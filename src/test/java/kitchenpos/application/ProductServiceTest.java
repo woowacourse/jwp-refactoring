@@ -46,6 +46,14 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("상품의 가격은 양수여야 한다.")
+    void createFail() {
+        product.setPrice(BigDecimal.valueOf(-1));
+        assertThatThrownBy(() -> productService.create(product))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("상품 목록을 불러올 수 있어야 한다.")
     void list() {
         Product product1 = new Product();
@@ -54,7 +62,7 @@ class ProductServiceTest {
         product2.setName("product2");
         product1.setPrice(BigDecimal.valueOf(1000));
         product2.setPrice(BigDecimal.valueOf(1000));
-        List<Product> products = Arrays.asList(product1, product2);
+        List<Product> products = Arrays.asList(product, product1, product2);
 
         given(productDao.findAll()).willReturn(products);
 
