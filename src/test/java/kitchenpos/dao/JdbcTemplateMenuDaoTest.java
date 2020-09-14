@@ -19,7 +19,7 @@ import kitchenpos.domain.Product;
 @SpringBootTest
 class JdbcTemplateMenuDaoTest {
     @Autowired
-    JdbcTemplateMenuDao menuDao;
+    private JdbcTemplateMenuDao menuDao;
     private Menu menu;
 
     @BeforeEach

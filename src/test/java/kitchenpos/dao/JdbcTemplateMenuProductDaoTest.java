@@ -14,7 +14,7 @@ import kitchenpos.domain.MenuProduct;
 @SpringBootTest
 class JdbcTemplateMenuProductDaoTest {
     @Autowired
-    JdbcTemplateMenuProductDao menuProductDao;
+    private JdbcTemplateMenuProductDao menuProductDao;
     private MenuProduct menuProduct1;
     private MenuProduct menuProduct2;
 

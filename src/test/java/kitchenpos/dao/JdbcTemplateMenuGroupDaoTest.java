@@ -14,7 +14,7 @@ import kitchenpos.domain.MenuGroup;
 @SpringBootTest
 class JdbcTemplateMenuGroupDaoTest {
     @Autowired
-    JdbcTemplateMenuGroupDao menuGroupDao;
+    private JdbcTemplateMenuGroupDao menuGroupDao;
     private MenuGroup menuGroup;
 
     @BeforeEach
