@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("create Error: 그룹으로 묶을 테이블은 2개 이상이어야 합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -48,7 +48,8 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                    "create Error: 테이블을 그룹으로 묶을 수 없습니다. (테이블이 비어있지 않거나, 이미 그룹이 되어있는 테이블)");
             }
         }
 
@@ -56,6 +57,7 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
+        //테이블 세팅
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroupId(tableGroupId);
@@ -77,7 +79,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("ungroup Error: 결제 완료여야 합니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
