@@ -83,14 +83,13 @@ class JdbcTemplateOrderDaoTest {
     void existsByOrderTableIdInAndOrderStatusIn() {
         Order savedOrder1 = orderDao.save(order);
         Order newOrder = new Order();
-
         newOrder.setOrderStatus(OrderStatus.COMPLETION.name());
         newOrder.setOrderedTime(LocalDateTime.now());
         newOrder.setOrderTableId(1L);
-        Order savedOrder2 = orderDao.save(order);
+        Order savedOrder2 = orderDao.save(newOrder);
 
         assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            Arrays.asList(savedOrder1.getId(), savedOrder2.getId()),
+            Arrays.asList(savedOrder1.getOrderTableId(), savedOrder2.getOrderTableId()),
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).isTrue();
     }
 }
