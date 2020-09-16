@@ -1,12 +1,13 @@
 package kitchenpos.ui;
 
+import static org.hamcrest.core.StringContains.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,18 +58,25 @@ class MenuRestControllerTest {
             .content(body)
         )
             .andDo(print())
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andExpect(content().string(containsString("menu")))
+            .andExpect(content().string(containsString("1000")));
     }
 
     @Test
     void list() throws Exception {
-        given(menuService.list()).willReturn(new ArrayList<>());
+        Menu menu2 = new Menu();
+        menu2.setName("menu2");
+
+        given(menuService.list()).willReturn(Arrays.asList(menu, menu2));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .accept(MediaType.APPLICATION_JSON_VALUE)
         )
             .andDo(print())
-            .andExpect(status().isOk());
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("menu")))
+            .andExpect(content().string(containsString("menu2")));
     }
 }
