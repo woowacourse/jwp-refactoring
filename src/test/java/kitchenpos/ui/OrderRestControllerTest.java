@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import static org.hamcrest.core.StringContains.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -20,35 +21,35 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.OrderService;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
-@WebMvcTest(controllers = {MenuGroupRestController.class})
-class MenuGroupRestControllerTest {
-    private final String BASE_URL = "/api/menu-groups";
-
+@WebMvcTest(OrderRestController.class)
+class OrderRestControllerTest {
+    private final String BASE_URL = "/api/orders";
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @MockBean
-    private MenuGroupService menuGroupService;
-    private MenuGroup menuGroup;
+    private OrderService orderService;
+    private Order order;
 
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        order = new Order();
+        order.setId(1L);
     }
 
     @Test
     void create() throws Exception {
-        String body = objectMapper.writeValueAsString(menuGroup);
+        String body = objectMapper.writeValueAsString(order);
 
-        given(menuGroupService.create(any())).willReturn(menuGroup);
+        given(orderService.create(any())).willReturn(order);
 
         mockMvc.perform(post(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -57,15 +58,15 @@ class MenuGroupRestControllerTest {
         )
             .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(content().string(containsString("menuGroup")));
+            .andExpect(content().string(containsString("1")));
     }
 
     @Test
     void list() throws Exception {
-        MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setName("menuGroup2");
+        Order order = new Order();
+        order.setId(2L);
 
-        given(menuGroupService.list()).willReturn(Arrays.asList(menuGroup, menuGroup2));
+        given(orderService.list()).willReturn(Arrays.asList(this.order, order));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -73,7 +74,26 @@ class MenuGroupRestControllerTest {
         )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("menuGroup")))
-            .andExpect(content().string(containsString("menuGroup2")));
+            .andExpect(content().string(containsString("1")))
+            .andExpect(content().string(containsString("2")));
+    }
+
+    @Test
+    void changeOrderStatus() throws Exception {
+        Order order = new Order();
+        order.setOrderStatus(OrderStatus.COMPLETION.name());
+
+        String body = objectMapper.writeValueAsString(order);
+
+        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
+
+        mockMvc.perform(put(BASE_URL + "/1/order-status")
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(body)
+        )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(content().string(containsString("COMPLETION")));
     }
 }
