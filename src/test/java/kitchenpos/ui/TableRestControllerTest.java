@@ -58,6 +58,8 @@ class TableRestControllerTest {
             .content(body)
         )
             .andDo(print())
+            .andExpect(content().string(containsString("1")))
+            .andExpect(content().string(containsString("false")))
             .andExpect(status().isCreated());
     }
 
