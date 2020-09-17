@@ -114,4 +114,21 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeEmpty(create.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("손님 수 변경")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable notEmptyTable = OrderTable.builder()
+            .numberOfGuests(0)
+            .empty(false)
+            .build();
+        OrderTable create = tableService.create(notEmptyTable);
+        OrderTable target = OrderTable.builder()
+            .numberOfGuests(10)
+            .build();
+
+        OrderTable changeNumberOfGuests = tableService.changeNumberOfGuests(create.getId(), target);
+
+        assertThat(changeNumberOfGuests.getNumberOfGuests()).isEqualTo(target.getNumberOfGuests());
+    }
 }
