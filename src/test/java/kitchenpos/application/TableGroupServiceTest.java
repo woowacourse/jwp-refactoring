@@ -86,7 +86,7 @@ class TableGroupServiceTest {
             .build();
 
         TableGroup tableGroup = TableGroup.builder()
-            .orderTables(Arrays.asList(notExistTable))
+            .orderTables(Arrays.asList(table1, table2, notExistTable))
             .createdDate(LocalDateTime.now())
             .build();
 
@@ -103,7 +103,7 @@ class TableGroupServiceTest {
         emptyTable = tableDao.save(emptyTable);
 
         TableGroup tableGroup = TableGroup.builder()
-            .orderTables(Arrays.asList(emptyTable))
+            .orderTables(Arrays.asList(table1, table2, emptyTable))
             .createdDate(LocalDateTime.now())
             .build();
 
@@ -114,18 +114,18 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 다른 그룹의 테이블을 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_OthersTable() {
-        OrderTable othersTable = OrderTable.builder()
-            .empty(true)
-            .tableGroupId(tableGroup.getId())
-            .build();
-        othersTable = tableDao.save(othersTable);
-
         TableGroup tableGroup = TableGroup.builder()
-            .orderTables(Arrays.asList(othersTable))
+            .orderTables(Arrays.asList(table1, table2))
+            .createdDate(LocalDateTime.now())
+            .build();
+        tableGroupService.create(tableGroup);
+
+        TableGroup tableGroup2 = TableGroup.builder()
+            .orderTables(Arrays.asList(table1, table2))
             .createdDate(LocalDateTime.now())
             .build();
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
