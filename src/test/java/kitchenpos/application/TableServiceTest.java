@@ -72,6 +72,17 @@ class TableServiceTest {
         assertThat(changeEmpty.isEmpty()).isEqualTo(target.isEmpty());
     }
 
+    @DisplayName("[예외] 존재하지 않는 테이블의 주문 등록 불가 여부 변경")
+    @Test
+    void changeEmpty_Fail_With_NotExistTable() {
+        OrderTable target = OrderTable.builder()
+            .empty(false)
+            .build();
+
+        assertThatThrownBy(() -> tableService.changeEmpty(100L, target))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("[예외] 그룹에 포함된 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInGroup() {
