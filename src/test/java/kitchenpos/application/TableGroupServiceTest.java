@@ -6,8 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +35,9 @@ class TableGroupServiceTest {
     private OrderTableDao tableDao;
     private OrderTable table1;
     private OrderTable table2;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @BeforeEach
     void setUp() {
@@ -138,5 +144,21 @@ class TableGroupServiceTest {
             () -> assertThat(ungroupedTable1.isEmpty()).isFalse(),
             () -> assertThat(ungroupedTable2.isEmpty()).isFalse()
         );
+    }
+
+    @DisplayName("[예외] 조리, 식사 중인 테이블을 포함한 테이블 그룹 해제")
+    @Test
+    void ungroup_Fail_With_TableInProgress() {
+        Order order = Order.builder()
+            .orderTableId(table1.getId())
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderedTime(LocalDateTime.now())
+            .build();
+        orderDao.save(order);
+
+        TableGroup create = tableGroupService.create(this.tableGroup);
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(create.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
