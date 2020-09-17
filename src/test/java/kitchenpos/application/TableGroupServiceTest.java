@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,9 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
     private TableGroup tableGroup;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @Autowired
     private OrderTableDao tableDao;
@@ -117,5 +121,22 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블 그룹 해제")
+    @Test
+    void ungroup() {
+        TableGroup create = tableGroupService.create(this.tableGroup);
+
+        tableGroupService.ungroup(create.getId());
+
+        OrderTable ungroupedTable1 = tableDao.findById(table1.getId()).get();
+        OrderTable ungroupedTable2 = tableDao.findById(table2.getId()).get();
+        assertAll(
+            () -> assertThat(ungroupedTable1.getTableGroupId()).isNull(),
+            () -> assertThat(ungroupedTable2.getTableGroupId()).isNull(),
+            () -> assertThat(ungroupedTable1.isEmpty()).isFalse(),
+            () -> assertThat(ungroupedTable2.isEmpty()).isFalse()
+        );
     }
 }
