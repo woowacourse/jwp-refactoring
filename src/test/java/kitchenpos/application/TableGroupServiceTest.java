@@ -149,14 +149,14 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 조리, 식사 중인 테이블을 포함한 테이블 그룹 해제")
     @Test
     void ungroup_Fail_With_TableInProgress() {
+        TableGroup create = tableGroupService.create(this.tableGroup);
+
         Order order = Order.builder()
             .orderTableId(table1.getId())
             .orderStatus(OrderStatus.COOKING.name())
             .orderedTime(LocalDateTime.now())
             .build();
         orderDao.save(order);
-
-        TableGroup create = tableGroupService.create(this.tableGroup);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(create.getId()))
             .isInstanceOf(IllegalArgumentException.class);
