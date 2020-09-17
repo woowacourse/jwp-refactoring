@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
@@ -102,5 +103,77 @@ class OrderServiceTest {
             () -> assertThat(create.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
             () -> assertThat(create.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
+    }
+
+    @DisplayName("[예외] 주문 항목이 없는 주문 추가")
+    @Test
+    void create_Fail_With_NoOrderLineItem() {
+        Order order = Order.builder()
+            .orderTableId(table.getId())
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
+    @Test
+    void create_Fail_With_NotExistMenu() {
+        OrderLineItem orderLineItem = OrderLineItem.builder()
+            .menuId(100L)
+            .quantity(2)
+            .build();
+        Order order = Order.builder()
+            .orderTableId(table.getId())
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderLineItems(Arrays.asList(orderLineItem))
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
+    @Test
+    void create_Fail_With_NotExistTable() {
+        OrderLineItem orderLineItem = OrderLineItem.builder()
+            .menuId(menu.getId())
+            .quantity(2)
+            .build();
+        Order order = Order.builder()
+            .orderTableId(100L)
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderLineItems(Arrays.asList(orderLineItem))
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 빈 테이블의 주문 추가")
+    @Test
+    void create_Fail_With_EmptyTable() {
+        OrderTable emptyTable = OrderTable.builder()
+            .empty(true)
+            .build();
+        emptyTable = tableDao.save(emptyTable);
+
+        OrderLineItem orderLineItem = OrderLineItem.builder()
+            .menuId(menu.getId())
+            .quantity(2)
+            .build();
+        Order order = Order.builder()
+            .orderTableId(emptyTable.getId())
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderLineItems(Arrays.asList(orderLineItem))
+            .orderedTime(LocalDateTime.now())
+            .build();
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
