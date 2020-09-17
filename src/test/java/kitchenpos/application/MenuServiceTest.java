@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -25,6 +26,7 @@ class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
+    private Menu menu;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -53,18 +55,18 @@ class MenuServiceTest {
             .productId(product.getId())
             .quantity(1)
             .build();
-    }
 
-    @DisplayName("메뉴 추가")
-    @Test
-    void create() {
-        Menu menu = Menu.builder()
+        menu = Menu.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(18_000))
             .menuGroupId(menuGroup.getId())
             .menuProducts(Arrays.asList(menuProduct, menuProduct))
             .build();
+    }
 
+    @DisplayName("메뉴 추가")
+    @Test
+    void create() {
         Menu create = menuService.create(menu);
 
         assertAll(
@@ -133,5 +135,16 @@ class MenuServiceTest {
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 전체 조회")
+    @Test
+    void list() {
+        menuService.create(menu);
+        menuService.create(menu);
+
+        List<Menu> list = menuService.list();
+
+        assertThat(list).hasSize(2);
     }
 }
