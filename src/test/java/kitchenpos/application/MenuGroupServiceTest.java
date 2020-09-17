@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,12 +20,28 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
-        MenuGroup menuGroup = MenuGroup.builder()
-            .name("반반메뉴")
-            .build();
+        MenuGroup menuGroup = newMenuGroup();
 
         MenuGroup create = menuGroupService.create(menuGroup);
 
         assertThat(create.getId()).isNotNull();
+    }
+
+    @DisplayName("메뉴 그룹 전체 조회")
+    @Test
+    void list() {
+        MenuGroup menuGroup = newMenuGroup();
+        menuGroupService.create(menuGroup);
+        menuGroupService.create(menuGroup);
+
+        List<MenuGroup> list = menuGroupService.list();
+
+        assertThat(list).hasSize(2);
+    }
+
+    private MenuGroup newMenuGroup() {
+        return MenuGroup.builder()
+            .name("반반메뉴")
+            .build();
     }
 }
