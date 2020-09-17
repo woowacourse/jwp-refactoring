@@ -175,7 +175,7 @@ class TableServiceTest {
     void changeNumberOfGuests_Fail_With_EmptyTable() {
         OrderTable create = tableService.create(table);
         OrderTable target = OrderTable.builder()
-            .numberOfGuests(-1)
+            .numberOfGuests(10)
             .build();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(create.getId(), target))
