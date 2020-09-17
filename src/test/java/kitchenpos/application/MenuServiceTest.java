@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -61,12 +62,16 @@ class MenuServiceTest {
             .name("강정치킨")
             .price(BigDecimal.valueOf(18_000))
             .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
+            .menuProducts(Arrays.asList(menuProduct, menuProduct))
             .build();
 
         Menu create = menuService.create(menu);
 
-        assertThat(create.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(create.getId()).isNotNull(),
+            () -> assertThat(create.getMenuProducts().get(0).getSeq()).isNotNull(),
+            () -> assertThat(create.getMenuProducts().get(1).getSeq()).isNotNull()
+        );
     }
 
     @DisplayName("[예외] 가격이 0보다 작은 메뉴 추가")
