@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -31,6 +32,7 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
+    private Order order;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -80,22 +82,23 @@ class OrderServiceTest {
             .empty(false)
             .build();
         table = tableDao.save(table);
-    }
 
-    @DisplayName("주문 추가")
-    @Test
-    void create() {
         OrderLineItem orderLineItem = OrderLineItem.builder()
             .menuId(menu.getId())
             .quantity(2)
             .build();
-        Order order = Order.builder()
+
+        order = Order.builder()
             .orderTableId(table.getId())
             .orderStatus(OrderStatus.COOKING.name())
             .orderLineItems(Arrays.asList(orderLineItem))
             .orderedTime(LocalDateTime.now())
             .build();
+    }
 
+    @DisplayName("주문 추가")
+    @Test
+    void create() {
         Order create = orderService.create(order);
 
         assertAll(
@@ -175,5 +178,16 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 전체 조회")
+    @Test
+    void list() {
+        orderService.create(order);
+        orderService.create(order);
+
+        List<Order> list = orderService.list();
+
+        assertThat(list).hasSize(2);
     }
 }
