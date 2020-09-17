@@ -190,4 +190,17 @@ class OrderServiceTest {
 
         assertThat(list).hasSize(2);
     }
+
+    @DisplayName("주문 상태 변경")
+    @Test
+    void changeOrderStatus() {
+        Order create = orderService.create(this.order);
+        Order target = Order.builder()
+            .orderStatus(OrderStatus.COMPLETION.name())
+            .build();
+
+        Order changeOrderStatus = orderService.changeOrderStatus(create.getId(), target);
+
+        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
+    }
 }
