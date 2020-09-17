@@ -67,7 +67,7 @@ class TableGroupServiceTest {
 
     @DisplayName("[예외] 2개 미만의 테이블을 포함한 테이블 그룹 추가")
     @Test
-    void create_Fail_With_LessTable() {
+    void create_Fail_With_NoTable() {
         TableGroup tableGroup = TableGroup.builder()
             .orderTables(Arrays.asList(table1))
             .createdDate(LocalDateTime.now())
