@@ -131,4 +131,43 @@ class TableServiceTest {
 
         assertThat(changeNumberOfGuests.getNumberOfGuests()).isEqualTo(target.getNumberOfGuests());
     }
+
+    @DisplayName("[예외] 0보다 작은 수로 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
+        OrderTable notEmptyTable = OrderTable.builder()
+            .numberOfGuests(0)
+            .empty(false)
+            .build();
+        OrderTable create = tableService.create(notEmptyTable);
+        OrderTable target = OrderTable.builder()
+            .numberOfGuests(-1)
+            .build();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(create.getId(), target))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 존재하지 않는 테이블의 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_Fail_With_NotExistTable() {
+        OrderTable target = OrderTable.builder()
+            .numberOfGuests(-1)
+            .build();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(100L, target))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("[예외] 빈 테이블의 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_Fail_With_EmptyTable() {
+        OrderTable create = tableService.create(table);
+        OrderTable target = OrderTable.builder()
+            .numberOfGuests(-1)
+            .build();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(create.getId(), target))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 }
