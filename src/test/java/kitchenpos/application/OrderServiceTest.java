@@ -52,6 +52,8 @@ class OrderServiceTest {
     private OrderTableDao tableDao;
     private OrderTable table;
 
+    private OrderLineItem orderLineItem;
+
     @BeforeEach
     void setUp() {
         menuGroup = MenuGroup.builder()
@@ -83,7 +85,7 @@ class OrderServiceTest {
             .build();
         table = tableDao.save(table);
 
-        OrderLineItem orderLineItem = OrderLineItem.builder()
+        orderLineItem = OrderLineItem.builder()
             .menuId(menu.getId())
             .quantity(2)
             .build();
@@ -194,7 +196,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        Order create = orderService.create(this.order);
+        Order create = orderService.create(order);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
@@ -202,5 +204,18 @@ class OrderServiceTest {
         Order changeOrderStatus = orderService.changeOrderStatus(create.getId(), target);
 
         assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
+    }
+
+    @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
+    @Test
+    void changeOrderStatus_With_CompletedOrder() {
+        Order create = orderService.create(order);
+        Order target = Order.builder()
+            .orderStatus(OrderStatus.COMPLETION.name())
+            .build();
+        orderService.changeOrderStatus(create.getId(), target);
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(create.getId(), target))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
