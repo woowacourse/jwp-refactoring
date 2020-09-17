@@ -152,7 +152,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_Fail_With_NotExistTable() {
         OrderTable target = OrderTable.builder()
-            .numberOfGuests(-1)
+            .numberOfGuests(10)
             .build();
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(100L, target))
