@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,12 +19,19 @@ class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+    private Product product;
+
+    @BeforeEach
+    void setUp() {
+        product = Product.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .build();
+    }
 
     @DisplayName("상품 추가")
     @Test
     void create() {
-        Product product = newProduct();
-
         Product create = productService.create(product);
 
         assertThat(create.getId()).isNotNull();
@@ -44,19 +52,11 @@ class ProductServiceTest {
     @DisplayName("전체 상품 조회")
     @Test
     void list() {
-        Product product = newProduct();
         productService.create(product);
         productService.create(product);
 
         List<Product> list = productService.list();
 
         assertThat(list).hasSize(2);
-    }
-
-    private Product newProduct() {
-        return Product.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .build();
     }
 }
