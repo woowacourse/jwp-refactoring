@@ -45,4 +45,17 @@ class TableServiceTest {
 
         assertThat(list).hasSize(2);
     }
+
+    @DisplayName("주문 등록 불가 여부 변경")
+    @Test
+    void changeEmpty() {
+        OrderTable create = tableService.create(table);
+        OrderTable target = OrderTable.builder()
+            .empty(!table.isEmpty())
+            .build();
+
+        OrderTable changeEmpty = tableService.changeEmpty(create.getId(), target);
+
+        assertThat(changeEmpty.isEmpty()).isEqualTo(target.isEmpty());
+    }
 }
