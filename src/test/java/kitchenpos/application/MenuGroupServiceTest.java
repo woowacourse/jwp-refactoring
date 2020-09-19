@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -39,6 +40,7 @@ class MenuGroupServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴 그룹의 목록을 불러올 수 있어야 한다.")
     void list() {
         MenuGroup menuGroup1 = new MenuGroup();
         MenuGroup menuGroup2 = new MenuGroup();

@@ -67,6 +67,7 @@ class JdbcTemplateOrderTableDaoTest {
     }
 
     @Test
+    @DisplayName("주어진 id리스트에 orderTable의 아이디가 포함되어 있는 모든 orderTable 반환")
     void findAllByIdIn() {
         List<Long> ids = Arrays.asList(1L, 2L, 3L);
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(ids);
@@ -81,6 +82,7 @@ class JdbcTemplateOrderTableDaoTest {
     }
 
     @Test
+    @DisplayName("주어진 table Group의 아이디가 동일한 orderTable 리스트 반환")
     void findAllByTableGroupId() {
         TableGroup tableGroup = new TableGroup();
         OrderTable orderTable1 = orderTableDao.findById(1L).get();

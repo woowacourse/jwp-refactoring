@@ -106,6 +106,7 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문의 목록을 불러올 수 있어야 한다.")
     void list() {
         Order order2 = new Order();
         order2.setId(2L);

@@ -121,6 +121,7 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 그룹을 해체할 수 있어야 한다.")
     void ungroup() {
         orderTable1.setTableGroupId(1L);
         orderTable2.setTableGroupId(1L);

@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,6 +63,7 @@ class MenuGroupRestControllerTest {
     }
 
     @Test
+    @DisplayName("메뉴 그룹의 리스트를 불러올 수 있어야 한다.")
     void list() throws Exception {
         MenuGroup menuGroup2 = new MenuGroup();
         menuGroup2.setName("menuGroup2");

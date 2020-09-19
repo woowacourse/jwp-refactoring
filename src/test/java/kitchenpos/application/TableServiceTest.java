@@ -50,6 +50,7 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("주문 테이블의 목록을 불러올 수 있어야 한다.")
     void list() {
         OrderTable orderTable2 = new OrderTable();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
@@ -107,6 +108,7 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 손님의 수를 변경할 수 있어야 한다.")
     void changeNumberOfGuests() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(4);

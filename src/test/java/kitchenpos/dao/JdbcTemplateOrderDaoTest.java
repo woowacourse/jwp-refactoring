@@ -71,6 +71,7 @@ class JdbcTemplateOrderDaoTest {
     }
 
     @Test
+    @DisplayName("해당 id의 주문 상태가 해당 주문 상태 리스트에 포함되어 있으면 참")
     void existsByOrderTableIdAndOrderStatusIn() {
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         Order savedOrder = orderDao.save(order);

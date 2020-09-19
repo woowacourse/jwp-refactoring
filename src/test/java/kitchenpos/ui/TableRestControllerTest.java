@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -65,6 +66,7 @@ class TableRestControllerTest {
     }
 
     @Test
+    @DisplayName("orderTable의 목록을 불러올 수 있어야 한다.")
     void list() throws Exception {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(2L);

@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -65,6 +66,7 @@ class MenuRestControllerTest {
     }
 
     @Test
+    @DisplayName("메뉴의 목록을 불러올 수 있어야 한다.")
     void list() throws Exception {
         Menu menu2 = new Menu();
         menu2.setName("menu2");

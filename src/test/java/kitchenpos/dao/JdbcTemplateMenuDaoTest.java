@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -71,6 +72,7 @@ class JdbcTemplateMenuDaoTest {
     }
 
     @Test
+    @DisplayName("ids 에 포함되는 메뉴 아이디의 개수 반환")
     void countByIdIn() {
         List<Long> ids = Arrays.asList(1L, 2L, 3L);
         Long count = menuDao.countByIdIn(ids);

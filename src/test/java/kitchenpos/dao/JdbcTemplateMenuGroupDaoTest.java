@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -51,6 +52,7 @@ class JdbcTemplateMenuGroupDaoTest {
     }
 
     @Test
+    @DisplayName("해당 id의 메뉴 그룹이 있는지 확인")
     void existsById() {
         MenuGroup menuGroup1 = new MenuGroup();
         menuGroup1.setName("menuGroup1");

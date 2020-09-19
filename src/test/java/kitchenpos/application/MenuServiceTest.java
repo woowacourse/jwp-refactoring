@@ -115,6 +115,7 @@ class MenuServiceTest {
     }
 
     @Test
+    @DisplayName("메뉴의 목록을 불러올 수 있어야 한다.")
     void list() {
         Menu newMenu = new Menu();
         newMenu.setId(2L);
