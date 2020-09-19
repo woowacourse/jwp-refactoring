@@ -34,6 +34,7 @@ class MenuRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     MenuService menuService;
+
     private Menu menu;
 
     @BeforeEach

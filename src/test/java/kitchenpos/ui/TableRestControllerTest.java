@@ -33,6 +33,7 @@ class TableRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private TableService tableService;
+
     private OrderTable orderTable;
 
     @BeforeEach

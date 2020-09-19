@@ -13,7 +13,6 @@ import kitchenpos.domain.Product;
 
 @SpringBootTest
 class JdbcTemplateProductDaoTest {
-
     @Autowired
     private JdbcTemplateProductDao productDao;
 

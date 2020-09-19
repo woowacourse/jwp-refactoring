@@ -35,6 +35,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
     @Mock
     private ProductDao productDao;
+
     private MenuGroup menuGroup;
     private Product product1;
     private Product product2;

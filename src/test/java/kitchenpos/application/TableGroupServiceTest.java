@@ -31,6 +31,7 @@ class TableGroupServiceTest {
     private OrderTableDao orderTableDao;
     @Mock
     private TableGroupDao tableGroupDao;
+
     private TableGroup tableGroup;
     private List<OrderTable> orderTables;
     private OrderTable orderTable1;

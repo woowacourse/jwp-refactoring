@@ -34,6 +34,7 @@ class OrderRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private OrderService orderService;
+
     private Order order;
 
     @BeforeEach

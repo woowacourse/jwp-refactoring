@@ -34,6 +34,7 @@ class ProductRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private ProductService productService;
+
     private Product product;
 
     @BeforeEach

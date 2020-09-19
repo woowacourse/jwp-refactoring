@@ -33,6 +33,7 @@ class MenuGroupRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private MenuGroupService menuGroupService;
+
     private MenuGroup menuGroup;
 
     @BeforeEach

@@ -33,6 +33,7 @@ class TableGroupRestControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private TableGroupService tableGroupService;
+
     private TableGroup tableGroup;
 
     @BeforeEach

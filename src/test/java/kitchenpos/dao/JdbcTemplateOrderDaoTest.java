@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderStatus;
 class JdbcTemplateOrderDaoTest {
     @Autowired
     private JdbcTemplateOrderDao orderDao;
+
     private Order order;
 
     @BeforeEach

@@ -37,6 +37,7 @@ class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
     @Mock
     private OrderTableDao orderTableDao;
+
     private OrderTable orderTable;
     private Order order;
     private OrderLineItem orderLineItem1;

@@ -19,6 +19,7 @@ class JdbcTemplateOrderLineItemDaoTest {
     private JdbcTemplateOrderLineItemDao orderLineItemDao;
     @Autowired
     private JdbcTemplateOrderDao orderDao;
+
     private OrderLineItem orderLineItem;
 
     @BeforeEach

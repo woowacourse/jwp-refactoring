@@ -26,6 +26,7 @@ class TableServiceTest {
     private OrderDao orderDao;
     @Mock
     private OrderTableDao orderTableDao;
+
     private OrderTable orderTable1;
 
     @BeforeEach

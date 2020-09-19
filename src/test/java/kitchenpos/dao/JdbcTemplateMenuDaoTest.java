@@ -20,6 +20,7 @@ import kitchenpos.domain.Product;
 class JdbcTemplateMenuDaoTest {
     @Autowired
     private JdbcTemplateMenuDao menuDao;
+
     private Menu menu;
 
     @BeforeEach

@@ -16,6 +16,7 @@ import kitchenpos.domain.TableGroup;
 class JdbcTemplateTableGroupDaoTest {
     @Autowired
     private JdbcTemplateTableGroupDao tableGroupDao;
+
     private TableGroup tableGroup;
 
     @BeforeEach

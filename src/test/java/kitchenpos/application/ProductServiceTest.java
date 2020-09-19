@@ -23,6 +23,7 @@ class ProductServiceTest {
     private ProductService productService;
     @Mock
     private ProductDao productDao;
+
     private Product product = new Product();
 
     @BeforeEach
