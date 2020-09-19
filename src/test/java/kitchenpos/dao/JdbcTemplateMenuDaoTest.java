@@ -34,23 +34,11 @@ class JdbcTemplateMenuDaoTest {
         menu.setName("menu");
         menu.setPrice(BigDecimal.valueOf(2000));
 
-        Product product1 = new Product();
-        Product product2 = new Product();
-        product1.setId(1L);
-        product2.setId(2L);
-        product1.setPrice(BigDecimal.valueOf(1000));
-        product2.setPrice(BigDecimal.valueOf(1000));
-        product1.setName("product1");
-        product2.setName("product2");
+        createProduct(1L, "product1");
+        createProduct(2L, "product2");
 
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct1.setQuantity(1);
-        menuProduct2.setQuantity(2);
-        menuProduct1.setProductId(1L);
-        menuProduct2.setProductId(2L);
-        menuProduct1.setMenuId(1L);
-        menuProduct2.setMenuId(2L);
+        createMenuProduct(1, 1L);
+        createMenuProduct(2, 2L);
     }
 
     @Test
@@ -88,5 +76,19 @@ class JdbcTemplateMenuDaoTest {
         Long count = menuDao.countByIdIn(ids);
 
         assertThat(count).isEqualTo(3);
+    }
+
+    private void createProduct(long id, String name) {
+        Product product1 = new Product();
+        product1.setId(id);
+        product1.setPrice(BigDecimal.valueOf(1000));
+        product1.setName(name);
+    }
+
+    private void createMenuProduct(int quantity, long id) {
+        MenuProduct menuProduct1 = new MenuProduct();
+        menuProduct1.setQuantity(quantity);
+        menuProduct1.setProductId(id);
+        menuProduct1.setMenuId(id);
     }
 }
