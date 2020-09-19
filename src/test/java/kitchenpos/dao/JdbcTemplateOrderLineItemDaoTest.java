@@ -1,82 +1,98 @@
 package kitchenpos.dao;
 
+import static kitchenpos.dao.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
+
+import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
-@SpringBootTest
 class JdbcTemplateOrderLineItemDaoTest {
-    @Autowired
+    private DataSource dataSource;
     private JdbcTemplateOrderLineItemDao orderLineItemDao;
-    @Autowired
     private JdbcTemplateOrderDao orderDao;
-
-    private OrderLineItem orderLineItem;
+    private JdbcTemplateMenuDao menuDao;
+    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private JdbcTemplateOrderTableDao orderTableDao;
 
     @BeforeEach
     void setUp() {
-        Order order = new Order();
-        orderLineItem = new OrderLineItem();
+        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+            .addScript("classpath:delete.sql")
+            .addScript("classpath:initialize.sql")
+            .build();
+        orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
+        orderDao = new JdbcTemplateOrderDao(dataSource);
+        menuDao = new JdbcTemplateMenuDao(dataSource);
+        menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
+        orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
 
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        OrderTable orderTable = createOrderTable(true);
+        orderTableDao.save(orderTable); //1L
 
-        Order savedOrder = orderDao.save(order);
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItem.setMenuId(1L);
+        Order order = createOrder(OrderStatus.COOKING, 1L);
+        orderDao.save(order); //1L
+
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
+        menuGroupDao.save(menuGroup); //1L
+
+        Menu menu = createMenu("menu", 1L, BigDecimal.valueOf(1000));
+        menuDao.save(menu); //1L
     }
 
     @Test
     void save() {
+        OrderLineItem orderLineItem = createOrderLineItem(1L, 1L);
         OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
 
-        assertThat(savedOrderLineItem.getSeq()).isNotNull();
-        assertThat(savedOrderLineItem.getMenuId()).isEqualTo(orderLineItem.getMenuId());
-        assertThat(savedOrderLineItem.getOrderId()).isEqualTo(orderLineItem.getOrderId());
+        assertAll(
+            () -> assertThat(savedOrderLineItem.getSeq()).isNotNull(),
+            () -> assertThat(savedOrderLineItem.getMenuId()).isEqualTo(orderLineItem.getMenuId()),
+            () -> assertThat(savedOrderLineItem.getOrderId()).isEqualTo(orderLineItem.getOrderId())
+        );
     }
 
     @Test
     void findById() {
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
-        OrderLineItem foundOrderLineItem = orderLineItemDao.findById(savedOrderLineItem.getSeq()).get();
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(createOrderLineItem(1L, 1L));
+        OrderLineItem expectedOrderLineItem = orderLineItemDao.findById(savedOrderLineItem.getSeq()).get();
 
-        assertThat(foundOrderLineItem.getSeq()).isEqualTo(savedOrderLineItem.getSeq());
-        assertThat(foundOrderLineItem.getOrderId()).isEqualTo(savedOrderLineItem.getOrderId());
-        assertThat(foundOrderLineItem.getMenuId()).isEqualTo(savedOrderLineItem.getMenuId());
+        assertAll(
+            () -> assertThat(expectedOrderLineItem.getSeq()).isEqualTo(savedOrderLineItem.getSeq()),
+            () -> assertThat(expectedOrderLineItem.getOrderId()).isEqualTo(savedOrderLineItem.getOrderId()),
+            () -> assertThat(expectedOrderLineItem.getMenuId()).isEqualTo(savedOrderLineItem.getMenuId())
+        );
     }
 
     @Test
     void findAll() {
-        int orderLineItemCount = orderLineItemDao.findAll().size();
-        orderLineItemDao.save(orderLineItem);
-        assertThat(orderLineItemDao.findAll().size()).isEqualTo(orderLineItemCount + 1);
+        orderLineItemDao.save(createOrderLineItem(1L, 1L));
+        orderLineItemDao.save(createOrderLineItem(1L, 1L));
+
+        assertThat(orderLineItemDao.findAll().size()).isEqualTo(2);
     }
 
     @Test
     void findAllByOrderId() {
-        Order order = new Order();
-        OrderLineItem orderLineItem2 = new OrderLineItem();
+        orderDao.save(createOrder(OrderStatus.COOKING, 1L)); //2L
+        Order order = orderDao.save(createOrder(OrderStatus.COOKING, 1L)); //3L
 
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        Order savedOrder2 = orderDao.save(order);
-        orderLineItem2.setOrderId(savedOrder2.getId());
-        orderLineItem2.setMenuId(1L);
+        orderLineItemDao.save(createOrderLineItem(1L, 1L));
+        orderLineItemDao.save(createOrderLineItem(order.getId(), 1L));
 
-        orderLineItemDao.save(orderLineItem);
-        orderLineItemDao.save(orderLineItem2);
-
-        assertThat(orderLineItemDao.findAllByOrderId(savedOrder2.getId()).size()).isEqualTo(1);
+        assertThat(orderLineItemDao.findAllByOrderId(order.getId()).size()).isEqualTo(1);
     }
 }

@@ -1,32 +1,36 @@
 package kitchenpos.dao;
 
+import static kitchenpos.dao.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest
 class JdbcTemplateMenuGroupDaoTest {
-    @Autowired
     private JdbcTemplateMenuGroupDao menuGroupDao;
-
-    private MenuGroup menuGroup;
+    private DataSource dataSource;
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
+        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
+            .addScript("classpath:delete.sql")
+            .addScript("classpath:initialize.sql")
+            .build();
+        menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
     }
 
     @Test
     void save() {
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
@@ -34,31 +38,34 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @Test
     void findById() {
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        MenuGroup foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId()).get();
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
 
-        assertThat(foundMenuGroup.getId()).isEqualTo(savedMenuGroup.getId());
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup expectedMenuGroup = menuGroupDao.findById(savedMenuGroup.getId()).get();
+
+        assertThat(expectedMenuGroup.getId()).isEqualTo(savedMenuGroup.getId());
     }
 
     @Test
     void findAll() {
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setName("menuGroup1");
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
-        menuGroupDao.save(menuGroup1);
-        List<MenuGroup> foundMenuGroups = menuGroupDao.findAll();
+        MenuGroup menuGroup1 = createMenuGroup("menuGroup1");
+        MenuGroup menuGroup2 = createMenuGroup("menuGroup2");
 
-        assertThat(foundMenuGroups.size()).isEqualTo(menuGroups.size() + 1);
+        menuGroupDao.save(menuGroup1);
+        menuGroupDao.save(menuGroup2);
+        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+
+        assertThat(menuGroups.size()).isEqualTo(2);
     }
 
     @Test
     @DisplayName("해당 id의 메뉴 그룹이 있는지 확인")
     void existsById() {
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setName("menuGroup1");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup1);
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
+
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
-        assertThat(menuGroupDao.existsById(0L)).isFalse();
+        assertThat(menuGroupDao.existsById(2L)).isFalse();
     }
 }
