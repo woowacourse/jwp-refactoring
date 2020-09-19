@@ -44,8 +44,8 @@ class TableServiceTest {
 
         OrderTable savedOrderTable = tableService.create(orderTable1);
 
-        assertThat(savedOrderTable.getId()).isEqualTo(null);
-        assertThat(savedOrderTable.getTableGroupId()).isEqualTo(null);
+        assertThat(savedOrderTable.getId()).isNull();
+        assertThat(savedOrderTable.getTableGroupId()).isNull();
         assertThat(savedOrderTable.isEmpty()).isFalse();
     }
 
