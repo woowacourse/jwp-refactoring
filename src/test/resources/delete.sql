@@ -1,0 +1,8 @@
+DROP TABLE IF EXISTS order_line_item;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS menu_product;
+DROP TABLE IF EXISTS menu;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS menu_group;
+DROP TABLE IF EXISTS order_table;
+DROP TABLE IF EXISTS table_group;
