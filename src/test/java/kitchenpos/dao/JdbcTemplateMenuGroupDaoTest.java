@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.dao.DomainCreator.*;
+import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;

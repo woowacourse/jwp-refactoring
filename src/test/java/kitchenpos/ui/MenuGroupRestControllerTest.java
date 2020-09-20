@@ -27,7 +27,6 @@ import kitchenpos.domain.MenuGroup;
 @WebMvcTest(controllers = {MenuGroupRestController.class})
 class MenuGroupRestControllerTest {
     private final String BASE_URL = "/api/menu-groups";
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
