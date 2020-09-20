@@ -11,6 +11,7 @@ import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
@@ -18,6 +19,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
+@JdbcTest
 class JdbcTemplateMenuProductDaoTest {
     private JdbcTemplateMenuProductDao menuProductDao;
     private JdbcTemplateMenuDao menuDao;

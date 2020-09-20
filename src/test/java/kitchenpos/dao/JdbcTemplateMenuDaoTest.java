@@ -13,12 +13,14 @@ import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 
+@JdbcTest
 class JdbcTemplateMenuDaoTest {
     private DataSource dataSource;
     private JdbcTemplateMenuDao menuDao;

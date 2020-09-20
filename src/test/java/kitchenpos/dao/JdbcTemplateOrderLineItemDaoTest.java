@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
@@ -20,6 +21,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
+@JdbcTest
 class JdbcTemplateOrderLineItemDaoTest {
     private DataSource dataSource;
     private JdbcTemplateOrderLineItemDao orderLineItemDao;
