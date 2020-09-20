@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
@@ -14,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -27,7 +31,7 @@ import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
-    @Mock
+    @Autowired
     private OrderService orderService;
     @Mock
     private MenuDao menuDao;
@@ -39,53 +43,49 @@ class OrderServiceTest {
     private OrderTableDao orderTableDao;
 
     private OrderTable orderTable;
-    private Order order;
     private OrderLineItem orderLineItem1;
     private OrderLineItem orderLineItem2;
 
     @BeforeEach
     void setUp() {
         orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-        Menu menu1 = new Menu();
-        menu1.setId(1L);
-        menu1.setName("menu1");
-        menu1.setPrice(BigDecimal.valueOf(1000));
 
-        orderLineItem1 = new OrderLineItem();
-        orderLineItem2 = new OrderLineItem();
+        Menu menu = createMenu("menu", 1L, BigDecimal.valueOf(1000));
+
+        orderLineItem1 = createOrderLineItem(1L, menu.getId());
+        orderLineItem2 = createOrderLineItem(1L, menu.getId());
         orderLineItem1.setQuantity(1);
         orderLineItem2.setQuantity(2);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem2.setMenuId(1L);
 
-        orderTable = new OrderTable();
+        orderTable = createOrderTable(false);
         orderTable.setId(1L);
-        orderTable.setEmpty(false);
-
-        order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
     }
 
     @Test
     void create() {
-        given(menuDao.countByIdIn(Arrays.asList(1L, 1L))).willReturn(2L);
-        given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
+        Order order = createOrder(OrderStatus.MEAL, 1L);
+        order.setId(1L);
+        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+
+        given(menuDao.countByIdIn(anyList())).willReturn(2L);
+        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.ofNullable(orderTable));
         given(orderDao.save(order)).willReturn(order);
 
         Order savedOrder = orderService.create(order);
 
-        assertThat(savedOrder.getId()).isEqualTo(order.getId());
-        assertThat(savedOrder.getOrderedTime()).isNotNull();
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(savedOrder.getOrderLineItems()).isEqualTo(order.getOrderLineItems());
-        assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
+        assertAll(
+            () -> assertThat(savedOrder.getId()).isEqualTo(order.getId()),
+            () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(order.getOrderStatus()),
+            () -> assertThat(savedOrder.getOrderLineItems()).isEqualTo(order.getOrderLineItems()),
+            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId())
+        );
     }
 
     @Test
-    @DisplayName("주문 항목(Order Line item)은 1개 이상이어야 한다.")
+    @DisplayName("주문 항목(Order Line item)은 1개 미만인 경우 에러")
     void createFailWhenOrderLineItemIsEmpty() {
+        Order order = createOrder(OrderStatus.COOKING, orderTable.getId());
         order.setOrderLineItems(new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -96,9 +96,12 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문하려는 테이블은 empty 상태가 아니어야 한다.")
     void createFailWhenTableIsEmpty() {
+        Order order = createOrder(OrderStatus.COMPLETION, 1L);
         orderTable.setEmpty(true);
-        given(menuDao.countByIdIn(Arrays.asList(1L, 1L))).willReturn(2L);
-        given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
+        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+
+        given(menuDao.countByIdIn(anyList())).willReturn(2L);
+        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.ofNullable(orderTable));
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class)
@@ -108,49 +111,49 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문의 목록을 불러올 수 있어야 한다.")
     void list() {
-        Order order2 = new Order();
+        Order order1 = createOrder(OrderStatus.COOKING, 1L);
+        Order order2 = createOrder(OrderStatus.COOKING, 1L);
+        order1.setId(1L);
         order2.setId(2L);
-        order2.setOrderTableId(1L);
         order2.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-        List<Order> orders = Arrays.asList(order, order2);
+        List<Order> orders = Arrays.asList(order1, order2);
 
         given(orderDao.findAll()).willReturn(orders);
         given(orderLineItemDao.findAllByOrderId(any())).willReturn(Arrays.asList(orderLineItem1, orderLineItem2));
 
-        List<Order> foundOrders = orderService.list();
+        List<Order> expectedOrders = orderService.list();
 
-        assertThat(foundOrders.size()).isEqualTo(orders.size());
-        assertThat(foundOrders.get(0)).isEqualTo(orders.get(0));
-        assertThat(foundOrders.get(1)).isEqualTo(orders.get(1));
-
+        assertThat(expectedOrders.size()).isEqualTo(orders.size());
     }
 
     @Test
+    @DisplayName("주문상태 변경이 가능하다.")
     void changeOrderStatus() {
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        Order orderToChange = new Order();
-        orderToChange.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order order = createOrder(OrderStatus.MEAL, orderTable.getId());
+        order.setId(1L);
+        Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
 
-        given(orderDao.findById(1L)).willReturn(java.util.Optional.ofNullable(order));
+        given(orderDao.findById(1L)).willReturn(java.util.Optional.of(order));
         given(orderDao.save(any())).willReturn(any());
         given(orderLineItemDao.findAllByOrderId(1L)).willReturn(anyList());
 
         String orderStatus = order.getOrderStatus();
-        Order changedOrder = orderService.changeOrderStatus(1L, orderToChange);
+        Order expectedOrder = orderService.changeOrderStatus(1L, orderToChange);
 
-        assertThat(orderStatus).isNotEqualTo(changedOrder.getOrderStatus());
+        assertThat(expectedOrder.getOrderStatus()).isNotEqualTo(orderStatus);
+        assertThat(expectedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     @Test
     @DisplayName("주문 상태가 결제 완료인 경우, 주문 상태를 변경할 수 없다.")
     void changeOrderStatusFail() {
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        Order orderToChange = new Order();
-        orderToChange.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order order = createOrder(OrderStatus.COMPLETION, orderTable.getId());
+        order.setId(1L);
+        Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
 
-        given(orderDao.findById(1L)).willReturn(java.util.Optional.ofNullable(order));
+        given(orderDao.findById(order.getId())).willReturn(java.util.Optional.of(order));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, orderToChange))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("changeOrderStatus Error: 결제 완료된 주문은 상태를 변경할 수 없습니다.");
     }

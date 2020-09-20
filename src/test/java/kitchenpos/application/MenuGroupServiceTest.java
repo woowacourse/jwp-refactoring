@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
@@ -12,13 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
-    @Mock
+    @Autowired
     private MenuGroupService menuGroupService;
     @Mock
     private MenuGroupDao menuGroupDao;
@@ -30,8 +32,7 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menu group");
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
 
         given(menuGroupDao.save(any())).willReturn(menuGroup);
 
@@ -42,13 +43,13 @@ class MenuGroupServiceTest {
     @Test
     @DisplayName("메뉴 그룹의 목록을 불러올 수 있어야 한다.")
     void list() {
-        MenuGroup menuGroup1 = new MenuGroup();
-        MenuGroup menuGroup2 = new MenuGroup();
+        MenuGroup menuGroup1 = createMenuGroup("menuGroup1");
+        MenuGroup menuGroup2 = createMenuGroup("menuGroup2");
         List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
 
         given(menuGroupDao.findAll()).willReturn(menuGroups);
 
-        List<MenuGroup> foundMenuGroups = menuGroupService.list();
-        assertThat(foundMenuGroups.size()).isEqualTo(menuGroups.size());
+        List<MenuGroup> expectedMenuGroups = menuGroupService.list();
+        assertThat(expectedMenuGroups.size()).isEqualTo(menuGroups.size());
     }
 }
