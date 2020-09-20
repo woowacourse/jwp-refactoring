@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.hamcrest.core.StringContains.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -34,19 +35,16 @@ class MenuGroupRestControllerTest {
     @MockBean
     private MenuGroupService menuGroupService;
 
-    private MenuGroup menuGroup;
-
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup");
     }
 
     @Test
     void create() throws Exception {
+        MenuGroup menuGroup = createMenuGroup("menuGroup");
         String body = objectMapper.writeValueAsString(menuGroup);
 
         given(menuGroupService.create(any())).willReturn(menuGroup);
@@ -64,10 +62,10 @@ class MenuGroupRestControllerTest {
     @Test
     @DisplayName("메뉴 그룹의 리스트를 불러올 수 있어야 한다.")
     void list() throws Exception {
-        MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setName("menuGroup2");
+        MenuGroup menuGroup1 = createMenuGroup("menuGroup1");
+        MenuGroup menuGroup2 = createMenuGroup("menuGroup2");
 
-        given(menuGroupService.list()).willReturn(Arrays.asList(menuGroup, menuGroup2));
+        given(menuGroupService.list()).willReturn(Arrays.asList(menuGroup1, menuGroup2));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -75,7 +73,7 @@ class MenuGroupRestControllerTest {
         )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString("menuGroup")))
+            .andExpect(content().string(containsString("menuGroup1")))
             .andExpect(content().string(containsString("menuGroup2")));
     }
 }

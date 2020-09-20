@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.hamcrest.core.StringContains.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -34,20 +35,17 @@ class TableGroupRestControllerTest {
     @MockBean
     private TableGroupService tableGroupService;
 
-    private TableGroup tableGroup;
-
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        tableGroup.setCreatedDate(LocalDateTime.now());
     }
 
     @Test
     void create() throws Exception {
+        TableGroup tableGroup = createTableGroup(null);
+        tableGroup.setId(1L);
         String body = objectMapper.writeValueAsString(tableGroup);
 
         given(tableGroupService.create(any())).willReturn(tableGroup);

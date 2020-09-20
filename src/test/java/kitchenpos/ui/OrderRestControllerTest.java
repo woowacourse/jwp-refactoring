@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.hamcrest.core.StringContains.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -36,19 +37,17 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
-    private Order order;
-
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        order = new Order();
-        order.setId(1L);
     }
 
     @Test
     void create() throws Exception {
+        Order order = createOrder(OrderStatus.COMPLETION, null);
+        order.setId(1L);
         String body = objectMapper.writeValueAsString(order);
 
         given(orderService.create(any())).willReturn(order);
@@ -66,10 +65,12 @@ class OrderRestControllerTest {
     @Test
     @DisplayName("주문의 목록을 불러올 수 있어야 한다.")
     void list() throws Exception {
-        Order order = new Order();
-        order.setId(2L);
+        Order order1 = createOrder(OrderStatus.COMPLETION, null);
+        order1.setId(1L);
+        Order order2 = createOrder(OrderStatus.COMPLETION, null);
+        order2.setId(2L);
 
-        given(orderService.list()).willReturn(Arrays.asList(this.order, order));
+        given(orderService.list()).willReturn(Arrays.asList(order1, order2));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -83,12 +84,10 @@ class OrderRestControllerTest {
 
     @Test
     void changeOrderStatus() throws Exception {
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
+        String body = objectMapper.writeValueAsString(orderToChange);
 
-        String body = objectMapper.writeValueAsString(order);
-
-        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
+        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(orderToChange);
 
         mockMvc.perform(put(BASE_URL + "/1/order-status")
             .contentType(MediaType.APPLICATION_JSON_VALUE)

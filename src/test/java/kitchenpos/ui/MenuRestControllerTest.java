@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.hamcrest.core.StringContains.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,7 +29,6 @@ import kitchenpos.domain.Menu;
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest {
     private final String BASE_URL = "/api/menus";
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -36,20 +36,16 @@ class MenuRestControllerTest {
     @MockBean
     MenuService menuService;
 
-    private Menu menu;
-
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        menu = new Menu();
-        menu.setName("menu");
-        menu.setPrice(BigDecimal.valueOf(1000));
     }
 
     @Test
     void create() throws Exception {
+        Menu menu = createMenu("menu", null, BigDecimal.valueOf(1000));
         String body = objectMapper.writeValueAsString(menu);
 
         given(menuService.create(any())).willReturn(menu);
@@ -68,10 +64,10 @@ class MenuRestControllerTest {
     @Test
     @DisplayName("메뉴의 목록을 불러올 수 있어야 한다.")
     void list() throws Exception {
-        Menu menu2 = new Menu();
-        menu2.setName("menu2");
+        Menu menu1 = createMenu("menu1", null, BigDecimal.valueOf(1000));
+        Menu menu2 = createMenu("menu2", null, BigDecimal.valueOf(1000));
 
-        given(menuService.list()).willReturn(Arrays.asList(menu, menu2));
+        given(menuService.list()).willReturn(Arrays.asList(menu1, menu2));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)

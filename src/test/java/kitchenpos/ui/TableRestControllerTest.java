@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.domain.DomainCreator.*;
 import static org.hamcrest.core.StringContains.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
@@ -35,21 +36,17 @@ class TableRestControllerTest {
     @MockBean
     private TableService tableService;
 
-    private OrderTable orderTable;
-
     @BeforeEach
     void setUp(WebApplicationContext webApplicationContext) {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
             .addFilter(new CharacterEncodingFilter("UTF-8", true))
             .build();
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(1);
     }
 
     @Test
     void create() throws Exception {
+        OrderTable orderTable = createOrderTable(false);
+        orderTable.setId(1L);
         String body = objectMapper.writeValueAsString(orderTable);
 
         given(tableService.create(any())).willReturn(orderTable);
@@ -68,10 +65,12 @@ class TableRestControllerTest {
     @Test
     @DisplayName("orderTable의 목록을 불러올 수 있어야 한다.")
     void list() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(2L);
+        OrderTable orderTable1 = createOrderTable(false);
+        orderTable1.setId(1L);
+        OrderTable orderTable2 = createOrderTable(false);
+        orderTable2.setId(2L);
 
-        given(tableService.list()).willReturn(Arrays.asList(orderTable, this.orderTable));
+        given(tableService.list()).willReturn(Arrays.asList(orderTable1, orderTable2));
 
         mockMvc.perform(get(BASE_URL)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -85,12 +84,13 @@ class TableRestControllerTest {
 
     @Test
     void changeEmpty() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = createOrderTable(false);
+        orderTable.setId(1L);
+        OrderTable orderTableToChange = createOrderTable(true);
 
         String body = objectMapper.writeValueAsString(orderTable);
 
-        given(tableService.changeEmpty(1L, orderTable)).willReturn(orderTable);
+        given(tableService.changeEmpty(orderTable.getId(), orderTable)).willReturn(orderTableToChange);
 
         mockMvc.perform(put(BASE_URL + "/1/empty")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -104,12 +104,14 @@ class TableRestControllerTest {
 
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(3);
+        OrderTable orderTable = createOrderTable(false);
+        orderTable.setId(1L);
+        OrderTable orderTableToChange = createOrderTable(false);
+        orderTableToChange.setNumberOfGuests(3);
 
         String body = objectMapper.writeValueAsString(orderTable);
 
-        given(tableService.changeNumberOfGuests(1L, orderTable)).willReturn(orderTable);
+        given(tableService.changeNumberOfGuests(orderTable.getId(), orderTable)).willReturn(orderTableToChange);
 
         mockMvc.perform(put(BASE_URL + "/1/number-of-guests")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
