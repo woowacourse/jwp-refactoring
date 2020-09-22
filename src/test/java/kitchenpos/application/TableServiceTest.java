@@ -35,9 +35,9 @@ class TableServiceTest {
     @Test
     void create() {
         OrderTable table = createTable(true);
-        OrderTable create = tableService.create(table);
+        OrderTable savedTable = tableService.create(table);
 
-        assertThat(create.getId()).isNotNull();
+        assertThat(savedTable.getId()).isNotNull();
     }
 
     @DisplayName("테이블 전체 조회")
@@ -59,9 +59,9 @@ class TableServiceTest {
         OrderTable savedTable = tableService.create(table);
         OrderTable targetTable = createTable(false);
 
-        OrderTable changeEmpty = tableService.changeEmpty(savedTable.getId(), targetTable);
+        OrderTable changedTable = tableService.changeEmpty(savedTable.getId(), targetTable);
 
-        assertThat(changeEmpty.isEmpty()).isEqualTo(targetTable.isEmpty());
+        assertThat(changedTable.isEmpty()).isEqualTo(targetTable.isEmpty());
     }
 
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 등록 불가 여부 변경")
@@ -110,8 +110,8 @@ class TableServiceTest {
     @DisplayName("손님 수 변경")
     @Test
     void changeNumberOfGuests() {
-        OrderTable notEmptyTable = createTable(false);
-        OrderTable savedTable = tableService.create(notEmptyTable);
+        OrderTable table = createTable(false);
+        OrderTable savedTable = tableService.create(table);
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(10)
             .build();
@@ -125,8 +125,8 @@ class TableServiceTest {
     @DisplayName("[예외] 0보다 작은 수로 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
-        OrderTable notEmptyTable = createTable(false);
-        OrderTable savedTable = tableService.create(notEmptyTable);
+        OrderTable table = createTable(false);
+        OrderTable savedTable = tableService.create(table);
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(-1)
             .build();

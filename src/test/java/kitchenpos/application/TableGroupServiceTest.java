@@ -41,12 +41,12 @@ class TableGroupServiceTest {
         List<OrderTable> tables = Arrays.asList(savedTable1, savedTable2);
 
         TableGroup tableGroup = createTableGroup(tables);
-        TableGroup create = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         assertAll(
-            () -> assertThat(create.getId()).isNotNull(),
-            () -> assertThat(create.getOrderTables().get(0).isEmpty()).isFalse(),
-            () -> assertThat(create.getOrderTables().get(1).isEmpty()).isFalse()
+            () -> assertThat(savedTableGroup.getId()).isNotNull(),
+            () -> assertThat(savedTableGroup.getOrderTables().get(0).isEmpty()).isFalse(),
+            () -> assertThat(savedTableGroup.getOrderTables().get(1).isEmpty()).isFalse()
         );
     }
 
@@ -115,9 +115,9 @@ class TableGroupServiceTest {
         List<OrderTable> tables = Arrays.asList(savedTable1, savedTable2);
 
         TableGroup tableGroup = createTableGroup(tables);
-        TableGroup create = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        tableGroupService.ungroup(create.getId());
+        tableGroupService.ungroup(savedTableGroup.getId());
 
         OrderTable ungroupedTable1 = tableDao.findById(savedTable1.getId()).get();
         OrderTable ungroupedTable2 = tableDao.findById(savedTable2.getId()).get();
@@ -137,12 +137,12 @@ class TableGroupServiceTest {
         List<OrderTable> tables = Arrays.asList(savedTable1, savedTable2);
 
         TableGroup tableGroup = createTableGroup(tables);
-        TableGroup create = tableGroupService.create(tableGroup);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         Order order = createOrder(savedTable1);
         orderDao.save(order);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(create.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

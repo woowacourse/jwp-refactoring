@@ -72,13 +72,13 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = TestObjectFactory.createOrder(savedTable, orderLineItems);
-        Order create = orderService.create(order);
+        Order order = createOrder(savedTable, orderLineItems);
+        Order savedOrder = orderService.create(order);
 
         assertAll(
-            () -> assertThat(create.getId()).isNotNull(),
-            () -> assertThat(create.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-            () -> assertThat(create.getOrderLineItems().get(0).getSeq()).isNotNull()
+            () -> assertThat(savedOrder.getId()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
     }
 
@@ -168,12 +168,12 @@ class OrderServiceTest {
 
         Order order = createOrder(savedTable, orderLineItems);
 
-        Order create = orderService.create(order);
+        Order savedOrder = orderService.create(order);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
 
-        Order changeOrderStatus = orderService.changeOrderStatus(create.getId(), target);
+        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), target);
 
         assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
     }
@@ -189,13 +189,13 @@ class OrderServiceTest {
 
         Order order = createOrder(savedTable, orderLineItems);
 
-        Order create = orderService.create(order);
+        Order crsavedOrder = orderService.create(order);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
-        orderService.changeOrderStatus(create.getId(), target);
+        orderService.changeOrderStatus(crsavedOrder.getId(), target);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(create.getId(), target))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(crsavedOrder.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

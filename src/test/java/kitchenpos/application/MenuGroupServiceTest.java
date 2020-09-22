@@ -29,9 +29,9 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
-        MenuGroup create = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
-        assertThat(create.getId()).isNotNull();
+        assertThat(savedMenuGroup.getId()).isNotNull();
     }
 
     @DisplayName("메뉴 그룹 전체 조회")

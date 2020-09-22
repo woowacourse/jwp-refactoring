@@ -45,12 +45,12 @@ class MenuServiceTest {
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
 
         Menu menu = createMenu(18_000, savedMenuGroup, menuProducts);
-        Menu create = menuService.create(menu);
+        Menu savedMenu = menuService.create(menu);
 
         assertAll(
-            () -> assertThat(create.getId()).isNotNull(),
-            () -> assertThat(create.getMenuProducts().get(0).getSeq()).isNotNull(),
-            () -> assertThat(create.getMenuProducts().get(1).getSeq()).isNotNull()
+            () -> assertThat(savedMenu.getId()).isNotNull(),
+            () -> assertThat(savedMenu.getMenuProducts().get(0).getSeq()).isNotNull(),
+            () -> assertThat(savedMenu.getMenuProducts().get(1).getSeq()).isNotNull()
         );
     }
 

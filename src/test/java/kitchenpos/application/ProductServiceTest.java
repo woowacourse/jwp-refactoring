@@ -24,9 +24,9 @@ class ProductServiceTest {
     void create() {
         Product product = createProduct(18_000);
 
-        Product create = productService.create(product);
+        Product savedProduct = productService.create(product);
 
-        assertThat(create.getId()).isNotNull();
+        assertThat(savedProduct.getId()).isNotNull();
     }
 
     @DisplayName("[예외] 가격이 0보다 작은 상품 추가")
