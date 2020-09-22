@@ -13,7 +13,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,47 +25,23 @@ class MenuServiceTest {
 
     @Autowired
     private MenuService menuService;
-    private Menu menu;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
-    private MenuGroup menuGroup;
 
     @Autowired
     private ProductDao productDao;
-    private Product product;
-
-    private MenuProduct menuProduct;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = MenuGroup.builder()
-            .name("강정메뉴")
-            .build();
-        menuGroup = menuGroupDao.save(menuGroup);
-
-        product = Product.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .build();
-        product = productDao.save(product);
-
-        menuProduct = MenuProduct.builder()
-            .productId(product.getId())
-            .quantity(1)
-            .build();
-
-        menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct, menuProduct))
-            .build();
-    }
 
     @DisplayName("메뉴 추가")
     @Test
     void create() {
+        MenuGroup savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
+
+        Product savedProduct = productDao.save(createTestProduct());
+        MenuProduct menuProduct = createTestMenuProduct(savedProduct);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        Menu menu = createTestMenu(18_000, savedMenuGroup, menuProducts);
         Menu create = menuService.create(menu);
 
         assertAll(
@@ -79,12 +54,13 @@ class MenuServiceTest {
     @DisplayName("[예외] 가격이 0보다 작은 메뉴 추가")
     @Test
     void create_Fail_With_InvalidPrice() {
-        Menu menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(-1))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
+        MenuGroup savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
+
+        Product savedProduct = productDao.save(createTestProduct());
+        MenuProduct menuProduct = createTestMenuProduct(savedProduct);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        Menu menu = createTestMenu(-1, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -93,12 +69,13 @@ class MenuServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴 그룹에 속한 메뉴 추가")
     @Test
     void create_Fail_With_NotExistMenuGroup() {
-        Menu menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .menuGroupId(100L)
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
+        MenuGroup notSavedMenuGroup = createTestMenuGroup();
+
+        Product product = productDao.save(createTestProduct());
+        MenuProduct menuProduct = createTestMenuProduct(product);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        Menu menu = createTestMenu(18_000, notSavedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -107,17 +84,13 @@ class MenuServiceTest {
     @DisplayName("[예외] 존재하지 않는 상품을 포함한 메뉴 추가")
     @Test
     void create_Fail_With_NotExistProduct() {
-        MenuProduct menuProduct = MenuProduct.builder()
-            .productId(100L)
-            .quantity(1)
-            .build();
+        MenuGroup savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
 
-        Menu menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
+        Product notSavedProduct = createTestProduct();
+        MenuProduct menuProduct = createTestMenuProduct(notSavedProduct);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        Menu menu = createTestMenu(-1, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -126,12 +99,13 @@ class MenuServiceTest {
     @DisplayName("[예외] 포함한 상품의 가격 총합보다 높은 가격의 메뉴 추가")
     @Test
     void create_Fail_With_OverPrice() {
-        Menu menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(100_000))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
+        MenuGroup savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
+
+        Product savedProduct = productDao.save(createTestProduct());
+        MenuProduct menuProduct = createTestMenuProduct(savedProduct);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        Menu menu = createTestMenu(100_000_000, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -140,11 +114,46 @@ class MenuServiceTest {
     @DisplayName("메뉴 전체 조회")
     @Test
     void list() {
-        menuService.create(menu);
-        menuService.create(menu);
+        MenuGroup savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
+
+        Product savedProduct = productDao.save(createTestProduct());
+        MenuProduct menuProduct = createTestMenuProduct(savedProduct);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+
+        menuService.create(createTestMenu(18_000, savedMenuGroup, menuProducts));
+        menuService.create(createTestMenu(18_000, savedMenuGroup, menuProducts));
 
         List<Menu> list = menuService.list();
 
         assertThat(list).hasSize(2);
+    }
+
+    private Menu createTestMenu(int price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        return Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(price))
+            .menuGroupId(menuGroup.getId())
+            .menuProducts(menuProducts)
+            .build();
+    }
+
+    private MenuGroup createTestMenuGroup() {
+        return MenuGroup.builder()
+            .name("강정메뉴")
+            .build();
+    }
+
+    private MenuProduct createTestMenuProduct(Product product) {
+        return MenuProduct.builder()
+            .productId(product.getId())
+            .quantity(1)
+            .build();
+    }
+
+    private Product createTestProduct() {
+        return Product.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .build();
     }
 }
