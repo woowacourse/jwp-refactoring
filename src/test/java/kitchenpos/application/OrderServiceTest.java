@@ -32,75 +32,40 @@ class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
-    private Order order;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-    private MenuGroup menuGroup;
-
-    @Autowired
-    private ProductDao productDao;
-    private Product product;
-
-    private MenuProduct menuProduct;
-
-    @Autowired
-    private MenuService menuService;
-    private Menu menu;
 
     @Autowired
     private OrderTableDao tableDao;
-    private OrderTable table;
 
-    private OrderLineItem orderLineItem;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuService menuService;
+
+    private MenuGroup savedMenuGroup;
+    private Product savedProduct;
+    private MenuProduct menuProduct;
 
     @BeforeEach
     void setUp() {
-        menuGroup = MenuGroup.builder()
-            .name("강정메뉴")
-            .build();
-        menuGroup = menuGroupDao.save(menuGroup);
-
-        product = Product.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .build();
-        product = productDao.save(product);
-
-        menuProduct = MenuProduct.builder()
-            .productId(product.getId())
-            .quantity(1)
-            .build();
-
-        menu = Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
-        menu = menuService.create(menu);
-
-        table = OrderTable.builder()
-            .empty(false)
-            .build();
-        table = tableDao.save(table);
-
-        orderLineItem = OrderLineItem.builder()
-            .menuId(menu.getId())
-            .quantity(2)
-            .build();
-
-        order = Order.builder()
-            .orderTableId(table.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(Arrays.asList(orderLineItem))
-            .orderedTime(LocalDateTime.now())
-            .build();
+        savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
+        savedProduct = productDao.save(createTestProduct());
+        menuProduct = createTestMenuProduct(savedProduct);
     }
 
     @DisplayName("주문 추가")
     @Test
     void create() {
+        OrderTable savedTable = tableDao.save(createTestTable(false));
+
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(savedTable, orderLineItems);
         Order create = orderService.create(order);
 
         assertAll(
@@ -113,11 +78,9 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        Order order = Order.builder()
-            .orderTableId(table.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderedTime(LocalDateTime.now())
-            .build();
+        OrderTable savedTable = tableDao.save(createTestTable(false));
+
+        Order order = createTestOrder(savedTable, null);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -126,16 +89,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-            .menuId(100L)
-            .quantity(2)
-            .build();
-        Order order = Order.builder()
-            .orderTableId(table.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(Arrays.asList(orderLineItem))
-            .orderedTime(LocalDateTime.now())
-            .build();
+        OrderTable table = tableDao.save(createTestTable(false));
+
+        Menu notSavedMenu = createTestMenu(savedMenuGroup, menuProduct);
+        OrderLineItem orderLineItem = createTestOrderLineItem(notSavedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(table, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -144,16 +104,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-            .menuId(menu.getId())
-            .quantity(2)
-            .build();
-        Order order = Order.builder()
-            .orderTableId(100L)
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(Arrays.asList(orderLineItem))
-            .orderedTime(LocalDateTime.now())
-            .build();
+        OrderTable notSavedTable = createTestTable(false);
+
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(notSavedTable, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -162,21 +119,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 빈 테이블의 주문 추가")
     @Test
     void create_Fail_With_EmptyTable() {
-        OrderTable emptyTable = OrderTable.builder()
-            .empty(true)
-            .build();
-        emptyTable = tableDao.save(emptyTable);
+        OrderTable emptyTable = tableDao.save(createTestTable(true));
 
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-            .menuId(menu.getId())
-            .quantity(2)
-            .build();
-        Order order = Order.builder()
-            .orderTableId(emptyTable.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(Arrays.asList(orderLineItem))
-            .orderedTime(LocalDateTime.now())
-            .build();
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(emptyTable, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -185,6 +134,14 @@ class OrderServiceTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
+        OrderTable savedTable = tableDao.save(createTestTable(false));
+
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(savedTable, orderLineItems);
+
         orderService.create(order);
         orderService.create(order);
 
@@ -196,6 +153,14 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
+        OrderTable savedTable = tableDao.save(createTestTable(false));
+
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(savedTable, orderLineItems);
+
         Order create = orderService.create(order);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
@@ -209,6 +174,14 @@ class OrderServiceTest {
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
     @Test
     void changeOrderStatus_With_CompletedOrder() {
+        OrderTable savedTable = tableDao.save(createTestTable(false));
+
+        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
+        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+
+        Order order = createTestOrder(savedTable, orderLineItems);
+
         Order create = orderService.create(order);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
@@ -217,5 +190,56 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(create.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Order createTestOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
+        return Order.builder()
+            .orderTableId(table.getId())
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderLineItems(orderLineItems)
+            .orderedTime(LocalDateTime.now())
+            .build();
+    }
+
+    private OrderTable createTestTable(boolean empty) {
+        return OrderTable.builder()
+            .empty(empty)
+            .build();
+    }
+
+    private OrderLineItem createTestOrderLineItem(Menu menu) {
+        return OrderLineItem.builder()
+            .menuId(menu.getId())
+            .quantity(2)
+            .build();
+    }
+
+    private Menu createTestMenu(MenuGroup menuGroup, MenuProduct menuProduct) {
+        return Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .menuGroupId(menuGroup.getId())
+            .menuProducts(Arrays.asList(menuProduct))
+            .build();
+    }
+
+    private MenuGroup createTestMenuGroup() {
+        return MenuGroup.builder()
+            .name("강정메뉴")
+            .build();
+    }
+
+    private MenuProduct createTestMenuProduct(Product product) {
+        return MenuProduct.builder()
+            .productId(product.getId())
+            .quantity(1)
+            .build();
+    }
+
+    private Product createTestProduct() {
+        return Product.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .build();
     }
 }
