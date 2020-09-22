@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createTable;
+import static kitchenpos.TestObjectFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +34,7 @@ class TableServiceTest {
     @DisplayName("테이블 추가")
     @Test
     void create() {
-        OrderTable table = createTestTable(true);
+        OrderTable table = createTable(true);
         OrderTable create = tableService.create(table);
 
         assertThat(create.getId()).isNotNull();
@@ -42,7 +43,7 @@ class TableServiceTest {
     @DisplayName("테이블 전체 조회")
     @Test
     void list() {
-        OrderTable table = createTestTable(true);
+        OrderTable table = createTable(true);
         tableService.create(table);
         tableService.create(table);
 
@@ -54,9 +55,9 @@ class TableServiceTest {
     @DisplayName("주문 등록 불가 여부 변경")
     @Test
     void changeEmpty() {
-        OrderTable table = createTestTable(true);
+        OrderTable table = createTable(true);
         OrderTable savedTable = tableService.create(table);
-        OrderTable targetTable = createTestTable(false);
+        OrderTable targetTable = createTable(false);
 
         OrderTable changeEmpty = tableService.changeEmpty(savedTable.getId(), targetTable);
 
@@ -66,8 +67,8 @@ class TableServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = createTestTable(true);
-        OrderTable targetTable = createTestTable(false);
+        OrderTable notSavedTable = createTable(true);
+        OrderTable targetTable = createTable(false);
 
         assertThatThrownBy(() -> tableService.changeEmpty(notSavedTable.getId(), targetTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -76,16 +77,16 @@ class TableServiceTest {
     @DisplayName("[예외] 그룹에 포함된 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInGroup() {
-        OrderTable table1 = createTestTable(true);
+        OrderTable table1 = createTable(true);
         OrderTable savedTable1 = tableService.create(table1);
 
-        OrderTable table2 = createTestTable(true);
+        OrderTable table2 = createTable(true);
         OrderTable savedTable2 = tableService.create(table2);
         List<OrderTable> tables = Arrays.asList(savedTable1, savedTable2);
         TableGroup tableGroup = createTableGroup(tables);
         tableGroupService.create(tableGroup);
 
-        OrderTable targetTable = createTestTable(false);
+        OrderTable targetTable = createTable(false);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable1.getId(), targetTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -94,13 +95,13 @@ class TableServiceTest {
     @DisplayName("[예외] 조리, 식사 중인 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInProgress() {
-        OrderTable table = createTestTable(false);
+        OrderTable table = createTable(false);
         OrderTable savedTable = tableService.create(table);
 
-        Order order = createTestOrder(savedTable);
+        Order order = createOrder(savedTable);
         orderDao.save(order);
 
-        OrderTable targetTable = createTestTable(true);
+        OrderTable targetTable = createTable(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), targetTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -109,7 +110,7 @@ class TableServiceTest {
     @DisplayName("손님 수 변경")
     @Test
     void changeNumberOfGuests() {
-        OrderTable notEmptyTable = createTestTable(false);
+        OrderTable notEmptyTable = createTable(false);
         OrderTable savedTable = tableService.create(notEmptyTable);
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(10)
@@ -124,7 +125,7 @@ class TableServiceTest {
     @DisplayName("[예외] 0보다 작은 수로 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
-        OrderTable notEmptyTable = createTestTable(false);
+        OrderTable notEmptyTable = createTable(false);
         OrderTable savedTable = tableService.create(notEmptyTable);
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(-1)
@@ -137,7 +138,7 @@ class TableServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = createTestTable(false);
+        OrderTable notSavedTable = createTable(false);
 
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(10)
@@ -151,7 +152,7 @@ class TableServiceTest {
     @DisplayName("[예외] 빈 테이블의 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_EmptyTable() {
-        OrderTable emptyTable = createTestTable(true);
+        OrderTable emptyTable = createTable(true);
         OrderTable savedEmptyTable = tableService.create(emptyTable);
         OrderTable targetTable = OrderTable.builder()
             .numberOfGuests(10)
@@ -160,27 +161,5 @@ class TableServiceTest {
         assertThatThrownBy(
             () -> tableService.changeNumberOfGuests(savedEmptyTable.getId(), targetTable))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderTable createTestTable(boolean empty) {
-        return OrderTable.builder()
-            .numberOfGuests(0)
-            .empty(empty)
-            .build();
-    }
-
-    private TableGroup createTableGroup(List<OrderTable> tables) {
-        return TableGroup.builder()
-            .orderTables(tables)
-            .createdDate(LocalDateTime.now())
-            .build();
-    }
-
-    private Order createTestOrder(OrderTable table) {
-        return Order.builder()
-            .orderTableId(table.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderedTime(LocalDateTime.now())
-            .build();
     }
 }

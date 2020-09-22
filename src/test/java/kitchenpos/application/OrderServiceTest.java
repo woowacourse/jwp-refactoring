@@ -1,11 +1,16 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createMenu;
+import static kitchenpos.TestObjectFactory.createMenuGroup;
+import static kitchenpos.TestObjectFactory.createMenuProduct;
+import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createOrderLineItem;
+import static kitchenpos.TestObjectFactory.createProduct;
+import static kitchenpos.TestObjectFactory.createTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
@@ -48,24 +53,26 @@ class OrderServiceTest {
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
     private MenuProduct menuProduct;
+    private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = menuGroupDao.save(createTestMenuGroup());
-        savedProduct = productDao.save(createTestProduct());
-        menuProduct = createTestMenuProduct(savedProduct);
+        savedMenuGroup = menuGroupDao.save(createMenuGroup());
+        savedProduct = productDao.save(createProduct(18_000));
+        menuProduct = createMenuProduct(savedProduct);
+        menuProducts = Arrays.asList(menuProduct);
     }
 
     @DisplayName("주문 추가")
     @Test
     void create() {
-        OrderTable savedTable = tableDao.save(createTestTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(savedTable, orderLineItems);
+        Order order = TestObjectFactory.createOrder(savedTable, orderLineItems);
         Order create = orderService.create(order);
 
         assertAll(
@@ -78,9 +85,9 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        OrderTable savedTable = tableDao.save(createTestTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Order order = createTestOrder(savedTable, null);
+        Order order = createOrder(savedTable, null);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -89,13 +96,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable table = tableDao.save(createTestTable(false));
+        OrderTable table = tableDao.save(createTable(false));
 
-        Menu notSavedMenu = createTestMenu(savedMenuGroup, menuProduct);
-        OrderLineItem orderLineItem = createTestOrderLineItem(notSavedMenu);
+        Menu notSavedMenu = createMenu(18_000, savedMenuGroup, menuProducts);
+        OrderLineItem orderLineItem = createOrderLineItem(notSavedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(table, orderLineItems);
+        Order order = createOrder(table, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -104,13 +111,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = createTestTable(false);
+        OrderTable notSavedTable = createTable(false);
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(notSavedTable, orderLineItems);
+        Order order = createOrder(notSavedTable, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -119,13 +126,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 빈 테이블의 주문 추가")
     @Test
     void create_Fail_With_EmptyTable() {
-        OrderTable emptyTable = tableDao.save(createTestTable(true));
+        OrderTable emptyTable = tableDao.save(createTable(true));
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(emptyTable, orderLineItems);
+        Order order = createOrder(emptyTable, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -134,13 +141,13 @@ class OrderServiceTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        OrderTable savedTable = tableDao.save(createTestTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(savedTable, orderLineItems);
+        Order order = createOrder(savedTable, orderLineItems);
 
         orderService.create(order);
         orderService.create(order);
@@ -153,13 +160,13 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        OrderTable savedTable = tableDao.save(createTestTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(savedTable, orderLineItems);
+        Order order = createOrder(savedTable, orderLineItems);
 
         Order create = orderService.create(order);
         Order target = Order.builder()
@@ -174,13 +181,13 @@ class OrderServiceTest {
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
     @Test
     void changeOrderStatus_With_CompletedOrder() {
-        OrderTable savedTable = tableDao.save(createTestTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createTestMenu(savedMenuGroup, menuProduct));
-        OrderLineItem orderLineItem = createTestOrderLineItem(savedMenu);
+        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createTestOrder(savedTable, orderLineItems);
+        Order order = createOrder(savedTable, orderLineItems);
 
         Order create = orderService.create(order);
         Order target = Order.builder()
@@ -190,56 +197,5 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(create.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private Order createTestOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
-        return Order.builder()
-            .orderTableId(table.getId())
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(orderLineItems)
-            .orderedTime(LocalDateTime.now())
-            .build();
-    }
-
-    private OrderTable createTestTable(boolean empty) {
-        return OrderTable.builder()
-            .empty(empty)
-            .build();
-    }
-
-    private OrderLineItem createTestOrderLineItem(Menu menu) {
-        return OrderLineItem.builder()
-            .menuId(menu.getId())
-            .quantity(2)
-            .build();
-    }
-
-    private Menu createTestMenu(MenuGroup menuGroup, MenuProduct menuProduct) {
-        return Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .menuGroupId(menuGroup.getId())
-            .menuProducts(Arrays.asList(menuProduct))
-            .build();
-    }
-
-    private MenuGroup createTestMenuGroup() {
-        return MenuGroup.builder()
-            .name("강정메뉴")
-            .build();
-    }
-
-    private MenuProduct createTestMenuProduct(Product product) {
-        return MenuProduct.builder()
-            .productId(product.getId())
-            .quantity(1)
-            .build();
-    }
-
-    private Product createTestProduct() {
-        return Product.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(18_000))
-            .build();
     }
 }

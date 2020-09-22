@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -22,7 +22,7 @@ class ProductServiceTest {
     @DisplayName("상품 추가")
     @Test
     void create() {
-        Product product = createTestProduct(18_000);
+        Product product = createProduct(18_000);
 
         Product create = productService.create(product);
 
@@ -32,7 +32,7 @@ class ProductServiceTest {
     @DisplayName("[예외] 가격이 0보다 작은 상품 추가")
     @Test
     void create_Fail_With_InvalidPrice() {
-        Product product = createTestProduct(-1);
+        Product product = createProduct(-1);
 
         assertThatThrownBy(() -> productService.create(product))
             .isInstanceOf(IllegalArgumentException.class);
@@ -41,7 +41,7 @@ class ProductServiceTest {
     @DisplayName("전체 상품 조회")
     @Test
     void list() {
-        Product product = createTestProduct(18_000);
+        Product product = createProduct(18_000);
 
         productService.create(product);
         productService.create(product);
@@ -49,12 +49,5 @@ class ProductServiceTest {
         List<Product> list = productService.list();
 
         assertThat(list).hasSize(2);
-    }
-
-    private Product createTestProduct(int price) {
-        return Product.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(price))
-            .build();
     }
 }
