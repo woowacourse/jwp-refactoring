@@ -35,6 +35,7 @@ class ProductAcceptanceTest {
      * Feature: 상품을 등록한다. Scenario: 상품을 등록한다.
      *
      * When 상품을 등록한다. Then 상품이 등록되었다.
+     * When 이미 존재하는 상품과 같은 이름의 상품을 등록한다. Then 상품이 등록되었다.
      */
     @Test
     @DisplayName("상품 등록")
@@ -47,18 +48,23 @@ class ProductAcceptanceTest {
         body.put("name", productName);
         body.put("price", Integer.toString(productPrice));
 
-        Product responseBody = given()
-            .body(body)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-            .post("/api/products")
-            .then()
-            .statusCode(HttpStatus.CREATED.value())
-            .extract().as(Product.class);
+        Product responseBody = sendCreateProductRequest(body);
 
         assertThat(responseBody.getId()).isNotNull();
         assertThat(responseBody.getName()).isEqualTo(productName);
         assertThat(responseBody.getPrice().intValue()).isEqualTo(productPrice);
+    }
+
+    private Product sendCreateProductRequest(Map<String, String> body) {
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .post("/api/products")
+            .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(Product.class);
     }
 }
