@@ -2,35 +2,16 @@ package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.restassured.RestAssured;
-import io.restassured.specification.RequestSpecification;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ProductAcceptanceTest {
-
-    @LocalServerPort
-    protected int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
-
-    static RequestSpecification given() {
-        return RestAssured.given().log().all();
-    }
-
+class ProductAcceptanceTest extends AcceptanceTest {
     /**
      * Feature: 상품을 관리한다. Scenario: 상품을 여러개 등록하고, 상품 목록을 조회한다.
      *
@@ -49,17 +30,19 @@ class ProductAcceptanceTest {
         assertThat(isProductNameInProducts("간장 치킨", products)).isTrue();
     }
 
-    private void createProduct(String productName, int productPrice) {
+    Product createProduct(String productName, int productPrice) {
         Map<String, String> body = new HashMap<>();
 
         body.put("name", productName);
         body.put("price", Integer.toString(productPrice));
 
-        Product responseBody = sendCreateProductRequest(body);
+        Product response = sendCreateProductRequest(body);
 
-        assertThat(responseBody.getId()).isNotNull();
-        assertThat(responseBody.getName()).isEqualTo(productName);
-        assertThat(responseBody.getPrice().intValue()).isEqualTo(productPrice);
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getName()).isEqualTo(productName);
+        assertThat(response.getPrice().intValue()).isEqualTo(productPrice);
+
+        return response;
     }
 
     private Product sendCreateProductRequest(Map<String, String> body) {
