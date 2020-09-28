@@ -2,8 +2,15 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;

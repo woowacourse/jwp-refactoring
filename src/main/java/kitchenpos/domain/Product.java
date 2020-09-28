@@ -1,8 +1,15 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Product {
+
     private Long id;
     private String name;
     private BigDecimal price;

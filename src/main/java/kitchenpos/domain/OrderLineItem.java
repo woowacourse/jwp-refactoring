@@ -1,6 +1,14 @@
 package kitchenpos.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class OrderLineItem {
+
     private Long seq;
     private Long orderId;
     private Long menuId;
