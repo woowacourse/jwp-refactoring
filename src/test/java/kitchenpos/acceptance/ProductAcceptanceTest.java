@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@DisplayName("상품(Product) 관리")
 class ProductAcceptanceTest {
 
     @LocalServerPort
@@ -32,18 +32,25 @@ class ProductAcceptanceTest {
     }
 
     /**
-     * Feature: 상품을 등록한다. Scenario: 상품을 등록한다.
+     * Feature: 상품을 관리한다. Scenario: 상품을 여러개 등록하고, 상품 목록을 조회한다.
      *
      * When 상품을 등록한다. Then 상품이 등록되었다.
-     * When 이미 존재하는 상품과 같은 이름의 상품을 등록한다. Then 상품이 등록되었다.
+     *
+     * When 상품 목록을 조회한다. Then 상품 목록이 조회된다.
      */
     @Test
-    @DisplayName("상품 등록")
-    void createProduct() {
-        Map<String, String> body = new HashMap<>();
+    @DisplayName("상품 관리")
+    void manageProduct() {
+        createProduct("후라이드 치킨", 9_000);
+        createProduct("간장 치킨", 10_000);
 
-        String productName = "후라이드 치킨";
-        int productPrice = 9_000;
+        List<Product> products = findProducts();
+        assertThat(isProductNameInProducts("후라이드 치킨", products)).isTrue();
+        assertThat(isProductNameInProducts("간장 치킨", products)).isTrue();
+    }
+
+    private void createProduct(String productName, int productPrice) {
+        Map<String, String> body = new HashMap<>();
 
         body.put("name", productName);
         body.put("price", Integer.toString(productPrice));
@@ -66,5 +73,24 @@ class ProductAcceptanceTest {
             .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(Product.class);
+    }
+
+    private List<Product> findProducts() {
+        return given()
+        .when()
+            .get("/api/products")
+        .then()
+            .statusCode(HttpStatus.OK.value())
+            .log().all()
+            .extract()
+            .jsonPath()
+            .getList("", Product.class);
+    }
+
+    private boolean isProductNameInProducts(String productName, List<Product> products) {
+        return products.stream()
+            .anyMatch(product -> product
+                .getName()
+                .equals(productName));
     }
 }
