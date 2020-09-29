@@ -1,0 +1,58 @@
+package kitchenpos.application;
+
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
+class ProductServiceTest {
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @DisplayName("MenuGroup을 생성하고 DB에 저장한다.")
+    @Test
+    void createTest() {
+        Product product = new Product();
+        product.setName("새로운_상품");
+        product.setPrice(BigDecimal.valueOf(1000L));
+
+        Product result = productService.create(product);
+
+        Product savedProduct = productDao.findById(result.getId())
+                .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
+        assertThat(savedProduct.getId()).isEqualTo(result.getId());
+        assertThat(savedProduct.getName()).isEqualTo(result.getName());
+        assertThat(savedProduct.getPrice()).isEqualTo(result.getPrice());
+    }
+
+    @DisplayName("가격이 0원 미만이면 예외가 발생한다.")
+    @Test
+    void invalidPriceExceptionTest() {
+        Product product = new Product();
+        product.setName("새로운_상품");
+        product.setPrice(BigDecimal.valueOf(-1));
+
+        assertThatThrownBy(() -> productService.create(product))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("MenuGroup 목록을 조회한다.")
+    @Test
+    void listTest() {
+        List<Product> products = productService.list();
+        assertThat(products).hasSize(productDao.findAll().size());
+    }
+}
