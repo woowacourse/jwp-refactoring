@@ -19,3 +19,10 @@
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
+
+
+## 요구 사항
+-[ ] 테스트 코드를 작성한다.
+    - 모든 Business Object에 대한 테스트 코드를 작성한다.
+    - @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
+    - Controller는 권장하지만 필수는 아니다.
