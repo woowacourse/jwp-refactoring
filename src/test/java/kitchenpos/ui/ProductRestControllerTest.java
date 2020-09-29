@@ -65,6 +65,6 @@ class ProductRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(6)));
+                .andExpect(jsonPath("$", Matchers.hasSize(6)));
     }
 }
