@@ -51,4 +51,16 @@ public class ProductIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
+
+	@DisplayName("상품의 목록을 조회할 수 있다")
+	@Test
+	void list() {
+		given().log().all()
+			.accept(ContentType.JSON)
+			.when()
+			.get("/api/products")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body(".", hasSize(6));
+	}
 }
