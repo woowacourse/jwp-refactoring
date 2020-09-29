@@ -33,4 +33,16 @@ public class MenuGroupIntegrationTest extends IntegrationTest {
 			.assertThat().body("id", notNullValue())
 			.assertThat().body("name", equalTo("맛있는 메뉴"));
 	}
+
+	@DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
+	@Test
+	void list() {
+		given().log().all()
+			.accept(ContentType.JSON)
+			.when()
+			.get("/api/menu-groups")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body(".", hasSize(4));
+	}
 }
