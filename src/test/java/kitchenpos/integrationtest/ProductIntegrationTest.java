@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import io.restassured.http.ContentType;
 import kitchenpos.integrationtest.common.IntegrationTest;
 
+@DisplayName("Product 통합 테스트")
 public class ProductIntegrationTest extends IntegrationTest {
 
 	@DisplayName("상품을 등록할 수 있다.")
