@@ -34,4 +34,21 @@ public class ProductIntegrationTest extends IntegrationTest {
 			.assertThat().body("name", equalTo("맛있는 치킨"))
 			.assertThat().body("price", equalTo(16000f));
 	}
+
+	@DisplayName("상품의 가격은 0원 이상이어야 한다.")
+	@Test
+	void create_WhenParamIsNotPositive() {
+		Map<String, String> requestBody = new HashMap<>();
+		requestBody.put("name", "맛있는 치킨");
+		requestBody.put("price", "-1");
+
+		given().log().all()
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.post("/api/products")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
