@@ -63,8 +63,7 @@ class MenuServiceTest {
         Menu result = menuService.create(menu);
 
         Menu savedMenu = menuDao.findById(result.getId()).get();
-        assertThat(savedMenu.getId()).isEqualTo(result.getId());
-        assertThat(savedMenu.getName()).isEqualTo(result.getName());
+        assertThat(savedMenu.getName()).isEqualTo(menu.getName());
     }
 
     @DisplayName("생성 시 가격이 0원 미만이면 예외가 발생한다.")
@@ -76,7 +75,8 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(-1));
         menu.setMenuGroupId(menuGroup.getId());
 
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("price가 sum보다 크면 예외가 발생한다.")
@@ -88,6 +88,7 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(10000));
         menu.setMenuGroupId(menuGroup.getId());
 
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }

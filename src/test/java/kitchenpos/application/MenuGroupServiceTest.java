@@ -29,8 +29,7 @@ class MenuGroupServiceTest {
 
         MenuGroup savedMenuGroup = menuGroupDao.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
-        assertThat(savedMenuGroup.getId()).isEqualTo(result.getId());
-        assertThat(savedMenuGroup.getName()).isEqualTo(result.getName());
+        assertThat(savedMenuGroup.getName()).isEqualTo(input.getName());
     }
 
     @DisplayName("MenuGroup 목록을 조회한다.")

@@ -32,10 +32,8 @@ class TableServiceTest {
         OrderTable result = tableService.create(orderTable);
         OrderTable savedOrderTable = orderTableDao.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
-
-        assertThat(savedOrderTable.getId()).isEqualTo(result.getId());
-        assertThat(savedOrderTable.getTableGroupId()).isEqualTo(result.getTableGroupId());
-        assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(result.getNumberOfGuests());
+        assertThat(savedOrderTable.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
+        assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
     }
 
     @DisplayName("empty 여부를 변경한다.")
