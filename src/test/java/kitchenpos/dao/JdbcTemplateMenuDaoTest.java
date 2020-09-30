@@ -81,8 +81,8 @@ class JdbcTemplateMenuDaoTest {
         Menu fried = createMenu("후라이드", BigDecimal.valueOf(2000), 1L);
         Menu source = createMenu("양념치킨", BigDecimal.valueOf(2000), 1L);
 
-        Menu savedFried = jdbcTemplateMenuDao.save(fried);
-        Menu savedSource = jdbcTemplateMenuDao.save(source);
+        jdbcTemplateMenuDao.save(fried);
+        jdbcTemplateMenuDao.save(source);
 
         List<Menu> allMenus = jdbcTemplateMenuDao.findAll();
         allMenus.forEach(menu -> menuIds.add(menu.getId()));
