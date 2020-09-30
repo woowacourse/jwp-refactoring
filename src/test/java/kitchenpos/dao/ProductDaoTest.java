@@ -1,8 +1,9 @@
 package kitchenpos.dao;
 
+import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
+import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,12 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class ProductDaoTest {
-
-    private static final String TEST_PRODUCT_NAME = "테스트상품";
-    private static final BigDecimal TEST_PRODUCT_PRICE = BigDecimal.valueOf(10000);
+class ProductDaoTest extends KitchenPosDaoTest {
 
     @Autowired
     private ProductDao productDao;

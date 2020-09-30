@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
+import static kitchenpos.constants.DaoConstants.TEST_MENU_GROUP_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,14 +10,8 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@Transactional
-class MenuGroupDaoTest {
-
-    private static final String TEST_GROUP_MENU = "테스트그룹메뉴";
+class MenuGroupDaoTest extends KitchenPosDaoTest {
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -26,19 +20,19 @@ class MenuGroupDaoTest {
     @Test
     void save_Success() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
 
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
-        assertThat(savedMenuGroup.getName()).isEqualTo(TEST_GROUP_MENU);
+        assertThat(savedMenuGroup.getName()).isEqualTo(TEST_MENU_GROUP_NAME);
     }
 
     @DisplayName("MenuGroup ID로 MenuGroup 조회 - 조회됨, ID가 존재하는 경우")
     @Test
     void findById_ExistsId_ReturnMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         MenuGroup foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId())
@@ -52,7 +46,7 @@ class MenuGroupDaoTest {
     @Test
     void findById_NotExistsId_ReturnEmpty() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId() + 1);
@@ -64,7 +58,7 @@ class MenuGroupDaoTest {
     @Test
     void findAll_Success() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
@@ -83,7 +77,7 @@ class MenuGroupDaoTest {
     @Test
     void existsById_ExistsId_ReturnTrue() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         boolean existsMenuGroup = menuGroupDao.existsById(savedMenuGroup.getId());
@@ -95,7 +89,7 @@ class MenuGroupDaoTest {
     @Test
     void existsById_NotExistsId_ReturnFalse() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_GROUP_MENU);
+        menuGroup.setName(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         boolean existsMenuGroup = menuGroupDao.existsById(savedMenuGroup.getId() + 1);
