@@ -22,4 +22,6 @@ public class DaoConstants {
 
     public static final LocalDateTime TEST_TABLE_GROUP_CREATED_DATE = LocalDateTime.now();
 
+    public static final LocalDateTime TEST_ORDER_ORDERED_TIME = LocalDateTime.now();
+
 }

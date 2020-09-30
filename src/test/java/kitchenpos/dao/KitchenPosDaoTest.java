@@ -3,6 +3,8 @@ package kitchenpos.dao;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_GROUP_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
+import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_EMPTY;
+import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_PRICE;
 import static kitchenpos.constants.DaoConstants.TEST_TABLE_GROUP_CREATED_DATE;
@@ -10,6 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +30,13 @@ public abstract class KitchenPosDaoTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     protected Long getCreatedMenuId() {
         Menu menu = new Menu();
@@ -56,15 +62,17 @@ public abstract class KitchenPosDaoTest {
         return savedMenuGroupId;
     }
 
-    protected Long getCreatedTableGroupId() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+    protected Long getCreatedOrderTableId() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setTableGroupId(getCreatedTableGroupId());
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        Long savedTableGroupId = savedTableGroup.getId();
-        assertThat(savedTableGroupId).isNotNull();
-        return savedTableGroupId;
+        Long savedOrderTableId = savedOrderTable.getId();
+        assertThat(savedOrderTableId).isNotNull();
+        return savedOrderTableId;
     }
 
     protected Long getCreatedProductId() {
@@ -77,6 +85,17 @@ public abstract class KitchenPosDaoTest {
         Long savedProductId = savedProduct.getId();
         assertThat(savedProductId).isNotNull();
         return savedProductId;
+    }
+
+    protected Long getCreatedTableGroupId() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+
+        Long savedTableGroupId = savedTableGroup.getId();
+        assertThat(savedTableGroupId).isNotNull();
+        return savedTableGroupId;
     }
 
 
