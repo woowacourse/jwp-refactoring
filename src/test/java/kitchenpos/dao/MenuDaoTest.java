@@ -4,9 +4,7 @@ import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
 import static kitchenpos.constants.DaoConstants.TEST_WRONG_MENU_ID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +12,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private MenuDao menuDao;
 
     @DisplayName("MenuDao 저장 - 성공")
     @Test

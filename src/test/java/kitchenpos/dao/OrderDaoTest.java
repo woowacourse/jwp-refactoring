@@ -11,12 +11,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private OrderDao orderDao;
 
     @DisplayName("Order 저장 - 성공")
     @Test

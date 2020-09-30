@@ -9,12 +9,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
 
     @DisplayName("MenuGroup 저장 - 성공")
     @Test

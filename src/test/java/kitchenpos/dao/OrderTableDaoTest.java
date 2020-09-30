@@ -11,12 +11,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderTableDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private OrderTableDao orderTableDao;
 
     @DisplayName("OrderTable 저장 - 성공")
     @Test
@@ -79,9 +75,9 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         assertThat(orderTableIds).contains(savedOrderTable.getId());
     }
 
-    @DisplayName("OrderTable ID들로 OrderTable들 조회 - 성")
+    @DisplayName("OrderTable ID들로 OrderTable들 조회 - 조회됨, OrderTable ID들이 존재하는 경우")
     @Test
-    void findAllByIdIn_Success() {
+    void findAllByIdIn_ExistsOrderTableIds_ReturnOrderTables() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
@@ -106,8 +102,23 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         assertThat(orderTableIds).containsAll(orderTableIds);
     }
 
+    @DisplayName("OrderTable ID들로 OrderTable들 조회 - 조회되지 않음, OrderTable ID들이 존재하지 않는 경우")
     @Test
-    void findAllByTableGroupId() {
+    void findAllByIdIn_NotExistsOrderTableIds_ReturnEmpty() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+        List<Long> ids = Arrays.asList(savedOrderTable.getId() + 1, savedOrderTable.getId() + 2);
+
+        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(ids);
+        assertThat(orderTables).isEmpty();
+    }
+
+    @DisplayName("TableGroup ID로 OrderTable들 조회 - 조회됨, TableGroup ID에 매치되는 경우")
+    @Test
+    void findAllByTableGroupId_MatchedTableGroupId_ReturnOrderTable() {
         Long tableGroupId = getCreatedTableGroupId();
 
         OrderTable orderTable = new OrderTable();
@@ -134,6 +145,15 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
 
         List<Long> foundOrderTableIds = getIds(foundOrderTables);
         assertThat(foundOrderTableIds).containsAll(ids);
+    }
+
+    @DisplayName("TableGroup ID로 OrderTable들 조회 - 조회되지 않음, TableGroup ID에 매치되지 않는 경우")
+    @Test
+    void findAllByTableGroupId_NotMatchedTableGroupId_ReturnOrderTable() {
+        Long tableGroupId = getCreatedTableGroupId();
+
+        List<OrderTable> foundOrderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        assertThat(foundOrderTables).isEmpty();
     }
 
     private List<Long> getIds(List<OrderTable> orderTables) {

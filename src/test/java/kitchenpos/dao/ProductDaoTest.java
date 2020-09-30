@@ -10,14 +10,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 class ProductDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private ProductDao productDao;
 
     @DisplayName("Product 저장 - 성공")
     @Test

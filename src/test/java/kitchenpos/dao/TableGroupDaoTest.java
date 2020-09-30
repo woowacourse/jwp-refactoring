@@ -9,12 +9,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class TableGroupDaoTest extends KitchenPosDaoTest {
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     @DisplayName("TableGroup 저장 - 성공")
     @Test

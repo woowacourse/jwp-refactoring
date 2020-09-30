@@ -90,9 +90,9 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         assertThat(menuProductIds).contains(savedMenuProduct.getSeq());
     }
 
-    @DisplayName("MenuId로 MenuProduct들 조회 - 성공")
+    @DisplayName("Menu ID로 MenuProduct들 조회 - 조회됨, Menu ID가 매치되는 경우")
     @Test
-    void findAllByMenuId_Success() {
+    void findAllByMenuId_MatchedMenuId_ReturnMenuProducts() {
         Long menuId = getCreatedMenuId();
         Long productId = getCreatedProductId();
 
@@ -126,5 +126,15 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         assertThat(menuProductIds.size()).isEqualTo(menuProducts.size());
         assertThat(menuProductIds).contains(savedMenuProduct.getSeq());
         assertThat(menuProductIds).contains(savedOtherMenuProduct.getSeq());
+    }
+
+    @DisplayName("Menu ID로 MenuProduct들 조회 - 조회되지 않음, Menu ID가 매치되지 않는 경우")
+    @Test
+    void findAllByMenuId_NotMatchedMenuId_ReturnEmpty() {
+        Long menuId = getCreatedMenuId();
+
+        List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
+
+        assertThat(menuProducts).isEmpty();
     }
 }

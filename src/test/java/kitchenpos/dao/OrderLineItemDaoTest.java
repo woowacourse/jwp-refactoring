@@ -87,9 +87,9 @@ class OrderLineItemDaoTest extends KitchenPosDaoTest {
         assertThat(orderLineItemIds).contains(savedOrderLineItem.getSeq());
     }
 
-    @DisplayName("Order ID로 OrderLineItems 조회 - 조회됨, Order ID가 존재하는 경우")
+    @DisplayName("Order ID로 OrderLineItems 조회 - 조회됨, Order ID에 매치되는 경우")
     @Test
-    void findAllByOrderId_ExistsOrderId_Success() {
+    void findAllByOrderId_MatchedOrderId_ReturnOrderLineItems() {
         Long orderId = getCreatedOrderId();
 
         OrderLineItem orderLineItem = new OrderLineItem();
@@ -105,7 +105,7 @@ class OrderLineItemDaoTest extends KitchenPosDaoTest {
         OrderLineItem savedOtherOrderLineItem = orderLineItemDao.save(otherOrderLineItem);
 
         OrderLineItem orderLineItemWithOtherOrderId = new OrderLineItem();
-        orderLineItemWithOtherOrderId.setOrderId(orderId);
+        orderLineItemWithOtherOrderId.setOrderId(getCreatedOrderId());
         orderLineItemWithOtherOrderId.setMenuId(getCreatedMenuId());
         orderLineItemWithOtherOrderId.setQuantity(TEST_ORDER_LINE_ITEM_QUANTITY);
         orderLineItemDao.save(orderLineItemWithOtherOrderId);
@@ -120,15 +120,14 @@ class OrderLineItemDaoTest extends KitchenPosDaoTest {
         assertThat(orderLineItemIds).containsAll(ids);
     }
 
-    @DisplayName("Order ID로 OrderLineItems 조회 - 조회되지 않음, Order ID가 존재하지 않는 경우")
+    @DisplayName("Order ID로 OrderLineItems 조회 - 조회되지 않음, Order ID에 매치되지 않는 경우")
     @Test
-    void findAllByOrderId_NotExistsOrderId_Success() {
+    void findAllByOrderId_NotMatchedOrderId_ReturnEmpty() {
         Long orderId = getCreatedOrderId();
 
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(orderId);
         assertThat(orderLineItems).isEmpty();
     }
-
 
     private List<Long> getIds(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()

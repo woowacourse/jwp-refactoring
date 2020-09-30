@@ -27,22 +27,22 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class KitchenPosDaoTest {
 
     @Autowired
-    private MenuDao menuDao;
+    protected MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    protected MenuGroupDao menuGroupDao;
 
     @Autowired
-    private OrderDao orderDao;
+    protected OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    protected OrderTableDao orderTableDao;
 
     @Autowired
-    private ProductDao productDao;
+    protected ProductDao productDao;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    protected TableGroupDao tableGroupDao;
 
     protected Long getCreatedMenuId() {
         Menu menu = new Menu();
