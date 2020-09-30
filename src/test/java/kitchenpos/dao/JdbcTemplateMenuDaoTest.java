@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 @SpringBootTest
 class JdbcTemplateMenuDaoTest {
     private static final String INSERT_MENU_GROUP = "insert into menu_group (id, name) values (:id, :name)";
-    private static final String DELETE_MENUS = "delete from menu where id in (:id)";
+    private static final String DELETE_MENUS = "delete from menu where id in (:ids)";
     private static final int BIG_DECIMAL_FLOOR_SCALE = 2;
 
     @Autowired
@@ -44,10 +44,7 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("메뉴 저장")
     @Test
     void saveTest() {
-        Menu menu = new Menu();
-        menu.setName("후라이드치킨");
-        menu.setPrice(BigDecimal.valueOf(2000));
-        menu.setMenuGroupId(1L);
+        Menu menu = createMenu("후라이드", BigDecimal.valueOf(2000), 1L);
 
         Menu savedMenu = jdbcTemplateMenuDao.save(menu);
         menuIds.add(savedMenu.getId());
@@ -64,10 +61,7 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("아이디로 메뉴를 찾는다.")
     @Test
     void findByIdTest() {
-        Menu menu = new Menu();
-        menu.setName("후라이드");
-        menu.setPrice(BigDecimal.valueOf(2000));
-        menu.setMenuGroupId(1L);
+        Menu menu = createMenu("후라이드", BigDecimal.valueOf(2000), 1L);
         Menu savedMenu = jdbcTemplateMenuDao.save(menu);
 
         Menu findMenu = jdbcTemplateMenuDao.findById(savedMenu.getId()).get();
@@ -84,21 +78,14 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("저장된 모든 메뉴를 찾는다.")
     @Test
     void findAllTest() {
-        Menu fried = new Menu();
-        fried.setName("후라이드");
-        fried.setPrice(BigDecimal.valueOf(2000));
-        fried.setMenuGroupId(1L);
-        Menu source = new Menu();
-        source.setName("양념치킨");
-        source.setPrice(BigDecimal.valueOf(2000));
-        source.setMenuGroupId(1L);
+        Menu fried = createMenu("후라이드", BigDecimal.valueOf(2000), 1L);
+        Menu source = createMenu("양념치킨", BigDecimal.valueOf(2000), 1L);
 
         Menu savedFried = jdbcTemplateMenuDao.save(fried);
         Menu savedSource = jdbcTemplateMenuDao.save(source);
 
         List<Menu> allMenus = jdbcTemplateMenuDao.findAll();
-        menuIds.add(savedFried.getId());
-        menuIds.add(savedSource.getId());
+        allMenus.forEach(menu -> menuIds.add(menu.getId()));
 
         assertThat(allMenus).hasSize(2);
     }
@@ -106,14 +93,8 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("입력한 메뉴 아이디에 맞는 메뉴 개수를 반환한다.")
     @Test
     void countByIdIn() {
-        Menu fried = new Menu();
-        fried.setName("후라이드");
-        fried.setPrice(BigDecimal.valueOf(2000));
-        fried.setMenuGroupId(1L);
-        Menu source = new Menu();
-        source.setName("양념치킨");
-        source.setPrice(BigDecimal.valueOf(2000));
-        source.setMenuGroupId(1L);
+        Menu fried = createMenu("후라이드", BigDecimal.valueOf(2000), 1L);
+        Menu source = createMenu("양념치킨", BigDecimal.valueOf(2000), 1L);
 
         Menu savedFried = jdbcTemplateMenuDao.save(fried);
         Menu savedSource = jdbcTemplateMenuDao.save(source);
@@ -125,9 +106,17 @@ class JdbcTemplateMenuDaoTest {
         assertThat(menuCount).isEqualTo(2L);
     }
 
+    private Menu createMenu(String name, BigDecimal price, Long menuGroupId) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        return menu;
+    }
+
     @AfterEach
     private void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("id", menuIds);
+        Map<String, Object> params = Collections.singletonMap("ids", menuIds);
         namedParameterJdbcTemplate.update(DELETE_MENUS, params);
     }
 }
