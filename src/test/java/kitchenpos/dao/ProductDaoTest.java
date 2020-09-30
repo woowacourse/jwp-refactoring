@@ -75,10 +75,10 @@ class ProductDaoTest extends KitchenPosDaoTest {
         assertThat(products).isNotNull();
         assertThat(products).isNotEmpty();
 
-        List<Long> productsId = products.stream()
+        List<Long> productIds = products.stream()
             .map(Product::getId)
             .collect(Collectors.toList());
 
-        assertThat(productsId).contains(savedProduct.getId());
+        assertThat(productIds).contains(savedProduct.getId());
     }
 }
