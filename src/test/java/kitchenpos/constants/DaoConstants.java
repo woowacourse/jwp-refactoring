@@ -24,4 +24,6 @@ public class DaoConstants {
 
     public static final LocalDateTime TEST_ORDER_ORDERED_TIME = LocalDateTime.now();
 
+    public static final long TEST_ORDER_LINE_ITEM_QUANTITY = 1L;
+
 }

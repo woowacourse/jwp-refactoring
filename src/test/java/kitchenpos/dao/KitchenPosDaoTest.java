@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_GROUP_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
+import static kitchenpos.constants.DaoConstants.TEST_ORDER_ORDERED_TIME;
 import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_EMPTY;
 import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
@@ -12,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -28,6 +31,9 @@ public abstract class KitchenPosDaoTest {
 
     @Autowired
     private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -60,6 +66,19 @@ public abstract class KitchenPosDaoTest {
         Long savedMenuGroupId = savedMenuGroup.getId();
         assertThat(savedMenuGroupId).isNotNull();
         return savedMenuGroupId;
+    }
+
+    protected Long getCreatedOrderId() {
+        Order order = new Order();
+        order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderTableId(getCreatedOrderTableId());
+
+        Order savedOrder = orderDao.save(order);
+
+        Long savedOrderId = savedOrder.getId();
+        assertThat(savedOrderId).isNotNull();
+        return savedOrderId;
     }
 
     protected Long getCreatedOrderTableId() {
