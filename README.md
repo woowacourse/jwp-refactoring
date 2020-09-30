@@ -22,7 +22,7 @@
 
 
 ## 요구 사항
--[ ] 테스트 코드를 작성한다.
+-[x] 테스트 코드를 작성한다.
     - 모든 Business Object에 대한 테스트 코드를 작성한다.
     - @SpringBootTest를 이용한 통합 테스트 코드 또는 @ExtendWith(MockitoExtension.class)를 이용한 단위 테스트 코드를 작성한다.
     - Controller는 권장하지만 필수는 아니다.
