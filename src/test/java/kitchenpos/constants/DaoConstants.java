@@ -16,4 +16,7 @@ public class DaoConstants {
     public static final String TEST_PRODUCT_NAME = "테스트상품";
     public static final BigDecimal TEST_PRODUCT_PRICE = BigDecimal.valueOf(10_000);
 
+    public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS = 1;
+    public static final boolean TEST_ORDER_TABLE_EMPTY = false;
+
 }
