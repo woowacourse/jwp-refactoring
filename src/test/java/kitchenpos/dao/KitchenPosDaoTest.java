@@ -5,9 +5,9 @@ import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
 import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_PRICE;
+import static kitchenpos.constants.DaoConstants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.time.LocalDateTime;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -58,7 +58,7 @@ public abstract class KitchenPosDaoTest {
 
     protected Long getCreatedTableGroupId() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 

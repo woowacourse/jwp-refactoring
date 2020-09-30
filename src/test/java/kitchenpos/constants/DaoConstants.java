@@ -1,6 +1,7 @@
 package kitchenpos.constants;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class DaoConstants {
 
@@ -18,5 +19,7 @@ public class DaoConstants {
 
     public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS = 1;
     public static final boolean TEST_ORDER_TABLE_EMPTY = false;
+
+    public static final LocalDateTime TEST_TABLE_GROUP_CREATED_DATE = LocalDateTime.now();
 
 }
