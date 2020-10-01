@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_EMPTY;
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;

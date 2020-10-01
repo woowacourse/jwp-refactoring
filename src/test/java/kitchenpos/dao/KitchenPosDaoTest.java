@@ -1,14 +1,14 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_MENU_GROUP_NAME;
-import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
-import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_ORDERED_TIME;
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_EMPTY;
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
-import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
-import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_PRICE;
-import static kitchenpos.constants.DaoConstants.TEST_TABLE_GROUP_CREATED_DATE;
+import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
+import static kitchenpos.constants.Constants.TEST_MENU_NAME;
+import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
+import static kitchenpos.constants.Constants.TEST_ORDER_ORDERED_TIME;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
+import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
+import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
+import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import kitchenpos.domain.Menu;

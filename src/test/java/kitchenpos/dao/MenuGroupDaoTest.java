@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_MENU_GROUP_NAME;
+import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

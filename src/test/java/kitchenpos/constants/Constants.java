@@ -3,9 +3,9 @@ package kitchenpos.constants;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class DaoConstants {
+public class Constants {
 
-    private DaoConstants() {
+    private Constants() {
     }
 
     public static final String TEST_MENU_GROUP_NAME = "테스트그룹메뉴";

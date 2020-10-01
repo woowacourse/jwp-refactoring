@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_ORDER_ORDERED_TIME;
+import static kitchenpos.constants.Constants.TEST_ORDER_ORDERED_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;

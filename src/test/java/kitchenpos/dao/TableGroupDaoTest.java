@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_TABLE_GROUP_CREATED_DATE;
+import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

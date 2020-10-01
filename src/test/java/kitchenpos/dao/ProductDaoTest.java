@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_NAME;
-import static kitchenpos.constants.DaoConstants.TEST_PRODUCT_PRICE;
+import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
+import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;

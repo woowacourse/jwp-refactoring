@@ -1,8 +1,8 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.DaoConstants.TEST_MENU_NAME;
-import static kitchenpos.constants.DaoConstants.TEST_MENU_PRICE;
-import static kitchenpos.constants.DaoConstants.TEST_WRONG_MENU_ID;
+import static kitchenpos.constants.Constants.TEST_MENU_NAME;
+import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
+import static kitchenpos.constants.Constants.TEST_WRONG_MENU_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
