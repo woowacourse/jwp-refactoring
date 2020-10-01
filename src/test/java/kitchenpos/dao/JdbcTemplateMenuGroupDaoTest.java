@@ -10,10 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -63,6 +60,14 @@ class JdbcTemplateMenuGroupDaoTest {
                 () -> assertThat(findMenuGroup.getId()).isEqualTo(savedMenuGroup.getId()),
                 () -> assertThat(findMenuGroup.getName()).isEqualTo(savedMenuGroup.getName())
         );
+    }
+
+    @DisplayName("존재하지 않는 메뉴 그룹 아이디 입력 시 빈 객체 반환")
+    @Test
+    void findByIdWithInvalidMenuGroupIdTest() {
+        Optional<MenuGroup> findMenuGroup = jdbcTemplateMenuGroupDao.findById(0L);
+
+        assertThat(findMenuGroup).isEqualTo(Optional.empty());
     }
 
     @DisplayName("저장된 모든 메뉴 그룹을 조회한다.")

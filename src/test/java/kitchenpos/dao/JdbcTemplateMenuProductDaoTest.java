@@ -110,6 +110,14 @@ class JdbcTemplateMenuProductDaoTest {
         );
     }
 
+    @DisplayName("존재하지 않는 seq 값 입력 시 빈 객체 반환")
+    @Test
+    void findByIdWithInvalidMenuProductSeqTest() {
+        Optional<MenuProduct> findMenuProduct = jdbcTemplateMenuProductDao.findById(0L);
+
+        assertThat(findMenuProduct).isEqualTo(Optional.empty());
+    }
+
     @DisplayName("저장된 모든 메뉴 상품 반환")
     @Test
     void findAllTest() {

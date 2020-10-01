@@ -75,6 +75,14 @@ class JdbcTemplateMenuDaoTest {
         );
     }
 
+    @DisplayName("존재하지 않는 메뉴 아이디 입력 시 빈 객체 반환")
+    @Test
+    void findByIdWithInvalidMenuIdTest() {
+        Optional<Menu> findMenu = jdbcTemplateMenuDao.findById(0L);
+
+        assertThat(findMenu).isEqualTo(Optional.empty());
+    }
+
     @DisplayName("저장된 모든 메뉴를 찾는다.")
     @Test
     void findAllTest() {
