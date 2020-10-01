@@ -75,4 +75,27 @@ public class MenuIntegrationTestStep {
 
 		return requestBody;
 	}
+
+	public static Map<String, Object> createMenuThatNotBelongToAnyGroup() {
+		Map<String, String> oneFriedChicken = new HashMap<>();
+		oneFriedChicken.put("productId", "1");
+		oneFriedChicken.put("quantity", "1");
+
+		Map<String, String> twoSourceChicken = new HashMap<>();
+		twoSourceChicken.put("productId", "2");
+		twoSourceChicken.put("quantity", "2");
+
+		List<Map<String, String>> menuProducts = Arrays.asList(
+			oneFriedChicken,
+			twoSourceChicken
+		);
+
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("name", "맛있는 치킨 세트");
+		requestBody.put("price", "49000");
+		requestBody.put("menuGroupId", "5");
+		requestBody.put("menuProducts", menuProducts);
+
+		return requestBody;
+	}
 }

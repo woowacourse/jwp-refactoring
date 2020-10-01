@@ -64,4 +64,19 @@ public class MenuIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
+
+	@DisplayName("메뉴는 특정 메뉴 그룹에 속해야 한다.")
+	@Test
+	void create_WhenNotBelongToAnyMenuGroup() {
+		Map<String, Object> requestBody = createMenuThatNotBelongToAnyGroup();
+
+		given().log().all()
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.post("/api/menus")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
