@@ -1,11 +1,9 @@
 package kitchenpos.integrationtest;
 
 import static io.restassured.RestAssured.*;
+import static kitchenpos.integrationtest.step.MenuIntegrationTestStep.*;
 import static org.hamcrest.Matchers.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -21,24 +19,7 @@ public class MenuIntegrationTest extends IntegrationTest {
 	@DisplayName("1개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.")
 	@Test
 	void create() {
-		Map<String, String> oneFriedChicken = new HashMap<>();
-		oneFriedChicken.put("productId", "1");
-		oneFriedChicken.put("quantity", "1");
-
-		Map<String, String> twoSourceChicken = new HashMap<>();
-		twoSourceChicken.put("productId", "2");
-		twoSourceChicken.put("quantity", "2");
-
-		List<Map<String, String>> menuProducts = Arrays.asList(
-			oneFriedChicken,
-			twoSourceChicken
-		);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("name", "맛있는 치킨 세트");
-		requestBody.put("price", "35000");
-		requestBody.put("menuGroupId", "1");
-		requestBody.put("menuProducts", menuProducts);
+		Map<String, Object> requestBody = createValidMenu();
 
 		given().log().all()
 			.body(requestBody)
@@ -57,24 +38,7 @@ public class MenuIntegrationTest extends IntegrationTest {
 	@DisplayName("메뉴의 가격은 0 원 이상이어야 한다.")
 	@Test
 	void create_WhenPriceLessThanZero() {
-		Map<String, String> oneFriedChicken = new HashMap<>();
-		oneFriedChicken.put("productId", "1");
-		oneFriedChicken.put("quantity", "1");
-
-		Map<String, String> twoSourceChicken = new HashMap<>();
-		twoSourceChicken.put("productId", "2");
-		twoSourceChicken.put("quantity", "2");
-
-		List<Map<String, String>> menuProducts = Arrays.asList(
-			oneFriedChicken,
-			twoSourceChicken
-		);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("name", "맛있는 치킨 세트");
-		requestBody.put("price", "-1");
-		requestBody.put("menuGroupId", "1");
-		requestBody.put("menuProducts", menuProducts);
+		Map<String, Object> requestBody = createMenuThatPriceIsLessThanZero();
 
 		given().log().all()
 			.body(requestBody)
@@ -88,25 +52,8 @@ public class MenuIntegrationTest extends IntegrationTest {
 
 	@DisplayName("메뉴의 가격은 메뉴에 속한 상품 금액의 합보다 같거나 작아야 한다.")
 	@Test
-	void create_WhenPriceBiggerThanPriceSum() {
-		Map<String, String> oneFriedChicken = new HashMap<>();
-		oneFriedChicken.put("productId", "1");
-		oneFriedChicken.put("quantity", "1");
-
-		Map<String, String> twoSourceChicken = new HashMap<>();
-		twoSourceChicken.put("productId", "2");
-		twoSourceChicken.put("quantity", "2");
-
-		List<Map<String, String>> menuProducts = Arrays.asList(
-			oneFriedChicken,
-			twoSourceChicken
-		);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("name", "맛있는 치킨 세트");
-		requestBody.put("price", "49000");
-		requestBody.put("menuGroupId", "1");
-		requestBody.put("menuProducts", menuProducts);
+	void create_WhenPriceBiggerThanSum() {
+		Map<String, Object> requestBody = createMenuThatPriceIsBiggerThanSum();
 
 		given().log().all()
 			.body(requestBody)
