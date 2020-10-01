@@ -84,4 +84,21 @@ public class TableIntegrationTest extends IntegrationTest {
 			.statusCode(HttpStatus.OK.value())
 			.assertThat().body("empty", equalTo(true));
 	}
+
+	@DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+	@Test
+	void changeEmpty_WhenTableAssignedToGroup() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("empty", false);
+
+		given().log().all()
+			.pathParam("orderTableId", 8)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/tables/{orderTableId}/empty")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
