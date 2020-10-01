@@ -48,4 +48,40 @@ public class TableIntegrationTest extends IntegrationTest {
 			.statusCode(HttpStatus.OK.value())
 			.assertThat().body(".", hasSize(8));
 	}
+
+	@DisplayName("빈 테이블을 해지할 수 있다.")
+	@Test
+	void setEmptyTrue() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("empty", false);
+
+		given().log().all()
+			.pathParam("orderTableId", 1)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/tables/{orderTableId}/empty")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body("empty", equalTo(false));
+	}
+
+	@DisplayName("빈 테이블을 설정할 수 있다.")
+	@Test
+	void setEmptyFalse() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("empty", true);
+
+		given().log().all()
+			.pathParam("orderTableId", 2)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/tables/{orderTableId}/empty")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body("empty", equalTo(true));
+	}
 }
