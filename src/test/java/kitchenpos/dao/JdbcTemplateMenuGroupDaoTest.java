@@ -12,6 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.*;
 
+import static kitchenpos.DomainFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -92,12 +93,6 @@ class JdbcTemplateMenuGroupDaoTest {
 
         boolean isExistMenuGroup = jdbcTemplateMenuGroupDao.existsById(savedMenuGroup.getId());
         assertThat(isExistMenuGroup).isTrue();
-    }
-
-    private MenuGroup createMenuGroup(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
     }
 
     @AfterEach
