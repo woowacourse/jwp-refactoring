@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = TableRestController.class)
@@ -29,20 +34,40 @@ class TableRestControllerTest {
     @MockBean
     private TableService tableService;
 
-    @DisplayName("테이블 생성 요청 테스트")
+    @DisplayName("테이블 생성 요청 api 테스트")
     @Test
     void create() throws Exception {
         OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
+        orderTable.setNumberOfGuests(0);
         orderTable.setId(1L);
 
-        given(tableService.create(any()))
-                .willReturn(orderTable);
+        given(tableService.create(any())).willReturn(orderTable);
         String body = mapper.writeValueAsString(orderTable);
 
         mockMvc.perform(post("/api/tables")
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.tableGroupId", Matchers.nullValue()))
+                .andExpect(jsonPath("$.numberOfGuests", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.empty", Matchers.instanceOf(Boolean.class)));
+    }
+
+    @DisplayName("테이블 목록 요청 api 테스트")
+    @Test
+    void name() throws Exception {
+        List<OrderTable> orderTables = new ArrayList<>();
+        orderTables.add(new OrderTable());
+        orderTables.add(new OrderTable());
+
+        given(tableService.list()).willReturn(orderTables);
+
+        mockMvc.perform(get("/api/tables"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", Matchers.hasSize(2)));
     }
 }
