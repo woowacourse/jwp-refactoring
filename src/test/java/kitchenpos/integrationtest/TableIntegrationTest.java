@@ -36,4 +36,16 @@ public class TableIntegrationTest extends IntegrationTest {
 			.assertThat().body("numberOfGuests", equalTo(0))
 			.assertThat().body("empty", equalTo(true));
 	}
+
+	@DisplayName("주문 테이블의 목록을 조회할 수 있다.")
+	@Test
+	void list() {
+		given().log().all()
+			.accept(ContentType.JSON)
+			.when()
+			.get("/api/tables")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body(".", hasSize(8));
+	}
 }
