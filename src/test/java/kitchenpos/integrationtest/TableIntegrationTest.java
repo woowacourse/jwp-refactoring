@@ -101,4 +101,38 @@ public class TableIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
+
+	@DisplayName("주문 상태가 조리인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+	@Test
+	void changeEmpty_WhenStatusIsCooking() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("empty", false);
+
+		given().log().all()
+			.pathParam("orderTableId", 6)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/tables/{orderTableId}/empty")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
+
+	@DisplayName("주문 상태가 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+	@Test
+	void changeEmpty_WhenStatusIsMeal() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("empty", false);
+
+		given().log().all()
+			.pathParam("orderTableId", 7)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/tables/{orderTableId}/empty")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
