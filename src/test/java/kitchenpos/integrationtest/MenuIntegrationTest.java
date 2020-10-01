@@ -16,6 +16,18 @@ import kitchenpos.integrationtest.common.IntegrationTest;
 @DisplayName("Menu 통합 테스트")
 public class MenuIntegrationTest extends IntegrationTest {
 
+	@DisplayName("메뉴의 목록을 조회할 수 있다.")
+	@Test
+	void list() {
+		given().log().all()
+			.accept(ContentType.JSON)
+			.when()
+			.get("/api/menus")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.assertThat().body(".", hasSize(6));
+	}
+
 	@DisplayName("1개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.")
 	@Test
 	void create() {
