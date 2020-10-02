@@ -170,4 +170,21 @@ public class TableIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
+
+	@DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+	@Test
+	void changeNumberOfGuests_WhenTableIsEmpty() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("numberOfGuests", 5);
+
+		given().log().all()
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.pathParam("orderTableId", 1)
+			.when()
+			.put("/api/tables/{orderTableId}/number-of-guests")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
