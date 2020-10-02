@@ -151,7 +151,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.put("/api/tables/{orderTableId}/number-of-guests")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body("numberOfGuests", equalTo(5));
+			.body("numberOfGuests", equalTo(5));
 	}
 
 	@DisplayName("방문한 손님 수는 0 명 이상이어야 한다.")

@@ -25,7 +25,7 @@ public class MenuIntegrationTest extends IntegrationTest {
 			.get("/api/menus")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body(".", hasSize(6));
+			.body(".", hasSize(6));
 	}
 
 	@DisplayName("1개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.")
@@ -41,10 +41,10 @@ public class MenuIntegrationTest extends IntegrationTest {
 			.post("/api/menus")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.assertThat().body("name", equalTo("맛있는 치킨 세트"))
-			.assertThat().body("price", equalTo(35000f))
-			.assertThat().body("menuGroupId", equalTo(1))
-			.assertThat().body("menuProducts", hasSize(2));
+			.body("name", equalTo("맛있는 치킨 세트"))
+			.body("price", equalTo(35000f))
+			.body("menuGroupId", equalTo(1))
+			.body("menuProducts", hasSize(2));
 	}
 
 	@DisplayName("메뉴의 가격은 0 원 이상이어야 한다.")

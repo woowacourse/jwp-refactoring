@@ -30,8 +30,8 @@ public class MenuGroupIntegrationTest extends IntegrationTest {
 			.post("/api/menu-groups")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.assertThat().body("id", notNullValue())
-			.assertThat().body("name", equalTo("맛있는 메뉴"));
+			.body("id", notNullValue())
+			.body("name", equalTo("맛있는 메뉴"));
 	}
 
 	@DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
@@ -43,6 +43,6 @@ public class MenuGroupIntegrationTest extends IntegrationTest {
 			.get("/api/menu-groups")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body(".", hasSize(4));
+			.body(".", hasSize(4));
 	}
 }

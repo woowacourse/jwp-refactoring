@@ -31,9 +31,9 @@ public class ProductIntegrationTest extends IntegrationTest {
 			.post("/api/products")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.assertThat().body("id", notNullValue())
-			.assertThat().body("name", equalTo("맛있는 치킨"))
-			.assertThat().body("price", equalTo(16000f));
+			.body("id", notNullValue())
+			.body("name", equalTo("맛있는 치킨"))
+			.body("price", equalTo(16000f));
 	}
 
 	@DisplayName("상품의 가격은 0원 이상이어야 한다.")
@@ -62,6 +62,6 @@ public class ProductIntegrationTest extends IntegrationTest {
 			.get("/api/products")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body(".", hasSize(6));
+			.body(".", hasSize(6));
 	}
 }
