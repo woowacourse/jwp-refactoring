@@ -13,13 +13,13 @@ import org.springframework.http.HttpStatus;
 import io.restassured.http.ContentType;
 import kitchenpos.integrationtest.common.IntegrationTest;
 
+@DisplayName("Table 통합 테스트")
 public class TableIntegrationTest extends IntegrationTest {
 
 	@DisplayName("주문 테이블을 등록할 수 있다.")
 	@Test
 	void create() {
 		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("tableGroupId", null);
 		requestBody.put("numberOfGuests", 0);
 		requestBody.put("empty", true);
 
