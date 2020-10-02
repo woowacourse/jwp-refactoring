@@ -1,10 +1,9 @@
 package kitchenpos.integrationtest;
 
 import static io.restassured.RestAssured.*;
+import static kitchenpos.integrationtest.step.TableGroupIntegrationTestStep.*;
 import static org.hamcrest.Matchers.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -20,17 +19,7 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 	@DisplayName("2 개 이상의 빈 테이블을 단체로 지정할 수 있다.")
 	@Test
 	void create() {
-		Map<String, Object> orderTables1 = new HashMap<>();
-		orderTables1.put("id", 1);
-
-		Map<String, Object> orderTables2 = new HashMap<>();
-		orderTables2.put("id", 3);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("orderTables", Arrays.asList(
-			orderTables1,
-			orderTables2
-		));
+		Map<String, Object> requestBody = createValidTableGroup();
 
 		given().log().all()
 			.body(requestBody)
@@ -45,20 +34,10 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 			.body("orderTables", hasSize(2));
 	}
 
-	@DisplayName("단체 지정은 중복될 수 없다.")
+	@DisplayName("단체 지정 시 테이블은 중복될 수 없다.")
 	@Test
-	void create2() {
-		Map<String, Object> orderTables1 = new HashMap<>();
-		orderTables1.put("id", 1);
-
-		Map<String, Object> orderTables2 = new HashMap<>();
-		orderTables2.put("id", 3);
-
-		Map<String, Object> requestBody = new HashMap<>();
-		requestBody.put("orderTables", Arrays.asList(
-			orderTables1,
-			orderTables2
-		));
+	void create_WhenTablesAreDuplicated() {
+		Map<String, Object> requestBody = createTableGroupThatHasDuplicatedTables();
 
 		given().log().all()
 			.body(requestBody)
@@ -67,9 +46,6 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 			.when()
 			.post("/api/table-groups")
 			.then().log().all()
-			.statusCode(HttpStatus.CREATED.value())
-			.body("id", equalTo(2))
-			.body("createdDate", notNullValue())
-			.body("orderTables", hasSize(2));
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
 }
