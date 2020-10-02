@@ -25,7 +25,7 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("findProducts: 상품 목록을 조회할 수 있다.")
     @Test
     void findProductsTest() throws Exception {
-        findLists("/api/products")
+        findList("/api/products")
                 .andExpect(jsonPath("$[0].name").value("후라이드"))
                 .andExpect(jsonPath("$[1].name").value("양념치킨"));
     }

@@ -40,7 +40,7 @@ public class ControllerTest {
                 .andExpect(status().isCreated());
     }
 
-    public ResultActions findLists(final String url) throws Exception {
+    public ResultActions findList(final String url) throws Exception {
         return mockMvc.perform(get(url)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
