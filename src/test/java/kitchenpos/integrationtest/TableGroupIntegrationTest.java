@@ -48,4 +48,15 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
+
+	@DisplayName("단체 지정을 해지할 수 있다.")
+	@Test
+	void ungroup() {
+		given().log().all()
+			.pathParam("tableGroupId", 1)
+			.when()
+			.delete("/api/table-groups/{tableGroupId}")
+			.then().log().all()
+			.statusCode(HttpStatus.NO_CONTENT.value());
+	}
 }
