@@ -8,6 +8,7 @@ import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 
 import io.restassured.RestAssured;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class MenuGroupRestControllerIntegrationTest {
+public class MenuRestControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -30,34 +31,42 @@ public class MenuGroupRestControllerIntegrationTest {
         RestAssured.port = port;
     }
 
-    @DisplayName("메뉴 그룹 생성")
+    @DisplayName("메뉴 생성")
     @Test
     void create() {
-        Map<String, String> data = new HashMap<>();
-        data.put("name", "추천메뉴");
+        Map<String, Object> data = new HashMap<>();
+        Map<String, String> menuProducts = new HashMap<>();
+        menuProducts.put("productId", "1");
+        menuProducts.put("quantity", "2");
+        data.put("name", "후라이드+후라이드");
+        data.put("price", "19000");
+        data.put("menuGroupId", "1");
+        data.put("menuProducts", Collections.singletonList(menuProducts));
 
         // @formatter:off
         given().
             contentType(MediaType.APPLICATION_JSON_VALUE).
             body(data).
         when().
-            post("/api/menu-groups").
+            post("/api/menus").
         then().
             assertThat().
             statusCode(HttpStatus.CREATED.value()).
-            header("Location", containsString("/api/menu-groups/")).
-            body("id", any(Integer.class)).
-            body("name", equalTo("추천메뉴"));
+            header("Location", containsString("/api/menus/")).
+            body("name", equalTo("후라이드+후라이드")).
+            body("price", any(Float.class)).
+            body("menuGroupId", any(Integer.class)).
+            body("menuProducts", hasSize(1));
         // @formatter:on
     }
 
-    @DisplayName("메뉴 그룹 전체 조회")
+    @DisplayName("메뉴 전체 조회")
     @Test
     void list() {
         // @formatter:off
         given().
         when().
-            get("/api/menu-groups").
+            get("/api/menus").
         then().
             assertThat().
             statusCode(HttpStatus.OK.value()).
