@@ -47,7 +47,7 @@ public class ProductRestControllerIntegrationTest {
         then().
             assertThat().
             statusCode(HttpStatus.CREATED.value()).
-            header("Location", containsString("/api/products")).
+            header("Location", containsString("/api/products/")).
             body("name", equalTo("강정치킨")).
             body("price", any(Float.class));
         // @formatter:on
