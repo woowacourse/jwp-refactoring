@@ -13,6 +13,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.math.BigDecimal;
 import java.util.*;
 
+import static kitchenpos.DomainFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -45,7 +46,7 @@ class JdbcTemplateProductDaoTest {
 
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo("후라이드치킨"),
+                () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
                 () -> assertThat(savedProduct.getPrice()).isEqualTo(
                         product.getPrice().setScale(BIG_DECIMAL_FLOOR_SCALE, BigDecimal.ROUND_FLOOR))
         );
@@ -79,8 +80,8 @@ class JdbcTemplateProductDaoTest {
     @Test
     void findAllTest() {
         Product firstProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
-        Product secondProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
-        Product thirdProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
+        Product secondProduct = createProduct("양념치킨", BigDecimal.valueOf(16000));
+        Product thirdProduct = createProduct("간장치킨", BigDecimal.valueOf(16000));
         jdbcTemplateProductDao.save(firstProduct);
         jdbcTemplateProductDao.save(secondProduct);
         jdbcTemplateProductDao.save(thirdProduct);
@@ -89,13 +90,6 @@ class JdbcTemplateProductDaoTest {
         allProducts.forEach(product -> productIds.add(product.getId()));
 
         assertThat(allProducts).hasSize(3);
-    }
-
-    private Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
     }
 
     @AfterEach
