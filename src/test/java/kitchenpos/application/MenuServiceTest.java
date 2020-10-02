@@ -31,8 +31,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuServiceTest extends ServiceTest {
-    private static final int BIG_DECIMAL_FLOOR_SCALE = 2;
-
     @Autowired
     private MenuDao menuDao;
 
@@ -50,7 +48,6 @@ class MenuServiceTest extends ServiceTest {
     static Stream<Arguments> invalidPrices() {
         return Stream.of(
                 Arguments.of((Object) null),
-                Arguments.of(BigDecimal.valueOf(0)),
                 Arguments.of(BigDecimal.valueOf(-1000))
         );
     }

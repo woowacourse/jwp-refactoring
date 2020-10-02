@@ -25,6 +25,7 @@ public class ServiceTest {
     protected static final String DELETE_MENU_GROUPS = "delete from menu_group where id in (:ids)";
     protected static final String DELETE_PRODUCT = "delete from product where id in (:ids)";
     protected static final String DELETE_MENU_PRODUCT = "delete from menu_product where seq in (:seqs)";
+    protected static final int BIG_DECIMAL_FLOOR_SCALE = 2;
 
     @Autowired
     protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
