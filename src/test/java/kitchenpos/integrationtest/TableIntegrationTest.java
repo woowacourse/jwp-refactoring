@@ -153,4 +153,21 @@ public class TableIntegrationTest extends IntegrationTest {
 			.statusCode(HttpStatus.OK.value())
 			.assertThat().body("numberOfGuests", equalTo(5));
 	}
+
+	@DisplayName("방문한 손님 수는 0 명 이상이어야 한다.")
+	@Test
+	void changeNumberOfGuests_WhenGuestLessThanZero() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("numberOfGuests", -1);
+
+		given().log().all()
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.pathParam("orderTableId", 2)
+			.when()
+			.put("/api/tables/{orderTableId}/number-of-guests")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
