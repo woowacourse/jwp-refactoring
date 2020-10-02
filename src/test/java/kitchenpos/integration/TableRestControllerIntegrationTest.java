@@ -7,28 +7,14 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 
-import io.restassured.RestAssured;
 import java.util.HashMap;
 import java.util.Map;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class TableRestControllerIntegrationTest {
-
-    @LocalServerPort
-    private int port;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
+public class TableRestControllerIntegrationTest extends IntegrationTest {
 
     @DisplayName("테이블 생성")
     @Test
@@ -94,7 +80,7 @@ public class TableRestControllerIntegrationTest {
     @DisplayName("테이블 게스트 수 수정")
     @Test
     void changeNumberOfGuests() {
-        int orderTableId = 1;
+        int orderTableId = 2;
         Map<String, Object> data = new HashMap<>();
         data.put("numberOfGuests", 4);
 
