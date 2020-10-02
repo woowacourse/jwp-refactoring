@@ -6,28 +6,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static kitchenpos.DomainFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class JdbcTemplateMenuGroupDaoTest {
-    private static final String DELETE_MENU_GROUPS = "delete from menu_group where id in (:ids)";
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateDaoTest {
     @Autowired
     private JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
-
-    private List<Long> menuGroupIds;
 
     @BeforeEach
     void setUp() {
@@ -97,7 +87,6 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @AfterEach
     void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("ids", menuGroupIds);
-        namedParameterJdbcTemplate.update(DELETE_MENU_GROUPS, params);
+        deleteMenuGroup();
     }
 }

@@ -26,11 +26,9 @@ public class ServiceTest {
     protected static final String DELETE_PRODUCT = "delete from product where id in (:ids)";
     protected static final String DELETE_MENU_PRODUCT = "delete from menu_product where seq in (:seqs)";
     protected static final String DELETE_TABLE_GROUP = "delete from table_group where id in (:ids)";
+
+
     protected static final int BIG_DECIMAL_FLOOR_SCALE = 2;
-
-    @Autowired
-    protected NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
     protected List<Long> menuGroupIds;
     protected List<Long> productIds;
     protected List<Long> menuIds;
@@ -39,6 +37,8 @@ public class ServiceTest {
     protected List<Long> orderIds;
     protected List<Long> orderLineItemSeqs;
     protected List<Long> tableGroupIds;
+    @Autowired
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     protected void deleteMenuProduct() {
         Map<String, Object> params = Collections.singletonMap("seqs", menuProductSeqs);

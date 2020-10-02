@@ -6,27 +6,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+import static kitchenpos.DomainFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class JdbcTemplateTableGroupDaoTest {
-    public static final String DELETE_TABLE_GROUP = "delete from table_group where id in (:ids)";
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+class JdbcTemplateTableGroupDaoTest extends JdbcTemplateDaoTest {
     @Autowired
     private JdbcTemplateTableGroupDao jdbcTemplateTableGroupDao;
-
-    private List<Long> tableGroupIds;
 
     @BeforeEach
     void setUp() {
@@ -36,7 +27,7 @@ class JdbcTemplateTableGroupDaoTest {
     @DisplayName("상품 저장")
     @Test
     void saveTest() {
-        TableGroup tableGroup = createTableGroup(LocalDateTime.now());
+        TableGroup tableGroup = createTableGroup();
 
         TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
         tableGroupIds.add(savedTableGroup.getId());
@@ -50,7 +41,7 @@ class JdbcTemplateTableGroupDaoTest {
     @DisplayName("아이디에 맞는 상품 반환")
     @Test
     void findByIdTest() {
-        TableGroup tableGroup = createTableGroup(LocalDateTime.now());
+        TableGroup tableGroup = createTableGroup();
         TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
 
         TableGroup findTableGroup = jdbcTemplateTableGroupDao.findById(savedTableGroup.getId()).get();
@@ -73,9 +64,9 @@ class JdbcTemplateTableGroupDaoTest {
     @DisplayName("모든 상품 반환")
     @Test
     void findAllTest() {
-        TableGroup firstTableGroup = createTableGroup(LocalDateTime.now());
-        TableGroup secondTableGroup = createTableGroup(LocalDateTime.now());
-        TableGroup thirdTableGroup = createTableGroup(LocalDateTime.now());
+        TableGroup firstTableGroup = createTableGroup();
+        TableGroup secondTableGroup = createTableGroup();
+        TableGroup thirdTableGroup = createTableGroup();
         jdbcTemplateTableGroupDao.save(firstTableGroup);
         jdbcTemplateTableGroupDao.save(secondTableGroup);
         jdbcTemplateTableGroupDao.save(thirdTableGroup);
@@ -86,15 +77,8 @@ class JdbcTemplateTableGroupDaoTest {
         assertThat(allTableGroups).hasSize(3);
     }
 
-    private TableGroup createTableGroup(LocalDateTime createdDate) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(createdDate);
-        return tableGroup;
-    }
-
     @AfterEach
     void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("ids", tableGroupIds);
-        namedParameterJdbcTemplate.update(DELETE_TABLE_GROUP, params);
+        deleteTableGroup();
     }
 }

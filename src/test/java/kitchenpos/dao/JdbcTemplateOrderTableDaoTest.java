@@ -6,30 +6,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
+import static kitchenpos.DomainFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class JdbcTemplateOrderTableDaoTest {
-    private static final String DELETE_ORDER_TABLE = "delete from order_table where id in (:ids)";
-    private static final String INSERT_TABLE_GROUP = "insert into table_group (id, created_date) " +
-            "values (:id, :created_date)";
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+class JdbcTemplateOrderTableDaoTest extends JdbcTemplateDaoTest {
     @Autowired
     private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
-
-    private List<Long> orderTableIds;
 
     @BeforeEach
     void setUp() {
@@ -128,9 +117,9 @@ class JdbcTemplateOrderTableDaoTest {
     @DisplayName("단체로 지정된 테이블만 반환")
     @Test
     void findAllByTableGroupIdTest() {
-        createTableGroup();
-        OrderTable firstOrderTable = createOrderTable(1L, 0, true);
-        OrderTable secondOrderTable = createOrderTable(1L, 5, false);
+        saveTableGroup();
+        OrderTable firstOrderTable = createOrderTable(0, true, 1L);
+        OrderTable secondOrderTable = createOrderTable(5, false, 1L);
         OrderTable thirdOrderTable = createOrderTable(10, false);
         jdbcTemplateOrderTableDao.save(firstOrderTable);
         jdbcTemplateOrderTableDao.save(secondOrderTable);
@@ -143,28 +132,8 @@ class JdbcTemplateOrderTableDaoTest {
         assertThat(orderTablesInTableGroup).hasSize(2);
     }
 
-    private void createTableGroup() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", 1L);
-        params.put("created_date", LocalDateTime.now());
-        namedParameterJdbcTemplate.update(INSERT_TABLE_GROUP, params);
-    }
-
-    private OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        return createOrderTable(null, numberOfGuests, empty);
-    }
-
-    private OrderTable createOrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
-    }
-
     @AfterEach
     void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("ids", orderTableIds);
-        namedParameterJdbcTemplate.update(DELETE_ORDER_TABLE, params);
+        deleteOrderTable();
     }
 }

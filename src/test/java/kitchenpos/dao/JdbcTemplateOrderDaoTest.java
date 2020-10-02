@@ -7,46 +7,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static kitchenpos.DomainFactory.createOrder;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class JdbcTemplateOrderDaoTest {
-    private static final String INSERT_ORDER_TABLE = "insert into order_table (id, number_of_guests, empty) " +
-            "values (:id, :number_of_guests, :empty)";
-    private static final String DELETE_ORDERS = "delete from orders where id in (:ids)";
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
     @Autowired
     private JdbcTemplateOrderDao jdbcTemplateOrderDao;
 
-    private List<Long> orderIds;
-
     @BeforeEach
     void setUp() {
-        createOrderTable(1L, 0, true);
+        saveOrderTable(1L, 0, true);
 
         orderIds = new ArrayList<>();
-    }
-
-    private void createOrderTable(Long id, int numberOfGuests, boolean empty) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("id", id);
-        params.put("number_of_guests", numberOfGuests);
-        params.put("empty", empty);
-
-        namedParameterJdbcTemplate.update(INSERT_ORDER_TABLE, params);
     }
 
     @DisplayName("새로운 주문 저장")
@@ -158,7 +139,7 @@ class JdbcTemplateOrderDaoTest {
     @DisplayName("모든 테이블에 주문이 있는지 확인")
     @Test
     void existsByOrderTableIdInAndOrderStatusInTest() {
-        createOrderTable(2L, 0, true);
+        saveOrderTable(2L, 0, true);
         List<Long> orderTableIds = Arrays.asList(1L, 2L);
         Order cookingOrder = createOrder(1L, OrderStatus.COOKING.toString(), LocalDateTime.now());
         Order mealOrder = createOrder(1L, OrderStatus.MEAL.toString(), LocalDateTime.now());
@@ -178,7 +159,7 @@ class JdbcTemplateOrderDaoTest {
     @DisplayName("모든 테이블에 주문이 없는지 확인")
     @Test
     void existsByNoOrderTableIdInAndOrderStatusInTest() {
-        createOrderTable(2L, 0, true);
+        saveOrderTable(2L, 0, true);
         List<Long> orderTableIds = Arrays.asList(1L, 2L);
         List<String> orderStatuses = Arrays.stream(OrderStatus.values())
                 .map(Enum::toString)
@@ -189,17 +170,8 @@ class JdbcTemplateOrderDaoTest {
         assertThat(isExists).isFalse();
     }
 
-    private Order createOrder(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        return order;
-    }
-
     @AfterEach
     void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("ids", orderIds);
-        namedParameterJdbcTemplate.update(DELETE_ORDERS, params);
+        deleteOrders();
     }
 }

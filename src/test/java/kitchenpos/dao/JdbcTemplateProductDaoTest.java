@@ -6,30 +6,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static kitchenpos.DomainFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class JdbcTemplateProductDaoTest {
-    private static final String DELETE_PRODUCT = "delete from product where id in (:ids)";
-    private static final int BIG_DECIMAL_FLOOR_SCALE = 2;
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-
+class JdbcTemplateProductDaoTest extends JdbcTemplateDaoTest {
     @Autowired
     private JdbcTemplateProductDao jdbcTemplateProductDao;
-
-    private List<Long> productIds;
 
     @BeforeEach
     void setUp() {
@@ -39,7 +28,7 @@ class JdbcTemplateProductDaoTest {
     @DisplayName("상품 저장")
     @Test
     void saveTest() {
-        Product product = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
+        Product product = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
 
         Product savedProduct = jdbcTemplateProductDao.save(product);
         productIds.add(savedProduct.getId());
@@ -55,7 +44,7 @@ class JdbcTemplateProductDaoTest {
     @DisplayName("아이디에 맞는 상품 반환")
     @Test
     void findByIdTest() {
-        Product product = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
+        Product product = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
         Product savedProduct = jdbcTemplateProductDao.save(product);
 
         Product findProduct = jdbcTemplateProductDao.findById(savedProduct.getId()).get();
@@ -79,9 +68,9 @@ class JdbcTemplateProductDaoTest {
     @DisplayName("모든 상품 반환")
     @Test
     void findAllTest() {
-        Product firstProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16000));
-        Product secondProduct = createProduct("양념치킨", BigDecimal.valueOf(16000));
-        Product thirdProduct = createProduct("간장치킨", BigDecimal.valueOf(16000));
+        Product firstProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
+        Product secondProduct = createProduct("양념치킨", BigDecimal.valueOf(16_000));
+        Product thirdProduct = createProduct("간장치킨", BigDecimal.valueOf(16_000));
         jdbcTemplateProductDao.save(firstProduct);
         jdbcTemplateProductDao.save(secondProduct);
         jdbcTemplateProductDao.save(thirdProduct);
@@ -94,7 +83,6 @@ class JdbcTemplateProductDaoTest {
 
     @AfterEach
     void tearDown() {
-        Map<String, Object> params = Collections.singletonMap("ids", productIds);
-        namedParameterJdbcTemplate.update(DELETE_PRODUCT, params);
+        deleteProduct();
     }
 }
