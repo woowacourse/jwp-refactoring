@@ -47,7 +47,7 @@ class MenuServiceTest {
         menuProduct.setProductId(1L);
         menuProduct.setQuantity(2L);
         final Menu menu = new Menu();
-        menu.setName("후라이드");
+        menu.setName("후라이드+후라이드");
         menu.setPrice(BigDecimal.valueOf(16000));
         menu.setMenuGroupId(1L);
         menu.setMenuProducts(Collections.singletonList(menuProduct));

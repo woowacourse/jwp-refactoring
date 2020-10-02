@@ -46,4 +46,13 @@ public class ControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    public ResultActions update(final String url, final Object object) throws Exception {
+        return mockMvc.perform(put(url)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(object)))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }
