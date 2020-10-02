@@ -1,11 +1,9 @@
 package kitchenpos;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DomainFactory {
@@ -50,5 +48,32 @@ public class DomainFactory {
         menu.setName(name);
         menu.setPrice(price);
         return menu;
+    }
+
+    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
+
+    public static OrderLineItem createOrderLineItem(Long menuId, long quantity) {
+        return createOrderLineItem(null, menuId, quantity);
+    }
+
+    public static OrderLineItem createOrderLineItem(Long orderId, Long menuId, long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
+    public static Order createOrder(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(orderedTime);
+        return order;
     }
 }

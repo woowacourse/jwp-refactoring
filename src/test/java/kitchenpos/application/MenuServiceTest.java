@@ -16,30 +16,22 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Stream;
 
-import static kitchenpos.DomainFactory.*;
+import static kitchenpos.DomainFactory.createMenuProduct;
+import static kitchenpos.DomainFactory.createMenuWithMenuProducts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
-@SpringBootTest
-class MenuServiceTest {
-    private static final String DELETE_MENU_GROUPS = "delete from menu_group where id in (:ids)";
-    private static final String DELETE_MENU = "delete from menu where id in (:ids)";
-    private static final String DELETE_PRODUCT = "delete from product where id in (:ids)";
-    private static final String DELETE_MENU_PRODUCT = "delete from menu_product where seq in (:seqs)";
+class MenuServiceTest extends ServiceTest {
     private static final int BIG_DECIMAL_FLOOR_SCALE = 2;
-
-    @Autowired
-    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Autowired
     private MenuDao menuDao;
@@ -54,11 +46,6 @@ class MenuServiceTest {
     private ProductDao productDao;
 
     private MenuService menuService;
-
-    private List<Long> menuGroupIds;
-    private List<Long> productIds;
-    private List<Long> menuIds;
-    private List<Long> menuProductSeqs;
 
     static Stream<Arguments> invalidPrices() {
         return Stream.of(
@@ -80,16 +67,9 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴 저장")
     @Test
     void createTest() {
-        MenuGroup menuGroup = createMenuGroup("한마리메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        menuGroupIds.add(savedMenuGroup.getId());
-
-        Product friedProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
-        Product sourceProduct = createProduct("양념치킨", BigDecimal.valueOf(16_000));
-        Product savedFriedProduct = productDao.save(friedProduct);
-        Product savedSourceProduct = productDao.save(sourceProduct);
-        productIds.add(savedFriedProduct.getId());
-        productIds.add(savedSourceProduct.getId());
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
+        Product savedFriedProduct = saveProduct(productDao, "후라이드치킨", BigDecimal.valueOf(16_000));
+        Product savedSourceProduct = saveProduct(productDao, "양념치킨", BigDecimal.valueOf(16_000));
 
         MenuProduct friedMenuProduct = createMenuProduct(savedFriedProduct.getId(), 1L);
         MenuProduct sourceMenuProduct = createMenuProduct(savedSourceProduct.getId(), 1L);
@@ -139,9 +119,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴 저장 시 잘못된 메뉴 상품 입력 시 예외 출력")
     @Test
     void createMenuWithInvalidMenuProductTest() {
-        MenuGroup menuGroup = createMenuGroup("한마리메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        menuGroupIds.add(savedMenuGroup.getId());
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
 
         MenuProduct menuProduct = createMenuProduct(0L, 1L);
         List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
@@ -157,13 +135,8 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴 저장 시 입력한 메뉴의 가격이 메뉴 상품 가격의 총 합보다 더 클 때 예외 출력")
     @Test
     void createMenuWithInvalidMenuProductPriceSumTest() {
-        MenuGroup menuGroup = createMenuGroup("한마리메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        menuGroupIds.add(savedMenuGroup.getId());
-
-        Product friedProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
-        Product savedFriedProduct = productDao.save(friedProduct);
-        productIds.add(savedFriedProduct.getId());
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
+        Product savedFriedProduct = saveProduct(productDao, "후라이드치킨", BigDecimal.valueOf(16_000));
 
         MenuProduct friedMenuProduct = createMenuProduct(savedFriedProduct.getId(), 1L);
         List<MenuProduct> menuProducts = Collections.singletonList(friedMenuProduct);
@@ -179,31 +152,17 @@ class MenuServiceTest {
     @DisplayName("저장되어있는 모든 메뉴 조회")
     @Test
     void listTest() {
-        MenuGroup menuGroup = createMenuGroup("한마리메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        menuGroupIds.add(savedMenuGroup.getId());
-
-        Product friedProduct = createProduct("후라이드치킨", BigDecimal.valueOf(16_000));
-        Product savedFriedProduct = productDao.save(friedProduct);
-        productIds.add(savedFriedProduct.getId());
-
-        Menu friedMenu = createMenu(savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
-        Menu sourceMenu = createMenu(savedMenuGroup.getId(), "양념치킨", BigDecimal.valueOf(16_000));
-        Menu savedFriedMenu = menuDao.save(friedMenu);
-        Menu savedSourceMenu = menuDao.save(sourceMenu);
-        menuIds.add(savedFriedMenu.getId());
-        menuIds.add(savedSourceMenu.getId());
-
-        MenuProduct friedMenuProduct = createMenuProduct(savedFriedMenu.getId(), savedFriedProduct.getId(), 1L);
-        MenuProduct sourceMenuProduct = createMenuProduct(savedSourceMenu.getId(), savedFriedProduct.getId(), 1L);
-        MenuProduct savedFriedMenuProduct = menuProductDao.save(friedMenuProduct);
-        MenuProduct savedSourceMenuProduct = menuProductDao.save(sourceMenuProduct);
-        menuProductSeqs.add(savedFriedMenuProduct.getSeq());
-        menuProductSeqs.add(savedSourceMenuProduct.getSeq());
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
+        Product savedFriedProduct = saveProduct(productDao, "후라이드치킨", BigDecimal.valueOf(16_000));
+        Menu savedFriedMenu = saveMenu(menuDao, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
+        saveMenuProduct(menuProductDao, savedFriedMenu.getId(), savedFriedProduct.getId(), 1L);
 
         List<Menu> menus = menuService.list();
 
-        assertThat(menus).hasSize(2);
+        assertAll(
+                () -> assertThat(menus).hasSize(1),
+                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1)
+        );
     }
 
     @AfterEach
@@ -212,25 +171,5 @@ class MenuServiceTest {
         deleteMenu();
         deleteProduct();
         deleteMenuGroup();
-    }
-
-    private void deleteMenuProduct() {
-        Map<String, Object> params = Collections.singletonMap("seqs", menuProductSeqs);
-        namedParameterJdbcTemplate.update(DELETE_MENU_PRODUCT, params);
-    }
-
-    private void deleteMenu() {
-        Map<String, Object> params = Collections.singletonMap("ids", menuIds);
-        namedParameterJdbcTemplate.update(DELETE_MENU, params);
-    }
-
-    private void deleteProduct() {
-        Map<String, Object> params = Collections.singletonMap("ids", productIds);
-        namedParameterJdbcTemplate.update(DELETE_PRODUCT, params);
-    }
-
-    private void deleteMenuGroup() {
-        Map<String, Object> params = Collections.singletonMap("ids", menuGroupIds);
-        namedParameterJdbcTemplate.update(DELETE_MENU_GROUPS, params);
     }
 }
