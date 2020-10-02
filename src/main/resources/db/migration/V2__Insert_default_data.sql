@@ -25,14 +25,16 @@ INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (5, 5, 1);
 INSERT INTO menu_product (menu_id, product_id, quantity) VALUES (6, 6, 1);
 
 INSERT INTO table_group (id, created_date) VALUES (1, '2020-10-01 00:00:00');
+INSERT INTO table_group (id, created_date) VALUES (2, '2020-10-02 00:00:00');
+INSERT INTO table_group (id, created_date) VALUES (3, '2020-10-03 00:00:00');
 
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (1, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (2, 0, false);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (3, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (4, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (5, 0, true);
-INSERT INTO order_table (id, number_of_guests, empty) VALUES (6, 0, true);
-INSERT INTO order_table (id, number_of_guests, empty) VALUES (7, 0, true);
+INSERT INTO order_table (id, table_group_id, number_of_guests, empty) VALUES (6, 3, 0, true);
+INSERT INTO order_table (id, table_group_id, number_of_guests, empty) VALUES (7, 2, 0, true);
 INSERT INTO order_table (id, table_group_id, number_of_guests, empty) VALUES (8, 1, 0, true);
 
 INSERT INTO orders (id, order_table_id, order_status, ordered_time)

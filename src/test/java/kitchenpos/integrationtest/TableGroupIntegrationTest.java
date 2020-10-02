@@ -29,7 +29,7 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 			.post("/api/table-groups")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.body("id", equalTo(2))
+			.body("id", notNullValue())
 			.body("createdDate", notNullValue())
 			.body("orderTables", hasSize(2));
 	}
@@ -58,5 +58,27 @@ public class TableGroupIntegrationTest extends IntegrationTest {
 			.delete("/api/table-groups/{tableGroupId}")
 			.then().log().all()
 			.statusCode(HttpStatus.NO_CONTENT.value());
+	}
+
+	@DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리인 경우 단체 지정을 해지할 수 없다.")
+	@Test
+	void ungroup_WhenOrderIsCooking() {
+		given().log().all()
+			.pathParam("tableGroupId", 2)
+			.when()
+			.delete("/api/table-groups/{tableGroupId}")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
+
+	@DisplayName("단체 지정된 주문 테이블의 주문 상태가 식사인 경우 단체 지정을 해지할 수 없다.")
+	@Test
+	void ungroup_WhenOrderIsMeal() {
+		given().log().all()
+			.pathParam("tableGroupId", 3)
+			.when()
+			.delete("/api/table-groups/{tableGroupId}")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
 }
