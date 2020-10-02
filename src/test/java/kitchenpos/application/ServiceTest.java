@@ -25,6 +25,7 @@ public class ServiceTest {
     protected static final String DELETE_MENU_GROUPS = "delete from menu_group where id in (:ids)";
     protected static final String DELETE_PRODUCT = "delete from product where id in (:ids)";
     protected static final String DELETE_MENU_PRODUCT = "delete from menu_product where seq in (:seqs)";
+    protected static final String DELETE_TABLE_GROUP = "delete from table_group where id in (:ids)";
     protected static final int BIG_DECIMAL_FLOOR_SCALE = 2;
 
     @Autowired
@@ -37,6 +38,7 @@ public class ServiceTest {
     protected List<Long> orderTableIds;
     protected List<Long> orderIds;
     protected List<Long> orderLineItemSeqs;
+    protected List<Long> tableGroupIds;
 
     protected void deleteMenuProduct() {
         Map<String, Object> params = Collections.singletonMap("seqs", menuProductSeqs);
@@ -73,6 +75,11 @@ public class ServiceTest {
         namedParameterJdbcTemplate.update(DELETE_MENU_GROUPS, params);
     }
 
+    protected void deleteTableGroup() {
+        Map<String, Object> params = Collections.singletonMap("ids", tableGroupIds);
+        namedParameterJdbcTemplate.update(DELETE_TABLE_GROUP, params);
+    }
+
     protected MenuGroup saveMenuGroup(MenuGroupDao menuGroupDao, String name) {
         MenuGroup menuGroup = createMenuGroup(name);
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
@@ -102,7 +109,12 @@ public class ServiceTest {
     }
 
     protected OrderTable saveOrderTable(OrderTableDao orderTableDao, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = createOrderTable(numberOfGuests, empty);
+        return saveOrderTable(orderTableDao, numberOfGuests, empty, null);
+    }
+
+    protected OrderTable saveOrderTable(OrderTableDao orderTableDao, int numberOfGuests,
+                                        boolean empty, Long tableGroupId) {
+        OrderTable orderTable = createOrderTable(numberOfGuests, empty, tableGroupId);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         orderTableIds.add(savedOrderTable.getId());
         return savedOrderTable;
@@ -121,5 +133,12 @@ public class ServiceTest {
         OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
         orderLineItemSeqs.add(savedOrderLineItem.getSeq());
         return savedOrderLineItem;
+    }
+
+    protected TableGroup saveTableGroup(TableGroupDao tableGroupDao) {
+        TableGroup tableGroup = createTableGroup();
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        tableGroupIds.add(savedTableGroup.getId());
+        return savedTableGroup;
     }
 }

@@ -51,9 +51,14 @@ public class DomainFactory {
     }
 
     public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
+        return createOrderTable(numberOfGuests, empty, null);
+    }
+
+    public static OrderTable createOrderTable(int numberOfGuests, boolean empty, Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
+        orderTable.setTableGroupId(tableGroupId);
         return orderTable;
     }
 
@@ -75,5 +80,11 @@ public class DomainFactory {
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
         return order;
+    }
+
+    public static TableGroup createTableGroup() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        return tableGroup;
     }
 }
