@@ -37,7 +37,7 @@ class TableRestControllerTest {
     @MockBean
     private TableService tableService;
 
-    @DisplayName("테이블 생성 요청 api 테스트")
+    @DisplayName("테이블 생성 요청 요청 테스트")
     @Test
     void create() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
@@ -57,7 +57,7 @@ class TableRestControllerTest {
                 .andExpect(jsonPath("$.empty", Matchers.instanceOf(Boolean.class)));
     }
 
-    @DisplayName("테이블 목록 요청 api 테스트")
+    @DisplayName("테이블 목록 요청 테스트")
     @Test
     void list() throws Exception {
         List<OrderTable> orderTables = new ArrayList<>();
@@ -72,7 +72,7 @@ class TableRestControllerTest {
                 .andExpect(jsonPath("$", Matchers.hasSize(2)));
     }
 
-    @DisplayName("테이블의 setEmpty를 변경하는 api 테스트")
+    @DisplayName("테이블의 setEmpty를 변경 요청 테스트")
     @Test
     void changeEmpty() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
@@ -92,7 +92,7 @@ class TableRestControllerTest {
                 .andExpect(jsonPath("$.empty", Matchers.is(false)));
     }
 
-    @DisplayName("고객 수를 변경하는 api 테스트")
+    @DisplayName("고객 수 변경 요청 테스트")
     @Test
     void changeNumberOfGuests() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
