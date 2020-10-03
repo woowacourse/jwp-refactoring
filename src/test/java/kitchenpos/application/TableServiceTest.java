@@ -67,7 +67,7 @@ class TableServiceTest {
         );
     }
 
-    @DisplayName("테이블의 empty 상태 변경 - 존재하지 않는 아이디를 입력받은 경우")
+    @DisplayName("테이블의 empty 상태 변경 - 존재하지 않는 아이디를 입력받은 경우 예외 처리")
     @Test
     void changeEmptyWithNotFoundOrderTable() {
         OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTableDto(false);
@@ -76,7 +76,7 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블의 empty 상태 변경 - 단체 테이블에 등록되어 있는 경우")
+    @DisplayName("테이블의 empty 상태 변경 - 단체 테이블에 등록되어 있는 경우 예외 처리")
     @Test
     void changeEmptyWithRegisteredGroupTable() {
         OrderTable savedOrderTable1 = tableService.create(TestObjectFactory.creatOrderTable());
@@ -90,7 +90,7 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블의 empty 상태 변경 - 주문 상태가 COOKING 혹은 MEAL 인경우 ")
+    @DisplayName("테이블의 empty 상태 변경 - 주문 상태가 COOKING 혹은 MEAL 인 경우 예외 처리")
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void changeEmptyWhenCooking(String orderStatus) {
@@ -121,7 +121,7 @@ class TableServiceTest {
         );
     }
 
-    @DisplayName("테이블에 방문한 손님 수를 변경 - 빈 테이블인 경우")
+    @DisplayName("테이블에 방문한 손님 수를 변경 - 빈 테이블인 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithEmptyTable() {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
@@ -134,7 +134,7 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("테이블에 방문한 손님 수를 변경 - 입력하려는 숫자가 0보다 작은 경우")
+    @DisplayName("테이블에 방문한 손님 수를 변경 - 입력하려는 숫자가 0보다 작은 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithLessZeroGuests() {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();

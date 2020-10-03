@@ -18,9 +18,11 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = TableGroupRestController.class)
 class TableGroupRestControllerTest {
@@ -57,7 +59,16 @@ class TableGroupRestControllerTest {
                         + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.orderTables", Matchers.hasSize(2)));
+    }
+
+    @DisplayName("테이블 그룹을 해지하는 요청 테스트")
+    @Test
+    void ungroup() throws Exception {
+        mockMvc.perform(delete("/api/table-groups/1"))
+                .andDo(print())
+                .andExpect(status().isNoContent());
     }
 }
