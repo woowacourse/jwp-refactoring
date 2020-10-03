@@ -72,7 +72,7 @@ class TableRestControllerTest {
                 .andExpect(jsonPath("$", Matchers.hasSize(2)));
     }
 
-    @DisplayName("테이블의 setEmpty를 true로 바꾸는 요청 테스트")
+    @DisplayName("테이블의 setEmpty를 변경하는 api 테스트")
     @Test
     void changeEmpty() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
@@ -90,5 +90,26 @@ class TableRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(1)))
                 .andExpect(jsonPath("$.empty", Matchers.is(false)));
+    }
+
+    @DisplayName("고객 수를 변경하는 api 테스트")
+    @Test
+    void changeNumberOfGuests() throws Exception {
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setId(1L);
+        orderTable.setNumberOfGuests(4);
+
+        given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(orderTable);
+
+
+        mockMvc.perform(put("/api/tables/1/number-of-guests")
+                .content("{\n"
+                        + "  \"numberOfGuests\": 4\n"
+                        + "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numberOfGuests", Matchers.is(4)));
+
     }
 }
