@@ -22,6 +22,12 @@ public class TestObjectFactory {
         return orderTable;
     }
 
+    public static OrderTable createChangeNumberOfGuestsDto(int numberOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        return orderTable;
+    }
+
     public static Order createOrder(Long orderTableId, String orderStatus, List<OrderLineItem> items) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);

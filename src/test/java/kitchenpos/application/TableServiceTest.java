@@ -104,4 +104,46 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("테이블에 방문한 손님 수를 변경하는 메서드 테스트")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setEmpty(false);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+
+        OrderTable changedOrderTable =
+                tableService.changeNumberOfGuests(savedOrderTable.getId(), TestObjectFactory.createChangeNumberOfGuestsDto(4));
+
+        assertAll(
+                () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
+                () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(4)
+        );
+    }
+
+    @DisplayName("테이블에 방문한 손님 수를 변경 - 빈 테이블인 경우")
+    @Test
+    void changeNumberOfGuestsWithEmptyTable() {
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setEmpty(true);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+
+        OrderTable changeNumberOfGuestsDto = TestObjectFactory.createChangeNumberOfGuestsDto(4);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberOfGuestsDto))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블에 방문한 손님 수를 변경 - 입력하려는 숫자가 0보다 작은 경우")
+    @Test
+    void changeNumberOfGuestsWithLessZeroGuests() {
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setEmpty(false);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+
+        OrderTable changeNumberOfGuestsDto = TestObjectFactory.createChangeNumberOfGuestsDto(-1);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberOfGuestsDto))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }
