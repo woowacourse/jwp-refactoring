@@ -41,6 +41,7 @@ class TableRestControllerTest {
     @Test
     void create() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setId(1L);
 
         given(tableService.create(any())).willReturn(orderTable);
         String body = mapper.writeValueAsString(orderTable);
@@ -76,7 +77,7 @@ class TableRestControllerTest {
     void changeEmpty() throws Exception {
         OrderTable orderTable = TestObjectFactory.creatOrderTable();
         orderTable.setId(1L);
-        orderTable.setEmpty(true);
+        orderTable.setEmpty(false);
 
         given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTable);
 
@@ -88,6 +89,6 @@ class TableRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", Matchers.is(1)))
-                .andExpect(jsonPath("$.empty", Matchers.is(true)));
+                .andExpect(jsonPath("$.empty", Matchers.is(false)));
     }
 }
