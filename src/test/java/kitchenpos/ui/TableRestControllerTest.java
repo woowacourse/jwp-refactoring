@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kitchenpos.TestObjectFactory;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.hamcrest.Matchers;
@@ -16,9 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,10 +40,7 @@ class TableRestControllerTest {
     @DisplayName("테이블 생성 요청 api 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setId(1L);
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
 
         given(tableService.create(any())).willReturn(orderTable);
         String body = mapper.writeValueAsString(orderTable);
@@ -58,7 +58,7 @@ class TableRestControllerTest {
 
     @DisplayName("테이블 목록 요청 api 테스트")
     @Test
-    void name() throws Exception {
+    void list() throws Exception {
         List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(new OrderTable());
         orderTables.add(new OrderTable());
@@ -69,5 +69,25 @@ class TableRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @DisplayName("테이블의 setEmpty를 true로 바꾸는 요청 테스트")
+    @Test
+    void changeEmpty() throws Exception {
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        orderTable.setId(1L);
+        orderTable.setEmpty(true);
+
+        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTable);
+
+        mockMvc.perform(put("/api/tables/1/empty")
+                .content("{\n"
+                        + "  \"empty\": false\n"
+                        + "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.is(1)))
+                .andExpect(jsonPath("$.empty", Matchers.is(true)));
     }
 }
