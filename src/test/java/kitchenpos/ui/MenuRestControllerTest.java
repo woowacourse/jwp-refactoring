@@ -32,7 +32,7 @@ class MenuRestControllerTest {
 
     private static final Long MENU_ID = 1L;
     private static final String MENU_NAME = "후라이드+후라이드";
-    private static final int MENU_PRICE = 19_000;
+    private static final BigDecimal MENU_PRICE = BigDecimal.valueOf(19_000);
     private static final long MENU_GROUP_ID = 10L;
     private static final long MENU_PRODUCT_SEQ = 100L;
     private static final long MENU_PRODUCT_PRODUCT_ID = 1_000L;
@@ -56,7 +56,7 @@ class MenuRestControllerTest {
         Menu menu = new Menu();
         menu.setId(MENU_ID);
         menu.setName(MENU_NAME);
-        menu.setPrice(BigDecimal.valueOf(MENU_PRICE));
+        menu.setPrice(MENU_PRICE);
         menu.setMenuGroupId(MENU_GROUP_ID);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
@@ -100,18 +100,8 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() throws Exception {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(MENU_PRODUCT_SEQ);
-        menuProduct.setMenuId(MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT_QUANTITY);
-
         Menu menu = new Menu();
         menu.setId(MENU_ID);
-        menu.setName(MENU_NAME);
-        menu.setPrice(BigDecimal.valueOf(MENU_PRICE));
-        menu.setMenuGroupId(MENU_GROUP_ID);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
 
         given(menuService.list())
             .willReturn(Collections.singletonList(menu));

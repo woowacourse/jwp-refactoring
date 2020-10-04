@@ -12,9 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.util.Collections;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.application.ProductService;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,33 +26,36 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest {
+@WebMvcTest(ProductRestController.class)
+class ProductRestControllerTest {
 
-    private static final Long MENU_GROUP_ID = 1L;
-    private static final String MENU_GROUP_NAME = "추천메뉴";
+    private static final long PRODUCT_ID = 1L;
+    private static final String PRODUCT_NAME = "강정치킨";
+    private static final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(17_000);
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private MenuGroupService menuGroupService;
+    private ProductService productService;
 
-    @DisplayName("메뉴 그룹 추가")
+    @DisplayName("상품 추가")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
-        menuGroup.setName(MENU_GROUP_NAME);
+        Product product = new Product();
+        product.setId(PRODUCT_ID);
+        product.setName(PRODUCT_NAME);
+        product.setPrice(ProductRestControllerTest.PRODUCT_PRICE);
 
         String body = "{\n"
-            + "  \"name\": \"" + menuGroup.getName() + "\"\n"
+            + "  \"name\": \"" + product.getName() + "\",\n"
+            + "  \"price\": " + product.getPrice() + "\n"
             + "}";
 
-        given(menuGroupService.create(any()))
-            .willReturn(menuGroup);
+        given(productService.create(any()))
+            .willReturn(product);
 
-        final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
+        ResultActions resultActions = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .content(body))
             .andDo(print());
@@ -59,22 +63,23 @@ class MenuGroupRestControllerTest {
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(menuGroup.getId().intValue())))
-            .andExpect(jsonPath("$.name", is(menuGroup.getName())))
             .andExpect(header().exists(HttpHeaders.LOCATION))
+            .andExpect(jsonPath("$.id", is(product.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(product.getName())))
+            .andExpect(jsonPath("$.price", is(product.getPrice().intValue())))
             .andDo(print());
     }
 
-    @DisplayName("메뉴 그룹 전체 조회")
+    @DisplayName("상품 조회")
     @Test
     void list() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
+        Product product = new Product();
+        product.setId(PRODUCT_ID);
 
-        given(menuGroupService.list())
-            .willReturn(Collections.singletonList(menuGroup));
+        given(productService.list())
+            .willReturn(Collections.singletonList(product));
 
-        final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
+        ResultActions resultActions = mockMvc.perform(get("/api/products")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 
@@ -82,7 +87,7 @@ class MenuGroupRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(menuGroup.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(product.getId().intValue())))
             .andDo(print());
     }
 }

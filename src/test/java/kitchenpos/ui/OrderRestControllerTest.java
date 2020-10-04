@@ -102,18 +102,8 @@ class OrderRestControllerTest {
     @DisplayName("주문 조회")
     @Test
     void list() throws Exception {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(ORDER_LINE_ITEM_SEQ);
-        orderLineItem.setOrderId(ORDER_ID);
-        orderLineItem.setMenuId(ORDER_LINE_ITEM_MENU_ID);
-        orderLineItem.setQuantity(ORDER_LINE_QUANTITY);
-
         Order order = new Order();
         order.setId(ORDER_ID);
-        order.setOrderTableId(ORDER_TABLE_ID);
-        order.setOrderStatus(ORDER_STATUS);
-        order.setOrderedTime(ORDERED_TIME);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
         given(orderService.list())
             .willReturn(Collections.singletonList(order));
