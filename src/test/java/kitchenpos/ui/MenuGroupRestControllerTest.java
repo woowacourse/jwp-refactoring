@@ -1,7 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.constants.Constants.TEST_MENU_ID;
-import static kitchenpos.constants.Constants.TEST_MENU_NAME;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +28,9 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest {
 
+    private static final Long MENU_GROUP_ID = 1L;
+    private static final String MENU_GROUP_NAME = "추천메뉴";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -40,15 +41,19 @@ class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(TEST_MENU_ID);
-        menuGroup.setName(TEST_MENU_NAME);
+        menuGroup.setId(MENU_GROUP_ID);
+        menuGroup.setName(MENU_GROUP_NAME);
+
+        String body = "{\n"
+            + "  \"name\": \"" + menuGroup.getName() + "\"\n"
+            + "}";
 
         given(menuGroupService.create(any()))
             .willReturn(menuGroup);
 
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"name\": \"" + TEST_MENU_NAME + " \"}"))
+            .content(body))
             .andDo(print());
 
         resultActions
@@ -64,8 +69,8 @@ class MenuGroupRestControllerTest {
     @Test
     void list() throws Exception {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(TEST_MENU_ID);
-        menuGroup.setName(TEST_MENU_NAME);
+        menuGroup.setId(MENU_GROUP_ID);
+        menuGroup.setName(MENU_GROUP_NAME);
 
         given(menuGroupService.list())
             .willReturn(Collections.singletonList(menuGroup));
