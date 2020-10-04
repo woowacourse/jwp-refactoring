@@ -8,12 +8,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Sql("/delete_all.sql")
 class ProductServiceTest {
     @Autowired
     private ProductService productService;
@@ -51,5 +55,15 @@ class ProductServiceTest {
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void name() {
+        productService.create(TestObjectFactory.createProduct("강정치킨", 17000));
+        productService.create(TestObjectFactory.createProduct("앙념치킨", 17000));
+
+        List<Product> list = productService.list();
+
+        assertThat(list).hasSize(2);
     }
 }
