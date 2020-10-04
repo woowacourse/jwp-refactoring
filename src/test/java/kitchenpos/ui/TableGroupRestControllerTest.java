@@ -51,7 +51,7 @@ class TableGroupRestControllerTest {
         tableGroup.setId(TABLE_GROUP_ID);
         tableGroup.setOrderTables(orderTables);
 
-        String body = "{\n"
+        String requestBody = "{\n"
             + "  \"orderTables\": [\n"
             + "    {\n"
             + "      \"id\": " + orderTables.get(0).getId() + "\n"
@@ -62,12 +62,12 @@ class TableGroupRestControllerTest {
             + "  ]\n"
             + "}";
 
-        given(tableGroupService.create(any()))
+        given(tableGroupService.create(any(TableGroup.class)))
             .willReturn(tableGroup);
 
         ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
+            .content(requestBody))
             .andDo(print());
 
         resultActions

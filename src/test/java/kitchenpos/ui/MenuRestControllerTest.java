@@ -60,7 +60,7 @@ class MenuRestControllerTest {
         menu.setMenuGroupId(MENU_GROUP_ID);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
-        String body = "{\n"
+        String requestBody = "{\n"
             + "  \"name\": \"" + menu.getName() + "\",\n"
             + "  \"price\": " + menu.getPrice() + ",\n"
             + "  \"menuGroupId\": " + menu.getMenuGroupId() + ",\n"
@@ -72,12 +72,12 @@ class MenuRestControllerTest {
             + "  ]\n"
             + "}";
 
-        given(menuService.create(any()))
+        given(menuService.create(any(Menu.class)))
             .willReturn(menu);
 
         ResultActions resultActions = mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
+            .content(requestBody))
             .andDo(print());
 
         resultActions

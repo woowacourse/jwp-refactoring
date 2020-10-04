@@ -44,16 +44,16 @@ class MenuGroupRestControllerTest {
         menuGroup.setId(MENU_GROUP_ID);
         menuGroup.setName(MENU_GROUP_NAME);
 
-        String body = "{\n"
+        String requestBody = "{\n"
             + "  \"name\": \"" + menuGroup.getName() + "\"\n"
             + "}";
 
-        given(menuGroupService.create(any()))
+        given(menuGroupService.create(any(MenuGroup.class)))
             .willReturn(menuGroup);
 
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
+            .content(requestBody))
             .andDo(print());
 
         resultActions

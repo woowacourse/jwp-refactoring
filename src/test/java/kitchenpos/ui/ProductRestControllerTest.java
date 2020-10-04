@@ -47,17 +47,17 @@ class ProductRestControllerTest {
         product.setName(PRODUCT_NAME);
         product.setPrice(ProductRestControllerTest.PRODUCT_PRICE);
 
-        String body = "{\n"
+        String requestBody = "{\n"
             + "  \"name\": \"" + product.getName() + "\",\n"
             + "  \"price\": " + product.getPrice() + "\n"
             + "}";
 
-        given(productService.create(any()))
+        given(productService.create(any(Product.class)))
             .willReturn(product);
 
         ResultActions resultActions = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
+            .content(requestBody))
             .andDo(print());
 
         resultActions
