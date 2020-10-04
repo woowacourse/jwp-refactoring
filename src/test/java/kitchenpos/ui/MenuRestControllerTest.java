@@ -33,9 +33,9 @@ class MenuRestControllerTest {
     private static final Long MENU_ID = 1L;
     private static final String MENU_NAME = "후라이드+후라이드";
     private static final int MENU_PRICE = 19_000;
-    private static final long MENU_GROUP_ID = 1L;
-    private static final long MENU_PRODUCT_SEQ = 10L;
-    private static final long MENU_PRODUCT_PRODUCT_ID = 1L;
+    private static final long MENU_GROUP_ID = 10L;
+    private static final long MENU_PRODUCT_SEQ = 100L;
+    private static final long MENU_PRODUCT_PRODUCT_ID = 1_000L;
     private static final int MENU_PRODUCT_QUANTITY = 2;
 
     @Autowired
@@ -84,6 +84,7 @@ class MenuRestControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
+            .andExpect(jsonPath("$.id", is(menu.getId().intValue())))
             .andExpect(jsonPath("$.name", is(menu.getName())))
             .andExpect(jsonPath("$.price", is(menu.getPrice().intValue())))
             .andExpect(jsonPath("$.menuGroupId", is(menu.getMenuGroupId().intValue())))
@@ -123,17 +124,7 @@ class MenuRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].name", is(menu.getName())))
-            .andExpect(jsonPath("$[0].price", is(menu.getPrice().intValue())))
-            .andExpect(jsonPath("$[0].menuGroupId", is(menu.getMenuGroupId().intValue())))
-            .andExpect(jsonPath("$[0].menuProducts", hasSize(1)))
-            .andExpect(jsonPath("$[0].menuProducts[0].seq", is(menuProduct.getSeq().intValue())))
-            .andExpect(jsonPath("$[0].menuProducts[0].menuId",
-                is(menuProduct.getMenuId().intValue())))
-            .andExpect(jsonPath("$[0].menuProducts[0].productId",
-                is(menuProduct.getProductId().intValue())))
-            .andExpect(jsonPath("$[0].menuProducts[0].quantity",
-                is((int) menuProduct.getQuantity())))
+            .andExpect(jsonPath("$[0].id", is(menu.getId().intValue())))
             .andDo(print());
     }
 }

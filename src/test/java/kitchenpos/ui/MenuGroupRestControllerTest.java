@@ -84,7 +84,6 @@ class MenuGroupRestControllerTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
             .andExpect(jsonPath("$[0].id", is(menuGroup.getId().intValue())))
-            .andExpect(jsonPath("$[0].name", is(menuGroup.getName())))
             .andDo(print());
     }
 }
