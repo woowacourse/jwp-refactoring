@@ -4,7 +4,7 @@ import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
 import static kitchenpos.constants.Constants.TEST_MENU_NAME;
 import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
 import static kitchenpos.constants.Constants.TEST_ORDER_ORDERED_TIME;
-import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_FALSE;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
@@ -84,7 +84,7 @@ public abstract class KitchenPosDaoTest {
     protected Long getCreatedOrderTableId() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         orderTable.setTableGroupId(getCreatedTableGroupId());
 
         OrderTable savedOrderTable = orderTableDao.save(orderTable);

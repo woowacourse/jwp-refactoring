@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_FALSE;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,13 +19,13 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void save_Success() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         assertThat(savedOrderTable.getId()).isNotNull();
         assertThat(savedOrderTable.getNumberOfGuests())
             .isEqualTo(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY);
+        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
         assertThat(savedOrderTable.getTableGroupId()).isNull();
     }
 
@@ -34,7 +34,7 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findById_ExistsId_ReturnOrderTable() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         OrderTable foundOrderTable = orderTableDao.findById(savedOrderTable.getId())
@@ -52,7 +52,7 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findById_NotExistsId_ReturnEmpty() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         Optional<OrderTable> foundOrderTable = orderTableDao.findById(savedOrderTable.getId() + 1);
@@ -64,7 +64,7 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findAll_Success() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         List<OrderTable> orderTables = orderTableDao.findAll();
@@ -80,17 +80,17 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findAllByIdIn_ExistsOrderTableIds_ReturnOrderTables() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOtherOrderTable = orderTableDao.save(otherOrderTable);
 
         OrderTable anotherOrderTable = new OrderTable();
         anotherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         orderTableDao.save(anotherOrderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId(), savedOtherOrderTable.getId());
@@ -107,7 +107,7 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findAllByIdIn_NotExistsOrderTableIds_ReturnEmpty() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId() + 1, savedOrderTable.getId() + 2);
@@ -123,19 +123,19 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
 
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         orderTable.setTableGroupId(tableGroupId);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         otherOrderTable.setTableGroupId(tableGroupId);
         OrderTable savedOtherOrderTable = orderTableDao.save(otherOrderTable);
 
         OrderTable anotherOrderTable = new OrderTable();
         anotherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY);
+        anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         orderTableDao.save(anotherOrderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId(), savedOtherOrderTable.getId());
