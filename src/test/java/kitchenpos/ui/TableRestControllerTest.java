@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +50,7 @@ class TableRestControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/tables/1"))
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.tableGroupId", Matchers.nullValue()))
                 .andExpect(jsonPath("$.numberOfGuests", Matchers.instanceOf(Number.class)))

@@ -20,6 +20,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,6 +46,7 @@ class ProductRestControllerTest {
                         + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
+                .andExpect(header().string("Location", "/api/products/1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.name", Matchers.instanceOf(String.class)))

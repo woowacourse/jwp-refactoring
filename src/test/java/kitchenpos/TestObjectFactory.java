@@ -2,6 +2,7 @@ package kitchenpos;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -39,6 +40,15 @@ public class TestObjectFactory {
         return order;
     }
 
+    public static Order createOrder(Long orderTableId, List<OrderLineItem> items) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderLineItems(items);
+        return order;
+    }
+
     public static TableGroup createTableGroup(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
@@ -59,5 +69,13 @@ public class TestObjectFactory {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
         return product;
+    }
+
+    public static OrderLineItem createOrderLineItem(long menuId, long orderId, long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
     }
 }
