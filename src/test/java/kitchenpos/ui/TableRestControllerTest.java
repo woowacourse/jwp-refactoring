@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.TestObjectFactory;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
@@ -31,9 +30,6 @@ class TableRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper mapper;
-
     @MockBean
     private TableService tableService;
 
@@ -44,10 +40,12 @@ class TableRestControllerTest {
         orderTable.setId(1L);
 
         given(tableService.create(any())).willReturn(orderTable);
-        String body = mapper.writeValueAsString(orderTable);
 
         mockMvc.perform(post("/api/tables")
-                .content(body)
+                .content("{\n"
+                        + "  \"numberOfGuests\": 0,\n"
+                        + "  \"empty\": true\n"
+                        + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isCreated())

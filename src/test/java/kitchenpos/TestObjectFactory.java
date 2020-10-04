@@ -3,8 +3,10 @@ package kitchenpos;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,5 +44,20 @@ public class TestObjectFactory {
         tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroup;
+    }
+
+    public static Product createProduct(String name, int price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(price));
+        return product;
+    }
+
+    public static Product createProduct(Long id, String name, int price) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(price));
+        return product;
     }
 }
