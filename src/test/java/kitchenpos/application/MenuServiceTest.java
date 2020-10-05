@@ -11,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Sql("/delete_all.sql")
 class MenuServiceTest {
     @Autowired
     private MenuService menuService;
@@ -34,7 +36,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성 기능 테스트")
     @Test
     void create() {
-        Menu menuFixture = createMenuToSave();
+        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
 
         Menu savedMenu = menuService.create(menuFixture);
 
@@ -48,38 +50,47 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성 - price가 null일 때 예외처리")
     @Test
     void createWhenNullPrice() {
-        Menu menu = createMenuToSave();
-        menu.setPrice(null);
+        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
+        menuFixture.setPrice(null);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuFixture))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 - price가 0 미만일 경우 예외처리")
     @Test
     void createWhenPriceLessZero() {
-        Menu menu = createMenuToSave();
-        menu.setPrice(BigDecimal.valueOf(-1));
+        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
+        menuFixture.setPrice(BigDecimal.valueOf(-1));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuFixture))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 - price 구성품 가격의 합보다 큰 경우 예외처리")
     @Test
     void createWhenPriceGraterSum() {
-        Menu menu = createMenuToSave();
-        menu.setPrice(BigDecimal.valueOf(90000));
+        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
+        menuFixture.setPrice(BigDecimal.valueOf(90000));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuFixture))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Menu createMenuToSave() {
-        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroup("추천메뉴"));
-        Product savedProduct = productDao.save(TestObjectFactory.createProduct("양념", 11000));
+    private Menu createMenuToSave(String menuGroupName, String productName, int productPrice) {
+        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroup(menuGroupName));
+        Product savedProduct = productDao.save(TestObjectFactory.createProduct(productName, productPrice));
 
         List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
-        return TestObjectFactory.createMenu("양념+양념", 20000, savedMenuGroup.getId(), menuProducts);
+        return TestObjectFactory.createMenu(productName + "+" + productName, productPrice * 2, savedMenuGroup.getId(), menuProducts);
+    }
+
+    @Test
+    void name() {
+        menuService.create(createMenuToSave("추천메뉴", "양념", 12000));
+        menuService.create(createMenuToSave("추천메뉴", "후라이드", 12000));
+
+        assertThat(menuService.list()).hasSize(2);
+
     }
 }
