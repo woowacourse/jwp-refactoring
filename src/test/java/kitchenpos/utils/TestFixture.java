@@ -12,9 +12,18 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class TestFixture {
+
+    public static Product getProduct(final int price) {
+        final Product product = new Product();
+        product.setName("후라이드");
+        product.setPrice(BigDecimal.valueOf(price));
+
+        return product;
+    }
 
     public static MenuProduct getMenuProduct(final Long productId) {
         final MenuProduct menuProduct = new MenuProduct();
@@ -24,10 +33,10 @@ public class TestFixture {
         return menuProduct;
     }
 
-    public static Menu getMenu(final MenuProduct menuProduct, final Long menuGroupId) {
+    public static Menu getMenu(final MenuProduct menuProduct, final Long menuGroupId, final int price) {
         final Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(16000));
+        menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
