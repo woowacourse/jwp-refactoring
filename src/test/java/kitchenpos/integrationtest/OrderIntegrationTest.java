@@ -28,7 +28,12 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.when()
 			.post("/api/orders")
 			.then().log().all()
-			.statusCode(HttpStatus.CREATED.value());
+			.statusCode(HttpStatus.CREATED.value())
+			.body("id", notNullValue())
+			.body("orderTableId", equalTo(2))
+			.body("orderStatus", equalTo("COOKING"))
+			.body("orderedTime", notNullValue())
+			.body("orderLineItems", hasSize(1));
 	}
 
 	@DisplayName("빈 테이블에는 주문을 등록할 수 없다.")
@@ -74,5 +79,22 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
 			.body("orderStatus", equalTo("MEAL"));
+	}
+
+	@DisplayName("주문 상태가 계산 완료인 경우 변경할 수 없다.")
+	@Test
+	void changeOrderStatus_WhenOrderStatusIsCompletion() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("orderStatus", "MEAL");
+
+		given().log().all()
+			.pathParam("orderId", 3)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/orders/{orderId}/order-status")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
 	}
 }
