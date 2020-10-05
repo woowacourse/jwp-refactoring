@@ -18,7 +18,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.utils.TextFixture;
+import kitchenpos.utils.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -34,9 +34,9 @@ class TableGroupServiceTest {
     @DisplayName("create: 테이블 그룹 생성 테스트")
     @Test
     void createTest() {
-        final OrderTable orderTable1 = TextFixture.getOrderTable();
-        final OrderTable orderTable2 = TextFixture.getOrderTable();
-        final TableGroup tableGroup = TextFixture.getTableGroup(orderTable1, orderTable2);
+        final OrderTable orderTable1 = TestFixture.getOrderTableWithEmpty();
+        final OrderTable orderTable2 = TestFixture.getOrderTableWithEmpty();
+        final TableGroup tableGroup = TestFixture.getTableGroup(orderTable1, orderTable2);
 
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Arrays.asList(orderTable1, orderTable2));
         when(tableGroupDao.save(any())).thenReturn(tableGroup);
@@ -46,19 +46,8 @@ class TableGroupServiceTest {
     @DisplayName("ungroup: 테이블 그룹 해제 테스트")
     @Test
     void ungroupTest() {
-        final OrderTable orderTable1 = TextFixture.getOrderTable();
-        final OrderTable orderTable2 = TextFixture.getOrderTable();
-
-        when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(Arrays.asList(orderTable1, orderTable2));
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);
-        tableGroupService.ungroup(1L);
-    }
-
-    @DisplayName("ungroup: 테이블 그룹 해제 테스트")
-    @Test
-    void ungroupTestByExOrderStatus() {
-        final OrderTable orderTable1 = TextFixture.getOrderTable();
-        final OrderTable orderTable2 = TextFixture.getOrderTable();
+        final OrderTable orderTable1 = TestFixture.getOrderTableWithEmpty();
+        final OrderTable orderTable2 = TestFixture.getOrderTableWithEmpty();
 
         when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(Arrays.asList(orderTable1, orderTable2));
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);

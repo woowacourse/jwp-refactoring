@@ -17,8 +17,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootTest
 @Transactional
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 public class ControllerTest {
 
     private MockMvc mockMvc;

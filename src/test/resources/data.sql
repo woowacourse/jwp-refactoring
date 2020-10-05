@@ -30,9 +30,5 @@ INSERT INTO order_table (id, number_of_guests, empty) VALUES (3, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (4, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (5, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (6, 0, true);
-INSERT INTO order_table (id, number_of_guests, empty) VALUES (7, 0, false);
-INSERT INTO order_table (id, number_of_guests, empty) VALUES (8, 0, false);
---
--- INSERT INTO order_line_itme (id, order_id, nenum_id, quantity) VALUES()
---
--- INSERT INTO orders (id, order_table_id, order_status_ordered_time) VALUES()
+INSERT INTO order_table (id, number_of_guests, empty) VALUES (7, 0, true);
+INSERT INTO order_table (id, number_of_guests, empty) VALUES (8, 0, true);

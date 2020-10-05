@@ -19,7 +19,7 @@ class ProductRestControllerTest extends ControllerTest {
         product.setPrice(BigDecimal.valueOf(16000));
         create("/api/products", product)
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.name").value("후라이드"));
+                .andExpect(jsonPath("$.name").value("후라이드 치킨"));
     }
 
     @DisplayName("findProducts: 상품 목록을 조회할 수 있다.")
