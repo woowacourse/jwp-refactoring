@@ -86,7 +86,7 @@ public class MenuServiceTest extends ServiceTest {
     void create_IfMenuPriceIsGreaterThanAllMenuProduct_ThrownException() {
         String menuName = "후라이드+후라이드";
         BigDecimal menuPrice = BigDecimal.valueOf(Long.MAX_VALUE);
-        Long menuGroupId = Long.MAX_VALUE;
+        Long menuGroupId = 1L;
         List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 

@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Product;
 
 public class TestObjectUtils {
 
@@ -43,5 +44,13 @@ public class TestObjectUtils {
         orderLineItem.setQuantity(quantity);
 
         return orderLineItem;
+    }
+
+    public static Product createProduct(String name, BigDecimal price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+
+        return product;
     }
 }
