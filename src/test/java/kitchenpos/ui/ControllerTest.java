@@ -55,4 +55,10 @@ public class ControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    public ResultActions deleteByPathVariable(final String url) throws Exception {
+        return mockMvc.perform(delete(url))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+    }
 }
