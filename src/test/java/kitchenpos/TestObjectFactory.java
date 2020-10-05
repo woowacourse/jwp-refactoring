@@ -103,6 +103,13 @@ public class TestObjectFactory {
         return menuProduct;
     }
 
+    public static MenuProduct createMenuProduct(long productId, int quantity) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
+    }
+
     public static MenuGroup createMenuGroup(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
