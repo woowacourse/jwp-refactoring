@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import io.restassured.http.ContentType;
 import kitchenpos.integrationtest.common.IntegrationTest;
 
+@DisplayName("Order 통합 테스트")
 public class OrderIntegrationTest extends IntegrationTest {
 
 	@DisplayName("1 개 이상의 등록된 메뉴로 주문을 등록할 수 있다.")

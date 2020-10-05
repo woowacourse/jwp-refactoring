@@ -31,10 +31,10 @@ public class TableIntegrationTest extends IntegrationTest {
 			.post("/api/tables")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.assertThat().body("id", equalTo(9))
-			.assertThat().body("tableGroupId", equalTo(null))
-			.assertThat().body("numberOfGuests", equalTo(0))
-			.assertThat().body("empty", equalTo(true));
+			.body("id", equalTo(9))
+			.body("tableGroupId", equalTo(null))
+			.body("numberOfGuests", equalTo(0))
+			.body("empty", equalTo(true));
 	}
 
 	@DisplayName("주문 테이블의 목록을 조회할 수 있다.")
@@ -46,7 +46,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.get("/api/tables")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body(".", hasSize(8));
+			.body(".", hasSize(8));
 	}
 
 	@DisplayName("빈 테이블을 해지할 수 있다.")
@@ -64,7 +64,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.put("/api/tables/{orderTableId}/empty")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body("empty", equalTo(false));
+			.body("empty", equalTo(false));
 	}
 
 	@DisplayName("빈 테이블을 설정할 수 있다.")
@@ -82,7 +82,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.put("/api/tables/{orderTableId}/empty")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.assertThat().body("empty", equalTo(true));
+			.body("empty", equalTo(true));
 	}
 
 	@DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
