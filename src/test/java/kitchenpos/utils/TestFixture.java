@@ -16,6 +16,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class TestFixture {
+
     public static Product getProduct(final int price) {
         final Product product = new Product();
         product.setName("후라이드");

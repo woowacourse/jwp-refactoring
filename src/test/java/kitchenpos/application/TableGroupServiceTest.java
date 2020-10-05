@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
@@ -40,9 +41,24 @@ class TableGroupServiceTest {
 
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Arrays.asList(orderTable1, orderTable2));
         when(tableGroupDao.save(any())).thenReturn(tableGroup);
+        final TableGroup actual = tableGroupService.create(tableGroup);
+
+        assertThat(actual.getOrderTables()).hasSize(2);
+    }
+
+    @DisplayName("create: 비어있지 않은 테이블이 있다면 예외처리")
+    @Test
+    void createTestByNotEmptyTable() {
+        final OrderTable orderTable1 = TestFixture.getOrderTableWithEmpty();
+        final OrderTable orderTable2 = TestFixture.getOrderTableWithNotEmpty();
+        final TableGroup tableGroup = TestFixture.getTableGroup(orderTable1, orderTable2);
+
+        when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Arrays.asList(orderTable1, orderTable2));
+        when(tableGroupDao.save(any())).thenReturn(tableGroup);
         tableGroupService.create(tableGroup);
     }
 
+    // TODO: 2020/10/05 이런 경우에는 테스트를 어떻게 하는지 물어보기
     @DisplayName("ungroup: 테이블 그룹 해제 테스트")
     @Test
     void ungroupTest() {
@@ -52,5 +68,18 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(Arrays.asList(orderTable1, orderTable2));
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);
         tableGroupService.ungroup(1L);
+    }
+
+    @DisplayName("ungroup: 테이블 상태가 Cocking이거나 Meal일 경우에는 예외처리")
+    @Test
+    void ungroupTestByStatusEqualsCokingAndMeal() {
+        final OrderTable orderTable1 = TestFixture.getOrderTableWithEmpty();
+        final OrderTable orderTable2 = TestFixture.getOrderTableWithEmpty();
+
+        when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(Arrays.asList(orderTable1, orderTable2));
+        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(true);
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
