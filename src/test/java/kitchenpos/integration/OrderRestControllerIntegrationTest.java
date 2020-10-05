@@ -38,7 +38,7 @@ public class OrderRestControllerIntegrationTest extends IntegrationTest {
             statusCode(HttpStatus.CREATED.value()).
             header("Location", containsString("/api/orders/")).
             body("id", any(Integer.class)).
-            body("orderTableId", any(Integer.class)).
+            body("orderTableId", equalTo(2)).
             body("orderStatus", equalTo("COOKING")).
             body("orderedTime", any(String.class)).
             body("orderLineItems", hasSize(1));

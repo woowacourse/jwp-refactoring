@@ -35,7 +35,7 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
             header("Location", containsString("/api/tables/")).
             body("id", any(Integer.class)).
             body("tableGroupId", equalTo(null)).
-            body("numberOfGuests", any(Integer.class)).
+            body("numberOfGuests", equalTo(0)).
             body("empty", equalTo(true));
         // @formatter:on
     }
@@ -95,7 +95,7 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
             statusCode(HttpStatus.OK.value()).
             body("id", any(Integer.class)).
             body("tableGroupId", equalTo(null)).
-            body("numberOfGuests", any(Integer.class)).
+            body("numberOfGuests", equalTo(4)).
             body("empty", equalTo(false));
         // @formatter:on
     }

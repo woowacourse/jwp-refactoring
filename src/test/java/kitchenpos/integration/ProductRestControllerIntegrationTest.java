@@ -2,7 +2,6 @@ package kitchenpos.integration;
 
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -35,7 +34,7 @@ public class ProductRestControllerIntegrationTest extends IntegrationTest {
             statusCode(HttpStatus.CREATED.value()).
             header("Location", containsString("/api/products/")).
             body("name", equalTo("강정치킨")).
-            body("price", any(Float.class));
+            body("price", equalTo(17000F));
         // @formatter:on
     }
 
