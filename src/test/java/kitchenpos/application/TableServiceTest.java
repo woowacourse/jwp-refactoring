@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.utils.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -32,27 +33,21 @@ class TableServiceTest {
     @DisplayName("create: 테이블 등록 생성 테스트")
     @Test
     void createTest() {
-        final OrderTable table = new OrderTable();
-        table.setNumberOfGuests(0);
-        table.setEmpty(true);
+        final OrderTable table = TestFixture.getOrderTableWithEmpty();
 
         when(orderTableDao.save(any())).thenReturn(table);
 
-        final OrderTable expcted = tableService.create(table);
+        final OrderTable expected = tableService.create(table);
 
-        assertThat(expcted.getNumberOfGuests()).isEqualTo(0);
+        assertThat(expected.getNumberOfGuests()).isEqualTo(0);
     }
 
     @DisplayName("list: 테이블 전체 조회 테스트")
     @Test
     void listTest() {
-        final OrderTable oneTable = new OrderTable();
-        oneTable.setNumberOfGuests(0);
-        oneTable.setEmpty(true);
+        final OrderTable oneTable = TestFixture.getOrderTableWithEmpty();
 
-        final OrderTable twoTable = new OrderTable();
-        twoTable.setNumberOfGuests(0);
-        twoTable.setEmpty(true);
+        final OrderTable twoTable = TestFixture.getOrderTableWithEmpty();
 
         when(orderTableDao.findAll()).thenReturn(Arrays.asList(oneTable, twoTable));
 
@@ -64,10 +59,7 @@ class TableServiceTest {
     @DisplayName("changeEmpty: 테이블의 비어있는 상태를 변경하는 테스트")
     @Test
     void changeEmptyTest() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = TestFixture.getOrderTableWithNotEmpty();
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(false);
@@ -80,7 +72,21 @@ class TableServiceTest {
         assertThat(actual.isEmpty()).isEqualTo(false);
     }
 
-    @DisplayName("changeNumberOfGuests")
+    @DisplayName("changeEmpty: 테이블 주문 상태가 음식을 먹고 있거나, 요리중이면 예외처리")
+    @Test
+    void changeEmptyTestByOrderStatusEqualsCookingAndMeal() {
+        final OrderTable orderTable = TestFixture.getOrderTableWithNotEmpty();
+
+        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
+        when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
+
+        final OrderTable expected = TestFixture.getOrderTableWithEmpty();
+
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, expected))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("changeNumberOfGuests: 손님 수를 변경하는 테스트")
     @Test
     void changeNumberOfGuestsTest() {
         final OrderTable orderTable = new OrderTable();
@@ -96,5 +102,25 @@ class TableServiceTest {
         final OrderTable actual = tableService.changeNumberOfGuests(1L, expected);
 
         assertThat(actual.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
+    }
+
+    @DisplayName("changeNumberOfGuests: 손님 수가 0보다 작으면 예외처리")
+    @Test
+    void changeNumberOfGuestsTestByZero() {
+        final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected));
+    }
+
+    @DisplayName("changeNumberOfGuests: 테이블이 비어있는데 손님수를 변경하려면 예외치리")
+    @Test
+    void changeNumberOfGuestsTestByEmpty() {
+        final OrderTable orderTable = TestFixture.getOrderTableWithEmpty();
+
+        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
+
+        final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected));
     }
 }
