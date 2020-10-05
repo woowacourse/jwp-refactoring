@@ -1,8 +1,9 @@
 package kitchenpos;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -40,11 +41,9 @@ public class TestObjectFactory {
         return order;
     }
 
-    public static Order createOrder(Long orderTableId, List<OrderLineItem> items) {
+    public static Order createOrderRequest(Long orderTableId, List<OrderLineItem> items) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
         order.setOrderLineItems(items);
         return order;
     }
@@ -77,5 +76,29 @@ public class TestObjectFactory {
         orderLineItem.setOrderId(orderId);
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
+    }
+
+    public static OrderLineItem createOrderLineItem(long menuId, int quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
+    public static Menu createMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(BigDecimal.valueOf(price));
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
+    }
+
+    public static MenuProduct createMenuProduct(long menuId, long productId, int quantity) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setMenuId(menuId);
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
     }
 }
