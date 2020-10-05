@@ -35,7 +35,7 @@ class TableServiceTest {
     @DisplayName("테이블 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -45,8 +45,8 @@ class TableServiceTest {
     @DisplayName("테이블 목록 조회 기능 테스트")
     @Test
     void list() {
-        tableService.create(TestObjectFactory.creatOrderTable());
-        tableService.create(TestObjectFactory.creatOrderTable());
+        tableService.create(TestObjectFactory.creatOrderTableDto());
+        tableService.create(TestObjectFactory.creatOrderTableDto());
 
         List<OrderTable> tables = tableService.list();
 
@@ -56,7 +56,7 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태를 변경하는 기능 테스트")
     @Test
     void changeEmpty() {
-        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTableDto());
         OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTableDto(false);
 
         OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable);
@@ -79,12 +79,12 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태 변경 - 단체 테이블에 등록되어 있는 경우 예외 처리")
     @Test
     void changeEmptyWithRegisteredGroupTable() {
-        OrderTable savedOrderTable1 = tableService.create(TestObjectFactory.creatOrderTable());
-        OrderTable savedOrderTable2 = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = tableService.create(TestObjectFactory.creatOrderTableDto());
+        OrderTable savedOrderTable2 = tableService.create(TestObjectFactory.creatOrderTableDto());
         OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTableDto(false);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
-        tableGroupService.create(TestObjectFactory.createTableGroup(orderTables));
+        tableGroupService.create(TestObjectFactory.createTableGroupDto(orderTables));
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), changeEmptyOrderTableDto))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -94,7 +94,7 @@ class TableServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void changeEmptyWhenCooking(String orderStatus) {
-        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTableDto());
 
         Order order = TestObjectFactory.createOrder(savedOrderTable.getId(), orderStatus, new ArrayList<>());
         orderDao.save(order);
@@ -108,7 +108,7 @@ class TableServiceTest {
     @DisplayName("테이블에 방문한 손님 수를 변경하는 메서드 테스트")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -124,7 +124,7 @@ class TableServiceTest {
     @DisplayName("테이블에 방문한 손님 수를 변경 - 빈 테이블인 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithEmptyTable() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setEmpty(true);
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -137,7 +137,7 @@ class TableServiceTest {
     @DisplayName("테이블에 방문한 손님 수를 변경 - 입력하려는 숫자가 0보다 작은 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithLessZeroGuests() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
 

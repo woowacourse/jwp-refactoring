@@ -26,7 +26,7 @@ class ProductServiceTest {
     @ParameterizedTest
     @CsvSource({"강정치킨, 17000", "양념치킨, 0"})
     void create(String name, int price) {
-        Product product = TestObjectFactory.createProduct(name, price);
+        Product product = TestObjectFactory.createProductDto(name, price);
 
         Product savedProduct = productService.create(product);
         assertAll(
@@ -51,7 +51,7 @@ class ProductServiceTest {
     @Test
     void createWhenIllegalPrice2() {
         String name = "강정치킨";
-        Product product = TestObjectFactory.createProduct(name, -1);
+        Product product = TestObjectFactory.createProductDto(name, -1);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -59,8 +59,8 @@ class ProductServiceTest {
 
     @Test
     void name() {
-        productService.create(TestObjectFactory.createProduct("강정치킨", 17000));
-        productService.create(TestObjectFactory.createProduct("앙념치킨", 17000));
+        productService.create(TestObjectFactory.createProductDto("강정치킨", 17000));
+        productService.create(TestObjectFactory.createProductDto("앙념치킨", 17000));
 
         List<Product> list = productService.list();
 

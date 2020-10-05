@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TestObjectFactory {
-    public static OrderTable creatOrderTable() {
+    public static OrderTable creatOrderTableDto() {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(0);
         orderTable.setEmpty(true);
@@ -42,21 +42,21 @@ public class TestObjectFactory {
         return order;
     }
 
-    public static Order createOrderRequest(Long orderTableId, List<OrderLineItem> items) {
+    public static Order createOrderDto(Long orderTableId, List<OrderLineItem> items) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
         order.setOrderLineItems(items);
         return order;
     }
 
-    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
+    public static TableGroup createTableGroupDto(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroup;
     }
 
-    public static Product createProduct(String name, int price) {
+    public static Product createProductDto(String name, int price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
@@ -86,7 +86,7 @@ public class TestObjectFactory {
         return orderLineItem;
     }
 
-    public static Menu createMenu(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu createMenuDto(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));
@@ -110,9 +110,15 @@ public class TestObjectFactory {
         return menuProduct;
     }
 
-    public static MenuGroup createMenuGroup(String name) {
+    public static MenuGroup createMenuGroupDto(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
+    }
+
+    public static Order createChangeOrderStatusDto(String orderStatus) {
+        Order order = new Order();
+        order.setOrderStatus(orderStatus);
+        return order;
     }
 }

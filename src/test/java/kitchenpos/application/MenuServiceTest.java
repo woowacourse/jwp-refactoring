@@ -77,20 +77,20 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Menu createMenuToSave(String menuGroupName, String productName, int productPrice) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroup(menuGroupName));
-        Product savedProduct = productDao.save(TestObjectFactory.createProduct(productName, productPrice));
-
-        List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
-        return TestObjectFactory.createMenu(productName + "+" + productName, productPrice * 2, savedMenuGroup.getId(), menuProducts);
-    }
-
     @Test
     void name() {
-        menuService.create(createMenuToSave("추천메뉴", "양념", 12000));
+        menuService.create(createMenuToSave("추천메뉴", "양념", 13000));
         menuService.create(createMenuToSave("추천메뉴", "후라이드", 12000));
 
         assertThat(menuService.list()).hasSize(2);
 
+    }
+
+    private Menu createMenuToSave(String menuGroupName, String productName, int productPrice) {
+        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(menuGroupName));
+        Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
+
+        List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
+        return TestObjectFactory.createMenuDto(productName + "+" + productName, productPrice * 2, savedMenuGroup.getId(), menuProducts);
     }
 }

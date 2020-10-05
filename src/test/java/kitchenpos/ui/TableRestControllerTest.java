@@ -37,7 +37,7 @@ class TableRestControllerTest {
     @DisplayName("테이블 생성 요청 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setId(1L);
 
         given(tableService.create(any())).willReturn(orderTable);
@@ -75,7 +75,7 @@ class TableRestControllerTest {
     @DisplayName("테이블의 setEmpty를 변경 요청 테스트")
     @Test
     void changeEmpty() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setId(1L);
         orderTable.setEmpty(false);
 
@@ -95,7 +95,7 @@ class TableRestControllerTest {
     @DisplayName("고객 수 변경 요청 테스트")
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
         orderTable.setId(1L);
         orderTable.setNumberOfGuests(4);
 

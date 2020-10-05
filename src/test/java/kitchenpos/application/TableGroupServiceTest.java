@@ -37,11 +37,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
@@ -54,10 +54,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 그룹을 맺으려는 테이블의 수가 2보다 작은 경우 예외 처리")
     @Test
     void createWithOrderTablesLessTwo() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -66,11 +66,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 존재하지 않는 테이블의 아이디를 입력받은 경우 예외처리")
     @Test
     void createWithNotFoundOrderTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -79,15 +79,15 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 이미 그룹핑된 테이블인 경우 예외처리")
     @Test
     void createWithGroupedTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         tableGroupService.create(tableGroup);
 
-        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables2 = Arrays.asList(orderTable2, orderTable3);
-        TableGroup tableGroupContainsGroupedTable = TestObjectFactory.createTableGroup(orderTables2);
+        TableGroup tableGroupContainsGroupedTable = TestObjectFactory.createTableGroupDto(orderTables2);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsGroupedTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -96,11 +96,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해지하는 메서드 테스트")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         tableGroupService.ungroup(savedTableGroup.getId());
@@ -115,11 +115,11 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void ungroupWhenCookingOrMeal(String orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         Order order = TestObjectFactory.createOrder(orderTable1.getId(), orderStatus, new ArrayList<>());

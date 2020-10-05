@@ -4,6 +4,7 @@ import kitchenpos.TestObjectFactory;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,7 @@ class OrderRestControllerTest {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(TestObjectFactory.createOrderLineItem(1L, 10L, 1L));
 
-        Order order = TestObjectFactory.createOrder(1L, orderLineItems);
+        Order order = TestObjectFactory.createOrder(1L, OrderStatus.COOKING.name(), orderLineItems);
         order.setId(10L);
 
         given(orderService.create(any())).willReturn(order);
@@ -71,8 +72,8 @@ class OrderRestControllerTest {
         orderLineItems.add(TestObjectFactory.createOrderLineItem(1L, 10L, 1L));
 
         List<Order> orders = new ArrayList<>();
-        orders.add(TestObjectFactory.createOrder(1L, orderLineItems));
-        orders.add(TestObjectFactory.createOrder(2L, orderLineItems));
+        orders.add(TestObjectFactory.createOrder(1L, OrderStatus.COOKING.name(), orderLineItems));
+        orders.add(TestObjectFactory.createOrder(2L, OrderStatus.COOKING.name(), orderLineItems));
 
         given(orderService.list()).willReturn(orders);
 

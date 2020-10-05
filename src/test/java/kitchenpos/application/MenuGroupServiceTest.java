@@ -21,7 +21,7 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         String name = "추천메뉴";
-        MenuGroup savedMenuGroup = menuGroupService.create(TestObjectFactory.createMenuGroup(name));
+        MenuGroup savedMenuGroup = menuGroupService.create(TestObjectFactory.createMenuGroupDto(name));
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
@@ -32,8 +32,8 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 목록 조희 기능 테스트")
     @Test
     void list() {
-        menuGroupService.create(TestObjectFactory.createMenuGroup("1"));
-        menuGroupService.create(TestObjectFactory.createMenuGroup("2"));
+        menuGroupService.create(TestObjectFactory.createMenuGroupDto("1"));
+        menuGroupService.create(TestObjectFactory.createMenuGroupDto("2"));
 
         assertThat(menuGroupService.list()).hasSize(2);
     }

@@ -38,7 +38,7 @@ class MenuRestControllerTest {
     void create() throws Exception {
         List<MenuProduct> menuProducts = new ArrayList<>();
         menuProducts.add(TestObjectFactory.createMenuProduct(1L, 1L, 2));
-        Menu menu = TestObjectFactory.createMenu("후라이드+후라이드", 19000, 1L, menuProducts);
+        Menu menu = TestObjectFactory.createMenuDto("후라이드+후라이드", 19000, 1L, menuProducts);
         menu.setId(1L);
 
         given(menuService.create(any())).willReturn(menu);
@@ -72,8 +72,8 @@ class MenuRestControllerTest {
     @Test
     void list() throws Exception {
         List<Menu> menus = new ArrayList<>();
-        menus.add(TestObjectFactory.createMenu("name", 1, 1, new ArrayList<>()));
-        menus.add(TestObjectFactory.createMenu("name", 1, 1, new ArrayList<>()));
+        menus.add(TestObjectFactory.createMenuDto("name", 1, 1, new ArrayList<>()));
+        menus.add(TestObjectFactory.createMenuDto("name", 1, 1, new ArrayList<>()));
         given(menuService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menus"))

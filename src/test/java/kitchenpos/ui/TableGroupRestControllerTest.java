@@ -36,13 +36,13 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable1 = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable1 = TestObjectFactory.creatOrderTableDto();
         orderTable1.setId(1L);
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTable();
+        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
         orderTable2.setId(2L);
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroup(orderTables);
+        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         tableGroup.setId(1L);
 
         given(tableGroupService.create(any())).willReturn(tableGroup);
