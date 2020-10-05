@@ -22,11 +22,6 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    compileOnly 'org.projectlombok:lombok:1.18.12'
-    annotationProcessor 'org.projectlombok:lombok:1.18.12'
-    testCompileOnly 'org.projectlombok:lombok:1.18.12'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.12'
-
     implementation 'io.rest-assured:rest-assured-common:3.3.0'
     testImplementation 'io.rest-assured:spring-mock-mvc:3.3.0'
 }
