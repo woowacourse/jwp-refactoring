@@ -6,7 +6,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class TestObjectUtils {
 
@@ -52,5 +54,19 @@ public class TestObjectUtils {
         product.setPrice(price);
 
         return product;
+    }
+
+    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+
+        return tableGroup;
+    }
+
+    public static OrderTable createOrderTable(Long id) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+
+        return orderTable;
     }
 }
