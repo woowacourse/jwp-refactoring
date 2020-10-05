@@ -2,6 +2,7 @@ package kitchenpos.integrationtest;
 
 import static io.restassured.RestAssured.*;
 import static kitchenpos.integrationtest.step.OrderIntegrationTestStep.*;
+import static org.hamcrest.Matchers.*;
 
 import java.util.Map;
 
@@ -42,5 +43,17 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.post("/api/orders")
 			.then().log().all()
 			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
+
+	@DisplayName("주문의 목록을 조회할 수 있다.")
+	@Test
+	void list() {
+		given().log().all()
+			.accept(ContentType.JSON)
+			.when()
+			.get("/api/orders")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.body(".", hasSize(2));
 	}
 }
