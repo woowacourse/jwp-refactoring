@@ -121,10 +121,7 @@ class OrderRestControllerTest {
 
     @DisplayName("주문 상태 변경")
     @ParameterizedTest
-    @EnumSource(
-        value = OrderStatus.class,
-        names = {"MEAL", "COMPLETION"}
-    )
+    @EnumSource(value = OrderStatus.class, names = {"MEAL", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) throws Exception {
         Order order = new Order();
         order.setId(ORDER_ID);

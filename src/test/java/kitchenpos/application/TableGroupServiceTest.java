@@ -27,9 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableGroupServiceTest extends KitchenPosServiceTest {
 
     @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
     private OrderTableDao orderTableDao;
 
     @Autowired
@@ -153,11 +150,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("TableGroup 해제 - 성공, Table의 Order 상태가 Cooking/Meal이 아닌 경우")
     @ParameterizedTest
-    @EnumSource(
-        value = OrderStatus.class,
-        names = {"COOKING", "MEAL"},
-        mode = Mode.EXCLUDE
-    )
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"}, mode = Mode.EXCLUDE)
     void ungroup_OrderOfTableNotCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 
@@ -184,10 +177,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("TableGroup 해제 - 예외 발생, Table의 Order 상태가 Cooking/Meal인 경우")
     @ParameterizedTest
-    @EnumSource(
-        value = OrderStatus.class,
-        names = {"COOKING", "MEAL"}
-    )
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroup_OrderOfTableCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 

@@ -26,9 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class TableServiceTest extends KitchenPosServiceTest {
 
     @Autowired
-    private TableService tableService;
-
-    @Autowired
     private OrderDao orderDao;
 
     @DisplayName("OrderTable 생성 - 성공")
@@ -160,11 +157,7 @@ class TableServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("Empty 상태 변경 - 성공, Order 상태가 Cooking/Meal이 아닌 경우")
     @ParameterizedTest
-    @EnumSource(
-        value = OrderStatus.class,
-        names = {"COOKING", "MEAL"},
-        mode = Mode.EXCLUDE
-    )
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"}, mode = Mode.EXCLUDE)
     void changeEmpty_OrderNotCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
@@ -188,10 +181,7 @@ class TableServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("Empty 상태 변경 - 예외 발생, Order 상태가 Cooking/Meal인 경우")
     @ParameterizedTest
-    @EnumSource(
-        value = OrderStatus.class,
-        names = {"COOKING", "MEAL"}
-    )
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmpty_OrderCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);

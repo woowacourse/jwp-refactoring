@@ -8,12 +8,8 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class MenuGroupServiceTest extends KitchenPosServiceTest {
-
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @DisplayName("MenuGroup 생성 - 성공")
     @Test

@@ -15,12 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class ProductServiceTest extends KitchenPosServiceTest {
-
-    @Autowired
-    private ProductService productService;
 
     @DisplayName("Product 생성 - 성공, 올바른 Price일 때")
     @ParameterizedTest

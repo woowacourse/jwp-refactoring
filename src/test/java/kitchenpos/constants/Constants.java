@@ -11,7 +11,6 @@ public class Constants {
     public static final String TEST_MENU_GROUP_NAME = "테스트그룹메뉴";
 
     public static final Long TEST_WRONG_MENU_ID = -1L;
-    public static final Long TEST_MENU_ID = 1L;
     public static final String TEST_MENU_NAME = "테스트메뉴";
     public static final BigDecimal TEST_MENU_PRICE = BigDecimal.valueOf(1_000);
 
