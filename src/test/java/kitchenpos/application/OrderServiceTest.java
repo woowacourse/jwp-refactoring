@@ -52,8 +52,8 @@ class OrderServiceTest {
 
         List<OrderLineItem> savedOrderLineItems = savedOrder.getOrderLineItems();
         assertAll(
-                () -> assertThat(savedOrder.getId()).isNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name()),
+                () -> assertThat(savedOrder.getId()).isNotNull(),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(savedOrderLineItems.get(0).getOrderId()).isEqualTo(savedOrder.getId())
         );
     }

@@ -83,7 +83,6 @@ class MenuServiceTest {
         menuService.create(createMenuToSave("추천메뉴", "후라이드", 12000));
 
         assertThat(menuService.list()).hasSize(2);
-
     }
 
     private Menu createMenuToSave(String menuGroupName, String productName, int productPrice) {
