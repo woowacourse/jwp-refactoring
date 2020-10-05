@@ -4,6 +4,7 @@ import static io.restassured.RestAssured.*;
 import static kitchenpos.integrationtest.step.OrderIntegrationTestStep.*;
 import static org.hamcrest.Matchers.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.jupiter.api.DisplayName;
@@ -55,5 +56,23 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
 			.body(".", hasSize(2));
+	}
+
+	@DisplayName("주문 상태를 변경할 수 있다.")
+	@Test
+	void changeOrderStatus() {
+		Map<String, Object> requestBody = new HashMap<>();
+		requestBody.put("orderStatus", "MEAL");
+
+		given().log().all()
+			.pathParam("orderId", 1)
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.put("/api/orders/{orderId}/order-status")
+			.then().log().all()
+			.statusCode(HttpStatus.OK.value())
+			.body("orderStatus", equalTo("MEAL"));
 	}
 }
