@@ -60,7 +60,7 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.get("/api/orders")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.body(".", hasSize(2));
+			.body(".", hasSize(3));
 	}
 
 	@DisplayName("주문 상태를 변경할 수 있다.")
