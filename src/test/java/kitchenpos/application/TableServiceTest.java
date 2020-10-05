@@ -46,7 +46,6 @@ class TableServiceTest {
     @Test
     void listTest() {
         final OrderTable oneTable = TestFixture.getOrderTableWithEmpty();
-
         final OrderTable twoTable = TestFixture.getOrderTableWithEmpty();
 
         when(orderTableDao.findAll()).thenReturn(Arrays.asList(oneTable, twoTable));
@@ -59,14 +58,13 @@ class TableServiceTest {
     @DisplayName("changeEmpty: 테이블의 비어있는 상태를 변경하는 테스트")
     @Test
     void changeEmptyTest() {
-        final OrderTable orderTable = TestFixture.getOrderTableWithNotEmpty();
+        final OrderTable orderTable = TestFixture.getOrderTableWithEmpty();
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(false);
         when(orderTableDao.save(any())).thenReturn(orderTable);
 
-        final OrderTable expected = new OrderTable();
-        expected.setEmpty(false);
+        final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
         final OrderTable actual = tableService.changeEmpty(1L, expected);
 
         assertThat(actual.isEmpty()).isEqualTo(false);

@@ -52,8 +52,6 @@ class OrderServiceTest {
         when(orderLineItemDao.save(any())).thenReturn(orderLineItem);
 
         final Order actual = orderService.create(order);
-        System.out.println(actual.getOrderLineItems());
-        System.out.println(actual.getOrderTableId());
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
@@ -61,7 +59,21 @@ class OrderServiceTest {
         );
     }
 
-    @DisplayName("전체 주문을 확인하는 테스트")
+    @DisplayName("create: 주문 등록 시 테이블이 비어있는 경우 예외처리")
+    @Test
+    void createTestByOrderTableEmpty() {
+        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
+        final Order order = TestFixture.getOrderWithCooking(orderLineItem, 1L);
+        final OrderTable orderTable = TestFixture.getOrderTableWithEmpty();
+
+        when(menuDao.countByIdIn(anyList())).thenReturn(1L);
+        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
+
+        assertThatThrownBy(() -> orderService.create(order))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("list: 전체 주문을 확인하는 테스트")
     @Test
     void listTest() {
         final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
@@ -89,5 +101,19 @@ class OrderServiceTest {
         final Order order = orderService.changeOrderStatus(1L, orderWithCompletion);
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+    }
+
+    @DisplayName("changeOrderStatus: 주문 상태가 Completion일 경우 예외처리")
+    @Test
+    void changeOrderStatusTestByCompletionOfOrderState() {
+        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
+        final Order orderWithCooking = TestFixture.getOrderWithCompletion(orderLineItem);
+        final Order orderWithCompletion = TestFixture.getOrderWithCompletion(orderLineItem);
+
+        when(orderDao.findById(anyLong())).thenReturn(Optional.of(orderWithCooking));
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, orderWithCompletion))
+                .isInstanceOf(IllegalArgumentException.class);
+
     }
 }

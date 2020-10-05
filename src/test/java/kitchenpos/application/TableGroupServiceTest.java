@@ -54,8 +54,9 @@ class TableGroupServiceTest {
         final TableGroup tableGroup = TestFixture.getTableGroup(orderTable1, orderTable2);
 
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Arrays.asList(orderTable1, orderTable2));
-        when(tableGroupDao.save(any())).thenReturn(tableGroup);
-        tableGroupService.create(tableGroup);
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     // TODO: 2020/10/05 이런 경우에는 테스트를 어떻게 하는지 물어보기

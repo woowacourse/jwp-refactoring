@@ -36,7 +36,7 @@ class TableGroupRestControllerTest extends ControllerTest {
         create("/api/table-groups", tableGroup)
                 .andExpect(header().exists("Location"))
                 .andExpect(jsonPath("$.id").value(2))
-                .andExpect(jsonPath("$.orderTables[0].id").value(11));
+                .andExpect(jsonPath("$.orderTables[0].id").value(10));
     }
 
     @DisplayName("delete: 단체 지정 해제 테스트")

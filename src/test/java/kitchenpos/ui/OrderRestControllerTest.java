@@ -30,7 +30,7 @@ class OrderRestControllerTest extends ControllerTest {
 
         create("/api/orders", order)
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.orderTableId").value(15));
+                .andExpect(jsonPath("$.orderTableId").value(14));
     }
 
     @DisplayName("전체 주문을 확인하는 테스트")

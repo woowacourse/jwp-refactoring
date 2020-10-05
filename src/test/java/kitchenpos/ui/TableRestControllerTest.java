@@ -46,15 +46,10 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("changeNumberOfGuests: 손님 수를 변경하는 테스")
     @Test
     void changeNumberOfGuestsTest() throws Exception {
-        final OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(IllegalArgumentException::new);
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
-
         final OrderTable expected = new OrderTable();
         expected.setNumberOfGuests(5);
 
-        update("/api/tables/1/number-of-guests", expected)
+        update("/api/tables/7/number-of-guests", expected)
                 .andExpect(jsonPath("$.numberOfGuests").value(5));
     }
 }
