@@ -9,12 +9,18 @@ import static org.hamcrest.Matchers.hasSize;
 
 import java.util.HashMap;
 import java.util.Map;
+import kitchenpos.application.TableService;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class TableRestControllerIntegrationTest extends IntegrationTest {
+
+    @Autowired
+    private TableService tableService;
 
     @DisplayName("테이블 생성")
     @Test
@@ -57,7 +63,10 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
     @DisplayName("빈(Empty) 테이블 수정")
     @Test
     void changeEmpty() {
-        int orderTableId = 1;
+        OrderTable orderTable = tableService.create(new OrderTable());
+        orderTable.setEmpty(true);
+        OrderTable changedOrderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
+
         Map<String, Object> data = new HashMap<>();
         data.put("empty", false);
 
@@ -66,7 +75,7 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
             contentType(MediaType.APPLICATION_JSON_VALUE).
             body(data).
         when().
-            put("/api/tables/" + orderTableId + "/empty").
+            put("/api/tables/" + changedOrderTable.getId() + "/empty").
         then().
             assertThat().
             statusCode(HttpStatus.OK.value()).
@@ -80,7 +89,8 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
     @DisplayName("테이블 게스트 수 수정")
     @Test
     void changeNumberOfGuests() {
-        int orderTableId = 2;
+        OrderTable orderTable = tableService.create(new OrderTable());
+
         Map<String, Object> data = new HashMap<>();
         data.put("numberOfGuests", 4);
 
@@ -89,11 +99,11 @@ public class TableRestControllerIntegrationTest extends IntegrationTest {
             contentType(MediaType.APPLICATION_JSON_VALUE).
             body(data).
         when().
-            put("/api/tables/" + orderTableId + "/number-of-guests").
+            put("/api/tables/" + orderTable.getId() + "/number-of-guests").
         then().
             assertThat().
             statusCode(HttpStatus.OK.value()).
-            body("id", any(Integer.class)).
+            body("id", equalTo(Math.toIntExact(orderTable.getId()))).
             body("tableGroupId", equalTo(null)).
             body("numberOfGuests", equalTo(4)).
             body("empty", equalTo(false));

@@ -63,9 +63,10 @@ public class TestObjectUtils {
         return tableGroup;
     }
 
-    public static OrderTable createOrderTable(Long id) {
+    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
 
         return orderTable;
     }

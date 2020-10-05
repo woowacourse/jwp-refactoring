@@ -1,19 +1,32 @@
 package kitchenpos.integration;
 
 import static io.restassured.RestAssured.given;
+import static kitchenpos.utils.TestObjectUtils.createTableGroup;
 import static org.hamcrest.Matchers.any;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import kitchenpos.application.TableGroupService;
+import kitchenpos.application.TableService;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 public class TableGroupRestControllerIntegrationTest extends IntegrationTest {
+
+    @Autowired
+    private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableService tableService;
 
     @DisplayName("테이블 그룹 생성")
     @Test
@@ -21,10 +34,10 @@ public class TableGroupRestControllerIntegrationTest extends IntegrationTest {
         Map<String, Object> data = new HashMap<>();
         data.put("orderTables", Arrays.asList(
             new HashMap<String, String>() {{
-                put("id", "3");
+                put("id", "1");
             }},
             new HashMap<String, String>() {{
-                put("id", "4");
+                put("id", "2");
             }})
         );
 
@@ -48,11 +61,12 @@ public class TableGroupRestControllerIntegrationTest extends IntegrationTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        int tableGroupId = 1;
+        List<OrderTable> orderTables = tableService.list();
+        TableGroup tableGroup = tableGroupService.create(createTableGroup(orderTables));
         // @formatter:off
         given().
         when().
-            delete("/api/table-groups/" + tableGroupId).
+            delete("/api/table-groups/" + tableGroup.getId()).
         then().
             assertThat().
             statusCode(HttpStatus.NO_CONTENT.value());
