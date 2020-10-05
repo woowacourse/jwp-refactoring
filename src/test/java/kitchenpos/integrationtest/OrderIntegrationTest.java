@@ -28,4 +28,19 @@ public class OrderIntegrationTest extends IntegrationTest {
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value());
 	}
+
+	@DisplayName("빈 테이블에는 주문을 등록할 수 없다.")
+	@Test
+	void create_WhenAddToEmptyTable() {
+		Map<String, Object> requestBody = createOrderToEmptyTable();
+
+		given().log().all()
+			.body(requestBody)
+			.contentType(ContentType.JSON)
+			.accept(ContentType.JSON)
+			.when()
+			.post("/api/orders")
+			.then().log().all()
+			.statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+	}
 }
