@@ -9,12 +9,9 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
-@Sql({"/truncate.sql", "/init-data.sql"})
-public class MenuGroupServiceTest {
+
+public class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
