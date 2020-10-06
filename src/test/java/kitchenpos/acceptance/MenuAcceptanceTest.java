@@ -52,11 +52,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThat(response.getMenuGroupId()).isEqualTo(세트_메뉴.getId());
         assertThat(response.getName()).isEqualTo("후라이드 세트");
 
-        List<MenuProduct> responseMenuProducts = response.getMenuProducts();
-
-        for (Product product : products) {
-            assertThat(doesMenuContainProduct(responseMenuProducts, product)).isTrue();
-        }
+        assertThatMenuContainsProducts(response, products);
     }
 
     private Menu createMenu(String name, Long price, Long menuGroupId) {
@@ -97,6 +93,14 @@ class MenuAcceptanceTest extends AcceptanceTest {
             .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(Menu.class);
+    }
+
+    private void assertThatMenuContainsProducts(Menu menu, List<Product> products) {
+        List<MenuProduct> responseMenuProducts = menu.getMenuProducts();
+
+        for (Product product : products) {
+            assertThat(doesMenuContainProduct(responseMenuProducts, product)).isTrue();
+        }
     }
 
     private boolean doesMenuContainProduct(List<MenuProduct> menuProducts, Product product) {
