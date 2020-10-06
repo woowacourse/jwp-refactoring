@@ -67,7 +67,7 @@ public class OrderRestControllerIntegrationTest extends IntegrationTest {
     void list() {
         OrderTable orderTable = tableService.create(new OrderTable());
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        orderService.create(createOrder(orderTable.getId(), orderLineItems));
+        orderService.create(createOrder(orderTable.getId(), null, orderLineItems));
 
         // @formatter:off
         given().
@@ -85,7 +85,7 @@ public class OrderRestControllerIntegrationTest extends IntegrationTest {
     void changeOrderStatus() {
         OrderTable orderTable = tableService.create(new OrderTable());
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        Order order = orderService.create(createOrder(orderTable.getId(), orderLineItems));
+        Order order = orderService.create(createOrder(orderTable.getId(), null, orderLineItems));
 
         Map<String, String> data = new HashMap<>();
         data.put("orderStatus", "MEAL");

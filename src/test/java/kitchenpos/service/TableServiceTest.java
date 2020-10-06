@@ -107,7 +107,7 @@ public class TableServiceTest extends ServiceTest {
         OrderTable orderTable = createOrderTable(1, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        orderService.create(createOrder(savedOrderTable.getId(), orderLineItems));
+        orderService.create(createOrder(savedOrderTable.getId(), null, orderLineItems));
         savedOrderTable.setEmpty(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable))
@@ -120,7 +120,7 @@ public class TableServiceTest extends ServiceTest {
         OrderTable orderTable = createOrderTable(1, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        Order order = orderService.create(createOrder(savedOrderTable.getId(), orderLineItems));
+        Order order = orderService.create(createOrder(savedOrderTable.getId(), null, orderLineItems));
         savedOrderTable.setEmpty(true);
         order.setOrderStatus(MEAL.name());
 

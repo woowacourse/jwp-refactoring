@@ -49,7 +49,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 생성 - 성공")
     @Test
     void create_SuccessToCreate() {
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
 
         Order savedOrder = orderService.create(order);
 
@@ -65,7 +65,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 생성 - 예외, 주문 항목이 null인 경우")
     @Test
     void create_OrderLineItemsIsNull_ThrownException() {
-        Order order = createOrder(notEmptyOrderTable.getId(), null);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, null);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -74,7 +74,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 생성 - 예외, 주문 항목이 빈 경우")
     @Test
     void create_OrderLineItemsIsEmpty_ThrownException() {
-        Order order = createOrder(notEmptyOrderTable.getId(), Collections.emptyList());
+        Order order = createOrder(notEmptyOrderTable.getId(), null, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -85,7 +85,7 @@ public class OrderServiceTest extends ServiceTest {
     void create_NotFoundOrderLineItemMenu_ThrownException() {
         menuId = NOT_EXIST_VALUE;
         orderLineItems = Collections.singletonList(createOrderLineItem(menuId, quantity));
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -95,7 +95,7 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void create_NotFoundOrderTable_ThrownException() {
         orderLineItems = Collections.singletonList(createOrderLineItem(menuId, quantity));
-        Order order = createOrder(NOT_EXIST_VALUE, orderLineItems);
+        Order order = createOrder(NOT_EXIST_VALUE, null, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -105,7 +105,7 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void create_OrderTableIsEmpty_ThrownException() {
         orderLineItems = Collections.singletonList(createOrderLineItem(menuId, quantity));
-        Order order = createOrder(emptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(emptyOrderTable.getId(), null, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -114,7 +114,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 조회 - 성공")
     @Test
     void list_SuccessToFindAll() {
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
         orderService.create(order);
         List<Order> orders = orderService.list();
 
@@ -124,7 +124,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태 변경 - 성공")
     @Test
     void changeOrderStatus_SuccessToChange() {
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
         Order savedOrder = orderService.create(order);
         savedOrder.setOrderStatus(MEAL.name());
 
@@ -142,7 +142,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태 변경 - 예외, 주문을 찾을 수 없는 경우")
     @Test
     void changeOrderStatus_NotFoundOrder_ThrownException() {
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
         Order savedOrder = orderService.create(order);
         savedOrder.setOrderStatus(MEAL.name());
 
@@ -153,7 +153,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태 변경 - 예외, 주문 상태가 완료인 경우")
     @Test
     void changeOrderStatus_OrderStatusIsCompletion_ThrownException() {
-        Order order = createOrder(notEmptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(notEmptyOrderTable.getId(), null, orderLineItems);
         Order savedOrder = orderService.create(order);
         savedOrder.setOrderStatus(COMPLETION.name());
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), savedOrder);

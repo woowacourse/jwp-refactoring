@@ -41,9 +41,10 @@ public class TestObjectUtils {
         return menuProduct;
     }
 
-    public static Order createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public static Order createOrder(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
         order.setOrderLineItems(orderLineItems);
 
         return order;

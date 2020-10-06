@@ -133,7 +133,7 @@ public class TableGroupServiceTest extends ServiceTest {
         TableGroup tableGroup = createTableGroup(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        Order order = createOrder(emptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(emptyOrderTable.getId(),null,  orderLineItems);
         orderService.create(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
@@ -147,7 +147,7 @@ public class TableGroupServiceTest extends ServiceTest {
         TableGroup tableGroup = createTableGroup(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         List<OrderLineItem> orderLineItems = Collections.singletonList(createOrderLineItem(1L, 1L));
-        Order order = createOrder(emptyOrderTable.getId(), orderLineItems);
+        Order order = createOrder(emptyOrderTable.getId(), null, orderLineItems);
         Order savedOrder = orderService.create(order);
         savedOrder.setOrderStatus(MEAL.name());
         orderService.changeOrderStatus(savedOrder.getId(), savedOrder);
