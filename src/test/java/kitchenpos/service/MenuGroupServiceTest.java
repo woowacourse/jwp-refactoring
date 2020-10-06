@@ -1,5 +1,6 @@
 package kitchenpos.service;
 
+import static kitchenpos.utils.TestObjectUtils.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -19,8 +20,7 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹 생성")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
+        MenuGroup menuGroup = createMenuGroup("추천 메뉴");
 
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 

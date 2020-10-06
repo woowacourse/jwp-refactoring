@@ -3,6 +3,7 @@ package kitchenpos.utils;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -22,6 +23,13 @@ public class TestObjectUtils {
         menu.setMenuProducts(menuProducts);
 
         return menu;
+    }
+
+    public static MenuGroup createMenuGroup(String name) {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(name);
+
+        return menuGroup;
     }
 
     public static MenuProduct createMenuProduct(Long productId, long quantity) {
