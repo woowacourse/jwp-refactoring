@@ -17,17 +17,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 class MenuAcceptanceTest extends AcceptanceTest {
-    private ProductAcceptanceTest productAcceptanceTest = new ProductAcceptanceTest();
     private List<Product> products;
 
     @BeforeEach
     void setUp() {
         products = new ArrayList<>();
 
-        products.add(productAcceptanceTest.createProduct("후라이드 치킨", 9_000));
-        products.add(productAcceptanceTest.createProduct("감자튀김", 5_500));
-        products.add(productAcceptanceTest.createProduct("사워 크림 소스", 500));
-        products.add(productAcceptanceTest.createProduct("맥주 500cc", 4_000));
+        products.add(createProduct("후라이드 치킨", 9_000));
+        products.add(createProduct("감자튀김", 5_500));
+        products.add(createProduct("사워 크림 소스", 500));
+        products.add(createProduct("맥주 500cc", 4_000));
     }
 
     /**
@@ -43,7 +42,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 관리한다.")
     void manageMenu() {
         // 메뉴 등록
-        Menu response = createMenu();
+        //Todo: 의미있는 메뉴 그룹 ID로 바꿀것
+        Menu response = createMenu("후라이드 세트", 16_000L, 1L);
 
         assertThat(response.getId()).isNotNull();
         assertThat(response.getMenuGroupId()).isEqualTo(1L);
@@ -52,16 +52,16 @@ class MenuAcceptanceTest extends AcceptanceTest {
         List<MenuProduct> responseMenuProducts = response.getMenuProducts();
 
         for (Product product : products) {
-            assertThat(doesMenuProductsContain(responseMenuProducts, product)).isTrue();
+            assertThat(doesMenuContainProduct(responseMenuProducts, product)).isTrue();
         }
     }
 
-    private Menu createMenu() {
+    private Menu createMenu(String name, Long price, Long menuGroupId) {
         Map<String, Object> body = new HashMap<>();
 
-        body.put("name", "후라이드 세트");
-        body.put("price", 16_000);
-        body.put("menuGroupId", 1);  //Todo: 의미있는 메뉴 그룹 ID로 바꿀것
+        body.put("name", name);
+        body.put("price", price);
+        body.put("menuGroupId", menuGroupId);
 
         List<Map> menuProducts = makeMenuProducts(products);
         body.put("menuProducts", menuProducts);
@@ -96,7 +96,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 .extract().as(Menu.class);
     }
 
-    private boolean doesMenuProductsContain(List<MenuProduct> menuProducts, Product product) {
+    private boolean doesMenuContainProduct(List<MenuProduct> menuProducts, Product product) {
         return menuProducts.stream()
             .anyMatch(menuProduct -> menuProduct.getProductId()
                 .equals(product.getId()));
