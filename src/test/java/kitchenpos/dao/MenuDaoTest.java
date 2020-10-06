@@ -33,7 +33,7 @@ public class MenuDaoTest extends DaoTest {
         menuName = "후라이드+후라이드";
         menuPrice = BigDecimal.valueOf(19000L);
         menuGroupId = 1L;
-        menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+        menuProducts = Collections.singletonList(createMenuProduct(1L, 1L, 2L));
     }
 
     @DisplayName("메뉴 save - 성공")
