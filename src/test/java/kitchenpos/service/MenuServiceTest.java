@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,13 +22,23 @@ public class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuService menuService;
 
+    private String menuName;
+    private BigDecimal menuPrice;
+    private Long menuGroupId;
+    private List<MenuProduct> menuProducts;
+
+
+    @BeforeEach
+    void setUp() {
+        menuName = "후라이드+후라이드";
+        menuPrice = BigDecimal.valueOf(19000L);
+        menuGroupId = 1L;
+        menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+    }
+
     @DisplayName("메뉴 생성 - 성공")
     @Test
     void create_SuccessToCreate() {
-        String menuName = "후라이드+후라이드";
-        BigDecimal menuPrice = BigDecimal.valueOf(19000L);
-        Long menuGroupId = 1L;
-        List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 
         Menu savedMenu = menuService.create(menu);
@@ -44,24 +55,17 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 생성 - 예외, 메뉴 가격이 null인 경우")
     @Test
     void create_IfMenuPriceIsNull_ThrownException() {
-        String menuName = "후라이드+후라이드";
-        BigDecimal menuPrice = null;
-        Long menuGroupId = 1L;
-        List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+        menuPrice = null;
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 
-        assertThatThrownBy(() -> {
-            menuService.create(menu);
-        }).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menu))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 - 예외, 메뉴 가격이 음수인 경우")
     @Test
     void create_IfMenuPriceIsNegative_ThrownException() {
-        String menuName = "후라이드+후라이드";
-        BigDecimal menuPrice = BigDecimal.valueOf(-10000L);
-        Long menuGroupId = 1L;
-        List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+        menuPrice = BigDecimal.valueOf(-10000L);
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -71,10 +75,7 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 생성 - 예외, 메뉴 그룹이 존재하지 않는 경우")
     @Test
     void create_IfMenuGroupIsNotExist_ThrownException() {
-        String menuName = "후라이드+후라이드";
-        BigDecimal menuPrice = BigDecimal.valueOf(19000L);
-        Long menuGroupId = Long.MAX_VALUE;
-        List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+        menuGroupId = Long.MAX_VALUE;
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
@@ -84,10 +85,7 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 생성 - 예외, 메뉴 가격이 메뉴 상품의 총 합보다 큰 경우")
     @Test
     void create_IfMenuPriceIsGreaterThanAllMenuProduct_ThrownException() {
-        String menuName = "후라이드+후라이드";
-        BigDecimal menuPrice = BigDecimal.valueOf(Long.MAX_VALUE);
-        Long menuGroupId = 1L;
-        List<MenuProduct> menuProducts = Collections.singletonList(createMenuProduct(1L, 2L));
+        menuPrice = BigDecimal.valueOf(Long.MAX_VALUE);
         Menu menu = createMenu(menuName, menuPrice, menuGroupId, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(menu))
