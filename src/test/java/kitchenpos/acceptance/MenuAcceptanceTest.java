@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 
 class MenuAcceptanceTest extends AcceptanceTest {
     private List<Product> products;
+    private MenuGroup 세트_메뉴;
 
     @BeforeEach
     void setUp() {
@@ -27,6 +29,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         products.add(createProduct("감자튀김", 5_500));
         products.add(createProduct("사워 크림 소스", 500));
         products.add(createProduct("맥주 500cc", 4_000));
+
+        세트_메뉴 = createMenuGroup("세트 메뉴");
     }
 
     /**
@@ -42,11 +46,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 관리한다.")
     void manageMenu() {
         // 메뉴 등록
-        //Todo: 의미있는 메뉴 그룹 ID로 바꿀것
-        Menu response = createMenu("후라이드 세트", 16_000L, 1L);
+        Menu response = createMenu("후라이드 세트", 16_000L, 세트_메뉴.getId());
 
         assertThat(response.getId()).isNotNull();
-        assertThat(response.getMenuGroupId()).isEqualTo(1L);
+        assertThat(response.getMenuGroupId()).isEqualTo(세트_메뉴.getId());
         assertThat(response.getName()).isEqualTo("후라이드 세트");
 
         List<MenuProduct> responseMenuProducts = response.getMenuProducts();
