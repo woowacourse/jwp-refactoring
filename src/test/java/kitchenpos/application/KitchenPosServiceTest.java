@@ -15,6 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -47,6 +48,9 @@ public abstract class KitchenPosServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    protected OrderDao orderDao;
 
     protected void setCreatedTableGroup(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();

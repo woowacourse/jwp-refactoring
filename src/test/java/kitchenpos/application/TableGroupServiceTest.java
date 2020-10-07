@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -28,9 +27,6 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
-
-    @Autowired
-    private OrderDao orderDao;
 
     @DisplayName("tableGroup 생성 - 성공")
     @Test
