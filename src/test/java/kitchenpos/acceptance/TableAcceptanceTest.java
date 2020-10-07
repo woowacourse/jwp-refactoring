@@ -33,6 +33,12 @@ class TableAcceptanceTest extends AcceptanceTest{
      * When empty=false 인 테이블 의 손님 수를 0 보다 큰 수로 바꾼다.
      * then 테이블의 손님 수가 바뀐다.
      *
+     * Feature 손님이 나간 테이블 비우기
+     *
+     * Given 테이블들이 생성되어있고, empty 여부가 false 이면서 손님수가 0 이상인 테이블이 있다.
+     * When 이 테이블의 손님 수를 0으로 바꾼다.
+     * then 테이블의 손님 수가 0으로 바뀐다.
+     *
      * When 어떤 테이블의 empty 여부를 true 에서 false 로 바꾼다.
      *      (주문 가능한 상태의 테이블을 주문 불가능한 상태로 바꾼다.)
      * Then 테이블의 empty 여부가 false 에서 true 로 바뀐다.
@@ -58,13 +64,23 @@ class TableAcceptanceTest extends AcceptanceTest{
         assertThat(doesTableExistInTables(tableA.getId(), tables)).isTrue();
         assertThat(doesTableExistInTables(tableB.getId(), tables)).isTrue();
 
-        // change empty
+        // change empty to false
         tableB = changeEmptyToFalse(tableB);
         assertThat(tableB.isEmpty()).isFalse();
 
-        // change number of guests
+        // change number of guests to n > 0
         tableB = changeNumberOfGuests(tableB, 2);
         assertThat(tableB.getNumberOfGuests()).isEqualTo(2);
+
+        // change number of guests to 0
+        tableB = changeNumberOfGuests(tableB, 0);
+        assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
+
+        // change empty to true
+        // Todo : 손님 수 0명 아닐때 empty로 바꿀 수 있는데, empty 로 바꾸고나면 사람수를 0명으로 못바꿈 ㅋㅋㅋㅋㅋㅋㅋ
+        // 이거 수정할것...
+        tableB = changeEmptyToTrue(tableB);
+        assertThat(tableB.isEmpty()).isTrue();
     }
 
     private List<OrderTable> findTables() {
@@ -109,6 +125,21 @@ class TableAcceptanceTest extends AcceptanceTest{
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             .when()
                 .put("/api/tables/" + table.getId() + "/number-of-guests")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(OrderTable.class);
+    }
+
+    private OrderTable changeEmptyToTrue(OrderTable table) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("empty", true);
+
+        return given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/tables/" + table.getId() + "/empty")
             .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(OrderTable.class);
