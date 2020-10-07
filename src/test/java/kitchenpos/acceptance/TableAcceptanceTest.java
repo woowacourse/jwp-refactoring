@@ -1,8 +1,11 @@
 package kitchenpos.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 
-class TableAcceptanceTest {
+class TableAcceptanceTest extends AcceptanceTest{
 
     /**
      * Feature: 테이블을 관리한다.
@@ -21,8 +24,7 @@ class TableAcceptanceTest {
      *
      * Given 테이블들이 생성되어있고, empty 여부가 false 인 테이블이 있다.
      * When empty=false 인 테이블 의 손님 수를 0 보다 큰 수로 바꾼다.
-     *
-     * When empty=true 인 테이블의 손님 수를 0 보다 큰 수로 바꿀 수 없다.
+     * then 테이블의 손님 수가 바뀐다.
      *
      * When 어떤 테이블의 empty 여부를 true 에서 false 로 바꾼다.
      *      (주문 가능한 상태의 테이블을 주문 불가능한 상태로 바꾼다.)
@@ -30,11 +32,24 @@ class TableAcceptanceTest {
      */
     @Test
     void manageTable() {
+        OrderTable tableA = createTable(5, false);
+        OrderTable tableB = createTable(0, true);
+
+        assertThat(tableA.getId()).isNotNull();
+        assertThat(tableA.getTableGroupId()).isNull();
+        assertThat(tableA.isEmpty()).isFalse();
+        assertThat(tableA.getNumberOfGuests()).isEqualTo(5);
+
+        assertThat(tableB.getId()).isNotNull();
+        assertThat(tableB.getTableGroupId()).isNull();
+        assertThat(tableB.isEmpty()).isTrue();
+        assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
+
 
     }
 
     /**
-     * Feature: 테이블 생성에 있어서 사용자가 실수를 한다.
+     * Feature: 테이블 생성에 있어서 테이블 id 와 테이블 그룹 id는 사용자가 지정할 수 없다.
      *
      * When 테이블 생성 요청을 하는데, 테이블 id 와 테이블 그룹 id를 지정해서 요청한다.
      * Then 테이블 id는 사용자 요청을 무시하고 자동으로 정해지고,
@@ -46,7 +61,7 @@ class TableAcceptanceTest {
     }
 
     /**
-     * Feature: 그룹으로 묶여있는 테이블의 empty 상태 전환을 시도한다.
+     * Feature: 그룹으로 묶여있는 테이블은 empty 를 false 에서 true 로 바꿀 수 없다.
      *
      * Given 테이블 두 개가 empty=false 이고, 하나의 테이블 그룹으로 묶여있다.
      * When 둘 중 하나 이상의 테이블에 대하여 empty 상태 전환을 요청한다.
@@ -58,14 +73,26 @@ class TableAcceptanceTest {
     }
 
     /**
-     * Feature: 주문이 들어가있는 테이블의 empty 상태 전환을 시도한다.
+     * Feature: 주문이 들어가있는 테이블은 empty 를 true 로 전환할 수 없다.
      *
      * Given 테이블 두 개가 empty=false 이고, 하나의 테이블 그룹으로 묶여있다.
      * When 둘 중 하나 이상의 테이블에 대하여 empty 상태 전환을 요청한다.
      * Then response 가 오지 않는다.    // Todo: 나중에 401같은거 오도록 바꿔야할듯!!
      */
     @Test
-    void changeEmpty_ExceptionalCase() {
+    void changeEmptyOfTableInOrder() {
+
+    }
+
+    /**
+     * Feature: empty=true 인 테이블의 손님 수를 0 보다 큰 수로 바꿀 수 없다.
+     *
+     * Given 손님이 없는(비어있는) 테이블이 있다.
+     * When 이 테이블의 손님 수를 0보다 큰 수로 바꿔달라고 요청한다.
+     * Then
+     */
+    @Test
+    void changeNumberOfGuests_ExceptionalCase() {
 
     }
 }

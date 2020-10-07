@@ -7,6 +7,7 @@ import io.restassured.specification.RequestSpecification;
 import java.util.HashMap;
 import java.util.Map;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,5 +74,33 @@ public abstract class AcceptanceTest {
             .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(MenuGroup.class);
+    }
+
+    OrderTable createTable(int numberOfGuests, boolean empty) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("numberOfGuests", numberOfGuests);
+        body.put("empty", empty);
+
+        OrderTable response = sendCreateTableRequest(body);
+
+        assertThat(response.getId()).isNotNull();
+        assertThat(response.getTableGroupId()).isEqualTo(null);
+        assertThat(response.getNumberOfGuests()).isEqualTo(numberOfGuests);
+
+        return response;
+    }
+
+    private OrderTable sendCreateTableRequest(Map<String, Object> body) {
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .post("/api/tables")
+                .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(OrderTable.class);
     }
 }
