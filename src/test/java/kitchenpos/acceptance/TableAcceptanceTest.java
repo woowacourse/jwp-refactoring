@@ -2,8 +2,10 @@ package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class TableAcceptanceTest extends AcceptanceTest{
 
@@ -16,6 +18,8 @@ class TableAcceptanceTest extends AcceptanceTest{
      *           해당 테이블의 손님 수를 0명으로 한다.
      *
      * When 테이블들을 생성한다. Then 테이블들이 생성된다.
+     *
+     * When 모든 테이블을 조회한다. Then 모든 테이블이 조회된다.
      *
      * Given 테이블들이 생성되어있다.
      * When 어떤 테이블의 empty 여부를 true 에서 false 로 바꾼다.
@@ -45,7 +49,26 @@ class TableAcceptanceTest extends AcceptanceTest{
         assertThat(tableB.isEmpty()).isTrue();
         assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
 
+        List<OrderTable> tables = findTables();
+        assertThat(doesTableExistInTables(tableA.getId(), tables)).isTrue();
+        assertThat(doesTableExistInTables(tableB.getId(), tables)).isTrue();
+    }
 
+    private List<OrderTable> findTables() {
+        return given()
+            .when()
+                .get("/api/tables")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .log().all()
+                .extract()
+                .jsonPath()
+                .getList("", OrderTable.class);
+    }
+
+    private boolean doesTableExistInTables(Long tableId, List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .anyMatch(orderTable -> orderTable.getId().equals(tableId));
     }
 
     /**
