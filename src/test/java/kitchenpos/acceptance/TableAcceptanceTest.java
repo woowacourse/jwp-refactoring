@@ -2,10 +2,13 @@ package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 class TableAcceptanceTest extends AcceptanceTest{
 
@@ -52,6 +55,10 @@ class TableAcceptanceTest extends AcceptanceTest{
         List<OrderTable> tables = findTables();
         assertThat(doesTableExistInTables(tableA.getId(), tables)).isTrue();
         assertThat(doesTableExistInTables(tableB.getId(), tables)).isTrue();
+
+        tableB = changeEmptyToFalse(tableB);
+        assertThat(tableB.isEmpty()).isFalse();
+
     }
 
     private List<OrderTable> findTables() {
@@ -69,6 +76,21 @@ class TableAcceptanceTest extends AcceptanceTest{
     private boolean doesTableExistInTables(Long tableId, List<OrderTable> orderTables) {
         return orderTables.stream()
             .anyMatch(orderTable -> orderTable.getId().equals(tableId));
+    }
+
+    private OrderTable changeEmptyToFalse(OrderTable table) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("empty", false);
+
+        return given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/tables/" + table.getId() + "/empty")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(OrderTable.class);
     }
 
     /**

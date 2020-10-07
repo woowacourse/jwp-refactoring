@@ -97,9 +97,9 @@ public abstract class AcceptanceTest {
                 .body(body)
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when()
+            .when()
                 .post("/api/tables")
-                .then()
+            .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract().as(OrderTable.class);
     }
