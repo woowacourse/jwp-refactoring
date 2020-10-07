@@ -2,9 +2,11 @@ package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class MenuGroupAcceptanceTest extends AcceptanceTest {
     /**
@@ -21,5 +23,27 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
         assertThat(menuGroup.getId()).isNotNull();
         assertThat(menuGroup.getName()).isEqualTo("세트 메뉴");
+
+        List<MenuGroup> menuGroups = findMenuGroups();
+        assertThat(doesMenuExistInMenus("세트 메뉴", menuGroups)).isTrue();
+    }
+
+    private List<MenuGroup> findMenuGroups() {
+        return given()
+            .when()
+                .get("/api/menu-groups")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .log().all()
+                .extract()
+                .jsonPath()
+                .getList("", MenuGroup.class);
+    }
+
+    private boolean doesMenuExistInMenus(String menuGroupName, List<MenuGroup> menuGroups) {
+        return menuGroups.stream()
+            .anyMatch(product -> product
+                .getName()
+                .equals(menuGroupName));
     }
 }

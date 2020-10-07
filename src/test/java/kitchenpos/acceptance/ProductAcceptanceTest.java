@@ -23,8 +23,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
         createProduct("간장 치킨", 10_000);
 
         List<Product> products = findProducts();
-        assertThat(isProductNameInProducts("후라이드 치킨", products)).isTrue();
-        assertThat(isProductNameInProducts("간장 치킨", products)).isTrue();
+        assertThat(doesProductExistInProducts("후라이드 치킨", products)).isTrue();
+        assertThat(doesProductExistInProducts("간장 치킨", products)).isTrue();
     }
 
     private List<Product> findProducts() {
@@ -39,7 +39,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
             .getList("", Product.class);
     }
 
-    private boolean isProductNameInProducts(String productName, List<Product> products) {
+    private boolean doesProductExistInProducts(String productName, List<Product> products) {
         return products.stream()
             .anyMatch(product -> product
                 .getName()
