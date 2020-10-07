@@ -1,0 +1,11 @@
+SET REFERENTIAL_INTEGRITY FALSE;
+truncate TABLE orders;
+truncate TABLE order_line_item;
+truncate TABLE menu;
+truncate TABLE menu_group;
+truncate TABLE menu_product;
+truncate TABLE order_table;
+truncate TABLE table_group;
+truncate TABLE product;
+truncate TABLE product;
+SET REFERENTIAL_INTEGRITY TRUE;
