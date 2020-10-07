@@ -39,6 +39,7 @@ class TableAcceptanceTest extends AcceptanceTest{
      */
     @Test
     void manageTable() {
+        // 생성 (create)
         OrderTable tableA = createTable(5, false);
         OrderTable tableB = createTable(0, true);
 
@@ -52,13 +53,18 @@ class TableAcceptanceTest extends AcceptanceTest{
         assertThat(tableB.isEmpty()).isTrue();
         assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
 
+        // 조회 (inquiry)
         List<OrderTable> tables = findTables();
         assertThat(doesTableExistInTables(tableA.getId(), tables)).isTrue();
         assertThat(doesTableExistInTables(tableB.getId(), tables)).isTrue();
 
+        // change empty
         tableB = changeEmptyToFalse(tableB);
         assertThat(tableB.isEmpty()).isFalse();
 
+        // change number of guests
+        tableB = changeNumberOfGuests(tableB, 2);
+        assertThat(tableB.getNumberOfGuests()).isEqualTo(2);
     }
 
     private List<OrderTable> findTables() {
@@ -88,6 +94,21 @@ class TableAcceptanceTest extends AcceptanceTest{
                 .accept(MediaType.APPLICATION_JSON_VALUE)
             .when()
                 .put("/api/tables/" + table.getId() + "/empty")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(OrderTable.class);
+    }
+
+    private OrderTable changeNumberOfGuests(OrderTable table, int numberOfGuests) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("numberOfGuests", numberOfGuests);
+
+        return given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/tables/" + table.getId() + "/number-of-guests")
             .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(OrderTable.class);
