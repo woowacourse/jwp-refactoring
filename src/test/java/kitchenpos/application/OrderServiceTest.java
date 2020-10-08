@@ -84,7 +84,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("수량이 있는 메뉴와 등록된 메뉴에 등록된 것이 다른 경우")
+    @DisplayName("주문에 포함된 메뉴와 등록된 메뉴에서 조회한 것이 다른 경우")
     void differentCountOfOrderLineItemAndMenu() {
         Order order = new Order();
         order.setId(1L);
