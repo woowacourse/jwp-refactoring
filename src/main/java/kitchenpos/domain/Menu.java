@@ -50,4 +50,15 @@ public class Menu {
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", price=" + price +
+            ", menuGroupId=" + menuGroupId +
+            ", menuProducts=" + menuProducts +
+            '}';
+    }
 }
