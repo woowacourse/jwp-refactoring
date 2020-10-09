@@ -12,8 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureJdbc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -25,13 +26,12 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@WebMvcTest(controllers = MenuGroupRestController.class)
+@WebMvcTest(
+    controllers = MenuGroupRestController.class,
+    includeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = {MenuGroupService.class, JdbcTemplateMenuGroupDao.class})
+)
 @AutoConfigureJdbc
-@ContextConfiguration(classes = {
-    MenuGroupRestController.class,
-    MenuGroupService.class,
-    JdbcTemplateMenuGroupDao.class
-})
 class MenuGroupRestControllerTest {
     private MockMvc mvc;
 
