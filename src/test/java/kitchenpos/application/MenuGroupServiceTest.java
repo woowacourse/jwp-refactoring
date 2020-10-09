@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -48,7 +49,10 @@ class MenuGroupServiceTest {
         when(menuGroupDao.findAll()).thenReturn(Arrays.asList(oneMenuGroup, twoMenuGroup));
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(2);
+        assertAll(
+                () -> assertThat(menuGroups).hasSize(2),
+                () -> assertThat(menuGroups.contains(oneMenuGroup)).isTrue()
+        );
     }
 }
 

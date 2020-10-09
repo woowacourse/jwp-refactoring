@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -54,8 +56,10 @@ class MenuServiceTest {
 
         final Menu actual = menuService.create(menu);
 
-        assertThat(actual.getName()).isEqualTo(menu.getName());
-        assertThat(actual.getPrice()).isEqualTo(menu.getPrice());
+        assertAll(
+                () -> assertThat(actual.getName()).isEqualTo(menu.getName()),
+                () -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice())
+        );
     }
 
     @DisplayName("create: 메뉴의 가격이 0원 미만일때 예외 처리")
@@ -102,6 +106,10 @@ class MenuServiceTest {
 
         when(menuDao.findAll()).thenReturn(Collections.singletonList(menu));
 
-        assertThat(menuService.list()).hasSize(1);
+        final List<Menu> menus = menuService.list();
+        assertAll(
+                () -> assertThat(menus).hasSize(1),
+                () -> assertThat(menus.contains(menu)).isTrue()
+        );
     }
 }

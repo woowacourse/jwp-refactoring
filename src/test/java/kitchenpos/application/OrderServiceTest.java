@@ -84,7 +84,7 @@ class OrderServiceTest {
 
         assertAll(
                 () -> assertThat(orders).hasSize(1),
-                () -> assertThat(orders.get(0)).isEqualTo(order)
+                () -> assertThat(orders.contains(order)).isTrue()
         );
     }
 

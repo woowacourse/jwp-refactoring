@@ -59,7 +59,6 @@ class TableGroupServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // TODO: 2020/10/05 이런 경우에는 테스트를 어떻게 하는지 물어보기
     @DisplayName("ungroup: 테이블 그룹 해제 테스트")
     @Test
     void ungroupTest() {

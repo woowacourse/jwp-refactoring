@@ -40,7 +40,7 @@ class ProductServiceTest {
         );
     }
 
-    @DisplayName("create: 상품 등록 확인 테스트")
+    @DisplayName("create: 상품 가격이 0보다 작으면 예외처리")
     @Test
     void createTestByPriceSmallThenZero() {
         final Product product = TestFixture.getProduct(-1);
@@ -58,6 +58,9 @@ class ProductServiceTest {
 
         final List<Product> products = productService.list();
 
-        assertThat(products).hasSize(1);
+        assertAll(
+                () -> assertThat(products).hasSize(1),
+                () -> assertThat(products.contains(friedChicken)).isTrue()
+        );
     }
 }

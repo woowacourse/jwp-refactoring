@@ -39,7 +39,7 @@ class TableServiceTest {
 
         final OrderTable expected = tableService.create(table);
 
-        assertThat(expected.getNumberOfGuests()).isEqualTo(0);
+        assertThat(expected.getNumberOfGuests()).isZero();
     }
 
     @DisplayName("list: 테이블 전체 조회 테스트")
@@ -67,7 +67,7 @@ class TableServiceTest {
         final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
         final OrderTable actual = tableService.changeEmpty(1L, expected);
 
-        assertThat(actual.isEmpty()).isEqualTo(false);
+        assertThat(actual.isEmpty()).isFalse();
     }
 
     @DisplayName("changeEmpty: 테이블 주문 상태가 음식을 먹고 있거나, 요리중이면 예외처리")
@@ -107,7 +107,8 @@ class TableServiceTest {
     void changeNumberOfGuestsTestByZero() {
         final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected));
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeNumberOfGuests: 테이블이 비어있는데 손님수를 변경하려면 예외치리")
@@ -119,6 +120,7 @@ class TableServiceTest {
 
         final OrderTable expected = TestFixture.getOrderTableWithNotEmpty();
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected));
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, expected))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
