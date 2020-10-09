@@ -57,7 +57,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = menuGroupDao.save(createMenuGroup());
+        savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
         savedProduct = productDao.save(createProduct(18_000));
         menuProduct = createMenuProduct(savedProduct);
         menuProducts = Arrays.asList(menuProduct);
@@ -111,7 +111,11 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = createTable(false);
+        OrderTable notSavedTable = OrderTable.builder()
+            .id(1000L)
+            .numberOfGuests(0)
+            .empty(false)
+            .build();
 
         Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);

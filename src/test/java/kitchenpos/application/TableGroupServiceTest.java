@@ -122,8 +122,8 @@ class TableGroupServiceTest {
         OrderTable ungroupedTable1 = tableDao.findById(savedTable1.getId()).get();
         OrderTable ungroupedTable2 = tableDao.findById(savedTable2.getId()).get();
         assertAll(
-            () -> assertThat(ungroupedTable1.getTableGroupId()).isNull(),
-            () -> assertThat(ungroupedTable2.getTableGroupId()).isNull(),
+            () -> assertThat(ungroupedTable1.getTableGroup()).isNull(),
+            () -> assertThat(ungroupedTable2.getTableGroup()).isNull(),
             () -> assertThat(ungroupedTable1.isEmpty()).isFalse(),
             () -> assertThat(ungroupedTable2.isEmpty()).isFalse()
         );

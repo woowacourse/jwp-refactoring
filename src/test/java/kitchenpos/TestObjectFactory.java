@@ -17,7 +17,7 @@ public class TestObjectFactory {
 
     public static Order createOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
         return Order.builder()
-            .orderTableId(table.getId())
+            .orderTable(table)
             .orderStatus(OrderStatus.COOKING.name())
             .orderLineItems(orderLineItems)
             .orderedTime(LocalDateTime.now())
@@ -26,7 +26,7 @@ public class TestObjectFactory {
 
     public static Order createOrder(OrderTable table) {
         return Order.builder()
-            .orderTableId(table.getId())
+            .orderTable(table)
             .orderStatus(OrderStatus.COOKING.name())
             .orderedTime(LocalDateTime.now())
             .build();
@@ -34,7 +34,7 @@ public class TestObjectFactory {
 
     public static OrderLineItem createOrderLineItem(Menu menu) {
         return OrderLineItem.builder()
-            .menuId(menu.getId())
+            .menu(menu)
             .quantity(2)
             .build();
     }
@@ -43,20 +43,20 @@ public class TestObjectFactory {
         return Menu.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(price))
-            .menuGroupId(menuGroup.getId())
+            .menuGroup(menuGroup)
             .menuProducts(menuProducts)
             .build();
     }
 
-    public static MenuGroup createMenuGroup() {
+    public static MenuGroup createMenuGroup(String name) {
         return MenuGroup.builder()
-            .name("강정메뉴")
+            .name(name)
             .build();
     }
 
     public static MenuProduct createMenuProduct(Product product) {
         return MenuProduct.builder()
-            .productId(product.getId())
+            .product(product)
             .quantity(1)
             .build();
     }

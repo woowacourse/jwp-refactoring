@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
@@ -17,18 +18,16 @@ class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
-    private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
-        menuGroup = MenuGroup.builder()
-            .name("반반메뉴")
-            .build();
     }
 
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
+        MenuGroup menuGroup = createMenuGroup("반반메뉴");
+
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
@@ -37,8 +36,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() {
-        menuGroupService.create(menuGroup);
-        menuGroupService.create(menuGroup);
+        MenuGroup menuGroup1 = createMenuGroup("반반메뉴");
+        MenuGroup menuGroup2 = createMenuGroup("강정메뉴");
+        menuGroupService.create(menuGroup1);
+        menuGroupService.create(menuGroup2);
 
         List<MenuGroup> list = menuGroupService.list();
 

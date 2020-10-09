@@ -41,10 +41,11 @@ class ProductServiceTest {
     @DisplayName("전체 상품 조회")
     @Test
     void list() {
-        Product product = createProduct(18_000);
+        Product product1 = createProduct(18_000);
+        Product product2 = createProduct(20_000);
 
-        productService.create(product);
-        productService.create(product);
+        productService.create(product1);
+        productService.create(product2);
 
         List<Product> list = productService.list();
 
