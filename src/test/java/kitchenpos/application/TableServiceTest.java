@@ -137,9 +137,12 @@ class TableServiceTest extends KitchenPosServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable savedOtherOrderTable = tableService.create(orderTable);
+
+        OrderTable otherOrderTable = new OrderTable();
+        otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        OrderTable savedOtherOrderTable = tableService.create(otherOrderTable);
         setCreatedTableGroup(Arrays.asList(savedOrderTable, savedOtherOrderTable));
 
         Long savedOrderTableId = savedOrderTable.getId();

@@ -15,15 +15,28 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dao.MockMenuDao;
+import kitchenpos.application.dao.MockMenuGroupDao;
+import kitchenpos.application.dao.MockMenuProductDao;
+import kitchenpos.application.dao.MockOrderDao;
+import kitchenpos.application.dao.MockOrderLineItemDao;
+import kitchenpos.application.dao.MockOrderTableDao;
+import kitchenpos.application.dao.MockProductDao;
+import kitchenpos.application.dao.MockTableGroupDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,26 +44,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class KitchenPosServiceTest {
 
-    @Autowired
-    protected TableService tableService;
-
-    @Autowired
-    protected TableGroupService tableGroupService;
-
-    @Autowired
-    protected MenuGroupService menuGroupService;
-
-    @Autowired
-    protected ProductService productService;
-
-    @Autowired
-    protected MenuService menuService;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    protected OrderDao orderDao;
+    protected OrderDao orderDao = new MockOrderDao();
+    protected OrderTableDao orderTableDao = new MockOrderTableDao();
+    protected ProductDao productDao = new MockProductDao();
+    protected TableService tableService = new TableService(orderDao, orderTableDao);
+    protected ProductService productService = new ProductService(productDao);
+    private TableGroupDao tableGroupDao = new MockTableGroupDao();
+    protected TableGroupService tableGroupService
+        = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    private MenuGroupDao menuGroupDao = new MockMenuGroupDao();
+    protected MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
+    private MenuDao menuDao = new MockMenuDao();
+    private MenuProductDao menuProductDao = new MockMenuProductDao();
+    protected MenuService menuService
+        = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    private OrderLineItemDao orderLineItemDao = new MockOrderLineItemDao();
+    protected OrderService orderService
+        = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
 
     protected void setCreatedTableGroup(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();

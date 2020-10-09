@@ -15,12 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
-import org.springframework.beans.factory.annotation.Autowired;
 
 class OrderServiceTest extends KitchenPosServiceTest {
-
-    @Autowired
-    private OrderService orderService;
 
     @DisplayName("Order 생성 - 성공")
     @Test
