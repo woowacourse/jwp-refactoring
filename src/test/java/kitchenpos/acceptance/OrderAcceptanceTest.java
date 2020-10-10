@@ -12,6 +12,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,30 +56,38 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     /**
      * Feature: 한 테이블의 주문을 관리한다.
-     * <p>
-     * Given 테이블, 메뉴가 존재한다. When 테이블에서 메뉴들을 주문한다. Then 메뉴들이 주문된다.
+     *
+     * Given 메뉴, empty=false 인 테이블이 존재한다.
+     * When 테이블에서 메뉴들을 주문한다.
+     * Then 주문이 들어간다. 주문 직후의 주문 상태는 '요리중' 이다.
+     *
+     * Given 어떤 테이블에서 치킨세트와 맥주를 주문했다.
+     * When 해당 주문이 완수되어, 주문 상태를 '식사중' 으로 바꾼다.
+     * Then 주문 상태가 '식사중' 으로 바뀐다.
      */
     @Test
     @DisplayName("한 테이블의 주문을 관리한다.")
     void manageOrderOfOneTable() {
-        // 주문한다
+        // 손님이 주문한 것을 등록한다.
         List<OrderLineItemForTest> orderLineItems = new ArrayList<>();
 
         orderLineItems.add(new OrderLineItemForTest(치킨_세트.getId(), 1));
         orderLineItems.add(new OrderLineItemForTest(맥주.getId(), 4));
 
-        Order orderResult = order(tableA, orderLineItems);
+        Order order = requestOrder(tableA, orderLineItems);
 
-        assertThat(orderResult.getId()).isNotNull();
-        assertThat(orderResult.getOrderStatus()).isEqualTo("COOKING");
-        assertThat(orderResult.getOrderTableId()).isEqualTo(tableA.getId());
+        assertThat(order.getId()).isNotNull();
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString());
+        assertThat(order.getOrderTableId()).isEqualTo(tableA.getId());
 
-        for (OrderLineItemForTest orderLineItem : orderLineItems) {
-            assertThatOrderLineItemIsIncludedInOrder(orderResult, orderLineItem);
-        }
+        assertThatOrderHistoryIsSameTo(orderLineItems, order);
+
+        // 주문이 완수되어, 주문 상태를 '식사중' 으로 바꾼다.
+        Order cookedOrder = changeOrderStatusTo(OrderStatus.MEAL, order);
+        assertThat(cookedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.toString());
     }
 
-    private Order order(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
+    private Order requestOrder(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("orderTableId", orderTable.getId());
@@ -108,8 +117,15 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().as(Order.class);
     }
 
-    private void assertThatOrderLineItemIsIncludedInOrder(Order order,
-        OrderLineItemForTest orderLineItem) {
+    private void assertThatOrderHistoryIsSameTo(List<OrderLineItemForTest> orderLineItems,
+        Order order) {
+        for (OrderLineItemForTest orderLineItem : orderLineItems) {
+            assertThatOrderLineItemIsIncludedInOrder(orderLineItem, order);
+        }
+    }
+
+    private void assertThatOrderLineItemIsIncludedInOrder(OrderLineItemForTest orderLineItem,
+        Order order) {
         List<OrderLineItem> collect = order.getOrderLineItems().stream()
             .filter(responseOrderLineItem ->
                 responseOrderLineItem.getMenuId().equals(orderLineItem.getMenuId()))
@@ -119,6 +135,23 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(collect.get(0).getOrderId()).isNotNull();
         assertThat(collect.get(0).getMenuId()).isEqualTo(orderLineItem.getMenuId());
         assertThat(collect.get(0).getQuantity()).isEqualTo(orderLineItem.getQuantity());
+    }
+
+    private Order changeOrderStatusTo(OrderStatus orderStatus, Order order) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("orderStatus", orderStatus);
+
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/orders/" + order.getId() + "/order-status")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(Order.class);
     }
 
     /**
