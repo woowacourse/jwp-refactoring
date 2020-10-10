@@ -69,7 +69,7 @@
 | 주문 테이블 | order table | 매장에서 주문이 발생하는 영역 |
 | 빈 테이블 | empty table | 주문을 등록할 수 없는 주문 테이블 |
 | 주문 | order | 매장에서 발생하는 주문 |
-| 주문 상태 | order status | 주문은 조리 ➜ 식사 ➜ 계산 완료 순서로 진행된다. |
+| 주문 상태 | order status | 주문은 조리(cooking) ➜ 식사(meal) ➜ 계산 완료(completion) 순서로 진행된다. |
 | 방문한 손님 수 | number of guests | 필수 사항은 아니며 주문은 0명으로 등록할 수 있다. |
 | 단체 지정 | table group | 통합 계산을 위해 개별 주문 테이블을 그룹화하는 기능 |
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
