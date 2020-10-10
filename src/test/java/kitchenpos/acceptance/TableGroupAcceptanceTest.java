@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +54,50 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         ungroup(tableGroup);
     }
 
-    private void assertThatOrderTableBelongsTableGroup(OrderTable table, TableGroup tableGroup) {
-        List<Long> tableIds = tableGroup.getOrderTables()
-            .stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-        assertThat(tableIds).contains(table.getId());
+    /**
+     * Feature: 테이블 하나짜리 그룹 생성을 시도한다.
+     *
+     * Given empty=true 인 테이블들이 존재한다.
+     *
+     * When 테이블 하나짜리 그룹 생성을 시도한다.
+     * Then
+     */
+    @Test
+    @DisplayName("테이블 그룹 생성 - 테이블 한 개로 시도할 경우 예외처리")
+    void createTableGroupWithOneTable() {
+        assertThatFailToGroupTables(Collections.singletonList(tableA));
+    }
+
+    /**
+     * Feature: 비어있지 않은 테이블들을 가지고 그룹 생성을 시도한다.
+     *
+     * Given 비어있는 테이블과 비어있지않은 테이블들이 존재한다.
+     *
+     * When 비어있지 않은 테이블이 포함된 테이블 그룹 생성을 시도한다.
+     * Then 오류난다.    // Todo : 응답 리팩토링
+     */
+    @Test
+    @DisplayName("테이블 그룹 생성 - 비어있지 않은 테이블을 포함하는 경우 예외처리")
+    void createTableGroupWithTablesContainingNotEmpty() {
+        changeEmptyToFalse(tableA);    // given
+
+        assertThatFailToGroupTables(Arrays.asList(tableA, tableB, tableC));
+    }
+
+    /**
+     * Feature: 이미 다른 그룹에 속해있는 테이블을 새로운 그룹에 포함시키려 한다.
+     *
+     * Given 이미 다른 그룹에 속한 테이블 A와 그렇지 않은 테이블들이 있다.
+     *
+     * When 테이블 A를 포함하여 그룹 생성하기를 시도한다.
+     * Then 오류난다.    // Todo : 응답 리팩토링
+     */
+    @Test
+    @DisplayName("테이블 그룹 생성 - 다른 그룹에 속한 테이블을 또 사용할 경우 예외처리")
+    void createTableGroupWithTableAlreadyInAnotherGroup() {
+        groupTables(Arrays.asList(tableA, tableB));    // given
+
+        assertThatFailToGroupTables(Arrays.asList(tableC, tableA));
     }
 
     private TableGroup groupTables(List<OrderTable> orderTables) {
@@ -95,42 +134,34 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    /**
-     * Feature: 테이블 하나짜리 그룹 생성을 시도한다.
-     *
-     * Given empty=true 인 테이블들이 존재한다.
-     *
-     * When 테이블 하나짜리 그룹 생성을 시도한다.
-     * Then
-     */
-    @Test
-    void createTableGroupWithOneTable() {
-
+    private void assertThatOrderTableBelongsTableGroup(OrderTable table, TableGroup tableGroup) {
+        List<Long> tableIds = tableGroup.getOrderTables()
+            .stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+        assertThat(tableIds).contains(table.getId());
     }
 
-    /**
-     * Feature: 비어있지 않은 테이블들을 가지고 그룹 생성을 시도한다.
-     *
-     * Given 비어있는 테이블과 비어있지않은 테이블들이 존재한다.
-     *
-     * When 비어있지 않은 테이블이 포함된 테이블 그룹 생성을 시도한다.
-     * Then
-     */
-    @Test
-    void createTableGroupWithTablesContainingNotEmpty() {
+    private void assertThatFailToGroupTables(List<OrderTable> orderTables) {
+        Map<String, Object> body = new HashMap<>();
 
-    }
+        List<Map> tablesForGroupingRequest = new ArrayList<>();
 
-    /**
-     * Feature: 이미 다른 그룹에 속해있는 테이블을 새로운 그룹에 포함시키려 한다.
-     *
-     * Given 이미 다른 그룹에 속한 테이블 A와 그렇지 않은 테이블들이 있다.
-     *
-     * When 테이블 A를 포함하여 그룹 생성하기를 시도한다.
-     * Then
-     */
-    @Test
-    void createTableGroupWithTableAlreadyInAnotherGroup() {
+        for (OrderTable orderTable : orderTables) {
+            Map<String, Object> tableForGroupingRequest = new HashMap<>();
+            tableForGroupingRequest.put("id", orderTable.getId());
 
+            tablesForGroupingRequest.add(tableForGroupingRequest);
+        }
+        body.put("orderTables", tablesForGroupingRequest);
+
+        given()
+            .body(body)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+        .when()
+            .post("/api/table-groups")
+        .then()
+            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 }
