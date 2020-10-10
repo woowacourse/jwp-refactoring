@@ -46,8 +46,9 @@ public class TestObjects {
         return menu;
     }
 
-    public static TableGroup createTableGroup() {
+    public static TableGroup createTableGroup(final List<OrderTable> orderTables) {
         final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
         tableGroup.setCreatedDate(LocalDateTime.now());
         return tableGroup;
     }
@@ -71,6 +72,7 @@ public class TestObjects {
         final Order order = new Order();
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
+        order.setOrderedTime(LocalDateTime.now());
         order.setOrderLineItems(orderLineItems);
         return order;
     }

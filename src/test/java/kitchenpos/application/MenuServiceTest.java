@@ -34,7 +34,6 @@ class MenuServiceTest extends ServiceTest {
 
         final Menu menu = menuDao.save(createMenu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
         menuProduct = menuProductDao.save(creatMenuProduct(menu.getId(), product.getId(), 1L));
-        System.out.println(menuDao.findAll().size());
     }
 
     @DisplayName("create: 메뉴 생성")

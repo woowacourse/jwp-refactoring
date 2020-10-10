@@ -7,6 +7,8 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
@@ -32,4 +34,7 @@ public class ServiceTest {
 
     @Autowired
     protected MenuDao menuDao;
+
+    @Autowired
+    protected OrderDao orderDao;
 }

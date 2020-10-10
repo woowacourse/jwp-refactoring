@@ -33,7 +33,7 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroup = tableGroupDao.save(createTableGroup());
+        tableGroup = tableGroupDao.save(createTableGroup(Collections.emptyList()));
         orderTable = orderTableDao.save(createOrderTable(tableGroup.getId(), 5, false));
 
         final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("이십마리메뉴"));
