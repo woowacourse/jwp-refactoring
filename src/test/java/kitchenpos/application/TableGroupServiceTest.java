@@ -12,8 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -90,7 +88,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @DisplayName("create: 주문 테이블에 주문 그룹이 존재할 때 예외 처리")
     @Test
-    void create_IfTableGroupIsExistInOrderTable_Exception() {
+    void create_IfTableGroupExistInOrderTable_Exception() {
         final TableGroup tableGroup = createTableGroup(Arrays.asList(orderTableHasTableGroupId, orderTable2));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
