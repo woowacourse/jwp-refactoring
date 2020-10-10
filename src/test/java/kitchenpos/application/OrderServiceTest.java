@@ -1,18 +1,14 @@
 package kitchenpos.application;
 
 import kitchenpos.TestObjectFactory;
+import kitchenpos.application.common.MenuFixtureFactory;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Sql("/delete_all.sql")
-class OrderServiceTest {
+class OrderServiceTest extends MenuFixtureFactory {
     @Autowired
     private OrderService orderService;
 
@@ -38,12 +34,6 @@ class OrderServiceTest {
 
     @Autowired
     private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
 
     @DisplayName("주문 생성 메서드 테스트")
     @Test
@@ -129,13 +119,5 @@ class OrderServiceTest {
         );
 
         return TestObjectFactory.createOrderDto(savedOrderTable.getId(), orderLineItems);
-    }
-
-    private Menu createMenuToSave(String menuGroupName, String productName, int productPrice) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(menuGroupName));
-        Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
-
-        List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
-        return TestObjectFactory.createMenuDto(productName + "+" + productName, productPrice * 2, savedMenuGroup.getId(), menuProducts);
     }
 }

@@ -57,8 +57,9 @@ class ProductServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("product 목록 조회 기능 테스트")
     @Test
-    void name() {
+    void list() {
         productService.create(TestObjectFactory.createProductDto("강정치킨", 17000));
         productService.create(TestObjectFactory.createProductDto("앙념치킨", 17000));
 

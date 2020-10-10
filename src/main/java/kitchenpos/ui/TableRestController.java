@@ -42,7 +42,6 @@ public class TableRestController {
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTable orderTable
     ) {
-        System.out.println("id:" + orderTableId);
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, orderTable))
                 ;
