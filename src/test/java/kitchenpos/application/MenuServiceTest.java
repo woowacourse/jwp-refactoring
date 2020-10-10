@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.helper.EntityCreateHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -50,21 +51,10 @@ class MenuServiceTest {
     @DisplayName("메뉴를 추가한다.")
     @Test
     void create() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("콜라");
-        product.setPrice(BigDecimal.valueOf(2000L));
+        Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
+        MenuProduct menuProduct = createMenuProduct(null, 2L, 1L);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(2L);
-        menuProduct.setQuantity(1L);
-
-        Menu menu = new Menu();
-        menu.setMenuGroupId(1L);
-        menu.setPrice(BigDecimal.valueOf(1900L));
-        menu.setName("홍빈");
-        menu.setId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = createMenu(1L, 1L, Arrays.asList(menuProduct), "콜라세트", BigDecimal.valueOf(1900L));
 
         given(productDao.findById(any(Long.class))).willReturn(Optional.of(product));
         given(menuProductDao.save(any(MenuProduct.class))).willReturn(menuProduct);
@@ -77,7 +67,7 @@ class MenuServiceTest {
             () -> assertThat(savedMenu.getId()).isNotNull(),
             () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(1L),
             () -> assertThat(savedMenu.getPrice()).isEqualTo(BigDecimal.valueOf(1900)),
-            () -> assertThat(savedMenu.getName()).isEqualTo("홍빈"),
+            () -> assertThat(savedMenu.getName()).isEqualTo("콜라세트"),
             () -> assertThat(savedMenu.getMenuProducts().get(0)).isEqualTo(menuProduct)
         );
 
@@ -106,8 +96,9 @@ class MenuServiceTest {
     @Test
     void createInvalidMenuGroup() {
         given(menuGroupDao.existsById(any(Long.class))).willReturn(false);
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(2000L));
+
+        Menu menu = createMenu(1L, 1L, Arrays.asList(), "둘둘치킨", BigDecimal.valueOf(2000L));
+
         assertThatThrownBy(
             () -> menuService.create(menu)
         ).isInstanceOf(IllegalArgumentException.class);
@@ -116,18 +107,9 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 개별 상품 가격의 총합보다 비쌀 시 예외가 발생하는지 확인한다.")
     @Test
     void createInvalidDiscountMenu() {
-        Product product = new Product();
-        product.setName("콜라");
-        product.setPrice(BigDecimal.valueOf(2000L));
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(2L);
-        menuProduct.setQuantity(1L);
-
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(2100L));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
+        MenuProduct menuProduct = createMenuProduct(null, 2L, 1L);
+        Menu menu = createMenu(1L, 1L, Arrays.asList(menuProduct), "콜라세트", BigDecimal.valueOf(2100L));
 
         given(menuGroupDao.existsById(any(Long.class))).willReturn(true);
         given(productDao.findById(any(Long.class))).willReturn(Optional.of(product));
@@ -142,20 +124,10 @@ class MenuServiceTest {
     @DisplayName("메뉴그룹을 조회한다.")
     @Test
     void list() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(2L);
-        menuProduct.setQuantity(1L);
+        Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
+        MenuProduct menuProduct = createMenuProduct(null, 2L, 1L);
 
-        Product product = new Product();
-        product.setName("콜라");
-        product.setPrice(BigDecimal.valueOf(2000L));
-
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(2000L));
-        menu.setName("콜라");
-        menu.setId(1L);
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = createMenu(1L, 1L, Arrays.asList(menuProduct), "콜라세트", BigDecimal.valueOf(2000L));
 
         given(menuGroupDao.existsById(any(Long.class))).willReturn(true);
         given(menuProductDao.save(any(MenuProduct.class))).willReturn(menuProduct);
@@ -172,7 +144,7 @@ class MenuServiceTest {
             () -> assertThat(savedMenu.getId()).isNotNull(),
             () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(1L),
             () -> assertThat(savedMenu.getPrice()).isEqualTo(BigDecimal.valueOf(2000L)),
-            () -> assertThat(savedMenu.getName()).isEqualTo("콜라")
+            () -> assertThat(savedMenu.getName()).isEqualTo("콜라세트")
         );
     }
 }
