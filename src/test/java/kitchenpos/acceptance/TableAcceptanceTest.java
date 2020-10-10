@@ -100,36 +100,6 @@ class TableAcceptanceTest extends AcceptanceTest{
             .anyMatch(orderTable -> orderTable.getId().equals(tableId));
     }
 
-    private OrderTable changeEmptyToFalse(OrderTable table) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("empty", false);
-
-        return given()
-                .body(body)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-                .put("/api/tables/" + table.getId() + "/empty")
-            .then()
-                .statusCode(HttpStatus.OK.value())
-                .extract().as(OrderTable.class);
-    }
-
-    private OrderTable changeNumberOfGuests(OrderTable table, int numberOfGuests) {
-        Map<String, Object> body = new HashMap<>();
-        body.put("numberOfGuests", numberOfGuests);
-
-        return given()
-                .body(body)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-                .put("/api/tables/" + table.getId() + "/number-of-guests")
-            .then()
-                .statusCode(HttpStatus.OK.value())
-                .extract().as(OrderTable.class);
-    }
-
     private OrderTable changeEmptyToTrue(OrderTable table) {
         Map<String, Object> body = new HashMap<>();
         body.put("empty", true);

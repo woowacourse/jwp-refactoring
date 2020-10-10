@@ -4,8 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -101,6 +105,77 @@ public abstract class AcceptanceTest {
                 .post("/api/tables")
             .then()
                 .statusCode(HttpStatus.CREATED.value())
+                .extract().as(OrderTable.class);
+    }
+
+    Menu createMenu(String menuName, List<Product> products, Long menuPrice, Long menuGroupId) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("name", menuName);
+        body.put("price", menuPrice);
+        body.put("menuGroupId", menuGroupId);
+
+        List<Map> menuProducts = makeMenuProducts(products);
+        body.put("menuProducts", menuProducts);
+
+        return sendCreateMenuRequest(body);
+    }
+
+    private List<Map> makeMenuProducts(List<Product> products) {
+        List<Map> menuProducts = new ArrayList<>();
+
+        for (Product product : products) {
+            Map<String, String> menuProduct = new HashMap<>();
+
+            menuProduct.put("productId", Long.toString(product.getId()));
+            menuProduct.put("quantity", "1");
+
+            menuProducts.add(menuProduct);
+        }
+        return Collections.unmodifiableList(menuProducts);
+    }
+
+    private Menu sendCreateMenuRequest(Map<String, Object> body) {
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .post("/api/menus")
+            .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(Menu.class);
+    }
+
+    OrderTable changeEmptyToFalse(OrderTable table) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("empty", false);
+
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/tables/" + table.getId() + "/empty")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(OrderTable.class);
+    }
+
+    OrderTable changeNumberOfGuests(OrderTable table, int numberOfGuests) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("numberOfGuests", numberOfGuests);
+
+            return given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/tables/" + table.getId() + "/number-of-guests")
+            .then()
+                .statusCode(HttpStatus.OK.value())
                 .extract().as(OrderTable.class);
     }
 }
