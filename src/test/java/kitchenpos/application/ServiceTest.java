@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -10,6 +11,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.dao.TableGroupDao;
 
+@Sql("/truncate.sql")
 @SpringBootTest
 public class ServiceTest {
 

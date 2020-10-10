@@ -14,12 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 class OrderServiceTest extends ServiceTest {
@@ -38,10 +36,8 @@ class OrderServiceTest extends ServiceTest {
         tableGroup = tableGroupDao.save(createTableGroup());
         orderTable = orderTableDao.save(createOrderTable(tableGroup.getId(), 5, false));
 
-        final Product product = productDao.save(createProduct("매콤치킨", BigDecimal.valueOf(16000)));
         final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("이십마리메뉴"));
-        final MenuProduct menuProduct = menuProductDao.save(creatMenuProduct(1L, product.getId(), 1L));
-        final Menu menu = menuDao.save(createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(menuProduct)));
+        final Menu menu = menuDao.save(createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
         orderLineItem = createOrderLineItem(menu.getId(), 1L);
     }
 

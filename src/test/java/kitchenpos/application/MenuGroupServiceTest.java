@@ -30,8 +30,12 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("list: 메뉴 그룹 전체 조회")
     @Test
     void list() {
+        final MenuGroup menuGroup = createMenuGroup("이십마리메뉴");
+        menuGroupService.create(menuGroup);
+
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
         assertThat(menuGroups).isNotEmpty();
+        assertThat(menuGroups).hasSize(1);
     }
 }
