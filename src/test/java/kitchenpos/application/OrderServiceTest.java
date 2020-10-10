@@ -95,7 +95,7 @@ class OrderServiceTest extends ServiceTest {
         .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("list: Order 전체 조회")
+    @DisplayName("list: 주문 전체 조회")
     @Test
     void list() {
         final Order order = createOrder(orderTable.getId(), null, Collections.singletonList(orderLineItem));
@@ -106,7 +106,7 @@ class OrderServiceTest extends ServiceTest {
         assertThat(orders).isNotEmpty();
     }
 
-    @DisplayName("changeOrderStatus: OrderStatus를 변경")
+    @DisplayName("changeOrderStatus: 주문 상태를 변경")
     @Test
     void changeOrderStatus() {
         final Order order = orderService.create(createOrder(orderTable.getId(), null, Collections.singletonList(orderLineItem)));
@@ -115,5 +115,25 @@ class OrderServiceTest extends ServiceTest {
         final Order actual = orderService.changeOrderStatus(order.getId(), orderStatusMeal);
 
         assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+    }
+
+    @DisplayName("changeOrderStatus: 주문을 찾을 수 없을 때 예외 처리")
+    @Test
+    void changeOrderStatus_IfNotFindId_Exception() {
+        final Order orderStatusMeal = createOrder(null, "MEAL", null);
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(0L, orderStatusMeal))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("changeOrderStatus: 주문 상태가 이미 완료되어 있을 때 예외 처리")
+    @Test
+    void changeOrderStatus_IfOrderStatusIsCompletion_Exception() {
+        final Order order = orderService.create(createOrder(orderTable.getId(), null, Collections.singletonList(orderLineItem)));
+        final Order orderStatusMeal = createOrder(null, "COMPLETION", null);
+        orderService.changeOrderStatus(order.getId(), orderStatusMeal);
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderStatusMeal))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
