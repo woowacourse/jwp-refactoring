@@ -29,8 +29,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
-@Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class MenuServiceTest {
 
     @Autowired

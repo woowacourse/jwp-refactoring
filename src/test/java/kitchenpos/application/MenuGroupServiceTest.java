@@ -20,7 +20,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @SpringBootTest
-@Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class MenuGroupServiceTest {
 
     @Autowired

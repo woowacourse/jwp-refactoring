@@ -24,8 +24,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
 @SpringBootTest
-@ExtendWith(MockitoExtension.class)
-@Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class TableServiceTest {
 
     @Autowired
