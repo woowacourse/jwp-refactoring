@@ -32,8 +32,6 @@ class OrderAcceptanceTest extends AcceptanceTest {
     void setUp() {
         // 영업준비
         tableA = createTable(0, true);
-        OrderTable tableB = createTable(0, true);
-        OrderTable tableC = createTable(0, true);
 
         MenuGroup 세트메뉴_그룹 = createMenuGroup("세트 메뉴");
         MenuGroup 음료수_그룹 = createMenuGroup("음료수");
@@ -55,7 +53,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     /**
-     * Feature: 한 테이블의 주문을 관리한다.
+     * Feature: 주문을 관리한다.
      *
      * Given 메뉴, empty=false 인 테이블이 존재한다.
      * When 테이블에서 메뉴들을 주문한다.
@@ -64,6 +62,10 @@ class OrderAcceptanceTest extends AcceptanceTest {
      * Given 어떤 테이블에서 치킨세트와 맥주를 주문했다.
      * When 해당 주문이 완수되어, 주문 상태를 '식사중' 으로 바꾼다.
      * Then 주문 상태가 '식사중' 으로 바뀐다.
+     *
+     * Given 식사중인 테이블이 있다.
+     * When 식사가 완료되어, 주문 상태를 '완료' 로 바꾼다.
+     * Then 주문 상태가 '완료' 로 바뀐다.
      */
     @Test
     @DisplayName("한 테이블의 주문을 관리한다.")
@@ -80,11 +82,15 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString());
         assertThat(order.getOrderTableId()).isEqualTo(tableA.getId());
 
-        assertThatOrderHistoryIsSameTo(orderLineItems, order);
+        assertThatOrderHistoryIsSameToOrderLineItems(orderLineItems, order);
 
         // 주문이 완수되어, 주문 상태를 '식사중' 으로 바꾼다.
-        Order cookedOrder = changeOrderStatusTo(OrderStatus.MEAL, order);
-        assertThat(cookedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.toString());
+        order = changeOrderStatusTo(OrderStatus.MEAL, order);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.toString());
+
+        // 식사가 완료되어, 주문 상태를 '완료' 로 바꾼다.
+        order = changeOrderStatusTo(OrderStatus.COMPLETION, order);
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.toString());
     }
 
     private Order requestOrder(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
@@ -117,8 +123,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .extract().as(Order.class);
     }
 
-    private void assertThatOrderHistoryIsSameTo(List<OrderLineItemForTest> orderLineItems,
-        Order order) {
+    private void assertThatOrderHistoryIsSameToOrderLineItems(
+        List<OrderLineItemForTest> orderLineItems, Order order) {
         for (OrderLineItemForTest orderLineItem : orderLineItems) {
             assertThatOrderLineItemIsIncludedInOrder(orderLineItem, order);
         }
@@ -152,17 +158,6 @@ class OrderAcceptanceTest extends AcceptanceTest {
             .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(Order.class);
-    }
-
-    /**
-     * Feature: 한 테이블 그룹의 주문을 관리한다.
-     * <p>
-     * Given 테이블, 메뉴가 존재한다. When 테이블에서 메뉴들을 주문한다. Then 메뉴들이 주문된다.
-     */
-    @Test
-    @DisplayName("한 테이블 그룹의 주문을 관리한다.")
-    void manageOrderOfGroupedTable() {
-
     }
 
     static class OrderLineItemForTest {
