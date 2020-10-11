@@ -25,6 +25,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
+        super.setUp();
         tableA = createTable(0, true);
         tableB = createTable(0, true);
         tableC = createTable(0, true);

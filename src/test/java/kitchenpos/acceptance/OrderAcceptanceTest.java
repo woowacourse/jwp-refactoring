@@ -30,6 +30,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
+        super.setUp();
+
         // 영업준비
         tableA = createTable(0, true);
 

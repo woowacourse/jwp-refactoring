@@ -19,6 +19,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
+        super.setUp();
+
         products = new ArrayList<>();
 
         products.add(createProduct("후라이드 치킨", 9_000));
