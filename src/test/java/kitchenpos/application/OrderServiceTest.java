@@ -285,6 +285,6 @@ class OrderServiceTest {
         given(orderDao.findById(savedOrder.getId())).willReturn(Optional.of(savedOrder));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateInfo))
-                .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -122,7 +122,8 @@ class MenuServiceTest {
 
         assertAll(
             () -> verify(menuDao).save(menu),
-            () -> assertThat(expected.getMenuProducts()).extracting(MenuProduct::getMenuId).containsOnly(savedMenu.getId())
+            () -> assertThat(expected.getMenuProducts()).extracting(MenuProduct::getMenuId)
+                .containsOnly(savedMenu.getId())
         );
     }
 
