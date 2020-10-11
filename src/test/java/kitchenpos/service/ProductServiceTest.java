@@ -9,11 +9,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Product;
 
 @DisplayName("ProductService 단위 테스트")
 @SpringBootTest
+@Sql({"/truncate.sql", "/test_data.sql"})
 class ProductServiceTest {
 	@Autowired
 	ProductService productService;
@@ -32,6 +34,17 @@ class ProductServiceTest {
 			() -> assertThat(created.getName()).isEqualTo("강정치킨"),
 			() -> assertThat(created.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(17000))
 		);
+	}
+
+	@DisplayName("상품의 가격은 0 원 이상이어야 한다.")
+	@Test
+	void create_WhenPriceLessThanZero() {
+		Product input = new Product();
+		input.setName("강정치킨");
+		input.setPrice(BigDecimal.valueOf(-1));
+
+		assertThatThrownBy(() -> productService.create(input))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
