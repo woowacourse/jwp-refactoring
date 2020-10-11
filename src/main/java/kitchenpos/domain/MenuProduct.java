@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 public class MenuProduct {
+
     private Long seq;
     private Long menuId;
     private Long productId;
@@ -36,5 +37,15 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "MenuProduct{" +
+            "seq=" + seq +
+            ", menuId=" + menuId +
+            ", productId=" + productId +
+            ", quantity=" + quantity +
+            '}';
     }
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
@@ -48,5 +49,16 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    @Override
+    public String toString() {
+        return "Menu{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", price=" + price +
+            ", menuGroupId=" + menuGroupId +
+            ", menuProducts=" + menuProducts +
+            '}';
     }
 }

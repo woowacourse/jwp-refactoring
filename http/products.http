@@ -1,4 +1,4 @@
-###
+### 상품 추가
 POST {{host}}/api/products
 Content-Type: application/json
 
@@ -7,7 +7,7 @@ Content-Type: application/json
   "price": 17000
 }
 
-###
+### 상품 조회
 GET {{host}}/api/products
 
 ###

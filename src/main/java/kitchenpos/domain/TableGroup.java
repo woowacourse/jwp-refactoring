@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class TableGroup {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
@@ -30,5 +31,14 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    @Override
+    public String toString() {
+        return "TableGroup{" +
+            "id=" + id +
+            ", createdDate=" + createdDate +
+            ", orderTables=" + orderTables +
+            '}';
     }
 }

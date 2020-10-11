@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class Order {
+
     private Long id;
     private Long orderTableId;
     private String orderStatus;
@@ -48,5 +49,16 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+            "id=" + id +
+            ", orderTableId=" + orderTableId +
+            ", orderStatus='" + orderStatus + '\'' +
+            ", orderedTime=" + orderedTime +
+            ", orderLineItems=" + orderLineItems +
+            '}';
     }
 }

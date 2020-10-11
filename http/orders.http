@@ -1,4 +1,4 @@
-###
+### 주문 추가
 POST {{host}}/api/orders
 Content-Type: application/json
 
@@ -12,10 +12,10 @@ Content-Type: application/json
   ]
 }
 
-###
+### 주문 조회
 GET {{host}}/api/orders
 
-###
+### 주문 상태 변경 - 식사
 PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 
@@ -23,7 +23,7 @@ Content-Type: application/json
   "orderStatus": "MEAL"
 }
 
-###
+### 주문 상태 변경 - 계산 완료
 PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 

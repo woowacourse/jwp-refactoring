@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 public class OrderTable {
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -36,5 +37,15 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderTable{" +
+            "id=" + id +
+            ", tableGroupId=" + tableGroupId +
+            ", numberOfGuests=" + numberOfGuests +
+            ", empty=" + empty +
+            '}';
     }
 }
