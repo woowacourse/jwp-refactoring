@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createMenuGroup;
-import static kitchenpos.TestObjectFactory.createMenuProduct;
+import static kitchenpos.TestObjectFactory.createMenuProductRequest;
+import static kitchenpos.TestObjectFactory.createMenuRequest;
 import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -15,8 +15,9 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +43,16 @@ class MenuServiceTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
 
         Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        Menu menu = createMenu(18_000, savedMenuGroup, menuProducts);
-        Menu savedMenu = menuService.create(menu);
+        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
+
+        Menu savedMenu = menuService.create(request);
 
         assertAll(
             () -> assertThat(savedMenu.getId()).isNotNull(),
-            () -> assertThat(savedMenu.getMenuProducts().get(0).getSeq()).isNotNull(),
-            () -> assertThat(savedMenu.getMenuProducts().get(1).getSeq()).isNotNull()
+            () -> assertThat(savedMenu.getMenuProducts().get(0).getSeq()).isNotNull()
         );
     }
 
@@ -61,12 +62,12 @@ class MenuServiceTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
 
         Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        Menu menu = createMenu(-1, savedMenuGroup, menuProducts);
+        MenuCreateRequest request = createMenuRequest(-1, savedMenuGroup, menuProducts);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -78,13 +79,14 @@ class MenuServiceTest {
             .name("강정메뉴")
             .build();
 
-        Product product = productDao.save(createProduct(18_000));
-        MenuProduct menuProduct = createMenuProduct(product);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        Product savedProduct = productDao.save(createProduct(18_000));
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        Menu menu = createMenu(18_000, notSavedMenuGroup, menuProducts);
+        MenuCreateRequest request = createMenuRequest(18_000, notSavedMenuGroup, menuProducts
+        );
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,12 +100,12 @@ class MenuServiceTest {
             .name("강정치킨")
             .price(BigDecimal.valueOf(18_000))
             .build();
-        MenuProduct menuProduct = createMenuProduct(notSavedProduct);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        MenuProductRequest menuProduct = createMenuProductRequest(notSavedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        Menu menu = createMenu(18_000, savedMenuGroup, menuProducts);
+        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,12 +115,12 @@ class MenuServiceTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
 
         Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        Menu menu = createMenu(100_000_000, savedMenuGroup, menuProducts);
+        MenuCreateRequest request = createMenuRequest(1_000_000, savedMenuGroup, menuProducts);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -128,11 +130,13 @@ class MenuServiceTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
 
         Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProduct menuProduct = createMenuProduct(savedProduct);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct, menuProduct);
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
+
+        menuService.create(request);
+        menuService.create(request);
 
         List<Menu> list = menuService.list();
 

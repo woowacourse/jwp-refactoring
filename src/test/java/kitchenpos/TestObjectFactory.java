@@ -12,8 +12,27 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
 
 public class TestObjectFactory {
+
+    public static MenuCreateRequest createMenuRequest(int price, MenuGroup menuGroup,
+        List<MenuProductRequest> menuProducts) {
+        return MenuCreateRequest.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(price))
+            .menuGroupId(menuGroup.getId())
+            .menuProducts(menuProducts)
+            .build();
+    }
+
+    public static MenuProductRequest createMenuProductRequest(Product product) {
+        return MenuProductRequest.builder()
+            .productId(product.getId())
+            .quantity(2)
+            .build();
+    }
 
     public static Order createOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
         return Order.builder()
@@ -36,15 +55,6 @@ public class TestObjectFactory {
         return OrderLineItem.builder()
             .menu(menu)
             .quantity(2)
-            .build();
-    }
-
-    public static Menu createMenu(int price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        return Menu.builder()
-            .name("강정치킨")
-            .price(BigDecimal.valueOf(price))
-            .menuGroup(menuGroup)
-            .menuProducts(menuProducts)
             .build();
     }
 

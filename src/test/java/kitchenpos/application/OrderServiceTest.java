@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createMenuGroup;
-import static kitchenpos.TestObjectFactory.createMenuProduct;
+import static kitchenpos.TestObjectFactory.createMenuProductRequest;
+import static kitchenpos.TestObjectFactory.createMenuRequest;
 import static kitchenpos.TestObjectFactory.createOrder;
 import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static kitchenpos.TestObjectFactory.createProduct;
@@ -18,12 +18,12 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,15 +52,11 @@ class OrderServiceTest {
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct;
-    private MenuProduct menuProduct;
-    private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void setUp() {
         savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
         savedProduct = productDao.save(createProduct(18_000));
-        menuProduct = createMenuProduct(savedProduct);
-        menuProducts = Arrays.asList(menuProduct);
     }
 
     @DisplayName("주문 추가")
@@ -68,7 +64,8 @@ class OrderServiceTest {
     void create() {
         OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -98,7 +95,8 @@ class OrderServiceTest {
     void create_Fail_With_NotExistMenu() {
         OrderTable table = tableDao.save(createTable(false));
 
-        Menu notSavedMenu = createMenu(18_000, savedMenuGroup, menuProducts);
+        Menu notSavedMenu = new Menu();
+
         OrderLineItem orderLineItem = createOrderLineItem(notSavedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -117,7 +115,8 @@ class OrderServiceTest {
             .empty(false)
             .build();
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -132,7 +131,8 @@ class OrderServiceTest {
     void create_Fail_With_EmptyTable() {
         OrderTable emptyTable = tableDao.save(createTable(true));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -147,7 +147,8 @@ class OrderServiceTest {
     void list() {
         OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -166,7 +167,8 @@ class OrderServiceTest {
     void changeOrderStatus() {
         OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -187,7 +189,8 @@ class OrderServiceTest {
     void changeOrderStatus_With_CompletedOrder() {
         OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
+        Menu savedMenu = saveMenu();
+
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
@@ -201,5 +204,11 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(crsavedOrder.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private Menu saveMenu() {
+        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
+        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
+        return menuService.create(createMenuRequest(18_000, savedMenuGroup, menuProducts));
     }
 }
