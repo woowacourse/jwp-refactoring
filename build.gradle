@@ -22,7 +22,7 @@ dependencies {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
 
-    implementation 'io.rest-assured:rest-assured-common:3.3.0'
+    testImplementation 'io.rest-assured:rest-assured-common:3.3.0'
     testImplementation 'io.rest-assured:spring-mock-mvc:3.3.0'
 }
 
