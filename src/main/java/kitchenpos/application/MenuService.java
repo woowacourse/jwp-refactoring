@@ -71,7 +71,7 @@ public class MenuService {
         }
 
         Menu savedMenu = menuDao.save(menu);
-        menuProducts.forEach(menuProductDao::save);
+        menuProductDao.saveAll(menuProducts);
         return savedMenu;
     }
 
