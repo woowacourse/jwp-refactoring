@@ -23,6 +23,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -171,16 +172,16 @@ class OrderServiceTest {
         OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
+        OrderRequest order = createOrderRequest(savedTable, orderLineItems);
 
-        Order savedOrder = orderService.create(request);
-        Order target = Order.builder()
+        Order savedOrder = orderService.create(order);
+        OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
 
-        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), target);
+        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), request);
 
-        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
+        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
@@ -193,15 +194,15 @@ class OrderServiceTest {
         OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
+        OrderRequest order = createOrderRequest(savedTable, orderLineItems);
 
-        Order savedOrder = orderService.create(request);
-        Order target = Order.builder()
+        Order savedOrder = orderService.create(order);
+        OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
-        orderService.changeOrderStatus(savedOrder.getId(), target);
+        orderService.changeOrderStatus(savedOrder.getId(), request);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), target))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
