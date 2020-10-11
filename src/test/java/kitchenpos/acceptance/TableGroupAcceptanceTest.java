@@ -75,7 +75,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
      * Given 비어있는 테이블과 비어있지않은 테이블들이 존재한다.
      *
      * When 비어있지 않은 테이블이 포함된 테이블 그룹 생성을 시도한다.
-     * Then 오류난다.    // Todo : 응답 리팩토링
+     * Then 500 에러 응답을 받는다.    // Todo : 응답 리팩토링
      */
     @Test
     @DisplayName("테이블 그룹 생성 - 비어있지 않은 테이블을 포함하는 경우 예외처리")
@@ -91,7 +91,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
      * Given 이미 다른 그룹에 속한 테이블 A와 그렇지 않은 테이블들이 있다.
      *
      * When 테이블 A를 포함하여 그룹 생성하기를 시도한다.
-     * Then 오류난다.    // Todo : 응답 리팩토링
+     * Then 500 에러 응답을 받는다.    // Todo : 응답 리팩토링
      */
     @Test
     @DisplayName("테이블 그룹 생성 - 다른 그룹에 속한 테이블을 또 사용할 경우 예외처리")

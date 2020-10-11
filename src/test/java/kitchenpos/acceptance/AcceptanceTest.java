@@ -121,7 +121,7 @@ public abstract class AcceptanceTest {
         return sendCreateMenuRequest(body);
     }
 
-    private List<Map> makeMenuProducts(List<Product> products) {
+    List<Map> makeMenuProducts(List<Product> products) {
         List<Map> menuProducts = new ArrayList<>();
 
         for (Product product : products) {
