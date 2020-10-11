@@ -33,7 +33,9 @@ class MenuGroupServiceTest {
 		);
 	}
 
+	@DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
 	@Test
 	void list() {
+		assertThat(menuGroupService.list()).hasSize(4);
 	}
 }
