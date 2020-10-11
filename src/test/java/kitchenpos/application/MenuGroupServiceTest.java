@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,9 +26,11 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
-        MenuGroup menuGroup = createMenuGroup("반반메뉴");
+        MenuGroupCreateRequest request = MenuGroupCreateRequest.builder()
+            .name("반반메뉴")
+            .build();
 
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupService.create(request);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
     }
@@ -36,10 +38,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() {
-        MenuGroup menuGroup1 = createMenuGroup("반반메뉴");
-        MenuGroup menuGroup2 = createMenuGroup("강정메뉴");
-        menuGroupService.create(menuGroup1);
-        menuGroupService.create(menuGroup2);
+        MenuGroupCreateRequest request1 = MenuGroupCreateRequest.builder()
+            .name("반반메뉴")
+            .build();
+        MenuGroupCreateRequest request2 = MenuGroupCreateRequest.builder()
+            .name("강정메뉴")
+            .build();
+        menuGroupService.create(request1);
+        menuGroupService.create(request2);
 
         List<MenuGroup> list = menuGroupService.list();
 
