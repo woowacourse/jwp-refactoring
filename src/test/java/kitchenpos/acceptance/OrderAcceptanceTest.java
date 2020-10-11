@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -18,8 +16,6 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 // Todo 여기 할 차례
 class OrderAcceptanceTest extends AcceptanceTest {
@@ -95,36 +91,6 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.toString());
     }
 
-    private Order requestOrder(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
-        Map<String, Object> body = new HashMap<>();
-
-        body.put("orderTableId", orderTable.getId());
-
-        List<Map> orderLineItemsForRequest = new ArrayList<>();
-
-        orderLineItems.forEach(orderLineItem -> {
-            Map<String, Object> orderLineItemForRequest = new HashMap<>();
-
-            orderLineItemForRequest.put("menuId", orderLineItem.getMenuId());
-            orderLineItemForRequest.put("quantity", orderLineItem.getQuantity());
-
-            orderLineItemsForRequest.add(Collections.unmodifiableMap(orderLineItemForRequest));
-        });
-
-        body.put("orderLineItems", orderLineItemsForRequest);
-
-        return
-            given()
-                .body(body)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-                .post("/api/orders")
-            .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Order.class);
-    }
-
     private void assertThatOrderHistoryIsSameToOrderLineItems(
         List<OrderLineItemForTest> orderLineItems, Order order) {
         for (OrderLineItemForTest orderLineItem : orderLineItems) {
@@ -143,23 +109,6 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(collect.get(0).getOrderId()).isNotNull();
         assertThat(collect.get(0).getMenuId()).isEqualTo(orderLineItem.getMenuId());
         assertThat(collect.get(0).getQuantity()).isEqualTo(orderLineItem.getQuantity());
-    }
-
-    private Order changeOrderStatusTo(OrderStatus orderStatus, Order order) {
-        Map<String, Object> body = new HashMap<>();
-
-        body.put("orderStatus", orderStatus);
-
-        return
-            given()
-                .body(body)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-                .put("/api/orders/" + order.getId() + "/order-status")
-            .then()
-                .statusCode(HttpStatus.OK.value())
-                .extract().as(Order.class);
     }
 
     static class OrderLineItemForTest {

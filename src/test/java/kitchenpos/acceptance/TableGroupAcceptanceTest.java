@@ -101,31 +101,6 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         assertThatFailToGroupTables(Arrays.asList(tableC, tableA));
     }
 
-    private TableGroup groupTables(List<OrderTable> orderTables) {
-        Map<String, Object> body = new HashMap<>();
-
-        List<Map> tablesForGroupingRequest = new ArrayList<>();
-
-        for (OrderTable orderTable : orderTables) {
-            Map<String, Object> tableForGroupingRequest = new HashMap<>();
-            tableForGroupingRequest.put("id", orderTable.getId());
-
-            tablesForGroupingRequest.add(tableForGroupingRequest);
-        }
-        body.put("orderTables", tablesForGroupingRequest);
-
-        return
-            given()
-                .body(body)
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .accept(MediaType.APPLICATION_JSON_VALUE)
-            .when()
-                .post("/api/table-groups")
-            .then()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract().as(TableGroup.class);
-    }
-
     private void ungroup(TableGroup tableGroup) {
         given()
             .accept(MediaType.APPLICATION_JSON_VALUE)

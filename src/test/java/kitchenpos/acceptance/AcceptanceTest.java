@@ -9,10 +9,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -95,7 +99,7 @@ public abstract class AcceptanceTest {
         return response;
     }
 
-    private OrderTable sendCreateTableRequest(Map<String, Object> body) {
+    OrderTable sendCreateTableRequest(Map<String, Object> body) {
         return
             given()
                 .body(body)
@@ -177,5 +181,77 @@ public abstract class AcceptanceTest {
             .then()
                 .statusCode(HttpStatus.OK.value())
                 .extract().as(OrderTable.class);
+    }
+
+    TableGroup groupTables(List<OrderTable> orderTables) {
+        Map<String, Object> body = new HashMap<>();
+
+        List<Map> tablesForGroupingRequest = new ArrayList<>();
+
+        for (OrderTable orderTable : orderTables) {
+            Map<String, Object> tableForGroupingRequest = new HashMap<>();
+            tableForGroupingRequest.put("id", orderTable.getId());
+
+            tablesForGroupingRequest.add(tableForGroupingRequest);
+        }
+        body.put("orderTables", tablesForGroupingRequest);
+
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .post("/api/table-groups")
+            .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(TableGroup.class);
+    }
+
+    Order requestOrder(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("orderTableId", orderTable.getId());
+
+        List<Map> orderLineItemsForRequest = new ArrayList<>();
+
+        orderLineItems.forEach(orderLineItem -> {
+            Map<String, Object> orderLineItemForRequest = new HashMap<>();
+
+            orderLineItemForRequest.put("menuId", orderLineItem.getMenuId());
+            orderLineItemForRequest.put("quantity", orderLineItem.getQuantity());
+
+            orderLineItemsForRequest.add(Collections.unmodifiableMap(orderLineItemForRequest));
+        });
+
+        body.put("orderLineItems", orderLineItemsForRequest);
+
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .post("/api/orders")
+            .then()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract().as(Order.class);
+    }
+
+    Order changeOrderStatusTo(OrderStatus orderStatus, Order order) {
+        Map<String, Object> body = new HashMap<>();
+
+        body.put("orderStatus", orderStatus);
+
+        return
+            given()
+                .body(body)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+            .when()
+                .put("/api/orders/" + order.getId() + "/order-status")
+            .then()
+                .statusCode(HttpStatus.OK.value())
+                .extract().as(Order.class);
     }
 }
