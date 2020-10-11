@@ -47,7 +47,9 @@ class ProductServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@DisplayName("상품의 목록을 조회할 수 있다.")
 	@Test
 	void list() {
+		assertThat(productService.list()).hasSize(6);
 	}
 }
