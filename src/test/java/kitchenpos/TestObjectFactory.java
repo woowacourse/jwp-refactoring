@@ -3,9 +3,7 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -51,23 +49,9 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static OrderLineItem createOrderLineItem(Menu menu) {
-        return OrderLineItem.builder()
-            .menu(menu)
-            .quantity(2)
-            .build();
-    }
-
     public static MenuGroup createMenuGroup(String name) {
         return MenuGroup.builder()
             .name(name)
-            .build();
-    }
-
-    public static MenuProduct createMenuProduct(Product product) {
-        return MenuProduct.builder()
-            .product(product)
-            .quantity(1)
             .build();
     }
 

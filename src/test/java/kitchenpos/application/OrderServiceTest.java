@@ -3,8 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.TestObjectFactory.createMenuGroup;
 import static kitchenpos.TestObjectFactory.createMenuProductRequest;
 import static kitchenpos.TestObjectFactory.createMenuRequest;
-import static kitchenpos.TestObjectFactory.createOrder;
-import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static kitchenpos.TestObjectFactory.createProduct;
 import static kitchenpos.TestObjectFactory.createTable;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,11 +17,12 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,11 +65,11 @@ class OrderServiceTest {
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(savedTable, orderLineItems);
-        Order savedOrder = orderService.create(order);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
+        Order savedOrder = orderService.create(request);
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -84,25 +83,27 @@ class OrderServiceTest {
     void create_Fail_With_NoOrderLineItem() {
         OrderTable savedTable = tableDao.save(createTable(false));
 
-        Order order = createOrder(savedTable, null);
+        OrderRequest request = createOrderRequest(savedTable, null);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable table = tableDao.save(createTable(false));
+        OrderTable savedTable = tableDao.save(createTable(false));
 
-        Menu notSavedMenu = new Menu();
+        Menu notSavedMenu = Menu.builder()
+            .id(1000L)
+            .build();
 
-        OrderLineItem orderLineItem = createOrderLineItem(notSavedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(notSavedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(table, orderLineItems);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -111,18 +112,16 @@ class OrderServiceTest {
     void create_Fail_With_NotExistTable() {
         OrderTable notSavedTable = OrderTable.builder()
             .id(1000L)
-            .numberOfGuests(0)
-            .empty(false)
             .build();
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(notSavedTable, orderLineItems);
+        OrderRequest request = createOrderRequest(notSavedTable, orderLineItems);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -133,12 +132,12 @@ class OrderServiceTest {
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(emptyTable, orderLineItems);
+        OrderRequest request = createOrderRequest(emptyTable, orderLineItems);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -149,13 +148,13 @@ class OrderServiceTest {
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(savedTable, orderLineItems);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
 
-        orderService.create(order);
-        orderService.create(order);
+        orderService.create(request);
+        orderService.create(request);
 
         List<Order> list = orderService.list();
 
@@ -169,12 +168,12 @@ class OrderServiceTest {
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(savedTable, orderLineItems);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
 
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
@@ -191,18 +190,18 @@ class OrderServiceTest {
 
         Menu savedMenu = saveMenu();
 
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order order = createOrder(savedTable, orderLineItems);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
 
-        Order crsavedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(request);
         Order target = Order.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
-        orderService.changeOrderStatus(crsavedOrder.getId(), target);
+        orderService.changeOrderStatus(savedOrder.getId(), target);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(crsavedOrder.getId(), target))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), target))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -210,5 +209,20 @@ class OrderServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
         return menuService.create(createMenuRequest(18_000, savedMenuGroup, menuProducts));
+    }
+
+    private OrderLineItemRequest createOrderLineItemRequest(Menu savedMenu) {
+        return OrderLineItemRequest.builder()
+            .menuId(savedMenu.getId())
+            .quantity(2)
+            .build();
+    }
+
+    private OrderRequest createOrderRequest(OrderTable savedTable,
+        List<OrderLineItemRequest> orderLineItems) {
+        return OrderRequest.builder()
+            .orderTableId(savedTable.getId())
+            .orderLineItems(orderLineItems)
+            .build();
     }
 }

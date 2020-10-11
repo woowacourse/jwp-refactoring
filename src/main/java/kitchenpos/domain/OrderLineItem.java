@@ -1,17 +1,15 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class OrderLineItem {
@@ -27,6 +25,14 @@ public class OrderLineItem {
     private Menu menu;
     private long quantity;
 
+    @Builder
+    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+        this.seq = seq;
+        setOrder(order);
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -39,8 +45,11 @@ public class OrderLineItem {
         return order;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
+    private void setOrder(final Order order) {
+        if (Objects.isNull(this.order)) {
+            this.order = order;
+            this.order.addOrderLineItem(this);
+        }
     }
 
     public Menu getMenu() {
