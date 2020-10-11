@@ -11,14 +11,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -28,23 +26,27 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    @Autowired
     private MenuService menuService;
 
-    @MockBean
+    @Mock
     private MenuDao menuDao;
 
-    @MockBean
+    @Mock
     private ProductDao productDao;
 
-    @MockBean
+    @Mock
     private MenuProductDao menuProductDao;
 
-    @MockBean
+    @Mock
     private MenuGroupDao menuGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+    }
 
     @DisplayName("메뉴를 추가한다.")
     @Test
@@ -111,8 +113,6 @@ class MenuServiceTest {
 
         given(menuGroupDao.existsById(any(Long.class))).willReturn(true);
         given(productDao.findById(any(Long.class))).willReturn(Optional.of(product));
-        given(menuProductDao.save(any(MenuProduct.class))).willReturn(menuProduct);
-        given(menuDao.save(any(Menu.class))).willReturn(menu);
 
         assertThatThrownBy(
             () -> menuService.create(menu)

@@ -11,11 +11,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -26,23 +27,27 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
-    @Autowired
     private OrderService orderService;
 
-    @MockBean
+    @Mock
     private OrderDao orderDao;
 
-    @MockBean
+    @Mock
     private OrderLineItemDao orderLineItemDao;
 
-    @MockBean
+    @Mock
     private OrderTableDao orderTableDao;
 
-    @MockBean
+    @Mock
     private MenuDao menuDao;
+
+    @BeforeEach
+    void setUp() {
+        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    }
 
     @DisplayName("주문 생성 시 주문항목이 없을 시 예외가 발생한다.")
     @Test

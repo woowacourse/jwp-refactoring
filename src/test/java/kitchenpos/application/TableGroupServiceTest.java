@@ -11,12 +11,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
 import org.mockito.internal.verification.VerificationModeFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -24,20 +25,24 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
 
-    @Autowired
     private TableGroupService tableGroupService;
 
-    @MockBean
+    @Mock
     private OrderTableDao orderTableDao;
 
-    @MockBean
+    @Mock
     private TableGroupDao tableGroupDao;
 
-    @MockBean
+    @Mock
     private OrderDao orderDao;
+
+    @BeforeEach
+    void setUp() {
+        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+    }
 
     @DisplayName("주문 테이블이 비어있거나 1개일 시 단체지정을 하면 예외를 발생한다.")
     @Test
@@ -75,7 +80,6 @@ class TableGroupServiceTest {
         OrderTable orderTableWithNoGroupId = createOrderTable(1L, true, null, 3);
         TableGroup tableGroupWithTableWithoutTableGroupId = createTableGroup(1L, LocalDateTime.now(),
             Arrays.asList(orderTableWithNoGroupId));
-
         assertAll(
             () -> assertThatThrownBy(
                 () -> tableGroupService.create(tableGroupWithTableWhichIsEmpty)
@@ -103,15 +107,12 @@ class TableGroupServiceTest {
         assertAll(
             () -> assertThat(savedTableGroup.getId()).isEqualTo(1L),
             () -> assertThat(savedTableGroup.getOrderTables()).containsAll(Arrays.asList(orderTable, orderTable2))
-
         );
     }
 
     @DisplayName("주문 테이블 중 주문이 안 들어가거나 계산 완료되지 않은 테이블이 있을 경우 단체지정 해제할 때 예외를 발생한다.")
     @Test
     void test() {
-        OrderTable orderTable = createOrderTable(1L, true, null, 3);
-        given(orderTableDao.findAll()).willReturn(Arrays.asList(orderTable));
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
         assertThatThrownBy(
             () -> tableGroupService.ungroup(1L)
@@ -125,7 +126,6 @@ class TableGroupServiceTest {
         OrderTable orderTable2 = createOrderTable(2L, true, 1L, 3);
 
         List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
-        given(orderTableDao.findAll()).willReturn(orderTables);
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
         tableGroupService.ungroup(1L);

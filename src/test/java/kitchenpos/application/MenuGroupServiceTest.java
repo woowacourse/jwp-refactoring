@@ -9,24 +9,28 @@ import static org.mockito.BDDMockito.*;
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.jdbc.Sql;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
 
-    @Autowired
     private MenuGroupService menuGroupService;
 
-    @MockBean
+    @Mock
     private MenuGroupDao menuGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        menuGroupService = new MenuGroupService(menuGroupDao);
+    }
 
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
