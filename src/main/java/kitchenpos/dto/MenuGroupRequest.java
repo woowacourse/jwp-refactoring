@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuGroupCreateRequest {
+public class MenuGroupRequest {
 
     private String name;
 

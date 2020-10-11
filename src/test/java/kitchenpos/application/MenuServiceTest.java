@@ -16,8 +16,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
+        MenuRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
 
         Menu savedMenu = menuService.create(request);
 
@@ -65,7 +65,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(-1, savedMenuGroup, menuProducts);
+        MenuRequest request = createMenuRequest(-1, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -83,7 +83,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(18_000, notSavedMenuGroup, menuProducts
+        MenuRequest request = createMenuRequest(18_000, notSavedMenuGroup, menuProducts
         );
 
         assertThatThrownBy(() -> menuService.create(request))
@@ -103,7 +103,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(notSavedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
+        MenuRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -118,7 +118,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(1_000_000, savedMenuGroup, menuProducts);
+        MenuRequest request = createMenuRequest(1_000_000, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -133,7 +133,7 @@ class MenuServiceTest {
         MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
-        MenuCreateRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
+        MenuRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
 
         menuService.create(request);
         menuService.create(request);

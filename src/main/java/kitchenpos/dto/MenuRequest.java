@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class MenuCreateRequest {
+public class MenuRequest {
 
     private String name;
     private BigDecimal price;

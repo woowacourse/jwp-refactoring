@@ -12,14 +12,14 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
 
 public class TestObjectFactory {
 
-    public static MenuCreateRequest createMenuRequest(int price, MenuGroup menuGroup,
+    public static MenuRequest createMenuRequest(int price, MenuGroup menuGroup,
         List<MenuProductRequest> menuProducts) {
-        return MenuCreateRequest.builder()
+        return MenuRequest.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(price))
             .menuGroupId(menuGroup.getId())

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
-        MenuGroupCreateRequest request = MenuGroupCreateRequest.builder()
+        MenuGroupRequest request = MenuGroupRequest.builder()
             .name("반반메뉴")
             .build();
 
@@ -39,10 +39,10 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() {
-        MenuGroupCreateRequest request1 = MenuGroupCreateRequest.builder()
+        MenuGroupRequest request1 = MenuGroupRequest.builder()
             .name("반반메뉴")
             .build();
-        MenuGroupCreateRequest request2 = MenuGroupCreateRequest.builder()
+        MenuGroupRequest request2 = MenuGroupRequest.builder()
             .name("강정메뉴")
             .build();
         menuGroupService.create(request1);
