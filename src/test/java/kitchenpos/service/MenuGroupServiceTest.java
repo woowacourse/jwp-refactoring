@@ -6,15 +6,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.service.common.ServiceTest;
 
 @DisplayName("MenuGroupService 단위 테스트")
-@SpringBootTest
-@Sql({"/truncate.sql", "/test_data.sql"})
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
 
 	@Autowired
 	MenuGroupService menuGroupService;

@@ -10,15 +10,12 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.service.common.ServiceTest;
 
 @DisplayName("MenuService 단위 테스트")
-@SpringBootTest
-@Sql({"/truncate.sql", "/test_data.sql"})
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
 
 	@Autowired
 	MenuService menuService;
