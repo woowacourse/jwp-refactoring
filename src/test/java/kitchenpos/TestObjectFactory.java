@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -42,15 +41,6 @@ public class TestObjectFactory {
         return MenuProductRequest.builder()
             .productId(product.getId())
             .quantity(2)
-            .build();
-    }
-
-    public static Order createOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
-        return Order.builder()
-            .orderTable(table)
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderLineItems(orderLineItems)
-            .orderedTime(LocalDateTime.now())
             .build();
     }
 
