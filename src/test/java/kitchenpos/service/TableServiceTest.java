@@ -3,6 +3,8 @@ package kitchenpos.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +35,12 @@ class TableServiceTest extends ServiceTest {
 		);
 	}
 
+	@DisplayName("주문 테이블의 목록을 조회할 수 있다.")
 	@Test
 	void list() {
+		List<OrderTable> list = tableService.list();
+
+		assertThat(list).hasSize(8);
 	}
 
 	@Test
