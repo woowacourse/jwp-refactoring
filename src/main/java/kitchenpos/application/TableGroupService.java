@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,7 +31,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(final TableGroupRequest request) {
         List<Long> orderTableIds = request.getOrderTables()
             .stream()
             .map(OrderTableIdRequest::getId)
@@ -63,7 +64,7 @@ public class TableGroupService {
             orderTableDao.save(savedOrderTable);
         }
 
-        return tableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional

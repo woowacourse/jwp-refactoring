@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +25,7 @@ class ProductServiceTest {
     void create() {
         ProductRequest request = createProductRequest(18_000);
 
-        Product savedProduct = productService.create(request);
+        ProductResponse savedProduct = productService.create(request);
 
         assertThat(savedProduct.getId()).isNotNull();
     }

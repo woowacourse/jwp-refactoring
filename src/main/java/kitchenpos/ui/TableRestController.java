@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableRequest;
 import kitchenpos.dto.TableResponse;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,8 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final TableRequest request) {
-        final OrderTable created = tableService.create(request);
+    public ResponseEntity<TableResponse> create(@RequestBody final TableRequest request) {
+        final TableResponse created = tableService.create(request);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created)

@@ -1,15 +1,17 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createOrder;
 import static kitchenpos.TestObjectFactory.createOrderTableIdRequest;
 import static kitchenpos.TestObjectFactory.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
@@ -34,12 +36,15 @@ class TableServiceTest {
     @Autowired
     private OrderDao orderDao;
 
+    @Autowired
+    private OrderTableDao tableDao;
+
     @DisplayName("테이블 추가")
     @Test
     void create() {
         TableRequest request = createTableRequest(0, true);
 
-        OrderTable savedTable = tableService.create(request);
+        TableResponse savedTable = tableService.create(request);
 
         assertThat(savedTable.getId()).isNotNull();
     }
@@ -60,7 +65,7 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         TableRequest table = createTableRequest(0, true);
-        OrderTable savedTable = tableService.create(table);
+        TableResponse savedTable = tableService.create(table);
         TableRequest request = createTableRequest(false);
 
         TableResponse changedTable = tableService.changeEmpty(savedTable.getId(), request);
@@ -81,10 +86,10 @@ class TableServiceTest {
     @Test
     void changeEmpty_Fail_With_TableInGroup() {
         TableRequest table = createTableRequest(0, true);
-        OrderTable savedTable1 = tableService.create(table);
-        OrderTable savedTable2 = tableService.create(table);
-        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1);
-        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2);
+        TableResponse savedTable1 = tableService.create(table);
+        TableResponse savedTable2 = tableService.create(table);
+        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
+        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
         TableGroupRequest tableGroup = createTableGroupRequest(tables);
         tableGroupService.create(tableGroup);
@@ -99,9 +104,14 @@ class TableServiceTest {
     @Test
     void changeEmpty_Fail_With_TableInProgress() {
         TableRequest table = createTableRequest(0, true);
-        OrderTable savedTable = tableService.create(table);
+        TableResponse tableResponse = tableService.create(table);
 
-        Order order = createOrder(savedTable);
+        OrderTable savedTable = tableDao.findById(tableResponse.getId()).get();
+        Order order = Order.builder()
+            .orderTable(savedTable)
+            .orderStatus(OrderStatus.COOKING.name())
+            .orderedTime(LocalDateTime.now())
+            .build();
         orderDao.save(order);
 
         TableRequest request = createTableRequest(true);
@@ -114,7 +124,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         TableRequest table = createTableRequest(0, false);
-        OrderTable savedTable = tableService.create(table);
+        TableResponse savedTable = tableService.create(table);
         TableRequest request = createTableRequest(10);
 
         TableResponse changedTable = tableService
@@ -127,7 +137,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
         TableRequest table = createTableRequest(0, true);
-        OrderTable savedTable = tableService.create(table);
+        TableResponse savedTable = tableService.create(table);
         TableRequest request = createTableRequest(-1);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
@@ -148,7 +158,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests_Fail_With_EmptyTable() {
         TableRequest emptyTable = createTableRequest(0, true);
-        OrderTable savedEmptyTable = tableService.create(emptyTable);
+        TableResponse savedEmptyTable = tableService.create(emptyTable);
 
         TableRequest request = createTableRequest(100);
 

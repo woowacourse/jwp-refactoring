@@ -30,4 +30,16 @@ public class ProductResponse {
             .price(product.getPrice())
             .build();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
 }

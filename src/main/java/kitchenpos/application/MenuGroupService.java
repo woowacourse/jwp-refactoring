@@ -19,11 +19,12 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroup create(final MenuGroupRequest request) {
+    public MenuGroupResponse create(final MenuGroupRequest request) {
         MenuGroup menuGroup = MenuGroup.builder()
             .name(request.getName())
             .build();
-        return menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        return MenuGroupResponse.from(savedMenuGroup);
     }
 
     public List<MenuGroupResponse> list() {

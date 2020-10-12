@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +30,7 @@ class MenuGroupServiceTest {
             .name("반반메뉴")
             .build();
 
-        MenuGroup savedMenuGroup = menuGroupService.create(request);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
     }

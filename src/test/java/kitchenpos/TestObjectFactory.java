@@ -16,9 +16,9 @@ import kitchenpos.dto.TableGroupRequest;
 
 public class TestObjectFactory {
 
-    public static OrderTableIdRequest createOrderTableIdRequest(OrderTable table) {
+    public static OrderTableIdRequest createOrderTableIdRequest(Long id) {
         return OrderTableIdRequest.builder()
-            .id(table.getId())
+            .id(id)
             .build();
     }
 

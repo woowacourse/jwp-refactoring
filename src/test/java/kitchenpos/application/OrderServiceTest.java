@@ -1,26 +1,22 @@
 package kitchenpos.application;
 
 import static kitchenpos.TestObjectFactory.createMenuGroup;
-import static kitchenpos.TestObjectFactory.createMenuProductRequest;
-import static kitchenpos.TestObjectFactory.createMenuRequest;
-import static kitchenpos.TestObjectFactory.createProduct;
 import static kitchenpos.TestObjectFactory.createTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
@@ -49,15 +45,13 @@ class OrderServiceTest {
     private ProductDao productDao;
 
     @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
 
     private MenuGroup savedMenuGroup;
-    private Product savedProduct;
 
     @BeforeEach
     void setUp() {
         savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
-        savedProduct = productDao.save(createProduct(18_000));
     }
 
     @DisplayName("주문 추가")
@@ -71,7 +65,7 @@ class OrderServiceTest {
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
         OrderRequest request = createOrderRequest(savedTable, orderLineItems);
-        Order savedOrder = orderService.create(request);
+        OrderResponse savedOrder = orderService.create(request);
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -175,7 +169,7 @@ class OrderServiceTest {
 
         OrderRequest order = createOrderRequest(savedTable, orderLineItems);
 
-        Order savedOrder = orderService.create(order);
+        OrderResponse savedOrder = orderService.create(order);
         OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
@@ -198,7 +192,7 @@ class OrderServiceTest {
 
         OrderRequest order = createOrderRequest(savedTable, orderLineItems);
 
-        Order savedOrder = orderService.create(order);
+        OrderResponse savedOrder = orderService.create(order);
         OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
@@ -209,9 +203,12 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu() {
-        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
-        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
-        return menuService.create(createMenuRequest(18_000, savedMenuGroup, menuProducts));
+        Menu menu = Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .menuGroup(savedMenuGroup)
+            .build();
+        return menuDao.save(menu);
     }
 
     private OrderLineItemRequest createOrderLineItemRequest(Menu savedMenu) {

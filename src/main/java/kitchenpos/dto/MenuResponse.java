@@ -38,4 +38,24 @@ public class MenuResponse {
             .menuProducts(menuProducts)
             .build();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public MenuGroupResponse getMenuGroup() {
+        return menuGroup;
+    }
+
+    public List<MenuProductResponse> getMenuProducts() {
+        return menuProducts;
+    }
 }

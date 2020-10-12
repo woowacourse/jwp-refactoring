@@ -24,4 +24,12 @@ public class TableGroupResponse {
             .createdDate(tableGroup.getCreatedDate())
             .build();
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
 }

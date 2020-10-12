@@ -19,7 +19,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final ProductRequest request) {
+    public ProductResponse create(final ProductRequest request) {
         final BigDecimal price = request.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -31,7 +31,8 @@ public class ProductService {
             .price(request.getPrice())
             .build();
 
-        return productDao.save(product);
+        Product savedProduct = productDao.save(product);
+        return ProductResponse.from(savedProduct);
     }
 
     public List<ProductResponse> list() {

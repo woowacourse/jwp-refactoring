@@ -41,7 +41,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest request) {
+    public OrderResponse create(final OrderRequest request) {
         final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
@@ -73,7 +73,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, order);
         orderLineItemDao.saveAll(orderLineItems);
 
-        return savedOrder;
+        return OrderResponse.from(savedOrder);
     }
 
     private List<OrderLineItem> convertOrderLineItems(List<OrderLineItemRequest> requests,

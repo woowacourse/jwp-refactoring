@@ -31,4 +31,16 @@ public class OrderLineItemResponse {
             .quantity(orderLineItem.getQuantity())
             .build();
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public MenuResponse getMenu() {
+        return menu;
+    }
+
+    public long getQuantity() {
+        return quantity;
+    }
 }

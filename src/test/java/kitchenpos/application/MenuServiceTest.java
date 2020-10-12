@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
@@ -49,7 +48,7 @@ class MenuServiceTest {
 
         MenuRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
 
-        Menu savedMenu = menuService.create(request);
+        MenuResponse savedMenu = menuService.create(request);
 
         assertAll(
             () -> assertThat(savedMenu.getId()).isNotNull(),

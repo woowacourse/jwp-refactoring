@@ -23,12 +23,13 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final TableRequest request) {
+    public TableResponse create(final TableRequest request) {
         OrderTable orderTable = OrderTable.builder()
             .empty(request.getEmpty())
             .numberOfGuests(request.getNumberOfGuests())
             .build();
-        return orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableDao.save(orderTable);
+        return TableResponse.from(savedTable);
     }
 
     public List<TableResponse> list() {

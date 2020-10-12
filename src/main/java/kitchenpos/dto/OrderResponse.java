@@ -42,4 +42,20 @@ public class OrderResponse {
     public String getOrderStatus() {
         return orderStatus;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableResponse getOrderTable() {
+        return orderTable;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
+    }
 }
