@@ -8,6 +8,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableRequest;
+import kitchenpos.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +31,13 @@ public class TableService {
         return orderTableDao.save(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<TableResponse> list() {
+        List<OrderTable> tables = orderTableDao.findAll();
+        return TableResponse.listFrom(tables);
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final TableRequest request) {
+    public TableResponse changeEmpty(final Long orderTableId, final TableRequest request) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
@@ -50,11 +52,12 @@ public class TableService {
 
         savedOrderTable.setEmpty(request.getEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        return TableResponse.from(changedTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableRequest request) {
+    public TableResponse changeNumberOfGuests(final Long orderTableId, final TableRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -70,6 +73,7 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        return TableResponse.from(changedTable);
     }
 }

@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableRequest;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ class TableServiceTest {
         tableService.create(request);
         tableService.create(request);
 
-        List<OrderTable> list = tableService.list();
+        List<TableResponse> list = tableService.list();
 
         assertThat(list).hasSize(2);
     }
@@ -62,7 +63,7 @@ class TableServiceTest {
         OrderTable savedTable = tableService.create(table);
         TableRequest request = createTableRequest(false);
 
-        OrderTable changedTable = tableService.changeEmpty(savedTable.getId(), request);
+        TableResponse changedTable = tableService.changeEmpty(savedTable.getId(), request);
 
         assertThat(changedTable.isEmpty()).isEqualTo(request.getEmpty());
     }
@@ -116,7 +117,7 @@ class TableServiceTest {
         OrderTable savedTable = tableService.create(table);
         TableRequest request = createTableRequest(10);
 
-        OrderTable changedTable = tableService
+        TableResponse changedTable = tableService
             .changeNumberOfGuests(savedTable.getId(), request);
 
         assertThat(changedTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());

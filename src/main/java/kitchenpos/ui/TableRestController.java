@@ -5,6 +5,7 @@ import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableRequest;
+import kitchenpos.dto.TableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,29 +32,29 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<TableResponse>> list() {
         return ResponseEntity.ok()
-                .body(tableService.list())
-                ;
+            .body(tableService.list())
+            ;
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
-            @PathVariable final Long orderTableId,
+    public ResponseEntity<TableResponse> changeEmpty(
+        @PathVariable final Long orderTableId,
         @RequestBody final TableRequest request
     ) {
         return ResponseEntity.ok()
             .body(tableService.changeEmpty(orderTableId, request))
-                ;
+            ;
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTable> changeNumberOfGuests(
-            @PathVariable final Long orderTableId,
+    public ResponseEntity<TableResponse> changeNumberOfGuests(
+        @PathVariable final Long orderTableId,
         @RequestBody final TableRequest request
     ) {
         return ResponseEntity.ok()
             .body(tableService.changeNumberOfGuests(orderTableId, request))
-                ;
+            ;
     }
 }
