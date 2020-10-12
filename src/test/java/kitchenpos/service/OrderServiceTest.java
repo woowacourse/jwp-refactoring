@@ -65,4 +65,15 @@ class OrderServiceTest extends ServiceTest {
 
 		assertThat(result.getOrderStatus()).isEqualTo(orderStatus);
 	}
+
+	@DisplayName("주문 상태가 계산 완료인 경우 변경할 수 없다.")
+	@ParameterizedTest
+	@CsvSource(value = {"3,MEAL", "3,COOKING"})
+	void changeOrderStatus_WhenOrderStatusIsCompletion(long id, String orderStatus) {
+		Order order = new Order();
+		order.setOrderStatus(orderStatus);
+
+		assertThatThrownBy(() -> orderService.changeOrderStatus(id, order))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
 }
