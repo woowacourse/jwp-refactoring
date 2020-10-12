@@ -1,18 +1,21 @@
 package kitchenpos.ui;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.BDDMockito.any;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MvcResult;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 
@@ -43,11 +46,14 @@ class MenuGroupRestControllerTest extends MvcTest {
         given(menuGroupService.create(any())).willReturn(MENU_GROUP_1);
 
         String inputJson = objectMapper.writeValueAsString(MENU_GROUP_1);
-        postAction("/api/menu-groups", inputJson)
+        MvcResult mvcResult = postAction("/api/menu-groups", inputJson)
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "/api/menu-groups/1"))
-            .andExpect(jsonPath("$.id", is(MENU_GROUP_ID_1)))
-            .andExpect(jsonPath("$.name", is(MENU_GROUP_NAME_1)));
+            .andReturn();
+
+        MenuGroup menuGroupResponse =
+            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), MenuGroup.class);
+        assertThat(menuGroupResponse).usingRecursiveComparison().isEqualTo(MENU_GROUP_1);
     }
 
     @DisplayName("/api/menu-groups로 GET요청 성공 테스트")
@@ -55,11 +61,17 @@ class MenuGroupRestControllerTest extends MvcTest {
     void listTest() throws Exception {
         given(menuGroupService.list()).willReturn(Arrays.asList(MENU_GROUP_1, MENU_GROUP_2));
 
-        getAction("/api/menu-groups")
+        MvcResult mvcResult = getAction("/api/menu-groups")
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].id", is(MENU_GROUP_ID_1)))
-            .andExpect(jsonPath("$[0].name", is(MENU_GROUP_NAME_1)))
-            .andExpect(jsonPath("$[1].id", is(MENU_GROUP_ID_2)))
-            .andExpect(jsonPath("$[1].name", is(MENU_GROUP_NAME_2)));
+            .andReturn();
+
+        List<MenuGroup> menuGroupsResponse = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                new TypeReference<List<MenuGroup>>() {});
+        assertAll(
+            () -> assertThat(menuGroupsResponse.size()).isEqualTo(2),
+            () -> assertThat(menuGroupsResponse.get(0)).usingRecursiveComparison().isEqualTo(MENU_GROUP_1),
+            () -> assertThat(menuGroupsResponse.get(1)).usingRecursiveComparison().isEqualTo(MENU_GROUP_2)
+        );
     }
 }
