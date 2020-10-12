@@ -18,4 +18,17 @@ public class TableGroupServiceTestStep {
 
 		return tableGroup;
 	}
+
+	public static TableGroup createTableGroupThatHasDuplicatedTables() {
+		OrderTable orderTable1 = new OrderTable();
+		orderTable1.setId(1L);
+
+		OrderTable orderTable2 = new OrderTable();
+		orderTable2.setId(1L);
+
+		TableGroup tableGroup = new TableGroup();
+		tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+
+		return tableGroup;
+	}
 }

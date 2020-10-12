@@ -33,6 +33,15 @@ class TableGroupServiceTest extends ServiceTest {
 		);
 	}
 
+	@DisplayName("단체 지정 시 테이블을 중복될 수 없다.")
+	@Test
+	void create_WhenHasDuplicatedTable() {
+		TableGroup tableGroup = createTableGroupThatHasDuplicatedTables();
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@Test
 	void ungroup() {
 	}
