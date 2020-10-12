@@ -45,3 +45,7 @@ INSERT INTO orders (id, order_table_id, order_status, ordered_time)
     VALUES (2, 6, 'MEAL', '2020-10-01 00:00:00');
 INSERT INTO orders (id, order_table_id, order_status, ordered_time)
     VALUES (3, 5, 'COMPLETION', '2020-10-02 00:00:00');
+INSERT INTO orders (id, order_table_id, order_status, ordered_time)
+    VALUES (4, 4, 'COOKING', '2020-10-02 00:00:00');
+INSERT INTO orders (id, order_table_id, order_status, ordered_time)
+    VALUES (5, 3, 'MEAL', '2020-10-02 00:00:00');

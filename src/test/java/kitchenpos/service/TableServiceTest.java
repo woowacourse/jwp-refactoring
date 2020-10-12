@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.domain.OrderTable;
@@ -82,6 +84,17 @@ class TableServiceTest extends ServiceTest {
 		orderTable.setEmpty(false);
 
 		assertThatThrownBy(() -> tableService.changeEmpty(6L, orderTable))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+	@ParameterizedTest
+	@CsvSource(value = {"4,true", "4,false", "3,true", "3,false"})
+	void changeEmpty_WhenOrderStatusIsCookingOrMeal_CanNot(long id, boolean empty) {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setEmpty(empty);
+
+		assertThatThrownBy(() -> tableService.changeEmpty(id, orderTable))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
