@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,5 +69,8 @@ class MenuServiceTest {
 	@DisplayName("메뉴의 목록을 조회할 수 있다.")
 	@Test
 	void list() {
+		List<Menu> list = menuService.list();
+
+		assertThat(list).hasSize(6);
 	}
 }
