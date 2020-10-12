@@ -23,6 +23,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,7 +158,7 @@ class OrderServiceTest {
         orderService.create(request);
         orderService.create(request);
 
-        List<Order> list = orderService.list();
+        List<OrderResponse> list = orderService.list();
 
         assertThat(list).hasSize(2);
     }
@@ -179,7 +180,8 @@ class OrderServiceTest {
             .orderStatus(OrderStatus.COMPLETION.name())
             .build();
 
-        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), request);
+        OrderResponse changeOrderStatus = orderService
+            .changeOrderStatus(savedOrder.getId(), request);
 
         assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
