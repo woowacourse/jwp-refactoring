@@ -9,11 +9,24 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.OrderTableIdRequest;
+import kitchenpos.dto.TableGroupRequest;
 
 public class TestObjectFactory {
+
+    public static OrderTableIdRequest createOrderTableIdRequest(OrderTable table) {
+        return OrderTableIdRequest.builder()
+            .id(table.getId())
+            .build();
+    }
+
+    public static TableGroupRequest createTableGroupRequest(List<OrderTableIdRequest> tables) {
+        return TableGroupRequest.builder()
+            .orderTables(tables)
+            .build();
+    }
 
     public static MenuRequest createMenuRequest(int price, MenuGroup menuGroup,
         List<MenuProductRequest> menuProducts) {
@@ -59,13 +72,6 @@ public class TestObjectFactory {
         return Product.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(price))
-            .build();
-    }
-
-    public static TableGroup createTableGroup(List<OrderTable> tables) {
-        return TableGroup.builder()
-            .orderTables(tables)
-            .createdDate(LocalDateTime.now())
             .build();
     }
 

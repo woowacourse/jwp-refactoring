@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,8 +22,13 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
+    @Builder.Default
     @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables = new ArrayList<>();
+
+    public void addOrderTable(OrderTable orderTable) {
+        orderTables.add(orderTable);
+    }
 
     public Long getId() {
         return id;

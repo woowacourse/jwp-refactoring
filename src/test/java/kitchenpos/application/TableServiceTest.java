@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
 import static kitchenpos.TestObjectFactory.createOrder;
-import static kitchenpos.TestObjectFactory.createTableGroup;
+import static kitchenpos.TestObjectFactory.createOrderTableIdRequest;
+import static kitchenpos.TestObjectFactory.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -10,7 +11,8 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableIdRequest;
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,8 +82,10 @@ class TableServiceTest {
         TableRequest table = createTableRequest(0, true);
         OrderTable savedTable1 = tableService.create(table);
         OrderTable savedTable2 = tableService.create(table);
-        List<OrderTable> tables = Arrays.asList(savedTable1, savedTable2);
-        TableGroup tableGroup = createTableGroup(tables);
+        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1);
+        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2);
+        List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
+        TableGroupRequest tableGroup = createTableGroupRequest(tables);
         tableGroupService.create(tableGroup);
 
         TableRequest request = createTableRequest(false);
