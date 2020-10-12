@@ -53,10 +53,10 @@ class ProductServiceTest {
         assertThat(list).hasSize(2);
     }
 
-    private ProductRequest createProductRequest(int i) {
+    private ProductRequest createProductRequest(int price) {
         return ProductRequest.builder()
             .name("강정치킨")
-            .price(BigDecimal.valueOf(i))
+            .price(BigDecimal.valueOf(price))
             .build();
     }
 }
