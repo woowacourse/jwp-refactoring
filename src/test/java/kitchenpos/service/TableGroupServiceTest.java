@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.OrderTableDao;
@@ -57,5 +59,13 @@ class TableGroupServiceTest extends ServiceTest {
 		List<OrderTable> allByTableGroupId = orderTableDao.findAllByTableGroupId(1L);
 
 		assertThat(allByTableGroupId).isEmpty();
+	}
+
+	@DisplayName("주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없다.")
+	@ParameterizedTest
+	@ValueSource(longs = {2, 3})
+	void ungroup_WhenOrderStatusIsMealOrCooking(long id) {
+		assertThatThrownBy(() -> tableGroupService.ungroup(id))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 }
