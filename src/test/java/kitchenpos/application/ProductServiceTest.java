@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ class ProductServiceTest {
         productService.create(request1);
         productService.create(request2);
 
-        List<Product> list = productService.list();
+        List<ProductResponse> list = productService.list();
 
         assertThat(list).hasSize(2);
     }
