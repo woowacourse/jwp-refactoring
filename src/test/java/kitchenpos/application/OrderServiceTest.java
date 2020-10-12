@@ -12,7 +12,6 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
@@ -36,13 +35,10 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao tableDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
 
     @Autowired
     private MenuDao menuDao;
@@ -57,7 +53,7 @@ class OrderServiceTest {
     @DisplayName("주문 추가")
     @Test
     void create() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -77,7 +73,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         OrderRequest request = createOrderRequest(savedTable, null);
 
@@ -88,7 +84,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         Menu notSavedMenu = Menu.builder()
             .id(1000L)
@@ -124,7 +120,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 빈 테이블의 주문 추가")
     @Test
     void create_Fail_With_EmptyTable() {
-        OrderTable emptyTable = tableDao.save(createTable(true));
+        OrderTable emptyTable = orderTableDao.save(createTable(true));
 
         Menu savedMenu = saveMenu();
 
@@ -140,7 +136,7 @@ class OrderServiceTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -160,7 +156,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -183,7 +179,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
     @Test
     void changeOrderStatus_With_CompletedOrder() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createTable(false));
 
         Menu savedMenu = saveMenu();
 

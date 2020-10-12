@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class OrderResponse {
 
     private Long id;
-    private TableResponse orderTable;
+    private OrderTableResponse orderTable;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
@@ -26,7 +26,7 @@ public class OrderResponse {
     }
 
     public static OrderResponse from(Order order) {
-        TableResponse table = TableResponse.from(order.getOrderTable());
+        OrderTableResponse table = OrderTableResponse.from(order.getOrderTable());
         List<OrderLineItemResponse> orderLineItems = OrderLineItemResponse
             .listFrom(order.getOrderLineItems());
 
@@ -47,7 +47,7 @@ public class OrderResponse {
         return id;
     }
 
-    public TableResponse getOrderTable() {
+    public OrderTableResponse getOrderTable() {
         return orderTable;
     }
 

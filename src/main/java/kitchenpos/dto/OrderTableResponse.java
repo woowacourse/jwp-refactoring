@@ -10,22 +10,22 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TableResponse {
+public class OrderTableResponse {
 
     private Long id;
     private TableGroupResponse tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
-    public static List<TableResponse> listFrom(List<OrderTable> tables) {
+    public static List<OrderTableResponse> listFrom(List<OrderTable> tables) {
         return tables.stream()
-            .map(TableResponse::from)
+            .map(OrderTableResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static TableResponse from(OrderTable table) {
+    public static OrderTableResponse from(OrderTable table) {
         TableGroupResponse tableGroup = TableGroupResponse.from(table.getTableGroup());
-        return TableResponse.builder()
+        return OrderTableResponse.builder()
             .id(table.getId())
             .tableGroup(tableGroup)
             .numberOfGuests(table.getNumberOfGuests())

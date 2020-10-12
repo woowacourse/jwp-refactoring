@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TableRequest {
+public class OrderTableRequest {
 
     private Integer numberOfGuests;
     private Boolean empty;

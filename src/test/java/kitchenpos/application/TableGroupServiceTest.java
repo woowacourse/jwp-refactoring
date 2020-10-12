@@ -31,7 +31,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao tableDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private OrderDao orderDao;
@@ -39,8 +39,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 추가")
     @Test
     void create() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
-        OrderTable savedTable2 = tableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -48,7 +48,7 @@ class TableGroupServiceTest {
         TableGroupRequest request = createTableGroupRequest(tables);
         TableGroupResponse savedTableGroup = tableGroupService.create(request);
 
-        List<OrderTable> savedTables = tableDao
+        List<OrderTable> savedTables = orderTableDao
             .findAllByTableGroupId(savedTableGroup.getId());
 
         assertAll(
@@ -61,7 +61,7 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 2개 미만의 테이블을 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_NoTable() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1);
 
@@ -74,7 +74,7 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 저장되지 않은 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable savedTable = tableDao.save(createTable(true));
+        OrderTable savedTable = orderTableDao.save(createTable(true));
         OrderTable notSavedTable = OrderTable.builder()
             .id(1000L)
             .build();
@@ -93,8 +93,8 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 빈 테이블이 아닌 테이블을 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_NotEmptyTable() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
-        OrderTable savedTable2 = tableDao.save(createTable(false));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createTable(false));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -108,8 +108,8 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 다른 그룹의 테이블을 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_OthersTable() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
-        OrderTable savedTable2 = tableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -117,7 +117,7 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroup1 = createTableGroupRequest(tables);
         tableGroupService.create(tableGroup1);
 
-        OrderTable savedTable3 = tableDao.save(createTable(true));
+        OrderTable savedTable3 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest3 = createOrderTableIdRequest(savedTable3.getId());
         List<OrderTableIdRequest> tables2 = Arrays.asList(tableIdRequest3, tableIdRequest2);
 
@@ -130,8 +130,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
-        OrderTable savedTable2 = tableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -141,8 +141,8 @@ class TableGroupServiceTest {
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        OrderTable ungroupedTable1 = tableDao.findById(savedTable1.getId()).get();
-        OrderTable ungroupedTable2 = tableDao.findById(savedTable2.getId()).get();
+        OrderTable ungroupedTable1 = orderTableDao.findById(savedTable1.getId()).get();
+        OrderTable ungroupedTable2 = orderTableDao.findById(savedTable2.getId()).get();
         assertAll(
             () -> assertThat(ungroupedTable1.getTableGroup()).isNull(),
             () -> assertThat(ungroupedTable2.getTableGroup()).isNull(),
@@ -154,8 +154,8 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 조리, 식사 중인 테이블을 포함한 테이블 그룹 해제")
     @Test
     void ungroup_Fail_With_TableInProgress() {
-        OrderTable savedTable1 = tableDao.save(createTable(true));
-        OrderTable savedTable2 = tableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
