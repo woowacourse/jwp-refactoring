@@ -108,4 +108,14 @@ class TableServiceTest extends ServiceTest {
 
 		assertThat(result.getNumberOfGuests()).isEqualTo(4);
 	}
+
+	@DisplayName("방문한 손님 수는 0명 이상이어야 한다.")
+	@Test
+	void changeNumberOfGuests_WhenNumberOfGuestsLessThanZero() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setNumberOfGuests(-1);
+
+		assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, orderTable))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
 }
