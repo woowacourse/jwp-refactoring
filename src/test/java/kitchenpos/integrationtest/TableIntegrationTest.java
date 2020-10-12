@@ -31,7 +31,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.post("/api/tables")
 			.then().log().all()
 			.statusCode(HttpStatus.CREATED.value())
-			.body("id", equalTo(9))
+			.body("id", equalTo(10))
 			.body("tableGroupId", equalTo(null))
 			.body("numberOfGuests", equalTo(0))
 			.body("empty", equalTo(true));
@@ -46,7 +46,7 @@ public class TableIntegrationTest extends IntegrationTest {
 			.get("/api/tables")
 			.then().log().all()
 			.statusCode(HttpStatus.OK.value())
-			.body(".", hasSize(8));
+			.body(".", hasSize(9));
 	}
 
 	@DisplayName("빈 테이블을 해지할 수 있다.")
