@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -37,6 +38,12 @@ public abstract class MvcTest {
 
     protected ResultActions postAction(String url) throws Exception {
         return mockMvc.perform(post(url));
+    }
+
+    protected ResultActions postAction(String url, String inputJson) throws Exception {
+        return mockMvc.perform(post(url)
+            .content(inputJson)
+            .contentType(MediaType.APPLICATION_JSON));
     }
 
     protected ResultActions deleteAction(String url) throws Exception {
