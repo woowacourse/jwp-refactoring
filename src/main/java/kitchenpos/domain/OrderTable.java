@@ -42,6 +42,8 @@ public class OrderTable {
         if (Objects.isNull(this.tableGroup)) {
             this.tableGroup = tableGroup;
             this.tableGroup.addOrderTable(this);
+        } else if (Objects.isNull(tableGroup)) {
+            this.tableGroup = null;
         }
     }
 
