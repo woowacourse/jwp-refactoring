@@ -43,8 +43,26 @@ class TableServiceTest extends ServiceTest {
 		assertThat(list).hasSize(8);
 	}
 
+	@DisplayName("빈 테이블을 설정할 수 있다.")
 	@Test
-	void changeEmpty() {
+	void changeEmpty_WhenSetTrue() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setEmpty(true);
+
+		OrderTable result = tableService.changeEmpty(2L, orderTable);
+
+		assertThat(result.isEmpty()).isTrue();
+	}
+
+	@DisplayName("빈 테이블을 설정 해지할 수 있다.")
+	@Test
+	void changeEmpty_WhenSetFalse() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setEmpty(false);
+
+		OrderTable result = tableService.changeEmpty(1L, orderTable);
+
+		assertThat(result.isEmpty()).isFalse();
 	}
 
 	@Test
