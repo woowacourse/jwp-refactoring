@@ -98,7 +98,14 @@ class TableServiceTest extends ServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@DisplayName("방문한 손님 수를 입력할 수 있다.")
 	@Test
 	void changeNumberOfGuests() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setNumberOfGuests(4);
+
+		OrderTable result = tableService.changeNumberOfGuests(2L, orderTable);
+
+		assertThat(result.getNumberOfGuests()).isEqualTo(4);
 	}
 }
