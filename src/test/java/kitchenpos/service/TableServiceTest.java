@@ -118,4 +118,14 @@ class TableServiceTest extends ServiceTest {
 		assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, orderTable))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
+
+	@DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+	@Test
+	void changeNumberOfGuests_WhenTableIsEmpty() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setNumberOfGuests(4);
+
+		assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
 }
