@@ -14,6 +14,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -92,13 +93,10 @@ public class MenuService {
             .build();
     }
 
-    public List<Menu> list() {
+    @Transactional
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return MenuResponse.listFrom(menus);
     }
 }

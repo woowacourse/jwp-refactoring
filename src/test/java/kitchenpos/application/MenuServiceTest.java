@@ -18,6 +18,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,7 +139,7 @@ class MenuServiceTest {
         menuService.create(request);
         menuService.create(request);
 
-        List<Menu> list = menuService.list();
+        List<MenuResponse> list = menuService.list();
 
         assertThat(list).hasSize(2);
     }
