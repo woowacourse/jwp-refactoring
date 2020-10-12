@@ -22,8 +22,8 @@ import kitchenpos.domain.MenuGroup;
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends MvcTest {
 
-    private static final int MENU_GROUP_ID_1 = 1;
-    private static final int MENU_GROUP_ID_2 = 2;
+    private static final Long MENU_GROUP_ID_1 = 1L;
+    private static final Long MENU_GROUP_ID_2 = 2L;
     private static final String MENU_GROUP_NAME_1 = "메뉴그룹1";
     private static final String MENU_GROUP_NAME_2 = "메뉴그룹2";
     private static final MenuGroup MENU_GROUP_1 = new MenuGroup();
@@ -34,9 +34,9 @@ class MenuGroupRestControllerTest extends MvcTest {
 
     @BeforeEach
     void setUp() {
-        MENU_GROUP_1.setId((long)MENU_GROUP_ID_1);
+        MENU_GROUP_1.setId(MENU_GROUP_ID_1);
         MENU_GROUP_1.setName(MENU_GROUP_NAME_1);
-        MENU_GROUP_2.setId((long)MENU_GROUP_ID_2);
+        MENU_GROUP_2.setId(MENU_GROUP_ID_2);
         MENU_GROUP_2.setName(MENU_GROUP_NAME_2);
     }
 

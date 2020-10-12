@@ -13,6 +13,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public abstract class MvcTest {
 
@@ -26,6 +28,9 @@ public abstract class MvcTest {
 
     @BeforeEach
     void setUpEncoding() {
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         mockMvc = MockMvcBuilders.webAppContextSetup(ctx)
             .addFilters(new CharacterEncodingFilter("UTF-8", true))
             .alwaysDo(print())
@@ -50,7 +55,9 @@ public abstract class MvcTest {
         return mockMvc.perform(delete(url));
     }
 
-    protected ResultActions putAction(String url) throws Exception {
-        return mockMvc.perform(put(url));
+    protected ResultActions putAction(String url, String inputJson) throws Exception {
+        return mockMvc.perform(put(url)
+            .content(inputJson)
+            .contentType(MediaType.APPLICATION_JSON));
     }
 }
