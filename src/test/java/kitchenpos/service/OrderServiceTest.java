@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.domain.Order;
@@ -52,7 +54,15 @@ class OrderServiceTest extends ServiceTest {
 		assertThat(list).hasSize(5);
 	}
 
-	@Test
-	void changeOrderStatus() {
+	@DisplayName("주문 상태를 변경할 수 있다.")
+	@ParameterizedTest
+	@CsvSource(value = {"1,MEAL", "2,COOKING"})
+	void changeOrderStatus(long id, String orderStatus) {
+		Order order = new Order();
+		order.setOrderStatus(orderStatus);
+
+		Order result = orderService.changeOrderStatus(id, order);
+
+		assertThat(result.getOrderStatus()).isEqualTo(orderStatus);
 	}
 }
