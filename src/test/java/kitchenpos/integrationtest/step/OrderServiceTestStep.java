@@ -17,4 +17,16 @@ public class OrderServiceTestStep {
 
 		return order;
 	}
+
+	public static Order createOrderThatTableIsEmpty() {
+		OrderLineItem orderLineItem = new OrderLineItem();
+		orderLineItem.setMenuId(1L);
+		orderLineItem.setQuantity(1);
+
+		Order order = new Order();
+		order.setOrderTableId(1L);
+		order.setOrderLineItems(Collections.singletonList(orderLineItem));
+
+		return order;
+	}
 }

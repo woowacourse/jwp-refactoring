@@ -33,6 +33,15 @@ class OrderServiceTest extends ServiceTest {
 		);
 	}
 
+	@DisplayName("빈 테이블에는 주문을 등록할 수 없다.")
+	@Test
+	void create_WhenTableIsEmpty() {
+		Order order = createOrderThatTableIsEmpty();
+
+		assertThatThrownBy(() -> orderService.create(order))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@Test
 	void list() {
 	}
