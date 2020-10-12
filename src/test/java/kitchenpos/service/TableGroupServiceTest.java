@@ -4,10 +4,14 @@ import static kitchenpos.service.step.TableGroupServiceTestStep.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.service.common.ServiceTest;
 
@@ -16,6 +20,9 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@Autowired
 	TableGroupService tableGroupService;
+
+	@Autowired
+	OrderTableDao orderTableDao;
 
 	@DisplayName("2개 이상의 빈 테이블을 단체로 지정할 수 있다.")
 	@Test
@@ -42,7 +49,13 @@ class TableGroupServiceTest extends ServiceTest {
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	@DisplayName("단체 지정을 해지할 수 있다.")
 	@Test
 	void ungroup() {
+		tableGroupService.ungroup(1L);
+
+		List<OrderTable> allByTableGroupId = orderTableDao.findAllByTableGroupId(1L);
+
+		assertThat(allByTableGroupId).isEmpty();
 	}
 }
