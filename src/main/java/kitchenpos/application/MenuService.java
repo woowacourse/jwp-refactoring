@@ -41,10 +41,6 @@ public class MenuService {
     public MenuResponse create(final MenuRequest request) {
         final BigDecimal price = request.getPrice();
 
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
         MenuGroup menuGroup = menuGroupDao.findById(request.getMenuGroupId())
             .orElseThrow(IllegalArgumentException::new);
 
