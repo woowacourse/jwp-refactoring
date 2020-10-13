@@ -39,8 +39,6 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
         MenuGroup menuGroup = menuGroupDao.findById(request.getMenuGroupId())
             .orElseThrow(IllegalArgumentException::new);
 
@@ -51,13 +49,8 @@ public class MenuService {
             .build();
         List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), menu);
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            Product product = menuProduct.getProduct();
-            sum = sum
-                .add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
+        BigDecimal price = menu.getPrice();
+        BigDecimal sum = menu.calculateProductPrice();
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }

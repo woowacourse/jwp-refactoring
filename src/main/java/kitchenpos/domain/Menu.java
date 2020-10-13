@@ -52,6 +52,12 @@ public class Menu {
         menuProducts.add(menuProduct);
     }
 
+    public BigDecimal calculateProductPrice() {
+        return menuProducts.stream()
+            .map(MenuProduct::calculatePrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
     public Long getId() {
         return id;
     }

@@ -3,7 +3,9 @@ package kitchenpos;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -58,10 +60,25 @@ public class TestObjectFactory {
             .build();
     }
 
+    public static Menu createMenu(int price) {
+        return Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(price))
+            .build();
+    }
+
     public static Product createProduct(int price) {
         return Product.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(price))
+            .build();
+    }
+
+    public static MenuProduct createMenuProduct(Menu menu, Product product, int quantity) {
+        return MenuProduct.builder()
+            .menu(menu)
+            .product(product)
+            .quantity(quantity)
             .build();
     }
 
