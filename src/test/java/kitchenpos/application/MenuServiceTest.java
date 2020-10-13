@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.TestDomainFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -81,7 +82,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createMenuWithNullPriceThenThrowException() {
-        Menu menu = createMenuDomain("양념간장두마리메뉴", null, this.savedMenuGroup.getId(), new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", null, this.savedMenuGroup.getId(), new ArrayList<>());
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -90,8 +91,9 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createMenuWithInvalidPriceThenThrowException(int invalidPrice) {
-        Menu menu = createMenuDomain("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice), this.savedMenuGroup.getId(),
-                                     new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice),
+                                                 this.savedMenuGroup.getId(),
+                                                 new ArrayList<>());
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -100,7 +102,8 @@ class MenuServiceTest {
     @Test
     void createMenuWithNotExistMenuGroupThenThrowException() {
         long notExistMenuGroupId = -1L;
-        Menu menu = createMenuDomain("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroupId, new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroupId,
+                                                 new ArrayList<>());
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -111,7 +114,7 @@ class MenuServiceTest {
         Menu menu = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
                                     new ArrayList<>());
         long notExistProductId = -1L;
-        MenuProduct menuProduct = createMenuProductDomain(menu.getId(), notExistProductId, 1);
+        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(menu.getId(), notExistProductId, 1);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -133,56 +136,22 @@ class MenuServiceTest {
     }
 
     private MenuGroup createSavedMenuGroup(String menuName) {
-        MenuGroup menuGroup = createMenuGroupDomain(menuName);
+        MenuGroup menuGroup = TestDomainFactory.createMenuGroup(menuName);
         return this.menuGroupDao.save(menuGroup);
     }
 
     private Menu createSavedMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = createMenuDomain(name, price, menuGroupId, menuProducts);
+        Menu menu = TestDomainFactory.createMenu(name, price, menuGroupId, menuProducts);
         return this.menuDao.save(menu);
     }
 
     private Product createSavedProduct(String name, BigDecimal price) {
-        Product product = createProductDomain(name, price);
+        Product product = TestDomainFactory.createProduct(name, price);
         return this.productDao.save(product);
     }
 
     private MenuProduct createSavedMenuProduct(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = createMenuProductDomain(menuId, productId, quantity);
+        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(menuId, productId, quantity);
         return this.menuProductDao.save(menuProduct);
-    }
-
-    private Menu createMenuDomain(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
-    }
-
-    private MenuGroup createMenuGroupDomain(String menuName) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuName);
-
-        return menuGroup;
-    }
-
-    private Product createProductDomain(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
-    }
-
-    private MenuProduct createMenuProductDomain(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
     }
 }
