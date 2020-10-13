@@ -52,7 +52,12 @@ public class Menu {
         menuProducts.add(menuProduct);
     }
 
-    public BigDecimal calculateProductPrice() {
+    public boolean isNotValidPrice() {
+        BigDecimal sum = calculateProductPrice();
+        return price.compareTo(sum) > 0;
+    }
+
+    private BigDecimal calculateProductPrice() {
         return menuProducts.stream()
             .map(MenuProduct::calculatePrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);

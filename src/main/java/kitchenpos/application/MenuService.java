@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -49,9 +48,7 @@ public class MenuService {
             .build();
         List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), menu);
 
-        BigDecimal price = menu.getPrice();
-        BigDecimal sum = menu.calculateProductPrice();
-        if (price.compareTo(sum) > 0) {
+        if (menu.isNotValidPrice()) {
             throw new IllegalArgumentException();
         }
 

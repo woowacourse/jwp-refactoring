@@ -22,19 +22,31 @@ class MenuTest {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴에 포함된 상품 가격 총합 계산")
+    @DisplayName("메뉴 가격 / 포함된 상품 가격 총합 비교 - 메뉴 가격이 더 작은 경우")
     @Test
-    void calculateProductPrice() {
+    void isValidPrice_True() {
         Product product1 = createProduct(15_000);
         Product product2 = createProduct(16_000);
 
-        Menu menu = createMenu(30_000);
+        Menu menu = createMenu(100_000_000);
 
         createMenuProduct(menu, product1, 1);
         createMenuProduct(menu, product2, 1);
 
-        BigDecimal actual = menu.calculateProductPrice();
-        BigDecimal expected = BigDecimal.valueOf(31_000);
-        assertThat(actual).isEqualTo(expected);
+        assertThat(menu.isNotValidPrice()).isTrue();
+    }
+
+    @DisplayName("메뉴 가격 / 포함된 상품 가격 총합 비교 - 메뉴 가격이 더 큰 경우")
+    @Test
+    void isValidPrice_False() {
+        Product product1 = createProduct(15_000);
+        Product product2 = createProduct(16_000);
+
+        Menu menu = createMenu(10);
+
+        createMenuProduct(menu, product1, 1);
+        createMenuProduct(menu, product2, 1);
+
+        assertThat(menu.isNotValidPrice()).isFalse();
     }
 }
