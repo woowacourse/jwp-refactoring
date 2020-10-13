@@ -88,6 +88,7 @@ class OrderServiceTest {
 
         Menu notSavedMenu = Menu.builder()
             .id(1000L)
+            .price(BigDecimal.valueOf(18_000))
             .build();
 
         OrderLineItemRequest orderLineItem = createOrderLineItemRequest(notSavedMenu);

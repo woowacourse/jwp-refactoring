@@ -56,21 +56,6 @@ class MenuServiceTest {
         );
     }
 
-    @DisplayName("[예외] 가격이 0보다 작은 메뉴 추가")
-    @Test
-    void create_Fail_With_InvalidPrice() {
-        MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
-
-        Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
-        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
-
-        MenuRequest request = createMenuRequest(-1, savedMenuGroup, menuProducts);
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("[예외] 존재하지 않는 메뉴 그룹에 속한 메뉴 추가")
     @Test
     void create_Fail_With_NotExistMenuGroup() {
@@ -104,21 +89,6 @@ class MenuServiceTest {
         List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
 
         MenuRequest request = createMenuRequest(18_000, savedMenuGroup, menuProducts);
-
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("[예외] 포함한 상품의 가격 총합보다 높은 가격의 메뉴 추가")
-    @Test
-    void create_Fail_With_OverPrice() {
-        MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
-
-        Product savedProduct = productDao.save(createProduct(18_000));
-        MenuProductRequest menuProduct = createMenuProductRequest(savedProduct);
-        List<MenuProductRequest> menuProducts = Arrays.asList(menuProduct);
-
-        MenuRequest request = createMenuRequest(1_000_000, savedMenuGroup, menuProducts);
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

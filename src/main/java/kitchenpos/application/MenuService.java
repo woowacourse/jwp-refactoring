@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -41,10 +40,6 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest request) {
         final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
 
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
