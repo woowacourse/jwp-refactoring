@@ -107,7 +107,7 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
 

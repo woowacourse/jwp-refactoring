@@ -53,6 +53,10 @@ public class Order {
         orderLineItems.add(orderLineItem);
     }
 
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        this.orderStatus = orderStatus.name();
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,10 +75,6 @@ public class Order {
 
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
