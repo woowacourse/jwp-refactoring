@@ -134,18 +134,6 @@ class OrderTableServiceTest {
         assertThat(changedTable.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
     }
 
-    @DisplayName("[예외] 0보다 작은 수로 손님 수 변경")
-    @Test
-    void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
-        OrderTableRequest table = createTableRequest(0, true);
-        OrderTableResponse savedTable = orderTableService.create(table);
-        OrderTableRequest request = createTableRequest(-1);
-
-        assertThatThrownBy(
-            () -> orderTableService.changeNumberOfGuests(savedTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("[예외] 존재하지 않는 테이블의 손님 수 변경")
     @Test
     void changeNumberOfGuests_Fail_With_NotExistTable() {

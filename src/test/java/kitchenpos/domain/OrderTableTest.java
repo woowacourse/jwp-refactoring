@@ -72,6 +72,16 @@ class OrderTableTest {
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
     }
 
+    @DisplayName("[예외] 0보다 작은 수로 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_Fail_With_InvalidNumberOfGuest() {
+        OrderTable orderTable = createOrderTable(false);
+
+        assertThatThrownBy(
+            () -> orderTable.changeNumberOfGuests(-1)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
     private OrderTable createOrderTable(boolean empty) {
         return OrderTable.builder()
             .empty(empty)
