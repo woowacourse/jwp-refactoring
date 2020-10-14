@@ -81,7 +81,7 @@ class OrderTableServiceTest {
     @DisplayName("[예외] 조리, 식사 중인 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInProgress() {
-        OrderTableRequest table = createTableRequest(0, true);
+        OrderTableRequest table = createTableRequest(0, false);
         OrderTableResponse orderTableResponse = orderTableService.create(table);
 
         OrderTable savedTable = orderTableDao.findById(orderTableResponse.getId()).get();

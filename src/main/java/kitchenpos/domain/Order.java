@@ -11,12 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "orders")
@@ -33,6 +31,23 @@ public class Order {
     @Builder.Default
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    @Builder
+    public Order(Long id, OrderTable orderTable, String orderStatus,
+        LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        validateOrderTable(orderTable);
+        this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
 
     public void addOrderLineItem(OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);

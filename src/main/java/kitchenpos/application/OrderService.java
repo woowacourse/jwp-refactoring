@@ -59,10 +59,6 @@ public class OrderService {
         final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
         Order order = Order.builder()
             .orderTable(orderTable)
             .orderStatus(OrderStatus.COOKING.name())

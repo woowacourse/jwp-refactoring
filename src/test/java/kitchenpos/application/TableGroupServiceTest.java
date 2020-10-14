@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableIdRequest;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Sql("/deleteAll.sql")
@@ -29,6 +31,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @Autowired
     private OrderTableDao orderTableDao;
@@ -114,6 +119,7 @@ class TableGroupServiceTest {
         );
     }
 
+    @Transactional
     @DisplayName("[예외] 조리, 식사 중인 테이블을 포함한 테이블 그룹 해제")
     @Test
     void ungroup_Fail_With_TableInProgress() {
@@ -126,7 +132,11 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroup = createTableGroupRequest(tables);
         TableGroupResponse savedTableGroup = tableGroupService.create(tableGroup);
 
-        Order order = createOrder(savedTable1);
+        OrderTable groupedTable = tableGroupDao.findById(savedTableGroup.getId())
+            .get()
+            .getOrderTables()
+            .get(0);
+        Order order = createOrder(groupedTable);
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
