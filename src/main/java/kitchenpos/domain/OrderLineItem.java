@@ -33,18 +33,6 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
     private void setOrder(final Order order) {
         if (Objects.isNull(this.order)) {
             this.order = order;
@@ -52,19 +40,19 @@ public class OrderLineItem {
         }
     }
 
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }
