@@ -13,9 +13,7 @@ class OrderTableTest {
     @DisplayName("주문 등록 불가 여부 변경")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(true)
-            .build();
+        OrderTable orderTable = createEmptyTable();
 
         orderTable.changeEmpty(false);
 
@@ -25,10 +23,7 @@ class OrderTableTest {
     @DisplayName("[예외] 그룹에 포함된 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInGroup() {
-        TableGroup tableGroup = TableGroup.builder()
-            .createdDate(LocalDateTime.now())
-            .build();
-
+        TableGroup tableGroup = createTableGroup();
         OrderTable orderTable = OrderTable.builder()
             .empty(true)
             .tableGroup(tableGroup)
@@ -41,13 +36,8 @@ class OrderTableTest {
     @DisplayName("테이블 그룹 지정")
     @Test
     void groupBy() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(true)
-            .build();
-
-        TableGroup tableGroup = TableGroup.builder()
-            .createdDate(LocalDateTime.now())
-            .build();
+        OrderTable orderTable = createEmptyTable();
+        TableGroup tableGroup = createTableGroup();
 
         orderTable.groupBy(tableGroup);
 
@@ -60,15 +50,10 @@ class OrderTableTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(true)
-            .build();
-
-        TableGroup tableGroup = TableGroup.builder()
-            .createdDate(LocalDateTime.now())
-            .build();
-
+        OrderTable orderTable = createEmptyTable();
+        TableGroup tableGroup = createTableGroup();
         orderTable.groupBy(tableGroup);
+
         orderTable.ungroup();
 
         assertAll(
@@ -76,4 +61,18 @@ class OrderTableTest {
             () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }
+
+    private OrderTable createEmptyTable() {
+        return OrderTable.builder()
+            .empty(true)
+            .build();
+    }
+
+    private TableGroup createTableGroup() {
+        return TableGroup.builder()
+            .createdDate(LocalDateTime.now())
+            .build();
+    }
+
+
 }
