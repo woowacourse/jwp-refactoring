@@ -31,4 +31,16 @@ class OrderTest {
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
+
+    @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
+    @Test
+    void changeOrderStatus_With_CompletedOrder() {
+        OrderTable orderTable = createOrderTable(false);
+        Order order = createOrder(orderTable);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+
+        assertThatThrownBy(
+            () -> order.changeOrderStatus(OrderStatus.COMPLETION)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
 }

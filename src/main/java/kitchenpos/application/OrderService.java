@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -101,10 +100,6 @@ public class OrderService {
         final OrderStatusChangeRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);

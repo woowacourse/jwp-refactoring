@@ -54,7 +54,14 @@ public class Order {
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateOrderStatus();
         this.orderStatus = orderStatus.name();
+    }
+
+    private void validateOrderStatus() {
+        if (orderStatus.equals(OrderStatus.COMPLETION.name())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

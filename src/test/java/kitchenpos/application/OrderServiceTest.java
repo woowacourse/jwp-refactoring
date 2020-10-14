@@ -161,28 +161,6 @@ class OrderServiceTest {
         assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 
-    @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
-    @Test
-    void changeOrderStatus_With_CompletedOrder() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
-
-        Menu savedMenu = saveMenu();
-
-        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
-        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
-
-        OrderRequest order = createOrderRequest(savedTable, orderLineItems);
-
-        OrderResponse savedOrder = orderService.create(order);
-        OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
-            .orderStatus(OrderStatus.COMPLETION.name())
-            .build();
-        orderService.changeOrderStatus(savedOrder.getId(), request);
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     private Menu saveMenu() {
         Menu menu = Menu.builder()
             .name("강정치킨")
