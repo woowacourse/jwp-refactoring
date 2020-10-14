@@ -47,6 +47,17 @@ public class OrderTable {
         }
     }
 
+    public void changeEmpty(final boolean empty) {
+        validateTableGroup();
+        this.empty = empty;
+    }
+
+    private void validateTableGroup() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
@@ -57,9 +68,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }
