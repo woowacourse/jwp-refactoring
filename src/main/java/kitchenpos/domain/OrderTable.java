@@ -40,7 +40,7 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void groupBy(final TableGroup tableGroup) {
         if (Objects.isNull(this.tableGroup)) {
             changeEmpty(false);
             this.tableGroup = tableGroup;

@@ -40,7 +40,7 @@ class OrderTableTest {
 
     @DisplayName("테이블 그룹 지정")
     @Test
-    void setTableGroup() {
+    void groupBy() {
         OrderTable orderTable = OrderTable.builder()
             .empty(true)
             .build();
@@ -49,7 +49,7 @@ class OrderTableTest {
             .createdDate(LocalDateTime.now())
             .build();
 
-        orderTable.setTableGroup(tableGroup);
+        orderTable.groupBy(tableGroup);
 
         assertAll(
             () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
@@ -68,7 +68,7 @@ class OrderTableTest {
             .createdDate(LocalDateTime.now())
             .build();
 
-        orderTable.setTableGroup(tableGroup);
+        orderTable.groupBy(tableGroup);
         orderTable.ungroup();
 
         assertAll(

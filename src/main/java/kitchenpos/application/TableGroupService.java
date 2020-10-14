@@ -61,7 +61,7 @@ public class TableGroupService {
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
+            savedOrderTable.groupBy(savedTableGroup);
             orderTableDao.save(savedOrderTable);
         }
 
