@@ -62,10 +62,6 @@ public class OrderTableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         OrderTable changedTable = orderTableDao.save(savedOrderTable);

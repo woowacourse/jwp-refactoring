@@ -144,19 +144,6 @@ class OrderTableServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("[예외] 빈 테이블의 손님 수 변경")
-    @Test
-    void changeNumberOfGuests_Fail_With_EmptyTable() {
-        OrderTableRequest emptyTable = createTableRequest(0, true);
-        OrderTableResponse savedEmptyTable = orderTableService.create(emptyTable);
-
-        OrderTableRequest request = createTableRequest(100);
-
-        assertThatThrownBy(
-            () -> orderTableService.changeNumberOfGuests(savedEmptyTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     private OrderTableRequest createTableRequest(int numberOfGuests, boolean empty) {
         return OrderTableRequest.builder()
             .numberOfGuests(numberOfGuests)

@@ -69,11 +69,18 @@ public class OrderTable {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
+        validateEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
     private void validateNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateEmpty() {
+        if (empty) {
             throw new IllegalArgumentException();
         }
     }

@@ -82,6 +82,16 @@ class OrderTableTest {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("[예외] 빈 테이블의 손님 수 변경")
+    @Test
+    void changeNumberOfGuests_Fail_With_EmptyTable() {
+        OrderTable orderTable = createOrderTable(true);
+
+        assertThatThrownBy(
+            () -> orderTable.changeNumberOfGuests(10)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
     private OrderTable createOrderTable(boolean empty) {
         return OrderTable.builder()
             .empty(empty)
