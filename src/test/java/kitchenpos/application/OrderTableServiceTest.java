@@ -1,22 +1,17 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createOrderTableIdRequest;
-import static kitchenpos.TestObjectFactory.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.dto.TableGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,24 +75,6 @@ class OrderTableServiceTest {
         OrderTableRequest request = createTableRequest(false);
 
         assertThatThrownBy(() -> orderTableService.changeEmpty(1000L, request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("[예외] 그룹에 포함된 테이블의 주문 등록 불가 여부 변경")
-    @Test
-    void changeEmpty_Fail_With_TableInGroup() {
-        OrderTableRequest table = createTableRequest(0, true);
-        OrderTableResponse savedTable1 = orderTableService.create(table);
-        OrderTableResponse savedTable2 = orderTableService.create(table);
-        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
-        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
-        List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
-        TableGroupRequest tableGroup = createTableGroupRequest(tables);
-        tableGroupService.create(tableGroup);
-
-        OrderTableRequest request = createTableRequest(false);
-
-        assertThatThrownBy(() -> orderTableService.changeEmpty(savedTable1.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
