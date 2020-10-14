@@ -8,9 +8,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Getter
 @Entity
 public class OrderLineItem {
 
@@ -38,21 +40,5 @@ public class OrderLineItem {
             this.order = order;
             this.order.addOrderLineItem(this);
         }
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }

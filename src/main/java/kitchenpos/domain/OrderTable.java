@@ -10,12 +10,14 @@ import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@EqualsAndHashCode
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@EqualsAndHashCode
 @Entity
 public class OrderTable {
 
@@ -95,9 +97,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
     }
 }

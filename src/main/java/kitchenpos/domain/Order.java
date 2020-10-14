@@ -14,10 +14,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @NoArgsConstructor
+@Getter
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -65,25 +67,5 @@ public class Order {
         if (orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

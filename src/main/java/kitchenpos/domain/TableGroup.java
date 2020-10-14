@@ -10,11 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class TableGroup {
 
@@ -32,17 +34,5 @@ public class TableGroup {
 
     public void removeOrderTable(OrderTable orderTable) {
         orderTables.remove(orderTable);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return new ArrayList<>(orderTables);
     }
 }

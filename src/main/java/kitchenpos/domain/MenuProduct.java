@@ -9,9 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Getter
 @Entity
 public class MenuProduct {
 
@@ -45,21 +47,5 @@ public class MenuProduct {
         BigDecimal price = this.product.getPrice();
         BigDecimal quantity = BigDecimal.valueOf(this.quantity);
         return price.multiply(quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }
