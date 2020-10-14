@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -35,5 +36,24 @@ class OrderTableTest {
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("테이블 그룹 지정")
+    @Test
+    void setTableGroup() {
+        OrderTable orderTable = OrderTable.builder()
+            .empty(true)
+            .build();
+
+        TableGroup tableGroup = TableGroup.builder()
+            .createdDate(LocalDateTime.now())
+            .build();
+
+        orderTable.setTableGroup(tableGroup);
+
+        assertAll(
+            () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
+            () -> assertThat(orderTable.isEmpty()).isFalse()
+        );
     }
 }

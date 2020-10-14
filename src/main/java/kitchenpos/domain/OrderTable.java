@@ -40,10 +40,12 @@ public class OrderTable {
 
     public void setTableGroup(final TableGroup tableGroup) {
         if (Objects.isNull(this.tableGroup)) {
+            changeEmpty(false);
             this.tableGroup = tableGroup;
             this.tableGroup.addOrderTable(this);
         } else if (Objects.isNull(tableGroup)) {
             this.tableGroup = null;
+            changeEmpty(false);
         }
     }
 
