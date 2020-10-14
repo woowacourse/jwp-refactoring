@@ -11,7 +11,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.JdbcTemplateMenuDao;
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -20,7 +31,28 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@SpringBootTest(classes = {
+        JdbcTemplateTableGroupDao.class,
+        JdbcTemplateMenuGroupDao.class,
+        JdbcTemplateMenuDao.class,
+        JdbcTemplateOrderDao.class,
+        JdbcTemplateOrderLineItemDao.class,
+        JdbcTemplateOrderTableDao.class,
+        OrderService.class
+})
 class OrderServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuDao menuDao;
 
     @Autowired
     private OrderService orderService;

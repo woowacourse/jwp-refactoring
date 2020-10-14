@@ -9,11 +9,33 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@SpringBootTest(classes = {
+        JdbcTemplateTableGroupDao.class,
+        JdbcTemplateOrderDao.class,
+        JdbcTemplateOrderTableDao.class,
+        TableService.class
+})
 class TableServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @Autowired
     private TableService tableService;

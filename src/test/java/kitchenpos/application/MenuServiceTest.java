@@ -11,14 +11,41 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.JdbcTemplateMenuDao;
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.JdbcTemplateProductDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
+@SpringBootTest(classes = {
+        JdbcTemplateMenuDao.class,
+        JdbcTemplateMenuGroupDao.class,
+        JdbcTemplateMenuProductDao.class,
+        JdbcTemplateProductDao.class,
+        MenuService.class
+})
 class MenuServiceTest extends ServiceTest {
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    @Autowired
+    private ProductDao productDao;
 
     @Autowired
     private MenuService menuService;
