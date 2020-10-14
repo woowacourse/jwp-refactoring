@@ -104,10 +104,7 @@ public class OrderService {
         final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
 
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return OrderResponse.from(savedOrder);
+        Order changedOrder = orderDao.save(savedOrder);
+        return OrderResponse.from(changedOrder);
     }
 }
