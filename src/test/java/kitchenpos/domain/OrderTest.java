@@ -22,6 +22,7 @@ class OrderTest {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
         OrderTable orderTable = createOrderTable(false);
