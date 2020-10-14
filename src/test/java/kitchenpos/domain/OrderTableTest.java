@@ -47,6 +47,30 @@ class OrderTableTest {
         );
     }
 
+    @DisplayName("[예외] 주문 가능한 테이블의 그룹 설정")
+    @Test
+    void groupBy_Fail_With_NotEmptyTable() {
+        OrderTable orderTable = createOrderTable(false);
+        TableGroup tableGroup = createTableGroup();
+
+        assertThatThrownBy(
+            () -> orderTable.groupBy(tableGroup)
+        ).isInstanceOf(IllegalArgumentException.class);
+
+    }
+
+    @DisplayName("[예외] 이미 다른 그룹에 속한 테이블의 그룹 설정")
+    @Test
+    void groupBy_Fail_With_AlreadyGroupedTable() {
+        OrderTable orderTable = createOrderTable(true);
+        TableGroup tableGroup = createTableGroup();
+        orderTable.groupBy(tableGroup);
+
+        assertThatThrownBy(
+            () -> orderTable.groupBy(tableGroup)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {

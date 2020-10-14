@@ -90,43 +90,6 @@ class TableGroupServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("[예외] 빈 테이블이 아닌 테이블을 포함한 테이블 그룹 추가")
-    @Test
-    void create_Fail_With_NotEmptyTable() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
-        OrderTable savedTable2 = orderTableDao.save(createTable(false));
-        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
-        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
-        List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
-
-        TableGroupRequest request = createTableGroupRequest(tables);
-
-        assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("[예외] 다른 그룹의 테이블을 포함한 테이블 그룹 추가")
-    @Test
-    void create_Fail_With_OthersTable() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
-        OrderTable savedTable2 = orderTableDao.save(createTable(true));
-        OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
-        OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
-        List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
-
-        TableGroupRequest tableGroup1 = createTableGroupRequest(tables);
-        tableGroupService.create(tableGroup1);
-
-        OrderTable savedTable3 = orderTableDao.save(createTable(true));
-        OrderTableIdRequest tableIdRequest3 = createOrderTableIdRequest(savedTable3.getId());
-        List<OrderTableIdRequest> tables2 = Arrays.asList(tableIdRequest3, tableIdRequest2);
-
-        TableGroupRequest request = createTableGroupRequest(tables2);
-
-        assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
