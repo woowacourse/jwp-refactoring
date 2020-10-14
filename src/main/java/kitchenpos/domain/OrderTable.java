@@ -9,8 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -44,9 +46,14 @@ public class OrderTable {
             this.tableGroup = tableGroup;
             this.tableGroup.addOrderTable(this);
         } else if (Objects.isNull(tableGroup)) {
-            this.tableGroup = null;
-            changeEmpty(false);
+            ungroup();
         }
+    }
+
+    public void ungroup() {
+        this.tableGroup.removeOrderTable(this);
+        this.tableGroup = null;
+        changeEmpty(false);
     }
 
     public void changeEmpty(final boolean empty) {

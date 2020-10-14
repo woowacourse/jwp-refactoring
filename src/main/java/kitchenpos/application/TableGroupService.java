@@ -20,11 +20,13 @@ import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+        final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
@@ -82,10 +84,9 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
+            orderTable.ungroup();
             orderTableDao.save(orderTable);
         }
-        tableGroup.setOrderTables(null);
         tableGroupDao.save(tableGroup);
     }
 }

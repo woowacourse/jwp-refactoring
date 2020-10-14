@@ -56,4 +56,24 @@ class OrderTableTest {
             () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }
+
+    @DisplayName("테이블 그룹 해제")
+    @Test
+    void ungroup() {
+        OrderTable orderTable = OrderTable.builder()
+            .empty(true)
+            .build();
+
+        TableGroup tableGroup = TableGroup.builder()
+            .createdDate(LocalDateTime.now())
+            .build();
+
+        orderTable.setTableGroup(tableGroup);
+        orderTable.ungroup();
+
+        assertAll(
+            () -> assertThat(orderTable.getTableGroup()).isNull(),
+            () -> assertThat(orderTable.isEmpty()).isFalse()
+        );
+    }
 }

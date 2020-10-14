@@ -30,6 +30,10 @@ public class TableGroup {
         orderTables.add(orderTable);
     }
 
+    public void removeOrderTable(OrderTable orderTable) {
+        orderTables.remove(orderTable);
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,7 +51,7 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return new ArrayList<>(orderTables);
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
