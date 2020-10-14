@@ -30,7 +30,7 @@ class OrderTest {
 
         order.changeOrderStatus(OrderStatus.MEAL);
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")

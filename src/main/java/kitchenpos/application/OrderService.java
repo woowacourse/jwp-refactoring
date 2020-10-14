@@ -60,7 +60,7 @@ public class OrderService {
 
         Order order = Order.builder()
             .orderTable(orderTable)
-            .orderStatus(OrderStatus.COOKING.name())
+            .orderStatus(OrderStatus.COOKING)
             .orderedTime(LocalDateTime.now())
             .build();
 
@@ -101,8 +101,7 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus);
+        savedOrder.changeOrderStatus(request.getOrderStatus());
 
         Order changedOrder = orderDao.save(savedOrder);
         return OrderResponse.from(changedOrder);

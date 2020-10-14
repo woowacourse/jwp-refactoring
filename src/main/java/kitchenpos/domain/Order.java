@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,14 +28,15 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
-    private String orderStatus;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @Builder.Default
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Builder
-    public Order(Long id, OrderTable orderTable, String orderStatus,
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus,
         LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validateOrderTable(orderTable);
         this.id = id;
@@ -55,11 +58,11 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
         validateOrderStatus();
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     private void validateOrderStatus() {
-        if (orderStatus.equals(OrderStatus.COMPLETION.name())) {
+        if (orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException();
         }
     }
@@ -72,7 +75,7 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

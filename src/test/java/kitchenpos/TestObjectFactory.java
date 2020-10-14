@@ -49,7 +49,7 @@ public class TestObjectFactory {
     public static Order createOrder(OrderTable table) {
         return Order.builder()
             .orderTable(table)
-            .orderStatus(OrderStatus.COOKING.name())
+            .orderStatus(OrderStatus.COOKING)
             .orderedTime(LocalDateTime.now())
             .build();
     }

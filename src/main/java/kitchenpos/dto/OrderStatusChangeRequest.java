@@ -1,5 +1,6 @@
 package kitchenpos.dto;
 
+import kitchenpos.domain.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OrderStatusChangeRequest {
 
-    private String orderStatus;
+    private OrderStatus orderStatus;
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 }

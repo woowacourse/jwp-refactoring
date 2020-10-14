@@ -65,7 +65,7 @@ class OrderServiceTest {
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
             () -> assertThat(savedOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
     }
@@ -152,7 +152,7 @@ class OrderServiceTest {
 
         OrderResponse savedOrder = orderService.create(order);
         OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
-            .orderStatus(OrderStatus.COMPLETION.name())
+            .orderStatus(OrderStatus.COMPLETION)
             .build();
 
         OrderResponse changeOrderStatus = orderService

@@ -87,7 +87,7 @@ class OrderTableServiceTest {
         OrderTable savedTable = orderTableDao.findById(orderTableResponse.getId()).get();
         Order order = Order.builder()
             .orderTable(savedTable)
-            .orderStatus(OrderStatus.COOKING.name())
+            .orderStatus(OrderStatus.COOKING)
             .orderedTime(LocalDateTime.now())
             .build();
         orderDao.save(order);
