@@ -41,7 +41,7 @@ public class OrderTable {
     }
 
     public void groupBy(final TableGroup tableGroup) {
-        validateNotEmpty();
+        validateEmpty();
         validateTableGroup();
         if (Objects.isNull(this.tableGroup)) {
             changeEmpty(false);
@@ -52,7 +52,7 @@ public class OrderTable {
         }
     }
 
-    private void validateNotEmpty() {
+    private void validateEmpty() {
         if (!empty) {
             throw new IllegalArgumentException();
         }
@@ -77,7 +77,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
-        validateEmpty();
+        validateNotEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -87,7 +87,7 @@ public class OrderTable {
         }
     }
 
-    private void validateEmpty() {
+    private void validateNotEmpty() {
         if (empty) {
             throw new IllegalArgumentException();
         }
