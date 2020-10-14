@@ -26,9 +26,8 @@ public class TestDomainFactory {
         return menu;
     }
 
-    public static MenuProduct createMenuProduct(Long menuId, Long productId, long quantity) {
+    public static MenuProduct createMenuProduct(Long productId, long quantity) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
 

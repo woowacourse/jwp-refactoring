@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.TestDomainFactory;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -36,46 +34,42 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Autowired
     private ProductDao productDao;
 
-    @Autowired
-    private MenuProductDao menuProductDao;
-
     private MenuGroup savedMenuGroup;
     private Product savedProduct1;
     private Product savedProduct2;
+    private Product savedProduct3;
 
     @BeforeEach
     void setUp() {
         this.savedMenuGroup = createSavedMenuGroup("두마리메뉴");
         this.savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         this.savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
+        this.savedProduct3 = createSavedProduct("후라이드치킨", BigDecimal.valueOf(15_000));
     }
 
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
-        Menu savedMenu = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
-                                         new ArrayList<>());
-        MenuProduct savedMenuProduct1 = createSavedMenuProduct(savedMenu.getId(), savedProduct1.getId(), 1);
-        MenuProduct savedMenuProduct2 = createSavedMenuProduct(savedMenu.getId(), savedProduct2.getId(), 1);
-        List<MenuProduct> savedMenuProducts = Arrays.asList(savedMenuProduct1, savedMenuProduct2);
-        savedMenu.setMenuProducts(savedMenuProducts);
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
+                                                 new ArrayList<>());
+        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
+        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        menu.setMenuProducts(menuProducts);
 
-        Menu actualSavedMenu = this.menuService.create(savedMenu);
+        Menu savedMenu = this.menuService.create(menu);
 
         assertAll(
-                () -> assertThat(actualSavedMenu).isNotNull(),
-                () -> assertThat(actualSavedMenu.getName()).isEqualTo(savedMenu.getName()),
-                () -> assertThat(actualSavedMenu.getPrice()).isEqualTo(savedMenu.getPrice()),
-                () -> assertThat(actualSavedMenu.getMenuGroupId()).isEqualTo(savedMenu.getMenuGroupId()),
-                () -> assertThat(actualSavedMenu.getMenuProducts().size()).isEqualTo(savedMenu.getMenuProducts().size())
+                () -> assertThat(savedMenu).isNotNull(),
+                () -> assertThat(savedMenu.getName()).isEqualTo(menu.getName()),
+                () -> assertThat(savedMenu.getPrice().toBigInteger()).isEqualTo(menu.getPrice().toBigInteger()),
+                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+                () -> assertThat(savedMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size())
         );
     }
 
@@ -111,10 +105,10 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuProductThenThrowException() {
-        Menu menu = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
-                                    new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
+                                                 new ArrayList<>());
         long notExistProductId = -1L;
-        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(menu.getId(), notExistProductId, 1);
+        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(notExistProductId, 1);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -124,15 +118,40 @@ class MenuServiceTest {
     @Test
     void createMenuWithInvalidPriceThenThrowException() {
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
-        Menu savedMenu = createSavedMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId(), new ArrayList<>());
-        Product savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
-        MenuProduct savedMenuProduct1 = createSavedMenuProduct(savedMenu.getId(), savedProduct1.getId(), 1);
-        Product savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
-        MenuProduct savedMenuProduct2 = createSavedMenuProduct(savedMenu.getId(), savedProduct2.getId(), 1);
-        List<MenuProduct> savedMenuProducts = Arrays.asList(savedMenuProduct1, savedMenuProduct2);
-        savedMenu.setMenuProducts(savedMenuProducts);
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId(),
+                                                 new ArrayList<>());
+        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
+        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        menu.setMenuProducts(menuProducts);
 
-        assertThatThrownBy(() -> this.menuService.create(savedMenu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("존재하는 모든 메뉴를 조회")
+    @Test
+    void listMenuTest() {
+        Menu menu1 = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
+                                                  new ArrayList<>());
+        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
+        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
+        List<MenuProduct> menuProducts1 = Arrays.asList(menuProduct1, menuProduct2);
+        menu1.setMenuProducts(menuProducts1);
+
+        Menu menu2 = TestDomainFactory.createMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
+                                                  this.savedMenuGroup.getId(),
+                                                  new ArrayList<>());
+        MenuProduct menuProduct3 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
+        MenuProduct menuProduct4 = TestDomainFactory.createMenuProduct(this.savedProduct3.getId(), 1);
+        List<MenuProduct> menuProducts2 = Arrays.asList(menuProduct3, menuProduct4);
+        menu2.setMenuProducts(menuProducts2);
+
+        List<Menu> menus = Arrays.asList(menu1, menu2);
+        menus.forEach(menu -> this.menuService.create(menu));
+
+        List<Menu> savedMenus = this.menuService.list();
+
+        assertThat(savedMenus.size()).isEqualTo(menus.size());
     }
 
     private MenuGroup createSavedMenuGroup(String menuName) {
@@ -140,18 +159,8 @@ class MenuServiceTest {
         return this.menuGroupDao.save(menuGroup);
     }
 
-    private Menu createSavedMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = TestDomainFactory.createMenu(name, price, menuGroupId, menuProducts);
-        return this.menuDao.save(menu);
-    }
-
     private Product createSavedProduct(String name, BigDecimal price) {
         Product product = TestDomainFactory.createProduct(name, price);
         return this.productDao.save(product);
-    }
-
-    private MenuProduct createSavedMenuProduct(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(menuId, productId, quantity);
-        return this.menuProductDao.save(menuProduct);
     }
 }
