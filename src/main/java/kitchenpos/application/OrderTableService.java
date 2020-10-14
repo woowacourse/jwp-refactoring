@@ -70,7 +70,7 @@ public class OrderTableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         OrderTable changedTable = orderTableDao.save(savedOrderTable);
         return OrderTableResponse.from(changedTable);

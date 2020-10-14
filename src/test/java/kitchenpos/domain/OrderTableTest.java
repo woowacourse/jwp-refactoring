@@ -13,7 +13,7 @@ class OrderTableTest {
     @DisplayName("주문 등록 불가 여부 변경")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = createEmptyTable();
+        OrderTable orderTable = createOrderTable(true);
 
         orderTable.changeEmpty(false);
 
@@ -36,7 +36,7 @@ class OrderTableTest {
     @DisplayName("테이블 그룹 지정")
     @Test
     void groupBy() {
-        OrderTable orderTable = createEmptyTable();
+        OrderTable orderTable = createOrderTable(true);
         TableGroup tableGroup = createTableGroup();
 
         orderTable.groupBy(tableGroup);
@@ -50,7 +50,7 @@ class OrderTableTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        OrderTable orderTable = createEmptyTable();
+        OrderTable orderTable = createOrderTable(true);
         TableGroup tableGroup = createTableGroup();
         orderTable.groupBy(tableGroup);
 
@@ -62,9 +62,19 @@ class OrderTableTest {
         );
     }
 
-    private OrderTable createEmptyTable() {
+    @DisplayName("손님 수 변경")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable orderTable = createOrderTable(false);
+
+        orderTable.changeNumberOfGuests(10);
+
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
+    }
+
+    private OrderTable createOrderTable(boolean empty) {
         return OrderTable.builder()
-            .empty(true)
+            .empty(empty)
             .build();
     }
 

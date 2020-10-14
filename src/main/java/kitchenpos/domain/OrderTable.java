@@ -67,15 +67,15 @@ public class OrderTable {
         }
     }
 
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 }
