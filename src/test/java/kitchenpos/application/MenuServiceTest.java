@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,8 +54,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
-                                                 new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
         MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
         MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
@@ -76,7 +74,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createMenuWithNullPriceThenThrowException() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", null, this.savedMenuGroup.getId(), new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", null, this.savedMenuGroup.getId());
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -86,8 +84,7 @@ class MenuServiceTest {
     @ValueSource(ints = {-1, -2, -9999})
     void createMenuWithInvalidPriceThenThrowException(int invalidPrice) {
         Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice),
-                                                 this.savedMenuGroup.getId(),
-                                                 new ArrayList<>());
+                                                 this.savedMenuGroup.getId());
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -96,8 +93,7 @@ class MenuServiceTest {
     @Test
     void createMenuWithNotExistMenuGroupThenThrowException() {
         long notExistMenuGroupId = -1L;
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroupId,
-                                                 new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroupId);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -105,8 +101,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuProductThenThrowException() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
-                                                 new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
         long notExistProductId = -1L;
         MenuProduct menuProduct = TestDomainFactory.createMenuProduct(notExistProductId, 1);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
@@ -118,8 +113,7 @@ class MenuServiceTest {
     @Test
     void createMenuWithInvalidPriceThenThrowException() {
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId(),
-                                                 new ArrayList<>());
+        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId());
         MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
         MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
@@ -131,16 +125,14 @@ class MenuServiceTest {
     @DisplayName("존재하는 모든 메뉴를 조회")
     @Test
     void listMenuTest() {
-        Menu menu1 = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId(),
-                                                  new ArrayList<>());
+        Menu menu1 = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
         MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
         MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
         List<MenuProduct> menuProducts1 = Arrays.asList(menuProduct1, menuProduct2);
         menu1.setMenuProducts(menuProducts1);
 
         Menu menu2 = TestDomainFactory.createMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
-                                                  this.savedMenuGroup.getId(),
-                                                  new ArrayList<>());
+                                                  this.savedMenuGroup.getId());
         MenuProduct menuProduct3 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
         MenuProduct menuProduct4 = TestDomainFactory.createMenuProduct(this.savedProduct3.getId(), 1);
         List<MenuProduct> menuProducts2 = Arrays.asList(menuProduct3, menuProduct4);

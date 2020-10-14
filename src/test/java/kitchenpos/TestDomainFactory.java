@@ -1,11 +1,9 @@
 package kitchenpos;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TestDomainFactory {
@@ -16,12 +14,11 @@ public class TestDomainFactory {
         return menuGroup;
     }
 
-    public static Menu createMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu createMenu(String name, BigDecimal price, Long menuGroupId) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(price);
         menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
 
         return menu;
     }
@@ -40,5 +37,36 @@ public class TestDomainFactory {
         product.setPrice(price);
 
         return product;
+    }
+
+    public static Order createOrder(Long orderTableId) {
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+
+        return order;
+    }
+
+    public static OrderLineItem createOrderLineItem(Long menuId, long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+
+        return orderLineItem;
+    }
+
+    public static TableGroup createTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+
+        return tableGroup;
+    }
+
+    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+
+        return orderTable;
     }
 }
