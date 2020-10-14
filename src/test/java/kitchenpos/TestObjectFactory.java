@@ -82,7 +82,7 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static OrderTable createTable(boolean empty) {
+    public static OrderTable createOrderTable(boolean empty) {
         return OrderTable.builder()
             .numberOfGuests(0)
             .empty(empty)

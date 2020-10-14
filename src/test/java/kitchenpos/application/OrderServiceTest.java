@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import static kitchenpos.TestObjectFactory.createMenuGroup;
-import static kitchenpos.TestObjectFactory.createTable;
+import static kitchenpos.TestObjectFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -53,7 +53,7 @@ class OrderServiceTest {
     @DisplayName("주문 추가")
     @Test
     void create() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -73,7 +73,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         OrderRequest request = createOrderRequest(savedTable, null);
 
@@ -84,7 +84,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         Menu notSavedMenu = Menu.builder()
             .id(1000L)
@@ -118,26 +118,10 @@ class OrderServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("[예외] 빈 테이블의 주문 추가")
-    @Test
-    void create_Fail_With_EmptyTable() {
-        OrderTable emptyTable = orderTableDao.save(createTable(true));
-
-        Menu savedMenu = saveMenu();
-
-        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
-        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
-
-        OrderRequest request = createOrderRequest(emptyTable, orderLineItems);
-
-        assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -157,7 +141,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -180,7 +164,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
     @Test
     void changeOrderStatus_With_CompletedOrder() {
-        OrderTable savedTable = orderTableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 

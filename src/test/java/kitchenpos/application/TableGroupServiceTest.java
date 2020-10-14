@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createOrderTable;
 import static kitchenpos.TestObjectFactory.createOrderTableIdRequest;
-import static kitchenpos.TestObjectFactory.createTable;
 import static kitchenpos.TestObjectFactory.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,8 +39,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 추가")
     @Test
     void create() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
-        OrderTable savedTable2 = orderTableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createOrderTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createOrderTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -61,7 +61,7 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 2개 미만의 테이블을 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_NoTable() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createOrderTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1);
 
@@ -74,7 +74,7 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 저장되지 않은 포함한 테이블 그룹 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable savedTable = orderTableDao.save(createTable(true));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(true));
         OrderTable notSavedTable = OrderTable.builder()
             .id(1000L)
             .build();
@@ -93,8 +93,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 해제")
     @Test
     void ungroup() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
-        OrderTable savedTable2 = orderTableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createOrderTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createOrderTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);
@@ -117,8 +117,8 @@ class TableGroupServiceTest {
     @DisplayName("[예외] 조리, 식사 중인 테이블을 포함한 테이블 그룹 해제")
     @Test
     void ungroup_Fail_With_TableInProgress() {
-        OrderTable savedTable1 = orderTableDao.save(createTable(true));
-        OrderTable savedTable2 = orderTableDao.save(createTable(true));
+        OrderTable savedTable1 = orderTableDao.save(createOrderTable(true));
+        OrderTable savedTable2 = orderTableDao.save(createOrderTable(true));
         OrderTableIdRequest tableIdRequest1 = createOrderTableIdRequest(savedTable1.getId());
         OrderTableIdRequest tableIdRequest2 = createOrderTableIdRequest(savedTable2.getId());
         List<OrderTableIdRequest> tables = Arrays.asList(tableIdRequest1, tableIdRequest2);

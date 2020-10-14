@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static kitchenpos.TestObjectFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -114,12 +115,6 @@ class OrderTableTest {
         assertThatThrownBy(
             () -> orderTable.changeNumberOfGuests(10)
         ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderTable createOrderTable(boolean empty) {
-        return OrderTable.builder()
-            .empty(empty)
-            .build();
     }
 
     private TableGroup createTableGroup() {
