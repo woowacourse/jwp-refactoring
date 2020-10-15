@@ -19,7 +19,7 @@ import kitchenpos.service.common.ServiceTest;
 class OrderServiceTest extends ServiceTest {
 
 	@Autowired
-	OrderService orderService;
+	private OrderService orderService;
 
 	@DisplayName("1 개 이상의 등록된 메뉴로 주문을 등록할 수 있다.")
 	@Test

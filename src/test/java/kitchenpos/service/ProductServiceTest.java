@@ -15,7 +15,7 @@ import kitchenpos.service.common.ServiceTest;
 @DisplayName("ProductService 단위 테스트")
 class ProductServiceTest extends ServiceTest {
 	@Autowired
-	ProductService productService;
+	private ProductService productService;
 
 	@DisplayName("상품을 등록할 수 있다.")
 	@Test

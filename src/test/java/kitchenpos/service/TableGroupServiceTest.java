@@ -21,10 +21,10 @@ import kitchenpos.service.common.ServiceTest;
 class TableGroupServiceTest extends ServiceTest {
 
 	@Autowired
-	TableGroupService tableGroupService;
+	private TableGroupService tableGroupService;
 
 	@Autowired
-	OrderTableDao orderTableDao;
+	private OrderTableDao orderTableDao;
 
 	@DisplayName("2개 이상의 빈 테이블을 단체로 지정할 수 있다.")
 	@Test
