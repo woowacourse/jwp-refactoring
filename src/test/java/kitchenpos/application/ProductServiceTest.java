@@ -67,6 +67,10 @@ class ProductServiceTest {
 
         List<Product> savedProducts = this.productService.list();
 
-        assertThat(savedProducts.size()).isEqualTo(products.size());
+        assertAll(
+                () -> assertThat(savedProducts.size()).isEqualTo(products.size()),
+                () -> assertThat(savedProducts.get(0).getName()).isEqualTo(product1.getName()),
+                () -> assertThat(savedProducts.get(1).getName()).isEqualTo(product2.getName())
+        );
     }
 }

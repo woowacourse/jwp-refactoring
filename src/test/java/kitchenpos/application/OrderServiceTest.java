@@ -144,7 +144,13 @@ class OrderServiceTest {
 
         List<Order> savedOrders = this.orderService.list();
 
-        assertThat(savedOrders.size()).isEqualTo(orders.size());
+        assertAll(
+                () -> assertThat(savedOrders.size()).isEqualTo(orders.size()),
+                () -> assertThat(savedOrders.get(0).getOrderTableId()).isEqualTo(order1.getOrderTableId()),
+                () -> assertThat(savedOrders.get(0).getOrderLineItems().size()).isEqualTo(order1.getOrderLineItems().size()),
+                () -> assertThat(savedOrders.get(1).getOrderTableId()).isEqualTo(order2.getOrderTableId()),
+                () -> assertThat(savedOrders.get(1).getOrderLineItems().size()).isEqualTo(order2.getOrderLineItems().size())
+        );
     }
 
     @DisplayName("특정 주문의 주문 상태를 식사 혹은 계산 완료로 변경")

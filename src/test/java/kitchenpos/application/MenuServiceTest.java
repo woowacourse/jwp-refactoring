@@ -143,7 +143,11 @@ class MenuServiceTest {
 
         List<Menu> savedMenus = this.menuService.list();
 
-        assertThat(savedMenus.size()).isEqualTo(menus.size());
+        assertAll(
+                () -> assertThat(savedMenus.size()).isEqualTo(menus.size()),
+                () -> assertThat(savedMenus.get(0).getName()).isEqualTo(menu1.getName()),
+                () -> assertThat(savedMenus.get(1).getName()).isEqualTo(menu2.getName())
+        );
     }
 
     private MenuGroup createSavedMenuGroup(String menuName) {

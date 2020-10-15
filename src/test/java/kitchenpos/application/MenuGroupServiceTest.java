@@ -38,14 +38,16 @@ class MenuGroupServiceTest {
     @Test
     void listMenuGroupTest() {
         MenuGroup menuGroup1 = TestDomainFactory.createMenuGroup("두마리메뉴");
-        this.menuGroupService.create(menuGroup1);
         MenuGroup menuGroup2 = TestDomainFactory.createMenuGroup("세마리메뉴");
-        this.menuGroupService.create(menuGroup2);
-
         List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
+        menuGroups.forEach(menuGroup -> this.menuGroupService.create(menuGroup));
 
         List<MenuGroup> actualMenuGroups = this.menuGroupService.list();
 
-        assertThat(actualMenuGroups.size()).isEqualTo(menuGroups.size());
+        assertAll(
+                () -> assertThat(actualMenuGroups.size()).isEqualTo(menuGroups.size()),
+                () -> assertThat(actualMenuGroups.get(0).getName()).isEqualTo(menuGroup1.getName()),
+                () -> assertThat(actualMenuGroups.get(1).getName()).isEqualTo(menuGroup2.getName())
+        );
     }
 }

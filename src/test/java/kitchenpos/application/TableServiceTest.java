@@ -66,7 +66,11 @@ class TableServiceTest {
 
         List<OrderTable> savedOrderTables = this.tableService.list();
 
-        assertThat(savedOrderTables.size()).isEqualTo(orderTables.size());
+        assertAll(
+                () -> assertThat(savedOrderTables.size()).isEqualTo(orderTables.size()),
+                () -> assertThat(savedOrderTables.get(0).getNumberOfGuests()).isEqualTo(orderTable1.getNumberOfGuests()),
+                () -> assertThat(savedOrderTables.get(1).getNumberOfGuests()).isEqualTo(orderTable2.getNumberOfGuests())
+        );
     }
 
     @DisplayName("특정 주문 테이블의 주문 등록 가능 여부, 즉 빈 테이블 여부를 변경")
