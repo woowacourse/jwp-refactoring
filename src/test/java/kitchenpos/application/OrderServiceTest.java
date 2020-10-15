@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.common.MenuFixtureFactory;
+import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
@@ -110,8 +110,8 @@ class OrderServiceTest extends MenuFixtureFactory {
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        Menu savedMenu1 = menuDao.save(createMenuToSave("추천메뉴", "양념", 12000));
-        Menu savedMenu2 = menuDao.save(createMenuToSave("추천메뉴", "후라이드", 11000));
+        Menu savedMenu1 = menuDao.save(makeMenuToSave("추천메뉴", "양념", 12000));
+        Menu savedMenu2 = menuDao.save(makeMenuToSave("추천메뉴", "후라이드", 11000));
 
         List<OrderLineItem> orderLineItems = Arrays.asList(
                 TestObjectFactory.createOrderLineItem(savedMenu1.getId(), 1),

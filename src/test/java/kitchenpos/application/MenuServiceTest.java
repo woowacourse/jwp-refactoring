@@ -1,8 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.MenuFixtureFactory;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.dto.menu.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,52 +27,49 @@ class MenuServiceTest extends MenuFixtureFactory {
     @DisplayName("메뉴 생성 기능 테스트")
     @Test
     void create() {
-        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
+        CreateMenuRequest createMenuRequest = makeCreateMenuRequest("추천메뉴", "양념", 13000);
 
-        Menu savedMenu = menuService.create(menuFixture);
+        MenuResponse menuResponse = menuService.create(createMenuRequest);
 
-        List<MenuProduct> savedMenuProducts = savedMenu.getMenuProducts();
+        List<MenuProductDto> savedMenuProducts = menuResponse.getMenuProducts();
         assertAll(
-                () -> assertThat(savedMenu.getId()).isNotNull(),
-                () -> assertThat(savedMenuProducts.get(0).getMenuId()).isEqualTo(savedMenu.getId())
+                () -> assertThat(menuResponse.getId()).isNotNull(),
+                () -> assertThat(savedMenuProducts.get(0).getId()).isEqualTo(menuResponse.getId())
         );
     }
 
     @DisplayName("메뉴 생성 - price가 null일 때 예외처리")
     @Test
     void createWhenNullPrice() {
-        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
-        menuFixture.setPrice(null);
+        CreateMenuRequest createMenuRequest = new CreateMenuRequest("추천메뉴", null, 1L, new ArrayList<>());
 
-        assertThatThrownBy(() -> menuService.create(menuFixture))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 - price가 0 미만일 경우 예외처리")
     @Test
     void createWhenPriceLessZero() {
-        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
-        menuFixture.setPrice(BigDecimal.valueOf(-1));
+        CreateMenuRequest createMenuRequest = new CreateMenuRequest("추천메뉴", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
 
-        assertThatThrownBy(() -> menuService.create(menuFixture))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 생성 - price 구성품 가격의 합보다 큰 경우 예외처리")
     @Test
     void createWhenPriceGraterSum() {
-        Menu menuFixture = createMenuToSave("추천메뉴", "양념", 12000);
-        menuFixture.setPrice(BigDecimal.valueOf(90000));
+        CreateMenuRequest createMenuRequest = new CreateMenuRequest("추천메뉴", BigDecimal.valueOf(90000), 1L, new ArrayList<>());
 
-        assertThatThrownBy(() -> menuService.create(menuFixture))
+        assertThatThrownBy(() -> menuService.create(createMenuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 목록 조회 기능 테스트")
     @Test
     void list() {
-        menuService.create(createMenuToSave("추천메뉴", "양념", 13000));
-        menuService.create(createMenuToSave("추천메뉴", "후라이드", 12000));
+        menuService.create(makeCreateMenuRequest("추천메뉴", "양념", 13000));
+        menuService.create(makeCreateMenuRequest("추천메뉴", "후라이드", 12000));
 
         assertThat(menuService.list()).hasSize(2);
     }

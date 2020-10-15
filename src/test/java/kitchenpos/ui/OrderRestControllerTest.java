@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;

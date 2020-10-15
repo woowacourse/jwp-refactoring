@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.TestObjectFactory;
+import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

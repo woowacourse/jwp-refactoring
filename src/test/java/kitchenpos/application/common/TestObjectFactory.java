@@ -1,6 +1,5 @@
-package kitchenpos;
+package kitchenpos.application.common;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -8,6 +7,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.dto.menu.MenuResponse;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -86,21 +87,12 @@ public class TestObjectFactory {
         return orderLineItem;
     }
 
-    public static Menu createMenuDto(String name, int price, long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+    public static MenuResponse createMenuResponse(Long id, String name, int price, long menuGroupId, List<MenuProductDto> menuProducts) {
+        return new MenuResponse(id, name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 
-    public static MenuProduct createMenuProduct(long menuId, long productId, int quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProductDto createMenuProductDto(long id, long menuId, long productId, int quantity) {
+        return new MenuProductDto(id, menuId, productId, quantity);
     }
 
     public static MenuProduct createMenuProduct(long productId, int quantity) {

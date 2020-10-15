@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.TableGroupService;
+import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.hamcrest.Matchers;

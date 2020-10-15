@@ -1,9 +1,9 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.application.common.TestObjectFactory;
+import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.dto.menu.MenuResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +36,9 @@ class MenuRestControllerTest {
     @DisplayName("Menu 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(TestObjectFactory.createMenuProduct(1L, 1L, 2));
-        Menu menu = TestObjectFactory.createMenuDto("후라이드+후라이드", 19000, 1L, menuProducts);
-        menu.setId(1L);
+        List<MenuProductDto> menuProducts = new ArrayList<>();
+        menuProducts.add(TestObjectFactory.createMenuProductDto(1L, 1L, 1L, 2));
+        MenuResponse menu = TestObjectFactory.createMenuResponse(1L, "후라이드+후라이드", 19000, 1L, menuProducts);
 
         given(menuService.create(any())).willReturn(menu);
 
@@ -71,9 +70,9 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 목록 조회 요청 테스트")
     @Test
     void list() throws Exception {
-        List<Menu> menus = new ArrayList<>();
-        menus.add(TestObjectFactory.createMenuDto("name", 1, 1, new ArrayList<>()));
-        menus.add(TestObjectFactory.createMenuDto("name", 1, 1, new ArrayList<>()));
+        List<MenuResponse> menus = new ArrayList<>();
+        menus.add(TestObjectFactory.createMenuResponse(1L, "양념+양념", 2000, 1L, new ArrayList<>()));
+        menus.add(TestObjectFactory.createMenuResponse(2L, "양념+후라이드", 1500, 2L, new ArrayList<>()));
         given(menuService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menus"))

@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.MenuGroup;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
