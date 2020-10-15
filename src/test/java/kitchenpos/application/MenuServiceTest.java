@@ -42,6 +42,9 @@ class MenuServiceTest {
     private Product savedProduct1;
     private Product savedProduct2;
     private Product savedProduct3;
+    private MenuProduct menuProduct1;
+    private MenuProduct menuProduct2;
+    private MenuProduct menuProduct3;
 
     @BeforeEach
     void setUp() {
@@ -49,15 +52,16 @@ class MenuServiceTest {
         this.savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         this.savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
         this.savedProduct3 = createSavedProduct("후라이드치킨", BigDecimal.valueOf(15_000));
+        this.menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
+        this.menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
+        this.menuProduct3 = TestDomainFactory.createMenuProduct(this.savedProduct3.getId(), 1);
     }
 
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
         Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
-        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
-        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        List<MenuProduct> menuProducts = Arrays.asList(this.menuProduct1, this.menuProduct2);
         menu.setMenuProducts(menuProducts);
 
         Menu savedMenu = this.menuService.create(menu);
@@ -112,11 +116,14 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 메뉴의 가격이 지정한 상품 가격의 총합을 초과하면 예외 발생")
     @Test
     void createMenuWithInvalidPriceThenThrowException() {
+        Product savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
+        Product savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
+        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(savedProduct1.getId(), 1);
+        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(savedProduct2.getId(), 1);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
         Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId());
-        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
-        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
         menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -126,16 +133,12 @@ class MenuServiceTest {
     @Test
     void listMenuTest() {
         Menu menu1 = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
-        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
-        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
-        List<MenuProduct> menuProducts1 = Arrays.asList(menuProduct1, menuProduct2);
+        List<MenuProduct> menuProducts1 = Arrays.asList(this.menuProduct1, this.menuProduct2);
         menu1.setMenuProducts(menuProducts1);
 
         Menu menu2 = TestDomainFactory.createMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
                                                   this.savedMenuGroup.getId());
-        MenuProduct menuProduct3 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
-        MenuProduct menuProduct4 = TestDomainFactory.createMenuProduct(this.savedProduct3.getId(), 1);
-        List<MenuProduct> menuProducts2 = Arrays.asList(menuProduct3, menuProduct4);
+        List<MenuProduct> menuProducts2 = Arrays.asList(this.menuProduct1, this.menuProduct3);
         menu2.setMenuProducts(menuProducts2);
 
         List<Menu> menus = Arrays.asList(menu1, menu2);

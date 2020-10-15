@@ -49,6 +49,10 @@ class OrderServiceTest {
     private Menu savedMenu1;
     private Menu savedMenu2;
     private Menu savedMenu3;
+    private OrderLineItem orderLineItem1;
+    private OrderLineItem orderLineItem2;
+    private OrderLineItem orderLineItem3;
+    private OrderLineItem orderLineItem4;
 
     @BeforeEach
     void setUp() {
@@ -60,15 +64,17 @@ class OrderServiceTest {
         this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), savedMenuGroup.getId());
         this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup.getId());
         this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup.getId());
+        this.orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
+        this.orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
+        this.orderLineItem4 = TestDomainFactory.createOrderLineItem(this.savedMenu3.getId(), 1);
+        this.orderLineItem3 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 2);
     }
 
     @DisplayName("새로운 주문 생성")
     @Test
     void createOrderTest() {
         Order order = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
         Order savedOrder = this.orderService.create(order);
 
@@ -104,11 +110,9 @@ class OrderServiceTest {
     @DisplayName("새로운 주문을 생성할 때 존재하지 않는 테이블을 주문 테이블로 지정하면 예외 발생")
     @Test
     void createOrderWithNotExistOrderTableThenThrowException() {
-        long notExistOrderTable = -1L;
-        Order order = TestDomainFactory.createOrder(notExistOrderTable);
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        long notExistOrderTableId = -1L;
+        Order order = TestDomainFactory.createOrder(notExistOrderTableId);
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
         assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -118,9 +122,7 @@ class OrderServiceTest {
     void createOrderWithEmptyOrderTableThenThrowException() {
         OrderTable savedOrderTable = createSavedOrderTable(this.tableGroup.getId(), 0, true);
         Order order = TestDomainFactory.createOrder(savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
         assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -130,14 +132,9 @@ class OrderServiceTest {
     @Test
     void listOrderTest() {
         Order order1 = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order1.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-
+        order1.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
         Order order2 = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem3 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 2);
-        OrderLineItem orderLineItem4 = TestDomainFactory.createOrderLineItem(this.savedMenu3.getId(), 1);
-        order2.setOrderLineItems(Arrays.asList(orderLineItem3, orderLineItem4));
+        order2.setOrderLineItems(Arrays.asList(this.orderLineItem3, this.orderLineItem4));
 
         List<Order> orders = Arrays.asList(order1, order2);
         orders.forEach(order -> this.orderService.create(order));
@@ -158,9 +155,7 @@ class OrderServiceTest {
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatusTest(String orderStatus) {
         Order order = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
         Order savedOrder = this.orderService.create(order);
         order.setOrderStatus(orderStatus);
@@ -174,9 +169,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusWithNotExistOrderThenThrowException() {
         Order order = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
         order.setOrderStatus(OrderStatus.MEAL.name());
 
         Long notExistOrderId = -1L;
@@ -188,9 +181,7 @@ class OrderServiceTest {
     @Test
     void changeOrderStatusWithOrderStatusIsCompletionThenThrowException() {
         Order order = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        OrderLineItem orderLineItem1 = TestDomainFactory.createOrderLineItem(this.savedMenu1.getId(), 1);
-        OrderLineItem orderLineItem2 = TestDomainFactory.createOrderLineItem(this.savedMenu2.getId(), 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
         Order savedOrder = this.orderService.create(order);
         savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
