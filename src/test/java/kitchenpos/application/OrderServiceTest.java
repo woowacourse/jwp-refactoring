@@ -9,6 +9,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,5 +120,13 @@ class OrderServiceTest extends MenuFixtureFactory {
         );
 
         return TestObjectFactory.createOrderDto(savedOrderTable.getId(), orderLineItems);
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuDao.deleteAll();
+        menuGroupDao.deleteAll();
+        // TODO: 2020/10/15
+//        productDao.deleteAll();
     }
 }

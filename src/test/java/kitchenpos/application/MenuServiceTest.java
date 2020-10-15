@@ -4,6 +4,7 @@ import kitchenpos.application.common.MenuFixtureFactory;
 import kitchenpos.dto.menu.CreateMenuRequest;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,5 +73,10 @@ class MenuServiceTest extends MenuFixtureFactory {
         menuService.create(makeCreateMenuRequest("추천메뉴", "후라이드", 12000));
 
         assertThat(menuService.list()).hasSize(2);
+    }
+
+    @AfterEach
+    void tearDown() {
+
     }
 }

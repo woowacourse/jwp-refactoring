@@ -15,10 +15,17 @@ import java.util.List;
 
 public class MenuFixtureFactory {
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    protected MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    protected ProductDao productDao;
+
+    protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
+        CreateMenuRequest createMenuRequest = makeCreateMenuRequest(menuGroupName, productName, productPrice);
+        MenuGroup menuGroup = menuGroupDao.findById(createMenuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
+        return createMenuRequest.toMenu(menuGroup);
+    }
 
     protected CreateMenuRequest makeCreateMenuRequest(String menuGroupName, String productName, int productPrice) {
         MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(menuGroupName));
@@ -29,12 +36,5 @@ public class MenuFixtureFactory {
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),
                 menuProducts);
-    }
-
-    protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
-        CreateMenuRequest createMenuRequest = makeCreateMenuRequest(menuGroupName, productName, productPrice);
-        MenuGroup menuGroup = menuGroupDao.findById(createMenuRequest.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
-        return createMenuRequest.toMenu(menuGroup);
     }
 }
