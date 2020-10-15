@@ -14,7 +14,7 @@ import kitchenpos.service.common.ServiceTest;
 class MenuGroupServiceTest extends ServiceTest {
 
 	@Autowired
-	MenuGroupService menuGroupService;
+	private MenuGroupService menuGroupService;
 
 	@DisplayName("메뉴 그룹을 등록할 수 있다.")
 	@Test

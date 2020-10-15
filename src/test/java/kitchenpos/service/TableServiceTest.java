@@ -18,7 +18,7 @@ import kitchenpos.service.common.ServiceTest;
 class TableServiceTest extends ServiceTest {
 
 	@Autowired
-	TableService tableService;
+	private TableService tableService;
 
 	@DisplayName("주문 테이블을 등록할 수 있다.")
 	@Test

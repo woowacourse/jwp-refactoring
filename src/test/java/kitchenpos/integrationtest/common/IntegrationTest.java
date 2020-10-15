@@ -12,7 +12,7 @@ import io.restassured.RestAssured;
 public abstract class IntegrationTest {
 
 	@LocalServerPort
-	int port;
+	private int port;
 
 	@BeforeEach
 	void setUp() {
