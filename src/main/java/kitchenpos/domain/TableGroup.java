@@ -1,12 +1,21 @@
 package kitchenpos.domain;
 
+import kitchenpos.config.BaseEntity;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class TableGroup {
-    private Long id;
-    private LocalDateTime createdDate;
+@AttributeOverride(name = "id", column = @Column(name = "table_group_id"))
+@Entity
+public class TableGroup extends BaseEntity {
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
+    private LocalDateTime createdDate;
 
     public Long getId() {
         return id;

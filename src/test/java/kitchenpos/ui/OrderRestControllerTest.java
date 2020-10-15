@@ -5,6 +5,9 @@ import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.order.OrderLineItemDto;
+import kitchenpos.dto.order.OrderResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,15 +37,14 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
+    @DisplayName("주문 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(TestObjectFactory.createOrderLineItem(1L, 10L, 1L));
+        List<OrderLineItemDto> orderLineItems = new ArrayList<>();
+        orderLineItems.add(new OrderLineItemDto(1L, 1L, 1L, 2));
+        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING.name(), orderLineItems);
 
-        Order order = TestObjectFactory.createOrder(1L, OrderStatus.COOKING.name(), orderLineItems);
-        order.setId(10L);
-
-        given(orderService.create(any())).willReturn(order);
+        given(orderService.create(any())).willReturn(orderResponse);
 
         mockMvc.perform(post("/api/orders")
                 .content("{\n"
@@ -50,30 +52,28 @@ class OrderRestControllerTest {
                         + "  \"orderLineItems\": [\n"
                         + "    {\n"
                         + "      \"menuId\": 1,\n"
-                        + "      \"quantity\": 1\n"
+                        + "      \"quantity\": 2\n"
                         + "    }\n"
                         + "  ]\n"
                         + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/orders/10"))
+                .andExpect(header().string("Location", "/api/orders/" + orderResponse.getId()))
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.orderTableId", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.orderLineItems[0].orderId", Matchers.is(Integer.parseInt(String.valueOf(order.getId())))))
-                .andExpect(jsonPath("$.orderLineItems[0].menuId", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.orderLineItems[0].quantity", Matchers.instanceOf(Number.class)));
+                .andExpect(jsonPath("$.orderLineItemDtos[0].orderId", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.orderLineItemDtos[0].menuId", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.orderLineItemDtos[0].quantity", Matchers.instanceOf(Number.class)));
     }
 
     @DisplayName("Product 목록 조회 요청 테스트")
     @Test
     void list() throws Exception {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
-        orderLineItems.add(TestObjectFactory.createOrderLineItem(1L, 10L, 1L));
-
         List<Order> orders = new ArrayList<>();
-        orders.add(TestObjectFactory.createOrder(1L, OrderStatus.COOKING.name(), orderLineItems));
-        orders.add(TestObjectFactory.createOrder(2L, OrderStatus.COOKING.name(), orderLineItems));
+        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING.name(), orderLineItems));
+        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING.name(), orderLineItems));
 
         given(orderService.list()).willReturn(orders);
 

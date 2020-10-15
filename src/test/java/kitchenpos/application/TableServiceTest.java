@@ -57,7 +57,7 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTableDto());
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTableDto(false);
+        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable);
 
@@ -70,7 +70,7 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태 변경 - 존재하지 않는 아이디를 입력받은 경우 예외 처리")
     @Test
     void changeEmptyWithNotFoundOrderTable() {
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTableDto(false);
+        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         assertThatThrownBy(() -> tableService.changeEmpty(100L, changeEmptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -81,7 +81,7 @@ class TableServiceTest {
     void changeEmptyWithRegisteredGroupTable() {
         OrderTable savedOrderTable1 = tableService.create(TestObjectFactory.creatOrderTableDto());
         OrderTable savedOrderTable2 = tableService.create(TestObjectFactory.creatOrderTableDto());
-        OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTableDto(false);
+        OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTable(false);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
         tableGroupService.create(TestObjectFactory.createTableGroupDto(orderTables));
@@ -96,10 +96,10 @@ class TableServiceTest {
     void changeEmptyWhenCooking(String orderStatus) {
         OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTableDto());
 
-        Order order = TestObjectFactory.createOrder(savedOrderTable.getId(), orderStatus, new ArrayList<>());
+        Order order = TestObjectFactory.createOrder(savedOrderTable, orderStatus, new ArrayList<>());
         orderDao.save(order);
 
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTableDto(false);
+        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);

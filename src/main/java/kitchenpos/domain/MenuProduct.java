@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MenuProduct extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_MENU_MENU_PRODUCT"))
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_MENU_PRODUCT_MENU"))
     private Menu menu;
     private Long productId;
     private long quantity;

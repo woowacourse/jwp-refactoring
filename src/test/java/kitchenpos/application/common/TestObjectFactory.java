@@ -1,5 +1,6 @@
 package kitchenpos.application.common;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
@@ -22,7 +23,7 @@ public class TestObjectFactory {
         return orderTable;
     }
 
-    public static OrderTable createChangeEmptyOrderTableDto(boolean empty) {
+    public static OrderTable createChangeEmptyOrderTable(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
         return orderTable;
@@ -34,18 +35,11 @@ public class TestObjectFactory {
         return orderTable;
     }
 
-    public static Order createOrder(Long orderTableId, String orderStatus, List<OrderLineItem> items) {
+    public static Order createOrder(OrderTable orderTable, String orderStatus, List<OrderLineItem> items) {
         Order order = new Order();
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(orderTable);
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(items);
-        return order;
-    }
-
-    public static Order createOrderDto(Long orderTableId, List<OrderLineItem> items) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
         order.setOrderLineItems(items);
         return order;
     }
@@ -72,17 +66,10 @@ public class TestObjectFactory {
         return product;
     }
 
-    public static OrderLineItem createOrderLineItem(long menuId, long orderId, long quantity) {
+    public static OrderLineItem createOrderLineItem(Menu menu, Order order, long quantity) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
-    }
-
-    public static OrderLineItem createOrderLineItem(long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setMenu(menu);
+        orderLineItem.setOrder(order);
         orderLineItem.setQuantity(quantity);
         return orderLineItem;
     }

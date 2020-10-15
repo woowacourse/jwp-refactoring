@@ -8,8 +8,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.CreateMenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.menu.menuCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,14 +38,14 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final CreateMenuRequest createMenuRequest) {
-        final BigDecimal price = createMenuRequest.getPrice();
+    public MenuResponse create(final menuCreateRequest menuCreateRequest) {
+        final BigDecimal price = menuCreateRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = createMenuRequest.getMenuProducts();
+        final List<MenuProduct> menuProducts = menuCreateRequest.getMenuProducts();
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
@@ -58,9 +58,9 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        MenuGroup menuGroup = menuGroupDao.findById(createMenuRequest.getMenuGroupId())
+        MenuGroup menuGroup = menuGroupDao.findById(menuCreateRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        final Menu savedMenu = menuDao.save(createMenuRequest.toMenu(menuGroup));
+        final Menu savedMenu = menuDao.save(menuCreateRequest.toMenu(menuGroup));
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {

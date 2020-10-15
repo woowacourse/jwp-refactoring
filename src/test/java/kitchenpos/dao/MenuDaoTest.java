@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import kitchenpos.application.common.MenuFixtureFactory;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class MenuDaoTest extends MenuFixtureFactory {
+class MenuDaoTest {
     @Autowired
     private MenuDao menuDao;
 
@@ -26,6 +25,6 @@ class MenuDaoTest extends MenuFixtureFactory {
 
         List<Long> ids = Arrays.asList(savedMenu1.getId(), savedMenu2.getId(), 9999L);
 
-        assertThat(menuDao.countByIdIn(ids)).isEqualTo(2);
+        assertThat(menuDao.findAllByIdIn(ids).size()).isEqualTo(2);
     }
 }

@@ -6,13 +6,15 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.CreateMenuRequest;
+import kitchenpos.dto.menu.menuCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+@SpringBootTest
 public class MenuFixtureFactory {
     @Autowired
     protected MenuGroupDao menuGroupDao;
@@ -21,18 +23,18 @@ public class MenuFixtureFactory {
     protected ProductDao productDao;
 
     protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
-        CreateMenuRequest createMenuRequest = makeCreateMenuRequest(menuGroupName, productName, productPrice);
-        MenuGroup menuGroup = menuGroupDao.findById(createMenuRequest.getMenuGroupId())
+        menuCreateRequest menuCreateRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
+        MenuGroup menuGroup = menuGroupDao.findById(menuCreateRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        return createMenuRequest.toMenu(menuGroup);
+        return menuCreateRequest.toMenu(menuGroup);
     }
 
-    protected CreateMenuRequest makeCreateMenuRequest(String menuGroupName, String productName, int productPrice) {
+    protected menuCreateRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
         MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(menuGroupName));
         Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
 
         List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
-        return new CreateMenuRequest(menuGroupName + " " + menuGroupName,
+        return new menuCreateRequest(menuGroupName + " " + menuGroupName,
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),
                 menuProducts);

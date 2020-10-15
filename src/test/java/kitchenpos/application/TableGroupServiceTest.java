@@ -122,7 +122,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        Order order = TestObjectFactory.createOrder(orderTable1.getId(), orderStatus, new ArrayList<>());
+        Order order = TestObjectFactory.createOrder(orderTable1, orderStatus, new ArrayList<>());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

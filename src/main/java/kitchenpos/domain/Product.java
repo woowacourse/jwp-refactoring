@@ -1,9 +1,16 @@
 package kitchenpos.domain;
 
+import kitchenpos.config.BaseEntity;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
 import java.math.BigDecimal;
 
-public class Product {
-    private Long id;
+@AttributeOverride(name = "id", column = @Column(name = "product_id"))
+@Entity
+public class Product extends BaseEntity {
     private String name;
     private BigDecimal price;
 

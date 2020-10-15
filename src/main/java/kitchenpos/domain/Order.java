@@ -1,29 +1,54 @@
 package kitchenpos.domain;
 
+import kitchenpos.config.BaseEntity;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Order {
-    private Long id;
-    private Long orderTableId;
+@AttributeOverride(name = "id", column = @Column(name = "order_id"))
+@Table(name = "ORDERS")
+@Entity
+public class Order extends BaseEntity {
+    @OneToOne
+    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "FK_ORDER_ORDER_TABLE"))
+    private OrderTable orderTable;
+
     private String orderStatus;
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Long getId() {
-        return id;
+    public Order() {
     }
 
-    public void setId(final Long id) {
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public void setOrderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public String getOrderStatus() {

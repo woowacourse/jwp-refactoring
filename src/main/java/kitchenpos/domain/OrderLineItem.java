@@ -1,40 +1,57 @@
 package kitchenpos.domain;
 
-public class OrderLineItem {
-    private Long seq;
-    private Long orderId;
-    private Long menuId;
+import kitchenpos.config.BaseEntity;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+
+@AttributeOverride(name = "id", column = @Column(name = "order_line_item_id"))
+@Entity
+public class OrderLineItem extends BaseEntity {
+    @ManyToOne
+    @JoinColumn(name = "order_id", foreignKey = @ForeignKey(name = "FK_ORDER_LINE_ITEM_ORDER"))
+    private Order order;
+
+    @OneToOne
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_ORDER_LINE_ITEM_MENU"))
+    private Menu menu;
+
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public OrderLineItem() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public OrderLineItem(Menu menu, long quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
+    public void setQuantity(long quantity) {
         this.quantity = quantity;
     }
 }

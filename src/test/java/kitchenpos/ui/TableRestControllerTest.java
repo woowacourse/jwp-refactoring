@@ -52,7 +52,7 @@ class TableRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/tables/1"))
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.tableGroupId", Matchers.nullValue()))
+                .andExpect(jsonPath("$.tableGroup", Matchers.nullValue()))
                 .andExpect(jsonPath("$.numberOfGuests", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.empty", Matchers.instanceOf(Boolean.class)));
     }
