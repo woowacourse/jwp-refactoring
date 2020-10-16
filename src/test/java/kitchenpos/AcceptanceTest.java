@@ -1,5 +1,6 @@
 package kitchenpos;
 
+import static java.lang.Long.*;
 import static java.util.Objects.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -45,7 +46,7 @@ public class AcceptanceTest {
         List<String> tokens = Arrays.asList(location.split(DELIMITER));
         int indexOfId = tokens.size() - 1;
         String id = tokens.get(indexOfId);
-        return Long.parseLong(id);
+        return parseLong(id);
     }
 
     protected <T> T getLastItem(List<T> items) {

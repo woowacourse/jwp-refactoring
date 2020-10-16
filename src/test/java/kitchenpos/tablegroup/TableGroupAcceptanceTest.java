@@ -1,10 +1,10 @@
 package kitchenpos.tablegroup;
 
+import static java.util.Arrays.*;
 import static kitchenpos.ui.TableGroupRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +23,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
      * Then 단체 지정이 생성 된다.
      * <p>
      * Given 단체 지정이 생성 되어 있다.
-     * When 단체 지정 삭제 요청.
-     * Then 단체 지정이 삭제 된다.
+     * When 단체 지정 해제 요청.
+     * Then 단체 지정이 해제 된다.
      */
     @DisplayName("단체 지정 관리")
     @TestFactory
@@ -34,7 +34,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         assertThat(tableGroupId).isNotNull();
 
         return Stream.of(
-                dynamicTest("단체 지정 삭제", () -> {
+                dynamicTest("단체 지정 해제", () -> {
                     delete(API_TABLE_GROUPS, tableGroupId);
                 })
         );
@@ -46,7 +46,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
+        tableGroup.setOrderTables(asList(orderTable1, orderTable2));
 
         String request = objectMapper.writeValueAsString(tableGroup);
         return post(request, API_TABLE_GROUPS);

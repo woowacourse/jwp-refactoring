@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
+import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -63,7 +63,7 @@ class TableServiceTest {
     @DisplayName("테이블 전체 조회")
     @Test
     void list() {
-        List<OrderTable> expected = Arrays.asList(orderTable1, orderTable2);
+        List<OrderTable> expected = asList(orderTable1, orderTable2);
 
         given(orderTableDao.findAll()).willReturn(expected);
 
@@ -91,7 +91,7 @@ class TableServiceTest {
                     given(orderTableDao.findById(orderTable1.getId()))
                             .willReturn(Optional.of(orderTable1));
                     given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
-                            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                            asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                             .willReturn(false);
                     given(orderTableDao.save(orderTable1)).willReturn(expected);
 
@@ -123,7 +123,7 @@ class TableServiceTest {
                             given(orderTableDao.findById(orderTable1.getId()))
                                     .willReturn(Optional.of(orderTable1));
                             given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
-                                    Arrays.asList(OrderStatus.COOKING.name(),
+                                    asList(OrderStatus.COOKING.name(),
                                             OrderStatus.MEAL.name())))
                                     .willReturn(true);
 
