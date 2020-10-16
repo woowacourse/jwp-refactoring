@@ -18,7 +18,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     /**
      * 테이블을 관리한다.
      * <p>
-     * When 테이블을 생성 요청.
+     * When 테이블 생성 요청.
      * Then 테이블이 생성 된다.
      * <p>
      * Given 테이블이 생성 되어 있다.

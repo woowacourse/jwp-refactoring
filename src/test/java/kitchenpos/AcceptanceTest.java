@@ -87,4 +87,9 @@ public class AcceptanceTest {
 
         return objectMapper.readValue(response, clazz);
     }
+
+    protected void delete(String uri, Long id) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/" + id))
+                .andExpect(status().isNoContent());
+    }
 }
