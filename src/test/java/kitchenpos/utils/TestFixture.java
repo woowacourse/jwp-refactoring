@@ -18,11 +18,7 @@ import kitchenpos.domain.TableGroup;
 public class TestFixture {
 
     public static Product getProduct(final int price) {
-        final Product product = new Product();
-        product.setName("후라이드");
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
+        return new Product("후라이드 치킨", BigDecimal.valueOf(price));
     }
 
     public static MenuProduct getMenuProduct(final Long productId) {
