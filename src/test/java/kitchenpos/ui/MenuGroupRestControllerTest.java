@@ -5,7 +5,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,6 +50,7 @@ class MenuGroupRestControllerTest {
         .content(objectMapper.writeValueAsString(menuGroup)))
                 .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name", is("legacy")));
     }
 
