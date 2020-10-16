@@ -47,7 +47,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 }),
                 dynamicTest("테이블 주문 여부 변경", () -> {
                     boolean empty = false;
-                    OrderTable orderTable = changeEmpty(empty, orderTableId);
+                    OrderTable orderTable = changeOrderTableEmpty(empty, orderTableId);
 
                     assertThat(orderTable.getId()).isEqualTo(orderTableId);
                     assertThat(orderTable.isEmpty()).isEqualTo(empty);
@@ -69,14 +69,6 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         String request = objectMapper.writeValueAsString(orderTable);
         return post(request, API_TABLES);
-    }
-
-    private OrderTable changeEmpty(boolean empty, Long orderTableId) throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-
-        String request = objectMapper.writeValueAsString(orderTable);
-        return put(OrderTable.class, request, API_TABLES + "/" + orderTableId + "/empty");
     }
 
     private OrderTable changNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {

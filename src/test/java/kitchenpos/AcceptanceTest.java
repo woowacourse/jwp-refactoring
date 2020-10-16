@@ -3,6 +3,7 @@ package kitchenpos;
 import static java.lang.Long.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
+import static kitchenpos.ui.TableRestController.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -15,12 +16,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kitchenpos.domain.OrderTable;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Transactional
 public class AcceptanceTest {
     protected static final String LOCATION = "Location";
     private static final String DELIMITER = "/";
@@ -92,5 +96,13 @@ public class AcceptanceTest {
     protected void delete(String uri, Long id) throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete(uri + "/" + id))
                 .andExpect(status().isNoContent());
+    }
+
+    protected OrderTable changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(empty);
+
+        String request = objectMapper.writeValueAsString(orderTable);
+        return put(OrderTable.class, request, API_TABLES + "/" + orderTableId + "/empty");
     }
 }
