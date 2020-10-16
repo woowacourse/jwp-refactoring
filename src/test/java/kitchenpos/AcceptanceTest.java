@@ -58,4 +58,17 @@ public class AcceptanceTest {
                         .getResponse()
                         .getHeader(LOCATION)));
     }
+
+    protected <T> List<T> showAll(Class<T> clazz, String uri) throws Exception {
+        String content = mockMvc.perform(get(uri)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return objectMapper.readValue(content,
+                objectMapper.getTypeFactory()
+                        .constructCollectionType(List.class, clazz));
+    }
 }
