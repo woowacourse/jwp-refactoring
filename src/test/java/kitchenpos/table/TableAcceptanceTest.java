@@ -1,4 +1,4 @@
-package kitchenpos.ordertable;
+package kitchenpos.table;
 
 import static kitchenpos.ui.TableRestController.*;
 import static org.assertj.core.api.Assertions.*;
@@ -14,7 +14,7 @@ import org.junit.jupiter.api.TestFactory;
 import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.OrderTable;
 
-public class OrderTableAcceptanceTest extends AcceptanceTest {
+public class TableAcceptanceTest extends AcceptanceTest {
     /**
      * 테이블을 관리한다.
      * <p>
