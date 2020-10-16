@@ -1,34 +1,41 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import static kitchenpos.ui.ProductRestController.*;
 
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import kitchenpos.application.ProductService;
+import kitchenpos.domain.Product;
+
+@RequestMapping(API_PRODUCTS)
 @RestController
 public class ProductRestController {
+    public static final String API_PRODUCTS = "/api/products";
+
     private final ProductService productService;
 
     public ProductRestController(final ProductService productService) {
         this.productService = productService;
     }
 
-    @PostMapping("/api/products")
+    @PostMapping
     public ResponseEntity<Product> create(@RequestBody final Product product) {
         final Product created = productService.create(product);
-        final URI uri = URI.create("/api/products/" + created.getId());
+        final URI uri = URI.create(API_PRODUCTS + "/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
     }
 
-    @GetMapping("/api/products")
+    @GetMapping
     public ResponseEntity<List<Product>> list() {
         return ResponseEntity.ok()
                 .body(productService.list())

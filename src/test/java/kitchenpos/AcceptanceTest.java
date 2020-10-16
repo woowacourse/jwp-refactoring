@@ -1,11 +1,11 @@
 package kitchenpos;
 
 import static java.lang.Long.*;
+import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +43,7 @@ public class AcceptanceTest {
     }
 
     protected Long extractId(String location) {
-        List<String> tokens = Arrays.asList(location.split(DELIMITER));
+        List<String> tokens = asList(location.split(DELIMITER));
         int indexOfId = tokens.size() - 1;
         String id = tokens.get(indexOfId);
         return parseLong(id);
