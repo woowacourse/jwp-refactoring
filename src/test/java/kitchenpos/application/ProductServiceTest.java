@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,13 +28,13 @@ class ProductServiceTest {
     @Mock
     private ProductDao productDao;
 
+    @InjectMocks
     private ProductService productService;
 
     private Product product;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
         product = new Product();
         product.setId(1L);
         product.setName("강정치킨");
@@ -43,31 +45,10 @@ class ProductServiceTest {
     @TestFactory
     Stream<DynamicTest> create() {
         return Stream.of(
-                dynamicTest("상품을 생성한다.", () -> {
-                    Product request = new Product();
-                    request.setName("강정치킨");
-                    request.setPrice(BigDecimal.valueOf(17_000L));
-
-                    given(productDao.save(request))
-                            .willReturn(product);
-
-                    assertThat(productService.create(request).getId()).isEqualTo(product.getId());
-                }),
-                dynamicTest("상품을 생성 요청의 가격이 존재하지 않을때, IllegalArgumentException 발생.", () -> {
-                    Product request = new Product();
-                    request.setName("강정치킨");
-
-                    assertThatIllegalArgumentException()
-                            .isThrownBy(() -> productService.create(request));
-                }),
-                dynamicTest("상품을 생성 요청의 가격이 음수일 때, IllegalArgumentException 발생.", () -> {
-                    Product request = new Product();
-                    request.setName("강정치킨");
-                    request.setPrice(BigDecimal.valueOf(-1L));
-
-                    assertThatIllegalArgumentException()
-                            .isThrownBy(() -> productService.create(request));
-                })
+                dynamicTest("상품을 생성한다.", this::createSuccess),
+                dynamicTest("상품을 생성 요청의 가격이 존재하지 않을때, IllegalArgumentException 발생.", this::noPrice),
+                dynamicTest("상품을 생성 요청의 가격이 음수일 때, IllegalArgumentException 발생.",
+                        this::invalidPrice)
         );
     }
 
@@ -76,8 +57,35 @@ class ProductServiceTest {
         given(productDao.findAll()).willReturn(singletonList(product));
 
         List<Product> list = productService.list();
-        assertThat(list.get(0).getId()).isEqualTo(product.getId());
-        assertThat(list.get(0).getName()).isEqualTo(product.getName());
-        assertThat(list.get(0).getPrice()).isEqualTo(product.getPrice());
+        assertAll(
+                () -> assertThat(list.get(0).getId()).isEqualTo(product.getId()),
+                () -> assertThat(list.get(0).getName()).isEqualTo(product.getName()),
+                () -> assertThat(list.get(0).getPrice()).isEqualTo(product.getPrice())
+        );
+    }
+
+    private void createSuccess() {
+        Product request = new Product();
+        request.setName("강정치킨");
+        request.setPrice(BigDecimal.valueOf(17_000L));
+
+        given(productDao.save(request)).willReturn(product);
+
+        assertThat(productService.create(request).getId()).isEqualTo(product.getId());
+    }
+
+    private void noPrice() {
+        Product request = new Product();
+        request.setName("강정치킨");
+
+        assertThatIllegalArgumentException().isThrownBy(() -> productService.create(request));
+    }
+
+    private void invalidPrice() {
+        Product request = new Product();
+        request.setName("강정치킨");
+        request.setPrice(BigDecimal.valueOf(-1L));
+
+        assertThatIllegalArgumentException().isThrownBy(() -> productService.create(request));
     }
 }

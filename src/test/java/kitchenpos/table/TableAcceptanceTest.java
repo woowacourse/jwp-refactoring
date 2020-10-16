@@ -2,6 +2,7 @@ package kitchenpos.table;
 
 import static kitchenpos.ui.TableRestController.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.List;
@@ -48,16 +49,19 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 dynamicTest("테이블 주문 여부 변경", () -> {
                     boolean empty = false;
                     OrderTable orderTable = changeOrderTableEmpty(empty, orderTableId);
-
-                    assertThat(orderTable.getId()).isEqualTo(orderTableId);
-                    assertThat(orderTable.isEmpty()).isEqualTo(empty);
+                    assertAll(
+                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(orderTable.isEmpty()).isEqualTo(empty)
+                    );
                 }),
                 dynamicTest("테이블 손님 수 변경", () -> {
                     int numberOfGuests = 3;
                     OrderTable orderTable = changNumberOfGuests(numberOfGuests, orderTableId);
-
-                    assertThat(orderTable.getId()).isEqualTo(orderTableId);
-                    assertThat(orderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
+                    assertAll(
+                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(
+                                    numberOfGuests)
+                    );
                 })
         );
     }

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,6 +35,7 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupDao tableGroupDao;
 
+    @InjectMocks
     private TableGroupService tableGroupService;
 
     private TableGroup tableGroup;
@@ -41,7 +44,6 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
         orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setEmpty(true);
@@ -58,93 +60,17 @@ class TableGroupServiceTest {
     @TestFactory
     Stream<DynamicTest> create() {
         return Stream.of(
-                dynamicTest("단체 지정을 생성한다.", () -> {
-                    TableGroup expected = new TableGroup();
-                    expected.setId(1L);
-                    expected.setOrderTables(asList(orderTable1, orderTable2));
-                    OrderTable saved1 = new OrderTable();
-                    saved1.setId(1L);
-                    saved1.setTableGroupId(expected.getId());
-                    saved1.setEmpty(false);
-                    OrderTable saved2 = new OrderTable();
-                    saved2.setId(2L);
-                    saved2.setTableGroupId(expected.getId());
-                    saved2.setEmpty(false);
-
-                    given(orderTableDao.findAllByIdIn(
-                            asList(orderTable1.getId(), orderTable2.getId())))
-                            .willReturn(asList(orderTable1, orderTable2));
-                    given(tableGroupDao.save(tableGroup)).willReturn(expected);
-                    given(orderTableDao.save(orderTable1)).willReturn(saved1);
-                    given(orderTableDao.save(orderTable2)).willReturn(saved2);
-
-                    TableGroup actual = tableGroupService.create(tableGroup);
-
-                    assertThat(actual.getId()).isEqualTo(expected.getId());
-                    assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate());
-                    List<OrderTable> actualOrderTables = actual.getOrderTables();
-                    assertThat(actualOrderTables.size()).isEqualTo(
-                            expected.getOrderTables().size());
-                    assertThat(actualOrderTables.get(0).getId()).isEqualTo(saved1.getId());
-                    assertThat(actualOrderTables.get(1).getId()).isEqualTo(saved2.getId());
-                }),
-                dynamicTest("요청에 OrderTable이 없을때, IllegalArgumentException 발생.", () -> {
-                    assertThatIllegalArgumentException()
-                            .isThrownBy(() -> tableGroupService.create(new TableGroup()));
-                }),
-                dynamicTest("요청에 OrderTable이 하나만 존재할때, IllegalArgumentException 발생.", () -> {
-                    TableGroup tableGroup = new TableGroup();
-                    tableGroup.setOrderTables(singletonList(new OrderTable()));
-                    assertThatIllegalArgumentException()
-                            .isThrownBy(() -> tableGroupService.create(tableGroup));
-                }),
+                dynamicTest("단체 지정을 생성한다.", this::createSuccess),
+                dynamicTest("요청에 OrderTable이 없을때, IllegalArgumentException 발생.",
+                        this::noOrderTable),
+                dynamicTest("요청에 OrderTable이 하나만 존재할때, IllegalArgumentException 발생.",
+                        this::invalidOrderTable),
                 dynamicTest("요청의 OrderTable과 저장된 OrderTable의 크기가 다를때, IllegalArgumentException 발생.",
-                        () -> {
-                            given(orderTableDao.findAllByIdIn(
-                                    asList(orderTable1.getId(), orderTable2.getId())))
-                                    .willReturn(singletonList(new OrderTable()));
-
-                            assertThatIllegalArgumentException()
-                                    .isThrownBy(() -> tableGroupService.create(tableGroup));
-                        }),
-                dynamicTest("저장된 OrderTable에 주문이 존재할때, IllegalArgumentException 발생.", () -> {
-                    TableGroup expected = new TableGroup();
-                    expected.setId(1L);
-                    expected.setOrderTables(asList(orderTable1, orderTable2));
-                    OrderTable saved1 = new OrderTable();
-                    saved1.setId(1L);
-                    saved1.setEmpty(false);
-                    OrderTable saved2 = new OrderTable();
-                    saved2.setId(2L);
-                    saved2.setEmpty(true);
-
-                    given(orderTableDao.findAllByIdIn(
-                            asList(orderTable1.getId(), orderTable2.getId())))
-                            .willReturn(asList(saved1, saved2));
-
-                    assertThatIllegalArgumentException()
-                            .isThrownBy(() -> tableGroupService.create(tableGroup));
-                }),
+                        this::orderTableMismatch),
+                dynamicTest("저장된 OrderTable에 주문이 존재할때, IllegalArgumentException 발생.",
+                        this::orderTableHasOrder),
                 dynamicTest("저장된 OrderTable에 TableGroup이 존재하면, IllegalArgumentException 발생.",
-                        () -> {
-                            TableGroup expected = new TableGroup();
-                            expected.setId(1L);
-                            expected.setOrderTables(asList(orderTable1, orderTable2));
-                            OrderTable saved1 = new OrderTable();
-                            saved1.setId(1L);
-                            saved1.setEmpty(true);
-                            saved1.setTableGroupId(1L);
-                            OrderTable saved2 = new OrderTable();
-                            saved2.setId(2L);
-                            saved2.setEmpty(true);
-
-                            given(orderTableDao.findAllByIdIn(
-                                    asList(orderTable1.getId(), orderTable2.getId())))
-                                    .willReturn(asList(saved1, saved2));
-
-                            assertThatIllegalArgumentException()
-                                    .isThrownBy(() -> tableGroupService.create(tableGroup));
-                        })
+                        this::orderTableHasTableGroup)
         );
     }
 
@@ -152,33 +78,120 @@ class TableGroupServiceTest {
     @TestFactory
     Stream<DynamicTest> ungroup() {
         return Stream.of(
-                dynamicTest("단체 지정을 해제한다.", () -> {
-                    given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
-                            .willReturn(asList(orderTable1, orderTable2));
-                    given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                            asList(orderTable1.getId(), orderTable2.getId()),
-                            asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                            .willReturn(false);
-
-                    tableGroupService.ungroup(tableGroup.getId());
-
-                    verify(orderTableDao).save(orderTable1);
-                    verify(orderTableDao).save(orderTable2);
-                }),
+                dynamicTest("단체 지정을 해제한다.", this::ungroupSuccess),
                 dynamicTest(
                         "TableGroup의 OrderTable 중 주문 상태가 조리 또는 식사 일때, IllegalArgumentException 발생.",
-                        () -> {
-                            given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
-                                    .willReturn(asList(orderTable1, orderTable2));
-                            given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                                    asList(orderTable1.getId(), orderTable2.getId()),
-                                    asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                                    .willReturn(true);
-
-                            assertThatIllegalArgumentException()
-                                    .isThrownBy(
-                                            () -> tableGroupService.ungroup(tableGroup.getId()));
-                        })
+                        this::invalidOrderStatus)
         );
+    }
+
+    private void createSuccess() {
+        TableGroup expected = new TableGroup();
+        expected.setId(1L);
+        expected.setOrderTables(asList(orderTable1, orderTable2));
+        OrderTable saved1 = new OrderTable();
+        saved1.setId(1L);
+        saved1.setTableGroupId(expected.getId());
+        saved1.setEmpty(false);
+        OrderTable saved2 = new OrderTable();
+        saved2.setId(2L);
+        saved2.setTableGroupId(expected.getId());
+        saved2.setEmpty(false);
+
+        given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
+                .willReturn(asList(orderTable1, orderTable2));
+        given(tableGroupDao.save(tableGroup)).willReturn(expected);
+        given(orderTableDao.save(orderTable1)).willReturn(saved1);
+        given(orderTableDao.save(orderTable2)).willReturn(saved2);
+
+        TableGroup actual = tableGroupService.create(tableGroup);
+        List<OrderTable> actualOrderTables = actual.getOrderTables();
+
+        assertAll(
+                () -> assertThat(actual.getId()).isEqualTo(expected.getId()),
+                () -> assertThat(actual.getCreatedDate()).isEqualTo(expected.getCreatedDate()),
+                () -> assertThat(actualOrderTables.size()).isEqualTo(
+                        expected.getOrderTables().size()),
+                () -> assertThat(actualOrderTables.get(0).getId()).isEqualTo(saved1.getId()),
+                () -> assertThat(actualOrderTables.get(1).getId()).isEqualTo(saved2.getId())
+        );
+    }
+
+    private void noOrderTable() {
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(new TableGroup()));
+    }
+
+    private void invalidOrderTable() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(singletonList(new OrderTable()));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    private void orderTableMismatch() {
+        given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
+                .willReturn(singletonList(new OrderTable()));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    private void orderTableHasOrder() {
+        OrderTable saved1 = new OrderTable();
+        saved1.setId(1L);
+        saved1.setEmpty(false);
+        OrderTable saved2 = new OrderTable();
+        saved2.setId(2L);
+        saved2.setEmpty(true);
+
+        given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
+                .willReturn(asList(saved1, saved2));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    private void orderTableHasTableGroup() {
+        OrderTable saved1 = new OrderTable();
+        saved1.setId(1L);
+        saved1.setEmpty(true);
+        saved1.setTableGroupId(1L);
+        OrderTable saved2 = new OrderTable();
+        saved2.setId(2L);
+        saved2.setEmpty(true);
+
+        given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
+                .willReturn(asList(saved1, saved2));
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    private void ungroupSuccess() {
+        given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
+                .willReturn(asList(orderTable1, orderTable2));
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                asList(orderTable1.getId(), orderTable2.getId()),
+                asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                .willReturn(false);
+
+        tableGroupService.ungroup(tableGroup.getId());
+
+        verify(orderTableDao).save(orderTable1);
+        verify(orderTableDao).save(orderTable2);
+    }
+
+    private void invalidOrderStatus() {
+        given(orderTableDao.findAllByTableGroupId(tableGroup.getId()))
+                .willReturn(asList(orderTable1, orderTable2));
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+                asList(orderTable1.getId(), orderTable2.getId()),
+                asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                .willReturn(true);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
     }
 }

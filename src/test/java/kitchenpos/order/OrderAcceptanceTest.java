@@ -3,6 +3,7 @@ package kitchenpos.order;
 import static java.util.Collections.*;
 import static kitchenpos.ui.OrderRestController.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.List;
@@ -51,8 +52,10 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     request.setOrderStatus(orderStatus);
                     Order order = changeOrderStatus(request, orderId);
 
-                    assertThat(order.getId()).isEqualTo(orderId);
-                    assertThat(order.getOrderStatus()).isEqualTo(orderStatus);
+                    assertAll(
+                            () -> assertThat(order.getId()).isEqualTo(orderId),
+                            () -> assertThat(order.getOrderStatus()).isEqualTo(orderStatus)
+                    );
                 })
         );
     }
