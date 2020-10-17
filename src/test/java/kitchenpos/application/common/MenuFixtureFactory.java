@@ -4,8 +4,8 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.menuCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,14 +26,16 @@ public class MenuFixtureFactory {
         menuCreateRequest menuCreateRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
         MenuGroup menuGroup = menuGroupDao.findById(menuCreateRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        return menuCreateRequest.toMenu(menuGroup);
+        return new Menu(menuCreateRequest.getName(),
+                menuCreateRequest.getPrice(),
+                menuGroup);
     }
 
     protected menuCreateRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
         MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(null, menuGroupName));
         Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
 
-        List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));
+        List<MenuProductDto> menuProducts = Arrays.asList(TestObjectFactory.createMenuProductDto(savedProduct.getId(), 2L));
         return new menuCreateRequest(menuGroupName + " " + menuGroupName,
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),

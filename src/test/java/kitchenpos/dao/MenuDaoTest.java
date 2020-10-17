@@ -19,9 +19,9 @@ class MenuDaoTest {
     @DisplayName("countByIdIn 기능 테스트")
     @Test
     void countByIdIn() {
-        Menu savedMenu1 = menuDao.save(new Menu(null, "a", null, null, null));
-        Menu savedMenu2 = menuDao.save(new Menu(null, "b", null, null, null));
-        menuDao.save(new Menu(null, "c", null, null, null));
+        Menu savedMenu1 = menuDao.save(new Menu(null, "a", null, null));
+        Menu savedMenu2 = menuDao.save(new Menu(null, "b", null, null));
+        menuDao.save(new Menu(null, "c", null, null));
 
         List<Long> ids = Arrays.asList(savedMenu1.getId(), savedMenu2.getId(), 9999L);
 

@@ -19,27 +19,33 @@ public class MenuProduct extends BaseEntity {
     private Long productId;
     private long quantity;
 
-    public Menu getMenu() {
-        return menu;
+    public MenuProduct() {
     }
 
-    public void setMenu(Menu menu) {
+    public MenuProduct(Long id, Menu menu, Long productId, Long quantity) {
+        this.id = id;
         this.menu = menu;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(Long productId, Long quantity) {
+        this(null, null, productId, quantity);
+    }
+
+    public MenuProduct(Menu menu, Long productId, long quantity) {
+        this(null, menu, productId, quantity);
+    }
+
+    public Menu getMenu() {
+        return menu;
     }
 
     public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

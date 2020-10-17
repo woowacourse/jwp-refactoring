@@ -18,6 +18,10 @@ public class MenuProductDto {
         this.quantity = quantity;
     }
 
+    public MenuProductDto(Long productId, long quantity) {
+        this(null, null, productId, quantity);
+    }
+
     public static MenuProductDto of(MenuProduct menuProduct) {
         return new MenuProductDto(
                 menuProduct.getId(),

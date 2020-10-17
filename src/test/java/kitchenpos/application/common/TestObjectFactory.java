@@ -2,7 +2,6 @@ package kitchenpos.application.common;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -83,11 +82,8 @@ public class TestObjectFactory {
         return new MenuProductDto(id, menuId, productId, quantity);
     }
 
-    public static MenuProduct createMenuProduct(long productId, int quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProductDto createMenuProductDto(long productId, long quantity) {
+        return new MenuProductDto(productId, quantity);
     }
 
     public static MenuGroup createMenuGroupDto(Long id, String name) {
