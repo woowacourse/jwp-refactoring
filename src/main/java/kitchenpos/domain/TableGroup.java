@@ -35,4 +35,8 @@ public class TableGroup {
     public void removeOrderTable(OrderTable orderTable) {
         orderTables.remove(orderTable);
     }
+
+    public List<OrderTable> getOrderTables() {
+        return new ArrayList<>(orderTables);
+    }
 }

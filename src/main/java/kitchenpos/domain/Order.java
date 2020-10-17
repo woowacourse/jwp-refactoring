@@ -68,4 +68,8 @@ public class Order {
             throw new IllegalArgumentException();
         }
     }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return new ArrayList<>(orderLineItems);
+    }
 }

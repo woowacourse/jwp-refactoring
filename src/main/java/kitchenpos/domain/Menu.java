@@ -64,4 +64,8 @@ public class Menu {
             .map(MenuProduct::calculatePrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public List<MenuProduct> getMenuProducts() {
+        return new ArrayList<>(menuProducts);
+    }
 }
