@@ -1,10 +1,7 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.List;
-
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +11,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -54,6 +54,6 @@ class MenuGroupServiceTest {
         final List<MenuGroup> menuGroups = service.list();
 
         assertThat(menuGroups).hasSize(1);
-        assertThat(menuGroups.get(0).getName()).isEqualTo("패스트 푸드");
+        assertThat(menuGroups).contains(menuGroup);
     }
 }
