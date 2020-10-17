@@ -29,10 +29,6 @@ public class MenuProduct extends BaseEntity {
         this.quantity = quantity;
     }
 
-    public MenuProduct(Long productId, Long quantity) {
-        this(null, null, productId, quantity);
-    }
-
     public MenuProduct(Menu menu, Long productId, long quantity) {
         this(null, menu, productId, quantity);
     }

@@ -38,8 +38,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
@@ -55,7 +55,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 그룹을 맺으려는 테이블의 수가 2보다 작은 경우 예외 처리")
     @Test
     void createWithOrderTablesLessTwo() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables = Arrays.asList(orderTable1);
 
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
@@ -67,8 +67,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 존재하지 않는 테이블의 아이디를 입력받은 경우 예외처리")
     @Test
     void createWithNotFoundOrderTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable2 = TestObjectFactory.creatOrderTable();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
@@ -80,13 +80,13 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 이미 그룹핑된 테이블인 경우 예외처리")
     @Test
     void createWithGroupedTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
         tableGroupService.create(tableGroup);
 
-        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables2 = Arrays.asList(orderTable2, orderTable3);
         TableGroup tableGroupContainsGroupedTable = TestObjectFactory.createTableGroupDto(orderTables2);
 
@@ -97,8 +97,8 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해지하는 메서드 테스트")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
@@ -116,8 +116,8 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void ungroupWhenCookingOrMeal(OrderStatus orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
+        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);

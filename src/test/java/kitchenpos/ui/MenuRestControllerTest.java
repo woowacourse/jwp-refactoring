@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.MenuService;
-import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuResponse;
 import org.hamcrest.Matchers;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,8 +37,8 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         List<MenuProductDto> menuProducts = new ArrayList<>();
-        menuProducts.add(TestObjectFactory.createMenuProductDto(1L, 1L, 1L, 2));
-        MenuResponse menu = TestObjectFactory.createMenuResponse(1L, "후라이드+후라이드", 19000, 1L, menuProducts);
+        menuProducts.add(new MenuProductDto(1L, 1L, 1L, 2));
+        MenuResponse menu = new MenuResponse(1L, "후라이드+후라이드", BigDecimal.valueOf(19000), 1L, menuProducts);
 
         given(menuService.create(any())).willReturn(menu);
 
@@ -71,8 +71,8 @@ class MenuRestControllerTest {
     @Test
     void list() throws Exception {
         List<MenuResponse> menus = new ArrayList<>();
-        menus.add(TestObjectFactory.createMenuResponse(1L, "양념+양념", 2000, 1L, new ArrayList<>()));
-        menus.add(TestObjectFactory.createMenuResponse(2L, "양념+후라이드", 1500, 2L, new ArrayList<>()));
+        menus.add(new MenuResponse(1L, "양념+양념", BigDecimal.valueOf(2000), 1L, new ArrayList<>()));
+        menus.add(new MenuResponse(2L, "양념+후라이드", BigDecimal.valueOf(1500), 2L, new ArrayList<>()));
         given(menuService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menus"))

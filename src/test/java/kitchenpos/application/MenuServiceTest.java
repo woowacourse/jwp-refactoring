@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.MenuFixtureFactory;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menu.menuCreateRequest;
@@ -22,6 +26,18 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MenuServiceTest extends MenuFixtureFactory {
     @Autowired
     private MenuService menuService;
+
+    @Autowired
+    private MenuDao menuDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
+
+    @Autowired
+    private MenuProductDao menuProductDao;
 
     @DisplayName("메뉴 생성 기능 테스트")
     @Test
@@ -69,12 +85,16 @@ class MenuServiceTest extends MenuFixtureFactory {
     void list() {
         menuService.create(makeMenuCreateRequest("추천메뉴", "양념", 13000));
         menuService.create(makeMenuCreateRequest("추천메뉴", "후라이드", 12000));
-
-        assertThat(menuService.list()).hasSize(2);
+        assertAll(
+                () -> assertThat(menuService.list()).hasSize(2)
+        );
     }
 
     @AfterEach
     void tearDown() {
-
+        menuProductDao.deleteAll();
+        menuDao.deleteAll();
+        productDao.deleteAll();
+        menuGroupDao.deleteAll();
     }
 }

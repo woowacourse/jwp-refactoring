@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuProductDto {
-    private final Long id;
-    private final Long menuId;
-    private final Long productId;
-    private final long quantity;
+    private Long id;
+    private Long menuId;
+    private Long productId;
+    private long quantity;
+
+    public MenuProductDto() {
+    }
 
     public MenuProductDto(Long id, Long menuId, Long productId, long quantity) {
         this.id = id;

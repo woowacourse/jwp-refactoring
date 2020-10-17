@@ -60,7 +60,7 @@ class OrderServiceTest extends MenuFixtureFactory {
     @DisplayName("주문 생성 메서드 - 테이블이 빈 테이블인 경우 예외 처리")
     @Test
     void createWhenEmptyTable() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         List<OrderLineItemDto> orderLineItemDtos = Arrays.asList(new OrderLineItemDto(1L, 1));
@@ -73,7 +73,7 @@ class OrderServiceTest extends MenuFixtureFactory {
     @DisplayName("주문 생성 메서드 - OrderLineItems가 빈 경우 예외 처리")
     @Test
     void createWhenEmptyOrderLineItems() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
@@ -86,7 +86,7 @@ class OrderServiceTest extends MenuFixtureFactory {
     @DisplayName("주문 생성 - 주문 요청 시 orderLineItems의 menuId가 존재하지 않는 menu의 아이디일 경우 예외처리")
     @Test
     void createWhenIllegalMenuId() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
@@ -128,7 +128,7 @@ class OrderServiceTest extends MenuFixtureFactory {
     }
 
     private OrderCreateRequest makeOrderCreateRequest() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable = TestObjectFactory.creatOrderTable();
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 

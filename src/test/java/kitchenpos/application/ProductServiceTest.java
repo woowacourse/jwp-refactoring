@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.application.common.TestObjectFactory;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductCreateRequest;
+import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,10 +26,10 @@ class ProductServiceTest {
     @DisplayName("Product 생성 메서드 테스트")
     @ParameterizedTest
     @CsvSource({"강정치킨, 17000", "양념치킨, 0"})
-    void create(String name, int price) {
-        Product product = TestObjectFactory.createProductDto(name, price);
+    void create(String name, BigDecimal price) {
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest(name, price);
 
-        Product savedProduct = productService.create(product);
+        ProductResponse savedProduct = productService.create(productCreateRequest);
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo(name),
@@ -39,31 +40,28 @@ class ProductServiceTest {
     @DisplayName("Product 생성 - price 값이 null일 때 예외 처리")
     @Test
     void createWhenIllegalPrice() {
-        String name = "강정치킨";
-        Product product = new Product();
-        product.setName(name);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("치킨", null);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Product 생성 - price 값이 0보다 작을 때 예외 처리")
     @Test
     void createWhenIllegalPrice2() {
-        String name = "강정치킨";
-        Product product = TestObjectFactory.createProductDto(name, -1);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("치킨", BigDecimal.valueOf(-1));
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("product 목록 조회 기능 테스트")
     @Test
     void list() {
-        productService.create(TestObjectFactory.createProductDto("강정치킨", 17000));
-        productService.create(TestObjectFactory.createProductDto("앙념치킨", 17000));
+        productService.create(new ProductCreateRequest("강정치킨", BigDecimal.valueOf(17000)));
+        productService.create(new ProductCreateRequest("앙념치킨", BigDecimal.valueOf(17000)));
 
-        List<Product> list = productService.list();
+        List<ProductResponse> list = productService.list();
 
         assertThat(list).hasSize(2);
     }

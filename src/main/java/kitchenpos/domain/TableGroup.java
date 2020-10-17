@@ -17,14 +17,6 @@ public class TableGroup extends BaseEntity {
     private List<OrderTable> orderTables;
     private LocalDateTime createdDate;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }

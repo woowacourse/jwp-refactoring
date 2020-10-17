@@ -32,13 +32,14 @@ public class MenuFixtureFactory {
     }
 
     protected menuCreateRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(null, menuGroupName));
-        Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, menuGroupName));
+        Product savedProduct = productDao.save(new Product(productName, BigDecimal.valueOf(productPrice)));
 
-        List<MenuProductDto> menuProducts = Arrays.asList(TestObjectFactory.createMenuProductDto(savedProduct.getId(), 2L));
-        return new menuCreateRequest(menuGroupName + " " + menuGroupName,
+        List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), 2L));
+
+        return new menuCreateRequest(productName + "+" + productName,
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),
-                menuProducts);
+                menuProductDtos);
     }
 }

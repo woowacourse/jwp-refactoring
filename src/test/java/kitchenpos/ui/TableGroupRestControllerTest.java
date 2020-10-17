@@ -36,9 +36,9 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable1 = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable1 = TestObjectFactory.creatOrderTable();
         orderTable1.setId(1L);
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
+        OrderTable orderTable2 = TestObjectFactory.creatOrderTable();
         orderTable2.setId(2L);
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
