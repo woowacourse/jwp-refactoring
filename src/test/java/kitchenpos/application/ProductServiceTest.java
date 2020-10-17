@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.math.BigDecimal;
-
+import kitchenpos.config.Dataset;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,8 +11,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import java.math.BigDecimal;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -29,10 +31,7 @@ class ProductServiceTest {
 
     @BeforeEach
     public void setUp() {
-        product = new Product();
-        product.setId(5L);
-        product.setName("포테이토 피자");
-        product.setPrice(BigDecimal.valueOf(12000L));
+        product = Dataset.product_포테이토_피자();
     }
 
     @DisplayName("상품 생성 실패 - 가격 null일 때")

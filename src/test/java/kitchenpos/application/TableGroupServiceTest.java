@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.time.LocalDateTime;
-
+import kitchenpos.config.Dataset;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.*;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,14 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -45,33 +40,18 @@ class TableGroupServiceTest {
 
     @BeforeEach
     public void setUp() {
-        OrderLineItem orderItem = new OrderLineItem();
-        orderItem.setSeq(2L);
-        orderItem.setQuantity(2);
-        orderItem.setOrderId(1L);
-        orderItem.setMenuId(1L);
+        Product product = Dataset.product_파스타();
+        MenuProduct menuProduct = Dataset.menuProduct_파스타_1_개(product);
+        MenuGroup menuGroup = Dataset.menuGroup_양식();
+        Menu menu = Dataset.menu_파스타(menuProduct, menuGroup);
 
-        order = new Order();
-        order.setId(1L);
-        order.setOrderLineItems(Lists.newArrayList(orderItem));
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(7L);
+        OrderLineItem orderItem = Dataset.orderLineItem_파스타_2_개(menu);
+        order = Dataset.order_파스타_2_개(orderItem);
 
-        orderTable1 = new OrderTable();
-        orderTable1.setId(7L);
-        orderTable1.setNumberOfGuests(4);
-        orderTable1.setEmpty(true);
+        orderTable1 = Dataset.orderTable_2_명(true);
+        orderTable2 = Dataset.orderTable_4_명(true);
 
-        orderTable2 = new OrderTable();
-        orderTable2.setId(8L);
-        orderTable2.setNumberOfGuests(2);
-        orderTable2.setEmpty(true);
-
-        tableGroup = new TableGroup();
-        tableGroup.setId(20L);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Lists.newArrayList(orderTable1, orderTable2));
+        tableGroup = Dataset.tableGroup_2_개(orderTable1, orderTable2);
     }
 
     @DisplayName("단체 지정 실패 - 주문 테이블이 없을 경우")

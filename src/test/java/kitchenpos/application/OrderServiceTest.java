@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.config.Dataset;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -14,8 +15,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,45 +47,14 @@ class OrderServiceTest {
 
     @BeforeEach
     public void setUp() {
-        Product product = new Product();
-        product.setId(3L);
-        product.setName("파스타");
-        product.setPrice(BigDecimal.valueOf(8000L));
+        Product product = Dataset.product_파스타();
+        MenuProduct menuProduct = Dataset.menuProduct_파스타_1_개(product);
+        MenuGroup menuGroup = Dataset.menuGroup_양식();
+        menu = Dataset.menu_파스타(menuProduct, menuGroup);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(1L);
-        menuProduct.setQuantity(1);
-        menuProduct.setMenuId(11L);
-        menuProduct.setProductId(3L);
-
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(2L);
-        menuGroup.setName("양식");
-
-        menu = new Menu();
-        menu.setId(11L);
-        menu.setMenuGroupId(2L);
-        menu.setMenuProducts(Lists.newArrayList(menuProduct));
-        menu.setName("파스타");
-        menu.setPrice(BigDecimal.valueOf(8000L));
-
-        orderItem = new OrderLineItem();
-        orderItem.setMenuId(11L);
-        orderItem.setOrderId(1L);
-        orderItem.setQuantity(2);
-        orderItem.setSeq(1L);
-
-        order = new Order();
-        order.setId(1L);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(Lists.newArrayList(orderItem));
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(7L);
-
-        orderTable = new OrderTable();
-        orderTable.setId(7L);
-        orderTable.setNumberOfGuests(2);
-        orderTable.setEmpty(false);
+        orderItem = Dataset.orderLineItem_파스타_2_개(menu);
+        order = Dataset.order_파스타_2_개(orderItem);
+        orderTable = Dataset.orderTable_2_명(false);
     }
 
     @DisplayName("주문 생성 실패 - 주문 아이템이 비었을 때")

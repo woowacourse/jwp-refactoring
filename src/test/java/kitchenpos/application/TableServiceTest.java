@@ -1,12 +1,9 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-
+import kitchenpos.config.Dataset;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderTable;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -35,28 +32,11 @@ class TableServiceTest {
     @InjectMocks
     private TableService service;
 
-    private Order order;
     private OrderTable orderTable;
 
     @BeforeEach
     public void setUp() {
-        OrderLineItem orderItem = new OrderLineItem();
-        orderItem.setSeq(2L);
-        orderItem.setQuantity(2);
-        orderItem.setOrderId(1L);
-        orderItem.setMenuId(1L);
-
-        order = new Order();
-        order.setId(1L);
-        order.setOrderLineItems(Lists.newArrayList(orderItem));
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(7L);
-
-        orderTable = new OrderTable();
-        orderTable.setId(7L);
-        orderTable.setNumberOfGuests(4);
-        orderTable.setEmpty(false);
+        orderTable = Dataset.orderTable_4_명(false);
     }
 
     @DisplayName("주문 테이블 생성")

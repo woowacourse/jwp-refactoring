@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.config.Dataset;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -53,38 +54,14 @@ class MenuServiceTest {
 
     @BeforeEach
     public void setUp() {
-        product1 = new Product();
-        product1.setId(5L);
-        product1.setName("포테이노 피자");
-        product1.setPrice(BigDecimal.valueOf(12000L));
+        product1 = Dataset.product_포테이토_피자();
+        product2 = Dataset.product_콜라();
 
-        menuProduct1 = new MenuProduct();
-        menuProduct1.setMenuId(10L);
-        menuProduct1.setProductId(5L);
-        menuProduct1.setQuantity(1);
-        menuProduct1.setSeq(1L);
+        menuProduct1 = Dataset.menuProduct_포테이토_피자_1_개();
+        menuProduct2 = Dataset.menuProduct_콜라_1_개();
 
-        product2 = new Product();
-        product2.setId(6L);
-        product2.setName("콜라");
-        product2.setPrice(BigDecimal.valueOf(2000L));
-
-        menuProduct2 = new MenuProduct();
-        menuProduct2.setMenuId(10L);
-        menuProduct2.setProductId(6L);
-        menuProduct2.setQuantity(1);
-        menuProduct2.setSeq(2L);
-
-        menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("패스트 푸드");
-
-        menu = new Menu();
-        menu.setId(10L);
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Lists.newArrayList(menuProduct1, menuProduct2));
-        menu.setName("포테이토 피자 세트");
-        menu.setPrice(BigDecimal.valueOf(13000L));
+        menuGroup = Dataset.menuGroup_패스트_푸드();
+        menu = Dataset.menu_포테이토_피자_세트(menuProduct1, menuProduct2, menuGroup);
     }
 
     @DisplayName("메뉴 생성 실패 - 가격이 null일 때")

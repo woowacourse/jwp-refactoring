@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.config.Dataset;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.assertj.core.util.Lists;
@@ -30,9 +31,7 @@ class MenuGroupServiceTest {
 
     @BeforeEach
     public void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("패스트 푸드");
+        menuGroup = Dataset.menuGroup_패스트_푸드();
     }
 
     @DisplayName("메뉴 그룹 생성")
