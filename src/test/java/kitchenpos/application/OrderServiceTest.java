@@ -83,7 +83,6 @@ class OrderServiceTest extends MenuFixtureFactory {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    // TODO: 2020/10/15
     @DisplayName("주문 생성 - 주문 요청 시 orderLineItems의 menuId가 존재하지 않는 menu의 아이디일 경우 예외처리")
     @Test
     void createWhenIllegalMenuId() {

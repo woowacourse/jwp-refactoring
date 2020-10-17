@@ -90,10 +90,8 @@ public class TestObjectFactory {
         return menuProduct;
     }
 
-    public static MenuGroup createMenuGroupDto(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
+    public static MenuGroup createMenuGroupDto(Long id, String name) {
+        return new MenuGroup(id, name);
     }
 
     public static Order createChangeOrderStatusDto(OrderStatus orderStatus) {

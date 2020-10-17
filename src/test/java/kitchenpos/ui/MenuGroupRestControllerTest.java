@@ -35,8 +35,7 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹을 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = TestObjectFactory.createMenuGroupDto("추천메뉴");
-        menuGroup.setId(1L);
+        MenuGroup menuGroup = TestObjectFactory.createMenuGroupDto(1L, "추천메뉴");
 
         given(menuGroupService.create(any())).willReturn(menuGroup);
 
@@ -56,8 +55,8 @@ class MenuGroupRestControllerTest {
     @Test
     void list() throws Exception {
         List<MenuGroup> menus = new ArrayList<>();
-        menus.add(TestObjectFactory.createMenuGroupDto("name1"));
-        menus.add(TestObjectFactory.createMenuGroupDto("name2"));
+        menus.add(TestObjectFactory.createMenuGroupDto(null, "name1"));
+        menus.add(TestObjectFactory.createMenuGroupDto(null, "name2"));
         given(menuGroupService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menu-groups"))

@@ -30,7 +30,7 @@ public class MenuFixtureFactory {
     }
 
     protected menuCreateRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(menuGroupName));
+        MenuGroup savedMenuGroup = menuGroupDao.save(TestObjectFactory.createMenuGroupDto(null, menuGroupName));
         Product savedProduct = productDao.save(TestObjectFactory.createProductDto(productName, productPrice));
 
         List<MenuProduct> menuProducts = Arrays.asList(TestObjectFactory.createMenuProduct(savedProduct.getId(), 2));

@@ -11,11 +11,19 @@ import javax.persistence.Entity;
 public class MenuGroup extends BaseEntity {
     private String name;
 
-    public String getName() {
-        return name;
+    public MenuGroup() {
     }
 
-    public void setName(final String name) {
+    public MenuGroup(Long id, String name) {
+        this.id = id;
         this.name = name;
+    }
+
+    public MenuGroup(String name) {
+        this(null, name);
+    }
+
+    public String getName() {
+        return name;
     }
 }
