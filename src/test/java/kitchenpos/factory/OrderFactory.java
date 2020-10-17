@@ -28,4 +28,12 @@ public class OrderFactory {
     public Order create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         return create(null, orderTableId, null, null, orderLineItems);
     }
+
+    public Order create(Long id, Long orderTableId, List<OrderLineItem> orderLineItems) {
+        return create(id, orderTableId, null, null, orderLineItems);
+    }
+
+    public Order create(Long id) {
+        return create(id, null, null, null, null);
+    }
 }
