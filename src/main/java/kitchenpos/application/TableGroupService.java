@@ -76,10 +76,8 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-            orderTableDao.save(orderTable);
-        }
+        orderTables.forEach(OrderTable::ungroup);
+        orderTableDao.saveAll(orderTables);
         tableGroupDao.save(tableGroup);
     }
 }
