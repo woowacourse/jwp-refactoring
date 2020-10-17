@@ -22,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.factory.ProductFactory;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -31,14 +32,14 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
+    private ProductFactory productFactory;
+
     private Product product;
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17_000L));
+        productFactory = new ProductFactory();
+        product = productFactory.create(1L, "강정치킨", BigDecimal.valueOf(17_000L));
     }
 
     @DisplayName("상품 생성")
@@ -65,9 +66,7 @@ class ProductServiceTest {
     }
 
     private void createSuccess() {
-        Product request = new Product();
-        request.setName("강정치킨");
-        request.setPrice(BigDecimal.valueOf(17_000L));
+        Product request = productFactory.create("강정치킨", BigDecimal.valueOf(17_000L));
 
         given(productDao.save(request)).willReturn(product);
 
@@ -75,16 +74,13 @@ class ProductServiceTest {
     }
 
     private void noPrice() {
-        Product request = new Product();
-        request.setName("강정치킨");
+        Product request = productFactory.create("강정치킨");
 
         assertThatIllegalArgumentException().isThrownBy(() -> productService.create(request));
     }
 
     private void invalidPrice() {
-        Product request = new Product();
-        request.setName("강정치킨");
-        request.setPrice(BigDecimal.valueOf(-1L));
+        Product request = productFactory.create("강정치킨", BigDecimal.valueOf(-1L));
 
         assertThatIllegalArgumentException().isThrownBy(() -> productService.create(request));
     }

@@ -44,9 +44,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createProduct() throws Exception {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17_000L));
+        Product product = productFactory.create("강정치킨", BigDecimal.valueOf(17_000L));
 
         String request = objectMapper.writeValueAsString(product);
         return post(request, API_PRODUCTS);

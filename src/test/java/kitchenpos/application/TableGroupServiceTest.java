@@ -25,6 +25,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.factory.OrderTableFactory;
+import kitchenpos.factory.TableGroupFactory;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -38,22 +40,20 @@ class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
+    private OrderTableFactory orderTableFactory;
+    private TableGroupFactory tableGroupFactory;
+
     private TableGroup tableGroup;
     private OrderTable orderTable1;
     private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        tableGroup = new TableGroup();
-        tableGroup.setOrderTables(asList(orderTable1, orderTable2));
+        orderTableFactory = new OrderTableFactory();
+        tableGroupFactory = new TableGroupFactory();
+        orderTable1 = orderTableFactory.create(1L ,null, true);
+        orderTable2 = orderTableFactory.create(2L, null, true);
+        tableGroup = tableGroupFactory.create(asList(orderTable1, orderTable2));
     }
 
     @DisplayName("단체 지정 생성")
@@ -86,17 +86,9 @@ class TableGroupServiceTest {
     }
 
     private void createSuccess() {
-        TableGroup expected = new TableGroup();
-        expected.setId(1L);
-        expected.setOrderTables(asList(orderTable1, orderTable2));
-        OrderTable saved1 = new OrderTable();
-        saved1.setId(1L);
-        saved1.setTableGroupId(expected.getId());
-        saved1.setEmpty(false);
-        OrderTable saved2 = new OrderTable();
-        saved2.setId(2L);
-        saved2.setTableGroupId(expected.getId());
-        saved2.setEmpty(false);
+        TableGroup expected = tableGroupFactory.create(1L, asList(orderTable1, orderTable2));
+        OrderTable saved1 = orderTableFactory.create(1L, expected.getId(), false);
+        OrderTable saved2 = orderTableFactory.create(2L, expected.getId(), false);
 
         given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
                 .willReturn(asList(orderTable1, orderTable2));
@@ -123,8 +115,7 @@ class TableGroupServiceTest {
     }
 
     private void invalidOrderTable() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(singletonList(new OrderTable()));
+        TableGroup tableGroup = tableGroupFactory.create(singletonList(new OrderTable()));
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tableGroupService.create(tableGroup));
@@ -139,12 +130,8 @@ class TableGroupServiceTest {
     }
 
     private void orderTableHasOrder() {
-        OrderTable saved1 = new OrderTable();
-        saved1.setId(1L);
-        saved1.setEmpty(false);
-        OrderTable saved2 = new OrderTable();
-        saved2.setId(2L);
-        saved2.setEmpty(true);
+        OrderTable saved1 = orderTableFactory.create(1L, false);
+        OrderTable saved2 = orderTableFactory.create(2L, true);
 
         given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
                 .willReturn(asList(saved1, saved2));
@@ -154,13 +141,8 @@ class TableGroupServiceTest {
     }
 
     private void orderTableHasTableGroup() {
-        OrderTable saved1 = new OrderTable();
-        saved1.setId(1L);
-        saved1.setEmpty(true);
-        saved1.setTableGroupId(1L);
-        OrderTable saved2 = new OrderTable();
-        saved2.setId(2L);
-        saved2.setEmpty(true);
+        OrderTable saved1 = orderTableFactory.create(1L, 1L, true);
+        OrderTable saved2 = orderTableFactory.create(2L, true);
 
         given(orderTableDao.findAllByIdIn(asList(orderTable1.getId(), orderTable2.getId())))
                 .willReturn(asList(saved1, saved2));

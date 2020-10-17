@@ -19,12 +19,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.factory.OrderTableFactory;
 
+@Import(OrderTableFactory.class)
 @ExtendWith(value = MockitoExtension.class)
 class TableServiceTest {
     @Mock
@@ -35,18 +38,16 @@ class TableServiceTest {
     @InjectMocks
     private TableService tableService;
 
+    private OrderTableFactory orderTableFactory;
+
     private OrderTable orderTable1;
     private OrderTable orderTable2;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(1L);
-        orderTable2.setEmpty(true);
+        orderTableFactory = new OrderTableFactory();
+        orderTable1 = orderTableFactory.create(1L, false);
+        orderTable2 = orderTableFactory.create(2L, 1L, true);
     }
 
     @DisplayName("OrderTable 생성시 Id와 tableGroupId가 부여된다.")
@@ -109,11 +110,8 @@ class TableServiceTest {
     }
 
     private void changeEmptySuccess() {
-        OrderTable request = new OrderTable();
-        request.setEmpty(true);
-        OrderTable expected = new OrderTable();
-        request.setId(orderTable1.getId());
-        request.setEmpty(true);
+        OrderTable request = orderTableFactory.create(true);
+        OrderTable expected = orderTableFactory.create(orderTable1.getId(), true);
 
         given(orderTableDao.findById(orderTable1.getId())).willReturn(Optional.of(orderTable1));
         given(orderTableDao.save(orderTable1)).willReturn(expected);
@@ -153,8 +151,7 @@ class TableServiceTest {
     }
 
     private void changeNumberOfGuestsSuccess() {
-        OrderTable request = new OrderTable();
-        request.setNumberOfGuests(3);
+        OrderTable request = orderTableFactory.create(3);
 
         given(orderTableDao.findById(orderTable1.getId())).willReturn(Optional.of(orderTable1));
         given(orderTableDao.save(orderTable1)).willReturn(orderTable1);
@@ -164,16 +161,14 @@ class TableServiceTest {
     }
 
     private void invalidNumberOfGuests() {
-        OrderTable request = new OrderTable();
-        request.setNumberOfGuests(-1);
+        OrderTable request = orderTableFactory.create(-1);
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tableService.changeNumberOfGuests(orderTable1.getId(), request));
     }
 
     private void orderTableNotFoundInNumberOfGuests() {
-        OrderTable request = new OrderTable();
-        request.setNumberOfGuests(3);
+        OrderTable request = orderTableFactory.create(3);
 
         given(orderTableDao.findById(orderTable1.getId())).willReturn(Optional.empty());
 
@@ -182,8 +177,7 @@ class TableServiceTest {
     }
 
     private void invalidOrderTable() {
-        OrderTable request = new OrderTable();
-        request.setNumberOfGuests(3);
+        OrderTable request = orderTableFactory.create(3);
 
         given(orderTableDao.findById(orderTable2.getId())).willReturn(Optional.of(orderTable2));
 

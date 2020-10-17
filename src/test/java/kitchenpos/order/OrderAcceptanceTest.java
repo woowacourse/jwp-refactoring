@@ -47,9 +47,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     assertThat(lastOrder.getId()).isEqualTo(orderId);
                 }),
                 dynamicTest("주문 상태 변경", () -> {
-                    Order request = new Order();
                     String orderStatus = OrderStatus.MEAL.name();
-                    request.setOrderStatus(orderStatus);
+                    Order request = orderFactory.create(orderStatus);
                     Order order = changeOrderStatus(request, orderId);
 
                     assertAll(
@@ -61,15 +60,9 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createOrder() throws Exception {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
-        Order order = new Order();
-        Long orderTableId = 1L;
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(singletonList(orderLineItem));
-
-        changeOrderTableEmpty(false, orderTableId);
+        OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1L);
+        Order order = orderFactory.create(1L, singletonList(orderLineItem));
+        changeOrderTableEmpty(false, order.getOrderTableId());
 
         String request = objectMapper.writeValueAsString(order);
         return post(request, API_ORDERS);

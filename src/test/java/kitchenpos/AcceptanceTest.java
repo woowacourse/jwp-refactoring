@@ -22,6 +22,11 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.factory.OrderFactory;
+import kitchenpos.factory.OrderLineItemFactory;
+import kitchenpos.factory.OrderTableFactory;
+import kitchenpos.factory.ProductFactory;
+import kitchenpos.factory.TableGroupFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -29,13 +34,24 @@ public class AcceptanceTest {
     protected static final String LOCATION = "Location";
     private static final String DELIMITER = "/";
 
-    protected MockMvc mockMvc;
+    @Autowired
+    protected OrderFactory orderFactory;
+    @Autowired
+    protected OrderLineItemFactory orderLineItemFactory;
+    @Autowired
+    protected OrderTableFactory orderTableFactory;
+    @Autowired
+    protected TableGroupFactory tableGroupFactory;
+    @Autowired
+    protected ProductFactory productFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;
 
     @Autowired
     private WebApplicationContext context;
+
+    protected MockMvc mockMvc;
 
     @BeforeEach
     protected void setUp() {
@@ -99,8 +115,7 @@ public class AcceptanceTest {
     }
 
     protected OrderTable changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+        OrderTable orderTable = orderTableFactory.create(empty);
 
         String request = objectMapper.writeValueAsString(orderTable);
         return put(OrderTable.class, request, API_TABLES + "/" + orderTableId + "/empty");
