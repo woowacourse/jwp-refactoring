@@ -20,12 +20,32 @@ public class OrderTable extends BaseEntity {
     private int numberOfGuests;
     private boolean empty;
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public OrderTable() {
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this.id = id;
         this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
+    public void tableGrouping(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void tableUngrouping() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {

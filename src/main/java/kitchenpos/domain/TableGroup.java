@@ -17,19 +17,24 @@ public class TableGroup extends BaseEntity {
     private List<OrderTable> orderTables;
     private LocalDateTime createdDate;
 
+    public TableGroup() {
+    }
+
+    public TableGroup(Long id, List<OrderTable> orderTables, LocalDateTime createdDate) {
+        this.id = id;
+        this.orderTables = orderTables;
+        this.createdDate = createdDate;
+    }
+
+    public TableGroup(List<OrderTable> orderTables, LocalDateTime createdDate) {
+        this(null, orderTables, createdDate);
+    }
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

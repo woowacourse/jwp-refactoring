@@ -3,10 +3,13 @@ package kitchenpos.application;
 import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tablegroup.OrderTableDto;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.dto.tablegroup.TableGroupingRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,6 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -30,6 +34,9 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
+    private TableGroupDao tableGroupDao;
+
+    @Autowired
     private OrderTableDao orderTableDao;
 
     @Autowired
@@ -40,15 +47,14 @@ class TableGroupServiceTest {
     void create() {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
-        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(orderTablesByTableGroupId).hasSize(2)
+                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
         );
     }
 
@@ -56,11 +62,12 @@ class TableGroupServiceTest {
     @Test
     void createWithOrderTablesLessTwo() {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -68,12 +75,12 @@ class TableGroupServiceTest {
     @Test
     void createWithNotFoundOrderTable() {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTable();
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId() + 1));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,15 +89,16 @@ class TableGroupServiceTest {
     void createWithGroupedTable() {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        tableGroupService.create(tableGroup);
-
         OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables2 = Arrays.asList(orderTable2, orderTable3);
-        TableGroup tableGroupContainsGroupedTable = TestObjectFactory.createTableGroupDto(orderTables2);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsGroupedTable))
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        tableGroupService.create(tableGroupingRequest);
+
+        TableGroupingRequest tableGroupingRequest2 =
+                makeTableGroupingRequest(Arrays.asList(orderTable2.getId(), orderTable3.getId()));
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -99,14 +107,14 @@ class TableGroupServiceTest {
     void ungroup() {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
-        tableGroupService.ungroup(savedTableGroup.getId());
+        tableGroupService.ungroup(tableGroupResponse.getId());
 
-        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(tableGroupResponse.getId());
         assertAll(
                 () -> assertThat(orderTablesByTableGroupId).hasSize(0)
         );
@@ -118,15 +126,22 @@ class TableGroupServiceTest {
     void ungroupWhenCookingOrMeal(OrderStatus orderStatus) {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
         OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupingRequest tableGroupingRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
         Order order = TestObjectFactory.createOrder(orderTable1, orderStatus, new ArrayList<>());
         orderDao.save(order);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private TableGroupingRequest makeTableGroupingRequest(List<Long> ids) {
+        List<OrderTableDto> orderTableDtos = ids.stream()
+                .map(OrderTableDto::new)
+                .collect(Collectors.toList());
+        return new TableGroupingRequest(orderTableDtos);
     }
 }

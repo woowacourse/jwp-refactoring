@@ -17,6 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,7 @@ class OrderRestControllerTest {
     void create() throws Exception {
         List<OrderLineItemDto> orderLineItems = new ArrayList<>();
         orderLineItems.add(new OrderLineItemDto(1L, 1L, 1L, 2));
-        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING, orderLineItems);
+        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING, orderLineItems, LocalDateTime.now());
 
         given(orderService.create(any())).willReturn(orderResponse);
 
@@ -62,9 +63,10 @@ class OrderRestControllerTest {
                 .andExpect(header().string("Location", "/api/orders/" + orderResponse.getId()))
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.orderTableId", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.orderLineItemDtos[0].orderId", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.orderLineItemDtos[0].menuId", Matchers.instanceOf(Number.class)))
-                .andExpect(jsonPath("$.orderLineItemDtos[0].quantity", Matchers.instanceOf(Number.class)));
+                .andExpect(jsonPath("$.orderedTime", Matchers.instanceOf(String.class)))
+                .andExpect(jsonPath("$.orderLineItems[0].orderId", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.orderLineItems[0].menuId", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.orderLineItems[0].quantity", Matchers.instanceOf(Number.class)));
     }
 
     @DisplayName("Product 목록 조회 요청 테스트")

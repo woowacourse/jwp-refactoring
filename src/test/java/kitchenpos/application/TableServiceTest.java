@@ -5,6 +5,8 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.tablegroup.OrderTableDto;
+import kitchenpos.dto.tablegroup.TableGroupingRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -80,12 +82,14 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태 변경 - 단체 테이블에 등록되어 있는 경우 예외 처리")
     @Test
     void changeEmptyWithRegisteredGroupTable() {
-        OrderTable savedOrderTable1 = tableService.create(TestObjectFactory.creatOrderTable());
-        OrderTable savedOrderTable2 = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = tableService.create(new OrderTable(0, true));
+        OrderTable savedOrderTable2 = tableService.create(new OrderTable(0, true));
         OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTable(false);
-        List<OrderTable> orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
-        tableGroupService.create(TestObjectFactory.createTableGroupDto(orderTables));
+        TableGroupingRequest groupingRequest = new TableGroupingRequest(
+                Arrays.asList(new OrderTableDto(savedOrderTable1.getId()), new OrderTableDto(savedOrderTable2.getId()))
+        );
+        tableGroupService.create(groupingRequest);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), changeEmptyOrderTableDto))
                 .isInstanceOf(IllegalArgumentException.class);

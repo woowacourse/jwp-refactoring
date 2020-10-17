@@ -4,7 +4,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,13 +35,6 @@ public class TestObjectFactory {
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderLineItems(items);
         return order;
-    }
-
-    public static TableGroup createTableGroupDto(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        return tableGroup;
     }
 
     public static Order createChangeOrderStatusDto(OrderStatus orderStatus) {
