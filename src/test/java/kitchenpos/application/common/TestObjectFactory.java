@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -35,7 +36,7 @@ public class TestObjectFactory {
         return orderTable;
     }
 
-    public static Order createOrder(OrderTable orderTable, String orderStatus, List<OrderLineItem> items) {
+    public static Order createOrder(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> items) {
         Order order = new Order();
         order.setOrderTable(orderTable);
         order.setOrderStatus(orderStatus);
@@ -95,7 +96,7 @@ public class TestObjectFactory {
         return menuGroup;
     }
 
-    public static Order createChangeOrderStatusDto(String orderStatus) {
+    public static Order createChangeOrderStatusDto(OrderStatus orderStatus) {
         Order order = new Order();
         order.setOrderStatus(orderStatus);
         return order;

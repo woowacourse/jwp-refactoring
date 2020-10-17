@@ -4,6 +4,7 @@ import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -114,7 +115,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해지 - OrderStatus가 COOKING 혹은 MEAL 인 경우 예외처리")
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
-    void ungroupWhenCookingOrMeal(String orderStatus) {
+    void ungroupWhenCookingOrMeal(OrderStatus orderStatus) {
         OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);

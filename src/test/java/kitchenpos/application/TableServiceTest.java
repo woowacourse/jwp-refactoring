@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -93,7 +94,7 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태 변경 - 주문 상태가 COOKING 혹은 MEAL 인 경우 예외 처리")
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
-    void changeEmptyWhenCooking(String orderStatus) {
+    void changeEmptyWhenCooking(OrderStatus orderStatus) {
         OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTableDto());
 
         Order order = TestObjectFactory.createOrder(savedOrderTable, orderStatus, new ArrayList<>());

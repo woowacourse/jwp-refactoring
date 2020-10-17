@@ -55,7 +55,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order orderToSave = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(orderToSave);
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -92,12 +92,12 @@ public class OrderService {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        final OrderStatus orderStatus = order.getOrderStatus();
+        savedOrder.setOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
 

@@ -5,6 +5,8 @@ import kitchenpos.config.BaseEntity;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -22,7 +24,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "FK_ORDER_ORDER_TABLE"))
     private OrderTable orderTable;
 
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
@@ -31,7 +34,7 @@ public class Order extends BaseEntity {
     public Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -39,7 +42,7 @@ public class Order extends BaseEntity {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
@@ -51,11 +54,11 @@ public class Order extends BaseEntity {
         this.orderTable = orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

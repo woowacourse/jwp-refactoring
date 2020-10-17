@@ -52,7 +52,7 @@ class OrderServiceTest extends MenuFixtureFactory {
         List<OrderLineItemDto> savedOrderLineItems = savedOrder.getOrderLineItemDtos();
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
                 () -> assertThat(savedOrderLineItems.get(0).getOrderId()).isEqualTo(savedOrder.getId())
         );
     }
@@ -109,18 +109,18 @@ class OrderServiceTest extends MenuFixtureFactory {
     @Test
     void changeOrderStatus() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        Order changeOrderStatusDto = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.MEAL.name());
+        Order changeOrderStatusDto = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.MEAL);
 
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDto);
 
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @DisplayName("주문 상태 변경 - 이미 완료 상태인 경우 예외 처리")
     @Test
     void changeOrderStatusWhenCompletion() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        Order changeOrderStatusDtoToCompletion = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.COMPLETION.name());
+        Order changeOrderStatusDtoToCompletion = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.COMPLETION);
 
         orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDtoToCompletion);
 

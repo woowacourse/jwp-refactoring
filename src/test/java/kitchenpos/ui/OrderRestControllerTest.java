@@ -42,7 +42,7 @@ class OrderRestControllerTest {
     void create() throws Exception {
         List<OrderLineItemDto> orderLineItems = new ArrayList<>();
         orderLineItems.add(new OrderLineItemDto(1L, 1L, 1L, 2));
-        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING.name(), orderLineItems);
+        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING, orderLineItems);
 
         given(orderService.create(any())).willReturn(orderResponse);
 
@@ -72,8 +72,8 @@ class OrderRestControllerTest {
     void list() throws Exception {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
-        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING.name(), orderLineItems));
-        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING.name(), orderLineItems));
+        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING, orderLineItems));
+        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING, orderLineItems));
 
         given(orderService.list()).willReturn(orders);
 
