@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -58,8 +57,7 @@ class OrderServiceTest extends TestFixtureFactory {
     @DisplayName("주문 생성 메서드 - 테이블이 빈 테이블인 경우 예외 처리")
     @Test
     void createWhenEmptyTable() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
         List<OrderLineItemDto> orderLineItemDtos = Arrays.asList(new OrderLineItemDto(1L, 1));
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
@@ -71,8 +69,7 @@ class OrderServiceTest extends TestFixtureFactory {
     @DisplayName("주문 생성 메서드 - OrderLineItems가 빈 경우 예외 처리")
     @Test
     void createWhenEmptyOrderLineItems() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
@@ -84,9 +81,7 @@ class OrderServiceTest extends TestFixtureFactory {
     @DisplayName("주문 생성 - 주문 요청 시 orderLineItems의 menuId가 존재하지 않는 menu의 아이디일 경우 예외처리")
     @Test
     void createWhenIllegalMenuId() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
 

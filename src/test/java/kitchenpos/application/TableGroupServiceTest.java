@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.common.TestObjectFactory;
+import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Sql("/delete_all.sql")
-class TableGroupServiceTest {
+class TableGroupServiceTest extends TestFixtureFactory {
     @Autowired
     private TableGroupService tableGroupService;
 
@@ -46,11 +46,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
         assertAll(
@@ -62,10 +62,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 그룹을 맺으려는 테이블의 수가 2보다 작은 경우 예외 처리")
     @Test
     void createWithOrderTablesLessTwo() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId()));
 
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
@@ -75,11 +75,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 존재하지 않는 테이블의 아이디를 입력받은 경우 예외처리")
     @Test
     void createWithNotFoundOrderTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId() + 1));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId() + 1));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -88,16 +88,16 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 생성 - 이미 그룹핑된 테이블인 경우 예외처리")
     @Test
     void createWithGroupedTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable3 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         tableGroupService.create(tableGroupingRequest);
 
         TableGroupingRequest tableGroupingRequest2 =
-                makeTableGroupingRequest(Arrays.asList(orderTable2.getId(), orderTable3.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable2.getId(), savedOrderTable3.getId()));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest2))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -106,11 +106,11 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해지하는 메서드 테스트")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
         tableGroupService.ungroup(tableGroupResponse.getId());
@@ -125,14 +125,14 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void ungroupWhenCookingOrMeal(OrderStatus orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTable());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
         TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
-        Order order = new Order(orderTable1, orderStatus, LocalDateTime.now(), new ArrayList<>());
+        Order order = new Order(savedOrderTable1, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
