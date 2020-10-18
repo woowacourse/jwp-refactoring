@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,13 +34,11 @@ public class TestFixtureFactory {
     @Autowired
     protected MenuDao menuDao;
 
-    protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
+    protected Menu makeSavedMenu(String menuGroupName, String productName, int productPrice) {
         menuRequest menuRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
-        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
-        return new Menu(menuRequest.getName(),
-                menuRequest.getPrice(),
-                menuGroup);
+        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
+        Menu menuToSave = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, new ArrayList<>());
+        return menuDao.save(menuToSave);
     }
 
     protected menuRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
@@ -55,15 +54,13 @@ public class TestFixtureFactory {
     }
 
     protected OrderRequest makeOrderCreateRequest() {
-        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(0, false));
-
-        Menu savedMenu1 = menuDao.save(makeMenuToSave("추천메뉴", "양념", 12000));
-        Menu savedMenu2 = menuDao.save(makeMenuToSave("추천메뉴", "후라이드", 11000));
+        OrderTable savedOrderTable = makeSavedOrderTable(0, false);
+        Menu savedMenu1 = makeSavedMenu("추천메뉴", "양념", 12000);
+        Menu savedMenu2 = makeSavedMenu("추천메뉴", "후라이드", 11000);
         List<OrderLineItemDto> orderLineItems = Arrays.asList(
                 new OrderLineItemDto(savedMenu1.getId(), 1),
                 new OrderLineItemDto(savedMenu2.getId(), 1)
         );
-
         return new OrderRequest(savedOrderTable.getId(), null, orderLineItems);
     }
 

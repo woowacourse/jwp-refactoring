@@ -42,18 +42,14 @@ public class MenuService {
     public MenuResponse create(final menuRequest menuRequest) {
         validatePrice(menuRequest);
 
-        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
-        Menu menuToSave = menuRequest.toMenuToSave(menuGroup);
+        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
+        Menu menuToSave = menuRequest.toMenu(menuGroup);
         final Menu savedMenu = menuDao.save(menuToSave);
 
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
-            MenuProduct menuProductToSave = new MenuProduct(
-                    menuToSave,
-                    menuProductDto.getProductId(),
-                    menuProductDto.getQuantity()
-            );
+            Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
+            MenuProduct menuProductToSave = new MenuProduct(menuToSave, product, menuProductDto.getQuantity());
             savedMenuProducts.add(menuProductDao.save(menuProductToSave));
         }
 

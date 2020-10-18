@@ -44,6 +44,7 @@ class OrderServiceTest extends TestFixtureFactory {
     void create() {
         OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
+
         Order order = orderDao.findById(orderResponse.getId()).get();
         List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         assertAll(

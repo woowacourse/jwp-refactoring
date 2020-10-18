@@ -7,9 +7,11 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @AttributeOverride(name = "id", column = @Column(name = "menu_id"))
 @Entity
@@ -21,18 +23,22 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "FK_MENU_MENU_GROUP"))
     private MenuGroup menuGroup;
 
+    @OneToMany(mappedBy = "menu")
+    private List<MenuProduct> menuProducts;
+
     public Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this.menuProducts = menuProducts;
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
     public String getName() {
@@ -45,5 +51,9 @@ public class Menu extends BaseEntity {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 }

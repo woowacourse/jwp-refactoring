@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class menuRequest {
@@ -38,7 +39,7 @@ public class menuRequest {
         return menuProductDtos;
     }
 
-    public Menu toMenuToSave(MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup);
+    public Menu toMenu(MenuGroup menuGroup) {
+        return new Menu(name, price, menuGroup, new ArrayList<>());
     }
 }

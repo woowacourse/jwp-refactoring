@@ -96,7 +96,6 @@ class TableRestControllerTest {
 
         given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(orderTable);
 
-
         mockMvc.perform(put("/api/tables/1/number-of-guests")
                 .content("{\n"
                         + "  \"numberOfGuests\": 4\n"

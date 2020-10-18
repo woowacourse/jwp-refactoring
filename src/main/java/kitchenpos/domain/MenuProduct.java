@@ -16,29 +16,32 @@ public class MenuProduct extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_MENU_PRODUCT_MENU"))
     private Menu menu;
-    private Long productId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "FK_MENU_PRODUCT_PRODUCT"))
+    private Product product;
     private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long id, Menu menu, Long productId, Long quantity) {
+    public MenuProduct(Long id, Menu menu, Product product, long quantity) {
         this.id = id;
         this.menu = menu;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Menu menu, Long productId, long quantity) {
-        this(null, menu, productId, quantity);
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this(null, menu, product, quantity);
     }
 
     public Menu getMenu() {
         return menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {
