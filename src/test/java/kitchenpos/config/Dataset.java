@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 public class Dataset {
 
     public static MenuGroup menuGroup_패스트_푸드() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("패스트 푸드");
+        MenuGroup menuGroup = new MenuGroup(1L, "패스트 푸드");
         return menuGroup;
     }
 
@@ -77,9 +75,7 @@ public class Dataset {
     }
 
     public static MenuGroup menuGroup_양식() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(2L);
-        menuGroup.setName("양식");
+        MenuGroup menuGroup = new MenuGroup(2L, "양식");
         return menuGroup;
     }
 
