@@ -26,7 +26,7 @@ public class TestObjectFactory {
 
     public static Order createChangeOrderStatusDto(OrderStatus orderStatus) {
         Order order = new Order();
-        order.setOrderStatus(orderStatus);
+        order.changeOrderStatus(orderStatus);
         return order;
     }
 }

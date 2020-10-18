@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,9 +114,9 @@ class OrderServiceTest extends TestFixtureFactory {
     @Test
     void changeOrderStatus() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        Order changeOrderStatusDto = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.MEAL);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL);
 
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDto);
+        OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest);
 
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
@@ -124,11 +125,11 @@ class OrderServiceTest extends TestFixtureFactory {
     @Test
     void changeOrderStatusWhenCompletion() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        Order changeOrderStatusDtoToCompletion = TestObjectFactory.createChangeOrderStatusDto(OrderStatus.COMPLETION);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION);
 
-        orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDtoToCompletion);
+        orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDtoToCompletion))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
