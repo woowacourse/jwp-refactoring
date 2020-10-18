@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -65,9 +64,9 @@ class TableServiceTest extends TestFixtureFactory {
     @Test
     void changeEmpty() {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
-        OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable);
+        OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest);
 
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
@@ -78,9 +77,10 @@ class TableServiceTest extends TestFixtureFactory {
     @DisplayName("테이블의 empty 상태 변경 - 존재하지 않는 아이디를 입력받은 경우 예외 처리")
     @Test
     void changeEmptyWithNotFoundOrderTable() {
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(100L, changeEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId() + 100, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -89,14 +89,15 @@ class TableServiceTest extends TestFixtureFactory {
     void changeEmptyWithRegisteredGroupTable() {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
-        OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         TableGroupingRequest groupingRequest = new TableGroupingRequest(
                 Arrays.asList(new OrderTableResponse(savedOrderTable1.getId()), new OrderTableResponse(savedOrderTable2.getId()))
         );
         tableGroupService.create(groupingRequest);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), changeEmptyOrderTableDto))
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
+
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -109,9 +110,9 @@ class TableServiceTest extends TestFixtureFactory {
         Order order = new Order(savedOrderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
 
-        OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

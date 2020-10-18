@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
@@ -38,9 +37,9 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(
+    public ResponseEntity<OrderTableResponse> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody final OrderTable orderTable
+            @RequestBody final OrderTableRequest orderTable
     ) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, orderTable));

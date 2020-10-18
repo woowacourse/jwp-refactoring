@@ -1,8 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.application.common.TestObjectFactory;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
@@ -76,11 +74,9 @@ class TableRestControllerTest {
     @DisplayName("테이블의 setEmpty를 변경 요청 테스트")
     @Test
     void changeEmpty() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        orderTable.setId(1L);
-        orderTable.changeEmpty(false);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, null, 1, false);
 
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTable);
+        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTableResponse);
 
         mockMvc.perform(put("/api/tables/1/empty")
                 .content("{\n"
