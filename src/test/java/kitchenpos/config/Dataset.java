@@ -14,18 +14,12 @@ public class Dataset {
     }
 
     public static Product product_포테이토_피자() {
-        Product product = new Product();
-        product.setId(5L);
-        product.setName("포테이토 피자");
-        product.setPrice(BigDecimal.valueOf(12000L));
+        Product product = new Product(5L, "포테이토 피자", BigDecimal.valueOf(12_000L));
         return product;
     }
 
     public static Product product_콜라() {
-        Product product = new Product();
-        product.setId(6L);
-        product.setName("콜라");
-        product.setPrice(BigDecimal.valueOf(2000L));
+        Product product = new Product(6L, "콜라", BigDecimal.valueOf(2_000L));
         return product;
     }
 
@@ -58,10 +52,7 @@ public class Dataset {
     }
 
     public static Product product_파스타() {
-        Product product = new Product();
-        product.setId(3L);
-        product.setName("파스타");
-        product.setPrice(BigDecimal.valueOf(8000L));
+        Product product = new Product(3L, "파스타", BigDecimal.valueOf(8_000L));
         return product;
     }
 

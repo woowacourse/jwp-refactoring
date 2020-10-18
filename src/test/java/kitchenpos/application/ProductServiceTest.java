@@ -1,66 +1,42 @@
 package kitchenpos.application;
 
-import kitchenpos.config.Dataset;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.config.IsolatedTest;
+import kitchenpos.ui.dto.product.ProductRequest;
+import kitchenpos.ui.dto.product.ProductResponse;
+import kitchenpos.ui.dto.product.ProductResponses;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+class ProductServiceTest extends IsolatedTest {
 
-    @Mock
-    private ProductDao dao;
-
-    @InjectMocks
+    @Autowired
     private ProductService service;
-
-    private Product product;
-
-    @BeforeEach
-    public void setUp() {
-        product = Dataset.product_포테이토_피자();
-    }
-
-    @DisplayName("상품 생성 실패 - 가격 null일 때")
-    @Test
-    public void createFailPriceNull() {
-        product.setPrice(null);
-
-        assertThatThrownBy(() -> service.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("상품 생성 실패 - 가격 음수일 때")
-    @Test
-    public void createFailPriceNegative() {
-        product.setPrice(BigDecimal.valueOf(-10L));
-
-        assertThatThrownBy(() -> service.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
 
     @DisplayName("상품 생성")
     @Test
     public void createProduct() {
-        given(dao.save(any(Product.class))).willReturn(product);
+        ProductRequest request = new ProductRequest("포테이토 피자", BigDecimal.valueOf(12_000L));
+        final ProductResponse response = service.create(request);
 
-        final Product savedProduct = service.create(this.product);
+        assertThat(response.getName()).isEqualTo("포테이토 피자");
+        assertThat(response.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(12_000L));
+    }
 
-        assertThat(savedProduct.getId()).isEqualTo(5L);
-        assertThat(savedProduct.getName()).isEqualTo("포테이토 피자");
-        assertThat(savedProduct.getPrice()).isEqualTo(BigDecimal.valueOf(12000L));
+    @DisplayName("상품 조회")
+    @Test
+    public void readProducts() {
+        ProductRequest request = new ProductRequest("포테이토 피자", BigDecimal.valueOf(12_000L));
+        final ProductResponse response = service.create(request);
+
+        final ProductResponses responses = service.list();
+
+        assertThat(responses.getProductResponses()).hasSize(1);
+        assertThat(responses.getProductResponses().get(0).getName()).isEqualTo("포테이토 피자");
+        assertThat(responses.getProductResponses().get(0).getPrice()).isEqualByComparingTo(BigDecimal.valueOf(12_000L));
     }
 }
