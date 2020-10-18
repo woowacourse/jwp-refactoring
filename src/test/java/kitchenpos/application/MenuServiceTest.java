@@ -66,9 +66,21 @@ class MenuServiceTest {
         assertThat(savedMenu.getName()).isEqualTo(menu.getName());
     }
 
+    @DisplayName("생성 시 그룹 id를 보유해야 한다.")
+    @Test
+    void createExceptionTest_noGroupId() {
+        Menu menu = new Menu();
+        menu.setName("새로운_메뉴");
+        menu.setMenuProducts(Arrays.asList(menuProduct));
+        menu.setPrice(BigDecimal.valueOf(1000));
+
+        assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("생성 시 가격이 0원 미만이면 예외가 발생한다.")
     @Test
-    void name() {
+    void createExceptionTest_priceIsZero() {
         Menu menu = new Menu();
         menu.setName("새로운_메뉴");
         menu.setMenuProducts(Arrays.asList(menuProduct));
