@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.common.MenuFixtureFactory;
+import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Sql("/delete_all.sql")
-class MenuServiceTest extends MenuFixtureFactory {
+class MenuServiceTest extends TestFixtureFactory {
     @Autowired
     private MenuService menuService;
 

@@ -43,29 +43,29 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         List<OrderLineItem> orderLineItems = toOrderLineItem(orderCreateRequest.getOrderLineItemDtos());
+        OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validate(orderLineItems, orderTable);
 
         Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(orderToSave);
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.setOrder(savedOrder);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+            orderLineItemDao.save(orderLineItem);
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return OrderResponse.of(savedOrder);
+    }
+
+    private void validate(List<OrderLineItem> orderLineItems, OrderTable orderTable) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<OrderLineItem> toOrderLineItem(List<OrderLineItemDto> orderLineItemDtos) {

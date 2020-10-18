@@ -1,12 +1,17 @@
 package kitchenpos.application.common;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.menuCreateRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -15,12 +20,18 @@ import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
-public class MenuFixtureFactory {
+public class TestFixtureFactory {
     @Autowired
     protected MenuGroupDao menuGroupDao;
 
     @Autowired
     protected ProductDao productDao;
+
+    @Autowired
+    protected OrderTableDao orderTableDao;
+
+    @Autowired
+    protected MenuDao menuDao;
 
     protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
         menuCreateRequest menuCreateRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
@@ -41,5 +52,18 @@ public class MenuFixtureFactory {
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),
                 menuProductDtos);
+    }
+
+    protected OrderCreateRequest makeOrderCreateRequest() {
+        OrderTable savedOrderTable = orderTableDao.save(new OrderTable(0, false));
+
+        Menu savedMenu1 = menuDao.save(makeMenuToSave("추천메뉴", "양념", 12000));
+        Menu savedMenu2 = menuDao.save(makeMenuToSave("추천메뉴", "후라이드", 11000));
+        List<OrderLineItemDto> orderLineItems = Arrays.asList(
+                new OrderLineItemDto(savedMenu1.getId(), 1),
+                new OrderLineItemDto(savedMenu2.getId(), 1)
+        );
+
+        return new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
     }
 }

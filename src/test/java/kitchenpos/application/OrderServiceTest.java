@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.application.common.MenuFixtureFactory;
+import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
@@ -28,12 +27,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Sql("/delete_all.sql")
-class OrderServiceTest extends MenuFixtureFactory {
+class OrderServiceTest extends TestFixtureFactory {
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
 
     @Autowired
     private OrderDao orderDao;
@@ -49,11 +45,13 @@ class OrderServiceTest extends MenuFixtureFactory {
     void create() {
         OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
-        List<OrderLineItemDto> savedOrderLineItems = orderResponse.getOrderLineItems();
+        Order order = orderDao.findById(orderResponse.getId()).get();
+        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
         assertAll(
-                () -> assertThat(orderResponse.getId()).isNotNull(),
-                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(savedOrderLineItems.get(0).getOrderId()).isEqualTo(orderResponse.getId())
+                () -> assertThat(order.getId()).isNotNull(),
+                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                () -> assertThat(orderLineItems).hasSize(2),
+                () -> assertThat(orderLineItems.get(0).getOrder()).isEqualTo(order)
         );
     }
 
@@ -125,22 +123,6 @@ class OrderServiceTest extends MenuFixtureFactory {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), changeOrderStatusDtoToCompletion))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderCreateRequest makeOrderCreateRequest() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        Menu savedMenu1 = menuDao.save(makeMenuToSave("추천메뉴", "양념", 12000));
-        Menu savedMenu2 = menuDao.save(makeMenuToSave("추천메뉴", "후라이드", 11000));
-
-        List<OrderLineItemDto> orderLineItems = Arrays.asList(
-                new OrderLineItemDto(savedMenu1.getId(), 1),
-                new OrderLineItemDto(savedMenu2.getId(), 1)
-        );
-
-        return new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
     }
 
     @AfterEach
