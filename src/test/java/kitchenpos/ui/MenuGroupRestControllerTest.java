@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menu.MenuGroupResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,9 +34,9 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹을 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = new MenuGroup(1L, "추천메뉴");
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "추천메뉴");
 
-        given(menuGroupService.create(any())).willReturn(menuGroup);
+        given(menuGroupService.create(any())).willReturn(menuGroupResponse);
 
         mockMvc.perform(post("/api/menu-groups")
                 .content("{\n"
@@ -53,9 +53,9 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 목록을 조회하는 요청 테스트")
     @Test
     void list() throws Exception {
-        List<MenuGroup> menus = new ArrayList<>();
-        menus.add(new MenuGroup(null, "name1"));
-        menus.add(new MenuGroup(null, "name2"));
+        List<MenuGroupResponse> menus = new ArrayList<>();
+        menus.add(new MenuGroupResponse(1L, "name1"));
+        menus.add(new MenuGroupResponse(2L, "name2"));
         given(menuGroupService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menu-groups"))
