@@ -77,14 +77,8 @@ public class OrderService {
         return orderLineItems;
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+    public List<OrderResponse> list() {
+        return OrderResponse.listOf(orderDao.findAll());
     }
 
     @Transactional

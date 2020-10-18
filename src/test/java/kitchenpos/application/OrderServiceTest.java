@@ -94,12 +94,19 @@ class OrderServiceTest extends TestFixtureFactory {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
+    @DisplayName("주문 목록 조회 메서드 테스트")
     @Test
     void list() {
         orderService.create(makeOrderCreateRequest());
         orderService.create(makeOrderCreateRequest());
 
-        assertThat(orderService.list()).hasSize(2);
+        List<OrderResponse> list = orderService.list();
+        OrderResponse orderResponse = list.get(0);
+        assertAll(
+                () -> assertThat(list).hasSize(2),
+                () -> assertThat(orderResponse.getId()).isNotNull(),
+                () -> assertThat(orderResponse.getOrderLineItems()).hasSize(2)
+        );
     }
 
     @DisplayName("주문 상태 변경 메서드 테스트")

@@ -1,10 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderResponse;
 import org.hamcrest.Matchers;
@@ -71,10 +68,10 @@ class OrderRestControllerTest {
     @DisplayName("Product 목록 조회 요청 테스트")
     @Test
     void list() throws Exception {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order(new OrderTable(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
-        orders.add(new Order(new OrderTable(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
+        List<OrderLineItemDto> orderLineItems = new ArrayList<>();
+        List<OrderResponse> orders = new ArrayList<>();
+        orders.add(new OrderResponse(1L, 1L, OrderStatus.COOKING, orderLineItems, LocalDateTime.now()));
+        orders.add(new OrderResponse(2L, 2L, OrderStatus.COOKING, orderLineItems, LocalDateTime.now()));
 
         given(orderService.list()).willReturn(orders);
 
