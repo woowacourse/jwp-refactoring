@@ -50,10 +50,6 @@ public class Order extends BaseEntity {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
@@ -64,10 +60,6 @@ public class Order extends BaseEntity {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

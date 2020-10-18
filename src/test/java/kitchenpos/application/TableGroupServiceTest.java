@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -131,7 +132,7 @@ class TableGroupServiceTest {
                 makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
 
-        Order order = TestObjectFactory.createOrder(orderTable1, orderStatus, new ArrayList<>());
+        Order order = new Order(orderTable1, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))

@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -74,8 +73,8 @@ class OrderRestControllerTest {
     void list() throws Exception {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         List<Order> orders = new ArrayList<>();
-        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING, orderLineItems));
-        orders.add(TestObjectFactory.createOrder(new OrderTable(), OrderStatus.COOKING, orderLineItems));
+        orders.add(new Order(new OrderTable(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
+        orders.add(new Order(new OrderTable(), OrderStatus.COOKING, LocalDateTime.now(), orderLineItems));
 
         given(orderService.list()).willReturn(orders);
 

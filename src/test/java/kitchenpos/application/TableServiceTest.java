@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -101,7 +102,7 @@ class TableServiceTest {
     void changeEmptyWhenCooking(OrderStatus orderStatus) {
         OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTable());
 
-        Order order = TestObjectFactory.createOrder(savedOrderTable, orderStatus, new ArrayList<>());
+        Order order = new Order(savedOrderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
 
         OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);

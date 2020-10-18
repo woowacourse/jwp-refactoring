@@ -47,13 +47,13 @@ class OrderServiceTest extends MenuFixtureFactory {
     @DisplayName("주문 생성 메서드 테스트")
     @Test
     void create() {
-        OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
+        OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
-        List<OrderLineItemDto> savedOrderLineItems = savedOrder.getOrderLineItems();
+        List<OrderLineItemDto> savedOrderLineItems = orderResponse.getOrderLineItems();
         assertAll(
-                () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(savedOrderLineItems.get(0).getOrderId()).isEqualTo(savedOrder.getId())
+                () -> assertThat(orderResponse.getId()).isNotNull(),
+                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                () -> assertThat(savedOrderLineItems.get(0).getOrderId()).isEqualTo(orderResponse.getId())
         );
     }
 
