@@ -22,21 +22,12 @@ public class TestFixture {
     }
 
     public static MenuProduct getMenuProduct(final Long productId) {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(2L);
-
-        return menuProduct;
+        return new MenuProduct(productId, 2L);
     }
 
     public static Menu getMenu(final MenuProduct menuProduct, final Long menuGroupId, final int price) {
-        final Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
 
-        return menu;
+        return new Menu("후라이드+후라이드", BigDecimal.valueOf(price), menuGroupId, Collections.singletonList(menuProduct));
     }
 
     public static MenuGroup getMenuGroup(final String name) {
