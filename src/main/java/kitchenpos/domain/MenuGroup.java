@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 public class MenuGroup {
@@ -18,8 +19,15 @@ public class MenuGroup {
     }
 
     public MenuGroup(Long id, String name) {
+        validateMenuGroupName(name);
         this.id = id;
         this.name = name;
+    }
+
+    private void validateMenuGroupName(String name) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public MenuGroup(String name) {
