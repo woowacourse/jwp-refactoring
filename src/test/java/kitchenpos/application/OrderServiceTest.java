@@ -4,8 +4,6 @@ import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
@@ -44,14 +42,11 @@ class OrderServiceTest extends TestFixtureFactory {
     void create() {
         OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
-
-        Order order = orderDao.findById(orderResponse.getId()).get();
-        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        List<OrderLineItemDto> orderLineItems = orderResponse.getOrderLineItems();
         assertAll(
-                () -> assertThat(order.getId()).isNotNull(),
-                () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(orderLineItems).hasSize(2),
-                () -> assertThat(orderLineItems.get(0).getOrder()).isEqualTo(order)
+                () -> assertThat(orderResponse.getId()).isNotNull(),
+                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+                () -> assertThat(orderLineItems).hasSize(2)
         );
     }
 
@@ -97,11 +92,10 @@ class OrderServiceTest extends TestFixtureFactory {
         orderService.create(makeOrderCreateRequest());
 
         List<OrderResponse> list = orderService.list();
-        OrderResponse orderResponse = list.get(0);
         assertAll(
                 () -> assertThat(list).hasSize(2),
-                () -> assertThat(orderResponse.getId()).isNotNull(),
-                () -> assertThat(orderResponse.getOrderLineItems()).hasSize(2)
+                () -> assertThat(list.get(0).getId()).isNotNull(),
+                () -> assertThat(list.get(0).getOrderLineItems()).hasSize(2)
         );
     }
 

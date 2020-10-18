@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,14 +45,14 @@ public class MenuService {
         Menu menuToSave = menuRequest.toMenu(menuGroup);
         final Menu savedMenu = menuDao.save(menuToSave);
 
-        List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
             Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
             MenuProduct menuProductToSave = new MenuProduct(menuToSave, product, menuProductDto.getQuantity());
-            savedMenuProducts.add(menuProductDao.save(menuProductToSave));
+            menuProducts.add(menuProductDao.save(menuProductToSave));
         }
 
-        return MenuResponse.of(savedMenu, savedMenuProducts);
+        return MenuResponse.of(savedMenu);
     }
 
     private void validatePrice(menuRequest menuRequest) {
@@ -77,15 +76,8 @@ public class MenuService {
         }
     }
 
+    @Transactional
     public List<MenuResponse> list() {
-        List<MenuResponse> menuResponses = new ArrayList<>();
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
-            menuResponses.add(MenuResponse.of(menu, menuProducts));
-        }
-
-        return menuResponses;
+        return MenuResponse.listOf(menuDao.findAll());
     }
 }

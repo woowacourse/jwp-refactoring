@@ -10,12 +10,12 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.TableGroupResponse;
 import kitchenpos.dto.table.TableGroupingRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
@@ -28,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
 @Sql("/delete_all.sql")
 class TableGroupServiceTest extends TestFixtureFactory {
     @Autowired
@@ -144,5 +143,13 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 .map(OrderTableResponse::new)
                 .collect(Collectors.toList());
         return new TableGroupingRequest(orderTableDtos);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderDao.deleteAll();
+        orderTableDao.deleteAll();
+        menuDao.deleteAll();
+        tableGroupDao.deleteAll();
     }
 }

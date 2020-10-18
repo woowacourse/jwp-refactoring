@@ -20,23 +20,24 @@ public class OrderLineItem extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_ORDER_LINE_ITEM_MENU"))
     private Menu menu;
-
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, long quantity) {
+    public OrderLineItem(Long id, Order order, Menu menu, long quantity) {
+        this.id = id;
+        this.order = order;
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    public Order getOrder() {
-        return order;
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        this(null, order, menu, quantity);
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public Order getOrder() {
+        return order;
     }
 
     public Menu getMenu() {
@@ -45,5 +46,9 @@ public class OrderLineItem extends BaseEntity {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

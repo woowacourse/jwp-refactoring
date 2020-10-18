@@ -85,6 +85,7 @@ class MenuServiceTest extends TestFixtureFactory {
     void list() {
         menuService.create(makeMenuCreateRequest("추천메뉴", "양념", 13000));
         menuService.create(makeMenuCreateRequest("추천메뉴", "후라이드", 12000));
+
         assertAll(
                 () -> assertThat(menuService.list()).hasSize(2)
         );

@@ -42,24 +42,25 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        List<OrderLineItem> orderLineItems = toOrderLineItem(orderRequest.getOrderLineItemDtos());
         OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
 
-        validate(orderLineItems, orderTable);
+        validate(orderRequest.getOrderLineItemDtos(), orderTable);
 
-        Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
         final Order savedOrder = orderDao.save(orderToSave);
 
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(savedOrder);
-            orderLineItemDao.save(orderLineItem);
+        List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
+        for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItemDtos()) {
+            Menu menu = menuDao.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
+            orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
 
         return OrderResponse.of(savedOrder);
     }
 
-    private void validate(List<OrderLineItem> orderLineItems, OrderTable orderTable) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+    private void validate(List<OrderLineItemDto> orderLineItemDtos, OrderTable orderTable) {
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
             throw new IllegalArgumentException();
         }
 
@@ -72,11 +73,12 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
             Menu menu = menuDao.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
-            orderLineItems.add(new OrderLineItem(menu, orderLineItemDto.getQuantity()));
+            orderLineItems.add(new OrderLineItem(null, menu, orderLineItemDto.getQuantity()));
         }
         return orderLineItems;
     }
 
+    @Transactional
     public List<OrderResponse> list() {
         return OrderResponse.listOf(orderDao.findAll());
     }

@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.ProductDao;
 import kitchenpos.dto.product.ProductRequest;
 import kitchenpos.dto.product.ProductResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class ProductServiceTest {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("Product 생성 메서드 테스트")
     @ParameterizedTest
@@ -64,5 +69,10 @@ class ProductServiceTest {
         List<ProductResponse> list = productService.list();
 
         assertThat(list).hasSize(2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        productDao.deleteAll();
     }
 }

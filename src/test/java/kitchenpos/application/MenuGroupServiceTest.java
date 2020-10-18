@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dto.menu.MenuGroupRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹 생성 기능 테스트")
     @Test
@@ -37,5 +42,10 @@ class MenuGroupServiceTest {
         menuGroupService.create(new MenuGroupRequest("name2"));
 
         assertThat(menuGroupService.list()).hasSize(2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuGroupDao.deleteAll();
     }
 }
