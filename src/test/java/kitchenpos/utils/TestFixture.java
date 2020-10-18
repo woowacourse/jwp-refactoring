@@ -40,8 +40,7 @@ public class TestFixture {
     }
 
     public static MenuGroup getMenuGroup(final String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        final MenuGroup menuGroup = new MenuGroup(name);
 
         return menuGroup;
     }

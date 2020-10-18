@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.utils.TestFixture;
+import kitchenpos.dto.ProductRequest;
 
 class ProductRestControllerTest extends ControllerTest {
     @Autowired
@@ -19,7 +19,8 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("create: 상품을 등록할 수 있다.")
     @Test
     void createTest() throws Exception {
-        final Product product = TestFixture.getProduct(16000);
+        final ProductRequest product = new ProductRequest("후라이드 치킨", BigDecimal.valueOf(16000));
+
         create("/api/products", product)
                 .andExpect(header().exists("Location"))
                 .andExpect(jsonPath("$.name").value("후라이드 치킨"));

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.utils.TestFixture;
 
 class MenuGroupRestControllerTest extends ControllerTest {
@@ -18,7 +18,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("create: 메뉴 그룹 등록 테스트")
     @Test
     void createTest() throws Exception {
-        final MenuGroup menuGroup = TestFixture.getMenuGroup("한마리메뉴");
+        final MenuGroupRequest menuGroup = new MenuGroupRequest("추천 메뉴");
 
         create("/api/menu-groups", menuGroup)
                 .andExpect(header().exists("Location"))
@@ -32,7 +32,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
         menuGroupDao.save(TestFixture.getMenuGroup("두마리메뉴"));
 
         findList("/api/menu-groups")
-                .andExpect(jsonPath("$[0].name").value("두마리메뉴"))
-                .andExpect(jsonPath("$[1].name").value("한마리메뉴"));
+                .andExpect(jsonPath("$[0].name").value("한마리메뉴"))
+                .andExpect(jsonPath("$[1].name").value("두마리메뉴"));
     }
 }
