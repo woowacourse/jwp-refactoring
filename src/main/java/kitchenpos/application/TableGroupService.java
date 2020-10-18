@@ -6,9 +6,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.tablegroup.OrderTableDto;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.dto.tablegroup.TableGroupingRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupResponse;
+import kitchenpos.dto.table.TableGroupingRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -34,13 +34,13 @@ public class TableGroupService {
     // TODO: 2020/10/17 validate 책임 분리
     @Transactional
     public TableGroupResponse create(final TableGroupingRequest tableGroupingRequest) {
-        final List<OrderTableDto> orderTableDtos = tableGroupingRequest.getOrderTableDtos();
+        final List<OrderTableResponse> orderTableDtos = tableGroupingRequest.getOrderTableDtos();
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
             throw new IllegalArgumentException();
         }
 
         final List<Long> orderTableIds = orderTableDtos.stream()
-                .map(OrderTableDto::getId)
+                .map(OrderTableResponse::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 

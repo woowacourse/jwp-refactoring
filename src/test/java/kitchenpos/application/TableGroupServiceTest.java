@@ -7,9 +7,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.tablegroup.OrderTableDto;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.dto.tablegroup.TableGroupingRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupResponse;
+import kitchenpos.dto.table.TableGroupingRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -140,8 +140,8 @@ class TableGroupServiceTest {
     }
 
     private TableGroupingRequest makeTableGroupingRequest(List<Long> ids) {
-        List<OrderTableDto> orderTableDtos = ids.stream()
-                .map(OrderTableDto::new)
+        List<OrderTableResponse> orderTableDtos = ids.stream()
+                .map(OrderTableResponse::new)
                 .collect(Collectors.toList());
         return new TableGroupingRequest(orderTableDtos);
     }

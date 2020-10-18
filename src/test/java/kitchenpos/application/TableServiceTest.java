@@ -1,12 +1,15 @@
 package kitchenpos.application;
 
+import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.application.common.TestObjectFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.tablegroup.OrderTableDto;
-import kitchenpos.dto.tablegroup.TableGroupingRequest;
+import kitchenpos.dto.table.OrderTableRequest;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupingRequest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 @Sql("/delete_all.sql")
-class TableServiceTest {
+class TableServiceTest extends TestFixtureFactory {
     @Autowired
     private TableService tableService;
 
@@ -39,9 +42,10 @@ class TableServiceTest {
     @DisplayName("테이블 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
+        OrderTableRequest orderTableRequest =
+                new OrderTableRequest(0, true);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableResponse savedOrderTable = tableService.create(orderTableRequest);
 
         assertThat(savedOrderTable.getId()).isNotNull();
     }
@@ -49,10 +53,10 @@ class TableServiceTest {
     @DisplayName("테이블 목록 조회 기능 테스트")
     @Test
     void list() {
-        tableService.create(TestObjectFactory.creatOrderTable());
-        tableService.create(TestObjectFactory.creatOrderTable());
+        makeSavedOrderTable(0, true);
+        makeSavedOrderTable(0, true);
 
-        List<OrderTable> tables = tableService.list();
+        List<OrderTableResponse> tables = tableService.list();
 
         assertThat(tables).hasSize(2);
     }
@@ -60,7 +64,7 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태를 변경하는 기능 테스트")
     @Test
     void changeEmpty() {
-        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
         OrderTable changeEmptyOrderTable = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), changeEmptyOrderTable);
@@ -83,12 +87,12 @@ class TableServiceTest {
     @DisplayName("테이블의 empty 상태 변경 - 단체 테이블에 등록되어 있는 경우 예외 처리")
     @Test
     void changeEmptyWithRegisteredGroupTable() {
-        OrderTable savedOrderTable1 = tableService.create(new OrderTable(0, true));
-        OrderTable savedOrderTable2 = tableService.create(new OrderTable(0, true));
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
         OrderTable changeEmptyOrderTableDto = TestObjectFactory.createChangeEmptyOrderTable(false);
 
         TableGroupingRequest groupingRequest = new TableGroupingRequest(
-                Arrays.asList(new OrderTableDto(savedOrderTable1.getId()), new OrderTableDto(savedOrderTable2.getId()))
+                Arrays.asList(new OrderTableResponse(savedOrderTable1.getId()), new OrderTableResponse(savedOrderTable2.getId()))
         );
         tableGroupService.create(groupingRequest);
 
@@ -100,7 +104,7 @@ class TableServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void changeEmptyWhenCooking(OrderStatus orderStatus) {
-        OrderTable savedOrderTable = tableService.create(TestObjectFactory.creatOrderTable());
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
         Order order = new Order(savedOrderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
@@ -114,42 +118,41 @@ class TableServiceTest {
     @DisplayName("테이블에 방문한 손님 수를 변경하는 메서드 테스트")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(4, false);
 
-        OrderTable changedOrderTable =
-                tableService.changeNumberOfGuests(savedOrderTable.getId(), TestObjectFactory.createChangeNumberOfGuestsDto(4));
+        OrderTableResponse changedOrderTableDto =
+                tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableRequest);
 
         assertAll(
-                () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
-                () -> assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(4)
+                () -> assertThat(changedOrderTableDto.getId()).isEqualTo(savedOrderTable.getId()),
+                () -> assertThat(changedOrderTableDto.getNumberOfGuests()).isEqualTo(4)
         );
     }
 
     @DisplayName("테이블에 방문한 손님 수를 변경 - 빈 테이블인 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithEmptyTable() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        orderTable.setEmpty(true);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(4, false);
 
-        OrderTable changeNumberOfGuestsDto = TestObjectFactory.createChangeNumberOfGuestsDto(4);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberOfGuestsDto))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블에 방문한 손님 수를 변경 - 입력하려는 숫자가 0보다 작은 경우 예외 처리")
     @Test
     void changeNumberOfGuestsWithLessZeroGuests() {
-        OrderTable orderTable = TestObjectFactory.creatOrderTable();
-        orderTable.setEmpty(false);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable savedOrderTable = makeSavedOrderTable(0, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(-1, false);
 
-        OrderTable changeNumberOfGuestsDto = TestObjectFactory.createChangeNumberOfGuestsDto(-1);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changeNumberOfGuestsDto))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderDao.deleteAll();
     }
 }

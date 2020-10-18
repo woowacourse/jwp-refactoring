@@ -9,9 +9,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductDto;
-import kitchenpos.dto.menu.menuCreateRequest;
-import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.menu.menuRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
+import kitchenpos.dto.order.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -34,27 +34,27 @@ public class TestFixtureFactory {
     protected MenuDao menuDao;
 
     protected Menu makeMenuToSave(String menuGroupName, String productName, int productPrice) {
-        menuCreateRequest menuCreateRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
-        MenuGroup menuGroup = menuGroupDao.findById(menuCreateRequest.getMenuGroupId())
+        menuRequest menuRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
+        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        return new Menu(menuCreateRequest.getName(),
-                menuCreateRequest.getPrice(),
+        return new Menu(menuRequest.getName(),
+                menuRequest.getPrice(),
                 menuGroup);
     }
 
-    protected menuCreateRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
+    protected menuRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
         MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, menuGroupName));
         Product savedProduct = productDao.save(new Product(productName, BigDecimal.valueOf(productPrice)));
 
         List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), 2L));
 
-        return new menuCreateRequest(productName + "+" + productName,
+        return new menuRequest(productName + "+" + productName,
                 BigDecimal.valueOf(productPrice * 2),
                 savedMenuGroup.getId(),
                 menuProductDtos);
     }
 
-    protected OrderCreateRequest makeOrderCreateRequest() {
+    protected OrderRequest makeOrderCreateRequest() {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(0, false));
 
         Menu savedMenu1 = menuDao.save(makeMenuToSave("추천메뉴", "양념", 12000));
@@ -64,6 +64,10 @@ public class TestFixtureFactory {
                 new OrderLineItemDto(savedMenu2.getId(), 1)
         );
 
-        return new OrderCreateRequest(savedOrderTable.getId(), orderLineItems);
+        return new OrderRequest(savedOrderTable.getId(), null, orderLineItems);
+    }
+
+    protected OrderTable makeSavedOrderTable(int numberOfGuests, boolean isEmpty) {
+        return orderTableDao.save(new OrderTable(numberOfGuests, isEmpty));
     }
 }

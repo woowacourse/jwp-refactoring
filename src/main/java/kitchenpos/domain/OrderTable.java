@@ -52,7 +52,7 @@ public class OrderTable extends BaseEntity {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -60,7 +60,7 @@ public class OrderTable extends BaseEntity {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty) {
         this.empty = empty;
     }
 }

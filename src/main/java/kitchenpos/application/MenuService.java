@@ -10,7 +10,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menu.menuCreateRequest;
+import kitchenpos.dto.menu.menuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,16 +39,16 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final menuCreateRequest menuCreateRequest) {
-        validatePrice(menuCreateRequest);
+    public MenuResponse create(final menuRequest menuRequest) {
+        validatePrice(menuRequest);
 
-        MenuGroup menuGroup = menuGroupDao.findById(menuCreateRequest.getMenuGroupId())
+        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        Menu menuToSave = menuCreateRequest.toMenuToSave(menuGroup);
+        Menu menuToSave = menuRequest.toMenuToSave(menuGroup);
         final Menu savedMenu = menuDao.save(menuToSave);
 
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductDto menuProductDto : menuCreateRequest.getMenuProductDtos()) {
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
             MenuProduct menuProductToSave = new MenuProduct(
                     menuToSave,
                     menuProductDto.getProductId(),
@@ -60,14 +60,14 @@ public class MenuService {
         return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
-    private void validatePrice(menuCreateRequest menuCreateRequest) {
-        final BigDecimal price = menuCreateRequest.getPrice();
+    private void validatePrice(menuRequest menuRequest) {
+        final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProductDto> menuProductDtos = menuCreateRequest.getMenuProductDtos();
+        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProductDtos();
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuProductDtos) {

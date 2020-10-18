@@ -9,10 +9,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
+import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
-import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -42,9 +41,9 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItem> orderLineItems = toOrderLineItem(orderCreateRequest.getOrderLineItemDtos());
-        OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
+    public OrderResponse create(final OrderRequest orderRequest) {
+        List<OrderLineItem> orderLineItems = toOrderLineItem(orderRequest.getOrderLineItemDtos());
+        OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
 
         validate(orderLineItems, orderTable);
 
@@ -83,7 +82,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest changeRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest changeRequest) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 

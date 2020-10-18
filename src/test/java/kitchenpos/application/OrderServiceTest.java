@@ -9,10 +9,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
+import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
-import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -63,9 +62,9 @@ class OrderServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         List<OrderLineItemDto> orderLineItemDtos = Arrays.asList(new OrderLineItemDto(1L, 1));
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(), orderLineItemDtos);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -76,9 +75,9 @@ class OrderServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(), orderLineItemDtos);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -89,9 +88,9 @@ class OrderServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(), orderLineItemDtos);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -114,9 +113,9 @@ class OrderServiceTest extends TestFixtureFactory {
     @Test
     void changeOrderStatus() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL);
+        OrderRequest orderRequest = new OrderRequest(null, OrderStatus.MEAL, null);
 
-        OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest);
+        OrderResponse changedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderRequest);
 
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
@@ -125,11 +124,11 @@ class OrderServiceTest extends TestFixtureFactory {
     @Test
     void changeOrderStatusWhenCompletion() {
         OrderResponse savedOrder = orderService.create(makeOrderCreateRequest());
-        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION);
+        OrderRequest orderRequest = new OrderRequest(null, OrderStatus.COMPLETION, null);
 
-        orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest);
+        orderService.changeOrderStatus(savedOrder.getId(), orderRequest);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

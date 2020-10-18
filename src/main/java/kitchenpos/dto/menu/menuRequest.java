@@ -6,16 +6,16 @@ import kitchenpos.domain.MenuGroup;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class menuCreateRequest {
+public class menuRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProductDto> menuProductDtos;
 
-    public menuCreateRequest() {
+    public menuRequest() {
     }
 
-    public menuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProductDtos) {
+    public menuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProductDtos) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

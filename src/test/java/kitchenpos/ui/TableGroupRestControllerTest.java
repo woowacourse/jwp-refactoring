@@ -1,8 +1,8 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableGroupService;
-import kitchenpos.dto.tablegroup.OrderTableDto;
-import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,9 +36,9 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTableDto orderTable1 = new OrderTableDto(1L, 1L, 0, false);
-        OrderTableDto orderTable2 = new OrderTableDto(2L, 1L, 0, false);
-        List<OrderTableDto> orderTableDtos = Arrays.asList(orderTable1, orderTable2);
+        OrderTableResponse orderTable1 = new OrderTableResponse(1L, 1L, 0, false);
+        OrderTableResponse orderTable2 = new OrderTableResponse(2L, 1L, 0, false);
+        List<OrderTableResponse> orderTableDtos = Arrays.asList(orderTable1, orderTable2);
 
         TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, orderTableDtos, LocalDateTime.now());
 

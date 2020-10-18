@@ -1,4 +1,4 @@
-package kitchenpos.dto.tablegroup;
+package kitchenpos.dto.table;
 
 import kitchenpos.domain.TableGroup;
 
@@ -8,21 +8,21 @@ import java.util.stream.Collectors;
 
 public class TableGroupResponse {
     private Long id;
-    private List<OrderTableDto> orderTables;
+    private List<OrderTableResponse> orderTables;
     private LocalDateTime createdDate;
 
     public TableGroupResponse() {
     }
 
-    public TableGroupResponse(Long id, List<OrderTableDto> orderTables, LocalDateTime createdDate) {
+    public TableGroupResponse(Long id, List<OrderTableResponse> orderTables, LocalDateTime createdDate) {
         this.id = id;
         this.orderTables = orderTables;
         this.createdDate = createdDate;
     }
 
     public static TableGroupResponse of(TableGroup tableGroup) {
-        List<OrderTableDto> orderTableDtos = tableGroup.getOrderTables().stream()
-                .map(OrderTableDto::of)
+        List<OrderTableResponse> orderTableDtos = tableGroup.getOrderTables().stream()
+                .map(OrderTableResponse::of)
                 .collect(Collectors.toList());
         return new TableGroupResponse(tableGroup.getId(), orderTableDtos, tableGroup.getCreatedDate());
     }
@@ -31,7 +31,7 @@ public class TableGroupResponse {
         return id;
     }
 
-    public List<OrderTableDto> getOrderTables() {
+    public List<OrderTableResponse> getOrderTables() {
         return orderTables;
     }
 
