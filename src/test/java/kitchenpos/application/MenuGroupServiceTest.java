@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,9 +38,9 @@ public class MenuGroupServiceTest {
 		menuGroup2 = new MenuGroup();
 		menuGroup2.setId(2L);
 		menuGroup2.setName("New Set");
-
 	}
 
+	@DisplayName("MenuGroup을 생성한다.")
 	@Test
 	void creatTest() {
 		when(menuGroupDao.save(any())).thenReturn(menuGroup1);
@@ -50,6 +51,7 @@ public class MenuGroupServiceTest {
 		assertThat(created.getName()).isEqualTo(menuGroup1.getName());
 	}
 
+	@DisplayName("등록된 모든 MenuGroup을 조회한다.")
 	@Test
 	void listTest() {
 		List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);

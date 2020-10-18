@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,11 +24,15 @@ import kitchenpos.domain.MenuGroup;
 
 @WebMvcTest(controllers = MenuGroupRestController.class)
 public class MenuGroupRestControllerTest {
-	private final ObjectMapper objectMapper = new ObjectMapper();
 	@MockBean
 	private MenuGroupService menuGroupService;
+
+	private final ObjectMapper objectMapper = new ObjectMapper();
+
 	private MockMvc mockMvc;
+
 	private MenuGroup menuGroup1;
+
 	private MenuGroup menuGroup2;
 
 	@BeforeEach
@@ -45,6 +50,7 @@ public class MenuGroupRestControllerTest {
 		menuGroup2.setName("New Set");
 	}
 
+	@DisplayName("MenuGroup을 생성한다.")
 	@Test
 	void createTest() throws Exception {
 		given(menuGroupService.create(any())).willReturn(menuGroup1);
@@ -57,6 +63,7 @@ public class MenuGroupRestControllerTest {
 			.andExpect(status().isCreated());
 	}
 
+	@DisplayName("등록된 모든 MenuGroup을 조회한다.")
 	@Test
 	void listTest() throws Exception {
 		List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
