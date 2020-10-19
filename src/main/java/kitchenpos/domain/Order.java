@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.util.CollectionUtils;
+
 public class Order {
-    private final LocalDateTime orderedTime;
     private final Long id;
+    private final LocalDateTime orderedTime;
     private Long orderTableId;
     private String orderStatus;
     private List<OrderLineItem> orderLineItems;
@@ -34,6 +36,13 @@ public class Order {
 
     public boolean isCompletionStatus() {
         return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+    }
+
+    private List<OrderLineItem> validateByOrderLineItemsWithZero(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문항목이 비어있으면 안됩니다.");
+        }
+        return orderLineItems;
     }
 
     public Long getId() {
@@ -65,6 +74,6 @@ public class Order {
     }
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems = validateByOrderLineItemsWithZero(orderLineItems);
     }
 }

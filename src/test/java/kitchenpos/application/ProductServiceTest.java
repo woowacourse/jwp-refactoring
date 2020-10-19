@@ -41,13 +41,13 @@ class ProductServiceTest {
     @Test
     void findProductsTest() {
         final ProductRequest productRequest = new ProductRequest("후라이드 치킨", BigDecimal.valueOf(16000));
-
         productService.create(productRequest);
-
         final List<ProductResponse> products = productService.list();
 
         assertAll(
-                () -> assertThat(products).hasSize(1)
+                () -> assertThat(products).hasSize(1),
+                () -> assertThat(products.get(0).getName()).isEqualTo(productRequest.getName()),
+                () -> assertThat(products.get(0).getPrice()).isEqualByComparingTo(productRequest.getPrice())
         );
     }
 }

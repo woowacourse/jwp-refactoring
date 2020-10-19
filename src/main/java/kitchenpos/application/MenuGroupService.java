@@ -12,6 +12,7 @@ import kitchenpos.dto.MenuGroupResponse;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupDao menuGroupDao;
 
     public MenuGroupService(final MenuGroupDao menuGroupDao) {

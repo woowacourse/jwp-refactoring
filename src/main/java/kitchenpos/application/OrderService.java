@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -41,28 +40,24 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderCreateRequest orderCreateRequest) {
+    public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         final Order order = orderCreateRequest.toEntity();
 
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문항목이 비어있으면 안됩니다.");
-        }
 
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목의 갯수와 메뉴 갯수가 맞지 않으면 예외처리");
         }
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("테이블을 찾을수 없습니다."));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 비어있으면 안됩니다.");
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -78,27 +73,27 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return OrderResponse.of(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
         }
 
-        return orders;
+        return OrderResponse.ofList(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId,
             final OrderChangeStatusRequest orderChangeStatusRequest) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을수 없습니다."));
 
         if (savedOrder.isCompletionStatus()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문완료된 상태에서 상태를 변경할수 없습니다.");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderChangeStatusRequest.getOrderStatus());
