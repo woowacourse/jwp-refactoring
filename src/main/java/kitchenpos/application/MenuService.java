@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -73,6 +75,11 @@ public class MenuService {
         return savedMenu;
     }
 
+    @Transactional
+    public MenuResponse createWithRequest(final MenuRequest menuRequest) {
+        return null;
+    }
+
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
 
@@ -81,5 +88,9 @@ public class MenuService {
         }
 
         return menus;
+    }
+
+    public List<MenuResponse> listWithResponse() {
+        return null;
     }
 }
