@@ -13,9 +13,9 @@ import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuDaoTest extends KitchenPosDaoTest {
+class MenuRepositoryTest extends KitchenPosDaoTest {
 
-    @DisplayName("MenuDao 저장 - 성공")
+    @DisplayName("Menu 저장 - 성공")
     @Test
     void save_Success() {
         Long menuGroupId = getCreatedMenuGroupId();
@@ -25,7 +25,7 @@ class MenuDaoTest extends KitchenPosDaoTest {
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(menuGroupId);
 
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         assertThat(savedMenu.getId()).isNotNull();
         assertThat(savedMenu.getName()).isEqualTo(TEST_MENU_NAME);
@@ -41,9 +41,9 @@ class MenuDaoTest extends KitchenPosDaoTest {
         menu.setName(TEST_MENU_NAME);
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(getCreatedMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
-        Menu foundMenu = menuDao.findById(savedMenu.getId())
+        Menu foundMenu = menuRepository.findById(savedMenu.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 Menu가 없습니다."));
 
         assertThat(foundMenu.getId()).isEqualTo(savedMenu.getId());
@@ -60,9 +60,9 @@ class MenuDaoTest extends KitchenPosDaoTest {
         menu.setName(TEST_MENU_NAME);
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(getCreatedMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
-        Optional<Menu> foundMenu = menuDao.findById(savedMenu.getId() + 1);
+        Optional<Menu> foundMenu = menuRepository.findById(savedMenu.getId() + 1);
 
         assertThat(foundMenu.isPresent()).isFalse();
     }
@@ -74,9 +74,9 @@ class MenuDaoTest extends KitchenPosDaoTest {
         menu.setName(TEST_MENU_NAME);
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(getCreatedMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
-        List<Menu> menus = menuDao.findAll();
+        List<Menu> menus = menuRepository.findAll();
 
         assertThat(menus).isNotNull();
         assertThat(menus).isNotEmpty();
@@ -95,11 +95,11 @@ class MenuDaoTest extends KitchenPosDaoTest {
         menu.setName(TEST_MENU_NAME);
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(getCreatedMenuGroupId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         List<Long> ids = Arrays.asList(savedMenu.getId(), TEST_WRONG_MENU_ID);
 
-        long menuCount = menuDao.countByIdIn(ids);
+        long menuCount = menuRepository.countByIdIn(ids);
 
         assertThat(menuCount).isEqualTo(1);
     }

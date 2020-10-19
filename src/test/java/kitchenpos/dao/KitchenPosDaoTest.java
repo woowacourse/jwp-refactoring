@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public abstract class KitchenPosDaoTest {
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     @Autowired
     protected MenuGroupRepository menuGroupRepository;
@@ -50,7 +50,7 @@ public abstract class KitchenPosDaoTest {
         menu.setPrice(TEST_MENU_PRICE);
         menu.setMenuGroupId(getCreatedMenuGroupId());
 
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         Long savedMenuId = savedMenu.getId();
         assertThat(savedMenuId).isNotNull();
