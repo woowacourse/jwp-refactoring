@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -29,8 +31,17 @@ public class TableService {
         return orderTableRepository.save(orderTable);
     }
 
+    @Transactional
+    public OrderTableResponse createWithRequest(OrderTableRequest orderTableRequest) {
+        return null;
+    }
+
     public List<OrderTable> list() {
         return orderTableRepository.findAll();
+    }
+
+    public List<OrderTableResponse> listWithResponse() {
+        return null;
     }
 
     @Transactional
@@ -53,6 +64,11 @@ public class TableService {
     }
 
     @Transactional
+    public OrderTableResponse changeEmptyWithRequest(Long orderTableId, OrderTableRequest orderTableRequest) {
+        return null;
+    }
+
+    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
@@ -70,5 +86,10 @@ public class TableService {
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    @Transactional
+    public OrderTableResponse changeNumberOfGuestsWithRequest(Long orderTableId, OrderTableRequest orderTableRequest) {
+        return null;
     }
 }
