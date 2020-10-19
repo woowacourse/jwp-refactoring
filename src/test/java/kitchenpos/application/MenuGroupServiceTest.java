@@ -6,29 +6,26 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
-import java.util.Arrays;
+import javax.transaction.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@Sql("/truncate.sql")
+@SpringBootTest
 public class MenuGroupServiceTest {
-    public static final long TEST_MENU_GROUP_ID_1 = 1L;
-    public static final long TEST_MENU_GROUP_ID_2 = 2L;
     public static final String TEST_MENU_GROUP_NAME_1 = "두마리 세트";
     public static final String TEST_MENU_GROUP_NAME_2 = "세마리 세트";
 
-    @Mock
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     private MenuGroup menuGroup;
@@ -36,18 +33,14 @@ public class MenuGroupServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = new MenuGroup();
-        menuGroup.setId(TEST_MENU_GROUP_ID_1);
         menuGroup.setName(TEST_MENU_GROUP_NAME_1);
     }
 
     @DisplayName("MenuGroup 생성이 올바르게 수행된다.")
     @Test
     void createTest() {
-        when(menuGroupDao.save(any())).thenReturn(menuGroup);
-
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
-        Assertions.assertEquals(savedMenuGroup.getId(), menuGroup.getId());
         Assertions.assertEquals(savedMenuGroup.getName(), menuGroup.getName());
     }
 
@@ -55,16 +48,15 @@ public class MenuGroupServiceTest {
     @Test
     void listTest() {
         MenuGroup secondMenuGroup = new MenuGroup();
-        secondMenuGroup.setId(TEST_MENU_GROUP_ID_2);
         secondMenuGroup.setName(TEST_MENU_GROUP_NAME_2);
-        List<MenuGroup> menuGroups = Arrays.asList(menuGroup, secondMenuGroup);
-        when(menuGroupDao.findAll()).thenReturn(menuGroups);
+        MenuGroup savedMenuGroup1 = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup2 = menuGroupDao.save(secondMenuGroup);
 
         List<MenuGroup> foundMenuGroup = menuGroupService.list();
 
         assertThat(foundMenuGroup)
                 .hasSize(2)
                 .extracting("id")
-                .containsOnly(TEST_MENU_GROUP_ID_1, TEST_MENU_GROUP_ID_2);
+                .containsOnly(savedMenuGroup1.getId(), savedMenuGroup2.getId());
     }
 }
