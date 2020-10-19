@@ -2,7 +2,6 @@ package kitchenpos.utils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 
 import kitchenpos.domain.Menu;
@@ -13,7 +12,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 
 public class TestFixture {
 
@@ -46,13 +44,6 @@ public class TestFixture {
         final OrderTable orderTable = new OrderTable(0, false);
 
         return orderTable;
-    }
-
-    public static TableGroup getTableGroup(final OrderTable orderTable1, final OrderTable orderTable2) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-
-        return tableGroup;
     }
 
     public static OrderLineItem getOrderLineItem() {
