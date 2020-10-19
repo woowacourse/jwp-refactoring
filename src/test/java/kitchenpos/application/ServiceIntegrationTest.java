@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -11,6 +12,7 @@ import kitchenpos.config.ServiceIntegrationTestConfig;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.Product;
 
 @SpringBootTest
 @Import(ServiceIntegrationTestConfig.class)
@@ -18,6 +20,7 @@ import kitchenpos.domain.OrderLineItem;
 @Ignore
 class ServiceIntegrationTest {
     static final String ORDER_STATUS_COOKING = "COOKING";
+    private static final int PRICE_SCALE = 2;
 
     static MenuGroup getMenuGroupWithoutId(String name) {
         MenuGroup menuGroup = new MenuGroup();
@@ -52,4 +55,23 @@ class ServiceIntegrationTest {
         return order;
     }
 
+    static Product getProductWithoutId(String name, long price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(BigDecimal.valueOf(unscaledPrice(price), PRICE_SCALE));
+        return product;
+    }
+
+    static Product getProductWithId(Long id, String name, long price) {
+        Product product = getProductWithoutId(name, price);
+        product.setId(id);
+        return product;
+    }
+
+    private static long unscaledPrice(long price) {
+        for (int i = 0; i < PRICE_SCALE; i ++) {
+            price *= 10;
+        }
+        return price;
+    }
 }
