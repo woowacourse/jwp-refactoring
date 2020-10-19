@@ -87,16 +87,45 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception {
         final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(true);
         final OrderTable savedTable = tableService.create(orderTable);
 
-        final OrderTable orderTable1 = new OrderTable();
+        final OrderTable emptyTable = new OrderTable();
         String url = "/api/tables/{orderTableId}/empty";
         mockMvc.perform(put(url, savedTable.getId())
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(orderTable1)))
+        .content(objectMapper.writeValueAsString(emptyTable)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", notNullValue()));
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.tableGroupId", nullValue()))
+                .andExpect(jsonPath("$.numberOfGuests", is(0)))
+                .andExpect(jsonPath("$.empty", is(false)));
+    }
+
+    @DisplayName("changeNumberOfGuests: 대상 테이블의 손님 수를 변경 후, 200 코드와 변경된 테이블 entity를 반환한다.")
+    @Test
+    void changeNumberOfGuests() throws Exception {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(5);
+        final OrderTable savedTable = tableService.create(orderTable);
+        final Long tableId = savedTable.getId();
+
+        final OrderTable tableWithNewNumberOfGuest = new OrderTable();
+        tableWithNewNumberOfGuest.setNumberOfGuests(10);
+
+        String url = "/api/tables/{orderTableId}/number-of-guests";
+        mockMvc.perform(put(url, tableId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(tableWithNewNumberOfGuest)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.tableGroupId", nullValue()))
+                .andExpect(jsonPath("$.numberOfGuests", is(10)))
+                .andExpect(jsonPath("$.empty", is(false)));
     }
 }
