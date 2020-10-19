@@ -39,7 +39,7 @@ public abstract class KitchenPosDaoTest {
     protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
     protected TableGroupDao tableGroupDao;
@@ -99,7 +99,7 @@ public abstract class KitchenPosDaoTest {
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
 
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         Long savedProductId = savedProduct.getId();
         assertThat(savedProductId).isNotNull();

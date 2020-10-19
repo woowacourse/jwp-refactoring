@@ -11,7 +11,7 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class ProductDaoTest extends KitchenPosDaoTest {
+class ProductRepositoryTest extends KitchenPosDaoTest {
 
     @DisplayName("Product 저장 - 성공")
     @Test
@@ -20,7 +20,7 @@ class ProductDaoTest extends KitchenPosDaoTest {
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
 
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         assertThat(savedProduct.getId()).isNotNull();
         assertThat(savedProduct.getName()).isEqualTo(TEST_PRODUCT_NAME);
@@ -33,9 +33,9 @@ class ProductDaoTest extends KitchenPosDaoTest {
         Product product = new Product();
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
-        Product foundProduct = productDao.findById(savedProduct.getId())
+        Product foundProduct = productRepository.findById(savedProduct.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 Product가 없습니다."));
 
         assertThat(foundProduct.getId()).isEqualTo(savedProduct.getId());
@@ -49,9 +49,9 @@ class ProductDaoTest extends KitchenPosDaoTest {
         Product product = new Product();
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
-        Optional<Product> foundProduct = productDao.findById(savedProduct.getId() + 1);
+        Optional<Product> foundProduct = productRepository.findById(savedProduct.getId() + 1);
 
         assertThat(foundProduct.isPresent()).isFalse();
     }
@@ -62,9 +62,9 @@ class ProductDaoTest extends KitchenPosDaoTest {
         Product product = new Product();
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
-        List<Product> products = productDao.findAll();
+        List<Product> products = productRepository.findAll();
 
         assertThat(products).isNotNull();
         assertThat(products).isNotEmpty();
