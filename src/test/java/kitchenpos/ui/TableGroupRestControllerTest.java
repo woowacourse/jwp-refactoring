@@ -1,26 +1,17 @@
 package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
@@ -30,17 +21,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@SpringBootTest
-@Transactional
-class TableGroupRestControllerTest {
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
+class TableGroupRestControllerTest extends ControllerTest {
     @Autowired
     TableService tableService;
 
@@ -49,12 +30,6 @@ class TableGroupRestControllerTest {
 
     @Autowired
     OrderService orderService;
-
-    @BeforeEach
-    void setUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .build();
-    }
 
     @DisplayName("create: 2개 이상의 중복되지 않고 비어있지 않는 테이블목록에 대해 테이블 그룹 지정 요청시, 201 반환과 함께 그룹 지정된 테이블 그룹을 반환한다.")
     @Test
@@ -75,11 +50,9 @@ class TableGroupRestControllerTest {
 
         String url = "/api/table-groups";
 
-        mockMvc.perform(post(url)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableGroup)))
-                .andDo(print())
+        final ResultActions resultActions = create(url, tableGroup);
+
+        resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.createdDate", notNullValue(LocalDateTime.class)))
@@ -124,11 +97,9 @@ class TableGroupRestControllerTest {
 
         String url = "/api/table-groups/{tableGroupId}";
 
-        mockMvc.perform(delete(url, savedTableGroupId)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableGroup)))
-                .andDo(print())
+        final ResultActions resultActions = deleteByPathId(url, savedTableGroupId);
+
+        resultActions
                 .andExpect(status().isNoContent());
     }
 }

@@ -1,49 +1,20 @@
 package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
-@SpringBootTest
-@Transactional
-class MenuRestControllerTest {
+class MenuRestControllerTest extends ControllerTest {
     private static final String MENU_API_URL = "/api/menus";
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
-                .addFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-                .build();
-    }
 
     @DisplayName("create: 이름을 body message에 포함해 메뉴 등록을 요청시 ,메뉴 생성 성공 시 201 응답을 반환한다.")
     @Test
@@ -58,11 +29,9 @@ class MenuRestControllerTest {
         menu.setMenuGroupId(1L);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
-        mockMvc.perform(post(MENU_API_URL)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(menu)))
-                .andDo(print())
+        final ResultActions resultActions = create(MENU_API_URL, menu);
+
+        resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name", is("후라이드 5마리 세트")))
@@ -74,9 +43,9 @@ class MenuRestControllerTest {
     @DisplayName("list: 전체 메뉴 목록 요청시, 200 응답 코드와 함께 메뉴 목록을 반환한다.")
     @Test
     void list() throws Exception {
-        mockMvc.perform(get(MENU_API_URL)
-        .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+        final ResultActions resultActions = findList(MENU_API_URL);
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(6)));
     }

@@ -1,53 +1,23 @@
 package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.nio.charset.StandardCharsets;
-
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.filter.CharacterEncodingFilter;
+import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
-@SpringBootTest
-@Transactional
-class TableRestControllerTest {
-
-    @Autowired
-    private WebApplicationContext applicationContext;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private MockMvc mockMvc;
-
+class TableRestControllerTest extends ControllerTest {
     @Autowired
     TableService tableService;
 
     @Autowired
     OrderTableDao orderTableDao;
-
-    @BeforeEach
-    void setUp() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
-                .addFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
-                .build();
-    }
 
     @DisplayName("create: 새 테이블 생성 요청시, 200 상태코드 반환, 새로 생성된 테이블을 반환한다.")
     @Test
@@ -56,11 +26,9 @@ class TableRestControllerTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(5);
 
-        mockMvc.perform(post("/api/tables")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(orderTable)))
-                .andDo(print())
+        final ResultActions resultActions = create("/api/tables", orderTable);
+
+        resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.tableGroupId", nullValue()))
@@ -76,9 +44,9 @@ class TableRestControllerTest {
         orderTable.setNumberOfGuests(5);
         orderTableDao.save(orderTable);
 
-        mockMvc.perform(get("/api/tables")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
+        final ResultActions resultActions = findList("/api/tables");
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(9)));
     }
@@ -92,11 +60,10 @@ class TableRestControllerTest {
 
         final OrderTable emptyTable = new OrderTable();
         String url = "/api/tables/{orderTableId}/empty";
-        mockMvc.perform(put(url, savedTable.getId())
-        .accept(MediaType.APPLICATION_JSON)
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(objectMapper.writeValueAsString(emptyTable)))
-                .andDo(print())
+
+        final ResultActions resultActions = updateByPathIdAndBody(url, savedTable.getId(), emptyTable);
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.tableGroupId", nullValue()))
@@ -117,11 +84,10 @@ class TableRestControllerTest {
         tableWithNewNumberOfGuest.setNumberOfGuests(10);
 
         String url = "/api/tables/{orderTableId}/number-of-guests";
-        mockMvc.perform(put(url, tableId)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(tableWithNewNumberOfGuest)))
-                .andDo(print())
+
+        final ResultActions resultActions = updateByPathIdAndBody(url, tableId, tableWithNewNumberOfGuest);
+
+        resultActions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.tableGroupId", nullValue()))
