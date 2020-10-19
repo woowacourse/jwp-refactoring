@@ -33,7 +33,7 @@ public abstract class KitchenPosDaoTest {
     protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected OrderDao orderDao;
+    protected OrderRepository orderRepository;
 
     @Autowired
     protected OrderTableDao orderTableDao;
@@ -74,7 +74,7 @@ public abstract class KitchenPosDaoTest {
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderTableId(getCreatedOrderTableId());
 
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         Long savedOrderId = savedOrder.getId();
         assertThat(savedOrderId).isNotNull();

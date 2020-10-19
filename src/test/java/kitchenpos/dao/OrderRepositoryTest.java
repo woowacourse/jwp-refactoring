@@ -12,7 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class OrderDaoTest extends KitchenPosDaoTest {
+class OrderRepositoryTest extends KitchenPosDaoTest {
 
     @DisplayName("Order 저장 - 성공")
     @Test
@@ -24,7 +24,7 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
 
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         assertThat(savedOrder.getId()).isNotNull();
         assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTableId);
@@ -40,9 +40,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        Order foundOrder = orderDao.findById(savedOrder.getId())
+        Order foundOrder = orderRepository.findById(savedOrder.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 order가 없습니다."));
 
         assertThat(foundOrder.getId()).isEqualTo(savedOrder.getId());
@@ -59,9 +59,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        Optional<Order> foundOrder = orderDao.findById(savedOrder.getId() + 1);
+        Optional<Order> foundOrder = orderRepository.findById(savedOrder.getId() + 1);
 
         assertThat(foundOrder.isPresent()).isFalse();
     }
@@ -73,9 +73,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderRepository.findAll();
 
         assertThat(orders).isNotNull();
         assertThat(orders).isNotEmpty();
@@ -98,10 +98,10 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatuses.get(0));
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         boolean existsOrder
-            = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+            = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
 
         assertThat(existsOrder).isTrue();
     }
@@ -117,10 +117,10 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(orderStatuses.get(0));
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         boolean existsOrder
-            = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+            = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
 
         assertThat(existsOrder).isFalse();
     }
@@ -136,10 +136,10 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         boolean existsOrder
-            = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+            = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
 
         assertThat(existsOrder).isFalse();
     }
@@ -155,10 +155,10 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         boolean existsOrder
-            = orderDao.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
+            = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, orderStatuses);
 
         assertThat(existsOrder).isFalse();
     }
@@ -175,9 +175,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(orderTableIds.get(0));
         order.setOrderStatus(orderStatuses.get(0));
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
-        boolean existsOrder = orderDao
+        boolean existsOrder = orderRepository
             .existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
 
         assertThat(existsOrder).isTrue();
@@ -195,9 +195,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(orderTableIds.get(0));
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
-        boolean existsOrder = orderDao
+        boolean existsOrder = orderRepository
             .existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
 
         assertThat(existsOrder).isFalse();
@@ -215,9 +215,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(orderStatuses.get(0));
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
-        boolean existsOrder = orderDao
+        boolean existsOrder = orderRepository
             .existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
 
         assertThat(existsOrder).isFalse();
@@ -235,9 +235,9 @@ class OrderDaoTest extends KitchenPosDaoTest {
         order.setOrderTableId(getCreatedOrderTableId());
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        orderDao.save(order);
+        orderRepository.save(order);
 
-        boolean existsOrder = orderDao
+        boolean existsOrder = orderRepository
             .existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
 
         assertThat(existsOrder).isFalse();
