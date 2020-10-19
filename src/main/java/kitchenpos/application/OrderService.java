@@ -38,6 +38,7 @@ public class OrderService {
     public OrderResponse create(final OrderRequest request) {
         final OrderTable orderTable = findOrderTable(request);
         final Order savedOrder = orderRepository.save(request.toEntity(orderTable));
+
         savedOrder.setOrderLineItems(mapToOrderLineItems(request, savedOrder));
         return OrderResponse.from(savedOrder);
     }

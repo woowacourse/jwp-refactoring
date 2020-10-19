@@ -34,6 +34,7 @@ public class TableGroupService {
         final List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         TableGroup tableGroup = request.toEntity(OrderTables.of(orderTableIds, savedOrderTables));
+
         tableGroup.setOrderTables(savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
@@ -42,6 +43,16 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
+        validateOrderStatus(orderTables);
+
+        orderTables.forEach(
+                orderTable -> {
+                    orderTable.setTableGroup(null);
+                    orderTable.changeEmptyState(false);
+                });
+    }
+
+    private void validateOrderStatus(final List<OrderTable> orderTables) {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -50,12 +61,5 @@ public class TableGroupService {
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
-
-        orderTables.forEach(
-                orderTable -> {
-                    orderTable.setTableGroup(null);
-                    orderTable.changeEmptyState(false);
-                    orderTableRepository.save(orderTable);
-                });
     }
 }

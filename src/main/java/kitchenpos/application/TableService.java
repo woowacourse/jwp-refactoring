@@ -38,14 +38,17 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
+        validateOrderStatus(orderTableId);
+
+        savedOrderTable.changeEmptyState(request.isEmpty());
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+    }
+
+    private void validateOrderStatus(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
-
-        savedOrderTable.changeEmptyState(request.isEmpty());
-
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
