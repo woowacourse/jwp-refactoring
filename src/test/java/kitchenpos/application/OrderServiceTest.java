@@ -2,118 +2,135 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
+
+import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderChangeStatusRequest;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.utils.TestFixture;
 
-@ExtendWith(MockitoExtension.class)
+@Transactional
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class OrderServiceTest {
-    @Mock
+
+    @Autowired
     private MenuDao menuDao;
-    @Mock
-    private OrderDao orderDao;
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
-    @Mock
+
+    @Autowired
     private OrderTableDao orderTableDao;
 
-    @InjectMocks
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
     private OrderService orderService;
 
     @DisplayName("create: 주문 등록 테스트")
     @Test
     void createTest() {
-        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
-        final Order order = TestFixture.getOrderWithCooking(orderLineItem, 1L);
-        final OrderTable orderTable = TestFixture.getOrderTableWithNotEmpty();
+        final OrderTable orderTable = orderTableDao.save(TestFixture.getOrderTableWithNotEmpty());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
 
-        when(menuDao.countByIdIn(anyList())).thenReturn(1L);
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
-        when(orderDao.save(any())).thenReturn(order);
-        when(orderLineItemDao.save(any())).thenReturn(orderLineItem);
-
-        final Order actual = orderService.create(order);
+        final Order order = orderService.create(orderCreateRequest);
 
         assertAll(
-                () -> assertThat(actual).isNotNull(),
-                () -> assertThat(actual.getOrderLineItems()).contains(orderLineItem)
+                () -> assertThat(order).isNotNull(),
+                () -> assertThat(order.getOrderTableId()).isEqualTo(orderTable.getId())
         );
     }
 
     @DisplayName("create: 주문 등록 시 테이블이 비어있는 경우 예외처리")
     @Test
     void createTestByOrderTableEmpty() {
-        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
-        final Order order = TestFixture.getOrderWithCooking(orderLineItem, 1L);
-        final OrderTable orderTable = TestFixture.getOrderTableWithEmpty();
+        final OrderTable orderTable = orderTableDao.save(TestFixture.getOrderTableWithEmpty());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
 
-        when(menuDao.countByIdIn(anyList())).thenReturn(1L);
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("list: 전체 주문을 확인하는 테스트")
     @Test
     void listTest() {
-        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
-        final Order order = TestFixture.getOrderWithCooking(orderLineItem, 1L);
-        when(orderDao.findAll()).thenReturn(Collections.singletonList(order));
+        final OrderTable orderTable = orderTableDao.save(TestFixture.getOrderTableWithNotEmpty());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
+
+        orderService.create(orderCreateRequest);
 
         final List<Order> orders = orderService.list();
 
         assertAll(
                 () -> assertThat(orders).hasSize(1),
-                () -> assertThat(orders.contains(order)).isTrue()
+                () -> assertThat(orders.get(0).getId()).isNotNull()
         );
     }
 
     @DisplayName("changeOrderStatus: 주문 상태를 변경하는 테스트")
     @Test
     void changeOrderStatusTest() {
-        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
-        final Order orderWithCooking = TestFixture.getOrderWithCooking(orderLineItem, 1L);
-        final Order orderWithCompletion = TestFixture.getOrderWithCompletion(orderLineItem);
+        final OrderTable orderTable = orderTableDao.save(TestFixture.getOrderTableWithNotEmpty());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
 
-        when(orderDao.findById(anyLong())).thenReturn(Optional.of(orderWithCooking));
-        when(orderDao.save(any())).thenReturn(orderWithCompletion);
+        final Order order = orderService.create(orderCreateRequest);
 
-        final Order order = orderService.changeOrderStatus(1L, orderWithCompletion);
+        final OrderChangeStatusRequest orderChangeStatusRequest = new OrderChangeStatusRequest("MEAL");
 
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        final OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), orderChangeStatusRequest);
+
+        assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @DisplayName("changeOrderStatus: 주문 상태가 Completion일 경우 예외처리")
     @Test
     void changeOrderStatusTestByCompletionOfOrderState() {
-        final OrderLineItem orderLineItem = TestFixture.getOrderLineItem();
-        final Order orderWithCooking = TestFixture.getOrderWithCompletion(orderLineItem);
-        final Order orderWithCompletion = TestFixture.getOrderWithCompletion(orderLineItem);
+        final OrderTable orderTable = orderTableDao.save(TestFixture.getOrderTableWithNotEmpty());
+        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
+        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(orderLineItemRequest));
 
-        when(orderDao.findById(anyLong())).thenReturn(Optional.of(orderWithCooking));
+        final Order order = orderService.create(orderCreateRequest);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, orderWithCompletion))
+        orderService.changeOrderStatus(order.getId(), new OrderChangeStatusRequest("COMPLETION"));
+        final OrderChangeStatusRequest orderChangeStatusRequest = new OrderChangeStatusRequest("MEAL");
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderChangeStatusRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-
     }
 }

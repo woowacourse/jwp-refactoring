@@ -26,6 +26,10 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
+    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
+        this(null, name, price, menuGroupId, null);
+    }
+
     public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
         this(id, name, price, menuGroupId, null);
     }

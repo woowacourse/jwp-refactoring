@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,7 +78,7 @@ class TableServiceTest {
         final TableCreateRequest tableCreateRequest = new TableCreateRequest(0, false);
         final TableResponse tableResponse = tableService.create(tableCreateRequest);
         final TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(true);
-        final Order order = new Order(tableResponse.getId(), "COOKING", LocalDateTime.now(), new ArrayList<>());
+        final Order order = new Order(tableResponse.getId(), "COOKING", new ArrayList<>());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(tableResponse.getId(), tableChangeEmptyRequest))

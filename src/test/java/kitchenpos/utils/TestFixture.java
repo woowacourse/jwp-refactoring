@@ -1,15 +1,12 @@
 package kitchenpos.utils;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
@@ -47,30 +44,8 @@ public class TestFixture {
     }
 
     public static OrderLineItem getOrderLineItem() {
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        final OrderLineItem orderLineItem = new OrderLineItem(1L, 1L);
 
         return orderLineItem;
-    }
-
-    public static Order getOrderWithCooking(final OrderLineItem orderLineItem, final Long orderTableId) {
-        final Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        return order;
-    }
-
-    public static Order getOrderWithCompletion(final OrderLineItem orderLineItem) {
-        final Order order = new Order();
-        order.setOrderTableId(7L);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        return order;
     }
 }
