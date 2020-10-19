@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.config.IsolatedTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
 import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
@@ -26,7 +27,7 @@ class TableGroupServiceTest extends IsolatedTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("단체 지정 실패 - 주문 테이블이 없을 경우")
     @Test
@@ -77,7 +78,7 @@ class TableGroupServiceTest extends IsolatedTest {
         orderTableRepository.save(new OrderTable(null, 4, true));
         orderTableRepository.save(new OrderTable(null, 5, true));
         TableGroupRequest request = new TableGroupRequest(Lists.newArrayList(1L, 2L));
-        createOrderWithOrderStatus("COOKING", 1L);
+        createOrderWithOrderStatusOf(OrderStatus.COOKING);
 
         final TableGroupResponse response = service.create(request);
 
@@ -91,7 +92,7 @@ class TableGroupServiceTest extends IsolatedTest {
         orderTableRepository.save(new OrderTable(null, 4, true));
         orderTableRepository.save(new OrderTable(null, 5, true));
         TableGroupRequest request = new TableGroupRequest(Lists.newArrayList(1L, 2L));
-        createOrderWithOrderStatus("MEAL", 1L);
+        createOrderWithOrderStatusOf(OrderStatus.MEAL);
 
         final TableGroupResponse response = service.create(request);
 
@@ -105,8 +106,8 @@ class TableGroupServiceTest extends IsolatedTest {
         orderTableRepository.save(new OrderTable(null, 4, true));
         orderTableRepository.save(new OrderTable(null, 5, true));
         TableGroupRequest request = new TableGroupRequest(Lists.newArrayList(1L, 2L));
-        createOrderWithOrderStatus("COMPLETION", 1L);
-        createOrderWithOrderStatus("COMPLETION", 2L);
+        createOrderWithOrderStatusOf(OrderStatus.COMPLETION);
+        createOrderWithOrderStatusOf(OrderStatus.COMPLETION);
 
         final TableGroupResponse response = service.create(request);
         service.ungroup(response.getId());
@@ -115,12 +116,9 @@ class TableGroupServiceTest extends IsolatedTest {
         assertThat(response.getOrderTables().get(1).isEmpty()).isFalse();
     }
 
-    private void createOrderWithOrderStatus(String orderStatus, Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(Lists.newArrayList());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+    private void createOrderWithOrderStatusOf(OrderStatus orderStatus) {
+        OrderTable orderTable = new OrderTable(1L, null, 4, false);
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), Lists.newArrayList());
+        orderRepository.save(order);
     }
 }

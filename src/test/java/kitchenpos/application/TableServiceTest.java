@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.config.IsolatedTest;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.ui.dto.ordertable.OrderTableRequest;
 import kitchenpos.ui.dto.ordertable.OrderTableResponse;
 import kitchenpos.ui.dto.ordertable.OrderTableResponses;
@@ -22,7 +24,7 @@ class TableServiceTest extends IsolatedTest {
     private TableService service;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문 테이블 생성")
     @Test
@@ -61,7 +63,7 @@ class TableServiceTest extends IsolatedTest {
     public void changeEmptyFailInvalidOrderStatus_Cooking() {
         OrderTableRequest request = new OrderTableRequest(4, false);
         final OrderTableResponse response = service.create(request);
-        createOrderWithOrderStatusOf("COOKING", response.getId());
+        createOrderWithOrderStatusOf(OrderStatus.COOKING);
 
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
@@ -74,7 +76,7 @@ class TableServiceTest extends IsolatedTest {
     public void changeEmptyFailInvalidOrderStatus_Meal() {
         OrderTableRequest request = new OrderTableRequest(4, false);
         final OrderTableResponse response = service.create(request);
-        createOrderWithOrderStatusOf("MEAL", response.getId());
+        createOrderWithOrderStatusOf(OrderStatus.MEAL);
 
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
@@ -87,7 +89,7 @@ class TableServiceTest extends IsolatedTest {
     public void changeEmpty() {
         OrderTableRequest request = new OrderTableRequest(4, false);
         final OrderTableResponse response = service.create(request);
-        createOrderWithOrderStatusOf("COMPLETION", response.getId());
+        createOrderWithOrderStatusOf(OrderStatus.COMPLETION);
 
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
@@ -130,12 +132,9 @@ class TableServiceTest extends IsolatedTest {
         assertThat(changedTable.getNumberOfGuests()).isEqualTo(3);
     }
 
-    private void createOrderWithOrderStatusOf(String orderStatus, Long orderTableId) {
-        Order order = new Order();
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(Lists.newArrayList());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+    private void createOrderWithOrderStatusOf(OrderStatus orderStatus) {
+        OrderTable orderTable = new OrderTable(1L, null, 4, false);
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), Lists.newArrayList());
+        orderRepository.save(order);
     }
 }
