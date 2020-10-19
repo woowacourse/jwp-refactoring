@@ -42,7 +42,7 @@ public abstract class KitchenPosDaoTest {
     protected ProductRepository productRepository;
 
     @Autowired
-    protected TableGroupDao tableGroupDao;
+    protected TableGroupRepository tableGroupRepository;
 
     protected Long getCreatedMenuId() {
         Menu menu = new Menu();
@@ -110,7 +110,7 @@ public abstract class KitchenPosDaoTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         Long savedTableGroupId = savedTableGroup.getId();
         assertThat(savedTableGroupId).isNotNull();

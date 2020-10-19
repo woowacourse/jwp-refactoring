@@ -10,7 +10,7 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableGroupDaoTest extends KitchenPosDaoTest {
+class TableGroupRepositoryTest extends KitchenPosDaoTest {
 
     @DisplayName("TableGroup 저장 - 성공")
     @Test
@@ -18,7 +18,7 @@ class TableGroupDaoTest extends KitchenPosDaoTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         assertThat(savedTableGroup.getId()).isNotNull();
         assertThat(savedTableGroup.getCreatedDate()).isEqualTo(TEST_TABLE_GROUP_CREATED_DATE);
@@ -30,9 +30,9 @@ class TableGroupDaoTest extends KitchenPosDaoTest {
     void findById_ExistsId_ReturnTableGroup() {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        TableGroup foundTableGroup = tableGroupDao.findById(savedTableGroup.getId())
+        TableGroup foundTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 TableGroup이 없습니다."));
 
         assertThat(foundTableGroup.getId()).isEqualTo(savedTableGroup.getId());
@@ -45,9 +45,10 @@ class TableGroupDaoTest extends KitchenPosDaoTest {
     void findById_NotExistsId_ReturnEmpty() {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        Optional<TableGroup> foundTableGroup = tableGroupDao.findById(savedTableGroup.getId() + 1);
+        Optional<TableGroup> foundTableGroup = tableGroupRepository
+            .findById(savedTableGroup.getId() + 1);
 
         assertThat(foundTableGroup.isPresent()).isFalse();
     }
@@ -57,9 +58,9 @@ class TableGroupDaoTest extends KitchenPosDaoTest {
     void findAll_Success() {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        List<TableGroup> tableGroups = tableGroupDao.findAll();
+        List<TableGroup> tableGroups = tableGroupRepository.findAll();
 
         assertThat(tableGroups).isNotNull();
         assertThat(tableGroups).isNotEmpty();
