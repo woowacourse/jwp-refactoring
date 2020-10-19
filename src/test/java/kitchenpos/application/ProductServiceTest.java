@@ -78,7 +78,7 @@ class ProductServiceTest {
 
         assertAll(() -> {
             assertThat(products).hasSize(6);
-            assertThat(products).extracting(Product::getName).contains(productNames);
+            assertThat(products).extracting(Product::getName).containsOnly(productNames);
         });
     }
 }
