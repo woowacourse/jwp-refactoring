@@ -12,7 +12,7 @@ import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class OrderTableDaoTest extends KitchenPosDaoTest {
+class OrderTableRepositoryTest extends KitchenPosDaoTest {
 
     @DisplayName("OrderTable 저장 - 성공")
     @Test
@@ -20,7 +20,7 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         assertThat(savedOrderTable.getId()).isNotNull();
         assertThat(savedOrderTable.getNumberOfGuests())
@@ -35,9 +35,9 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        OrderTable foundOrderTable = orderTableDao.findById(savedOrderTable.getId())
+        OrderTable foundOrderTable = orderTableRepository.findById(savedOrderTable.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 orderTable이 없습니다."));
 
         assertThat(foundOrderTable.getId()).isEqualTo(savedOrderTable.getId());
@@ -53,9 +53,10 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Optional<OrderTable> foundOrderTable = orderTableDao.findById(savedOrderTable.getId() + 1);
+        Optional<OrderTable> foundOrderTable = orderTableRepository
+            .findById(savedOrderTable.getId() + 1);
         assertThat(foundOrderTable.isPresent()).isFalse();
     }
 
@@ -65,9 +66,9 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         assertThat(orderTables).isNotNull();
         assertThat(orderTables).isNotEmpty();
 
@@ -81,21 +82,21 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOtherOrderTable = orderTableDao.save(otherOrderTable);
+        OrderTable savedOtherOrderTable = orderTableRepository.save(otherOrderTable);
 
         OrderTable anotherOrderTable = new OrderTable();
         anotherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTableDao.save(anotherOrderTable);
+        orderTableRepository.save(anotherOrderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId(), savedOtherOrderTable.getId());
 
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(ids);
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(ids);
         assertThat(orderTables).hasSize(ids.size());
 
         List<Long> orderTableIds = getIds(orderTables);
@@ -108,11 +109,11 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId() + 1, savedOrderTable.getId() + 2);
 
-        List<OrderTable> orderTables = orderTableDao.findAllByIdIn(ids);
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(ids);
         assertThat(orderTables).isEmpty();
     }
 
@@ -125,22 +126,23 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
         orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         orderTable.setTableGroupId(tableGroupId);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         OrderTable otherOrderTable = new OrderTable();
         otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         otherOrderTable.setTableGroupId(tableGroupId);
-        OrderTable savedOtherOrderTable = orderTableDao.save(otherOrderTable);
+        OrderTable savedOtherOrderTable = orderTableRepository.save(otherOrderTable);
 
         OrderTable anotherOrderTable = new OrderTable();
         anotherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         anotherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTableDao.save(anotherOrderTable);
+        orderTableRepository.save(anotherOrderTable);
 
         List<Long> ids = Arrays.asList(savedOrderTable.getId(), savedOtherOrderTable.getId());
 
-        List<OrderTable> foundOrderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        List<OrderTable> foundOrderTables = orderTableRepository
+            .findAllByTableGroupId(tableGroupId);
         assertThat(foundOrderTables).hasSize(ids.size());
 
         List<Long> foundOrderTableIds = getIds(foundOrderTables);
@@ -152,7 +154,8 @@ class OrderTableDaoTest extends KitchenPosDaoTest {
     void findAllByTableGroupId_NotMatchedTableGroupId_ReturnOrderTable() {
         Long tableGroupId = getCreatedTableGroupId();
 
-        List<OrderTable> foundOrderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        List<OrderTable> foundOrderTables = orderTableRepository
+            .findAllByTableGroupId(tableGroupId);
         assertThat(foundOrderTables).isEmpty();
     }
 
