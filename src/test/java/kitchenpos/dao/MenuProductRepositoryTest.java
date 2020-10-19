@@ -10,12 +10,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class MenuProductDaoTest extends KitchenPosDaoTest {
+class MenuProductRepositoryTest extends KitchenPosDaoTest {
 
     private static final int TEST_QUANTITY = 3;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @DisplayName("MenuProduct 저장 - 성공")
     @Test
@@ -28,7 +28,7 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(TEST_QUANTITY);
 
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         assertThat(savedMenuProduct.getSeq()).isNotNull();
         assertThat(savedMenuProduct.getMenuId()).isEqualTo(menuId);
@@ -43,9 +43,9 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         menuProduct.setMenuId(getCreatedMenuId());
         menuProduct.setProductId(getCreatedProductId());
         menuProduct.setQuantity(TEST_QUANTITY);
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
-        MenuProduct foundMenuProduct = menuProductDao.findById(savedMenuProduct.getSeq())
+        MenuProduct foundMenuProduct = menuProductRepository.findById(savedMenuProduct.getSeq())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 MenuProduct가 없습니다."));
 
         assertThat(foundMenuProduct.getSeq()).isEqualTo(savedMenuProduct.getSeq());
@@ -61,9 +61,9 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         menuProduct.setMenuId(getCreatedMenuId());
         menuProduct.setProductId(getCreatedProductId());
         menuProduct.setQuantity(TEST_QUANTITY);
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
-        Optional<MenuProduct> foundMenuProduct = menuProductDao
+        Optional<MenuProduct> foundMenuProduct = menuProductRepository
             .findById(savedMenuProduct.getSeq() + 1);
 
         assertThat(foundMenuProduct.isPresent()).isFalse();
@@ -76,9 +76,9 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         menuProduct.setMenuId(getCreatedMenuId());
         menuProduct.setProductId(getCreatedProductId());
         menuProduct.setQuantity(TEST_QUANTITY);
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
-        List<MenuProduct> menuProducts = menuProductDao.findAll();
+        List<MenuProduct> menuProducts = menuProductRepository.findAll();
 
         assertThat(menuProducts).isNotNull();
         assertThat(menuProducts).isNotEmpty();
@@ -100,21 +100,21 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
         menuProduct.setMenuId(menuId);
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(TEST_QUANTITY);
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         MenuProduct otherMenuProduct = new MenuProduct();
         otherMenuProduct.setMenuId(menuId);
         otherMenuProduct.setProductId(productId);
         otherMenuProduct.setQuantity(TEST_QUANTITY);
-        MenuProduct savedOtherMenuProduct = menuProductDao.save(otherMenuProduct);
+        MenuProduct savedOtherMenuProduct = menuProductRepository.save(otherMenuProduct);
 
         MenuProduct menuProductOtherMenu = new MenuProduct();
         menuProductOtherMenu.setMenuId(getCreatedMenuId());
         menuProductOtherMenu.setProductId(productId);
         menuProductOtherMenu.setQuantity(TEST_QUANTITY);
-        menuProductDao.save(menuProductOtherMenu);
+        menuProductRepository.save(menuProductOtherMenu);
 
-        List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
+        List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menuId);
 
         assertThat(menuProducts).hasSize(2);
 
@@ -133,7 +133,7 @@ class MenuProductDaoTest extends KitchenPosDaoTest {
     void findAllByMenuId_NotMatchedMenuId_ReturnEmpty() {
         Long menuId = getCreatedMenuId();
 
-        List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menuId);
+        List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menuId);
 
         assertThat(menuProducts).isEmpty();
     }
