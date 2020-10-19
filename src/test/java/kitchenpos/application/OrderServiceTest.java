@@ -91,7 +91,7 @@ class OrderServiceTest {
     @Test
     void createOrderWithEmptyOrderLineItemsThenThrowException() {
         Order order = TestDomainFactory.createOrder(this.savedOrderTable.getId());
-        order.setOrderLineItems(Collections.EMPTY_LIST);
+        order.setOrderLineItems(Collections.emptyList());
 
         assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -143,10 +143,8 @@ class OrderServiceTest {
 
         assertAll(
                 () -> assertThat(savedOrders.size()).isEqualTo(orders.size()),
-                () -> assertThat(savedOrders.get(0).getOrderTableId()).isEqualTo(order1.getOrderTableId()),
-                () -> assertThat(savedOrders.get(0).getOrderLineItems().size()).isEqualTo(order1.getOrderLineItems().size()),
-                () -> assertThat(savedOrders.get(1).getOrderTableId()).isEqualTo(order2.getOrderTableId()),
-                () -> assertThat(savedOrders.get(1).getOrderLineItems().size()).isEqualTo(order2.getOrderLineItems().size())
+                () -> assertThat(savedOrders.contains(order1)),
+                () -> assertThat(savedOrders.contains(order2))
         );
     }
 

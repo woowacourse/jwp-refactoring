@@ -68,8 +68,8 @@ class TableServiceTest {
 
         assertAll(
                 () -> assertThat(savedOrderTables.size()).isEqualTo(orderTables.size()),
-                () -> assertThat(savedOrderTables.get(0).getNumberOfGuests()).isEqualTo(orderTable1.getNumberOfGuests()),
-                () -> assertThat(savedOrderTables.get(1).getNumberOfGuests()).isEqualTo(orderTable2.getNumberOfGuests())
+                () -> assertThat(savedOrderTables.contains(orderTable1)),
+                () -> assertThat(savedOrderTables.contains(orderTable2))
         );
     }
 

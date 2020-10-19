@@ -46,8 +46,8 @@ class MenuGroupServiceTest {
 
         assertAll(
                 () -> assertThat(actualMenuGroups.size()).isEqualTo(menuGroups.size()),
-                () -> assertThat(actualMenuGroups.get(0).getName()).isEqualTo(menuGroup1.getName()),
-                () -> assertThat(actualMenuGroups.get(1).getName()).isEqualTo(menuGroup2.getName())
+                () -> assertThat(actualMenuGroups.contains(menuGroup1)),
+                () -> assertThat(actualMenuGroups.contains(menuGroup2))
         );
     }
 }

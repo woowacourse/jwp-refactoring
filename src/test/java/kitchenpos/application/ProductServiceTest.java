@@ -69,8 +69,8 @@ class ProductServiceTest {
 
         assertAll(
                 () -> assertThat(savedProducts.size()).isEqualTo(products.size()),
-                () -> assertThat(savedProducts.get(0).getName()).isEqualTo(product1.getName()),
-                () -> assertThat(savedProducts.get(1).getName()).isEqualTo(product2.getName())
+                () -> assertThat(savedProducts.contains(product1)),
+                () -> assertThat(savedProducts.contains(product2))
         );
     }
 }

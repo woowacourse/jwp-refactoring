@@ -148,8 +148,8 @@ class MenuServiceTest {
 
         assertAll(
                 () -> assertThat(savedMenus.size()).isEqualTo(menus.size()),
-                () -> assertThat(savedMenus.get(0).getName()).isEqualTo(menu1.getName()),
-                () -> assertThat(savedMenus.get(1).getName()).isEqualTo(menu2.getName())
+                () -> assertThat(savedMenus.contains(menu1)),
+                () -> assertThat(savedMenus.contains(menu2))
         );
     }
 
