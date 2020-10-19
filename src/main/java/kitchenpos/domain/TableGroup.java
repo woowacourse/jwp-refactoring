@@ -2,12 +2,34 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
+@Entity
 public class TableGroup {
 
+    @Id
     private Long id;
     private LocalDateTime createdDate;
+
+    @Transient
     private List<OrderTable> orderTables;
+
+    public TableGroup() {
+    }
+
+    protected TableGroup(Long id, LocalDateTime createdDate) {
+        this.id = id;
+        this.createdDate = createdDate;
+    }
+
+    protected TableGroup(Long id, LocalDateTime createdDate,
+        List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
 
     public Long getId() {
         return id;

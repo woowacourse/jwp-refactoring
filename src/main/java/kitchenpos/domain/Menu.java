@@ -2,14 +2,40 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
+@Entity
 public class Menu {
 
+    @Id
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
+
+    @Transient
     private List<MenuProduct> menuProducts;
+
+    public Menu() {
+    }
+
+    protected Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
+
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
+        List<MenuProduct> menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
 
     public Long getId() {
         return id;
