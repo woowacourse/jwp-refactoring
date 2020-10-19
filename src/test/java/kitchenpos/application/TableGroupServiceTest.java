@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,9 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -28,13 +29,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableGroupServiceTest extends ServiceTest {
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private TableGroupService tableGroupService;
 
@@ -52,23 +56,19 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-        orderTableIds = new ArrayList<>();
-        orderIds = new ArrayList<>();
-        tableGroupIds = new ArrayList<>();
+        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
     }
 
     @DisplayName("새로운 단체 지정")
     @Test
     void createTest() {
-        OrderTable firstOrderTable = saveOrderTable(orderTableDao, 1, true);
-        OrderTable secondOrderTable = saveOrderTable(orderTableDao, 2, true);
+        OrderTable firstOrderTable = saveOrderTable(orderTableRepository, 1, true);
+        OrderTable secondOrderTable = saveOrderTable(orderTableRepository, 2, true);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        tableGroupIds.add(savedTableGroup.getId());
 
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
@@ -103,18 +103,20 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정 해제")
     @Test
     void ungroupTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
-        saveOrderTable(orderTableDao, 2, true, savedTableGroup.getId());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable firstOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
+        OrderTable secondOrderTable = saveOrderTable(orderTableRepository, 2, true, savedTableGroup.getId());
 
         tableGroupService.ungroup(savedTableGroup.getId());
-        List<OrderTable> ungroupedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        List<OrderTable> ungroupedOrderTables = orderTableRepository.findAllByIdIn(
+                Arrays.asList(firstOrderTable.getId(), secondOrderTable.getId())
+        );
 
         assertAll(
-                () -> assertThat(ungroupedOrderTables.get(0).getTableGroupId()).isNull(),
+                () -> assertThat(ungroupedOrderTables.get(0).getTableGroup()).isNull(),
                 () -> assertThat(ungroupedOrderTables.get(0).getNumberOfGuests()).isEqualTo(1),
                 () -> assertThat(ungroupedOrderTables.get(0).isEmpty()).isFalse(),
-                () -> assertThat(ungroupedOrderTables.get(1).getTableGroupId()).isNull(),
+                () -> assertThat(ungroupedOrderTables.get(1).getTableGroup()).isNull(),
                 () -> assertThat(ungroupedOrderTables.get(1).getNumberOfGuests()).isEqualTo(2),
                 () -> assertThat(ungroupedOrderTables.get(1).isEmpty()).isFalse()
         );
@@ -123,10 +125,10 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 테이블 중 결제 완료 되지 않은 주문이 남아있을 때 단체 지정 해제 시 예외 반환")
     @Test
     void ungroupWithInvalidOrderTableTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        OrderTable unPairedOrderTable = saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
-        saveOrderTable(orderTableDao, 2, true, savedTableGroup.getId());
-        saveOrder(orderDao, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
+        saveOrderTable(orderTableRepository, 2, true, savedTableGroup.getId());
+        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         assertThatThrownBy(() -> {
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -134,9 +136,13 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @AfterEach
+    @Transactional
     void tearDown() {
-        deleteOrder();
-        deleteOrderTable();
-        deleteTableGroup();
+        orderRepository.deleteAll();
+        List<TableGroup> tableGroups = tableGroupRepository.findAll();
+        tableGroups.forEach(tableGroup -> tableGroup.setOrderTables(null));
+        tableGroupRepository.saveAll(tableGroups);
+        orderTableRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }

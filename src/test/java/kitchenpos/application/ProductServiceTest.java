@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProductServiceTest extends ServiceTest {
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private ProductService productService;
 
@@ -35,8 +34,7 @@ class ProductServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
-        productIds = new ArrayList<>();
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("새로운 상품 생성")
@@ -47,13 +45,11 @@ class ProductServiceTest extends ServiceTest {
         product.setPrice(BigDecimal.valueOf(17_000));
 
         Product savedProduct = productService.create(product);
-        productIds.add(savedProduct.getId());
 
         assertAll(
                 () -> assertThat(savedProduct.getId()).isNotNull(),
                 () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice()).isEqualTo(
-                        product.getPrice().setScale(BIG_DECIMAL_FLOOR_SCALE, BigDecimal.ROUND_FLOOR))
+                () -> assertThat(savedProduct.getPrice()).isEqualTo(product.getPrice())
         );
     }
 
@@ -72,8 +68,8 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("저장된 모든 상품 반환")
     @Test
     void listTest() {
-        saveProduct(productDao, "후라이드치킨", BigDecimal.valueOf(16_000));
-        saveProduct(productDao, "양념치킨", BigDecimal.valueOf(16_000));
+        saveProduct(productRepository, "후라이드치킨", BigDecimal.valueOf(16_000));
+        saveProduct(productRepository, "양념치킨", BigDecimal.valueOf(16_000));
 
         List<Product> products = productService.list();
 
@@ -82,6 +78,6 @@ class ProductServiceTest extends ServiceTest {
 
     @AfterEach
     void tearDown() {
-        deleteProduct();
+        productRepository.deleteAll();
     }
 }

@@ -1,40 +1,54 @@
 package kitchenpos.domain;
 
-public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
+import javax.persistence.*;
+
+@AttributeOverride(name = "id", column = @Column(name = "id"))
+@Table(name = "order_table")
+@Entity
+public class OrderTable extends BaseEntity {
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    public OrderTable() {
+    }
+
+    public OrderTable(Long id) {
+        this.id = id;
     }
 
     public void setId(final Long id) {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public void setNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public void setTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

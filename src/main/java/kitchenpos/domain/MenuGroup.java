@@ -1,22 +1,36 @@
 package kitchenpos.domain;
 
-public class MenuGroup {
-    private Long id;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@AttributeOverride(name = "id", column = @Column(name = "id"))
+@Table(name = "menu_group")
+@Entity
+public class MenuGroup extends BaseEntity {
     private String name;
+
+    public MenuGroup() {
+    }
+
+    public MenuGroup(Long id) {
+        this.id = id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 }

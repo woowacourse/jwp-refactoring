@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static kitchenpos.DomainFactory.createOrderTable;
@@ -23,22 +22,19 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableServiceTest extends ServiceTest {
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     private TableService tableService;
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
-        orderTableIds = new ArrayList<>();
-        orderIds = new ArrayList<>();
-        tableGroupIds = new ArrayList<>();
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 테이블 추가")
@@ -47,7 +43,6 @@ class TableServiceTest extends ServiceTest {
         OrderTable orderTable = createOrderTable(0, true);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
-        orderTableIds.add(savedOrderTable.getId());
 
         assertAll(
                 () -> assertThat(savedOrderTable.getId()).isNotNull(),
@@ -59,8 +54,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("저장된 모든 테이블 반환")
     @Test
     void listTest() {
-        saveOrderTable(orderTableDao, 0, true);
-        saveOrderTable(orderTableDao, 0, true);
+        saveOrderTable(orderTableRepository, 0, true);
+        saveOrderTable(orderTableRepository, 0, true);
 
         List<OrderTable> orderTables = tableService.list();
 
@@ -70,7 +65,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블에 주문이 남아있는지 여부 상태 변경")
     @Test
     void changeEmptyTest() {
-        OrderTable orderTable = saveOrderTable(orderTableDao, 0, true);
+        OrderTable orderTable = saveOrderTable(orderTableRepository, 0, true);
         OrderTable nonEmptyOrderTable = createOrderTable(0, false);
 
         OrderTable changeEmptyOrderTable = tableService.changeEmpty(orderTable.getId(), nonEmptyOrderTable);
@@ -95,8 +90,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("단체로 지정된 테이블의 상태 변경 시 예외 반환")
     @Test
     void changeEmptyWithTableGroupTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        OrderTable orderTable = saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable orderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
         OrderTable nonEmptyOrderTable = createOrderTable(1, false);
 
         assertThatThrownBy(() -> {
@@ -107,10 +102,10 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블에 주문이 남아있을 때 상태 변경 시 예외 반환")
     @Test
     void changeEmptyWithOrderTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        OrderTable unPairedOrderTable = saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
         OrderTable nonEmptyOrderTable = createOrderTable(1, false);
-        saveOrder(orderDao, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         assertThatThrownBy(() -> {
             tableService.changeEmpty(unPairedOrderTable.getId(), nonEmptyOrderTable);
@@ -120,7 +115,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수 변경")
     @Test
     void changeNumberOfGuestsTest() {
-        OrderTable orderTable = saveOrderTable(orderTableDao, 5, false);
+        OrderTable orderTable = saveOrderTable(orderTableRepository, 5, false);
         OrderTable changeGuestsOrderTable = createOrderTable(3, false);
 
         OrderTable changeNumberOfGuestsOrderTable =
@@ -137,7 +132,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("0명 미만으로 손님 수 변경 시 예외 반환")
     @Test
     void changeNumberOfGuestsWithUnderZeroTest() {
-        OrderTable orderTable = saveOrderTable(orderTableDao, 5, false);
+        OrderTable orderTable = saveOrderTable(orderTableRepository, 5, false);
         OrderTable changeGuestsOrderTable = createOrderTable(-1, false);
 
         assertThatThrownBy(() -> {
@@ -158,7 +153,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문이 비어있는 테이블의 손님 수 변경 시 예외 반환")
     @Test
     void changeNumberOfGuestsWithEmptyOrderTableTest() {
-        OrderTable emptyOrderTable = saveOrderTable(orderTableDao, 5, true);
+        OrderTable emptyOrderTable = saveOrderTable(orderTableRepository, 5, true);
         OrderTable changeGuestsOrderTable = createOrderTable(3, false);
 
         assertThatThrownBy(() -> {
@@ -168,8 +163,8 @@ class TableServiceTest extends ServiceTest {
 
     @AfterEach
     void tearDown() {
-        deleteOrder();
-        deleteOrderTable();
-        deleteTableGroup();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }

@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
 import kitchenpos.domain.*;
+import kitchenpos.repository.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,54 +20,46 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class OrderServiceTest extends ServiceTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-        menuGroupIds = new ArrayList<>();
-        menuIds = new ArrayList<>();
-        orderTableIds = new ArrayList<>();
-        orderIds = new ArrayList<>();
-        orderLineItemSeqs = new ArrayList<>();
+        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
     }
 
     @DisplayName("새로운 주문 추가")
     @Test
     void createTest() {
-        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
-        Menu savedMenu = saveMenu(menuDao, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
-        OrderTable savedOrderTable = saveOrderTable(orderTableDao, 0, false);
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
+        Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
+        OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1L);
         List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
 
         Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTable(new OrderTable(savedOrderTable.getId()));
         order.setOrderLineItems(orderLineItems);
 
         Order savedOrder = orderService.create(order);
-        orderIds.add(savedOrder.getId());
-        List<OrderLineItem> savedOrderLineItems = savedOrder.getOrderLineItems();
-        savedOrderLineItems.forEach(item -> orderLineItemSeqs.add(item.getSeq()));
 
         assertAll(
                 () -> assertThat(savedOrder.getId()).isNotNull(),
-                () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(savedOrderTable.getId()),
+                () -> assertThat(savedOrder.getOrderTable().getId()).isEqualTo(savedOrderTable.getId()),
                 () -> assertThat(savedOrder.getOrderLineItems()).hasSize(1),
                 () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(savedOrder.getOrderedTime()).isNotNull()
@@ -101,15 +92,15 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("새로운 주문 등록 시 존재하지 않는 주문 테이블 번호 입력 시 예외 반환")
     @Test
     void createOrderWithInvalidOrderTableTest() {
-        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
-        Menu savedMenu = saveMenu(menuDao, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
+        Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1L);
         List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
 
         Order order = new Order();
         order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(0L);
+        order.setOrderTable(new OrderTable(0L));
 
         assertThatThrownBy(() -> {
             orderService.create(order);
@@ -119,15 +110,15 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("새로운 주문 등록 시 비어있는 테이블에 주문 추가 시 예외 반환")
     @Test
     void createOrderWithEmptyOrderTableTest() {
-        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
-        Menu savedMenu = saveMenu(menuDao, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
-        OrderTable savedOrderTable = saveOrderTable(orderTableDao, 0, true);
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
+        Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
+        OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, true);
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1L);
         List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
 
         Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTable(new OrderTable(savedOrderTable.getId()));
         order.setOrderLineItems(orderLineItems);
 
         assertThatThrownBy(() -> {
@@ -139,11 +130,11 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("저장된 모든 주문 조회")
     @Test
     void listTest() {
-        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
-        Menu savedMenu = saveMenu(menuDao, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
-        OrderTable savedOrderTable = saveOrderTable(orderTableDao, 0, false);
-        Order savedOrder = saveOrder(orderDao, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
-        saveOrderLineItem(orderLineItemDao, savedOrder.getId(), savedMenu.getId(), 1L);
+        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
+        Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
+        OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        saveOrderLineItem(orderLineItemRepository, savedOrder.getId(), savedMenu.getId(), 1L);
 
         List<Order> orders = orderService.list();
 
@@ -156,8 +147,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문의 상태 변경")
     @Test
     void changeOrderStatusTest() {
-        OrderTable savedOrderTable = saveOrderTable(orderTableDao, 0, false);
-        Order savedOrder = saveOrder(orderDao, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
 
         Order newStatusOrder = new Order();
         newStatusOrder.setOrderStatus(OrderStatus.COMPLETION.name());
@@ -166,7 +157,8 @@ class OrderServiceTest extends ServiceTest {
 
         assertAll(
                 () -> assertThat(changeStatusOrder.getId()).isEqualTo(savedOrder.getId()),
-                () -> assertThat(changeStatusOrder.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId()),
+                () -> assertThat(changeStatusOrder.getOrderTable().getId())
+                        .isEqualTo(savedOrder.getOrderTable().getId()),
                 () -> assertThat(changeStatusOrder.getOrderedTime()).isEqualTo(savedOrder.getOrderedTime()),
                 () -> assertThat(changeStatusOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name())
         );
@@ -185,8 +177,8 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("완료된 주문의 상태 변경 시 예외 반환")
     @Test
     void changeOrderStatusWithCompletionOrderTest() {
-        OrderTable savedOrderTable = saveOrderTable(orderTableDao, 0, false);
-        Order savedOrder = saveOrder(orderDao, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
 
         Order newStatusOrder = new Order();
 
@@ -197,10 +189,10 @@ class OrderServiceTest extends ServiceTest {
 
     @AfterEach
     void tearDown() {
-        deleteOrderLineItem();
-        deleteOrder();
-        deleteOrderTable();
-        deleteMenu();
-        deleteMenuGroup();
+        orderLineItemRepository.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }
