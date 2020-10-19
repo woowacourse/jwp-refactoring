@@ -12,6 +12,7 @@ import kitchenpos.config.ServiceIntegrationTestConfig;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @SpringBootTest
@@ -73,5 +74,17 @@ class ServiceIntegrationTest {
             price *= 10;
         }
         return price;
+    }
+
+    static OrderTable getNotEmptyOrderTable() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        return orderTable;
+    }
+
+    static OrderTable getOrderTableWithGuests(int numberOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        return orderTable;
     }
 }
