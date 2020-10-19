@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.util.ObjectUtil.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
@@ -7,10 +8,13 @@ import static org.mockito.BDDMockito.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -37,17 +41,12 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Test
+    @DisplayName("그룹 테이블 생성")
     void create() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(true);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, null, 0, true);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(3L);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = createTableGroup(3L, null, orderTables);
 
         given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(orderTables);
         given(tableGroupDao.save(any(TableGroup.class))).willReturn(tableGroup);
@@ -62,35 +61,22 @@ class TableGroupServiceTest {
         );
     }
 
-    @Test
-    @DisplayName("주문 테이블이 비어있거나 2 미만인 경우")
-    void orderTablesBelowTwo() {
-        TableGroup tableGroup = new TableGroup();
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-            .isInstanceOf(IllegalArgumentException.class);
-
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        tableGroup.setOrderTables(Collections.singletonList(orderTable));
-
+    @ParameterizedTest
+    @MethodSource("provideOrderTables")
+    @DisplayName("주문 테이블이 비어있거나 2 미만인 경우 예외 발생")
+    void orderTablesBelowTwo(List<OrderTable> input) {
+        TableGroup tableGroup = createTableGroup(null, null, input);
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("그룹내의 주문 테이블과 등록된 주문 테이블에서 조회한 것이 다른 경우")
+    @DisplayName("그룹내의 주문 테이블과 등록된 주문 테이블에서 조회한 것이 다른 경우 예외 발생")
     void differentCountOfOrderTableAndRegisterOrderTable() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(true);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, null, 0, true);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(3L);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = createTableGroup(3L, null, orderTables);
 
         given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(firstTable));
 
@@ -99,18 +85,12 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("그룹내의 주문 테이블이 비어있지 않은 경우")
+    @DisplayName("그룹내의 주문 테이블이 비어있지 않은 경우 예외 발생")
     void notEmptyOrderTable() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(false);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, null, 0, false);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(3L);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = createTableGroup(3L, null, orderTables);
 
         given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(firstTable));
 
@@ -119,18 +99,12 @@ class TableGroupServiceTest {
     }
 
     @Test
+    @DisplayName("주문 테이블이 다른 그룹에 속한 경우 예외 발생")
     void orderTableBelongToOtherTableGroup() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(false);
-        firstTable.setTableGroupId(3L);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, 3L, 0, false);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(3L);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = createTableGroup(3L, null, orderTables);
 
         given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(firstTable));
 
@@ -141,12 +115,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("그룹 해제")
     void ungroup() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(true);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, null, 0, true);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
 
         given(orderTableDao.findAllByTableGroupId(1L)).willReturn(orderTables);
@@ -157,14 +127,10 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("주문이 완료되지 않은 경우")
+    @DisplayName("주문이 완료되지 않은 경우 예외 발생")
     void orderNotCompleted() {
-        OrderTable firstTable = new OrderTable();
-        firstTable.setId(1L);
-        firstTable.setEmpty(true);
-        OrderTable secondTable = new OrderTable();
-        secondTable.setId(2L);
-        secondTable.setEmpty(true);
+        OrderTable firstTable = createOrderTable(1L, null, 0, true);
+        OrderTable secondTable = createOrderTable(2L, null, 0, true);
         List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
 
         given(orderTableDao.findAllByTableGroupId(1L)).willReturn(orderTables);
@@ -173,5 +139,14 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private static Stream<List<OrderTable>> provideOrderTables() {
+        OrderTable orderTable = createOrderTable(1L, null, 0, true);
+
+        return Stream.of(
+            null,
+            Collections.singletonList(orderTable)
+        );
     }
 }
