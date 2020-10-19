@@ -3,51 +3,49 @@ package kitchenpos.application;
 import static kitchenpos.helper.EntityCreateHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql(value = "/truncate.sql")
 class OrderServiceTest {
 
+    @Autowired
     private OrderService orderService;
 
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
-
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
 
-    @Mock
+    @Autowired
     private MenuDao menuDao;
 
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-    }
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("주문 생성 시 주문항목이 없을 시 예외가 발생한다.")
     @Test
@@ -61,12 +59,13 @@ class OrderServiceTest {
     @DisplayName("주문 생성 시 주문 항목이 중복되거나 없는 주문 항목일 시 예외가 발생한다.")
     @Test
     void createWithInvalidOrderItem() {
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(1L, 2L, 3);
-        OrderLineItem 주문된_콜라세트 = createOrderLineItem(1L, 3L, 3);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        given(menuDao.countByIdIn(anyList())).willReturn(3L);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_콜라세트), OrderStatus.COOKING, 1L);
+        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_치킨세트), OrderStatus.COOKING, 1L);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -75,13 +74,16 @@ class OrderServiceTest {
     @DisplayName("주문 생성 시 주문 테이블이 없는 경우 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTable() {
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(1L, 2L, 3);
-        OrderLineItem 주문된_콜라세트 = createOrderLineItem(1L, 3L, 3);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
-        given(orderTableDao.findById(any(Long.class))).willReturn(Optional.empty());
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_콜라세트), OrderStatus.COOKING, 1L);
+        OrderTable orderTable = createOrderTable(null, false, null, 5);
+        orderTableDao.save(orderTable);
+
+        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING, -1L);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -90,14 +92,17 @@ class OrderServiceTest {
     @DisplayName("주문 생성 시 주문테이블의 손님이 없을 경우 예외가 발생한다.")
     @Test
     void createWithEmptyTable() {
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(1L, 2L, 3);
-        OrderLineItem 주문된_콜라세트 = createOrderLineItem(1L, 3L, 3);
-        OrderTable orderTable = createOrderTable(1L, true, null, 3);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
-        given(orderTableDao.findById(any(Long.class))).willReturn(Optional.of(orderTable));
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_콜라세트), OrderStatus.COOKING, 1L);
+        OrderTable orderTable = createOrderTable(null, true, null, 5);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
+            savedOrderTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -106,47 +111,59 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(1L, 2L, 3);
-        OrderLineItem 주문된_콜라세트 = createOrderLineItem(1L, 3L, 3);
-        OrderTable orderTable = createOrderTable(1L, false, null, 3);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
+        OrderTable savedOrderTable = saveOrderTable();
 
-        Order expect = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_콜라세트), OrderStatus.COOKING, 1L);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
-        given(orderTableDao.findById(any(Long.class))).willReturn(Optional.of(orderTable));
-        given(orderDao.save(any(Order.class))).willReturn(expect);
+        Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
+            savedOrderTable.getId());
 
-        Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_콜라세트), OrderStatus.COOKING, 1L);
-        Order actual = orderService.create(order);
+        Order savedOrder = orderService.create(order);
 
         assertAll(
-            () -> assertThat(actual.getId()).isEqualTo(1L),
-            () -> assertThat(actual.getOrderStatus()).isEqualTo("COOKING"),
-            () -> assertThat(actual.getOrderTableId()).isEqualTo(1L)
+            () -> assertThat(savedOrder.getId()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING"),
+            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(savedOrderTable.getId())
         );
     }
 
     @DisplayName("주문 리스트를 조회한다")
     @Test
     void list() {
-        Order order = createOrder(1L, LocalDateTime.now(), null, OrderStatus.MEAL, null);
-        Order order1 = createOrder(2L, LocalDateTime.now(), null, OrderStatus.MEAL, null);
-        Order order2 = createOrder(3L, LocalDateTime.now(), null, OrderStatus.MEAL, null);
-        List<Order> orders = Arrays.asList(order, order1, order2);
-        given(orderDao.findAll()).willReturn(orders);
-        given(orderLineItemDao.findAllByOrderId(any(Long.class))).willReturn(Collections.EMPTY_LIST);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
+
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+
+        OrderTable savedOrderTable = saveOrderTable();
+
+        Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
+            savedOrderTable.getId());
+
+        Order savedOrder = orderService.create(order);
 
         List<Order> actual = orderService.list();
 
-        assertThat(actual).isEqualTo(orders);
+        assertAll(
+            () -> assertThat(actual).hasSize(1),
+            () -> assertThat(actual.get(0).getOrderStatus()).isEqualTo(savedOrder.getOrderStatus()),
+            () -> assertThat(actual.get(0).getOrderTableId()).isEqualTo(savedOrder.getOrderTableId())
+        );
+    }
+
+    private OrderTable saveOrderTable() {
+        OrderTable orderTable = createOrderTable(null, false, null, 5);
+        return orderTableDao.save(orderTable);
     }
 
     @DisplayName("주문 상태를 변경할 때 주문이 없을 시 예외가 발생한다.")
     @Test
     void changeOrderStatusWithInvalidOrder() {
         Order order = createOrder(1L, LocalDateTime.now(), null, OrderStatus.COOKING, 2L);
-
-        given(orderDao.findById(any(Long.class))).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -155,9 +172,7 @@ class OrderServiceTest {
     @DisplayName("주문상태를 변경할 때 주문상태가 'COMPLETION' 인 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWhenCompletion() {
-        Order expect = createOrder(1L, LocalDateTime.now(), null, OrderStatus.COMPLETION, 2L);
-
-        given(orderDao.findById(any(Long.class))).willReturn(Optional.of(expect));
+        createOrder(1L, LocalDateTime.now(), null, OrderStatus.COMPLETION, 2L);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -166,14 +181,39 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다.")
     @Test
     void changeOrderStatus() {
-        Order expect = createOrder(1L, LocalDateTime.now(), null, OrderStatus.COOKING, 2L);
+        MenuGroup savedMenuGroup = getMenuGroup();
+        Product savedProduct = saveProduct();
+        Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
+        OrderTable savedOrderTable = saveOrderTable();
 
-        given(orderDao.findById(any(Long.class))).willReturn(Optional.of(expect));
-        given(orderLineItemDao.findAllByOrderId(any(Long.class))).willReturn(Collections.EMPTY_LIST);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        Order order = createOrder(1L, LocalDateTime.now(), null, OrderStatus.MEAL, 2L);
-        Order actual = orderService.changeOrderStatus(1L, order);
+        Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
+            savedOrderTable.getId());
+
+        Order savedOrder = orderService.create(order);
+
+        Order actual = orderService.changeOrderStatus(savedOrder.getId(),
+            createOrder(null, LocalDateTime.now(), null, OrderStatus.MEAL, 2L));
 
         assertThat(actual.getOrderStatus()).isEqualTo("MEAL");
+    }
+
+    private Menu saveMenu(MenuGroup savedMenuGroup, Product savedProduct) {
+        MenuProduct menuProduct = createMenuProduct(null, savedProduct.getId(), 1L);
+        Menu 치킨세트 = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "둘둘치킨",
+            BigDecimal.valueOf(1900L));
+
+        return menuDao.save(치킨세트);
+    }
+
+    private Product saveProduct() {
+        Product product = createProduct(null, "양념치킨", BigDecimal.valueOf(2000L));
+        return productDao.save(product);
+    }
+
+    private MenuGroup getMenuGroup() {
+        MenuGroup menuGroup = createMenuGroup(null, "치킨류");
+        return menuGroupDao.save(menuGroup);
     }
 }
