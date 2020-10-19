@@ -30,8 +30,8 @@ class TableGroupRestControllerTest extends MvcTest {
             .andExpect(header().string("Location", "/api/table-groups/1"))
             .andReturn();
 
-        TableGroup tableGroupResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-            TableGroup.class);
+        TableGroup tableGroupResponse =
+            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), TableGroup.class);
         assertThat(tableGroupResponse).usingRecursiveComparison().isEqualTo(TABLE_GROUP);
     }
 
