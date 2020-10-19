@@ -52,7 +52,7 @@ class MenuGroupRestControllerTest {
         String content = objectMapper.writeValueAsString(menuGroupRequest);
         MenuGroupResponse menuGroupResponse = new MenuGroupResponse(1L, "추천메뉴");
 
-        given(menuGroupService.createWithRequest(any())).willReturn(menuGroupResponse);
+        given(menuGroupService.create(any())).willReturn(menuGroupResponse);
 
         mockMvc.perform(
                 post(BASE_URL)
@@ -74,7 +74,7 @@ class MenuGroupRestControllerTest {
                 new MenuGroupResponse(3L, "한정메뉴")
         );
 
-        given(menuGroupService.listToMenuGroupResponse()).willReturn(menuGroupResponses);
+        given(menuGroupService.list()).willReturn(menuGroupResponses);
 
         mockMvc.perform(get("/api/menu-groups"))
                 .andExpect(status().isOk())
