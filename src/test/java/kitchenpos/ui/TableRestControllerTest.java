@@ -21,6 +21,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
 @SpringBootTest
@@ -38,11 +39,48 @@ class TableRestControllerTest {
     @Autowired
     TableService tableService;
 
+    @Autowired
+    OrderTableDao orderTableDao;
+
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(applicationContext)
                 .addFilter(new CharacterEncodingFilter(StandardCharsets.UTF_8.name(), true))
                 .build();
+    }
+
+    @DisplayName("create: 새 테이블 생성 요청시, 200 상태코드 반환, 새로 생성된 테이블을 반환한다.")
+    @Test
+    void create() throws Exception {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(5);
+
+        mockMvc.perform(post("/api/tables")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(orderTable)))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.tableGroupId", nullValue()))
+                .andExpect(jsonPath("$.numberOfGuests", is(5)))
+                .andExpect(jsonPath("$.empty", is(false)));
+    }
+
+    @DisplayName("list: 전체 테이블 목록 조회 요청시, 200 상태 코드와 함께, 전체 테이블 내역을 반환한다.")
+    @Test
+    void list() throws Exception {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setEmpty(false);
+        orderTable.setNumberOfGuests(5);
+        orderTableDao.save(orderTable);
+
+        mockMvc.perform(get("/api/tables")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(9)));
     }
 
     @DisplayName("changeEmpty: 현재 주문 테이블의 비움 처리 요청시, 200 상태코드반환, 주문 테이블 비운 처리")
