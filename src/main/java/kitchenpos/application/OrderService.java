@@ -4,6 +4,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -80,6 +83,11 @@ public class OrderService {
         return savedOrder;
     }
 
+    @Transactional
+    public OrderResponse createWithRequest(final OrderRequest orderRequest) {
+        return null;
+    }
+
     public List<Order> list() {
         final List<Order> orders = orderRepository.findAll();
 
@@ -88,6 +96,10 @@ public class OrderService {
         }
 
         return orders;
+    }
+
+    public List<OrderResponse> listWithResponse() {
+        return null;
     }
 
     @Transactional
@@ -107,5 +119,9 @@ public class OrderService {
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return savedOrder;
+    }
+
+    public OrderResponse changeOrderStatusWithRequest(Long orderId, OrderStatusRequest orderStatusRequest) {
+        return null;
     }
 }
