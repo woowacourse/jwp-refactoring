@@ -5,11 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,29 +21,8 @@ import kitchenpos.domain.Product;
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends MvcTest {
 
-    private static final Long PRODUCT_ID_1 = 1L;
-    private static final String PRODUCT_NAME_1 = "name_1";
-    private static final BigDecimal PRODUCT_PRICE_1 = new BigDecimal(1);
-    private static final Product PRODUCT_1 = new Product();
-
-    private static final Long PRODUCT_ID_2 = 2L;
-    private static final String PRODUCT_NAME_2 = "name_2";
-    private static final BigDecimal PRODUCT_PRICE_2 = new BigDecimal(2);
-    private static final Product PRODUCT_2 = new Product();
-
     @MockBean
     private ProductService productService;
-
-    @BeforeEach
-    void setUp() {
-        PRODUCT_1.setId(PRODUCT_ID_1);
-        PRODUCT_1.setName(PRODUCT_NAME_1);
-        PRODUCT_1.setPrice(PRODUCT_PRICE_1);
-
-        PRODUCT_2.setId(PRODUCT_ID_2);
-        PRODUCT_2.setName(PRODUCT_NAME_2);
-        PRODUCT_2.setPrice(PRODUCT_PRICE_2);
-    }
 
     @DisplayName("/api/products로 POST요청 성공 테스트")
     @Test

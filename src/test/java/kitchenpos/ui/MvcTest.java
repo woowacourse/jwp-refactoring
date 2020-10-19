@@ -15,8 +15,9 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import kitchenpos.fixture.TestFixture;
 
-public abstract class MvcTest {
+public abstract class MvcTest extends TestFixture {
 
     protected ObjectMapper objectMapper = new ObjectMapper();
 

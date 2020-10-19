@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,23 +21,8 @@ import kitchenpos.domain.MenuGroup;
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends MvcTest {
 
-    private static final Long MENU_GROUP_ID_1 = 1L;
-    private static final Long MENU_GROUP_ID_2 = 2L;
-    private static final String MENU_GROUP_NAME_1 = "메뉴그룹1";
-    private static final String MENU_GROUP_NAME_2 = "메뉴그룹2";
-    private static final MenuGroup MENU_GROUP_1 = new MenuGroup();
-    private static final MenuGroup MENU_GROUP_2 = new MenuGroup();
-
     @MockBean
     private MenuGroupService menuGroupService;
-
-    @BeforeEach
-    void setUp() {
-        MENU_GROUP_1.setId(MENU_GROUP_ID_1);
-        MENU_GROUP_1.setName(MENU_GROUP_NAME_1);
-        MENU_GROUP_2.setId(MENU_GROUP_ID_2);
-        MENU_GROUP_2.setName(MENU_GROUP_NAME_2);
-    }
 
     @DisplayName("/api/menu-groups로 POST요청 성공 테스트")
     @Test
