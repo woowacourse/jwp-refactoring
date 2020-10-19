@@ -37,17 +37,13 @@ public class TestFixture {
     }
 
     public static OrderTable getOrderTableWithEmpty() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        final OrderTable orderTable = new OrderTable(0, true);
 
         return orderTable;
     }
 
     public static OrderTable getOrderTableWithNotEmpty() {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(false);
+        final OrderTable orderTable = new OrderTable(0, false);
 
         return orderTable;
     }

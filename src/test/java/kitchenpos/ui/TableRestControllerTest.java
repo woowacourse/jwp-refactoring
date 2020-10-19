@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.TableChangeEmptyRequest;
+import kitchenpos.dto.TableChangeGuestsRequest;
+import kitchenpos.dto.TableCreateRequest;
 
 class TableRestControllerTest extends ControllerTest {
 
@@ -17,18 +20,21 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("create: 테이블 등록 테스트")
     @Test
     void createTest() throws Exception {
-        final OrderTable table = new OrderTable();
-        table.setNumberOfGuests(0);
-        table.setEmpty(true);
+        final TableCreateRequest table = new TableCreateRequest(0, true);
 
         create("/api/tables", table)
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.numberOfGuests").value(0));
+                .andExpect(jsonPath("$.numberOfGuests").value(0))
+                .andExpect(jsonPath("$.empty").value(true));
     }
 
     @DisplayName("list: 테이블 전체 조회 테스트")
     @Test
     void listTest() throws Exception {
+        final OrderTable orderTable = new OrderTable(0, true);
+        orderTableDao.save(orderTable);
+        orderTableDao.save(orderTable);
+
         findList("/api/tables")
                 .andExpect(jsonPath("$[0].numberOfGuests").value(0))
                 .andExpect(jsonPath("$[1].numberOfGuests").value(0));
@@ -37,19 +43,23 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("changeEmpty: 테이블의 비어있는 상태를 변경하는 테스트")
     @Test
     void changeEmptyTest() throws Exception {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        update("/api/tables/1/empty", orderTable)
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable saved = orderTableDao.save(orderTable);
+        final TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(false);
+
+        update("/api/tables/" + saved.getId() + "/empty", tableChangeEmptyRequest)
                 .andExpect(jsonPath("$.empty").value(false));
     }
 
     @DisplayName("changeNumberOfGuests: 손님 수를 변경하는 테스")
     @Test
     void changeNumberOfGuestsTest() throws Exception {
-        final OrderTable expected = new OrderTable();
-        expected.setNumberOfGuests(5);
+        final OrderTable orderTable = new OrderTable(0, false);
+        final OrderTable saved = orderTableDao.save(orderTable);
 
-        update("/api/tables/7/number-of-guests", expected)
+        final TableChangeGuestsRequest tableChangeGuestsRequest = new TableChangeGuestsRequest(5);
+
+        update("/api/tables/" + saved.getId() + "/number-of-guests", tableChangeGuestsRequest)
                 .andExpect(jsonPath("$.numberOfGuests").value(5));
     }
 }

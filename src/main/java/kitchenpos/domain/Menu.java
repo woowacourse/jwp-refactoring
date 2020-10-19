@@ -37,7 +37,7 @@ public class Menu {
     }
 
     public void validateByPriceWithMenuProductSum(final BigDecimal sum) {
-        if (price.compareTo(sum) < 0) {
+        if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴 가격이 메뉴 상품 가격의 합보다 작을 수 없습니다.");
         }
     }
