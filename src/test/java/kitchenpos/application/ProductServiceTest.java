@@ -1,46 +1,33 @@
 package kitchenpos.application;
 
-import static kitchenpos.helper.EntityCreateHelper.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.*;
+import static kitchenpos.helper.EntityCreateHelper.createProduct;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql(value = "/truncate.sql")
 class ProductServiceTest {
 
+    @Autowired
     private ProductService productService;
-
-    @Mock
-    private ProductDao productDao;
-
-    @BeforeEach
-    void setUp() {
-        productService = new ProductService(productDao);
-    }
 
     @DisplayName("상품을 등록한다")
     @Test
     void create() {
         Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
 
-        given(productDao.save(any(Product.class))).willReturn(product);
         Product savedProduct = productService.create(product);
 
         assertAll(
@@ -65,8 +52,7 @@ class ProductServiceTest {
     @Test
     void list() {
         Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
-
-        given(productDao.findAll()).willReturn(Arrays.asList(product));
+        productService.create(product);
         List<Product> products = productService.list();
 
         assertAll(
