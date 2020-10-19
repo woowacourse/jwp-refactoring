@@ -18,8 +18,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 class OrderRestControllerTest extends ControllerTest {
-    private static final String ORDER_API_URL = "/api/orders";
-
     @Autowired
     OrderService orderService;
 
@@ -42,7 +40,8 @@ class OrderRestControllerTest extends ControllerTest {
         order.setOrderTableId(savedTable.getId());
         order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
-        final ResultActions resultActions = create(ORDER_API_URL, order);
+        final String createOrderApiUrl = "/api/orders";
+        final ResultActions resultActions = create(createOrderApiUrl, order);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -70,7 +69,8 @@ class OrderRestControllerTest extends ControllerTest {
         order.setOrderLineItems(Collections.singletonList(orderLineItem));
         orderService.create(order);
 
-        final ResultActions resultActions = findList(ORDER_API_URL);
+        final String findOrdersApiUrl = "/api/orders";
+        final ResultActions resultActions = findList(findOrdersApiUrl);
 
         resultActions
                 .andExpect(status().isOk())
@@ -94,13 +94,13 @@ class OrderRestControllerTest extends ControllerTest {
         order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
         final Order savedOrder = orderService.create(order);
+        final Long savedOrderId = savedOrder.getId();
 
         final Order newOrder = new Order();
         newOrder.setOrderStatus(OrderStatus.MEAL.name());
 
-        String api = "/api/orders/{orderId}/order-status";
-
-        final ResultActions resultActions = updateByPathIdAndBody(api, savedOrder.getId(), newOrder);
+        String updateOrderStatusApiUrl = "/api/orders/{orderId}/order-status";
+        final ResultActions resultActions = updateByPathIdAndBody(updateOrderStatusApiUrl, savedOrderId, newOrder);
 
         resultActions
                 .andExpect(status().isOk())

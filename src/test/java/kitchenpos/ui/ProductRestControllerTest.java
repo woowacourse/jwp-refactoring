@@ -12,8 +12,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import kitchenpos.domain.Product;
 
 class ProductRestControllerTest extends ControllerTest {
-    private static final String PRODUCT_API_URL = "/api/products";
-
     @DisplayName("create: 이름, 가격을 body message에 포함해 제품 등록을 요청시 , 요청값을 바탕으로 제품을 생성 후 생성 성공 시 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
@@ -21,7 +19,8 @@ class ProductRestControllerTest extends ControllerTest {
         product.setName("치킨");
         product.setPrice(BigDecimal.valueOf(16_000));
 
-        final ResultActions resultActions = create(PRODUCT_API_URL, product);
+        final String createProductApiUrl = "/api/products";
+        final ResultActions resultActions = create(createProductApiUrl, product);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -34,7 +33,8 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("list: 제품 목록 요청시, 등록된 제품의 목록을 body message로 가지고 있는 status code 200 응답을 반환한다.")
     @Test
     void list() throws Exception {
-        final ResultActions resultActions = findList(PRODUCT_API_URL);
+        final String findProductsApiUrl = "/api/products";
+        final ResultActions resultActions = findList(findProductsApiUrl);
 
         resultActions
                 .andExpect(status().isOk())

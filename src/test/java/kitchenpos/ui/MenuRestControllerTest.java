@@ -14,8 +14,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 class MenuRestControllerTest extends ControllerTest {
-    private static final String MENU_API_URL = "/api/menus";
-
     @DisplayName("create: 이름을 body message에 포함해 메뉴 등록을 요청시 ,메뉴 생성 성공 시 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
@@ -29,7 +27,8 @@ class MenuRestControllerTest extends ControllerTest {
         menu.setMenuGroupId(1L);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
-        final ResultActions resultActions = create(MENU_API_URL, menu);
+        final String createMenuApiUrl = "/api/menus";
+        final ResultActions resultActions = create(createMenuApiUrl, menu);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -43,7 +42,8 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("list: 전체 메뉴 목록 요청시, 200 응답 코드와 함께 메뉴 목록을 반환한다.")
     @Test
     void list() throws Exception {
-        final ResultActions resultActions = findList(MENU_API_URL);
+        final String findMenusApiUrl = "/api/menus";
+        final ResultActions resultActions = findList(findMenusApiUrl);
 
         resultActions
                 .andExpect(status().isOk())

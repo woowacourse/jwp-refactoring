@@ -48,9 +48,9 @@ class TableGroupRestControllerTest extends ControllerTest {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(Lists.list(orderTable, orderTable2));
 
-        String url = "/api/table-groups";
+        String groupApiUrl = "/api/table-groups";
 
-        final ResultActions resultActions = create(url, tableGroup);
+        final ResultActions resultActions = create(groupApiUrl, tableGroup);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -95,9 +95,9 @@ class TableGroupRestControllerTest extends ControllerTest {
         orderService.changeOrderStatus(order1.getId(), order3);
         orderService.changeOrderStatus(order4.getId(), order3);
 
-        String url = "/api/table-groups/{tableGroupId}";
+        String unGroupApiUrl = "/api/table-groups/{tableGroupId}";
 
-        final ResultActions resultActions = deleteByPathId(url, savedTableGroupId);
+        final ResultActions resultActions = deleteByPathId(unGroupApiUrl, savedTableGroupId);
 
         resultActions
                 .andExpect(status().isNoContent());

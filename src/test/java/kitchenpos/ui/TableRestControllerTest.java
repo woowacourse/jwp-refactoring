@@ -26,7 +26,8 @@ class TableRestControllerTest extends ControllerTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(5);
 
-        final ResultActions resultActions = create("/api/tables", orderTable);
+        final String createTableApiUrl = "/api/tables";
+        final ResultActions resultActions = create(createTableApiUrl, orderTable);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -44,7 +45,8 @@ class TableRestControllerTest extends ControllerTest {
         orderTable.setNumberOfGuests(5);
         orderTableDao.save(orderTable);
 
-        final ResultActions resultActions = findList("/api/tables");
+        final String tableListApiUrl = "/api/tables";
+        final ResultActions resultActions = findList(tableListApiUrl);
 
         resultActions
                 .andExpect(status().isOk())
@@ -57,11 +59,11 @@ class TableRestControllerTest extends ControllerTest {
         final OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
         final OrderTable savedTable = tableService.create(orderTable);
-
         final OrderTable emptyTable = new OrderTable();
-        String url = "/api/tables/{orderTableId}/empty";
+        final Long savedTableId = savedTable.getId();
 
-        final ResultActions resultActions = updateByPathIdAndBody(url, savedTable.getId(), emptyTable);
+        String updateEmptyStatusApiUrl = "/api/tables/{orderTableId}/empty";
+        final ResultActions resultActions = updateByPathIdAndBody(updateEmptyStatusApiUrl, savedTableId, emptyTable);
 
         resultActions
                 .andExpect(status().isOk())
@@ -78,14 +80,13 @@ class TableRestControllerTest extends ControllerTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(5);
         final OrderTable savedTable = tableService.create(orderTable);
-        final Long tableId = savedTable.getId();
+        final Long savedTableId = savedTable.getId();
 
         final OrderTable tableWithNewNumberOfGuest = new OrderTable();
         tableWithNewNumberOfGuest.setNumberOfGuests(10);
 
-        String url = "/api/tables/{orderTableId}/number-of-guests";
-
-        final ResultActions resultActions = updateByPathIdAndBody(url, tableId, tableWithNewNumberOfGuest);
+        String updateGuestCountApiUrl = "/api/tables/{orderTableId}/number-of-guests";
+        final ResultActions resultActions = updateByPathIdAndBody(updateGuestCountApiUrl, savedTableId, tableWithNewNumberOfGuest);
 
         resultActions
                 .andExpect(status().isOk())
