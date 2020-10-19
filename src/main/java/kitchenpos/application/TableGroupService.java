@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -68,6 +70,11 @@ public class TableGroupService {
         savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;
+    }
+
+    @Transactional
+    public TableGroupResponse createWithRequest(TableGroupRequest tableGroupRequest) {
+        return null;
     }
 
     @Transactional
