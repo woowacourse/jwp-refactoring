@@ -14,6 +14,10 @@ public class MenuGroup extends BaseEntity {
     public MenuGroup() {
     }
 
+    public MenuGroup(String name) {
+        this.name = name;
+    }
+
     public MenuGroup(Long id) {
         this.id = id;
     }
