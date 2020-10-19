@@ -40,6 +40,8 @@ public abstract class TestFixture {
     public static final String MENU_NAME_2 = "메뉴이름2";
     public static final BigDecimal MENU_PRICE_1 = new BigDecimal(1);
     public static final BigDecimal MENU_PRICE_2 = new BigDecimal(2);
+    public static final List<MenuProduct> MENU_PRODUCTS_1 = Arrays.asList(MENU_PRODUCT_1);
+    public static final List<MenuProduct> MENU_PRODUCTS_2 = Arrays.asList(MENU_PRODUCT_2);
     public static final Menu MENU_1 = new Menu();
     public static final Menu MENU_2 = new Menu();
 
@@ -81,10 +83,11 @@ public abstract class TestFixture {
 
     public static final long TABLE_GROUP_ID = 1L;
     public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
+    public static final List<OrderTable> ORDER_TABLES = Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_2);
     public static final TableGroup TABLE_GROUP = new TableGroup();
 
     @BeforeEach
-    void setUp() {
+    void setUpFixture() {
         MENU_GROUP_1.setId(MENU_GROUP_ID_1);
         MENU_GROUP_1.setName(MENU_GROUP_NAME_1);
         MENU_GROUP_2.setId(MENU_GROUP_ID_2);
@@ -103,12 +106,12 @@ public abstract class TestFixture {
         MENU_1.setName(MENU_NAME_1);
         MENU_1.setPrice(MENU_PRICE_1);
         MENU_1.setMenuGroupId(MENU_GROUP_ID_1);
-        MENU_1.setMenuProducts(Arrays.asList(MENU_PRODUCT_1));
+        MENU_1.setMenuProducts(MENU_PRODUCTS_1);
         MENU_2.setId(MENU_ID_2);
         MENU_2.setName(MENU_NAME_2);
         MENU_2.setPrice(MENU_PRICE_2);
         MENU_2.setMenuGroupId(MENU_GROUP_ID_2);
-        MENU_2.setMenuProducts(Arrays.asList(MENU_PRODUCT_2));
+        MENU_2.setMenuProducts(MENU_PRODUCTS_2);
 
         PRODUCT_1.setId(PRODUCT_ID_1);
         PRODUCT_1.setName(PRODUCT_NAME_1);
@@ -168,6 +171,6 @@ public abstract class TestFixture {
 
         TABLE_GROUP.setId(TABLE_GROUP_ID);
         TABLE_GROUP.setCreatedDate(TABLE_GROUP_CREATED_DATE);
-        TABLE_GROUP.setOrderTables(Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_2));
+        TABLE_GROUP.setOrderTables(ORDER_TABLES);
     }
 }
