@@ -1,9 +1,13 @@
 package kitchenpos.application;
 
+import static kitchenpos.util.ObjectUtil.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +34,9 @@ class TableServiceTest {
     private TableService tableService;
 
     @Test
-    @DisplayName("생성")
+    @DisplayName("테이블 생성")
     void create() {
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = createOrderTable(null, null, 0, false);
 
         given(orderTableDao.save(any(OrderTable.class))).willReturn(orderTable);
 
@@ -42,12 +46,26 @@ class TableServiceTest {
     }
 
     @Test
+    @DisplayName("테이블 목록 조회")
+    void list() {
+        OrderTable orderTable = createOrderTable(1L, 2L, 4, false);
+        given(orderTableDao.findAll()).willReturn(Collections.singletonList(orderTable));
+
+        List<OrderTable> result = tableService.list();
+
+        assertThat(result).isNotNull();
+        assertAll(
+            () -> assertThat(result).hasSize(1),
+            () -> assertThat(result.get(0)).usingRecursiveComparison()
+                .isEqualTo(orderTable)
+        );
+    }
+
+    @Test
     @DisplayName("주문 테이블로 상태 변경")
     void changeEmpty() {
-        OrderTable saved = new OrderTable();
-        saved.setId(1L);
-        saved.setEmpty(true);
-        OrderTable ordered = new OrderTable();
+        OrderTable saved = createOrderTable(1L, null, 0, true);
+        OrderTable ordered = createOrderTable(null, null, 0, false);
         ordered.setEmpty(false);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
@@ -62,14 +80,10 @@ class TableServiceTest {
     }
 
     @Test
-    @DisplayName("테이블이 다른 테이블 그룹에 속하는 경우")
+    @DisplayName("테이블이 다른 테이블 그룹에 속하는 경우 예외 발생")
     void tableBelongToOtherTableGroup() {
-        OrderTable saved = new OrderTable();
-        saved.setId(1L);
-        saved.setEmpty(true);
-        saved.setTableGroupId(3L);
-        OrderTable ordered = new OrderTable();
-        ordered.setEmpty(false);
+        OrderTable saved = createOrderTable(1L, 3L, 0, true);
+        OrderTable ordered = createOrderTable(null, null, 0, false);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
 
@@ -78,13 +92,10 @@ class TableServiceTest {
     }
 
     @Test
-    @DisplayName("주문이 완료되지 않은 경우")
+    @DisplayName("주문이 완료되지 않은 경우 예외 발생")
     void orderNotCompleted() {
-        OrderTable saved = new OrderTable();
-        saved.setId(1L);
-        saved.setEmpty(true);
-        OrderTable ordered = new OrderTable();
-        ordered.setEmpty(false);
+        OrderTable saved = createOrderTable(1L, null, 0, true);
+        OrderTable ordered = createOrderTable(null, null, 0, false);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L,
@@ -97,11 +108,8 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블의 고객수 변경")
     void changeNumberOfGuests() {
-        OrderTable saved = new OrderTable();
-        saved.setNumberOfGuests(0);
-        saved.setEmpty(false);
-        OrderTable ordered = new OrderTable();
-        ordered.setNumberOfGuests(2);
+        OrderTable saved = createOrderTable(null, null, 0, false);
+        OrderTable ordered = createOrderTable(null, null, 2, false);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
         given(orderTableDao.save(any(OrderTable.class))).willReturn(ordered);
@@ -113,22 +121,19 @@ class TableServiceTest {
     }
 
     @Test
-    @DisplayName("테이블의 고객 수가 0 미만인 경우")
+    @DisplayName("테이블의 고객 수가 0 미만인 경우 예외 발생")
     void numberOfGuestsBelowZero() {
-        OrderTable ordered = new OrderTable();
-        ordered.setNumberOfGuests(-2);
+        OrderTable ordered = createOrderTable(null, null, -2, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, ordered))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("테이블이 빈상태인 경우")
+    @DisplayName("테이블이 빈상태인 경우 예외 발생")
     void emptyTable() {
-        OrderTable saved = new OrderTable();
-        saved.setNumberOfGuests(0);
-        saved.setEmpty(true);
-        OrderTable ordered = new OrderTable();
+        OrderTable saved = createOrderTable(null, null, 0, true);
+        OrderTable ordered = createOrderTable(null, null, 2, false);
         ordered.setNumberOfGuests(2);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
