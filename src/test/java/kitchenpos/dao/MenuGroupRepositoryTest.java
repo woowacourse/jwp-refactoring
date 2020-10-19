@@ -10,7 +10,7 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuGroupDaoTest extends KitchenPosDaoTest {
+class MenuGroupRepositoryTest extends KitchenPosDaoTest {
 
     @DisplayName("MenuGroup 저장 - 성공")
     @Test
@@ -18,7 +18,7 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
 
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
         assertThat(savedMenuGroup.getName()).isEqualTo(TEST_MENU_GROUP_NAME);
@@ -29,9 +29,9 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
     void findById_ExistsId_ReturnMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        MenuGroup foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId())
+        MenuGroup foundMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId())
             .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 MenuGroup이 없습니다."));
 
         assertThat(foundMenuGroup.getId()).isEqualTo(savedMenuGroup.getId());
@@ -43,9 +43,10 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
     void findById_NotExistsId_ReturnEmpty() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        Optional<MenuGroup> foundMenuGroup = menuGroupDao.findById(savedMenuGroup.getId() + 1);
+        Optional<MenuGroup> foundMenuGroup = menuGroupRepository
+            .findById(savedMenuGroup.getId() + 1);
 
         assertThat(foundMenuGroup.isPresent()).isFalse();
     }
@@ -55,9 +56,9 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
     void findAll_Success() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
         assertThat(menuGroups).isNotNull();
         assertThat(menuGroups).isNotEmpty();
@@ -74,9 +75,9 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
     void existsById_ExistsId_ReturnTrue() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        boolean existsMenuGroup = menuGroupDao.existsById(savedMenuGroup.getId());
+        boolean existsMenuGroup = menuGroupRepository.existsById(savedMenuGroup.getId());
 
         assertThat(existsMenuGroup).isTrue();
     }
@@ -86,9 +87,9 @@ class MenuGroupDaoTest extends KitchenPosDaoTest {
     void existsById_NotExistsId_ReturnFalse() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
-        boolean existsMenuGroup = menuGroupDao.existsById(savedMenuGroup.getId() + 1);
+        boolean existsMenuGroup = menuGroupRepository.existsById(savedMenuGroup.getId() + 1);
 
         assertThat(existsMenuGroup).isFalse();
     }

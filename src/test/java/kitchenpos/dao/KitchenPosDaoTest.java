@@ -30,7 +30,7 @@ public abstract class KitchenPosDaoTest {
     protected MenuDao menuDao;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
     protected OrderDao orderDao;
@@ -61,7 +61,7 @@ public abstract class KitchenPosDaoTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
 
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         Long savedMenuGroupId = savedMenuGroup.getId();
         assertThat(savedMenuGroupId).isNotNull();
