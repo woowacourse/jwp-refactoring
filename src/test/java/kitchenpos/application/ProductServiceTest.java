@@ -1,13 +1,20 @@
 package kitchenpos.application;
 
+import static kitchenpos.util.ObjectUtil.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,11 +31,9 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("생성")
+    @DisplayName("상품 생성")
     void create() {
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1000));
-
+        Product product = createProduct(null, null, 1000);
         given(productDao.save(any(Product.class))).willReturn(product);
 
         Product saved = productService.create(product);
@@ -38,13 +43,27 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("상품의 가격이 null이거나 0미만인 경우")
-    void priceBelowZero() {
-        Product product = new Product();
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
+    @DisplayName("상품 목록 조회")
+    void list() {
+        Product product = createProduct(null, null, 1000);
+        given(productDao.findAll()).willReturn(Collections.singletonList(product));
 
-        product.setPrice(BigDecimal.valueOf(-1000));
+        List<Product> result = productService.list();
+
+        assertThat(result).isNotNull();
+        assertAll(
+            () -> assertThat(result).hasSize(1),
+            () -> assertThat(result.get(0)).usingRecursiveComparison()
+                .isEqualTo(product)
+        );
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(ints = {-1000})
+    @DisplayName("상품의 가격이 null이거나 0미만인 경우 예외 발생")
+    void priceBelowZero(Integer input) {
+        Product product = createProduct(null, null, input);
         assertThatThrownBy(() -> productService.create(product))
             .isInstanceOf(IllegalArgumentException.class);
     }
