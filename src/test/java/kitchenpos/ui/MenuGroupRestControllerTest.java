@@ -32,7 +32,7 @@ class MenuGroupRestControllerTest extends MvcTest {
         String inputJson = objectMapper.writeValueAsString(MENU_GROUP_1);
         MvcResult mvcResult = postAction("/api/menu-groups", inputJson)
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/menu-groups/1"))
+            .andExpect(header().string("Location", String.format("/api/menu-groups/%d", MENU_GROUP_ID_1)))
             .andReturn();
 
         MenuGroup menuGroupResponse =

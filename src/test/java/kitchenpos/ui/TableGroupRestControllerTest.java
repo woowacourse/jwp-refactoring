@@ -27,7 +27,7 @@ class TableGroupRestControllerTest extends MvcTest {
         String inputJson = objectMapper.writeValueAsString(TABLE_GROUP);
         MvcResult mvcResult = postAction("/api/table-groups", inputJson)
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/table-groups/1"))
+            .andExpect(header().string("Location", String.format("/api/table-groups/%d", TABLE_GROUP_ID)))
             .andReturn();
 
         TableGroup tableGroupResponse =
@@ -40,7 +40,7 @@ class TableGroupRestControllerTest extends MvcTest {
     void ungroupTest() throws Exception {
         willDoNothing().given(tableGroupService).ungroup(anyLong());
 
-        deleteAction("/api/table-groups/1")
+        deleteAction(String.format("/api/table-groups/%d", TABLE_GROUP_ID))
             .andExpect(status().isNoContent());
     }
 }

@@ -32,7 +32,7 @@ class MenuRestControllerTest extends MvcTest {
         String inputJson = objectMapper.writeValueAsString(MENU_1);
         MvcResult mvcResult = postAction("/api/menus", inputJson)
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/menus/1"))
+            .andExpect(header().string("Location", String.format("/api/menus/%d", MENU_ID_1)))
             .andReturn();
 
         Menu menuResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Menu.class);

@@ -32,7 +32,7 @@ class OrderRestControllerTest extends MvcTest {
         String inputJson = objectMapper.writeValueAsString(ORDER_1);
         MvcResult mvcResult = postAction("/api/orders", inputJson)
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/orders/1"))
+            .andExpect(header().string("Location", String.format("/api/orders/%d", ORDER_ID_1)))
             .andReturn();
 
         Order orderResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Order.class);
@@ -62,9 +62,8 @@ class OrderRestControllerTest extends MvcTest {
     @Test
     void changeOrderStatusTest() throws Exception {
         given(orderService.changeOrderStatus(anyLong(), any())).willReturn(ORDER_1);
-
         String inputJson = objectMapper.writeValueAsString(ORDER_1);
-        MvcResult mvcResult = putAction("/api/orders/1/order-status", inputJson)
+        MvcResult mvcResult = putAction(String.format("/api/orders/%d/order-status", ORDER_ID_1), inputJson)
             .andExpect(status().isOk())
             .andReturn();
 

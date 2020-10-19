@@ -32,7 +32,7 @@ class ProductRestControllerTest extends MvcTest {
         String inputJson = objectMapper.writeValueAsString(PRODUCT_1);
         MvcResult mvcResult = postAction("/api/products", inputJson)
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", "/api/products/1"))
+            .andExpect(header().string("Location", String.format("/api/products/%d", PRODUCT_ID_1)))
             .andReturn();
 
         Product productResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Product.class);
