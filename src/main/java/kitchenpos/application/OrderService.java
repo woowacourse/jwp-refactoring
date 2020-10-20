@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
@@ -61,7 +60,6 @@ public class OrderService {
         Order order = Order.builder()
             .orderTable(orderTable)
             .orderStatus(OrderStatus.COOKING)
-            .orderedTime(LocalDateTime.now())
             .build();
 
         final Order savedOrder = orderDao.save(order);

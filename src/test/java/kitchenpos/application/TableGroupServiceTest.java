@@ -59,6 +59,7 @@ class TableGroupServiceTest {
 
         assertAll(
             () -> assertThat(savedTableGroup.getId()).isNotNull(),
+            () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull(),
             () -> assertThat(savedTables.get(0).isEmpty()).isFalse(),
             () -> assertThat(savedTables.get(1).isEmpty()).isFalse()
         );

@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,9 +47,7 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        TableGroup tableGroup = TableGroup.builder()
-            .createdDate(LocalDateTime.now())
-            .build();
+        TableGroup tableGroup = TableGroup.builder().build();
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         for (OrderTable savedOrderTable : savedOrderTables) {

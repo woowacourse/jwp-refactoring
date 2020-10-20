@@ -66,6 +66,7 @@ class OrderServiceTest {
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
             () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
             () -> assertThat(savedOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
