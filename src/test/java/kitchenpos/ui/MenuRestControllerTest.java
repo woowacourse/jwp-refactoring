@@ -61,7 +61,7 @@ class MenuRestControllerTest {
         String content = objectMapper.writeValueAsString(menuRequest);
         MenuResponse menuResponse = new MenuResponse(1L);
 
-        given(menuService.createWithRequest(any())).willReturn(menuResponse);
+        given(menuService.create(any())).willReturn(menuResponse);
 
         mockMvc.perform(
                 post(BASE_URL)
@@ -82,7 +82,7 @@ class MenuRestControllerTest {
                 new MenuResponse(3L)
         );
 
-        given(menuService.listWithResponse()).willReturn(menuResponses);
+        given(menuService.list()).willReturn(menuResponses);
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())

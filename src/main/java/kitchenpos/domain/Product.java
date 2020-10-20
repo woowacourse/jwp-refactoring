@@ -1,17 +1,15 @@
 package kitchenpos.domain;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import java.math.BigDecimal;
+import javax.persistence.*;
 
 @AttributeOverride(name = "id", column = @Column(name = "id"))
 @Table(name = "product")
 @Entity
 public class Product extends BaseEntity {
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
 
     public Product() {
     }
@@ -36,11 +34,11 @@ public class Product extends BaseEntity {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(Price price) {
         this.price = price;
     }
 }

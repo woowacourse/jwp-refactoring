@@ -2,8 +2,6 @@ package kitchenpos.domain;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @AttributeOverride(name = "id", column = @Column(name = "id"))
 @Table(name = "menu")
@@ -11,20 +9,36 @@ import java.util.List;
 public class Menu extends BaseEntity {
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
     }
 
     public Menu(Long id) {
         this.id = id;
+    }
+
+    public Menu(Price price) {
+        this.price = price;
+    }
+
+    public Menu(String name, Price price, MenuGroup menuGroup) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+    }
+
+    public BigDecimal getPriceValue() {
+        return this.price.getPrice();
+    }
+
+    public Long getMenuGroupId() {
+        return menuGroup.getId();
     }
 
     public Long getId() {
@@ -43,11 +57,11 @@ public class Menu extends BaseEntity {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(Price price) {
         this.price = price;
     }
 
@@ -57,13 +71,5 @@ public class Menu extends BaseEntity {
 
     public void setMenuGroup(MenuGroup menuGroup) {
         this.menuGroup = menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

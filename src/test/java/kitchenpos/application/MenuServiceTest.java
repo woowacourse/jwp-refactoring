@@ -2,8 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -18,13 +20,10 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static kitchenpos.DomainFactory.createMenuProduct;
-import static kitchenpos.DomainFactory.createMenuWithMenuProducts;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -60,24 +59,22 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void createTest() {
         MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
-        Product savedFriedProduct = saveProduct(productRepository, "후라이드치킨", BigDecimal.valueOf(16_000));
-        Product savedSourceProduct = saveProduct(productRepository, "양념치킨", BigDecimal.valueOf(16_000));
+        Product savedProduct = saveProduct(productRepository, "후라이드치킨", BigDecimal.valueOf(16_000));
+        MenuProductRequest menuProductRequest = new MenuProductRequest(savedProduct.getId(), 2L);
+        MenuRequest menuRequest = new MenuRequest(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19_000),
+                savedMenuGroup.getId(),
+                Collections.singletonList(menuProductRequest)
+        );
 
-        MenuProduct friedMenuProduct = createMenuProduct(savedFriedProduct.getId(), 1L);
-        MenuProduct sourceMenuProduct = createMenuProduct(savedSourceProduct.getId(), 1L);
-        List<MenuProduct> menuProducts = Arrays.asList(friedMenuProduct, sourceMenuProduct);
-
-        Menu menu = createMenuWithMenuProducts(savedMenuGroup.getId(), "후라이드치킨+양념치킨",
-                BigDecimal.valueOf(32_000), menuProducts);
-
-        Menu createdMenu = menuService.create(menu);
+        MenuResponse menuResponse = menuService.create(menuRequest);
 
         assertAll(
-                () -> assertThat(createdMenu.getId()).isNotNull(),
-                () -> assertThat(createdMenu.getMenuGroup().getId()).isEqualTo(savedMenuGroup.getId()),
-                () -> assertThat(createdMenu.getName()).isEqualTo(menu.getName()),
-                () -> assertThat(createdMenu.getPrice()).isEqualTo(menu.getPrice()),
-                () -> assertThat(createdMenu.getMenuProducts()).hasSize(2)
+                () -> assertThat(menuResponse.getId()).isNotNull(),
+                () -> assertThat(menuResponse.getMenuGroupId()).isEqualTo(savedMenuGroup.getId()),
+                () -> assertThat(menuResponse.getName()).isEqualTo(menuRequest.getName()),
+                () -> assertThat(menuResponse.getPrice()).isEqualTo(menuRequest.getPrice())
         );
     }
 
@@ -85,23 +82,20 @@ class MenuServiceTest extends ServiceTest {
     @ParameterizedTest
     @MethodSource("invalidPrices")
     void createWithInvalidPriceTest(BigDecimal price) {
-        Menu menu = new Menu();
-        menu.setPrice(price);
+        MenuRequest menuRequest = new MenuRequest(price);
 
         assertThatThrownBy(() -> {
-            menuService.create(menu);
+            menuService.create(menuRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴 저장 시 존재하지 않는 메뉴 그룹 아이디 입력 시 예외 출력")
     @Test
     void createWithInvalidMenuGroupIdTest() {
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(10_000));
-        menu.setMenuGroup(new MenuGroup(0L));
+        MenuRequest menuRequest = new MenuRequest(BigDecimal.valueOf(16_000), 0L);
 
         assertThatThrownBy(() -> {
-            menuService.create(menu);
+            menuService.create(menuRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -109,15 +103,12 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void createMenuWithInvalidMenuProductTest() {
         MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
-
-        MenuProduct menuProduct = createMenuProduct(0L, 1L);
-        List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
-
-        Menu menu = createMenuWithMenuProducts(savedMenuGroup.getId(), "잘못된 메뉴",
-                BigDecimal.valueOf(10_000), menuProducts);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(0L, 2L);
+        MenuRequest menuRequest = new MenuRequest("잘못된 메뉴", BigDecimal.valueOf(16_000),
+                savedMenuGroup.getId(), Collections.singletonList(menuProductRequest));
 
         assertThatThrownBy(() -> {
-            menuService.create(menu);
+            menuService.create(menuRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,15 +117,12 @@ class MenuServiceTest extends ServiceTest {
     void createMenuWithInvalidMenuProductPriceSumTest() {
         MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
         Product savedFriedProduct = saveProduct(productRepository, "후라이드치킨", BigDecimal.valueOf(16_000));
-
-        MenuProduct friedMenuProduct = createMenuProduct(savedFriedProduct.getId(), 1L);
-        List<MenuProduct> menuProducts = Collections.singletonList(friedMenuProduct);
-
-        Menu menu = createMenuWithMenuProducts(savedMenuGroup.getId(), "후라이드치킨+양념치킨",
-                BigDecimal.valueOf(20_000), menuProducts);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(savedFriedProduct.getId(), 1L);
+        MenuRequest menuRequest = new MenuRequest("잘못된 메뉴", BigDecimal.valueOf(20_000),
+                savedMenuGroup.getId(), Collections.singletonList(menuProductRequest));
 
         assertThatThrownBy(() -> {
-            menuService.create(menu);
+            menuService.create(menuRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -146,11 +134,11 @@ class MenuServiceTest extends ServiceTest {
         Menu savedFriedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
         saveMenuProduct(menuProductRepository, savedFriedMenu.getId(), savedFriedProduct.getId(), 1L);
 
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menuResponses = menuService.list();
 
         assertAll(
-                () -> assertThat(menus).hasSize(1),
-                () -> assertThat(menus.get(0).getMenuProducts()).hasSize(1)
+                () -> assertThat(menuResponses).hasSize(1),
+                () -> assertThat(menuResponses.get(0).getMenuProducts()).hasSize(1)
         );
     }
 

@@ -17,7 +17,7 @@ public class DomainFactory {
     public static Product createProduct(String name, BigDecimal price) {
         Product product = new Product();
         product.setName(name);
-        product.setPrice(price);
+        product.setPrice(Price.of(price));
         return product;
     }
 
@@ -37,9 +37,9 @@ public class DomainFactory {
                                                   BigDecimal price, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setMenuGroup(new MenuGroup(menuGroupId));
-        menu.setPrice(price);
+//        menu.setPrice(price);
         menu.setName(name);
-        menu.setMenuProducts(menuProducts);
+//        menu.setMenuProducts(menuProducts);
         return menu;
     }
 
@@ -47,7 +47,7 @@ public class DomainFactory {
         Menu menu = new Menu();
         menu.setMenuGroup(new MenuGroup(menuGroupId));
         menu.setName(name);
-        menu.setPrice(price);
+        menu.setPrice(Price.of(price));
         return menu;
     }
 
