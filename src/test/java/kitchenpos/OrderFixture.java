@@ -13,7 +13,8 @@ public class OrderFixture {
         final Order order = new Order();
         order.setOrderedTime(LocalDateTime.now());
         order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderLineItems(Arrays.asList(createOrderLineItemWithoutOrderId(), createOrderLineItemWithoutOrderId()));
+        order.setOrderLineItems(
+            Arrays.asList(createOrderLineItemWithoutOrderId(), createOrderLineItemWithoutOrderId()));
         order.setOrderTableId(1L);
 
         return order;
