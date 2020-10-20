@@ -27,11 +27,11 @@ class ProductServiceTest {
         final Product product = new Product();
         product.setName("맛난 치킨");
         product.setPrice(BigDecimal.valueOf(16_000));
-        final Product product1 = productService.create(product);
+        final Product savedProduct = productService.create(product);
         assertAll(
-                () -> assertThat(product1.getId()).isNotNull(),
-                () -> assertThat(product1.getName()).isEqualTo("맛난 치킨"),
-                () -> assertThat(product1.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16_000))
+                () -> assertThat(savedProduct.getId()).isNotNull(),
+                () -> assertThat(savedProduct.getName()).isEqualTo("맛난 치킨"),
+                () -> assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16_000))
         );
     }
 
