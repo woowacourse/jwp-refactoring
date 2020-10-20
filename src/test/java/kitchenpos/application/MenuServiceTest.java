@@ -6,7 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.utils.KitchenposClassCreator;
+import kitchenpos.utils.KitchenPosClassCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,20 +49,20 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product1 = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
-        product2 = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
+        product1 = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        product2 = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
 
         product1 = productDao.save(product1);
         product2 = productDao.save(product2);
 
-        MenuGroup menuGroup = KitchenposClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
         menuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct1 = KitchenposClassCreator.createMenuProduct(product1, TEST_MENU_PRODUCT_QUANTITY);
-        MenuProduct menuProduct2 = KitchenposClassCreator.createMenuProduct(product2, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct1 = KitchenPosClassCreator.createMenuProduct(product1, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct2 = KitchenPosClassCreator.createMenuProduct(product2, TEST_MENU_PRODUCT_QUANTITY);
 
         menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        menu = KitchenposClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
+        menu = KitchenPosClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
     }
 
     @DisplayName("Menu 생성이 올바르게 수행된다.")

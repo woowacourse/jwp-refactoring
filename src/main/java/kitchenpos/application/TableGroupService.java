@@ -41,7 +41,6 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }

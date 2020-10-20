@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Product;
-import kitchenpos.utils.KitchenposClassCreator;
+import kitchenpos.utils.KitchenPosClassCreator;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        product = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
     }
 
 
@@ -69,7 +69,7 @@ public class ProductServiceTest {
     @DisplayName("Product 전체 목록을 조회 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        Product secondProduct = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
+        Product secondProduct = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
         product = productService.create(product);
         secondProduct = productService.create(secondProduct);
 

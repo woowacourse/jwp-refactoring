@@ -4,7 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.utils.KitchenposClassCreator;
+import kitchenpos.utils.KitchenPosClassCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
+        orderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
     }
 
     @DisplayName("OrderTable 생성이 올바르게 수행된다.")
@@ -54,7 +54,7 @@ public class TableServiceTest {
     @DisplayName("OrderTable 전체 목록 요청 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        OrderTable secondOrderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
+        OrderTable secondOrderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
         OrderTable savedOrderTable = tableService.create(orderTable);
         secondOrderTable = tableService.create(secondOrderTable);
 
@@ -70,7 +70,7 @@ public class TableServiceTest {
     @Test
     void changeEmptyTest() {
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable paramOrderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
+        OrderTable paramOrderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
 
         OrderTable emptyTable = tableService.changeEmpty(savedOrderTable.getId(), paramOrderTable);
 
@@ -80,7 +80,7 @@ public class TableServiceTest {
     @DisplayName("예외 테스트 : OrderTable을 빈 테이블로 변경 시, 잘못된 ID를 전달하면 예외가 발생한다.")
     @Test
     void changeEmptyWithInvalidIdTest() {
-        OrderTable paramOrderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
+        OrderTable paramOrderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(TEST_INVALID_TABLE_ID, paramOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -89,7 +89,7 @@ public class TableServiceTest {
     @DisplayName("예외 테스트 : OrderTable을 빈 테이블로 변경 시, NULL값인 ID를 전달하면 예외가 발생한다.")
     @Test
     void changeEmptyWithNullIdTest() {
-        OrderTable paramOrderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
+        OrderTable paramOrderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(null, paramOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -99,7 +99,7 @@ public class TableServiceTest {
     @Test
     void changeEmptyWithProceedingOrderTest() {
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable paramOrderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
+        OrderTable paramOrderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
 
         Order order = new Order();
         order.setOrderStatus(OrderStatus.COOKING.name());
@@ -115,7 +115,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuestTest() {
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable paramOrderTable = KitchenposClassCreator
+        OrderTable paramOrderTable = KitchenPosClassCreator
                 .createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_CHANGED, false);
 
         OrderTable changedTable = tableService.changeNumberOfGuests(savedOrderTable.getId(), paramOrderTable);
@@ -127,7 +127,7 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuestWithNegativeNumberExceptionTest() {
         OrderTable savedOrderTable = tableService.create(orderTable);
-        OrderTable paramOrderTable = KitchenposClassCreator
+        OrderTable paramOrderTable = KitchenPosClassCreator
                 .createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_INVALID, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), paramOrderTable))
@@ -137,7 +137,7 @@ public class TableServiceTest {
     @DisplayName("예외 테스트 : OrderTable의 고객 수 변경을 요청 시, 잘못된 ID가 전달되면 예외가 발생한다.")
     @Test
     void changeNumberOfGuestWithInvalidIdExceptionTest() {
-        OrderTable paramOrderTable = KitchenposClassCreator
+        OrderTable paramOrderTable = KitchenPosClassCreator
                 .createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_INVALID, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(TEST_INVALID_TABLE_ID, paramOrderTable))

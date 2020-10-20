@@ -5,7 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.*;
-import kitchenpos.utils.KitchenposClassCreator;
+import kitchenpos.utils.KitchenPosClassCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,22 +51,22 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product product = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        Product product = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
         product = productDao.save(product);
-        MenuGroup menuGroup = KitchenposClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
         menuGroup = menuGroupDao.save(menuGroup);
-        MenuProduct menuProduct = KitchenposClassCreator.createMenuProduct(product, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct = KitchenPosClassCreator.createMenuProduct(product, TEST_MENU_PRODUCT_QUANTITY);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
-        menu = KitchenposClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
+        menu = KitchenPosClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
         menu = menuDao.save(menu);
 
-        orderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
+        orderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
         orderTable = orderTableDao.save(orderTable);
-        OrderLineItem orderLineItem = KitchenposClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
+        OrderLineItem orderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        order = KitchenposClassCreator.createOrder(orderTable, orderLineItems, TEST_ORDER_STATUS_COOKING);
+        order = KitchenPosClassCreator.createOrder(orderTable, orderLineItems, TEST_ORDER_STATUS_COOKING);
     }
 
     @DisplayName("Order 생성이 올바르게 수행된다.")
@@ -94,7 +94,7 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : Order 생성 중 잘못된 OrderLineItems를 보내면, 예외가 발생한다.")
     @Test
     void createWithInvalidOrderLineItemsExceptionTest() {
-        OrderLineItem invalidOrderLineItem = KitchenposClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
+        OrderLineItem invalidOrderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
         invalidOrderLineItem.setMenuId(INVALID_MENU_ID);
         List<OrderLineItem> orderLineItems = Arrays.asList(invalidOrderLineItem);
         order.setOrderLineItems(orderLineItems);
@@ -115,7 +115,7 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : Order 생성 중 비어있는 OrderTable을 보내면, 예외가 발생한다.")
     @Test
     void createWithEmptyOrderTableItemsExceptionTest() {
-        OrderTable emptyOrderTable = KitchenposClassCreator
+        OrderTable emptyOrderTable = KitchenPosClassCreator
                 .createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
         emptyOrderTable = orderTableDao.save(emptyOrderTable);
         order.setOrderTableId(emptyOrderTable.getId());
@@ -143,7 +143,7 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatusTest() {
         Order savedOrder = orderService.create(order);
-        Order statusOrder = KitchenposClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
 
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), statusOrder);
 
@@ -156,7 +156,7 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : 잘못된 Order의 ID를 전달 시, 예외가 발생한다.")
     @Test
     void changeOrderStatusInvalidIdExceptionTest() {
-        Order statusOrder = KitchenposClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ORDER_ID, statusOrder))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -166,7 +166,7 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatusCompletionExceptionTest() {
         Order savedOrder = orderService.create(order);
-        Order statusOrder = KitchenposClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
 
         assertThatThrownBy(() -> {
             Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), statusOrder);

@@ -7,9 +7,9 @@ import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
-public class KitchenposClassCreator {
+public class KitchenPosClassCreator {
 
-    private KitchenposClassCreator() {
+    private KitchenPosClassCreator() {
     }
 
     public static Product createProduct(String name, BigDecimal price) {
@@ -84,5 +84,12 @@ public class KitchenposClassCreator {
         order.setOrderStatus(orderStatus);
 
         return order;
+    }
+
+    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(orderTables);
+
+        return tableGroup;
     }
 }
