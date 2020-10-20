@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.utils.KitchenposClassCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -51,33 +52,20 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product1 = new Product();
-        product2 = new Product();
-        product1.setName(TEST_PRODUCT_NAME_1);
-        product1.setPrice(TEST_PRODUCT_PRICE_1);
-        product2.setName(TEST_PRODUCT_NAME_2);
-        product2.setPrice(TEST_PRODUCT_PRICE_2);
+        product1 = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        product2 = KitchenposClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
 
         product1 = productDao.save(product1);
         product2 = productDao.save(product2);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = KitchenposClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
         menuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct1.setProductId(product1.getId());
-        menuProduct1.setQuantity(TEST_MENU_PRODUCT_QUANTITY);
-        menuProduct2.setProductId(product2.getId());
-        menuProduct2.setQuantity(TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct1 = KitchenposClassCreator.createMenuProduct(product1, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct2 = KitchenposClassCreator.createMenuProduct(product2, TEST_MENU_PRODUCT_QUANTITY);
 
-        menu = new Menu();
-        menu.setMenuGroupId(menuGroup.getId());
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(TEST_MENU_PRICE);
         menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        menu.setMenuProducts(menuProducts);
+        menu = KitchenposClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
     }
 
     @DisplayName("Menu 생성이 올바르게 수행된다.")

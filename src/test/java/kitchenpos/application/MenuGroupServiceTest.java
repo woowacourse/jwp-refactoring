@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.utils.KitchenposClassCreator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,8 +33,7 @@ public class MenuGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME_1);
+        menuGroup = KitchenposClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME_1);
     }
 
     @DisplayName("MenuGroup 생성이 올바르게 수행된다.")
@@ -47,8 +47,7 @@ public class MenuGroupServiceTest {
     @DisplayName("MenuGroup 전체 목록을 요청 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        MenuGroup secondMenuGroup = new MenuGroup();
-        secondMenuGroup.setName(TEST_MENU_GROUP_NAME_2);
+        MenuGroup secondMenuGroup = KitchenposClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME_2);
         MenuGroup savedMenuGroup1 = menuGroupDao.save(menuGroup);
         MenuGroup savedMenuGroup2 = menuGroupDao.save(secondMenuGroup);
 
