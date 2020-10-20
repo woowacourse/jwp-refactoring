@@ -180,7 +180,7 @@ class TableGroupServiceTest {
         return orderTable;
     }
 
-    private TableGroup createTableGroup(OrderTable... tables) {
+    static TableGroup createTableGroup(OrderTable... tables) {
         List<OrderTable> orderTables = Arrays.asList(tables);
 
         TableGroup tableGroup = new TableGroup();
@@ -190,7 +190,7 @@ class TableGroupServiceTest {
         return tableGroup;
     }
 
-    private Order createOrder(Long tableId, OrderStatus status) {
+    static Order createOrder(Long tableId, OrderStatus status) {
         Order order = new Order();
         order.setOrderTableId(tableId);
         order.setOrderStatus(status.name());
