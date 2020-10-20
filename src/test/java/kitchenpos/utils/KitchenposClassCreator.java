@@ -1,9 +1,6 @@
 package kitchenpos.utils;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -30,10 +27,9 @@ public class KitchenposClassCreator {
         return menuGroup;
     }
 
-    public static MenuProduct createMenuProduct(Product product, Long quantity) {
-        //원래는 Menu의 id도 가져야 하지만, 실제로는 MenuService에서 Menu를 저장할 때 MenuProduct가 같이 저장되는 방식.
-        //그래서, Menu의 id와 본인 id를 제외한 나머지 값만 넣어준다.
-        Long productId = product.getId();
+    public static MenuProduct createMenuProduct(Product product, long quantity) {
+        requireNonNull(product);
+        long productId = product.getId();
         requireNonNull(productId);
 
         MenuProduct menuProduct = new MenuProduct();
@@ -44,7 +40,8 @@ public class KitchenposClassCreator {
     }
 
     public static Menu createMenu(String name, MenuGroup menuGroup, BigDecimal price, List<MenuProduct> menuProducts) {
-        Long menuGroupId = menuGroup.getId();
+        requireNonNull(menuGroup);
+        long menuGroupId = menuGroup.getId();
         requireNonNull(menuGroupId);
 
         Menu menu = new Menu();
@@ -54,6 +51,39 @@ public class KitchenposClassCreator {
         menu.setMenuProducts(menuProducts);
 
         return menu;
+    }
+
+    public static OrderTable createOrderTable(int numberOfGuest, boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuest);
+        orderTable.setEmpty(isEmpty);
+
+        return orderTable;
+    }
+
+    public static OrderLineItem createOrderLineItem(Menu menu, long quantity) {
+        requireNonNull(menu);
+        long menuId = menu.getId();
+        requireNonNull(menuId);
+
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+
+        return orderLineItem;
+    }
+
+    public static Order createOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems, String orderStatus) {
+        requireNonNull(orderTable);
+        long orderTableId = orderTable.getId();
+        requireNonNull(orderTableId);
+
+        Order order = new Order();
+        order.setOrderTableId(orderTableId);
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderStatus(orderStatus);
+
+        return order;
     }
 
 }
