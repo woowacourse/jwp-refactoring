@@ -5,11 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -77,6 +83,44 @@ public class TableGroupServiceTest {
 		);
 	}
 
+	private static Stream<Arguments> provideSavedOrderTables() {
+		OrderTable firstOrderTable = new OrderTable();
+		OrderTable secondOrderTable = new OrderTable();
+
+		return Stream.of(
+			Arguments.of(Collections.singletonList(firstOrderTable)),
+			Arguments.of(Arrays.asList(firstOrderTable, secondOrderTable))
+		);
+	}
+
+	@DisplayName("테이블 그룹의 테아블 리스트가 비어있으면 예외 발생한다.")
+	@Test
+	void nullOrderTablesException() {
+		tableGroup.setOrderTables(null);
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("테이블 그룹의 테이블 개수가 2개 미만이면 예외 발생한다.")
+	@Test
+	void lessThanTwoTablesException() {
+		tableGroup.setOrderTables(Collections.singletonList(orderTable1));
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("테이블 그룹의 테이블 수가 DB에서 조회한 테이블의 수와 다르면 예외 발생한다.")
+	@ParameterizedTest
+	@MethodSource("provideSavedOrderTables")
+	void differentTablesException(List<OrderTable> savedOrderTables) {
+		when(orderTableDao.findAllByIdIn(anyList())).thenReturn(savedOrderTables);
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@DisplayName("TableGroup을 삭제한다.")
 	@Test
 	void ungroupTest() {
@@ -95,5 +139,14 @@ public class TableGroupServiceTest {
 			() -> assertThat(orderTable3.getTableGroupId()).isNull(),
 			() -> assertThat(orderTable3.isEmpty()).isFalse()
 		);
+	}
+
+	@DisplayName("테이블들의 주문 상태가 COOKING 혹은 MEAL이면 예외 발생한다.")
+	@Test
+	void completionOrderStatusException() {
+		when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(true);
+
+		assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 }
