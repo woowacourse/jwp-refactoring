@@ -21,6 +21,7 @@ import java.util.List;
 import static kitchenpos.application.MenuServiceTest.*;
 import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_NAME_1;
 import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_PRICE_1;
+import static kitchenpos.application.TableServiceTest.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,12 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class OrderServiceTest {
-    public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS = 4;
     public static final long INVALID_MENU_ID = 10000L;
     public static final long INVALID_ORDER_TABLE_ID = 10000L;
     public static final long INVALID_ORDER_ID = 10000L;
-    private static final String TEST_ORDER_STATUS_COOKING = OrderStatus.COOKING.toString();
-    private static final String TEST_ORDER_STATUS_COMPLETION = OrderStatus.COMPLETION.toString();
+    private static final String TEST_ORDER_STATUS_COOKING = OrderStatus.COOKING.name();
+    private static final String TEST_ORDER_STATUS_COMPLETION = OrderStatus.COMPLETION.name();
     OrderTable orderTable;
     @Autowired
     private MenuDao menuDao;
@@ -63,9 +63,7 @@ public class OrderServiceTest {
 
         orderTable = KitchenposClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
         orderTable = orderTableDao.save(orderTable);
-
         OrderLineItem orderLineItem = KitchenposClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
-
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
         order = KitchenposClassCreator.createOrder(orderTable, orderLineItems, TEST_ORDER_STATUS_COOKING);
