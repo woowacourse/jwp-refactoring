@@ -56,6 +56,7 @@ public class OrderServiceTest {
 		orderTable.setId(1L);
 		orderLineItem = new OrderLineItem();
 		orderLineItem.setOrderId(1L);
+		orderLineItem.setMenuId(1L);
 		order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
@@ -80,6 +81,35 @@ public class OrderServiceTest {
 			() -> assertThat(saved.getOrderLineItems().get(0).getOrderId()).isEqualTo(
 				order.getOrderLineItems().get(0).getOrderId())
 		);
+	}
+
+	@DisplayName("주문된 상품이 없으면 예외 발생한다.")
+	@Test
+	void emptyOrderLineItemsException() {
+		order.setOrderLineItems(null);
+
+		assertThatThrownBy(() -> orderService.create(order))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("주문된 상품 개수와 해당하는 메뉴 개수가 다르면 예외 발생한다.")
+	@Test
+	void differentOrderLineItemsException() {
+		when(menuDao.countByIdIn(anyList())).thenReturn(0L);
+
+		assertThatThrownBy(() -> orderService.create(order))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("주문 테이블이 빈 테이블이면 예외 발생한다.")
+	@Test
+	void emptyOrderTableException() {
+		orderTable.setEmpty(true);
+		when(menuDao.countByIdIn(anyList())).thenReturn(1L);
+		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
+
+		assertThatThrownBy(() -> orderService.create(order))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("등록된 모든 Order를 조회한다.")
@@ -113,5 +143,15 @@ public class OrderServiceTest {
 			() -> assertThat(changed.getOrderLineItems().get(0).getOrderId()).isEqualTo(
 				order.getOrderLineItems().get(0).getOrderId())
 		);
+	}
+
+	@DisplayName("주문 상태가 COMPLETION이면 예외 발생한다.")
+	@Test
+	void completionOrderStatusException() {
+		order.setOrderStatus(OrderStatus.COMPLETION.name());
+		when(orderDao.findById(anyLong())).thenReturn(Optional.of(order));
+
+		assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 }
