@@ -1,4 +1,4 @@
-package kitchenpos.data;
+package kitchenpos.utils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,7 +14,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
-public class TestData {
+public class TestObjects {
     public static Product createProduct(String name, BigDecimal price) {
         final Product product = new Product();
         product.setPrice(price);

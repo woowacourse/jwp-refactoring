@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,7 +32,8 @@ class MenuRestControllerTest extends ControllerTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_40_000_won = createMenuProduct(null, product_20_000_won.getId(), 2);
-        Menu menu_with_price_is_40_000_won = createMenu("후라이드 2마리 세트", BigDecimal.valueOf(40_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_40_000_won));
+        Menu menu_with_price_is_40_000_won = createMenu("후라이드 2마리 세트", BigDecimal.valueOf(40_000), setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_40_000_won));
 
         final String createMenuApiUrl = "/api/menus";
         final ResultActions resultActions = create(createMenuApiUrl, menu_with_price_is_40_000_won);

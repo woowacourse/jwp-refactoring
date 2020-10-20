@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,10 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -25,15 +21,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
-@SpringBootTest(classes = {
-        MenuService.class,
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class,
-        JdbcTemplateProductDao.class,
-})
+@SpringBootTest
 @Transactional
-class MenuServiceTest extends ServiceTest {
+class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
@@ -49,7 +39,8 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_100_000_won = createMenuProduct(null, product_20_000_won.getId(), 5);
-        Menu menu_with_price_is_80_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_100_000_won));
+        Menu menu_with_price_is_80_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_100_000_won));
         menuService.create(menu_with_price_is_80_000_won);
 
         final List<Menu> menuGroups = menuService.list();
@@ -63,8 +54,8 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_100_000_won = createMenuProduct(null, product_20_000_won.getId(), 5);
-        Menu menu_with_price_is_80_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_100_000_won));
-
+        Menu menu_with_price_is_80_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_100_000_won));
 
         final Menu savedMenu = menuService.create(menu_with_price_is_80_000_won);
         assertAll(
@@ -82,7 +73,8 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_5_ea_20_000_won = createMenuProduct(null, product_20_000_won.getId(), 5);
-        Menu menu_price_is_negative = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(-16_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_5_ea_20_000_won));
+        Menu menu_price_is_negative = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(-16_000), setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_5_ea_20_000_won));
 
         assertThatThrownBy(() -> menuService.create(menu_price_is_negative))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -94,7 +86,8 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_5_ea_20_000_won = createMenuProduct(null, product_20_000_won.getId(), 5);
-        Menu menu_price_is_null = createMenu("후라이드 5마리 세트", null, setMenuGroup.getId(), Collections.singletonList(menuProduct_with_5_ea_20_000_won));
+        Menu menu_price_is_null = createMenu("후라이드 5마리 세트", null, setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_5_ea_20_000_won));
 
         assertThatThrownBy(() -> menuService.create(menu_price_is_null))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -105,7 +98,8 @@ class MenuServiceTest extends ServiceTest {
     void create_fail_if_menu_group_non_exist() {
         Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
         MenuProduct menuProduct_with_5_ea_20_000_won = createMenuProduct(null, product_20_000_won.getId(), 5);
-        Menu menu_has_no_menu_group = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), null, Collections.singletonList(menuProduct_with_5_ea_20_000_won));
+        Menu menu_has_no_menu_group = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(80_000), null,
+                Collections.singletonList(menuProduct_with_5_ea_20_000_won));
 
         assertThatThrownBy(() -> menuService.create(menu_has_no_menu_group))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -117,7 +111,8 @@ class MenuServiceTest extends ServiceTest {
         MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
         Product product_10_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(10_000)));
         MenuProduct menuProduct_with_5_ea_10_000_won = createMenuProduct(null, product_10_000_won.getId(), 5);
-        Menu menu_85_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(85_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_5_ea_10_000_won));
+        Menu menu_85_000_won = createMenu("후라이드 5마리 세트", BigDecimal.valueOf(85_000), setMenuGroup.getId(),
+                Collections.singletonList(menuProduct_with_5_ea_10_000_won));
 
         assertThatThrownBy(() -> menuService.create(menu_85_000_won))
                 .isInstanceOf(IllegalArgumentException.class);

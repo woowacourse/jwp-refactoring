@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,23 +14,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@SpringBootTest(classes = {
-        TableGroupService.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateTableGroupDao.class,
-        JdbcTemplateOrderDao.class
-})
+@SpringBootTest
 @Transactional
-class TableGroupServiceTest extends ServiceTest {
+class TableGroupServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
@@ -88,7 +80,8 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void create_fail_if_target_table_contains_duplicate_table() {
         OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
-        TableGroup tableGroupContainsDuplicateTable = createTableGroup(null, Lists.list(firstSavedTable, firstSavedTable));
+        TableGroup tableGroupContainsDuplicateTable = createTableGroup(null,
+                Lists.list(firstSavedTable, firstSavedTable));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsDuplicateTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -137,15 +130,24 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
         OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
 
-        orderDao.save(createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION, null));
-        orderDao.save(createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION, null));
+        orderDao.save(
+                createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION,
+                        null));
+        orderDao.save(
+                createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
+                        null));
 
-        TableGroup createdTableGroup = tableGroupService.create(createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
+        TableGroup createdTableGroup = tableGroupService.create(
+                createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
 
         tableGroupService.ungroup(createdTableGroup.getId());
         assertAll(
-                () -> assertThat(orderTableDao.findById(firstEmptyTable.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull(),
-                () -> assertThat(orderTableDao.findById(secondEmptyTable.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull()
+                () -> assertThat(orderTableDao.findById(firstEmptyTable.getId())
+                        .orElseThrow(IllegalArgumentException::new)
+                        .getTableGroupId()).isNull(),
+                () -> assertThat(orderTableDao.findById(secondEmptyTable.getId())
+                        .orElseThrow(IllegalArgumentException::new)
+                        .getTableGroupId()).isNull()
         );
     }
 
@@ -154,10 +156,14 @@ class TableGroupServiceTest extends ServiceTest {
     void ungroup_fail_if_contains_not_completion_order_status_table() {
         OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
         OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
-        TableGroup createdTableGroup = tableGroupService.create(createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
+        TableGroup createdTableGroup = tableGroupService.create(
+                createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
 
-        orderDao.save(createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.MEAL, null));
-        orderDao.save(createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION, null));
+        orderDao.save(
+                createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.MEAL, null));
+        orderDao.save(
+                createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
+                        null));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

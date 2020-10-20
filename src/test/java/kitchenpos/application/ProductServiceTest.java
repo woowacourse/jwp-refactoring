@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,15 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Product;
 
-@SpringBootTest(classes = {
-        ProductService.class,
-        JdbcTemplateProductDao.class
-})
+@SpringBootTest
 @Transactional
-class ProductServiceTest extends ServiceTest {
+class ProductServiceTest {
 
     @Autowired
     private ProductService productService;

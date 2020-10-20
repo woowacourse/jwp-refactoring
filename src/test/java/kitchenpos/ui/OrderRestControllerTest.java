@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

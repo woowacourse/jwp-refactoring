@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static kitchenpos.data.TestData.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -26,14 +23,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@SpringBootTest(classes = {
-        TableService.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateTableGroupDao.class
-})
+@SpringBootTest
 @Transactional
-class TableServiceTest extends ServiceTest {
+class TableServiceTest {
     @Autowired
     private TableService tableService;
 
@@ -77,7 +69,8 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         OrderTable nonGroupedTable = orderTableDao.save(createTable(null, 10, false));
         Long savedTableId = nonGroupedTable.getId();
-        Order completedOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COMPLETION, null);
+        Order completedOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COMPLETION,
+                null);
         orderDao.save(completedOrder);
         OrderTable emptyTable = createTable(null, 0, true);
 
@@ -110,7 +103,8 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_fail_if_table_s_order_is_not_completion() {
         OrderTable savedTable = orderTableDao.save(createTable(null, 10, false));
         Long savedTableId = savedTable.getId();
-        Order nonCompleteOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COOKING, null);
+        Order nonCompleteOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COOKING,
+                null);
         orderDao.save(nonCompleteOrder);
         OrderTable emptyTable = createTable(null, 0, true);
 
@@ -136,7 +130,8 @@ class TableServiceTest extends ServiceTest {
         final Long nonEmptyTableId = nonEmptyTable.getId();
         final OrderTable tableWithNewNumberOfGuest = createTable(null, 10, false);
 
-        final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(nonEmptyTableId, tableWithNewNumberOfGuest);
+        final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(nonEmptyTableId,
+                tableWithNewNumberOfGuest);
 
         assertAll(
                 () -> assertThat(updatedOrderTable.getId()).isNotNull(),

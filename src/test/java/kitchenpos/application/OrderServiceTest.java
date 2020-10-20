@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,13 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -37,19 +30,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
-@SpringBootTest(classes = {
-        OrderService.class,
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderLineItemDao.class,
-        JdbcTemplateProductDao.class,
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class
-})
+@SpringBootTest
 @Transactional
-class OrderServiceTest extends ServiceTest {
+class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
@@ -115,7 +98,8 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void create_fail_if_order_contains_no_order_line_item() {
         OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Order orderNotContainsAnyProduct = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING, Collections.emptyList());
+        Order orderNotContainsAnyProduct = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING,
+                Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderNotContainsAnyProduct))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -148,7 +132,8 @@ class OrderServiceTest extends ServiceTest {
 
         OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
         OrderLineItem secondOrderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        Order newOrder = createOrder(notEmptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem, secondOrderLineItem));
+        Order newOrder = createOrder(notEmptyTable.getId(), null, OrderStatus.COOKING,
+                Lists.list(firstOrderLineItem, secondOrderLineItem));
 
         assertThatThrownBy(() -> orderService.create(newOrder))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -178,7 +163,8 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_fail_if_order_status_is_completion() {
         OrderTable notEmptyTable = orderTableDao.save(createTable(null, 5, false));
         Order completedOrder = orderDao.save(
-                createOrder(notEmptyTable.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COMPLETION, null));
+                createOrder(notEmptyTable.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COMPLETION,
+                        null));
         Long savedOrderId = completedOrder.getId();
         Order nonCompletedOrder = createOrder(null, null, OrderStatus.MEAL, null);
 

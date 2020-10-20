@@ -1,11 +1,10 @@
 package kitchenpos.ui;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +17,6 @@ import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -64,10 +61,15 @@ class TableGroupRestControllerTest extends ControllerTest {
         OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
         OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
 
-        orderDao.save(createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION, null));
-        orderDao.save(createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION, null));
+        orderDao.save(
+                createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION,
+                        null));
+        orderDao.save(
+                createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
+                        null));
 
-        TableGroup createdTableGroup = tableGroupService.create(createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
+        TableGroup createdTableGroup = tableGroupService.create(
+                createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
 
         String unGroupApiUrl = "/api/table-groups/{tableGroupId}";
 

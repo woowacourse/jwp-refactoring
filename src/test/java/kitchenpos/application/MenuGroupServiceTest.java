@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import static kitchenpos.data.TestData.*;
+import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,15 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest(classes = {
-        MenuGroupService.class,
-        JdbcTemplateMenuGroupDao.class
-})
+@SpringBootTest
 @Transactional
-class MenuGroupServiceTest extends ServiceTest {
+class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
