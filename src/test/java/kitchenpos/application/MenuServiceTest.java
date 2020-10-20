@@ -99,6 +99,32 @@ public class MenuServiceTest {
 		);
 	}
 
+	@DisplayName("Menu의 price가 null이면 예외 발생한다.")
+	@Test
+	void priceNullException() {
+		menu1.setPrice(null);
+		assertThatThrownBy(() -> menuService.create(menu1))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("Menu의 price가 0보다 작으면 예외 발생한다.")
+	@Test
+	void negativePriceException() {
+		menu1.setPrice(BigDecimal.valueOf(-1));
+		assertThatThrownBy(() -> menuService.create(menu1))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("Menu의 price가 메뉴에 포함된 MenuProduct의 price 합보다 크면 예외 발생한다.")
+	@Test
+	void priceaNullException() {
+		BigDecimal sum = product1.getPrice().multiply(BigDecimal.valueOf(menuProduct1.getQuantity()));
+		menu1.setPrice(sum.add(BigDecimal.ONE));
+
+		assertThatThrownBy(() -> menuService.create(menu1))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
 	@DisplayName("등록된 모든 Menu를 조회한다.")
 	@Test
 	void listTest() {

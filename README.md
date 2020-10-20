@@ -7,9 +7,9 @@
 
 - Menu 관련 기능
     - [x] 메뉴를 생성하는 기능 구현
-        - [ ] Menu의 price가 null이면 예외 발생
-        - [ ] Menu의 price가 0보다 작으면 예외 발생
-        - [ ] Menu의 price가 메뉴에 포함된 Product의 price 합보다 크면 예외 발생
+        - [x] Menu의 price가 null이면 예외 발생
+        - [x] Menu의 price가 0보다 작으면 예외 발생
+        - [x] Menu의 price가 메뉴에 포함된 MenuProduct의 price 합보다 크면 예외 발생
     - [x] 등록된 모든 메뉴를 확인하는 기능 구현
 
 - Order 관련 기능
