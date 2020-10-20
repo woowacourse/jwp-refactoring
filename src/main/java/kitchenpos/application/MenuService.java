@@ -56,14 +56,14 @@ public class MenuService {
         return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
-    private void validateMenuGroup(MenuRequest menuRequest) {
+    private void validateMenuGroup(final MenuRequest menuRequest) {
         final Long menuGroupId = menuRequest.getMenuGroupId();
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validatePriceSum(Price price, List<MenuProductRequest> menuProductRequests) {
+    private void validatePriceSum(final Price price, final List<MenuProductRequest> menuProductRequests) {
         Price sum = Price.zero();
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
@@ -76,7 +76,8 @@ public class MenuService {
         }
     }
 
-    private List<MenuProductResponse> saveMenuProducts(List<MenuProductRequest> menuProductRequests, Long menuId) {
+    private List<MenuProductResponse> saveMenuProducts(final List<MenuProductRequest> menuProductRequests,
+                                                       final Long menuId) {
         final List<MenuProductResponse> savedMenuProducts = new ArrayList<>();
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             MenuProduct menuProduct = menuProductRequest.to(menuId);

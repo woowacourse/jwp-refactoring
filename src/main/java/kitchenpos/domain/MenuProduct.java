@@ -28,6 +28,14 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public Long getContainMenuId() {
+        return menu.getId();
+    }
+
+    public Long getContainProductId() {
+        return product.getId();
+    }
+
     public Menu getMenu() {
         return menu;
     }

@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(ProductRequest productRequest) {
+    public ProductResponse create(final ProductRequest productRequest) {
         Price.of(productRequest.getPrice());
 
         Product product = productRequest.to();

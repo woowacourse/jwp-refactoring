@@ -61,9 +61,9 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+//        if (orderTable.isEmpty()) {
+//            throw new IllegalArgumentException();
+//        }
 
         order.getOrderTable().setId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());

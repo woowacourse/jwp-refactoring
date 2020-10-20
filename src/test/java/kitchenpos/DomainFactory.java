@@ -57,8 +57,8 @@ public class DomainFactory {
 
     public static OrderTable createOrderTable(int numberOfGuests, boolean empty, Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        orderTable.setNumberOfGuests(NumberOfGuests.of(numberOfGuests));
+        orderTable.setEmpty(Empty.of(empty));
         if (Objects.nonNull(tableGroupId)) {
             orderTable.setTableGroup(new TableGroup(tableGroupId));
         }

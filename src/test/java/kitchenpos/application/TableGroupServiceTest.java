@@ -114,11 +114,11 @@ class TableGroupServiceTest extends ServiceTest {
 
         assertAll(
                 () -> assertThat(ungroupedOrderTables.get(0).getTableGroup()).isNull(),
-                () -> assertThat(ungroupedOrderTables.get(0).getNumberOfGuests()).isEqualTo(1),
-                () -> assertThat(ungroupedOrderTables.get(0).isEmpty()).isFalse(),
+                () -> assertThat(ungroupedOrderTables.get(0).getNumberOfGuestsCount()).isEqualTo(1),
+                () -> assertThat(ungroupedOrderTables.get(0).isEmptyTable()).isFalse(),
                 () -> assertThat(ungroupedOrderTables.get(1).getTableGroup()).isNull(),
-                () -> assertThat(ungroupedOrderTables.get(1).getNumberOfGuests()).isEqualTo(2),
-                () -> assertThat(ungroupedOrderTables.get(1).isEmpty()).isFalse()
+                () -> assertThat(ungroupedOrderTables.get(1).getNumberOfGuestsCount()).isEqualTo(2),
+                () -> assertThat(ungroupedOrderTables.get(1).isEmptyTable()).isFalse()
         );
     }
 

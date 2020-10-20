@@ -15,7 +15,6 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,11 +51,11 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
+//        for (final OrderTable savedOrderTable : savedOrderTables) {
+//            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+//                throw new IllegalArgumentException();
+//            }
+//        }
 
         tableGroup.setCreatedDate(LocalDateTime.now());
 
@@ -64,7 +63,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
+//            savedOrderTable.setEmpty(false);
             orderTableRepository.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
@@ -73,7 +72,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse createWithRequest(TableGroupRequest tableGroupRequest) {
+    public TableGroupResponse createWithRequest(final TableGroupRequest tableGroupRequest) {
         return null;
     }
 
@@ -92,7 +91,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+//            orderTable.setEmpty(false);
             orderTableRepository.save(orderTable);
         }
     }

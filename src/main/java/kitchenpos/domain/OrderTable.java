@@ -10,14 +10,40 @@ public class OrderTable extends BaseEntity {
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
-    private int numberOfGuests;
-    private boolean empty;
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
+    @Embedded
+    private Empty empty;
 
     public OrderTable() {
     }
 
     public OrderTable(Long id) {
         this.id = id;
+    }
+
+    public OrderTable(Long id, TableGroup tableGroup, NumberOfGuests numberOfGuests, Empty empty) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = this.empty.compare(empty);
+    }
+
+    public void changeNumberOfGuests(final NumberOfGuests numberOfGuests) {
+        this.numberOfGuests = this.numberOfGuests.compare(numberOfGuests);
+    }
+
+    public int getNumberOfGuestsCount() {
+        return numberOfGuests.getNumberOfGuests();
+    }
+
+    public boolean isEmptyTable() {
+        return this.empty.isEmpty();
     }
 
     public TableGroup getTableGroup() {
@@ -36,19 +62,19 @@ public class OrderTable extends BaseEntity {
         this.id = id;
     }
 
-    public int getNumberOfGuests() {
+    public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(int numberOfGuests) {
+    public void setNumberOfGuests(NumberOfGuests numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Empty getEmpty() {
         return empty;
     }
 
-    public void setEmpty(boolean empty) {
+    public void setEmpty(Empty empty) {
         this.empty = empty;
     }
 }

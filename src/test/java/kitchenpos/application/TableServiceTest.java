@@ -3,6 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -15,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static kitchenpos.DomainFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -40,14 +41,16 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("새로운 테이블 추가")
     @Test
     void createTest() {
-        OrderTable orderTable = createOrderTable(0, true);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
 
         assertAll(
-                () -> assertThat(savedOrderTable.getId()).isNotNull(),
-                () -> assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests()),
-                () -> assertThat(savedOrderTable.isEmpty()).isEqualTo(orderTable.isEmpty())
+                () -> assertThat(orderTableResponse.getId()).isNotNull(),
+                () -> assertThat(orderTableResponse.getTableGroupId()).isNull(),
+                () -> assertThat(orderTableResponse.getNumberOfGuests())
+                        .isEqualTo(orderTableRequest.getNumberOfGuests()),
+                () -> assertThat(orderTableResponse.isEmpty()).isEqualTo(orderTableRequest.isEmpty())
         );
     }
 
@@ -57,33 +60,34 @@ class TableServiceTest extends ServiceTest {
         saveOrderTable(orderTableRepository, 0, true);
         saveOrderTable(orderTableRepository, 0, true);
 
-        List<OrderTable> orderTables = tableService.list();
+        List<OrderTableResponse> orderTableResponses = tableService.list();
 
-        assertThat(orderTables).hasSize(2);
+        assertThat(orderTableResponses).hasSize(2);
     }
 
     @DisplayName("테이블에 주문이 남아있는지 여부 상태 변경")
     @Test
     void changeEmptyTest() {
         OrderTable orderTable = saveOrderTable(orderTableRepository, 0, true);
-        OrderTable nonEmptyOrderTable = createOrderTable(0, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
-        OrderTable changeEmptyOrderTable = tableService.changeEmpty(orderTable.getId(), nonEmptyOrderTable);
+        OrderTableResponse orderTableResponse =
+                tableService.changeEmpty(orderTable.getId(), orderTableRequest);
 
         assertAll(
-                () -> assertThat(changeEmptyOrderTable.getId()).isEqualTo(orderTable.getId()),
-                () -> assertThat(changeEmptyOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests()),
-                () -> assertThat(changeEmptyOrderTable.isEmpty()).isEqualTo(nonEmptyOrderTable.isEmpty())
+                () -> assertThat(orderTableResponse.getId()).isEqualTo(orderTable.getId()),
+                () -> assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuestsCount()),
+                () -> assertThat(orderTableResponse.isEmpty()).isEqualTo(orderTableRequest.isEmpty())
         );
     }
 
     @DisplayName("잘못된 테이블 번호 입력 시 예외 반환")
     @Test
     void changeEmptyWithInvalidOrderTableIdTest() {
-        OrderTable orderTable = createOrderTable(0, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
         assertThatThrownBy(() -> {
-            tableService.changeEmpty(0L, orderTable);
+            tableService.changeEmpty(0L, orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -92,10 +96,10 @@ class TableServiceTest extends ServiceTest {
     void changeEmptyWithTableGroupTest() {
         TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
         OrderTable orderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
-        OrderTable nonEmptyOrderTable = createOrderTable(1, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
         assertThatThrownBy(() -> {
-            tableService.changeEmpty(orderTable.getId(), nonEmptyOrderTable);
+            tableService.changeEmpty(orderTable.getId(), orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,11 +108,11 @@ class TableServiceTest extends ServiceTest {
     void changeEmptyWithOrderTest() {
         TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
         OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
-        OrderTable nonEmptyOrderTable = createOrderTable(1, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(false);
         saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         assertThatThrownBy(() -> {
-            tableService.changeEmpty(unPairedOrderTable.getId(), nonEmptyOrderTable);
+            tableService.changeEmpty(unPairedOrderTable.getId(), orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -116,16 +120,17 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuestsTest() {
         OrderTable orderTable = saveOrderTable(orderTableRepository, 5, false);
-        OrderTable changeGuestsOrderTable = createOrderTable(3, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(3);
 
-        OrderTable changeNumberOfGuestsOrderTable =
-                tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsOrderTable);
+        OrderTableResponse orderTableResponse =
+                tableService.changeNumberOfGuests(orderTable.getId(), orderTableRequest);
 
         assertAll(
-                () -> assertThat(changeNumberOfGuestsOrderTable.getId()).isEqualTo(orderTable.getId()),
-                () -> assertThat(changeNumberOfGuestsOrderTable.getNumberOfGuests())
-                        .isEqualTo(changeGuestsOrderTable.getNumberOfGuests()),
-                () -> assertThat(changeNumberOfGuestsOrderTable.isEmpty()).isEqualTo(orderTable.isEmpty())
+                () -> assertThat(orderTableResponse.getId()).isEqualTo(orderTable.getId()),
+                () -> assertThat(orderTableResponse.getTableGroupId()).isNull(),
+                () -> assertThat(orderTableResponse.getNumberOfGuests())
+                        .isEqualTo(orderTableRequest.getNumberOfGuests()),
+                () -> assertThat(orderTableResponse.isEmpty()).isEqualTo(orderTable.isEmptyTable())
         );
     }
 
@@ -133,20 +138,20 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuestsWithUnderZeroTest() {
         OrderTable orderTable = saveOrderTable(orderTableRepository, 5, false);
-        OrderTable changeGuestsOrderTable = createOrderTable(-1, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(-1);
 
         assertThatThrownBy(() -> {
-            tableService.changeNumberOfGuests(orderTable.getId(), changeGuestsOrderTable);
+            tableService.changeNumberOfGuests(orderTable.getId(), orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("잘못된 테이블 번호 입력 시 예외 반환")
     @Test
     void changeNumberOfGuestsWithInvalidOrderTableIdTest() {
-        OrderTable changeGuestsOrderTable = createOrderTable(3, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(5);
 
         assertThatThrownBy(() -> {
-            tableService.changeNumberOfGuests(0L, changeGuestsOrderTable);
+            tableService.changeNumberOfGuests(0L, orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -154,10 +159,10 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuestsWithEmptyOrderTableTest() {
         OrderTable emptyOrderTable = saveOrderTable(orderTableRepository, 5, true);
-        OrderTable changeGuestsOrderTable = createOrderTable(3, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(3);
 
         assertThatThrownBy(() -> {
-            tableService.changeNumberOfGuests(emptyOrderTable.getId(), changeGuestsOrderTable);
+            tableService.changeNumberOfGuests(emptyOrderTable.getId(), orderTableRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 

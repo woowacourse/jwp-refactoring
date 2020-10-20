@@ -49,9 +49,10 @@ class TableRestControllerTest {
     void createTest() throws Exception {
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
         String content = objectMapper.writeValueAsString(orderTableRequest);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(1L);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, 1L,
+                orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty());
 
-        given(tableService.createWithRequest(any())).willReturn(orderTableResponse);
+        given(tableService.create(any())).willReturn(orderTableResponse);
 
         mockMvc.perform(
                 post(BASE_URL)
@@ -60,7 +61,10 @@ class TableRestControllerTest {
                         .content(content)
         )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", Matchers.is(1)));
+                .andExpect(jsonPath("$.id", Matchers.is(1)))
+                .andExpect(jsonPath("$.tableGroupId", Matchers.is(1)))
+                .andExpect(jsonPath("$.numberOfGuests", Matchers.is(0)))
+                .andExpect(jsonPath("$.empty", Matchers.is(true)));
     }
 
     @DisplayName("저장된 모든 주문 테이블 출력")
@@ -72,7 +76,7 @@ class TableRestControllerTest {
                 new OrderTableResponse(3L)
         );
 
-        given(tableService.listWithResponse()).willReturn(orderTableResponses);
+        given(tableService.list()).willReturn(orderTableResponses);
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
@@ -87,7 +91,7 @@ class TableRestControllerTest {
         String content = objectMapper.writeValueAsString(orderTableRequest);
         OrderTableResponse orderTableResponse = new OrderTableResponse(1L);
 
-        given(tableService.changeEmptyWithRequest(any(), any())).willReturn(orderTableResponse);
+        given(tableService.changeEmpty(any(), any())).willReturn(orderTableResponse);
 
         mockMvc.perform(
                 put(BASE_URL + "/1/empty")
@@ -106,7 +110,7 @@ class TableRestControllerTest {
         String content = objectMapper.writeValueAsString(orderTableRequest);
         OrderTableResponse orderTableResponse = new OrderTableResponse(1L);
 
-        given(tableService.changeNumberOfGuestsWithRequest(any(), any())).willReturn(orderTableResponse);
+        given(tableService.changeNumberOfGuests(any(), any())).willReturn(orderTableResponse);
 
         mockMvc.perform(
                 put(BASE_URL + "/1/number-of-guests")
