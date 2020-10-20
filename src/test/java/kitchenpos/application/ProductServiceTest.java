@@ -11,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -45,6 +47,25 @@ public class ProductServiceTest {
 		assertThat(saved.getId()).isEqualTo(product.getId());
 		assertThat(saved.getName()).isEqualTo(product.getName());
 		assertThat(saved.getPrice()).isEqualTo(product.getPrice());
+	}
+
+	@DisplayName("상품의 price가 null이면 예외 발생한다.")
+	@Test
+	void nullProductPriceException() {
+		product.setPrice(null);
+
+		assertThatThrownBy(() -> productService.create(product))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("상품의 price가 0보다 작으면 예외 발생한다.")
+	@ParameterizedTest
+	@ValueSource(ints = {-1, -2, -100})
+	void negativeProductPriceException(int price) {
+		product.setPrice(BigDecimal.valueOf(price));
+
+		assertThatThrownBy(() -> productService.create(product))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("등록된 모든 Product를 조회한다.")
