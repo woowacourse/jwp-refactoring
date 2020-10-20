@@ -1,20 +1,12 @@
 package kitchenpos.fixture;
 
+import kitchenpos.domain.*;
+import org.junit.jupiter.api.BeforeEach;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 
 public abstract class TestFixture {
 
@@ -38,8 +30,8 @@ public abstract class TestFixture {
     public static final long MENU_ID_2 = 2L;
     public static final String MENU_NAME_1 = "메뉴이름1";
     public static final String MENU_NAME_2 = "메뉴이름2";
-    public static final BigDecimal MENU_PRICE_1 = new BigDecimal(1);
-    public static final BigDecimal MENU_PRICE_2 = new BigDecimal(2);
+    public static final BigDecimal MENU_PRICE_1 = BigDecimal.valueOf(1L, 2);
+    public static final BigDecimal MENU_PRICE_2 = BigDecimal.valueOf(2L, 2);
     public static final List<MenuProduct> MENU_PRODUCTS_1 = Arrays.asList(MENU_PRODUCT_1);
     public static final List<MenuProduct> MENU_PRODUCTS_2 = Arrays.asList(MENU_PRODUCT_2);
     public static final Menu MENU_1 = new Menu();
@@ -49,8 +41,8 @@ public abstract class TestFixture {
     public static final long PRODUCT_ID_2 = 2L;
     public static final String PRODUCT_NAME_1 = "제품이름1";
     public static final String PRODUCT_NAME_2 = "제품이름2";
-    public static final BigDecimal PRODUCT_PRICE_1 = new BigDecimal(1);
-    public static final BigDecimal PRODUCT_PRICE_2 = new BigDecimal(2);
+    public static final BigDecimal PRODUCT_PRICE_1 = BigDecimal.valueOf(1L, 2);
+    public static final BigDecimal PRODUCT_PRICE_2 = BigDecimal.valueOf(2L, 2);
     public static final Product PRODUCT_1 = new Product();
     public static final Product PRODUCT_2 = new Product();
 
