@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -19,29 +20,19 @@ public class ProductService {
     }
 
     @Transactional
-    public Product create(final Product product) {
-//        final BigDecimal price = product.getPrice();
-//
-//        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-//            throw new IllegalArgumentException();
-//        }
-        final Price price = product.getPrice();
-//        if (price.isInvalidPrice()) {
-//            throw new IllegalArgumentException();
-//        }
+    public ProductResponse create(ProductRequest productRequest) {
+        Price.of(productRequest.getPrice());
 
-        return productRepository.save(product);
+        Product product = productRequest.to();
+        Product savedProduct = productRepository.save(product);
+
+        return ProductResponse.of(savedProduct);
     }
 
-    public ProductResponse createWithRequest(ProductRequest productRequest) {
-        return null;
-    }
-
-    public List<Product> list() {
-        return productRepository.findAll();
-    }
-
-    public List<ProductResponse> listWithResponse() {
-        return null;
+    public List<ProductResponse> list() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .map(ProductResponse::of)
+                .collect(Collectors.toList());
     }
 }

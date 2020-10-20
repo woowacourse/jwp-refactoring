@@ -51,9 +51,9 @@ class ProductRestControllerTest {
     void createTest() throws Exception {
         ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(17_000));
         String content = objectMapper.writeValueAsString(productRequest);
-        ProductResponse productResponse = new ProductResponse(1L);
+        ProductResponse productResponse = new ProductResponse(1L, "강정치킨", BigDecimal.valueOf(17_000));
 
-        given(productService.createWithRequest(any())).willReturn(productResponse);
+        given(productService.create(any())).willReturn(productResponse);
 
         mockMvc.perform(
                 post(BASE_URL)
@@ -62,7 +62,9 @@ class ProductRestControllerTest {
                         .content(content)
         )
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", Matchers.is(1)));
+                .andExpect(jsonPath("$.id", Matchers.is(productResponse.getId().intValue())))
+                .andExpect(jsonPath("$.name", Matchers.is(productRequest.getName())))
+                .andExpect(jsonPath("$.price", Matchers.is(productRequest.getPrice().intValue())));
     }
 
     @DisplayName("저장된 모든 제품 출력")
@@ -74,7 +76,7 @@ class ProductRestControllerTest {
                 new ProductResponse(3L)
         );
 
-        given(productService.listWithResponse()).willReturn(productResponses);
+        given(productService.list()).willReturn(productResponses);
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
