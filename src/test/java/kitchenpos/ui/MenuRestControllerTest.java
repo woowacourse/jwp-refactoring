@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.data.TestData.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -8,32 +9,38 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.ResultActions;
 
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 class MenuRestControllerTest extends ControllerTest {
+    @Autowired
+    MenuGroupDao menuGroupDao;
+
+    @Autowired
+    ProductDao productDao;
+
     @DisplayName("create: 이름을 body message에 포함해 메뉴 등록을 요청시 ,메뉴 생성 성공 시 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(5L);
-
-        final Menu menu = new Menu();
-        menu.setName("후라이드 5마리 세트");
-        menu.setPrice(BigDecimal.valueOf(40_000));
-        menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
+        Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
+        MenuProduct menuProduct_with_40_000_won = createMenuProduct(null, product_20_000_won.getId(), 2);
+        Menu menu_with_price_is_40_000_won = createMenu("후라이드 2마리 세트", BigDecimal.valueOf(40_000), setMenuGroup.getId(), Collections.singletonList(menuProduct_with_40_000_won));
 
         final String createMenuApiUrl = "/api/menus";
-        final ResultActions resultActions = create(createMenuApiUrl, menu);
+        final ResultActions resultActions = create(createMenuApiUrl, menu_with_price_is_40_000_won);
 
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
-                .andExpect(jsonPath("$.name", is("후라이드 5마리 세트")))
+                .andExpect(jsonPath("$.name", is("후라이드 2마리 세트")))
                 .andExpect(jsonPath("$.price", is(40_000d)))
                 .andExpect(jsonPath("$.menuGroupId", is(1)))
                 .andExpect(jsonPath("$.menuProducts", hasSize(1)));
@@ -47,6 +54,6 @@ class MenuRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(6)));
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

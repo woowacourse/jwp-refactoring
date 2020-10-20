@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.data.TestData.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -12,12 +13,11 @@ import kitchenpos.domain.MenuGroup;
 class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("create: 이름을 body message에 포함해 제품 등록을 요청시 , 메뉴 그룹을 생성 후 생성 성공 시 201 응답을 반환한다.")
     @Test
-    void createMenuGroup() throws Exception {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("legacy");
+    void createNewMenuGroup() throws Exception {
+        MenuGroup menuGroup = createMenuGroup("legacy");
 
-        final String createMenuGroupApiUrl = "/api/menu-groups/";
-        final ResultActions resultActions = create(createMenuGroupApiUrl, menuGroup);
+        String createMenuGroupApiUrl = "/api/menu-groups/";
+        ResultActions resultActions = create(createMenuGroupApiUrl, menuGroup);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -33,6 +33,6 @@ class MenuGroupRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

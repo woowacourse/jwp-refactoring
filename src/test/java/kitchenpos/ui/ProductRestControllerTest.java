@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.data.TestData.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -15,12 +16,10 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("create: 이름, 가격을 body message에 포함해 제품 등록을 요청시 , 요청값을 바탕으로 제품을 생성 후 생성 성공 시 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
-        final Product product = new Product();
-        product.setName("치킨");
-        product.setPrice(BigDecimal.valueOf(16_000));
+        Product product = createProduct("치킨", BigDecimal.valueOf(16_000));
 
-        final String createProductApiUrl = "/api/products";
-        final ResultActions resultActions = create(createProductApiUrl, product);
+        String createProductApiUrl = "/api/products";
+        ResultActions resultActions = create(createProductApiUrl, product);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -38,6 +37,6 @@ class ProductRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(6)));
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }

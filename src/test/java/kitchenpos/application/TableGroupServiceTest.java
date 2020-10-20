@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.data.TestData.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,18 +14,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@SpringBootTest
+@SpringBootTest(classes = {
+        TableGroupService.class,
+        JdbcTemplateOrderTableDao.class,
+        JdbcTemplateTableGroupDao.class,
+        JdbcTemplateOrderDao.class
+})
 @Transactional
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
@@ -32,29 +38,16 @@ class TableGroupServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
-
-    @Autowired
     private OrderDao orderDao;
 
     @DisplayName("create: 2개 이상의 중복 없이 존재, 비어있고, 그룹 지정 되지 않은 테이블 목록 그룹 지정시, 그룹 지정 후, 해당 객체를 반환한다.")
     @Test
     void create() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable secondSavedTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup tableGroupWithMultipleTable = createTableGroup(null, Lists.list(firstSavedTable, secondSavedTable));
 
-        final OrderTable secondTable = new OrderTable();
-        secondTable.setEmpty(true);
-        secondTable.setNumberOfGuests(0);
-        secondTable.setTableGroupId(null);
-        final OrderTable secondSavedTable = orderTableDao.save(secondTable);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable, secondSavedTable));
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        final TableGroup savedTableGroup = tableGroupService.create(tableGroupWithMultipleTable);
 
         assertAll(
                 () -> assertThat(savedTableGroup.getId()).isNotNull(),
@@ -66,126 +59,73 @@ class TableGroupServiceTest {
     @DisplayName("create: 1개 테이블 그룹 지정시, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_count_is_smaller_than_minimum_length() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup tableGroupWithOneTable = createTableGroup(null, Lists.list(firstSavedTable));
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupWithOneTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블이 없는 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_does_not_exist() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        TableGroup tableGroupWithOutAnyTable = createTableGroup(null, Collections.emptyList());
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupWithOutAnyTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블이 null인 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_is_null() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(null);
+        TableGroup tableGroupWithTableIsNull = createTableGroup(null, null);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupWithTableIsNull))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블 들 중 중복인 테이블이 존재하는 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_contains_duplicate_table() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup tableGroupContainsDuplicateTable = createTableGroup(null, Lists.list(firstSavedTable, firstSavedTable));
 
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable, firstSavedTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsDuplicateTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블 들 중 존재하지 않는 테이블이 포함된 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_contains_non_exist_table() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable nonExistTable = createTable(null, 0, true);
+        TableGroup tableGroupContainsInvalidTable = createTableGroup(null, Lists.list(firstSavedTable, nonExistTable));
 
-        final OrderTable nonExistTable = new OrderTable();
-        nonExistTable.setEmpty(true);
-        nonExistTable.setNumberOfGuests(0);
-        nonExistTable.setTableGroupId(null);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable, nonExistTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsInvalidTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블 들 중 이미 점유중인 테이블이 포함된 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_contains_non_empty_table() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable emptyTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
+        TableGroup tableGroupContainsNonEmptyTable = createTableGroup(null, Lists.list(emptyTable, nonEmptyTable));
 
-        final OrderTable secondTable = new OrderTable();
-        secondTable.setEmpty(false);
-        secondTable.setNumberOfGuests(0);
-        secondTable.setTableGroupId(null);
-        final OrderTable secondSavedTable = orderTableDao.save(secondTable);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable, secondSavedTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsNonEmptyTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 그룹 지정 대상 테이블 들 중 이미 그룹 에 소속된 테이블 포함하는 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_contains_already_grouped_table() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable firstSavedTable = orderTableDao.save(firstTable);
+        OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup firstTableGroup = createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable));
+        tableGroupService.create(firstTableGroup);
 
-        final OrderTable secondTable = new OrderTable();
-        secondTable.setEmpty(true);
-        secondTable.setNumberOfGuests(0);
-        secondTable.setTableGroupId(null);
-        final OrderTable secondSavedTable = orderTableDao.save(secondTable);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(firstSavedTable, secondSavedTable));
-        tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 10, 20, 40));
-        tableGroupDao.save(tableGroup);
-
-        final OrderTable thirdTable = new OrderTable();
-        thirdTable.setEmpty(false);
-        thirdTable.setNumberOfGuests(0);
-        thirdTable.setTableGroupId(null);
-        final OrderTable thirdSavedTable = orderTableDao.save(thirdTable);
-
-        final TableGroup secondTableGroup = new TableGroup();
-        secondTableGroup.setOrderTables(Lists.list(secondSavedTable, thirdSavedTable));
+        OrderTable thirdEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup secondTableGroup = createTableGroup(null, Lists.list(firstEmptyTable, thirdEmptyTable));
 
         assertThatThrownBy(() -> tableGroupService.create(secondTableGroup))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -194,90 +134,32 @@ class TableGroupServiceTest {
     @DisplayName("ungroup: 입력 받은 테이블 그룹 id에 대해 그룹 해제 대상 테이블 모두 주문 완료 상태인 경우, 대상 테이블들의 그룹화를 해제한다.")
     @Test
     void ungroup() {
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        final OrderTable orderTable = orderTableDao.save(firstTable);
+        OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
 
-        final OrderTable secondTable = new OrderTable();
-        secondTable.setEmpty(true);
-        secondTable.setNumberOfGuests(0);
-        secondTable.setTableGroupId(null);
-        final OrderTable orderTable2 = orderTableDao.save(secondTable);
+        orderDao.save(createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION, null));
+        orderDao.save(createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION, null));
 
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(3);
+        TableGroup createdTableGroup = tableGroupService.create(createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
 
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderedTime(LocalDateTime.of(2020, 10, 20, 20, 40));
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(order);
-
-        final Order order2 = new Order();
-        order2.setOrderTableId(orderTable2.getId());
-        order2.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order2.setOrderedTime(LocalDateTime.of(2020, 10, 20, 21, 44));
-        order2.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(order2);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Lists.list(orderTable, orderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 10, 20, 40));
-        final TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
-        final Long savedTableGroupId = createdTableGroup.getId();
-
-        tableGroupService.ungroup(savedTableGroupId);
+        tableGroupService.ungroup(createdTableGroup.getId());
         assertAll(
-                () -> assertThat(orderTableDao.findById(orderTable.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull(),
-                () -> assertThat(orderTableDao.findById(orderTable2.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull()
+                () -> assertThat(orderTableDao.findById(firstEmptyTable.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull(),
+                () -> assertThat(orderTableDao.findById(secondEmptyTable.getId()).orElseThrow(IllegalArgumentException::new).getTableGroupId()).isNull()
         );
     }
 
     @DisplayName("ungroup: 그룹 해제 대상 테이블 중 하나라도 주문 완료 상태가 아닌 경우, 그룹 해제 실패 및 IllegalArgumentException 발생.")
     @Test
     void ungroup_fail_if_contains_not_completion_order_status_table() {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 10, 20, 40));
-        final TableGroup createdTableGroup = tableGroupDao.save(tableGroup);
-        final Long savedTableGroupId = createdTableGroup.getId();
+        OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        TableGroup createdTableGroup = tableGroupService.create(createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
 
-        final OrderTable firstTable = new OrderTable();
-        firstTable.setEmpty(true);
-        firstTable.setNumberOfGuests(0);
-        firstTable.setTableGroupId(null);
-        firstTable.setTableGroupId(savedTableGroupId);
-        final OrderTable orderTable = orderTableDao.save(firstTable);
+        orderDao.save(createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.MEAL, null));
+        orderDao.save(createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION, null));
 
-        final OrderTable secondTable = new OrderTable();
-        secondTable.setEmpty(true);
-        secondTable.setNumberOfGuests(0);
-        secondTable.setTableGroupId(null);
-        secondTable.setTableGroupId(savedTableGroupId);
-        final OrderTable orderTable2 = orderTableDao.save(secondTable);
-
-        final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(3);
-
-        final Order order = new Order();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderedTime(LocalDateTime.of(2020, 10, 20, 20, 40));
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(order);
-
-        final Order order2 = new Order();
-        order2.setOrderTableId(orderTable2.getId());
-        order2.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order2.setOrderedTime(LocalDateTime.of(2020, 10, 20, 21, 44));
-        order2.setOrderStatus(OrderStatus.COOKING.name());
-        orderDao.save(order2);
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroupId))
+        assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
