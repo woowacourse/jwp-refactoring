@@ -19,6 +19,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static kitchenpos.application.MenuServiceTest.*;
+import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_NAME_1;
+import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_PRICE_1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
+import static kitchenpos.application.ProductServiceTest.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,10 +34,6 @@ public class MenuServiceTest {
     public static final long TEST_MENU_PRODUCT_QUANTITY = 1L;
     public static final String TEST_MENU_NAME = "후라이드 치킨";
     public static final BigDecimal TEST_MENU_PRICE = new BigDecimal("16000.00");
-    public static final String TEST_PRODUCT_NAME_1 = "후라이드 치킨";
-    public static final String TEST_PRODUCT_NAME_2 = "코카콜라";
-    public static final BigDecimal TEST_PRODUCT_PRICE_1 = new BigDecimal("15000.00");
-    public static final BigDecimal TEST_PRODUCT_PRICE_2 = new BigDecimal("1000.00");
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
