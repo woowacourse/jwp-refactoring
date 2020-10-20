@@ -63,4 +63,24 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
 
         assertThat(isExist).isTrue();
     }
+
+    @DisplayName("기존에 존재하는 주문 업데이트 테스트")
+    @Test
+    void updateTest() {
+        Order updatingOrder = new Order();
+        updatingOrder.setId(ORDER_ID_1);
+        updatingOrder.setOrderedTime(ORDERED_TIME_1);
+        updatingOrder.setOrderStatus("COMPLETION");
+        updatingOrder.setOrderTableId(ORDER_TABLE_ID_1);
+
+        jdbcTemplateOrderDao.save(updatingOrder);
+
+        Order updatedOrder = jdbcTemplateOrderDao.findById(ORDER_ID_1).get();
+        assertAll(
+            () -> assertThat(updatedOrder.getId()).isEqualTo(ORDER_ID_1),
+            () -> assertThat(updatedOrder.getOrderedTime()).isEqualTo(ORDERED_TIME_1),
+            () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo("COMPLETION"),
+            () -> assertThat(updatedOrder.getOrderTableId()).isEqualTo(ORDER_TABLE_ID_1)
+        );
+    }
 }

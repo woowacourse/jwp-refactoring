@@ -39,4 +39,15 @@ class JdbcTemplateMenuProductDaoTest extends DaoTest {
 
         assertThat(menuProduct).usingRecursiveComparison().isEqualTo(MENU_PRODUCT_1);
     }
+
+    @DisplayName("메뉴id로 전체조회 테스트")
+    @Test
+    void findAllByMenuIdTest() {
+        List<MenuProduct> menuProducts = jdbcTemplateMenuProductDao.findAllByMenuId(MENU_ID_1);
+
+        assertAll(
+            () -> assertThat(menuProducts).hasSize(1),
+            () -> assertThat(menuProducts.get(0)).usingRecursiveComparison().isEqualTo(MENU_PRODUCT_1)
+        );
+    }
 }

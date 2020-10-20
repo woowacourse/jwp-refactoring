@@ -1,19 +1,5 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -21,6 +7,22 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixture.TestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest extends TestFixture {
@@ -148,5 +150,20 @@ class OrderServiceTest extends TestFixture {
         given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
 
         assertThat(orderService.changeOrderStatus(ORDER_ID_1, ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
+    }
+
+    @DisplayName("주문 목록 조회 테스트")
+    @Test
+    void listTest() {
+        given(orderDao.findAll()).willReturn(Arrays.asList(ORDER_1, ORDER_2));
+        given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
+        given(orderLineItemDao.findAllByOrderId(ORDER_ID_2)).willReturn(ORDER_LINE_ITEMS_2);
+
+        List<Order> orders = orderService.list();
+        assertAll(
+            () -> assertThat(orders).hasSize(2),
+            () -> assertThat(orders.get(0)).usingRecursiveComparison().isEqualTo(ORDER_1),
+            () -> assertThat(orders.get(1)).usingRecursiveComparison().isEqualTo(ORDER_2)
+        );
     }
 }

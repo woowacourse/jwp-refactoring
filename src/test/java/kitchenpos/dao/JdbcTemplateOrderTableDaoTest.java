@@ -65,4 +65,24 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
             () -> assertThat(orderTables.get(1)).usingRecursiveComparison().isEqualTo(ORDER_TABLE_2)
         );
     }
+
+    @DisplayName("기존에 존재하는 테이블 업데이트 테스트")
+    @Test
+    void updateTest() {
+        OrderTable updatingOrderTable = new OrderTable();
+        updatingOrderTable.setId(ORDER_TABLE_ID_1);
+        updatingOrderTable.setTableGroupId(TABLE_GROUP_ID);
+        updatingOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_2);
+        updatingOrderTable.setEmpty(true);
+
+        jdbcTemplateOrderTableDao.save(updatingOrderTable);
+
+        OrderTable updatedOrderTable = jdbcTemplateOrderTableDao.findById(ORDER_TABLE_ID_1).get();
+        assertAll(
+            () -> assertThat(updatedOrderTable.getId()).isEqualTo(ORDER_TABLE_ID_1),
+            () -> assertThat(updatedOrderTable.getTableGroupId()).isEqualTo(TABLE_GROUP_ID),
+            () -> assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(ORDER_TABLE_NUMBER_OF_GUESTS_2),
+            () -> assertThat(updatedOrderTable.isEmpty()).isEqualTo(true)
+        );
+    }
 }
