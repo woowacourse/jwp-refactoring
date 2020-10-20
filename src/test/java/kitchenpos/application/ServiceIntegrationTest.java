@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Ignore;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,6 +87,18 @@ class ServiceIntegrationTest {
     static OrderTable getOrderTableWithGuests(int numberOfGuests) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
+        return orderTable;
+    }
+
+    static List<OrderTable> getOrderTablesWithId(Long... ids) {
+        return Arrays.stream(ids)
+            .map(id -> getOrderTableWithId(id))
+            .collect(Collectors.toList());
+    }
+
+    private static OrderTable getOrderTableWithId(Long id) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
         return orderTable;
     }
 }
