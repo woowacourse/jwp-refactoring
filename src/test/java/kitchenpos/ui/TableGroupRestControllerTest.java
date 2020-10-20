@@ -57,7 +57,7 @@ class TableGroupRestControllerTest {
         String content = objectMapper.writeValueAsString(tableGroupRequest);
         TableGroupResponse tableGroupResponse = new TableGroupResponse(1L);
 
-        given(tableGroupService.createWithRequest(any())).willReturn(tableGroupResponse);
+        given(tableGroupService.create(any())).willReturn(tableGroupResponse);
 
         mockMvc.perform(
                 post(BASE_URL)

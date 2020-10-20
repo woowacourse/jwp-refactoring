@@ -46,6 +46,15 @@ public class OrderTable extends BaseEntity {
         return this.empty.isEmpty();
     }
 
+    public void groupIn(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = Empty.of(false);
+    }
+
     public TableGroup getTableGroup() {
         return tableGroup;
     }

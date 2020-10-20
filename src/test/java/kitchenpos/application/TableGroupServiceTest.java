@@ -3,6 +3,9 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -15,14 +18,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static kitchenpos.DomainFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -37,20 +38,15 @@ class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupRepository tableGroupRepository;
 
-    @Autowired
-    private EntityManager entityManager;
-
     private TableGroupService tableGroupService;
 
-    static Stream<TableGroup> invalidTableGroupWithOrderTable() {
-        TableGroup tableGroupWithEmptyOrderTable = new TableGroup();
-        tableGroupWithEmptyOrderTable.setOrderTables(Collections.emptyList());
-
-        TableGroup tableGroupWithOrderTableSizeUnderTwo = new TableGroup();
-        tableGroupWithOrderTableSizeUnderTwo.setOrderTables(Collections.singletonList(new OrderTable()));
+    static Stream<TableGroupRequest> invalidTableGroupRequestWithOrderTable() {
+        TableGroupRequest tableGroupRequestWithEmpty = new TableGroupRequest(Collections.emptyList());
+        TableGroupRequest tableGroupRequestWithSingleOrderTable = new TableGroupRequest(
+                Collections.singletonList(new OrderTableRequest(1L)));
 
         return Stream.of(
-                tableGroupWithEmptyOrderTable, tableGroupWithOrderTableSizeUnderTwo
+                tableGroupRequestWithEmpty, tableGroupRequestWithSingleOrderTable
         );
     }
 
@@ -64,39 +60,40 @@ class TableGroupServiceTest extends ServiceTest {
     void createTest() {
         OrderTable firstOrderTable = saveOrderTable(orderTableRepository, 1, true);
         OrderTable secondOrderTable = saveOrderTable(orderTableRepository, 2, true);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(new OrderTableRequest(firstOrderTable.getId()),
+                        new OrderTableRequest(secondOrderTable.getId()))
+        );
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup.getOrderTables()).hasSize(2),
-                () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull()
+                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getCreatedDate()).isBefore(LocalDateTime.now()),
+                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
         );
     }
 
     @DisplayName("새로운 단체 지정 시 주문 테이블의 개수가 잘못 되었을 때 예외 반환")
     @ParameterizedTest
-    @MethodSource("invalidTableGroupWithOrderTable")
-    void createTableGroupWithInvalidOrderTableTest(TableGroup tableGroup) {
+    @MethodSource("invalidTableGroupRequestWithOrderTable")
+    void createTableGroupWithInvalidOrderTableTest(TableGroupRequest tableGroupRequest) {
         assertThatThrownBy(() -> {
-            tableGroupService.create(tableGroup);
+            tableGroupService.create(tableGroupRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 단체 지정 시 존재하지 않는 주문 테이블 입력 시 예외 반환")
     @Test
     void createTableGroupWithInvalidOrderTableTest() {
-        OrderTable firstInvalidOrderTable = createOrderTable(0, false);
-        OrderTable secondInvalidOrderTable = createOrderTable(0, false);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(firstInvalidOrderTable, secondInvalidOrderTable));
+        OrderTableRequest firstInvalidOrderTableRequest = new OrderTableRequest(0, false);
+        OrderTableRequest secondInvalidOrderTableRequest = new OrderTableRequest(0, false);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(firstInvalidOrderTableRequest, secondInvalidOrderTableRequest)
+        );
 
         assertThatThrownBy(() -> {
-            tableGroupService.create(tableGroup);
+            tableGroupService.create(tableGroupRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -139,9 +136,6 @@ class TableGroupServiceTest extends ServiceTest {
     @Transactional
     void tearDown() {
         orderRepository.deleteAll();
-        List<TableGroup> tableGroups = tableGroupRepository.findAll();
-        tableGroups.forEach(tableGroup -> tableGroup.setOrderTables(null));
-        tableGroupRepository.saveAll(tableGroups);
         orderTableRepository.deleteAll();
         tableGroupRepository.deleteAll();
     }

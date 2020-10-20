@@ -33,6 +33,10 @@ public class OrderTableRequest {
         return new OrderTable(null, null, NumberOfGuests.of(numberOfGuests), Empty.of(empty));
     }
 
+    public OrderTable forOrderTables() {
+        return new OrderTable(id);
+    }
+
     public Long getId() {
         return id;
     }
