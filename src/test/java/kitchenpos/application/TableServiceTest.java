@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("/truncate.sql")
+@Sql(value = "/truncate.sql")
 @SpringBootTest
 class TableServiceTest {
     @Autowired
@@ -202,7 +202,7 @@ class TableServiceTest {
         return orderTable;
     }
 
-    private OrderTable createOrderTable(boolean emptyStatus) {
+    static OrderTable createOrderTable(boolean emptyStatus) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(emptyStatus);
         return orderTable;
