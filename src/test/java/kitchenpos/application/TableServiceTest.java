@@ -7,7 +7,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
-import kitchenpos.dto.table.TableGroupingRequest;
+import kitchenpos.dto.table.TableGroupRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,7 +88,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest groupingRequest = new TableGroupingRequest(
+        TableGroupRequest groupingRequest = new TableGroupRequest(
                 Arrays.asList(new OrderTableResponse(savedOrderTable1.getId()), new OrderTableResponse(savedOrderTable2.getId()))
         );
         tableGroupService.create(groupingRequest);

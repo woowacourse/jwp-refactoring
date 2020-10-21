@@ -2,13 +2,13 @@ package kitchenpos.dto.table;
 
 import java.util.List;
 
-public class TableGroupingRequest {
+public class TableGroupRequest {
     private List<OrderTableResponse> orderTableDtos;
 
-    public TableGroupingRequest() {
+    public TableGroupRequest() {
     }
 
-    public TableGroupingRequest(List<OrderTableResponse> orderTableDtos) {
+    public TableGroupRequest(List<OrderTableResponse> orderTableDtos) {
         this.orderTableDtos = orderTableDtos;
     }
 

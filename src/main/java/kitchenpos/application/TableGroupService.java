@@ -7,8 +7,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupRequest;
 import kitchenpos.dto.table.TableGroupResponse;
-import kitchenpos.dto.table.TableGroupingRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,18 +31,29 @@ public class TableGroupService {
         this.tableGroupDao = tableGroupDao;
     }
 
-    // TODO: 2020/10/17 validate 책임 분리
     @Transactional
-    public TableGroupResponse create(final TableGroupingRequest tableGroupingRequest) {
-        final List<OrderTableResponse> orderTableDtos = tableGroupingRequest.getOrderTableDtos();
-        if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTableResponse> orderTableDtos = tableGroupRequest.getOrderTableDtos();
         final List<Long> orderTableIds = orderTableDtos.stream()
                 .map(OrderTableResponse::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+
+        validate(orderTableDtos, savedOrderTables);
+
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables, LocalDateTime.now()));
+
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.tableGrouping(savedTableGroup);
+        }
+
+        return TableGroupResponse.of(savedTableGroup);
+    }
+
+    private void validate(List<OrderTableResponse> orderTableDtos, List<OrderTable> savedOrderTables) {
+        if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
+            throw new IllegalArgumentException();
+        }
 
         if (orderTableDtos.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
@@ -53,15 +64,6 @@ public class TableGroupService {
                 throw new IllegalArgumentException();
             }
         }
-
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables, LocalDateTime.now()));
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.tableGrouping(savedTableGroup);
-            orderTableDao.save(savedOrderTable);
-        }
-
-        return TableGroupResponse.of(savedTableGroup);
     }
 
     @Transactional

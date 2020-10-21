@@ -8,8 +8,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.TableGroupRequest;
 import kitchenpos.dto.table.TableGroupResponse;
-import kitchenpos.dto.table.TableGroupingRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,16 +45,18 @@ class TableGroupServiceTest extends TestFixtureFactory {
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
-        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
+        OrderTable orderTable1 = makeSavedOrderTable(0, true);
+        OrderTable orderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
-                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
-        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
+        OrderTable changedOrderTable = orderTableDao.findById(orderTable1.getId()).get();
         assertAll(
                 () -> assertThat(tableGroupResponse.getId()).isNotNull(),
-                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
+                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2),
+                () -> assertThat(changedOrderTable.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId())
         );
     }
 
@@ -63,11 +65,11 @@ class TableGroupServiceTest extends TestFixtureFactory {
     void createWithOrderTablesLessTwo() {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
+        TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId()));
 
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,10 +79,10 @@ class TableGroupServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
+        TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId() + 1));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,14 +93,14 @@ class TableGroupServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable3 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
+        TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
-        tableGroupService.create(tableGroupingRequest);
+        tableGroupService.create(tableGroupRequest);
 
-        TableGroupingRequest tableGroupingRequest2 =
+        TableGroupRequest tableGroupRequest2 =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable2.getId(), savedOrderTable3.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupingRequest2))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -108,9 +110,9 @@ class TableGroupServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
+        TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
-        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         tableGroupService.ungroup(tableGroupResponse.getId());
 
@@ -127,9 +129,9 @@ class TableGroupServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroupingRequest tableGroupingRequest =
+        TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
-        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupingRequest);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         Order order = new Order(savedOrderTable1, orderStatus, LocalDateTime.now(), new ArrayList<>());
         orderDao.save(order);
@@ -138,11 +140,11 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private TableGroupingRequest makeTableGroupingRequest(List<Long> ids) {
+    private TableGroupRequest makeTableGroupingRequest(List<Long> ids) {
         List<OrderTableResponse> orderTableDtos = ids.stream()
                 .map(OrderTableResponse::new)
                 .collect(Collectors.toList());
-        return new TableGroupingRequest(orderTableDtos);
+        return new TableGroupRequest(orderTableDtos);
     }
 
     @AfterEach
