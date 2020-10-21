@@ -42,15 +42,9 @@ public class MenuService {
         validatePrice(menuRequest);
 
         MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
-        Menu menuToSave = menuRequest.toMenu(menuGroup);
-        final Menu savedMenu = menuDao.save(menuToSave);
+        final Menu savedMenu = menuDao.save(menuRequest.toMenu(menuGroup));
 
-        List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
-            Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
-            MenuProduct menuProductToSave = new MenuProduct(menuToSave, product, menuProductDto.getQuantity());
-            menuProducts.add(menuProductDao.save(menuProductToSave));
-        }
+        addMenuProductToMenu(menuRequest, savedMenu);
 
         return MenuResponse.of(savedMenu);
     }
@@ -63,16 +57,23 @@ public class MenuService {
         }
 
         final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProductDtos();
-
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuProductDtos) {
             final Product product = productDao.findById(menuProductDto.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
         }
-
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private void addMenuProductToMenu(menuRequest menuRequest, Menu savedMenu) {
+        List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
+            Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
+            MenuProduct menuProductToSave = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
+            menuProducts.add(menuProductDao.save(menuProductToSave));
         }
     }
 

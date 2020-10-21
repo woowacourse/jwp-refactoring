@@ -49,12 +49,7 @@ public class OrderService {
         Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
         final Order savedOrder = orderDao.save(orderToSave);
 
-        List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
-        for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItemDtos()) {
-            Menu menu = menuDao.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
-            orderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
+        addOrderLineItemToOrder(orderRequest, savedOrder);
 
         return OrderResponse.of(savedOrder);
     }
@@ -69,13 +64,13 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> toOrderLineItem(List<OrderLineItemDto> orderLineItemDtos) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+    private void addOrderLineItemToOrder(OrderRequest orderRequest, Order savedOrder) {
+        List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
+        for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItemDtos()) {
             Menu menu = menuDao.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
-            orderLineItems.add(new OrderLineItem(null, menu, orderLineItemDto.getQuantity()));
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
+            orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        return orderLineItems;
     }
 
     @Transactional
@@ -85,8 +80,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest changeRequest) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+        final Order savedOrder = orderDao.findById(orderId).orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
