@@ -163,6 +163,7 @@ class OrderServiceTest {
         });
     }
 
+    @Transactional
     @DisplayName("Order의 상태를 수정할 수 있다.")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL", "COMPLETION"})
     @ParameterizedTest
@@ -268,7 +269,7 @@ class OrderServiceTest {
         return menu;
     }
 
-    private MenuGroup createMenuGroup(String name) {
+    static MenuGroup createMenuGroup(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
         return menuGroup;
