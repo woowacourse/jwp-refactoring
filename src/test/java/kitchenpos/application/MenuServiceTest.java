@@ -5,9 +5,9 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menu.menuRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,21 +42,37 @@ class MenuServiceTest extends TestFixtureFactory {
     @DisplayName("메뉴 생성 기능 테스트")
     @Test
     void create() {
-        menuRequest menuRequest = makeMenuCreateRequest("추천메뉴", "양념", 13000);
+        String menuName = "양념2마리";
+        int menuPrice = 20000;
+        String menuGroupName = "추천메뉴";
+        String productName = "양념";
+        int productPrice = 13000;
+        long productQuantity = 2L;
+        MenuRequest menuRequest = makeMenuCreateRequest(
+                menuName,
+                menuPrice,
+                menuGroupName,
+                productName,
+                productPrice,
+                productQuantity
+        );
 
         MenuResponse menuResponse = menuService.create(menuRequest);
 
-        List<MenuProductDto> savedMenuProducts = menuResponse.getMenuProducts();
+        List<MenuProduct> menuProductsByMenuId = menuProductDao.findAllByMenuId(menuResponse.getId());
         assertAll(
                 () -> assertThat(menuResponse.getId()).isNotNull(),
-                () -> assertThat(savedMenuProducts.get(0).getId()).isEqualTo(menuResponse.getId())
+                () -> assertThat(menuResponse.getName()).isEqualTo(menuName),
+                () -> assertThat(menuResponse.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(menuPrice)),
+                () -> assertThat(menuProductsByMenuId.get(0).getQuantity()).isEqualTo(productQuantity),
+                () -> assertThat(menuProductsByMenuId.get(0).getId()).isEqualTo(menuResponse.getId())
         );
     }
 
     @DisplayName("메뉴 생성 - price가 null일 때 예외처리")
     @Test
     void createWhenNullPrice() {
-        menuRequest menuRequest = new menuRequest("추천메뉴", null, 1L, new ArrayList<>());
+        MenuRequest menuRequest = new MenuRequest("추천메뉴", null, 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -65,7 +81,7 @@ class MenuServiceTest extends TestFixtureFactory {
     @DisplayName("메뉴 생성 - price가 0 미만일 경우 예외처리")
     @Test
     void createWhenPriceLessZero() {
-        menuRequest menuRequest = new menuRequest("추천메뉴", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
+        MenuRequest menuRequest = new MenuRequest("추천메뉴", BigDecimal.valueOf(-1), 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -74,7 +90,7 @@ class MenuServiceTest extends TestFixtureFactory {
     @DisplayName("메뉴 생성 - price 구성품 가격의 합보다 큰 경우 예외처리")
     @Test
     void createWhenPriceGraterSum() {
-        menuRequest menuRequest = new menuRequest("추천메뉴", BigDecimal.valueOf(90000), 1L, new ArrayList<>());
+        MenuRequest menuRequest = new MenuRequest("추천메뉴", BigDecimal.valueOf(90000), 1L, new ArrayList<>());
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -83,8 +99,25 @@ class MenuServiceTest extends TestFixtureFactory {
     @DisplayName("메뉴 목록 조회 기능 테스트")
     @Test
     void list() {
-        menuService.create(makeMenuCreateRequest("추천메뉴", "양념", 13000));
-        menuService.create(makeMenuCreateRequest("추천메뉴", "후라이드", 12000));
+        MenuRequest menuRequest1 = makeMenuCreateRequest(
+                "양념2마리",
+                20000,
+                "추천메뉴1",
+                "양념",
+                11000,
+                2
+        );
+        MenuRequest menuRequest2 = makeMenuCreateRequest(
+                "후라이드2마리",
+                20000,
+                "추천메뉴2",
+                "양념",
+                11000,
+                2
+        );
+
+        menuService.create(menuRequest1);
+        menuService.create(menuRequest2);
 
         assertAll(
                 () -> assertThat(menuService.list()).hasSize(2)

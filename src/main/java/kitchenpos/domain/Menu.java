@@ -5,6 +5,7 @@ import kitchenpos.config.BaseEntity;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -19,11 +20,11 @@ public class Menu extends BaseEntity {
     private String name;
     private BigDecimal price;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "FK_MENU_MENU_GROUP"))
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
     private List<MenuProduct> menuProducts;
 
     public Menu() {

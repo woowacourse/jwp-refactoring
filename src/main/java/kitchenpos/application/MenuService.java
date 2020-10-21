@@ -9,8 +9,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductDto;
+import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menu.menuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +38,8 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final menuRequest menuRequest) {
-        validatePrice(menuRequest);
+    public MenuResponse create(final MenuRequest menuRequest) {
+        validateOfCreateMenu(menuRequest);
 
         MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
         final Menu savedMenu = menuDao.save(menuRequest.toMenu(menuGroup));
@@ -49,7 +49,7 @@ public class MenuService {
         return MenuResponse.of(savedMenu);
     }
 
-    private void validatePrice(menuRequest menuRequest) {
+    private void validateOfCreateMenu(MenuRequest menuRequest) {
         final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -68,7 +68,7 @@ public class MenuService {
         }
     }
 
-    private void addMenuProductToMenu(menuRequest menuRequest, Menu savedMenu) {
+    private void addMenuProductToMenu(MenuRequest menuRequest, Menu savedMenu) {
         List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
             Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);

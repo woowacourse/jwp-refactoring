@@ -9,7 +9,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuProductDto;
-import kitchenpos.dto.menu.menuRequest;
+import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,29 +34,57 @@ public class TestFixtureFactory {
     @Autowired
     protected MenuDao menuDao;
 
-    protected Menu makeSavedMenu(String menuGroupName, String productName, int productPrice) {
-        menuRequest menuRequest = makeMenuCreateRequest(menuGroupName, productName, productPrice);
+    protected Menu makeSavedMenu(
+            String menuName,
+            int menuPrice,
+            String menuGroupName,
+            String productName,
+            int productPrice,
+            long productQuantity
+    ) {
+        MenuRequest menuRequest = makeMenuCreateRequest(menuName, menuPrice, menuGroupName, productName, productPrice, productQuantity);
         MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
         Menu menuToSave = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, new ArrayList<>());
         return menuDao.save(menuToSave);
     }
 
-    protected menuRequest makeMenuCreateRequest(String menuGroupName, String productName, int productPrice) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(null, menuGroupName));
+    protected MenuRequest makeMenuCreateRequest(
+            String menuName,
+            int menuPrice,
+            String menuGroupName,
+            String productName,
+            int productPrice,
+            long productQuantity
+    ) {
+        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(menuGroupName));
         Product savedProduct = productDao.save(new Product(productName, BigDecimal.valueOf(productPrice)));
 
-        List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), 2L));
+        List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), productQuantity));
 
-        return new menuRequest(productName + "+" + productName,
-                BigDecimal.valueOf(productPrice * 2),
+        return new MenuRequest(menuName,
+                BigDecimal.valueOf(menuPrice),
                 savedMenuGroup.getId(),
                 menuProductDtos);
     }
 
     protected OrderRequest makeOrderCreateRequest() {
         OrderTable savedOrderTable = makeSavedOrderTable(0, false);
-        Menu savedMenu1 = makeSavedMenu("추천메뉴", "양념", 12000);
-        Menu savedMenu2 = makeSavedMenu("추천메뉴", "후라이드", 11000);
+        Menu savedMenu1 = makeSavedMenu(
+                "양념2마리",
+                20000,
+                "추천메뉴",
+                "양념",
+                11000,
+                2
+        );
+        Menu savedMenu2 = makeSavedMenu(
+                "후라이드2마리",
+                20000,
+                "추천메뉴",
+                "후라이드",
+                11000,
+                2
+        );
         List<OrderLineItemDto> orderLineItems = Arrays.asList(
                 new OrderLineItemDto(savedMenu1.getId(), 1),
                 new OrderLineItemDto(savedMenu2.getId(), 1)

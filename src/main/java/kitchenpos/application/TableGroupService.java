@@ -41,7 +41,8 @@ public class TableGroupService {
 
         validate(orderTableDtos, savedOrderTables);
 
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedOrderTables, LocalDateTime.now()));
+        TableGroup TableGroupToSave = new TableGroup(savedOrderTables, LocalDateTime.now());
+        final TableGroup savedTableGroup = tableGroupDao.save(TableGroupToSave);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.tableGrouping(savedTableGroup);

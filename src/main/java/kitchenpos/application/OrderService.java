@@ -58,7 +58,6 @@ public class OrderService {
         if (CollectionUtils.isEmpty(orderLineItemDtos)) {
             throw new IllegalArgumentException();
         }
-
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -86,8 +85,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = changeRequest.getOrderStatus();
-        savedOrder.changeOrderStatus(orderStatus);
+        savedOrder.changeOrderStatus(changeRequest.getOrderStatus());
 
         return OrderResponse.of(savedOrder);
     }

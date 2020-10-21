@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -20,7 +21,7 @@ import java.util.List;
 @Table(name = "ORDERS")
 @Entity
 public class Order extends BaseEntity {
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "FK_ORDER_ORDER_TABLE"))
     private OrderTable orderTable;
 
@@ -28,7 +29,7 @@ public class Order extends BaseEntity {
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

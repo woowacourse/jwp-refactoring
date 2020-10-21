@@ -4,6 +4,7 @@ import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
@@ -42,11 +43,13 @@ class OrderServiceTest extends TestFixtureFactory {
     void create() {
         OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
-        List<OrderLineItemDto> orderLineItems = orderResponse.getOrderLineItems();
+        List<OrderLineItem> orderLineItemsByOrderId = orderLineItemDao.findAllByOrderId(orderResponse.getId());
         assertAll(
                 () -> assertThat(orderResponse.getId()).isNotNull(),
                 () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
-                () -> assertThat(orderLineItems).hasSize(2)
+                () -> assertThat(orderResponse.getOrderLineItems()).hasSize(2),
+                () -> assertThat(orderLineItemsByOrderId).hasSize(2),
+                () -> assertThat(orderLineItemsByOrderId.get(0).getOrder().getId()).isEqualTo(orderResponse.getId())
         );
     }
 
@@ -67,8 +70,7 @@ class OrderServiceTest extends TestFixtureFactory {
     void createWhenEmptyOrderLineItems() {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
-        ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
-        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -78,8 +80,7 @@ class OrderServiceTest extends TestFixtureFactory {
     @Test
     void createWhenIllegalMenuId() {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
-        ArrayList<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
-        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);

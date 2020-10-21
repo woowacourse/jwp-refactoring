@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -35,6 +36,9 @@ class TableServiceTest extends TestFixtureFactory {
 
     @Autowired
     private OrderDao orderDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @DisplayName("테이블 생성 메서드 테스트")
     @Test
@@ -135,7 +139,6 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
         OrderTableRequest orderTableRequest = new OrderTableRequest(4, false);
 
-
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -153,5 +156,6 @@ class TableServiceTest extends TestFixtureFactory {
     @AfterEach
     void tearDown() {
         orderDao.deleteAll();
+        orderTableDao.deleteAll();
     }
 }
