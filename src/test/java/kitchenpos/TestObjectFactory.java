@@ -1,7 +1,6 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -50,7 +49,6 @@ public class TestObjectFactory {
         return Order.builder()
             .orderTable(table)
             .orderStatus(OrderStatus.COOKING)
-            .orderedTime(LocalDateTime.now())
             .build();
     }
 

@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -29,9 +28,13 @@ public class TableGroup {
     private Long id;
     @CreatedDate
     private LocalDateTime createdDate;
-    @Builder.Default
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
+
+    @Builder
+    public TableGroup(final Long id) {
+        this.id = id;
+    }
 
     public void addOrderTable(OrderTable orderTable) {
         orderTables.add(orderTable);

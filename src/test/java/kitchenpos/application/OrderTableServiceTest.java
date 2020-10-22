@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -89,7 +88,6 @@ class OrderTableServiceTest {
         Order order = Order.builder()
             .orderTable(savedTable)
             .orderStatus(OrderStatus.COOKING)
-            .orderedTime(LocalDateTime.now())
             .build();
         orderDao.save(order);
 
