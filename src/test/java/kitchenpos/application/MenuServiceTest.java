@@ -17,11 +17,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.OrderServiceTest.createMenuGroup;
-import static kitchenpos.application.ProductServiceTest.createProduct;
+import static kitchenpos.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -47,7 +45,7 @@ class MenuServiceTest {
 
     @DisplayName("새로운 Menu를 추가할 수 있다.")
     @Test
-    void createMenu() {
+    void createMenuTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -70,7 +68,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: 이름이 없는 Menu를 추가")
     @Test
-    void createMenuWithoutName() {
+    void createMenuWithoutNameTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -86,7 +84,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: 가격이 0보다 작은 Menu를 추가")
     @Test
-    void createMenuWithoutPrice() {
+    void createMenuWithoutPriceTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -102,7 +100,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: 가격이 없는 Menu를 추가")
     @Test
-    void createMenuWithNegativePrice() {
+    void createMenuWithNegativePriceTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -118,7 +116,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: 존재하지 않는 MenuGroupId로 Menu를 추가")
     @Test
-    void createWithInvalidMenuGroupId() {
+    void createWithInvalidMenuGroupIdTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -131,7 +129,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: MenuGroupId가 null인 Menu를 추가")
     @Test
-    void createWithoutMenuGroupId() {
+    void createWithoutMenuGroupIdTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -144,7 +142,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: ProductId가 존재하지 않는 MenuProduct로 Menu를 추가")
     @Test
-    void createMenuWithInvalidProductId() {
+    void createMenuWithInvalidProductIdTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(tweChickenMenu);
 
@@ -157,7 +155,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: ProductId가 없는 MenuProduct로 Menu를 추가")
     @Test
-    void createMenuWithoutProductId() {
+    void createMenuWithoutProductIdTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(tweChickenMenu);
 
@@ -170,7 +168,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: MenuProducts에 null을 이용해 Menu를 추가")
     @Test
-    void createMenuWithoutMenuProducts() {
+    void createMenuWithoutMenuProductsTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(tweChickenMenu);
 
@@ -183,7 +181,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: MenuProducts에 EmptyList를 이용해 Menu를 추가")
     @Test
-    void createMenuWithEmptyMenuProducts() {
+    void createMenuWithEmptyMenuProductsTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(tweChickenMenu);
 
@@ -195,7 +193,7 @@ class MenuServiceTest {
 
     @DisplayName("예외: Menu의 가격이 Menu에 포함된 MenuProduct 가격의 합보다 비싼 경우")
     @Test
-    void createMenuWithWronglyCalculatedPrice() {
+    void createMenuWithWronglyCalculatedPriceTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -211,7 +209,7 @@ class MenuServiceTest {
 
     @DisplayName("전체 Menu를 조회하면 MenuProduct와 함께 조회할 수 있다.")
     @Test
-    void findAllMenus() {
+    void findAllMenusTest() {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -231,29 +229,5 @@ class MenuServiceTest {
             assertThat(menus).extracting(Menu::getName).containsOnly(savedMenu.getName());
             assertThat(menus).extracting(Menu::getMenuProducts).isNotEmpty();
         });
-    }
-
-    private Menu createMenu(String name, BigDecimal price, Long menuGroupId, MenuProduct... menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(Arrays.asList(menuProducts));
-        return menu;
-    }
-
-    private MenuProduct createMenuProduct(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
-    }
-
-    private MenuProduct createMenuProduct(Long productId, long quantity, Long menuId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        menuProduct.setMenuId(menuId);
-        return menuProduct;
     }
 }

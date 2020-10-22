@@ -19,8 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static kitchenpos.application.TableGroupServiceTest.createOrder;
-import static kitchenpos.application.TableGroupServiceTest.createTableGroup;
+import static kitchenpos.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -44,8 +43,8 @@ class TableServiceTest {
     @DisplayName("OrderTable을 추가할 수 있다.")
     @CsvSource(value = {"true, 0", "true, 1", "false, 0", "false, 2"})
     @ParameterizedTest
-    void createTable(boolean emptyStatus, int numberOfGuests) {
-        OrderTable orderTable = createOrderTable(emptyStatus, numberOfGuests);
+    void createTableTest(boolean emptyStatus, int numberOfGuests) {
+        OrderTable orderTable = createTable(emptyStatus, numberOfGuests);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
@@ -61,10 +60,14 @@ class TableServiceTest {
     @Transactional
     @DisplayName("전체 OrderTable을 조회할 수 있다.")
     @Test
-    void findAllTables() {
-        orderTableDao.save(new OrderTable());
-        orderTableDao.save(new OrderTable());
-        orderTableDao.save(new OrderTable());
+    void findAllTablesTest() {
+        OrderTable table1 = createOccupiedTable();
+        OrderTable table2 = createEmptyTable();
+        OrderTable table3 = createEmptyTable();
+
+        orderTableDao.save(table1);
+        orderTableDao.save(table2);
+        orderTableDao.save(table3);
 
         List<OrderTable> orderTables = tableService.list();
 
@@ -80,9 +83,11 @@ class TableServiceTest {
     @DisplayName("OrderTable의 사용 상태를 수정할 수 있다.")
     @ValueSource(booleans = {true, false})
     @ParameterizedTest
-    void changeEmptyStatusOfTable(boolean emptyStatus) {
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
-        OrderTable orderTable = createOrderTable(emptyStatus);
+    void changeEmptyStatusOfTableTest(boolean emptyStatus) {
+        OrderTable emptyTable = createEmptyTable();
+        OrderTable savedTable = orderTableDao.save(emptyTable);
+
+        OrderTable orderTable = createTableToChange(emptyStatus);
 
         OrderTable savedOrderTable = tableService.changeEmpty(savedTable.getId(), orderTable);
 
@@ -92,8 +97,8 @@ class TableServiceTest {
     @DisplayName("예외: 존재하지 않는 OrderTable의 사용 상태를 수정")
     @ValueSource(booleans = {true, false})
     @ParameterizedTest
-    void changeEmptyStatusOfInvalidTable(boolean emptyStatus) {
-        OrderTable orderTable = createOrderTable(emptyStatus);
+    void changeEmptyStatusOfInvalidTableTest(boolean emptyStatus) {
+        OrderTable orderTable = createTableToChange(emptyStatus);
 
         assertThatThrownBy(() -> tableService.changeEmpty(100L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -103,15 +108,15 @@ class TableServiceTest {
     @DisplayName("예외: 테이블 그룹에 속한 OrderTable의 사용 상태를 수정")
     @ValueSource(booleans = {true, false})
     @ParameterizedTest
-    void changeEmptyStatusOfGroupedTable(boolean emptyStatus) {
+    void changeEmptyStatusOfGroupedTableTest(boolean emptyStatus) {
         TableGroup tableGroup = createTableGroup();
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         Long groupId = savedTableGroup.getId();
 
-        OrderTable groupedTable = createOrderTable(groupId, true, 0);
+        OrderTable groupedTable = createGroupedTable(groupId);
         OrderTable savedTable = orderTableDao.save(groupedTable);
 
-        OrderTable orderTable = createOrderTable(emptyStatus);
+        OrderTable orderTable = createTableToChange(emptyStatus);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -121,13 +126,13 @@ class TableServiceTest {
     @DisplayName("예외: OrderStatus가 COOKING 혹은 MEAL인 OrderTable의 사용 상태 수정")
     @CsvSource(value = {"COOKING, true", "COOKING, false", "MEAL, true", "MEAL, false"})
     @ParameterizedTest
-    void changeEmptyStatusOfTableHavingNotProperStatus(OrderStatus status, boolean emptyStatus) {
+    void changeEmptyStatusOfTableHavingNotProperStatusTest(OrderStatus status, boolean emptyStatus) {
         OrderTable savedTable = orderTableDao.save(new OrderTable());
-        Order order = createOrder(savedTable.getId(), status);
+        Order order = createOrder(savedTable.getId());
+        order.setOrderStatus(status.name());
         orderDao.save(order);
 
-        OrderTable orderTable = createOrderTable(true);
-        orderTable.setEmpty(emptyStatus);
+        OrderTable orderTable = createTableToChange(emptyStatus);
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -137,11 +142,11 @@ class TableServiceTest {
     @DisplayName("OrderTable의 손님 수를 수정할 수 있다.")
     @ValueSource(ints = {0, 1, 2})
     @ParameterizedTest
-    void changeNumberOfGuests(int numberOfGuests) {
-        OrderTable occupiedTable = createOrderTable(false);
+    void changeNumberOfGuestsTest(int numberOfGuests) {
+        OrderTable occupiedTable = createOccupiedTable();
         OrderTable savedTable = orderTableDao.save(occupiedTable);
 
-        OrderTable orderTable = createOrderTable(numberOfGuests);
+        OrderTable orderTable = createTableToChange(numberOfGuests);
 
         OrderTable savedOrderTable = tableService.changeNumberOfGuests(savedTable.getId(), orderTable);
 
@@ -155,11 +160,11 @@ class TableServiceTest {
     @DisplayName("예외: OrderTable의 손님 수를 0명 이하로 수정")
     @ValueSource(ints = {-1, -2})
     @ParameterizedTest
-    void changeNumberOfGuestsUnderZero(int numberOfGuests) {
-        OrderTable occupiedTable = createOrderTable(false);
+    void changeNumberOfGuestsUnderZeroTest(int numberOfGuests) {
+        OrderTable occupiedTable = createOccupiedTable();
         OrderTable savedTable = orderTableDao.save(occupiedTable);
 
-        OrderTable orderTable = createOrderTable(numberOfGuests);
+        OrderTable orderTable = createTableToChange(numberOfGuests);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -167,8 +172,8 @@ class TableServiceTest {
 
     @DisplayName("예외: 존재하지 않는 OrderTable의 손님수를 수정")
     @Test
-    void changeNumberOfGuestsOfInvalidTable() {
-        OrderTable orderTable = createOrderTable(5);
+    void changeNumberOfGuestsOfInvalidTableTest() {
+        OrderTable orderTable = createTableToChange(5);
 
         assertThatThrownBy(() -> tableService.changeEmpty(100L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -177,40 +182,13 @@ class TableServiceTest {
     @Transactional
     @DisplayName("예외: 비어있는 OrderTable에 손님수를 수정")
     @Test
-    void changeNumberOfGuestsOfEmptyTable() {
-        OrderTable emptyTable = createOrderTable(true);
+    void changeNumberOfGuestsOfEmptyTableTest() {
+        OrderTable emptyTable = createEmptyTable();
         OrderTable savedEmptyTable = orderTableDao.save(emptyTable);
 
-        OrderTable orderTable = createOrderTable(5);
+        OrderTable orderTable = createTableToChange(5);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedEmptyTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderTable createOrderTable(Long groupId, boolean emptyStatus, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(groupId);
-        orderTable.setEmpty(emptyStatus);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
-    }
-
-    private OrderTable createOrderTable(boolean emptyStatus, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(emptyStatus);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
-    }
-
-    static OrderTable createOrderTable(boolean emptyStatus) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(emptyStatus);
-        return orderTable;
-    }
-
-    private OrderTable createOrderTable(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
     }
 }

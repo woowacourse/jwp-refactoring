@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static kitchenpos.TestFixtureFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -29,7 +30,7 @@ class ProductServiceTest {
     @Transactional
     @DisplayName("새로운 Product를 추가할 수 있다.")
     @Test
-    void createProduct() {
+    void createProductTest() {
         Product product = createProduct("까르보나라치킨", BigDecimal.valueOf(18_000));
 
         Product savedProduct = productService.create(product);
@@ -44,7 +45,7 @@ class ProductServiceTest {
 
     @DisplayName("예외: 이름이 null인 Product를 추가")
     @Test
-    void createProductWithoutName() {
+    void createProductWithoutNameTest() {
         Product product = createProduct(null, BigDecimal.valueOf(18_000));
 
         assertThatThrownBy(() -> productService.create(product))
@@ -53,7 +54,7 @@ class ProductServiceTest {
 
     @DisplayName("예외: 가격이 0보다 작은 Product를 추가")
     @Test
-    void createProductWithoutPrice() {
+    void createProductWithoutPriceTest() {
         Product product = createProduct("까르보나라치킨", BigDecimal.valueOf(-1));
 
         assertThatThrownBy(() -> productService.create(product))
@@ -62,7 +63,7 @@ class ProductServiceTest {
 
     @DisplayName("예외: 가격이 null인 Product를 추가")
     @Test
-    void createProductWithNegativePrice() {
+    void createProductWithNegativePriceTest() {
         Product product = createProduct("까르보나라치킨", null);
 
         assertThatThrownBy(() -> productService.create(product))
@@ -72,7 +73,7 @@ class ProductServiceTest {
     @Transactional
     @DisplayName("모든 Product를 조회할 수 있다.")
     @Test
-    void findAllProducts() {
+    void findAllProductsTest() {
         Product friedChicken = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product seasonedChicken = createProduct("양념치킨", BigDecimal.valueOf(17_000));
         Product halfAndHalfChicken = createProduct("반반치킨", BigDecimal.valueOf(18_000));
@@ -86,12 +87,5 @@ class ProductServiceTest {
             assertThat(products).hasSize(3);
             assertThat(products).extracting(Product::getName).containsOnly(friedChicken.getName(), seasonedChicken.getName(), halfAndHalfChicken.getName());
         });
-    }
-
-    static Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        return product;
     }
 }

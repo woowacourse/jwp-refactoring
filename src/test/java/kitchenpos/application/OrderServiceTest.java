@@ -12,11 +12,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.TableServiceTest.createOrderTable;
+import static kitchenpos.TestFixtureFactory.*;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,11 +45,11 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("주문을 추가할 수 있다.")
     @Test
-    void createOrder() {
+    void createOrderTest() {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
         OrderTable savedTable = orderTableDao.save(new OrderTable());
@@ -70,7 +68,7 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("예외: 빈 OrderLineItems 로 Order 추가")
     @Test
-    void createOrderWithoutOrderLineItem() {
+    void createOrderWithoutOrderLineItemTest() {
         OrderTable savedTable = orderTableDao.save(new OrderTable());
 
         Order order = createOrder(savedTable.getId());
@@ -82,7 +80,7 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("예외: 존재하지 않는 Menu로 Order 추가")
     @Test
-    void createOrderWithInvalidMenuId() {
+    void createOrderWithInvalidMenuIdTest() {
         OrderTable savedTable = orderTableDao.save(new OrderTable());
 
         OrderLineItem orderLineItem = createOrderLineItem(100L, 1);
@@ -95,11 +93,11 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("예외: 존재하지 않는 OrderTable로 Order 추가")
     @Test
-    void createOrderWithInvalidOrderTableId() {
+    void createOrderWithInvalidOrderTableIdTest() {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1);
@@ -112,14 +110,14 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("예외: 빈 OrderTable로 Order 추가")
     @Test
-    void createOrderWithEmptyOrderTableId() {
+    void createOrderWithEmptyOrderTableIdTest() {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
-        OrderTable emptyTable = createOrderTable(true);
+        OrderTable emptyTable = createEmptyTable();
         OrderTable savedEmptyTable = orderTableDao.save(emptyTable);
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1);
@@ -132,11 +130,11 @@ class OrderServiceTest {
     @Transactional
     @DisplayName("전체 주문을 조회할 수 있다.")
     @Test
-    void findAllOrdersWithOrderLineItems() {
+    void findAllOrdersWithOrderLineItemsTest() {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
         OrderTable firstTable = orderTableDao.save(new OrderTable());
@@ -167,11 +165,11 @@ class OrderServiceTest {
     @DisplayName("Order의 상태를 수정할 수 있다.")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL", "COMPLETION"})
     @ParameterizedTest
-    void changeOrderStatus(OrderStatus status) {
+    void changeOrderStatusTest(OrderStatus status) {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
         OrderTable savedTable = orderTableDao.save(new OrderTable());
@@ -182,7 +180,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1, savedOrder.getId());
         orderLineItemDao.save(orderLineItem);
 
-        Order orderWithNewStatus = createOrder(status);
+        Order orderWithNewStatus = createOrderToChange(status);
 
         Order updatedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderWithNewStatus);
 
@@ -197,8 +195,8 @@ class OrderServiceTest {
     @DisplayName("예외: 존재하지 않는 Order의 상태를 수정")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL", "COMPLETION"})
     @ParameterizedTest
-    void changeOrderStatusWithInvalidOrder(OrderStatus status) {
-        Order order = createOrder(status);
+    void changeOrderStatusWithInvalidOrderTest(OrderStatus status) {
+        Order order = createOrderToChange(status);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(100L, order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -207,11 +205,11 @@ class OrderServiceTest {
     @DisplayName("예외: Completion 상태의 Order의 상태를 수정")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL", "COMPLETION"})
     @ParameterizedTest
-    void changeOrderStatusWithCompletedOrder(OrderStatus status) {
+    void changeOrderStatusWithCompletedOrderTest(OrderStatus status) {
         MenuGroup menuGroup = createMenuGroup("한마리메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = createMenu("후라이드치킨", 16_000, savedMenuGroup.getId());
+        Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
         OrderTable savedTable = orderTableDao.save(new OrderTable());
@@ -223,55 +221,10 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1, savedOrder.getId());
         orderLineItemDao.save(orderLineItem);
 
-        Order orderWithNewStatus = createOrder(status);
+        Order orderWithNewStatus = createOrderToChange(status);
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderWithNewStatus))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-
-    private Order createOrder(Long tableId, OrderLineItem... items) {
-        List<OrderLineItem> orderLineItems = Arrays.asList(items);
-        Order order = new Order();
-        order.setOrderTableId(tableId);
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
-    }
-
-    private Order createOrder(OrderStatus status) {
-        Order order = new Order();
-        order.setOrderStatus(status.name());
-        return order;
-    }
-
-    private OrderLineItem createOrderLineItem(Long menuId, int quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
-    }
-
-    private OrderLineItem createOrderLineItem(Long menuId, int quantity, Long orderId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        orderLineItem.setOrderId(orderId);
-        return orderLineItem;
-    }
-
-    private Menu createMenu(String name, int price, Long groupId) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(groupId);
-        return menu;
-    }
-
-    static MenuGroup createMenuGroup(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
-    }
 }

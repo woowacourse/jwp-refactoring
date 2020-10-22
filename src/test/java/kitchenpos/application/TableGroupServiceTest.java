@@ -16,10 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
+import static kitchenpos.TestFixtureFactory.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -42,7 +41,7 @@ class TableGroupServiceTest {
 
     @DisplayName("Table Group을 추가할 수 있다.")
     @Test
-    void groupTables() {
+    void groupTablesTest() {
         OrderTable firstTable = createEmptyTable();
         OrderTable savedFirstTable = orderTableDao.save(firstTable);
 
@@ -64,7 +63,7 @@ class TableGroupServiceTest {
 
     @DisplayName("예외: OrderTables 없이 TableGroup 을 생성")
     @Test
-    void groupTablesWithoutOrderTables() {
+    void groupTablesWithoutOrderTablesTest() {
         TableGroup tableGroup = createTableGroup();
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -73,7 +72,7 @@ class TableGroupServiceTest {
 
     @DisplayName("예외: 한 개의 OrderTable 로 TableGroup 생성 (2개 이상의 OrderTable가 요구됨)")
     @Test
-    void groupTablesWithOneOrderTable() {
+    void groupTablesWithOneOrderTableTest() {
         OrderTable firstTable = createEmptyTable();
         OrderTable savedFirstTable = orderTableDao.save(firstTable);
 
@@ -85,7 +84,7 @@ class TableGroupServiceTest {
 
     @DisplayName("예외: 존재하지 않는 OrderTable 로 TableGroup 생성")
     @Test
-    void groupTablesWithInvalidOrderTable() {
+    void groupTablesWithInvalidOrderTableTest() {
         OrderTable firstTable = createEmptyTable();
         OrderTable savedFirstTable = orderTableDao.save(firstTable);
 
@@ -100,7 +99,7 @@ class TableGroupServiceTest {
 
     @DisplayName("예외: 사용중인 OrderTable로 TableGroup 생성")
     @Test
-    void groupTablesWithOccupiedOrderTable() {
+    void groupTablesWithOccupiedOrderTableTest() {
         OrderTable occupiedTable = createOccupiedTable();
         OrderTable savedOccupiedTable = orderTableDao.save(occupiedTable);
 
@@ -115,7 +114,7 @@ class TableGroupServiceTest {
 
     @DisplayName("예외: 이미 TableGroup 이 있는 OrderTable 로 TableGroup 생성")
     @Test
-    void groupTablesWithAlreadyGroupedTable() {
+    void groupTablesWithAlreadyGroupedTableTest() {
         TableGroup existingGroup = createTableGroup();
         TableGroup savedTableGroup = tableGroupDao.save(existingGroup);
         Long groupId = savedTableGroup.getId();
@@ -134,7 +133,7 @@ class TableGroupServiceTest {
 
     @DisplayName("테이블 그룹을 해제 할 수 있다.")
     @Test
-    void ungroupTables() {
+    void ungroupTablesTest() {
         TableGroup existingGroup = createTableGroup();
         TableGroup savedTableGroup = tableGroupDao.save(existingGroup);
         Long groupId = savedTableGroup.getId();
@@ -153,7 +152,7 @@ class TableGroupServiceTest {
     @DisplayName("예외: OrderStatus가 COOKING 혹은 MEAL인 OrderTable의 그룹 해제")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
-    void ungroupTablesHavingNotProperOrderStatus(OrderStatus status) {
+    void ungroupTablesHavingNotProperOrderStatusTest(OrderStatus status) {
         TableGroup existingGroup = createTableGroup();
         TableGroup savedTableGroup = tableGroupDao.save(existingGroup);
         Long groupId = savedTableGroup.getId();
@@ -164,46 +163,11 @@ class TableGroupServiceTest {
         OrderTable secondTable = createGroupedTable(groupId);
         orderTableDao.save(secondTable);
 
-        Order order = createOrder(savedFirstTable.getId(), status);
+        Order order = createOrder(savedFirstTable.getId());
+        order.setOrderStatus(status.name());
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(groupId))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderTable createEmptyTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        return orderTable;
-    }
-
-    private OrderTable createOccupiedTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        return orderTable;
-    }
-
-    private OrderTable createGroupedTable(Long groupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(groupId);
-        return orderTable;
-    }
-
-    static TableGroup createTableGroup(OrderTable... tables) {
-        List<OrderTable> orderTables = Arrays.asList(tables);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        return tableGroup;
-    }
-
-    static Order createOrder(Long tableId, OrderStatus status) {
-        Order order = new Order();
-        order.setOrderTableId(tableId);
-        order.setOrderStatus(status.name());
-        order.setOrderedTime(LocalDateTime.now());
-        return order;
     }
 }

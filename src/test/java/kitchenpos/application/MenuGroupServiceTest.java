@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static kitchenpos.TestFixtureFactory.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -28,8 +29,8 @@ class MenuGroupServiceTest {
     @Transactional
     @DisplayName("새로운 MenuGroup을 추가할 수 있다.")
     @Test
-    void createMenuGroup() {
-        MenuGroup menuGroup = OrderServiceTest.createMenuGroup("회식세트메뉴");
+    void createMenuGroupTest() {
+        MenuGroup menuGroup = createMenuGroup("회식세트메뉴");
 
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
@@ -41,8 +42,8 @@ class MenuGroupServiceTest {
 
     @DisplayName("예외: 이름이 없는 MenuGroup을 추가")
     @Test
-    void createMenuGroupWithoutName() {
-        MenuGroup menuGroup = OrderServiceTest.createMenuGroup(null);
+    void createMenuGroupWithoutNameTest() {
+        MenuGroup menuGroup = createMenuGroup(null);
 
         assertThatThrownBy(() -> menuGroupService.create(menuGroup))
                 .isInstanceOf(DataIntegrityViolationException.class);
@@ -51,10 +52,10 @@ class MenuGroupServiceTest {
     @Transactional
     @DisplayName("전체 메뉴 그룹을 조회할 수 있다.")
     @Test
-    void findAllMenuGroups() {
-        MenuGroup chickenMenu = OrderServiceTest.createMenuGroup("치킨메뉴");
-        MenuGroup springOnionChickenMenu = OrderServiceTest.createMenuGroup("파닭메뉴");
-        MenuGroup newMenu = OrderServiceTest.createMenuGroup("신메뉴");
+    void findAllMenuGroupsTest() {
+        MenuGroup chickenMenu = createMenuGroup("치킨메뉴");
+        MenuGroup springOnionChickenMenu = createMenuGroup("파닭메뉴");
+        MenuGroup newMenu = createMenuGroup("신메뉴");
         menuGroupDao.save(chickenMenu);
         menuGroupDao.save(springOnionChickenMenu);
         menuGroupDao.save(newMenu);
