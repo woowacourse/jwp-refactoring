@@ -1,4 +1,4 @@
-package kitchenpos.product;
+package kitchenpos.acceptance;
 
 import static kitchenpos.ui.ProductRestController.*;
 import static org.assertj.core.api.Assertions.*;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.Product;
 
 public class ProductAcceptanceTest extends AcceptanceTest {

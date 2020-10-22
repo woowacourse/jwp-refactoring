@@ -1,4 +1,4 @@
-package kitchenpos.tablegroup;
+package kitchenpos.acceptance;
 
 import static java.util.Arrays.*;
 import static kitchenpos.ui.TableGroupRestController.*;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 

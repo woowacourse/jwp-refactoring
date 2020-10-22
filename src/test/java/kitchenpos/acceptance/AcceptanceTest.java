@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.acceptance;
 
 import static java.lang.Long.*;
 import static java.util.Arrays.*;
@@ -22,6 +22,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.factory.MenuFactory;
+import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
@@ -44,6 +46,10 @@ public class AcceptanceTest {
     protected TableGroupFactory tableGroupFactory;
     @Autowired
     protected ProductFactory productFactory;
+    @Autowired
+    protected MenuProductFactory menuProductFactory;
+    @Autowired
+    protected MenuFactory menuFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;

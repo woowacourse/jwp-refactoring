@@ -1,4 +1,4 @@
-package kitchenpos.table;
+package kitchenpos.acceptance;
 
 import static kitchenpos.ui.TableRestController.*;
 import static org.assertj.core.api.Assertions.*;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.OrderTable;
 
 public class TableAcceptanceTest extends AcceptanceTest {

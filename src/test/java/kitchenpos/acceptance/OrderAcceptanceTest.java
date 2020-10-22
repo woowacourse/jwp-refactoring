@@ -1,4 +1,4 @@
-package kitchenpos.order;
+package kitchenpos.acceptance;
 
 import static java.util.Collections.*;
 import static kitchenpos.ui.OrderRestController.*;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.AcceptanceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
