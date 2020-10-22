@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.annotation.Import;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
@@ -27,7 +26,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.factory.OrderTableFactory;
 
-@Import(OrderTableFactory.class)
 @ExtendWith(value = MockitoExtension.class)
 class TableServiceTest {
     @Mock
