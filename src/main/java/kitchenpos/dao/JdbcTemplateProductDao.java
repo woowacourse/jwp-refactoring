@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,12 @@ public class JdbcTemplateProductDao implements ProductDao {
     public List<Product> findAll() {
         final String sql = "SELECT id, name, price FROM product";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM product";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 
     private Product select(final Long id) {
