@@ -23,6 +23,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.factory.MenuFactory;
+import kitchenpos.factory.MenuGroupFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
@@ -50,6 +51,8 @@ public class AcceptanceTest {
     protected MenuProductFactory menuProductFactory;
     @Autowired
     protected MenuFactory menuFactory;
+    @Autowired
+    protected MenuGroupFactory menuGroupFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;
