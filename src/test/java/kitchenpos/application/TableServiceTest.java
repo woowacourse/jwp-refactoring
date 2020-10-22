@@ -44,6 +44,7 @@ class TableServiceTest {
     @CsvSource(value = {"true, 0", "true, 1", "false, 0", "false, 2"})
     @ParameterizedTest
     void createTableTest(boolean emptyStatus, int numberOfGuests) {
+        // TODO: 2020/10/22 레거시 리팩토링 할 때, isEmpty: true, numberOfGuest: 1이상 조건으로 테이블이 생성되지 않도록 막아야 할 듯?
         OrderTable orderTable = createTable(emptyStatus, numberOfGuests);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
@@ -81,17 +82,17 @@ class TableServiceTest {
 
     @Transactional
     @DisplayName("OrderTable의 사용 상태를 수정할 수 있다.")
-    @ValueSource(booleans = {true, false})
+    @CsvSource(value = {"true, false", "true, true", "false, true", "false, false"})
     @ParameterizedTest
-    void changeEmptyStatusOfTableTest(boolean emptyStatus) {
-        OrderTable emptyTable = createEmptyTable();
+    void changeEmptyStatusOfTableTest(boolean previousStatus, boolean stateToChange) {
+        OrderTable emptyTable = createTable(previousStatus, 0);
         OrderTable savedTable = orderTableDao.save(emptyTable);
 
-        OrderTable orderTable = createTableToChange(emptyStatus);
+        OrderTable orderTable = createTableToChange(stateToChange);
 
         OrderTable savedOrderTable = tableService.changeEmpty(savedTable.getId(), orderTable);
 
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(emptyStatus);
+        assertThat(savedOrderTable.isEmpty()).isEqualTo(stateToChange);
     }
 
     @DisplayName("예외: 존재하지 않는 OrderTable의 사용 상태를 수정")
@@ -127,14 +128,16 @@ class TableServiceTest {
     @CsvSource(value = {"COOKING, true", "COOKING, false", "MEAL, true", "MEAL, false"})
     @ParameterizedTest
     void changeEmptyStatusOfTableHavingNotProperStatusTest(OrderStatus status, boolean emptyStatus) {
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable emptyTable = createEmptyTable();
+        OrderTable savedTable = orderTableDao.save(emptyTable);
+
         Order order = createOrder(savedTable.getId());
         order.setOrderStatus(status.name());
         orderDao.save(order);
 
         OrderTable orderTable = createTableToChange(emptyStatus);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -153,8 +153,8 @@ class TableGroupServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     @ParameterizedTest
     void ungroupTablesHavingNotProperOrderStatusTest(OrderStatus status) {
-        TableGroup existingGroup = createTableGroup();
-        TableGroup savedTableGroup = tableGroupDao.save(existingGroup);
+        TableGroup tableGroup = createTableGroup();
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         Long groupId = savedTableGroup.getId();
 
         OrderTable firstTable = createGroupedTable(groupId);

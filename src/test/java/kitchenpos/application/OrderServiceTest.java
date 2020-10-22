@@ -52,10 +52,12 @@ class OrderServiceTest {
         Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable table = createOccupiedTable();
+        OrderTable savedTable = orderTableDao.save(table);
 
         OrderLineItem orderLineItem = createOrderLineItem(savedMenu.getId(), 1);
         Order order = createOrder(savedTable.getId(), orderLineItem);
+
         Order savedOrder = orderService.create(order);
 
         assertAll(() -> {
@@ -69,7 +71,8 @@ class OrderServiceTest {
     @DisplayName("예외: 빈 OrderLineItems 로 Order 추가")
     @Test
     void createOrderWithoutOrderLineItemTest() {
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable table = createOccupiedTable();
+        OrderTable savedTable = orderTableDao.save(table);
 
         Order order = createOrder(savedTable.getId());
 
@@ -81,7 +84,8 @@ class OrderServiceTest {
     @DisplayName("예외: 존재하지 않는 Menu로 Order 추가")
     @Test
     void createOrderWithInvalidMenuIdTest() {
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable table = createOccupiedTable();
+        OrderTable savedTable = orderTableDao.save(table);
 
         OrderLineItem orderLineItem = createOrderLineItem(100L, 1);
         Order order = createOrder(savedTable.getId(), orderLineItem);
@@ -137,17 +141,19 @@ class OrderServiceTest {
         Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
-        OrderTable firstTable = orderTableDao.save(new OrderTable());
-        OrderTable secondTable = orderTableDao.save(new OrderTable());
+        OrderTable firstTable = createOccupiedTable();
+        OrderTable savedFirstTable = orderTableDao.save(firstTable);
 
-        Order firstOrder = createOrder(firstTable.getId());
+        Order firstOrder = createOrder(savedFirstTable.getId());
         Order savedFirstOrder = orderDao.save(firstOrder);
 
         OrderLineItem firstItem = createOrderLineItem(savedMenu.getId(), 1, savedFirstOrder.getId());
         orderLineItemDao.save(firstItem);
 
+        OrderTable secondTable = createOccupiedTable();
+        OrderTable savedSecondTable = orderTableDao.save(secondTable);
 
-        Order secondOrder = createOrder(secondTable.getId());
+        Order secondOrder = createOrder(savedSecondTable.getId());
         Order savedSecondOrder = orderDao.save(secondOrder);
 
         OrderLineItem secondItem = createOrderLineItem(savedMenu.getId(), 3, savedSecondOrder.getId());
@@ -157,7 +163,8 @@ class OrderServiceTest {
 
         assertAll(() -> {
             assertThat(orders).hasSize(2);
-            assertThat(orders).extracting(Order::getOrderTableId).containsOnly(firstTable.getId(), secondTable.getId());
+            assertThat(orders).extracting(Order::getOrderTableId).containsOnly(savedFirstTable.getId(), savedSecondTable.getId());
+            assertThat(orders).extracting(Order::getOrderLineItems).allMatch(items -> items.size() == 1);
         });
     }
 
@@ -172,7 +179,8 @@ class OrderServiceTest {
         Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable table = createOccupiedTable();
+        OrderTable savedTable = orderTableDao.save(table);
 
         Order order = createOrder(savedTable.getId());
         Order savedOrder = orderDao.save(order);
@@ -212,7 +220,8 @@ class OrderServiceTest {
         Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16_000), savedMenuGroup.getId());
         Menu savedMenu = menuDao.save(menu);
 
-        OrderTable savedTable = orderTableDao.save(new OrderTable());
+        OrderTable table = createOccupiedTable();
+        OrderTable savedTable = orderTableDao.save(table);
 
         Order order = createOrder(savedTable.getId());
         order.setOrderStatus(COMPLETION.name());

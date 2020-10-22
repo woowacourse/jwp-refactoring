@@ -35,6 +35,7 @@ class MenuGroupServiceTest {
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         assertAll(() -> {
+            assertThat(savedMenuGroup).isNotNull();
             assertThat(savedMenuGroup.getId()).isNotNegative();
             assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
         });

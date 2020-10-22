@@ -10,6 +10,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -44,8 +46,9 @@ class MenuServiceTest {
     private MenuDao menuDao;
 
     @DisplayName("새로운 Menu를 추가할 수 있다.")
-    @Test
-    void createMenuTest() {
+    @ValueSource(ints = {30_000, 32_000})
+    @ParameterizedTest
+    void createMenuTest(int price) {
         Product product = createProduct("후라이드", BigDecimal.valueOf(16_000));
         Product savedProduct = productDao.save(product);
 
@@ -53,7 +56,7 @@ class MenuServiceTest {
         MenuGroup savedMenuGroup = menuGroupDao.save(tweChickenMenu);
 
         MenuProduct menuProduct = createMenuProduct(savedProduct.getId(), 2L);
-        Menu menu = createMenu("두마리 후라이드치킨", BigDecimal.valueOf(30_000), savedMenuGroup.getId(), menuProduct);
+        Menu menu = createMenu("두마리 후라이드치킨", BigDecimal.valueOf(price), savedMenuGroup.getId(), menuProduct);
 
         Menu savedMenu = menuService.create(menu);
 
@@ -140,7 +143,7 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("예외: ProductId가 존재하지 않는 MenuProduct로 Menu를 추가")
+    @DisplayName("예외: 존재하지 않는 ProductId로 MenuProduct로 Menu를 추가")
     @Test
     void createMenuWithInvalidProductIdTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
@@ -153,7 +156,7 @@ class MenuServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("예외: ProductId가 없는 MenuProduct로 Menu를 추가")
+    @DisplayName("예외: ProductId가 null인 MenuProduct로 Menu를 추가")
     @Test
     void createMenuWithoutProductIdTest() {
         MenuGroup tweChickenMenu = createMenuGroup("두마리메뉴");
