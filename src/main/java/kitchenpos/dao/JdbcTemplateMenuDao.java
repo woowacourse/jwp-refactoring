@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,12 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("ids", ids);
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM menu";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 
     private Menu select(final Long id) {

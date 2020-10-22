@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -31,7 +30,7 @@ class ProductServiceTest {
     @DisplayName("상품을 생성한다.")
     @Test
     void create() {
-        Product product = new Product("상품", BigDecimal.valueOf(10000L));
+        Product product = new Product("상품", 10000L);
 
         Product savedProduct = productService.create(product);
 
@@ -45,7 +44,7 @@ class ProductServiceTest {
     @DisplayName("상품 가격이 양수가 아니면 생성할 수 없다.")
     @Test
     void createException1() {
-        Product product = new Product("상품", BigDecimal.valueOf(-100L));
+        Product product = new Product("상품", -100L);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -55,7 +54,7 @@ class ProductServiceTest {
     @ParameterizedTest
     @MethodSource("wrongNameProvider")
     void createException2(String name) {
-        Product product = new Product(name, BigDecimal.valueOf(10000L));
+        Product product = new Product(name, 10000L);
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -69,9 +68,9 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
-        Product product1 = new Product("상품1", BigDecimal.valueOf(10000L));
-        Product product2 = new Product("상품2", BigDecimal.valueOf(15000L));
-        Product product3 = new Product("상품3", BigDecimal.valueOf(20000L));
+        Product product1 = new Product("상품1", 10000L);
+        Product product2 = new Product("상품2", 15000L);
+        Product product3 = new Product("상품3", 20000L);
 
         productDao.save(product1);
         productDao.save(product2);
