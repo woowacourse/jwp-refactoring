@@ -23,4 +23,12 @@ public class ProductFactory {
     public Product create(String name) {
         return create(null, name, null);
     }
+
+    public Product create(Long id) {
+        return create(id, null, null);
+    }
+
+    public Product create(Long id, BigDecimal price) {
+        return create(id, null, price);
+    }
 }

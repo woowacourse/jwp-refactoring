@@ -53,6 +53,7 @@ class ProductServiceTest {
         );
     }
 
+    @DisplayName("상품 전체 조회")
     @Test
     void list() {
         given(productDao.findAll()).willReturn(singletonList(product));

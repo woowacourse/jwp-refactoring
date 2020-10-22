@@ -18,4 +18,8 @@ public class MenuProductFactory {
     public MenuProduct create(Long productId, long quantity) {
         return create(null, null, productId, quantity);
     }
+
+    public MenuProduct create(Long menuId, Long productId, long quantity) {
+        return create(null, menuId, productId, quantity);
+    }
 }
