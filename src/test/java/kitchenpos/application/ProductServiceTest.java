@@ -47,9 +47,8 @@ class ProductServiceTest {
     Stream<DynamicTest> create() {
         return Stream.of(
                 dynamicTest("상품을 생성한다.", this::createSuccess),
-                dynamicTest("상품을 생성 요청의 가격이 존재하지 않을때, IllegalArgumentException 발생.", this::noPrice),
-                dynamicTest("상품을 생성 요청의 가격이 음수일 때, IllegalArgumentException 발생.",
-                        this::invalidPrice)
+                dynamicTest("가격이 존재해야 한다.", this::noPrice),
+                dynamicTest("가격은 음수가 될 수 없다.", this::invalidPrice)
         );
     }
 

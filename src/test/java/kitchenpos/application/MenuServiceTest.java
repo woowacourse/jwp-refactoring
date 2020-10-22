@@ -53,15 +53,11 @@ class MenuServiceTest {
     Stream<DynamicTest> create() {
         return Stream.of(
                 dynamicTest("메뉴를 생성한다.", this::createSuccess),
-                dynamicTest("메뉴 요청의 가격이 존재하지 않을때, IllegalArgumentException 발생.", this::noPriceMenu),
-                dynamicTest("메뉴 요청의 가격이 음수 일때, IllegalArgumentException 발생.",
-                        this::negativePriceMenu),
-                dynamicTest("메뉴 요청의 메뉴 그룹이 존재하지 않을때, IllegalArgumentException 발생.",
-                        this::noMenuGroup),
-                dynamicTest("메뉴 요청의 제품이 존재하지 않을때, IllegalArgumentException 발생.",
-                        this::noProduct),
-                dynamicTest("메뉴 요청의 가격이 상품 가격과 주문 개수의 곱보다 클때, IllegalArgumentException 발생.",
-                        this::bigMenuPrice)
+                dynamicTest("메뉴의 가격이 존재해야 한다.", this::noPriceMenu),
+                dynamicTest("가격은 음수일 수 없다.", this::negativePriceMenu),
+                dynamicTest("메뉴 상품이 존재해야 한다.", this::noMenuGroup),
+                dynamicTest("상품이 존재해야 한다.", this::noProduct),
+                dynamicTest("메뉴의 가격은 상품의 가격의 총 합보다 작아야 한다.", this::bigMenuPrice)
         );
     }
 

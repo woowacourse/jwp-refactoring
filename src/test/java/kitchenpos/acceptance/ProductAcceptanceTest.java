@@ -33,7 +33,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         assertThat(productId).isNotNull();
 
         return Stream.of(
-                dynamicTest("테이블 전체 조회", () -> {
+                dynamicTest("상품 전체 조회", () -> {
                     List<Product> products = getAll(Product.class, API_PRODUCTS);
                     Product lastProduct = getLastItem(products);
 

@@ -51,7 +51,7 @@ class TableGroupServiceTest {
     void setUp() {
         orderTableFactory = new OrderTableFactory();
         tableGroupFactory = new TableGroupFactory();
-        orderTable1 = orderTableFactory.create(1L ,null, true);
+        orderTable1 = orderTableFactory.create(1L, null, true);
         orderTable2 = orderTableFactory.create(2L, null, true);
         tableGroup = tableGroupFactory.create(asList(orderTable1, orderTable2));
     }
@@ -61,16 +61,11 @@ class TableGroupServiceTest {
     Stream<DynamicTest> create() {
         return Stream.of(
                 dynamicTest("단체 지정을 생성한다.", this::createSuccess),
-                dynamicTest("요청에 OrderTable이 없을때, IllegalArgumentException 발생.",
-                        this::noOrderTable),
-                dynamicTest("요청에 OrderTable이 하나만 존재할때, IllegalArgumentException 발생.",
-                        this::invalidOrderTable),
-                dynamicTest("요청의 OrderTable과 저장된 OrderTable의 크기가 다를때, IllegalArgumentException 발생.",
-                        this::orderTableMismatch),
-                dynamicTest("저장된 OrderTable에 주문이 존재할때, IllegalArgumentException 발생.",
-                        this::orderTableHasOrder),
-                dynamicTest("저장된 OrderTable에 TableGroup이 존재하면, IllegalArgumentException 발생.",
-                        this::orderTableHasTableGroup)
+                dynamicTest("OrderTable이 존재해야 한다.", this::noOrderTable),
+                dynamicTest("요청엔 2개 이상의 테이블이 존재해야 한다.", this::invalidOrderTable),
+                dynamicTest("요청한 테이블들이 하나씩 존재해야 한다.", this::orderTableMismatch),
+                dynamicTest("테이블에 주문이 없어야 한다.", this::orderTableHasOrder),
+                dynamicTest("단체 지정이 되어있지 않아야 한다.", this::orderTableHasTableGroup)
         );
     }
 
@@ -79,9 +74,7 @@ class TableGroupServiceTest {
     Stream<DynamicTest> ungroup() {
         return Stream.of(
                 dynamicTest("단체 지정을 해제한다.", this::ungroupSuccess),
-                dynamicTest(
-                        "TableGroup의 OrderTable 중 주문 상태가 조리 또는 식사 일때, IllegalArgumentException 발생.",
-                        this::invalidOrderStatus)
+                dynamicTest("테이블에 모든 주문은 완료 상태이어야 한다.", this::invalidOrderStatus)
         );
     }
 

@@ -84,12 +84,9 @@ class TableServiceTest {
     Stream<DynamicTest> changeEmpty() {
         return Stream.of(
                 dynamicTest("테이블 주문 여부를 변경한다.", this::changeEmptySuccess),
-                dynamicTest("요청한 Id와 일치하는 OrderTable이 존재하지 않을때, IllegalArgumentException 발생.",
-                        this::orderTableNotFound),
-                dynamicTest("요청한 OrderTable의 TableGroupId가 존재할때, IllegalArgumentException 발생.",
-                        this::orderTableHasTableGroupId),
-                dynamicTest("요청한 OrderTable의 Order 상태가 조리 또는 식사일때, IllegalArgumentException 발생.",
-                        this::invalidOrderStatus)
+                dynamicTest("테이블이 존재해야 한다.", this::orderTableNotFound),
+                dynamicTest("단체 지정은 존재하지 않아야한다.", this::orderTableHasTableGroupId),
+                dynamicTest("테이블에 모든 주문은 완료 상태이어야 한다.", this::invalidOrderStatus)
         );
     }
 
@@ -98,12 +95,9 @@ class TableServiceTest {
     Stream<DynamicTest> changeNumberOfGuests() {
         return Stream.of(
                 dynamicTest("테이블 손님 수를 변경한다.", this::changeNumberOfGuestsSuccess),
-                dynamicTest("요청의 손님 수가 음수일때, IllegalArgumentException 발생.",
-                        this::invalidNumberOfGuests),
-                dynamicTest("요청한 Id와 일치하는 OrderTable이 존재하지 않을때, IllegalArgumentException 발생.",
-                        this::orderTableNotFoundInNumberOfGuests),
-                dynamicTest("요청한 Id와 일치하는 OrderTable에 주문이 존재하지 않을때, IllegalArgumentException 발생.",
-                        this::invalidOrderTable)
+                dynamicTest("손님 수를 음수로 변경할 수 없다.", this::invalidNumberOfGuests),
+                dynamicTest("테이블이 존재해야 한다.", this::orderTableNotFoundInNumberOfGuests),
+                dynamicTest("테이블에 주문이 존재해야 한다.", this::invalidOrderTable)
         );
     }
 
