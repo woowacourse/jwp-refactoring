@@ -106,7 +106,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem1 = new OrderLineItem();
         orderLineItem1.setMenuId(menu.getId());
         OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem1.setMenuId(menu.getId());
+        orderLineItem2.setMenuId(menu.getId());
 
         Order order = new Order();
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
