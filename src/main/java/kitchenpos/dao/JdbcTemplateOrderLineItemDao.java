@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,12 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("orderId", orderId);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM order_line_item";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 
     private OrderLineItem select(final Long id) {
