@@ -175,4 +175,32 @@ class OrderServiceTest {
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         assertThat(changeOrder.getOrderStatus()).isEqualTo(CHANGED_STATUS);
     }
+
+    @DisplayName("존재하지 않는 Order 상태로 변경한다.")
+    @Test
+    void changeOrderStatusExceptionTest() {
+        final String CHANGED_STATUS = "NOT_VALID_STATUS";
+
+        // given
+        Menu menu = menuDao.findById(1L)
+                .orElseThrow(() -> new NoSuchElementException("저장된 메뉴가 없습니다."));
+
+        OrderTable orderTable = orderTableDao.findById(1L)
+                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
+        orderTable.setEmpty(false);
+        orderTableDao.save(orderTable);
+
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+
+        Order order = new Order();
+        order.setOrderTableId(orderTable.getId());
+        order.setOrderLineItems(Arrays.asList(orderLineItem));
+
+        // when
+        Order result = orderService.create(order);
+        result.setOrderStatus(CHANGED_STATUS);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(result.getId(), result))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 }

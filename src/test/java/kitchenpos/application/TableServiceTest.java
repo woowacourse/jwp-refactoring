@@ -94,7 +94,7 @@ class TableServiceTest {
 
     @DisplayName("빈 테이블이면 손님의 인원 수를 수정할 수 없다.")
     @Test
-    void name() {
+    void changeNumberOfGuestsExceptionTest() {
         // given
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
