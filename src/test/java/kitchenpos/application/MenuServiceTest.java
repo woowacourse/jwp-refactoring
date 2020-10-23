@@ -14,6 +14,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -41,48 +43,29 @@ public class MenuServiceTest {
 	@Mock
 	private JdbcTemplateProductDao productDao;
 
-	private Menu friedChicken;
-
-	private Menu garlicChicken;
-
-	private MenuProduct friedMenuProduct;
-
-	private MenuProduct garlicMenuProduct;
-
-	private Product friedProduct;
-
 	@BeforeEach
 	void setUp() {
 		this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-
-		friedProduct = new Product();
-		friedProduct.setId(1L);
-		friedProduct.setPrice(BigDecimal.valueOf(16000));
-
-		friedMenuProduct = new MenuProduct();
-		friedMenuProduct.setMenuId(1L);
-		friedMenuProduct.setProductId(1L);
-		friedMenuProduct.setQuantity(3);
-		garlicMenuProduct = new MenuProduct();
-		garlicMenuProduct.setMenuId(2L);
-		garlicMenuProduct.setProductId(2L);
-		garlicMenuProduct.setQuantity(5);
-
-		friedChicken = new Menu();
-		friedChicken.setId(1L);
-		friedChicken.setName("Fried");
-		friedChicken.setPrice(BigDecimal.valueOf(16000));
-		friedChicken.setMenuProducts(Collections.singletonList(friedMenuProduct));
-		garlicChicken = new Menu();
-		garlicChicken.setId(2L);
-		garlicChicken.setName("Garlic");
-		garlicChicken.setPrice(BigDecimal.valueOf(17000));
-		garlicChicken.setMenuProducts(Collections.singletonList(garlicMenuProduct));
 	}
 
 	@DisplayName("Menu를 생성한다.")
 	@Test
 	void createTest() {
+		Product friedProduct = new Product();
+		friedProduct.setId(1L);
+		friedProduct.setPrice(BigDecimal.valueOf(16000));
+
+		MenuProduct friedMenuProduct = new MenuProduct();
+		friedMenuProduct.setMenuId(1L);
+		friedMenuProduct.setProductId(1L);
+		friedMenuProduct.setQuantity(3);
+
+		Menu friedChicken = new Menu();
+		friedChicken.setId(1L);
+		friedChicken.setName("Fried");
+		friedChicken.setPrice(BigDecimal.valueOf(16000));
+		friedChicken.setMenuProducts(Collections.singletonList(friedMenuProduct));
+
 		when(menuGroupDao.existsById(any())).thenReturn(true);
 		when(productDao.findById(any())).thenReturn(Optional.of(friedProduct));
 		when(menuDao.save(any())).thenReturn(friedChicken);
@@ -102,24 +85,46 @@ public class MenuServiceTest {
 	@DisplayName("Menu의 price가 null이면 예외 발생한다.")
 	@Test
 	void priceNullException() {
+		Menu friedChicken = new Menu();
 		friedChicken.setPrice(null);
+
 		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("Menu의 price가 0보다 작으면 예외 발생한다.")
-	@Test
-	void negativePriceException() {
-		friedChicken.setPrice(BigDecimal.valueOf(-1));
+	@ParameterizedTest
+	@ValueSource(ints = {-1, -2, -100})
+	void negativePriceException(int price) {
+		Menu friedChicken = new Menu();
+		friedChicken.setPrice(BigDecimal.valueOf(price));
+
 		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("Menu의 price가 메뉴에 포함된 MenuProduct의 price 합보다 크면 예외 발생한다.")
 	@Test
-	void priceaNullException() {
+	void differentSumWithMenuPriceSum() {
+		Product friedProduct = new Product();
+		friedProduct.setPrice(BigDecimal.valueOf(16000));
+		MenuProduct friedMenuProduct = new MenuProduct();
+		friedMenuProduct.setQuantity(3);
+		Menu friedChicken = new Menu();
+
 		BigDecimal sum = friedProduct.getPrice().multiply(BigDecimal.valueOf(friedMenuProduct.getQuantity()));
 		friedChicken.setPrice(sum.add(BigDecimal.ONE));
+
+		assertThatThrownBy(() -> menuService.create(friedChicken))
+			.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@DisplayName("존재하지 않는 메뉴 그룹인 경우 예외 발생한다.")
+	@Test
+	void notExistMenuGroupException() {
+		Menu friedChicken = new Menu();
+		friedChicken.setPrice(BigDecimal.valueOf(16000));
+		when(menuGroupDao.existsById(any())).thenReturn(false);
 
 		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -128,6 +133,19 @@ public class MenuServiceTest {
 	@DisplayName("등록된 모든 Menu를 조회한다.")
 	@Test
 	void listTest() {
+		MenuProduct friedMenuProduct = new MenuProduct();
+		friedMenuProduct.setMenuId(1L);
+		MenuProduct garlicMenuProduct = new MenuProduct();
+		garlicMenuProduct.setMenuId(2L);
+		Menu friedChicken = new Menu();
+		friedChicken.setId(1L);
+		friedChicken.setName("Fried");
+		friedChicken.setMenuProducts(Collections.singletonList(friedMenuProduct));
+		Menu garlicChicken = new Menu();
+		garlicChicken.setId(2L);
+		garlicChicken.setName("Garlic");
+		garlicChicken.setMenuProducts(Collections.singletonList(garlicMenuProduct));
+
 		List<Menu> menus = Arrays.asList(friedChicken, garlicChicken);
 		List<MenuProduct> menuProducts1 = Collections.singletonList(friedMenuProduct);
 		List<MenuProduct> menuProducts2 = Collections.singletonList(garlicMenuProduct);

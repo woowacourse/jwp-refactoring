@@ -26,23 +26,22 @@ public class ProductServiceTest {
 	@Mock
 	private JdbcTemplateProductDao productDao;
 
-	private Product product;
-
 	@BeforeEach
 	void setUp() {
 		this.productService = new ProductService(productDao);
-		product = new Product();
-		product.setId(1L);
-		product.setName("Fired");
-		product.setPrice(BigDecimal.valueOf(16000));
 	}
 
 	@DisplayName("Product를 생성한다.")
 	@Test
 	void createTest() {
+		Product product = new Product();
+		product.setId(1L);
+		product.setName("Fired");
+		product.setPrice(BigDecimal.valueOf(16000));
+
 		when(productDao.save(any())).thenReturn(product);
 
-		Product saved = productService.create(this.product);
+		Product saved = productService.create(product);
 
 		assertThat(saved.getId()).isEqualTo(product.getId());
 		assertThat(saved.getName()).isEqualTo(product.getName());
@@ -52,6 +51,9 @@ public class ProductServiceTest {
 	@DisplayName("상품의 price가 null이면 예외 발생한다.")
 	@Test
 	void nullProductPriceException() {
+		Product product = new Product();
+		product.setId(1L);
+		product.setName("Fired");
 		product.setPrice(null);
 
 		assertThatThrownBy(() -> productService.create(product))
@@ -62,6 +64,9 @@ public class ProductServiceTest {
 	@ParameterizedTest
 	@ValueSource(ints = {-1, -2, -100})
 	void negativeProductPriceException(int price) {
+		Product product = new Product();
+		product.setId(1L);
+		product.setName("Fired");
 		product.setPrice(BigDecimal.valueOf(price));
 
 		assertThatThrownBy(() -> productService.create(product))
@@ -71,6 +76,10 @@ public class ProductServiceTest {
 	@DisplayName("등록된 모든 Product를 조회한다.")
 	@Test
 	void listTest() {
+		Product product = new Product();
+		product.setId(1L);
+		product.setName("Fired");
+		product.setPrice(BigDecimal.valueOf(16000));
 		when(productDao.findAll()).thenReturn(Collections.singletonList(product));
 
 		List<Product> products = productService.list();

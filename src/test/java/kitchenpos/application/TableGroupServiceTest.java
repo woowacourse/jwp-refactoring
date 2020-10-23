@@ -38,38 +38,36 @@ public class TableGroupServiceTest {
 	@Mock
 	private JdbcTemplateTableGroupDao tableGroupDao;
 
-	private TableGroup tableGroup;
+	private static Stream<Arguments> provideSavedOrderTables() {
+		OrderTable firstOrderTable = new OrderTable();
+		OrderTable secondOrderTable = new OrderTable();
 
-	private OrderTable orderTable1;
-
-	private OrderTable orderTable2;
-
-	private OrderTable orderTable3;
+		return Stream.of(
+			Arguments.of(Collections.singletonList(firstOrderTable)),
+			Arguments.of(Arrays.asList(firstOrderTable, secondOrderTable))
+		);
+	}
 
 	@BeforeEach
 	void setUp() {
 		this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-
-		orderTable1 = new OrderTable();
-		orderTable1.setId(1L);
-		orderTable1.setEmpty(true);
-
-		orderTable2 = new OrderTable();
-		orderTable2.setId(2L);
-		orderTable2.setEmpty(true);
-
-		orderTable3 = new OrderTable();
-		orderTable3.setId(3L);
-		orderTable3.setEmpty(true);
-
-		tableGroup = new TableGroup();
-		tableGroup.setId(1L);
-		tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2, orderTable3));
 	}
 
 	@DisplayName("TableGroup을 생성한다.")
 	@Test
 	void createTest() {
+		OrderTable orderTable1 = new OrderTable();
+		orderTable1.setId(1L);
+		orderTable1.setEmpty(true);
+		OrderTable orderTable2 = new OrderTable();
+		orderTable2.setId(2L);
+		orderTable2.setEmpty(true);
+		OrderTable orderTable3 = new OrderTable();
+		orderTable3.setId(3L);
+		orderTable3.setEmpty(true);
+		TableGroup tableGroup = new TableGroup();
+		tableGroup.setId(1L);
+		tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2, orderTable3));
 		when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Arrays.asList(orderTable1, orderTable2, orderTable3));
 		when(tableGroupDao.save(any())).thenReturn(tableGroup);
 		when(orderTableDao.save(any())).thenReturn(any());
@@ -83,19 +81,10 @@ public class TableGroupServiceTest {
 		);
 	}
 
-	private static Stream<Arguments> provideSavedOrderTables() {
-		OrderTable firstOrderTable = new OrderTable();
-		OrderTable secondOrderTable = new OrderTable();
-
-		return Stream.of(
-			Arguments.of(Collections.singletonList(firstOrderTable)),
-			Arguments.of(Arrays.asList(firstOrderTable, secondOrderTable))
-		);
-	}
-
 	@DisplayName("테이블 그룹의 테아블 리스트가 비어있으면 예외 발생한다.")
 	@Test
 	void nullOrderTablesException() {
+		TableGroup tableGroup = new TableGroup();
 		tableGroup.setOrderTables(null);
 
 		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -105,6 +94,11 @@ public class TableGroupServiceTest {
 	@DisplayName("테이블 그룹의 테이블 개수가 2개 미만이면 예외 발생한다.")
 	@Test
 	void lessThanTwoTablesException() {
+		OrderTable orderTable1 = new OrderTable();
+		orderTable1.setId(1L);
+		orderTable1.setEmpty(true);
+		TableGroup tableGroup = new TableGroup();
+		tableGroup.setId(1L);
 		tableGroup.setOrderTables(Collections.singletonList(orderTable1));
 
 		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -115,6 +109,18 @@ public class TableGroupServiceTest {
 	@ParameterizedTest
 	@MethodSource("provideSavedOrderTables")
 	void differentTablesException(List<OrderTable> savedOrderTables) {
+		OrderTable orderTable1 = new OrderTable();
+		orderTable1.setId(1L);
+		orderTable1.setEmpty(true);
+		OrderTable orderTable2 = new OrderTable();
+		orderTable2.setId(2L);
+		orderTable2.setEmpty(true);
+		OrderTable orderTable3 = new OrderTable();
+		orderTable3.setId(3L);
+		orderTable3.setEmpty(true);
+		TableGroup tableGroup = new TableGroup();
+		tableGroup.setId(1L);
+		tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2, orderTable3));
 		when(orderTableDao.findAllByIdIn(anyList())).thenReturn(savedOrderTables);
 
 		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -124,6 +130,15 @@ public class TableGroupServiceTest {
 	@DisplayName("TableGroup을 삭제한다.")
 	@Test
 	void ungroupTest() {
+		OrderTable orderTable1 = new OrderTable();
+		orderTable1.setId(1L);
+		orderTable1.setEmpty(true);
+		OrderTable orderTable2 = new OrderTable();
+		orderTable2.setId(2L);
+		orderTable2.setEmpty(true);
+		OrderTable orderTable3 = new OrderTable();
+		orderTable3.setId(3L);
+		orderTable3.setEmpty(true);
 		when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(
 			Arrays.asList(orderTable1, orderTable2, orderTable3));
 		when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(false);

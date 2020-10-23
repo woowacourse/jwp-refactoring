@@ -30,26 +30,19 @@ public class TableServiceTest {
 	@Mock
 	private JdbcTemplateOrderTableDao orderTableDao;
 
-	private OrderTable orderTable;
-
-	private OrderTable newOrderTable;
-
 	@BeforeEach
 	void setUp() {
 		this.tableService = new TableService(orderDao, orderTableDao);
-		orderTable = new OrderTable();
-		orderTable.setId(1L);
-		orderTable.setEmpty(false);
-		orderTable.setNumberOfGuests(2);
-
-		newOrderTable = new OrderTable();
-		newOrderTable.setEmpty(true);
-		newOrderTable.setNumberOfGuests(4);
 	}
 
 	@DisplayName("Table을 생성한다.")
 	@Test
 	void createTest() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
 		when(orderTableDao.save(any())).thenReturn(orderTable);
 
 		OrderTable saved = tableService.create(orderTable);
@@ -61,6 +54,11 @@ public class TableServiceTest {
 	@DisplayName("등록된 모든 Table을 조회한다.")
 	@Test
 	void listTest() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
 		when(orderTableDao.findAll()).thenReturn(Collections.singletonList(orderTable));
 
 		List<OrderTable> tables = tableService.list();
@@ -71,6 +69,15 @@ public class TableServiceTest {
 	@DisplayName("Table의 empty 여부를 변경한다.")
 	@Test
 	void changeEmptyTest() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
+		OrderTable newOrderTable = new OrderTable();
+		newOrderTable.setEmpty(true);
+		newOrderTable.setNumberOfGuests(4);
+
 		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 		when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(false);
 		when(orderTableDao.save(any())).thenReturn(orderTable);
@@ -83,7 +90,14 @@ public class TableServiceTest {
 	@DisplayName("테이블 그룹에 포함되는 테이블이면 예외 발생한다.")
 	@Test
 	void hasTableGroupException() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
 		orderTable.setTableGroupId(1L);
+
+		OrderTable newOrderTable = new OrderTable();
+
 		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 
 		assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), newOrderTable))
@@ -93,6 +107,13 @@ public class TableServiceTest {
 	@DisplayName("테이블의 주문 상태가 COOKING 혹은 MEAL이면 예외 발생한다.")
 	@Test
 	void notCompletionOrderStatusException() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
+		OrderTable newOrderTable = new OrderTable();
+
 		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 		when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
 
@@ -103,6 +124,15 @@ public class TableServiceTest {
 	@DisplayName("Table의 손님 수를 변경한다.")
 	@Test
 	void changeNumberOfGuestsTest() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
+		OrderTable newOrderTable = new OrderTable();
+		newOrderTable.setEmpty(true);
+		newOrderTable.setNumberOfGuests(4);
+
 		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 		when(orderTableDao.save(any())).thenReturn(orderTable);
 
@@ -115,6 +145,12 @@ public class TableServiceTest {
 	@ParameterizedTest
 	@ValueSource(ints = {-1, -2, -100})
 	void negativeNumberOfGuestsException(int numberOfGuests) {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(false);
+		orderTable.setNumberOfGuests(2);
+
+		OrderTable newOrderTable = new OrderTable();
 		newOrderTable.setNumberOfGuests(numberOfGuests);
 
 		assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), newOrderTable))
@@ -124,6 +160,13 @@ public class TableServiceTest {
 	@DisplayName("테이블이 비어있으면 예외 발생한다.")
 	@Test
 	void emptyTableException() {
+		OrderTable orderTable = new OrderTable();
+		orderTable.setId(1L);
+		orderTable.setEmpty(true);
+
+		OrderTable newOrderTable = new OrderTable();
+		newOrderTable.setNumberOfGuests(4);
+
 		orderTable.setEmpty(true);
 		when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 

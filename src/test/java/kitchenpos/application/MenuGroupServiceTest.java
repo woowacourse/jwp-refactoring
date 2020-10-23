@@ -23,26 +23,18 @@ public class MenuGroupServiceTest {
 	@Mock
 	private JdbcTemplateMenuGroupDao menuGroupDao;
 
-	private MenuGroup friedSet;
-
-	private MenuGroup garlicSet;
-
 	@BeforeEach()
 	void setUp() {
 		menuGroupService = new MenuGroupService(menuGroupDao);
-
-		friedSet = new MenuGroup();
-		friedSet.setId(1L);
-		friedSet.setName("Fried Set");
-
-		garlicSet = new MenuGroup();
-		garlicSet.setId(2L);
-		garlicSet.setName("Garlic Set");
 	}
 
 	@DisplayName("MenuGroup을 생성한다.")
 	@Test
 	void creatTest() {
+		MenuGroup friedSet = new MenuGroup();
+		friedSet.setId(1L);
+		friedSet.setName("Fried Set");
+
 		when(menuGroupDao.save(any())).thenReturn(friedSet);
 
 		MenuGroup created = menuGroupService.create(friedSet);
@@ -54,6 +46,14 @@ public class MenuGroupServiceTest {
 	@DisplayName("등록된 모든 MenuGroup을 조회한다.")
 	@Test
 	void listTest() {
+		MenuGroup friedSet = new MenuGroup();
+		friedSet.setId(1L);
+		friedSet.setName("Fried Set");
+
+		MenuGroup garlicSet = new MenuGroup();
+		garlicSet.setId(2L);
+		garlicSet.setName("Garlic Set");
+
 		List<MenuGroup> menuGroups = Arrays.asList(friedSet, garlicSet);
 		when(menuGroupDao.findAll()).thenReturn(menuGroups);
 
