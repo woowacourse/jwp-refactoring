@@ -33,6 +33,8 @@
 
 * **MenuProduct**
   * Menu 안에 속하는 제품 정보
+  * MenuProduct을 생성할 수 있다.
+  * MenuProduct을 조회할 수 있다.
   * 가격은 0원 이상이다.
 
 * **Order**

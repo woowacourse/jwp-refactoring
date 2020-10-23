@@ -45,10 +45,7 @@ class OrderServiceTest {
         Menu menu = menuDao.findById(1L)
                 .orElseThrow(() -> new NoSuchElementException("저장된 메뉴가 없습니다."));
 
-        OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable = getOrderTable(false);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
@@ -85,10 +82,7 @@ class OrderServiceTest {
     @Test
     void emptyOrderTableExceptionTest() {
         // given
-        OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
-        orderTable.setEmpty(true);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable = getOrderTable(true);
 
         Order order = new Order();
         order.setOrderTableId(orderTable.getId());
@@ -122,10 +116,7 @@ class OrderServiceTest {
         Menu menu = menuDao.findById(1L)
                 .orElseThrow(() -> new NoSuchElementException("저장된 메뉴가 없습니다."));
 
-        OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable = getOrderTable(false);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
@@ -153,10 +144,7 @@ class OrderServiceTest {
         Menu menu = menuDao.findById(1L)
                 .orElseThrow(() -> new NoSuchElementException("저장된 메뉴가 없습니다."));
 
-        OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable = getOrderTable(false);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
@@ -185,10 +173,7 @@ class OrderServiceTest {
         Menu menu = menuDao.findById(1L)
                 .orElseThrow(() -> new NoSuchElementException("저장된 메뉴가 없습니다."));
 
-        OrderTable orderTable = orderTableDao.findById(1L)
-                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
-        orderTable.setEmpty(false);
-        orderTableDao.save(orderTable);
+        OrderTable orderTable = getOrderTable(false);
 
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
@@ -202,5 +187,13 @@ class OrderServiceTest {
         result.setOrderStatus(CHANGED_STATUS);
         assertThatThrownBy(() -> orderService.changeOrderStatus(result.getId(), result))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable getOrderTable(boolean empty) {
+        OrderTable orderTable = orderTableDao.findById(1L)
+                .orElseThrow(() -> new NoSuchElementException("저장된 테이블이 없습니다."));
+        orderTable.setEmpty(empty);
+        orderTableDao.save(orderTable);
+        return orderTable;
     }
 }
