@@ -41,7 +41,7 @@ class TableServiceIntegrationTest extends ServiceIntegrationTest {
         );
     }
 
-    @DisplayName("테이블을 빈 테이블로 설정한다.")
+    @DisplayName("테이블의 빈 테이블 여부를 변경한다.")
     @Test
     void changeEmpty() {
         OrderTable changedTable = tableService.changeEmpty(1L, getNotEmptyOrderTable());

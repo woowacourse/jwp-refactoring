@@ -17,7 +17,7 @@ class TableGroupServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     OrderTableDao orderTableDao;
 
-    @DisplayName("새로운 단체 손님을 지정한다.")
+    @DisplayName("주문 테이블들을 단체로 지정한다")
     @Test
     void create() {
         Long[] ids = {3L, 4L};
@@ -29,7 +29,7 @@ class TableGroupServiceIntegrationTest extends ServiceIntegrationTest {
         assertThat(persist.getOrderTables()).extracting(OrderTable::getId).containsExactlyInAnyOrder(ids);
     }
 
-    @DisplayName("단체 손님을 해제한다.")
+    @DisplayName("단체로 지정된 테이블들을 빈 테이블로 변경한다.")
     @Test
     void ungroup() {
         Long[] ids = {3L, 4L};
