@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,5 +102,11 @@ public class JdbcTemplateOrderDao implements OrderDao {
         entity.setOrderStatus(resultSet.getString("order_status"));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM orders";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 }
