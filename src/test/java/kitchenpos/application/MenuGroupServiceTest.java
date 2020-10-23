@@ -23,45 +23,45 @@ public class MenuGroupServiceTest {
 	@Mock
 	private JdbcTemplateMenuGroupDao menuGroupDao;
 
-	private MenuGroup menuGroup1;
+	private MenuGroup friedSet;
 
-	private MenuGroup menuGroup2;
+	private MenuGroup garlicSet;
 
 	@BeforeEach()
 	void setUp() {
 		menuGroupService = new MenuGroupService(menuGroupDao);
 
-		menuGroup1 = new MenuGroup();
-		menuGroup1.setId(1L);
-		menuGroup1.setName("Fried Set");
+		friedSet = new MenuGroup();
+		friedSet.setId(1L);
+		friedSet.setName("Fried Set");
 
-		menuGroup2 = new MenuGroup();
-		menuGroup2.setId(2L);
-		menuGroup2.setName("New Set");
+		garlicSet = new MenuGroup();
+		garlicSet.setId(2L);
+		garlicSet.setName("Garlic Set");
 	}
 
 	@DisplayName("MenuGroup을 생성한다.")
 	@Test
 	void creatTest() {
-		when(menuGroupDao.save(any())).thenReturn(menuGroup1);
+		when(menuGroupDao.save(any())).thenReturn(friedSet);
 
-		MenuGroup created = menuGroupService.create(menuGroup1);
+		MenuGroup created = menuGroupService.create(friedSet);
 
-		assertThat(created.getId()).isEqualTo(menuGroup1.getId());
-		assertThat(created.getName()).isEqualTo(menuGroup1.getName());
+		assertThat(created.getId()).isEqualTo(friedSet.getId());
+		assertThat(created.getName()).isEqualTo(friedSet.getName());
 	}
 
 	@DisplayName("등록된 모든 MenuGroup을 조회한다.")
 	@Test
 	void listTest() {
-		List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
+		List<MenuGroup> menuGroups = Arrays.asList(friedSet, garlicSet);
 		when(menuGroupDao.findAll()).thenReturn(menuGroups);
 
 		List<MenuGroup> menuGroupList = menuGroupService.list();
 
-		assertThat(menuGroupList.get(0).getId()).isEqualTo(menuGroup1.getId());
-		assertThat(menuGroupList.get(0).getName()).isEqualTo(menuGroup1.getName());
-		assertThat(menuGroupList.get(1).getId()).isEqualTo(menuGroup2.getId());
-		assertThat(menuGroupList.get(1).getName()).isEqualTo(menuGroup2.getName());
+		assertThat(menuGroupList.get(0).getId()).isEqualTo(friedSet.getId());
+		assertThat(menuGroupList.get(0).getName()).isEqualTo(friedSet.getName());
+		assertThat(menuGroupList.get(1).getId()).isEqualTo(garlicSet.getId());
+		assertThat(menuGroupList.get(1).getName()).isEqualTo(garlicSet.getName());
 	}
 }

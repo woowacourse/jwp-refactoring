@@ -41,60 +41,60 @@ public class MenuServiceTest {
 	@Mock
 	private JdbcTemplateProductDao productDao;
 
-	private Menu menu1;
+	private Menu friedChicken;
 
-	private Menu menu2;
+	private Menu garlicChicken;
 
-	private MenuProduct menuProduct1;
+	private MenuProduct friedMenuProduct;
 
-	private MenuProduct menuProduct2;
+	private MenuProduct garlicMenuProduct;
 
-	private Product product1;
+	private Product friedProduct;
 
 	@BeforeEach
 	void setUp() {
 		this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
 
-		product1 = new Product();
-		product1.setId(1L);
-		product1.setPrice(BigDecimal.valueOf(16000));
+		friedProduct = new Product();
+		friedProduct.setId(1L);
+		friedProduct.setPrice(BigDecimal.valueOf(16000));
 
-		menuProduct1 = new MenuProduct();
-		menuProduct1.setMenuId(1L);
-		menuProduct1.setProductId(1L);
-		menuProduct1.setQuantity(3);
-		menuProduct2 = new MenuProduct();
-		menuProduct2.setMenuId(2L);
-		menuProduct2.setProductId(2L);
-		menuProduct2.setQuantity(5);
+		friedMenuProduct = new MenuProduct();
+		friedMenuProduct.setMenuId(1L);
+		friedMenuProduct.setProductId(1L);
+		friedMenuProduct.setQuantity(3);
+		garlicMenuProduct = new MenuProduct();
+		garlicMenuProduct.setMenuId(2L);
+		garlicMenuProduct.setProductId(2L);
+		garlicMenuProduct.setQuantity(5);
 
-		menu1 = new Menu();
-		menu1.setId(1L);
-		menu1.setName("Fried");
-		menu1.setPrice(BigDecimal.valueOf(16000));
-		menu1.setMenuProducts(Collections.singletonList(menuProduct1));
-		menu2 = new Menu();
-		menu2.setId(2L);
-		menu2.setName("Garlic");
-		menu2.setPrice(BigDecimal.valueOf(17000));
-		menu2.setMenuProducts(Collections.singletonList(menuProduct2));
+		friedChicken = new Menu();
+		friedChicken.setId(1L);
+		friedChicken.setName("Fried");
+		friedChicken.setPrice(BigDecimal.valueOf(16000));
+		friedChicken.setMenuProducts(Collections.singletonList(friedMenuProduct));
+		garlicChicken = new Menu();
+		garlicChicken.setId(2L);
+		garlicChicken.setName("Garlic");
+		garlicChicken.setPrice(BigDecimal.valueOf(17000));
+		garlicChicken.setMenuProducts(Collections.singletonList(garlicMenuProduct));
 	}
 
 	@DisplayName("Menu를 생성한다.")
 	@Test
 	void createTest() {
 		when(menuGroupDao.existsById(any())).thenReturn(true);
-		when(productDao.findById(any())).thenReturn(Optional.of(product1));
-		when(menuDao.save(any())).thenReturn(menu1);
-		when(menuProductDao.save(any())).thenReturn(menuProduct1);
+		when(productDao.findById(any())).thenReturn(Optional.of(friedProduct));
+		when(menuDao.save(any())).thenReturn(friedChicken);
+		when(menuProductDao.save(any())).thenReturn(friedMenuProduct);
 
-		Menu savedMenu = menuService.create(menu1);
+		Menu savedMenu = menuService.create(friedChicken);
 
 		assertAll(
-			() -> assertThat(savedMenu.getId()).isEqualTo(menu1.getId()),
-			() -> assertThat(savedMenu.getName()).isEqualTo(menu1.getName()),
-			() -> assertThat(savedMenu.getPrice()).isEqualTo(menu1.getPrice()),
-			() -> assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isEqualTo(menu1.getId()),
+			() -> assertThat(savedMenu.getId()).isEqualTo(friedChicken.getId()),
+			() -> assertThat(savedMenu.getName()).isEqualTo(friedChicken.getName()),
+			() -> assertThat(savedMenu.getPrice()).isEqualTo(friedChicken.getPrice()),
+			() -> assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isEqualTo(friedChicken.getId()),
 			() -> assertThat(savedMenu.getMenuProducts().get(0).getQuantity()).isEqualTo(3)
 		);
 	}
@@ -102,35 +102,35 @@ public class MenuServiceTest {
 	@DisplayName("Menu의 price가 null이면 예외 발생한다.")
 	@Test
 	void priceNullException() {
-		menu1.setPrice(null);
-		assertThatThrownBy(() -> menuService.create(menu1))
+		friedChicken.setPrice(null);
+		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("Menu의 price가 0보다 작으면 예외 발생한다.")
 	@Test
 	void negativePriceException() {
-		menu1.setPrice(BigDecimal.valueOf(-1));
-		assertThatThrownBy(() -> menuService.create(menu1))
+		friedChicken.setPrice(BigDecimal.valueOf(-1));
+		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("Menu의 price가 메뉴에 포함된 MenuProduct의 price 합보다 크면 예외 발생한다.")
 	@Test
 	void priceaNullException() {
-		BigDecimal sum = product1.getPrice().multiply(BigDecimal.valueOf(menuProduct1.getQuantity()));
-		menu1.setPrice(sum.add(BigDecimal.ONE));
+		BigDecimal sum = friedProduct.getPrice().multiply(BigDecimal.valueOf(friedMenuProduct.getQuantity()));
+		friedChicken.setPrice(sum.add(BigDecimal.ONE));
 
-		assertThatThrownBy(() -> menuService.create(menu1))
+		assertThatThrownBy(() -> menuService.create(friedChicken))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("등록된 모든 Menu를 조회한다.")
 	@Test
 	void listTest() {
-		List<Menu> menus = Arrays.asList(menu1, menu2);
-		List<MenuProduct> menuProducts1 = Collections.singletonList(menuProduct1);
-		List<MenuProduct> menuProducts2 = Collections.singletonList(menuProduct2);
+		List<Menu> menus = Arrays.asList(friedChicken, garlicChicken);
+		List<MenuProduct> menuProducts1 = Collections.singletonList(friedMenuProduct);
+		List<MenuProduct> menuProducts2 = Collections.singletonList(garlicMenuProduct);
 		when(menuDao.findAll()).thenReturn(menus);
 		when(menuProductDao.findAllByMenuId(1L)).thenReturn(menuProducts1);
 		when(menuProductDao.findAllByMenuId(2L)).thenReturn(menuProducts2);
@@ -138,12 +138,12 @@ public class MenuServiceTest {
 		List<Menu> searched = menuService.list();
 
 		assertAll(
-			() -> assertThat(searched.get(0).getId()).isEqualTo(menu1.getId()),
-			() -> assertThat(searched.get(0).getName()).isEqualTo(menu1.getName()),
-			() -> assertThat(searched.get(0).getMenuProducts().get(0).getMenuId()).isEqualTo(menu1.getId()),
-			() -> assertThat(searched.get(1).getId()).isEqualTo(menu2.getId()),
-			() -> assertThat(searched.get(1).getName()).isEqualTo(menu2.getName()),
-			() -> assertThat(searched.get(1).getMenuProducts().get(0).getMenuId()).isEqualTo(menu2.getId())
+			() -> assertThat(searched.get(0).getId()).isEqualTo(friedChicken.getId()),
+			() -> assertThat(searched.get(0).getName()).isEqualTo(friedChicken.getName()),
+			() -> assertThat(searched.get(0).getMenuProducts().get(0).getMenuId()).isEqualTo(friedChicken.getId()),
+			() -> assertThat(searched.get(1).getId()).isEqualTo(garlicChicken.getId()),
+			() -> assertThat(searched.get(1).getName()).isEqualTo(garlicChicken.getName()),
+			() -> assertThat(searched.get(1).getMenuProducts().get(0).getMenuId()).isEqualTo(garlicChicken.getId())
 		);
 	}
 }
