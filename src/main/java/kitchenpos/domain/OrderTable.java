@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -7,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +17,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -30,8 +32,18 @@ public class OrderTable {
     private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders = new ArrayList<>();
     @Version
     private int version;
+
+    @Builder
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
 
     public Long getId() {
         return id;
@@ -96,6 +108,10 @@ public class OrderTable {
         if (empty) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void addOrder(final Order order) {
+        orders.add(order);
     }
 
     public boolean isEmpty() {

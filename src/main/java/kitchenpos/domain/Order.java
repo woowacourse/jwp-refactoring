@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -45,10 +46,17 @@ public class Order {
 
     @Builder
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus) {
-        validateOrderTable(orderTable);
         this.id = id;
-        this.orderTable = orderTable;
+        setOrderTable(orderTable);
         this.orderStatus = orderStatus;
+    }
+
+    private void setOrderTable(final OrderTable orderTable) {
+        validateOrderTable(orderTable);
+        if (Objects.isNull(this.orderTable)) {
+            this.orderTable = orderTable;
+            this.orderTable.addOrder(this);
+        }
     }
 
     private void validateOrderTable(OrderTable orderTable) {

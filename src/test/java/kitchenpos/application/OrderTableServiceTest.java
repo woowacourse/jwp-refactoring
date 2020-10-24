@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Sql(value = "/deleteAll.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
@@ -77,6 +78,7 @@ class OrderTableServiceTest {
 
     @DisplayName("[예외] 조리, 식사 중인 테이블의 주문 등록 불가 여부 변경")
     @Test
+    @Transactional
     void changeEmpty_Fail_With_TableInProgress() {
         OrderTableRequest table = createTableRequest(0, false);
         OrderTableResponse orderTableResponse = orderTableService.create(table);
