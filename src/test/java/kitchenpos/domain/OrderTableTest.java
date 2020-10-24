@@ -26,8 +26,8 @@ class OrderTableTest {
         TableGroup tableGroup = createTableGroup();
         OrderTable orderTable = OrderTable.builder()
             .empty(true)
-            .tableGroup(tableGroup)
             .build();
+        orderTable.groupBy(tableGroup);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
             .isInstanceOf(IllegalArgumentException.class);
