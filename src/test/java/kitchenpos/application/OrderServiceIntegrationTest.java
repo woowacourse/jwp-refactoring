@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,19 +22,55 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("주문을 등록한다.")
     @Test
     void create() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(2);
-        Order order = new Order();
-        order.setOrderTableId(2L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderLineItem orderLineItem = getOrderLineItem(1L, 2);
+        Order order = getOrder(2L, Arrays.asList(orderLineItem));
 
         Order persist = orderService.create(order);
 
         assertAll(
-            () -> assertThat(persist).isEqualToIgnoringGivenFields(order, "id", "orderLineItems"),
+            () -> assertThat(persist.getOrderStatus()).isEqualTo(ORDER_STATUS_COOKING),
+            () -> assertThat(persist.getOrderTableId()).isEqualTo(order.getOrderTableId()),
             () -> assertThat(persist.getOrderLineItems().get(0)).isEqualToIgnoringNullFields(orderLineItem)
         );
+    }
+
+    @DisplayName("주문하려는 메뉴가 1개 이상이 아니면 주문을 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenOrderLineItemsAreEmpty() {
+        Order order = getOrder(2L, Lists.emptyList());
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문하려는 메뉴가 등록되어있지 않으면 주문을 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenMenuInOrderLineItemsDoesNotExist() {
+        OrderLineItem orderLineItem = getOrderLineItem(7L, 2);
+        Order order = getOrder(2L, Arrays.asList(orderLineItem));
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문하려는 테이블이 등록되어있지 않으면 주문을 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenTableDoesNotExist() {
+        OrderLineItem orderLineItem = getOrderLineItem(1L, 2);
+        Order order = getOrder(9L, Arrays.asList(orderLineItem));
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문하려는 테이블이 빈 상태이면 주문을 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenTableIsEmpty() {
+        OrderLineItem orderLineItem = getOrderLineItem(1L, 2);
+        Order order = getOrder(1L, Arrays.asList(orderLineItem));
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 전체를 조회한다.")
@@ -54,7 +91,6 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
             () -> assertThat(orders.get(0).getOrderLineItems().get(0)).isEqualToIgnoringNullFields(twoFriedChicken),
             () -> assertThat(orders.get(1)).isEqualToIgnoringGivenFields(halfAndHalfOrder, "id", "orderLineItems"),
             () -> assertThat(orders.get(1).getOrderLineItems().get(0)).isEqualToIgnoringNullFields(halfAndHalfChicken)
-
         );
     }
 

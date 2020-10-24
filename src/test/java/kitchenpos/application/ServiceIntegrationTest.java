@@ -92,7 +92,7 @@ class ServiceIntegrationTest {
 
     static Order getOrder(Long tableId, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
-        order.setOrderTableId(2L);
+        order.setOrderTableId(tableId);
         order.setOrderLineItems(orderLineItems);
         return order;
     }
