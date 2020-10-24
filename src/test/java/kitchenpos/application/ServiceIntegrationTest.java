@@ -35,7 +35,7 @@ class ServiceIntegrationTest {
     }
 
     static Menu getMenu(String name, long price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        return getMenu(name, BigDecimal.valueOf(price, PRICE_SCALE), menuGroupId, menuProducts);
+        return getMenu(name, getScaledPrice(price), menuGroupId, menuProducts);
     }
 
     static Menu getMenuWithNullPrice(String name, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -49,6 +49,32 @@ class ServiceIntegrationTest {
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(menuProducts);
         return menu;
+    }
+
+    static Product getProductWithoutId(String name, long price) {
+        return getProduct(name, getScaledPrice(price));
+    }
+
+    private static BigDecimal getScaledPrice(long price) {
+        price *= Math.pow(10, PRICE_SCALE);
+        return BigDecimal.valueOf(price, PRICE_SCALE);
+    }
+
+    static Product getProductWithNullPrice(String name) {
+        return getProduct(name, null);
+    }
+
+    private static Product getProduct(String name, BigDecimal price) {
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+        return product;
+    }
+
+    static Product getProductWithId(Long id, String name, long price) {
+        Product product = getProductWithoutId(name, price);
+        product.setId(id);
+        return product;
     }
 
     static MenuGroup getMenuGroupWithoutId(String name) {
@@ -82,26 +108,6 @@ class ServiceIntegrationTest {
         Order order = new Order();
         order.setOrderStatus(ORDER_STATUS_COOKING);
         return order;
-    }
-
-    static Product getProductWithoutId(String name, long price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(unscaledPrice(price), PRICE_SCALE));
-        return product;
-    }
-
-    static Product getProductWithId(Long id, String name, long price) {
-        Product product = getProductWithoutId(name, price);
-        product.setId(id);
-        return product;
-    }
-
-    private static long unscaledPrice(long price) {
-        for (int i = 0; i < PRICE_SCALE; i++) {
-            price *= 10;
-        }
-        return price;
     }
 
     static OrderTable getNotEmptyOrderTable() {

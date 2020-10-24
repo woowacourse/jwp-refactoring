@@ -15,7 +15,7 @@ class ProductServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     ProductService productService;
 
-    @DisplayName("상품을 추가한다.")
+    @DisplayName("상품을 등록한다.")
     @Test
     void create() {
         Product spicyChicken = getProductWithoutId("스파이시치킨", 17000);
@@ -23,6 +23,24 @@ class ProductServiceIntegrationTest extends ServiceIntegrationTest {
         Product persist = productService.create(spicyChicken);
 
         assertThat(persist).isEqualToIgnoringNullFields(spicyChicken);
+    }
+
+    @DisplayName("상품의 가격이 올바르지 않으면 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenPriceIsNull() {
+        Product spicyChicken = getProductWithNullPrice("스파이시치킨");
+
+        assertThatThrownBy(() -> productService.create(spicyChicken))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("상품의 가격이 음수면 등록할 수 없다.")
+    @Test
+    void create_willThrowException_whenPriceIsNegativeNumber() {
+        Product spicyChicken = getProductWithoutId("스파이시치킨", -16000);
+
+        assertThatThrownBy(() -> productService.create(spicyChicken))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 전체를 조회한다.")
