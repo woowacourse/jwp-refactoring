@@ -15,7 +15,7 @@ class TableServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     TableService tableService;
 
-    @DisplayName("테이블을 추가한다.")
+    @DisplayName("테이블을 등록한다.")
     @Test
     void create() {
         OrderTable orderTable = new OrderTable();

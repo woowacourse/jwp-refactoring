@@ -18,7 +18,7 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     OrderService orderService;
 
-    @DisplayName("주문을 추가한다.")
+    @DisplayName("주문을 등록한다.")
     @Test
     void create() {
         OrderLineItem orderLineItem = new OrderLineItem();

@@ -15,7 +15,7 @@ class MenuGroupServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     MenuGroupService menuGroupService;
 
-    @DisplayName("메뉴 그룹을 생성한다.")
+    @DisplayName("메뉴 그룹을 등록한다.")
     @Test
     void create() {
         MenuGroup twoChicken = new MenuGroup();
