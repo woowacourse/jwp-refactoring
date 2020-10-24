@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +22,8 @@ public class Product {
     private Long id;
     private String name;
     private BigDecimal price;
+    @OneToMany(mappedBy = "product")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
     public Product(Long id, String name, BigDecimal price) {
@@ -32,5 +37,9 @@ public class Product {
         if (BigDecimal.ZERO.compareTo(price) > 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
     }
 }

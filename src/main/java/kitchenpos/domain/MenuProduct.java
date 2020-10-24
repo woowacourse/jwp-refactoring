@@ -32,7 +32,7 @@ public class MenuProduct {
     public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
         this.seq = seq;
         setMenu(menu);
-        this.product = product;
+        setProduct(product);
         this.quantity = quantity;
     }
 
@@ -40,6 +40,13 @@ public class MenuProduct {
         if (Objects.isNull(this.menu)) {
             this.menu = menu;
             this.menu.addMenuProduct(this);
+        }
+    }
+
+    private void setProduct(final Product product) {
+        if (Objects.isNull(this.product) && Objects.nonNull(product)) {
+            this.product = product;
+            this.product.addMenuProduct(this);
         }
     }
 
