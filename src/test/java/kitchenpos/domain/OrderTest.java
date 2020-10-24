@@ -4,11 +4,26 @@ import static kitchenpos.TestObjectFactory.createOrder;
 import static kitchenpos.TestObjectFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
+
+    @DisplayName("주문 등록 시 주문테이블 등록 여부 확인")
+    @Test
+    void setOrderTable() {
+        OrderTable orderTable = createOrderTable(false);
+        Order order = Order.builder()
+            .orderTable(orderTable)
+            .build();
+
+        assertAll(
+            () -> assertThat(order.getOrderTable()).isEqualTo(orderTable),
+            () -> assertThat(order.getOrderTable().getOrders()).containsOnly(order)
+        );
+    }
 
     @DisplayName("[예외] 빈 테이블에 대한 주문 생성")
     @Test
