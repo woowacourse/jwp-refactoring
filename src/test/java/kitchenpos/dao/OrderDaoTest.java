@@ -46,7 +46,8 @@ class OrderDaoTest {
         savedOrder.changeOrderStatus(OrderStatus.MEAL);
         Order changedOrder = orderDao.saveAndFlush(savedOrder);
 
-        assertThat(changedOrder.getVersion()).isEqualTo(1);
+        int actual = changedOrder.getVersion() - savedOrder.getVersion();
+        assertThat(actual).isEqualTo(1);
     }
 
     @DisplayName("[예외] 동시에 같은 주문 수정")

@@ -36,7 +36,8 @@ class OrderTableDaoTest {
         savedTable.changeEmpty(true);
         OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
 
-        assertThat(changedTable.getVersion()).isEqualTo(1);
+        int actual = changedTable.getVersion() - savedTable.getVersion();
+        assertThat(actual).isEqualTo(1);
     }
 
     @DisplayName("numberOfGuests 변경 시 버전 증가")
@@ -46,7 +47,8 @@ class OrderTableDaoTest {
         savedTable.changeNumberOfGuests(10);
         OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
 
-        assertThat(changedTable.getVersion()).isEqualTo(1);
+        int actual = changedTable.getVersion() - savedTable.getVersion();
+        assertThat(actual).isEqualTo(1);
     }
 
     @DisplayName("[예외] 동시에 같은 테이블을 수정")
