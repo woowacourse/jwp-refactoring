@@ -11,7 +11,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.config.ServiceIntegrationTestConfig;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -24,6 +26,30 @@ import kitchenpos.domain.Product;
 class ServiceIntegrationTest {
     static final String ORDER_STATUS_COOKING = "COOKING";
     private static final int PRICE_SCALE = 2;
+
+    static MenuProduct getMenuProduct(long quantity, Long id) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setQuantity(quantity);
+        menuProduct.setProductId(id);
+        return menuProduct;
+    }
+
+    static Menu getMenu(String name, long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return getMenu(name, BigDecimal.valueOf(price, PRICE_SCALE), menuGroupId, menuProducts);
+    }
+
+    static Menu getMenuWithNullPrice(String name, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return getMenu(name, null, menuGroupId, menuProducts);
+    }
+
+    private static Menu getMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu();
+        menu.setName(name);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
+    }
 
     static MenuGroup getMenuGroupWithoutId(String name) {
         MenuGroup menuGroup = new MenuGroup();
@@ -72,7 +98,7 @@ class ServiceIntegrationTest {
     }
 
     private static long unscaledPrice(long price) {
-        for (int i = 0; i < PRICE_SCALE; i ++) {
+        for (int i = 0; i < PRICE_SCALE; i++) {
             price *= 10;
         }
         return price;
