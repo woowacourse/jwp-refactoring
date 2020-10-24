@@ -26,9 +26,6 @@ class OrderTableServiceTest {
     private OrderTableService orderTableService;
 
     @Autowired
-    private TableGroupService tableGroupService;
-
-    @Autowired
     private OrderDao orderDao;
 
     @Autowired
