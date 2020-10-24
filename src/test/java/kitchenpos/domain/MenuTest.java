@@ -24,7 +24,7 @@ class MenuTest {
             .build();
 
         assertAll(
-            () -> assertThat(menu.getMenuGroup()).isEqualToComparingFieldByField(menuGroup),
+            () -> assertThat(menu.getMenuGroup()).isEqualTo(menuGroup),
             () -> assertThat(menu.getMenuGroup().getMenus()).containsOnly(menu)
         );
     }

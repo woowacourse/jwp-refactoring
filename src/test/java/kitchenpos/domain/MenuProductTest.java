@@ -24,7 +24,7 @@ class MenuProductTest {
             .build();
 
         assertAll(
-            () -> assertThat(menuProduct.getMenu()).isEqualToComparingFieldByField(menu),
+            () -> assertThat(menuProduct.getMenu()).isEqualTo(menu),
             () -> assertThat(menuProduct.getMenu().getMenuProducts()).containsOnly(menuProduct)
         );
     }
@@ -41,7 +41,7 @@ class MenuProductTest {
             .build();
 
         assertAll(
-            () -> assertThat(menuProduct.getProduct()).isEqualToComparingFieldByField(product),
+            () -> assertThat(menuProduct.getProduct()).isEqualTo(product),
             () -> assertThat(menuProduct.getProduct().getMenuProducts()).containsOnly(menuProduct)
         );
     }
