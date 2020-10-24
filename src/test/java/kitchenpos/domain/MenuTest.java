@@ -5,12 +5,29 @@ import static kitchenpos.TestObjectFactory.createMenuProduct;
 import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MenuTest {
+
+    @DisplayName("메뉴 생성 시 메뉴 그룹 등록 여부 확인")
+    @Test
+    void setMenuGroup() {
+        MenuGroup menuGroup = MenuGroup.builder().build();
+
+        Menu menu = Menu.builder()
+            .price(BigDecimal.valueOf(18_000))
+            .menuGroup(menuGroup)
+            .build();
+
+        assertAll(
+            () -> assertThat(menu.getMenuGroup()).isEqualToComparingFieldByField(menuGroup),
+            () -> assertThat(menu.getMenuGroup().getMenus()).containsOnly(menu)
+        );
+    }
 
     @DisplayName("[예외] 가격이 0보다 작은 메뉴 생성")
     @Test
