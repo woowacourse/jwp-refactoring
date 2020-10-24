@@ -11,4 +11,6 @@ public interface TableGroupDao {
     Optional<TableGroup> findById(Long id);
 
     List<TableGroup> findAll();
+
+    void deleteAll();
 }
