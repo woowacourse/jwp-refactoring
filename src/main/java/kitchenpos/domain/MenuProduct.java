@@ -37,7 +37,7 @@ public class MenuProduct {
     }
 
     private void setMenu(final Menu menu) {
-        if (Objects.isNull(this.menu)) {
+        if (Objects.isNull(this.menu) && Objects.nonNull(menu)) {
             this.menu = menu;
             this.menu.addMenuProduct(this);
         }

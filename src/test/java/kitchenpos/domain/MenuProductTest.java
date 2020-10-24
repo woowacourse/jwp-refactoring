@@ -4,12 +4,47 @@ import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createMenuProduct;
 import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class MenuProductTest {
+
+    @DisplayName("메뉴상품 생성 시 메뉴 등록 여부 확인")
+    @Test
+    void setMenu() {
+        Menu menu = Menu.builder()
+            .price(BigDecimal.valueOf(18_000))
+            .build();
+
+        MenuProduct menuProduct = MenuProduct.builder()
+            .menu(menu)
+            .build();
+
+        assertAll(
+            () -> assertThat(menuProduct.getMenu()).isEqualToComparingFieldByField(menu),
+            () -> assertThat(menuProduct.getMenu().getMenuProducts()).containsOnly(menuProduct)
+        );
+    }
+
+    @DisplayName("메뉴상품 생성 시 상품 등록 여부 확인")
+    @Test
+    void setProduct() {
+        Product product = Product.builder()
+            .price(BigDecimal.valueOf(18_000))
+            .build();
+
+        MenuProduct menuProduct = MenuProduct.builder()
+            .product(product)
+            .build();
+
+        assertAll(
+            () -> assertThat(menuProduct.getProduct()).isEqualToComparingFieldByField(product),
+            () -> assertThat(menuProduct.getProduct().getMenuProducts()).containsOnly(menuProduct)
+        );
+    }
 
     @DisplayName("상품 개수에 따른 가격 계산")
     @Test
