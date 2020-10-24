@@ -37,7 +37,14 @@ public class Menu {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        setMenuGroup(menuGroup);
+    }
+
+    private void setMenuGroup(final MenuGroup menuGroup) {
+        if (Objects.isNull(this.menuGroup) && Objects.nonNull(menuGroup)) {
+            this.menuGroup = menuGroup;
+            this.menuGroup.addMenu(this);
+        }
     }
 
     private void validatePrice(BigDecimal price) {
