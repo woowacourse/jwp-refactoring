@@ -15,22 +15,24 @@ import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+        final MenuDao menuDao,
+        final OrderDao orderDao,
+        final OrderLineItemDao orderLineItemDao,
+        final OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
@@ -101,7 +103,11 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        Order changedOrder = orderDao.save(savedOrder);
-        return OrderResponse.from(changedOrder);
+        try {
+            Order changedOrder = orderDao.save(savedOrder);
+            return OrderResponse.from(changedOrder);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            return changeOrderStatus(orderId, request);
+        }
     }
 }
