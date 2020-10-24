@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +20,18 @@ class OrderTableDaoTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
+    private OrderTable orderTable;
+
+    @BeforeEach
+    void setUp() {
+        orderTable = OrderTable.builder()
+            .empty(false)
+            .build();
+    }
+
     @DisplayName("empty 변경 시 버전 증가")
     @Test
     void version_Empty() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(false)
-            .build();
-
         OrderTable savedTable = orderTableDao.save(orderTable);
         savedTable.changeEmpty(true);
         OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
@@ -36,10 +42,6 @@ class OrderTableDaoTest {
     @DisplayName("numberOfGuests 변경 시 버전 증가")
     @Test
     void version_NumberOfGuests() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(false)
-            .build();
-
         OrderTable savedTable = orderTableDao.save(orderTable);
         savedTable.changeNumberOfGuests(10);
         OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
@@ -50,10 +52,6 @@ class OrderTableDaoTest {
     @DisplayName("[예외] 동시에 같은 테이블을 수정")
     @Test
     void objectOptimisticLockingFailureException() {
-        OrderTable orderTable = OrderTable.builder()
-            .empty(false)
-            .build();
-
         OrderTable savedTable = orderTableDao.save(orderTable);
         savedTable.changeEmpty(true);
         orderTableDao.saveAndFlush(savedTable);
