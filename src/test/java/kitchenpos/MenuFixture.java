@@ -50,7 +50,26 @@ public class MenuFixture {
         return menu;
     }
 
-    public static List<Menu> createMenuList() {
+    public static Menu createNoPriceMenu() {
+        final Menu menu = new Menu();
+        final MenuProduct menuProduct = new MenuProduct();
+        menu.setName("후라이드+후라이드");
+        menu.setMenuGroupId(1L);
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(2);
+        menu.setMenuProducts(new ArrayList<>(Collections.singletonList(menuProduct)));
+
+        return menu;
+    }
+
+    public static MenuProduct createMenuProductWithProductId(final Long productId) {
+        final MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(2);
+        return menuProduct;
+    }
+
+    public static List<Menu> createMenus() {
         return Arrays.asList(createMenuWithId(1L), createMenuWithId(2L));
     }
 }

@@ -60,7 +60,7 @@ class MenuRestControllerTest {
     @DisplayName("정상적인 메뉴 리스트 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void listTest() throws Exception {
-        final List<Menu> menus = createMenuList();
+        final List<Menu> menus = createMenus();
         given(menuService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menus"))

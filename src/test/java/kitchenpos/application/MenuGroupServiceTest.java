@@ -2,10 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.MenuGroupFixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;

@@ -22,6 +22,14 @@ public class ProductFixture {
         return product;
     }
 
+    public static Product createProductWithPrice(final BigDecimal price) {
+        final Product product = new Product();
+        product.setName("강정치킨");
+        product.setPrice(price);
+        product.setId(1L);
+        return product;
+    }
+
     public static List<Product> createProducts() {
         return Arrays.asList(createProductWithId(1L), createProductWithId(2L));
     }
