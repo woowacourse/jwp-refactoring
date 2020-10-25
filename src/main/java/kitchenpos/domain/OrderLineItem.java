@@ -22,6 +22,23 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
+    public OrderLineItem(Menu menu, long quantity) {
+        this.menu = menu;
+        this.quantity = quantity;
+    }
+
+    public void addOrder(Order savedOrder) {
+        this.order = savedOrder;
+    }
+
+    public Long getContainMenuId() {
+        return this.menu.getId();
+    }
+
+    public Long getContainOrderId() {
+        return this.order.getId();
+    }
+
     public Order getOrder() {
         return order;
     }

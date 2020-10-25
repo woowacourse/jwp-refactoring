@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
+@EntityListeners(AuditingEntityListener.class)
 @AttributeOverride(name = "id", column = @Column(name = "id"))
 @Table(name = "orders")
 @Entity
@@ -14,16 +17,28 @@ public class Order extends BaseEntity {
     private OrderTable orderTable;
 
     private String orderStatus;
-    private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @CreatedDate
+    private LocalDateTime orderedTime;
 
     public Order() {
     }
 
     public Order(Long id) {
         this.id = id;
+    }
+
+    public Order(OrderTable orderTable, String orderStatus) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+    }
+
+    public Long getContainOrderTableId() {
+        return this.orderTable.getId();
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus.name();
     }
 
     public OrderTable getOrderTable() {
@@ -58,11 +73,7 @@ public class Order extends BaseEntity {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public boolean isCompleteOrder() {
+        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
     }
 }

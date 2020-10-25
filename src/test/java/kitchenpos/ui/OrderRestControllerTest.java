@@ -58,7 +58,7 @@ class OrderRestControllerTest {
         String content = objectMapper.writeValueAsString(orderRequest);
         OrderResponse orderResponse = new OrderResponse(1L);
 
-        given(orderService.createWithRequest(any())).willReturn(orderResponse);
+        given(orderService.create(any())).willReturn(orderResponse);
 
         mockMvc.perform(
                 post(BASE_URL)
@@ -79,7 +79,7 @@ class OrderRestControllerTest {
                 new OrderResponse(3L)
         );
 
-        given(orderService.listWithResponse()).willReturn(orderResponses);
+        given(orderService.list()).willReturn(orderResponses);
 
         mockMvc.perform(get(BASE_URL))
                 .andExpect(status().isOk())
@@ -94,7 +94,7 @@ class OrderRestControllerTest {
         String content = objectMapper.writeValueAsString(orderStatusRequest);
         OrderResponse orderResponse = new OrderResponse(1L);
 
-        given(orderService.changeOrderStatusWithRequest(any(), any())).willReturn(orderResponse);
+        given(orderService.changeOrderStatus(any(), any())).willReturn(orderResponse);
 
         mockMvc.perform(
                 put(BASE_URL + "/1/order-status")
