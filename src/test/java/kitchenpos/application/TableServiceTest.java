@@ -20,6 +20,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.EnumSource.Mode;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 
 class TableServiceTest extends KitchenPosServiceTest {
 
@@ -128,7 +129,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         OrderTable orderTableOnlyEmpty = new OrderTable();
         orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
         assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableOnlyEmpty))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @DisplayName("Empty 상태 변경 - 예외 발생, TableGroup이 세팅된 경우")
