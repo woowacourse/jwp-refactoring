@@ -106,8 +106,9 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
             assertThat(foundOrderTable.getTableGroupId()).isNull();
         }
 
-        tableGroupService.create(tableGroup);
-        foundOrderTables = foundOrderTables(orderTables);
+        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        foundOrderTables = createdTableGroup.getOrderTables();
+//        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
 
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
@@ -125,14 +126,14 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         tableGroup.setOrderTables(orderTables);
 
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTables(orderTables);
+        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
             assertThat(foundOrderTable.getTableGroupId()).isNotNull();
         }
 
         tableGroupService.ungroup(createdTableGroup.getId());
-        foundOrderTables = foundOrderTables(orderTables);
+        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
             assertThat(foundOrderTable.getTableGroupId()).isNull();
@@ -152,14 +153,14 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         tableGroup.setOrderTables(orderTables);
 
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTables(orderTables);
+        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
             assertThat(foundOrderTable.getTableGroupId()).isNotNull();
         }
 
         tableGroupService.ungroup(createdTableGroup.getId());
-        foundOrderTables = foundOrderTables(orderTables);
+        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
             assertThat(foundOrderTable.getTableGroupId()).isNull();
@@ -179,7 +180,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         tableGroup.setOrderTables(orderTables);
 
         TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTables(orderTables);
+        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
         for (OrderTable foundOrderTable : foundOrderTables) {
             assertThat(foundOrderTable.isEmpty()).isFalse();
             assertThat(foundOrderTable.getTableGroupId()).isNotNull();
@@ -201,6 +202,14 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         return orderTable;
     }
 
+    private List<OrderTable> foundOrderTablesByTableId(Long tableId) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableId);
+
+        return orderTables.stream()
+            .map(this::findOrderTableById)
+            .collect(Collectors.toList());
+    }
+
     private List<OrderTable> foundOrderTables(List<OrderTable> orderTables) {
         return orderTables.stream()
             .map(this::findOrderTableById)
@@ -209,7 +218,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
 
     private OrderTable findOrderTableById(OrderTable orderTable) {
         Long id = orderTable.getId();
-        return orderTableDao.findById(id)
+        return orderTableRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException(id + "에 해당하는 OrderTable이 없습니다."));
     }
 
@@ -224,7 +233,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         order.setOrderStatus(orderStatus.name());
         order.setOrderTableId(savedOrderTable.getId());
         order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
         return savedOrderTableId;
     }
 }

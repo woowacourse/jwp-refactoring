@@ -168,7 +168,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         order.setOrderStatus(orderStatus.name());
         order.setOrderTableId(savedOrderTable.getId());
         order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         OrderTable orderTableOnlyEmpty = new OrderTable();
         orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
@@ -192,7 +192,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         order.setOrderStatus(orderStatus.name());
         order.setOrderTableId(savedOrderTable.getId());
         order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         OrderTable orderTableOnlyEmpty = new OrderTable();
         orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
