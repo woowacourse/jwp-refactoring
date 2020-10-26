@@ -4,6 +4,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,6 +24,9 @@ public class ProductService {
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
+        }
+        if (StringUtils.isEmpty(product.getName())) {
+            throw new IllegalArgumentException(String.format("%s : 올바르지 않은 이름입니다.", product.getName()));
         }
 
         return productDao.save(product);
