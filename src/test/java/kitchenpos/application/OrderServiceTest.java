@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,61 +41,259 @@ class OrderServiceTest {
     private TableService tableService;
 
     @Autowired
+    private TableGroupService tableGroupService;
+
+    @Autowired
     private OrderService orderService;
 
     private Menu menu;
-    private OrderTable orderTable;
+    private OrderTable table;
 
     @BeforeEach
     void setUp() {
         menu = createMenu_후라이드세트();
-        orderTable = createNotEmptyTable();
+        table = createTable();
     }
 
     @Test
     void create() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // when
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);
 
         Order order = new Order();
         order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTableId(table.getId());
 
         Order result = orderService.create(order);
 
+        // then
         assertThat(result.getId()).isNotNull();
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString());
-        assertThat(result.getOrderTableId()).isEqualTo(orderTable.getId());
+        assertThat(result.getOrderTableId()).isEqualTo(table.getId());
+    }
+
+    @Test
+    @DisplayName("create - 그룹에 속한 테이블에서 주문")
+    void createWithGroupedTable() {
+        // given
+        OrderTable anotherTable = createTable();
+
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(Arrays.asList(anotherTable, table));
+        tableGroupService.create(tableGroup);
+
+        // when
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order orderOfTable = new Order();
+        orderOfTable.setOrderLineItems(Collections.singletonList(orderLineItem));
+        orderOfTable.setOrderTableId(table.getId());
+
+        Order resultOfTable = orderService.create(orderOfTable);
+
+        Order orderOfAnotherTable = new Order();
+        orderOfAnotherTable.setOrderLineItems(Collections.singletonList(orderLineItem));
+        orderOfAnotherTable.setOrderTableId(anotherTable.getId());
+
+        Order resultOfAnotherTable = orderService.create(orderOfAnotherTable);
+
+        // then
+        assertThat(resultOfTable.getId()).isNotNull();
+        assertThat(resultOfTable.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString());
+        assertThat(resultOfTable.getOrderTableId()).isEqualTo(table.getId());
+
+        assertThat(resultOfAnotherTable.getId()).isNotNull();
+        assertThat(resultOfAnotherTable.getOrderStatus()).isEqualTo(OrderStatus.COOKING.toString());
+        assertThat(resultOfAnotherTable.getOrderTableId()).isEqualTo(anotherTable.getId());
+    }
+
+    @Test
+    @DisplayName("create - 아무 메뉴도 포함하지 않는 주문시 예외처리")
+    void create_IfOrderContainsNoMenu_ThrowException() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // when
+        Order order = new Order();
+        order.setOrderLineItems(new ArrayList<>());
+        order.setOrderTableId(table.getId());
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("create - 존재하지 않는 메뉴 id로 주문시 예외처리")
+    void create_IfOrderContainsWrongMenu_ThrowException() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // when
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(1_000L);
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("create - 빈 테이블에서 주문 시도시 예외처리")
     void create_IfTableIsEmpty_ThrowException() {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        assertThatThrownBy(() -> orderService.create(order))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void list() {
+        assertThat(orderService.list()).hasSize(0);
+
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // given (create order)
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        orderService.create(order);
+
+        // when & then
+        assertThat(orderService.list()).hasSize(1);
     }
 
     @Test
+    @DisplayName("changeOrderStatus")
     void changeOrderStatus() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // given (create order)
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        order = orderService.create(order);
+
+        // when & then
+        order.setOrderStatus(OrderStatus.MEAL.toString());
+        assertThat(orderService.changeOrderStatus(order.getId(), order).getOrderStatus())
+            .isEqualTo(OrderStatus.MEAL.toString());
+
+        order.setOrderStatus(OrderStatus.COMPLETION.toString());
+        assertThat(orderService.changeOrderStatus(order.getId(), order).getOrderStatus())
+            .isEqualTo(OrderStatus.COMPLETION.toString());
     }
 
-    private OrderTable createNotEmptyTable() {
+    @Test
+    @DisplayName("changeOrderStatus - 요리중인 상태에서 식사를 거치지 않고 식사완료 상태로 바꾸려는 경우")
+    void changeOrderStatus_IfAfterCookingIsCompletion() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // given (create order)
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        order = orderService.create(order);
+
+        // when & then
+        order.setOrderStatus(OrderStatus.COMPLETION.toString());
+        order = orderService.changeOrderStatus(order.getId(), order);
+
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.toString());
+    }
+
+    @Test
+    @DisplayName("changeOrderStatus - 존재하지 않는 상태 문자열 사용시 예외처리")
+    void changeOrderStatus_IfTryWithUndefinedStatus_ThrowException() {
+        // given (change table to not empty)
+        table.setEmpty(false);
+        table = tableService.changeEmpty(table.getId(), table);
+
+        table.setNumberOfGuests(4);
+        table = tableService.changeNumberOfGuests(table.getId(), table);
+
+        // given (create order)
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setMenuId(menu.getId());
+        orderLineItem.setQuantity(2);
+
+        Order order = new Order();
+        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.setOrderTableId(table.getId());
+
+        Order savedOrder = orderService.create(order);
+
+        // when & then
+        order.setOrderStatus("식사중");
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private OrderTable createTable() {
         // create table
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(0);
 
-        orderTable = tableService.create(orderTable);
-
-        // change to not empty
-        orderTable.setEmpty(false);
-        orderTable = tableService.changeEmpty(orderTable.getId(), orderTable);
-
-        orderTable.setNumberOfGuests(4);
-        return tableService.changeNumberOfGuests(orderTable.getId(), orderTable);
+        return tableService.create(orderTable);
     }
 
     private Menu createMenu_후라이드세트() {
