@@ -92,21 +92,10 @@ class OrderServiceTest {
         tableGroupService.create(tableGroup);
 
         // when
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order orderOfTable = new Order();
-        orderOfTable.setOrderLineItems(Collections.singletonList(orderLineItem));
-        orderOfTable.setOrderTableId(table.getId());
-
-        Order resultOfTable = orderService.create(orderOfTable);
-
-        Order orderOfAnotherTable = new Order();
-        orderOfAnotherTable.setOrderLineItems(Collections.singletonList(orderLineItem));
-        orderOfAnotherTable.setOrderTableId(anotherTable.getId());
-
-        Order resultOfAnotherTable = orderService.create(orderOfAnotherTable);
+        Order resultOfTable = orderWithEqualAmountOfAllMenus(table,
+            Collections.singletonList(menu), 2);
+        Order resultOfAnotherTable = orderWithEqualAmountOfAllMenus(anotherTable,
+                Collections.singletonList(menu), 2);
 
         // then
         assertThat(resultOfTable.getId()).isNotNull();
@@ -187,15 +176,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), table);
 
         // given (create order)
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
-
-        orderService.create(order);
+        orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         assertThat(orderService.list()).hasSize(1);
@@ -212,15 +193,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), table);
 
         // given (create order)
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
-
-        order = orderService.create(order);
+        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         order.setOrderStatus(OrderStatus.MEAL.toString());
@@ -243,15 +216,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), table);
 
         // given (create order)
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
-
-        order = orderService.create(order);
+        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         order.setOrderStatus(OrderStatus.COMPLETION.toString());
@@ -271,19 +236,11 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), table);
 
         // given (create order)
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
-
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
-
-        Order savedOrder = orderService.create(order);
+        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         order.setOrderStatus("식사중");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -335,5 +292,23 @@ class OrderServiceTest {
             menuProducts.add(menuProduct);
         }
         return Collections.unmodifiableList(menuProducts);
+    }
+
+    private Order orderWithEqualAmountOfAllMenus(OrderTable table, List<Menu> menus, int quantity) {
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        for (Menu menu : menus) {
+            OrderLineItem orderLineItem = new OrderLineItem();
+
+            orderLineItem.setMenuId(menu.getId());
+            orderLineItem.setQuantity(2);
+
+            orderLineItems.add(orderLineItem);
+        }
+        Order order = new Order();
+        order.setOrderLineItems(orderLineItems);
+        order.setOrderTableId(table.getId());
+
+        return orderService.create(order);
     }
 }
