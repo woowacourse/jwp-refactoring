@@ -2,9 +2,14 @@ package kitchenpos.dto.table;
 
 import kitchenpos.domain.order.OrderTable;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderTableRequest {
-    private int numberOfGuests;
-    private boolean empty;
+    @NotNull(groups = {TableValidationGroup.create.class, TableValidationGroup.changeNumberOfGuests.class})
+    private Integer numberOfGuests;
+
+    @NotNull(groups = {TableValidationGroup.create.class, TableValidationGroup.changeEmpty.class})
+    private Boolean empty;
 
     public OrderTableRequest() {
     }

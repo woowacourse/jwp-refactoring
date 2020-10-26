@@ -43,13 +43,15 @@ public class OrderTable extends BaseEntity {
     }
 
     public void tableUngrouping(List<Order> ordersByOrderTable) {
-        for (Order order : ordersByOrderTable) {
-            if (order.isNotComplete()) {
-                throw new IllegalArgumentException();
-            }
+        if (existNotCompleteOrder(ordersByOrderTable)) {
+            throw new IllegalArgumentException();
         }
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    private boolean existNotCompleteOrder(List<Order> ordersByOrderTable) {
+        return ordersByOrderTable.stream().anyMatch(Order::isNotComplete);
     }
 
     public void ValidateGrouping() {
@@ -67,6 +69,12 @@ public class OrderTable extends BaseEntity {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -74,7 +82,13 @@ public class OrderTable extends BaseEntity {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty) {
+    public void changeEmpty(final boolean empty, List<Order> ordersByOrderTable) {
+        if (existNotCompleteOrder(ordersByOrderTable)) {
+            throw new IllegalArgumentException();
+        }
+        if (Objects.nonNull(getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
         this.empty = empty;
     }
 }
