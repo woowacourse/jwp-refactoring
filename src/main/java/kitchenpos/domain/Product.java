@@ -42,4 +42,8 @@ public class Product {
     public void addMenuProduct(final MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
     }
+
+    public List<MenuProduct> getMenuProducts() {
+        return new ArrayList<>(menuProducts);
+    }
 }

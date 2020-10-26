@@ -32,4 +32,8 @@ public class MenuGroup {
     public void addMenu(final Menu menu) {
         menus.add(menu);
     }
+
+    public List<Menu> getMenus() {
+        return new ArrayList<>(menus);
+    }
 }

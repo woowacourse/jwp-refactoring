@@ -114,4 +114,8 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public List<Order> getOrders() {
+        return new ArrayList<>(orders);
+    }
 }
