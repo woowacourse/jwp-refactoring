@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderResponse;
 import org.hamcrest.Matchers;
@@ -12,15 +12,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,7 +53,7 @@ class OrderRestControllerTest {
                         + "  \"orderLineItems\": [\n"
                         + "    {\n"
                         + "      \"menuId\": 1,\n"
-                        + "      \"quantity\": 2\n"
+                        + "      \"quantity\": 1\n"
                         + "    }\n"
                         + "  ]\n"
                         + "}")
@@ -63,6 +67,24 @@ class OrderRestControllerTest {
                 .andExpect(jsonPath("$.orderLineItems[0].orderId", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.orderLineItems[0].menuId", Matchers.instanceOf(Number.class)))
                 .andExpect(jsonPath("$.orderLineItems[0].quantity", Matchers.instanceOf(Number.class)));
+    }
+
+    @DisplayName("주문 생성 요청 테스트 - orderLineItems가 비어있을 때 예외처리")
+    @Test
+    void createWhenEmptyOrderLineItems() {
+        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING, new ArrayList<>(), LocalDateTime.now());
+
+        given(orderService.create(any())).willReturn(orderResponse);
+
+        assertThatThrownBy(() -> mockMvc.perform(post("/api/orders")
+                .content("{\n"
+                        + "  \"orderTableId\": 1,\n"
+                        + "  \"orderLineItems\": [\n"
+                        + "  ]\n"
+                        + "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print()))
+                .isInstanceOf(NestedServletException.class);
     }
 
     @DisplayName("Product 목록 조회 요청 테스트")
@@ -79,5 +101,33 @@ class OrderRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", Matchers.hasSize(2)));
+    }
+
+    @DisplayName("주문 상태 변경 요청 테스트")
+    @Test
+    void changeOrderStatus() throws Exception {
+        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.MEAL, new ArrayList<>(), LocalDateTime.now());
+
+        given(orderService.changeOrderStatus(eq(1L), any())).willReturn(orderResponse);
+
+        mockMvc.perform(put("/api/orders/1/order-status")
+                .content("{\n"
+                        + "  \"orderStatus\": \"MEAL\"\n"
+                        + "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.orderStatus", Matchers.is(OrderStatus.MEAL.name())));
+    }
+
+    @DisplayName("주문 상태 변경 요청 테스트 - orderStatus가 없을 때")
+    @Test
+    void changeOrderStatusWhenBlankOrderStatusInRequest() {
+        assertThatThrownBy(() -> mockMvc.perform(put("/api/orders/1/order-status")
+                .content("{\n"
+                        + "}")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andDo(print()))
+                .isInstanceOf(NestedServletException.class);
     }
 }

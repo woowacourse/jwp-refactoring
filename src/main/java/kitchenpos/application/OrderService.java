@@ -4,22 +4,17 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -43,10 +38,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
-
-        validate(orderRequest.getOrderLineItemDtos(), orderTable);
-
-        Order orderToSave = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+        Order orderToSave = Order.of(orderTable);
         final Order savedOrder = orderDao.save(orderToSave);
 
         addOrderLineItemToOrder(orderRequest, savedOrder);
@@ -54,18 +46,9 @@ public class OrderService {
         return OrderResponse.of(savedOrder);
     }
 
-    private void validate(List<OrderLineItemDto> orderLineItemDtos, OrderTable orderTable) {
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new IllegalArgumentException();
-        }
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void addOrderLineItemToOrder(OrderRequest orderRequest, Order savedOrder) {
         List<OrderLineItem> orderLineItems = savedOrder.getOrderLineItems();
-        for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItemDtos()) {
+        for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             Menu menu = menuDao.findById(orderLineItemDto.getMenuId()).orElseThrow(IllegalArgumentException::new);
             OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemDto.getQuantity());
             orderLineItems.add(orderLineItemDao.save(orderLineItem));
@@ -80,10 +63,6 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest changeRequest) {
         final Order savedOrder = orderDao.findById(orderId).orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrder.changeOrderStatus(changeRequest.getOrderStatus());
 

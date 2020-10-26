@@ -4,9 +4,9 @@ import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
@@ -60,17 +60,6 @@ class OrderServiceTest extends TestFixtureFactory {
 
         List<OrderLineItemDto> orderLineItemDtos = Arrays.asList(new OrderLineItemDto(1L, 1));
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
-
-        assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 생성 메서드 - OrderLineItems가 빈 경우 예외 처리")
-    @Test
-    void createWhenEmptyOrderLineItems() {
-        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
-
-        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);

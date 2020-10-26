@@ -3,7 +3,10 @@ package kitchenpos.ui;
 import kitchenpos.application.OrderService;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderValidationGroup;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,7 +26,12 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody final OrderRequest orderRequest) {
+    public ResponseEntity<OrderResponse> create(
+            @RequestBody @Validated(OrderValidationGroup.create.class) final OrderRequest orderRequest,
+            BindingResult bindingResult
+    ) {
+        System.out.println(orderRequest);
+        validateBindingResult(bindingResult);
         final OrderResponse created = orderService.create(orderRequest);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
@@ -39,8 +47,16 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final OrderRequest orderRequest
+            @RequestBody @Validated(OrderValidationGroup.changeOrderStatus.class) final OrderRequest orderRequest,
+            BindingResult bindingResult
     ) {
+        validateBindingResult(bindingResult);
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderRequest));
+    }
+
+    private void validateBindingResult(BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException(bindingResult.toString());
+        }
     }
 }

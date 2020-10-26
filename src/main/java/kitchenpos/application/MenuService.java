@@ -48,7 +48,7 @@ public class MenuService {
     }
 
     private BigDecimal calculateProductsPriceSum(MenuRequest menuRequest) {
-        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProductDtos();
+        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProducts();
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuProductDtos) {
             final Product product = productDao.findById(menuProductDto.getProductId())
@@ -60,7 +60,7 @@ public class MenuService {
 
     private void addMenuProductToMenu(MenuRequest menuRequest, Menu savedMenu) {
         List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProductDtos()) {
+        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
             Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
             MenuProduct menuProductToSave = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
             menuProducts.add(menuProductDao.save(menuProductToSave));

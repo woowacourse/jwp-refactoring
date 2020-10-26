@@ -1,6 +1,6 @@
 package kitchenpos.dto.order;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 import java.util.List;
 import java.util.stream.Collectors;

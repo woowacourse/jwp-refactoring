@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.OrderTableDto;
 import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.table.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,24 +24,24 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
+    public OrderTableDto create(final OrderTableRequest orderTableRequest) {
         OrderTable orderTable = orderTableRequest.toOrderTable();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return OrderTableResponse.of(savedOrderTable);
+        return OrderTableDto.of(savedOrderTable);
     }
 
-    public List<OrderTableResponse> list() {
-        return OrderTableResponse.listOf(orderTableDao.findAll());
+    public List<OrderTableDto> list() {
+        return OrderTableDto.listOf(orderTableDao.findAll());
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest orderTable) {
+    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableRequest orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
 
         validateOfChangeEmpty(orderTableId, savedOrderTable);
 
         savedOrderTable.changeEmpty(orderTable.isEmpty());
-        return OrderTableResponse.of(savedOrderTable);
+        return OrderTableDto.of(savedOrderTable);
     }
 
     private void validateOfChangeEmpty(Long orderTableId, OrderTable savedOrderTable) {
@@ -54,12 +54,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
+    public OrderTableDto changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         validateOfChangeNumberOfGuests(orderTableId, orderTableRequest);
 
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
         savedOrderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
-        return OrderTableResponse.of(savedOrderTable);
+        return OrderTableDto.of(savedOrderTable);
     }
 
     private void validateOfChangeNumberOfGuests(Long orderTableId, OrderTableRequest orderTableRequest) {

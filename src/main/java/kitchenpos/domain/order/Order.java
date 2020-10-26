@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import kitchenpos.config.BaseEntity;
 
@@ -15,7 +15,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @AttributeOverride(name = "id", column = @Column(name = "order_id"))
 @Table(name = "ORDERS")
@@ -47,7 +49,21 @@ public class Order extends BaseEntity {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
+    public static Order of(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return Order.of(orderTable, OrderStatus.COOKING);
+    }
+
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus) {
+        return new Order(orderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 

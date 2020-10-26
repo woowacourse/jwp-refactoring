@@ -1,44 +1,44 @@
 package kitchenpos.dto.table;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderTableResponse {
+public class OrderTableDto {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTableResponse() {
+    public OrderTableDto() {
     }
 
-    public OrderTableResponse(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
+    public OrderTableDto(Long id, Long tableGroupId, Integer numberOfGuests, Boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public OrderTableResponse(Long id) {
+    public OrderTableDto(Long id) {
         this(id, null, 0, true);
     }
 
-    public static OrderTableResponse of(OrderTable orderTable) {
+    public static OrderTableDto of(OrderTable orderTable) {
         Long tableGroupId = null;
         if (orderTable.getTableGroup() != null) {
             tableGroupId = orderTable.getTableGroup().getId();
         }
-        return new OrderTableResponse(orderTable.getId(),
+        return new OrderTableDto(orderTable.getId(),
                 tableGroupId,
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty());
     }
 
-    public static List<OrderTableResponse> listOf(List<OrderTable> orderTables) {
+    public static List<OrderTableDto> listOf(List<OrderTable> orderTables) {
         return orderTables.stream()
-                .map(OrderTableResponse::of)
+                .map(OrderTableDto::of)
                 .collect(Collectors.toList());
     }
 

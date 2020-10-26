@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
-import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.table.OrderTableDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,8 +36,8 @@ class TableRestControllerTest {
     @DisplayName("테이블 생성 요청 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTableResponse response =
-                new OrderTableResponse(1L, null, 0, true);
+        OrderTableDto response =
+                new OrderTableDto(1L, null, 0, true);
 
         given(tableService.create(any())).willReturn(response);
 
@@ -59,9 +59,9 @@ class TableRestControllerTest {
     @DisplayName("테이블 목록 요청 테스트")
     @Test
     void list() throws Exception {
-        List<OrderTableResponse> orderTables = new ArrayList<>();
-        orderTables.add(new OrderTableResponse());
-        orderTables.add(new OrderTableResponse());
+        List<OrderTableDto> orderTables = new ArrayList<>();
+        orderTables.add(new OrderTableDto());
+        orderTables.add(new OrderTableDto());
 
         given(tableService.list()).willReturn(orderTables);
 
@@ -74,9 +74,9 @@ class TableRestControllerTest {
     @DisplayName("테이블의 setEmpty를 변경 요청 테스트")
     @Test
     void changeEmpty() throws Exception {
-        OrderTableResponse orderTableResponse = new OrderTableResponse(1L, null, 1, false);
+        OrderTableDto orderTableDto = new OrderTableDto(1L, null, 1, false);
 
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTableResponse);
+        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTableDto);
 
         mockMvc.perform(put("/api/tables/1/empty")
                 .content("{\n"
@@ -92,7 +92,7 @@ class TableRestControllerTest {
     @DisplayName("고객 수 변경 요청 테스트")
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTableResponse orderTable = new OrderTableResponse(1L, null, 4, false);
+        OrderTableDto orderTable = new OrderTableDto(1L, null, 4, false);
 
         given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(orderTable);
 

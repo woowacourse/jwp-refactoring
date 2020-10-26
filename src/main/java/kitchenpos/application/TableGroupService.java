@@ -3,10 +3,10 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.dto.table.OrderTableDto;
 import kitchenpos.dto.table.TableGroupRequest;
 import kitchenpos.dto.table.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -33,9 +33,9 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTableResponse> orderTableDtos = tableGroupRequest.getOrderTableDtos();
+        final List<OrderTableDto> orderTableDtos = tableGroupRequest.getOrderTables();
         final List<Long> orderTableIds = orderTableDtos.stream()
-                .map(OrderTableResponse::getId)
+                .map(OrderTableDto::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
@@ -51,7 +51,7 @@ public class TableGroupService {
         return TableGroupResponse.of(savedTableGroup);
     }
 
-    private void validate(List<OrderTableResponse> orderTableDtos, List<OrderTable> savedOrderTables) {
+    private void validate(List<OrderTableDto> orderTableDtos, List<OrderTable> savedOrderTables) {
         if (CollectionUtils.isEmpty(orderTableDtos) || orderTableDtos.size() < 2) {
             throw new IllegalArgumentException();
         }

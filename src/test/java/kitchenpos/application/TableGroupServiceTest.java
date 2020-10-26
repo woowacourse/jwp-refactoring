@@ -4,10 +4,10 @@ import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.OrderTableDto;
 import kitchenpos.dto.table.TableGroupRequest;
 import kitchenpos.dto.table.TableGroupResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -18,8 +18,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -133,7 +131,7 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        Order order = new Order(savedOrderTable1, orderStatus, LocalDateTime.now(), new ArrayList<>());
+        Order order = Order.of(savedOrderTable1, orderStatus);
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
@@ -141,8 +139,8 @@ class TableGroupServiceTest extends TestFixtureFactory {
     }
 
     private TableGroupRequest makeTableGroupingRequest(List<Long> ids) {
-        List<OrderTableResponse> orderTableDtos = ids.stream()
-                .map(OrderTableResponse::new)
+        List<OrderTableDto> orderTableDtos = ids.stream()
+                .map(OrderTableDto::new)
                 .collect(Collectors.toList());
         return new TableGroupRequest(orderTableDtos);
     }

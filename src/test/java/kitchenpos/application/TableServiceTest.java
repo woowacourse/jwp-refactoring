@@ -3,11 +3,11 @@ package kitchenpos.application;
 import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.OrderTableDto;
 import kitchenpos.dto.table.OrderTableRequest;
-import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.dto.table.TableGroupRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,8 +17,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +44,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTableRequest orderTableRequest =
                 new OrderTableRequest(0, true);
 
-        OrderTableResponse savedOrderTable = tableService.create(orderTableRequest);
+        OrderTableDto savedOrderTable = tableService.create(orderTableRequest);
 
         assertThat(savedOrderTable.getId()).isNotNull();
     }
@@ -57,7 +55,7 @@ class TableServiceTest extends TestFixtureFactory {
         makeSavedOrderTable(0, true);
         makeSavedOrderTable(0, true);
 
-        List<OrderTableResponse> tables = tableService.list();
+        List<OrderTableDto> tables = tableService.list();
 
         assertThat(tables).hasSize(2);
     }
@@ -68,7 +66,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
-        OrderTableResponse changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest);
+        OrderTableDto changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest);
 
         assertAll(
                 () -> assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId()),
@@ -93,7 +91,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
         TableGroupRequest groupingRequest = new TableGroupRequest(
-                Arrays.asList(new OrderTableResponse(savedOrderTable1.getId()), new OrderTableResponse(savedOrderTable2.getId()))
+                Arrays.asList(new OrderTableDto(savedOrderTable1.getId()), new OrderTableDto(savedOrderTable2.getId()))
         );
         tableGroupService.create(groupingRequest);
 
@@ -109,7 +107,7 @@ class TableServiceTest extends TestFixtureFactory {
     void changeEmptyWhenCooking(OrderStatus orderStatus) {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
-        Order order = new Order(savedOrderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
+        Order order = Order.of(savedOrderTable, orderStatus);
         orderDao.save(order);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
@@ -124,7 +122,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = makeSavedOrderTable(0, false);
         OrderTableRequest orderTableRequest = new OrderTableRequest(4, false);
 
-        OrderTableResponse changedOrderTableDto =
+        OrderTableDto changedOrderTableDto =
                 tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTableRequest);
 
         assertAll(

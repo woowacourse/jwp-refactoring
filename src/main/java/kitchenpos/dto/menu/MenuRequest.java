@@ -12,16 +12,16 @@ public class MenuRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProductDtos;
+    private List<MenuProductDto> menuProducts;
 
     public MenuRequest() {
     }
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProductDtos) {
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductDto> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductDtos = menuProductDtos;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -36,8 +36,8 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProductDtos() {
-        return menuProductDtos;
+    public List<MenuProductDto> getMenuProducts() {
+        return menuProducts;
     }
 
     public Menu toMenu(MenuGroup menuGroup, BigDecimal productsPriceSum) {
