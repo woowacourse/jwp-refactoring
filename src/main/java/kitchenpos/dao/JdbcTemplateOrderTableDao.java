@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -100,5 +101,11 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
         entity.setEmpty(resultSet.getBoolean("empty"));
         return entity;
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM order_table";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 }

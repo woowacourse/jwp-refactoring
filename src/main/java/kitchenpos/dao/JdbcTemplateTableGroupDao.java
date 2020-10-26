@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -66,5 +67,11 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
         return entity;
+    }
+
+    @Override
+    public void deleteAll() {
+        final String sql = "DELETE FROM table_group";
+        jdbcTemplate.update(sql, new HashMap<>());
     }
 }
