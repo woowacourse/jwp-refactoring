@@ -10,6 +10,9 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import java.util.List;
+import java.util.Objects;
+
 @AttributeOverride(name = "id", column = @Column(name = "order_table_id"))
 @Entity
 public class OrderTable extends BaseEntity {
@@ -39,9 +42,20 @@ public class OrderTable extends BaseEntity {
         this.empty = false;
     }
 
-    public void tableUngrouping() {
+    public void tableUngrouping(List<Order> ordersByOrderTable) {
+        for (Order order : ordersByOrderTable) {
+            if (order.isNotComplete()) {
+                throw new IllegalArgumentException();
+            }
+        }
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public void ValidateGrouping() {
+        if (!isEmpty() || Objects.nonNull(getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public TableGroup getTableGroup() {

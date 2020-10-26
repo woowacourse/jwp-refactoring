@@ -37,7 +37,7 @@ public class Order extends BaseEntity {
     public Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -45,7 +45,7 @@ public class Order extends BaseEntity {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    private Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
@@ -58,6 +58,10 @@ public class Order extends BaseEntity {
 
     public static Order of(OrderTable orderTable, OrderStatus orderStatus) {
         return new Order(orderTable, orderStatus, LocalDateTime.now(), new ArrayList<>());
+    }
+
+    public boolean isNotComplete() {
+        return orderStatus != OrderStatus.COMPLETION;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

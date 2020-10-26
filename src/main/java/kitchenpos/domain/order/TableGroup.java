@@ -31,6 +31,16 @@ public class TableGroup extends BaseEntity {
         this(null, orderTables, createdDate);
     }
 
+    public static TableGroup of(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ValidateGrouping();
+        }
+        return new TableGroup(orderTables, LocalDateTime.now());
+    }
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }

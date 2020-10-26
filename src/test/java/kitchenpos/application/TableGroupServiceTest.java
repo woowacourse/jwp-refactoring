@@ -111,6 +111,7 @@ class TableGroupServiceTest extends TestFixtureFactory {
         TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
+        orderDao.save(Order.of(savedOrderTable1, OrderStatus.COMPLETION));
 
         tableGroupService.ungroup(tableGroupResponse.getId());
 
@@ -131,8 +132,7 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        Order order = Order.of(savedOrderTable1, orderStatus);
-        orderDao.save(order);
+        orderDao.save(Order.of(savedOrderTable1, orderStatus));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
