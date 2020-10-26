@@ -1,7 +1,8 @@
 package kitchenpos.dto.menu;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuPrice;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class MenuRequest {
         return menuProductDtos;
     }
 
-    public Menu toMenu(MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup, new ArrayList<>());
+    public Menu toMenu(MenuGroup menuGroup, BigDecimal productsPriceSum) {
+        return new Menu(name, MenuPrice.of(price, productsPriceSum), menuGroup, new ArrayList<>());
     }
 }

@@ -4,10 +4,10 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -39,23 +38,16 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        validateOfCreateMenu(menuRequest);
-
         MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
-        final Menu savedMenu = menuDao.save(menuRequest.toMenu(menuGroup));
+        BigDecimal productsPriceSum = calculateProductsPriceSum(menuRequest);
+        final Menu savedMenu = menuDao.save(menuRequest.toMenu(menuGroup, productsPriceSum));
 
         addMenuProductToMenu(menuRequest, savedMenu);
 
         return MenuResponse.of(savedMenu);
     }
 
-    private void validateOfCreateMenu(MenuRequest menuRequest) {
-        final BigDecimal price = menuRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
+    private BigDecimal calculateProductsPriceSum(MenuRequest menuRequest) {
         final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProductDtos();
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuProductDtos) {
@@ -63,9 +55,7 @@ public class MenuService {
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
         }
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        return sum;
     }
 
     private void addMenuProductToMenu(MenuRequest menuRequest, Menu savedMenu) {

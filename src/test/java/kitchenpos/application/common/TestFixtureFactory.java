@@ -4,10 +4,10 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class TestFixtureFactory {
     ) {
         MenuRequest menuRequest = makeMenuCreateRequest(menuName, menuPrice, menuGroupName, productName, productPrice, productQuantity);
         MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
-        Menu menuToSave = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, new ArrayList<>());
+        Menu menuToSave = menuRequest.toMenu(menuGroup, BigDecimal.valueOf(productPrice * productQuantity));
         return menuDao.save(menuToSave);
     }
 

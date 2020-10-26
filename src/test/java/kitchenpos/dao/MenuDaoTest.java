@@ -1,6 +1,6 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
