@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.config.BaseEntity;
+import kitchenpos.domain.product.Product;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;

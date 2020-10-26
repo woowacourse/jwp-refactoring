@@ -6,8 +6,9 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.order.OrderLineItemDto;
@@ -56,7 +57,7 @@ public class TestFixtureFactory {
             long productQuantity
     ) {
         MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(menuGroupName));
-        Product savedProduct = productDao.save(new Product(productName, BigDecimal.valueOf(productPrice)));
+        Product savedProduct = productDao.save(new Product(productName, ProductPrice.of(productPrice)));
 
         List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), productQuantity));
 

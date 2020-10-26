@@ -4,14 +4,24 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuPrice;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MenuRequest {
+    @NotNull
     private String name;
+
+    @NotNull
     private BigDecimal price;
+
+    @NotNull
     private Long menuGroupId;
+
+    @NotEmpty
     private List<MenuProductDto> menuProducts;
 
     public MenuRequest() {

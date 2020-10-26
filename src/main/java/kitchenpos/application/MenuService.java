@@ -7,7 +7,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -53,7 +53,8 @@ public class MenuService {
         for (final MenuProductDto menuProductDto : menuProductDtos) {
             final Product product = productDao.findById(menuProductDto.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
+            BigDecimal price = product.getProductPrice().getPrice();
+            sum = sum.add(price.multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
         }
         return sum;
     }
