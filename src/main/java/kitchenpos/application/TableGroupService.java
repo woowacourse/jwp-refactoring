@@ -35,7 +35,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         TableGroup tableGroup = request.toEntity(OrderTables.of(orderTableIds, savedOrderTables));
 
-        tableGroup.setOrderTables(savedOrderTables);
+        tableGroup.addOrderTables(savedOrderTables);
         return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
     }
 

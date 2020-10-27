@@ -49,7 +49,7 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void addOrderTables(final List<OrderTable> orderTables) {
         validateOrderTables(orderTables);
         for (final OrderTable savedOrderTable : orderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {

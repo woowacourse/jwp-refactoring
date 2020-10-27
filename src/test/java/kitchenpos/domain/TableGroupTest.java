@@ -41,7 +41,7 @@ class TableGroupTest {
 
         OrderTable orderTable3 = new OrderTable(null, 5, true);
         OrderTable orderTable4 = new OrderTable(null, 6, true);
-        tableGroup.setOrderTables(Lists.newArrayList(orderTable3, orderTable4));
+        tableGroup.addOrderTables(Lists.newArrayList(orderTable3, orderTable4));
 
         assertThat(tableGroup).isNotNull();
         assertThat(tableGroup.getOrderTables()).contains(orderTable3, orderTable4);
