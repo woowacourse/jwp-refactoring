@@ -33,4 +33,8 @@ public class OrderTableFixture {
     public static List<OrderTable> createOrderTables() {
         return Arrays.asList(createOrderTableWithId(1L), createOrderTableWithId(2L));
     }
+
+    public static List<OrderTable> createEmptyOrderTables() {
+        return Arrays.asList(createEmptyOrderTable(), createEmptyOrderTable());
+    }
 }

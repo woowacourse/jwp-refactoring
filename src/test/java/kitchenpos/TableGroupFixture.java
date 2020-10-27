@@ -9,7 +9,7 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupFixture {
     public static TableGroup createTableGroupWithoutId() {
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(createOrderTables());
+        tableGroup.setOrderTables(createEmptyOrderTables());
         return tableGroup;
     }
 
@@ -17,7 +17,7 @@ public class TableGroupFixture {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setId(tableGroupId);
         tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(createOrderTables());
+        tableGroup.setOrderTables(createEmptyOrderTables());
         return tableGroup;
     }
 }
