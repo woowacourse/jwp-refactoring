@@ -44,6 +44,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void ungroup() {
+        this.tableGroup = null;
+        changeEmptyState(false);
+    }
+
     public Long getId() {
         return id;
     }

@@ -45,11 +45,7 @@ public class TableGroupService {
 
         validateOrderStatus(orderTables);
 
-        orderTables.forEach(
-                orderTable -> {
-                    orderTable.setTableGroup(null);
-                    orderTable.changeEmptyState(false);
-                });
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     private void validateOrderStatus(final List<OrderTable> orderTables) {
