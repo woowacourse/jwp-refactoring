@@ -8,6 +8,8 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.application.exceptions.NotExistedMenuGroupException;
+import kitchenpos.application.exceptions.NotExistedProductException;
 import kitchenpos.ui.dto.menu.MenuProductRequest;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
@@ -42,7 +44,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistedMenuGroupException::new);
 
         final List<MenuProductRequest> menuProductsRequest = request.getMenuProducts();
         final BigDecimal sum = calculateProductsPrice(menuProductsRequest);
@@ -55,7 +57,7 @@ public class MenuService {
     private void saveMenuProducts(final List<MenuProductRequest> menuProductsRequest, final Menu savedMenu) {
         List<MenuProduct> menuProducts = menuProductsRequest.stream()
                 .map(m -> {
-                    Product product = productRepository.findById(m.getProductId()).orElseThrow(IllegalArgumentException::new);
+                    Product product = productRepository.findById(m.getProductId()).orElseThrow(NotExistedProductException::new);
                     return menuProductRepository.save(new MenuProduct(m.getSeq(), savedMenu, product, m.getQuantity()));
                 })
                 .collect(Collectors.toList());
@@ -66,7 +68,7 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(NotExistedProductException::new);
             sum = sum.add(product.getTotalPrice(menuProduct.getQuantity()));
         }
         return sum;

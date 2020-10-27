@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.NotExistedMenuException;
+import kitchenpos.application.exceptions.NotExistedOrderException;
+import kitchenpos.application.exceptions.NotExistedOrderTableException;
+import kitchenpos.application.exceptions.TableStatusEmptyException;
 import kitchenpos.config.IsolatedTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderStatus;
@@ -38,7 +42,7 @@ class OrderServiceTest extends IsolatedTest {
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(), Lists.newArrayList());
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NotExistedOrderTableException.class);
     }
 
     @DisplayName("주문 생성 실패 - 주문 아이템이 실제 등록된 메뉴와 다를 때")
@@ -55,7 +59,7 @@ class OrderServiceTest extends IsolatedTest {
         );
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NotExistedMenuException.class);
     }
 
     @DisplayName("주문 생성 실패 - 주문 테이블이 존재하지 않을 때")
@@ -67,7 +71,7 @@ class OrderServiceTest extends IsolatedTest {
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NotExistedOrderTableException.class);
     }
 
     @DisplayName("주문 생성 실패 - 주문 테이블이 이미 사용 중일 때")
@@ -80,7 +84,7 @@ class OrderServiceTest extends IsolatedTest {
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableStatusEmptyException.class);
     }
 
     @DisplayName("주문 생성")
@@ -121,7 +125,7 @@ class OrderServiceTest extends IsolatedTest {
         OrderRequest changeRequest = new OrderRequest(1L, OrderStatus.MEAL, LocalDateTime.now(), Lists.newArrayList());
 
         assertThatThrownBy(() -> service.changeOrderStatus(1L,changeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotExistedOrderException.class);
     }
 
     @DisplayName("주문 상태 변경")

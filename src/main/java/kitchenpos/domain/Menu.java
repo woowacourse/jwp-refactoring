@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidPriceException;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
@@ -41,7 +43,7 @@ public class Menu {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidPriceException();
         }
     }
 

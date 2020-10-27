@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,14 +15,14 @@ class MenuTest {
     @Test
     public void createFailPriceNull() {
         assertThatThrownBy(() -> new Menu("파스타", null, new MenuGroup("양식")))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @DisplayName("Menu 생성 실패 - 가격이 0보다 작을 경우")
     @Test
     public void createFailPriceMinus() {
         assertThatThrownBy(() -> new Menu("파스타", BigDecimal.valueOf(-1), new MenuGroup("양식")))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @DisplayName("Menu 생성")

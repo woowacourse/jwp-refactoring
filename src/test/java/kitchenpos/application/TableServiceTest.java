@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.NotExistedOrderTableException;
+import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.config.IsolatedTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exceptions.InvalidForChangingNumberOfGuestsException;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.ui.dto.ordertable.OrderTableRequest;
 import kitchenpos.ui.dto.ordertable.OrderTableResponse;
@@ -55,7 +58,7 @@ class TableServiceTest extends IsolatedTest {
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
         assertThatThrownBy(() -> service.changeEmpty(10L, changeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotExistedOrderTableException.class);
     }
 
     @DisplayName("Empty 상태 변경 불가 - 조리중")
@@ -68,7 +71,7 @@ class TableServiceTest extends IsolatedTest {
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
         assertThatThrownBy(() -> service.changeEmpty(response.getId(), changeRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderStatusNotCompletionException.class);
     }
 
     @DisplayName("Empty 상태 변경 불가 - 식사중")
@@ -81,7 +84,7 @@ class TableServiceTest extends IsolatedTest {
         OrderTableRequest changeRequest = new OrderTableRequest(4, true);
 
         assertThatThrownBy(() -> service.changeEmpty(response.getId(), changeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderStatusNotCompletionException.class);
     }
 
     @DisplayName("Empty 상태 변경")
@@ -104,7 +107,7 @@ class TableServiceTest extends IsolatedTest {
         OrderTableRequest changeRequest = new OrderTableRequest(3, false);
 
         assertThatThrownBy(() -> service.changeNumberOfGuests(10L, changeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotExistedOrderTableException.class);
     }
 
     @DisplayName("인원 수 변경 실패 - 변경할 인원 수가 음수일 때")
@@ -116,7 +119,7 @@ class TableServiceTest extends IsolatedTest {
         OrderTableRequest changeRequest = new OrderTableRequest(-3, false);
 
         assertThatThrownBy(() -> service.changeNumberOfGuests(response.getId(), changeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidForChangingNumberOfGuestsException.class);
     }
 
     @DisplayName("인원 수 변경")

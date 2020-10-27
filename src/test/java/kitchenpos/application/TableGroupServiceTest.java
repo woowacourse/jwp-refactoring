@@ -1,9 +1,11 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.config.IsolatedTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
@@ -45,7 +47,7 @@ class TableGroupServiceTest extends IsolatedTest {
         TableGroupRequest request = new TableGroupRequest(Lists.newArrayList(1L));
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidOrderTableSizesException.class);
     }
 
     @DisplayName("단체 지정 실패 - 지정하고자 하는 테이블 갯수와 저장가능한 테이블 갯수가 다를 경우")
@@ -83,7 +85,7 @@ class TableGroupServiceTest extends IsolatedTest {
         final TableGroupResponse response = service.create(request);
 
         assertThatThrownBy(() -> service.ungroup(response.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderStatusNotCompletionException.class);
     }
 
     @DisplayName("단체 해제 실패 - 주문 상태가 식사 중일 경우")
@@ -97,7 +99,7 @@ class TableGroupServiceTest extends IsolatedTest {
         final TableGroupResponse response = service.create(request);
 
         assertThatThrownBy(() -> service.ungroup(response.getId()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderStatusNotCompletionException.class);
     }
 
     @DisplayName("단체 해제")

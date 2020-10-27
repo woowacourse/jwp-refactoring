@@ -1,8 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.NotExistedMenuGroupException;
 import kitchenpos.config.IsolatedTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.exceptions.InvalidPriceException;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.ui.dto.menu.MenuProductRequest;
@@ -37,7 +39,7 @@ class MenuServiceTest extends IsolatedTest {
         MenuRequest request = new MenuRequest("포테이토 피자 세트", BigDecimal.valueOf(-1L), 1L, Lists.newArrayList());
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidPriceException.class);
     }
 
     @DisplayName("메뉴 생성 실패 - 존재 하지 않는 메뉴 그룹을 참조할 때")
@@ -46,7 +48,7 @@ class MenuServiceTest extends IsolatedTest {
         MenuRequest request = new MenuRequest("포테이토 피자 세트", null, 10L, Lists.newArrayList());
 
         assertThatThrownBy(() -> service.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NotExistedMenuGroupException.class);
     }
 
     @DisplayName("메뉴 생성 실패 - 가격이 products 가격 합보다 클 때")

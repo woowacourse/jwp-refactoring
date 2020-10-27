@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import com.google.common.collect.Lists;
+import kitchenpos.domain.exceptions.InvalidOrderStatusException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -67,7 +68,7 @@ public class Order {
 
     public void changeOrderStatus(final OrderStatus orderStatus) {
         if (OrderStatus.COMPLETION == this.orderStatus) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderStatusException();
         }
         this.orderStatus = orderStatus;
     }

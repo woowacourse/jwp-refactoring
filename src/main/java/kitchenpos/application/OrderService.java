@@ -6,13 +6,16 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.application.exceptions.NotExistedMenuException;
+import kitchenpos.application.exceptions.NotExistedOrderException;
+import kitchenpos.application.exceptions.NotExistedOrderTableException;
+import kitchenpos.application.exceptions.TableStatusEmptyException;
 import kitchenpos.ui.dto.order.OrderLineItemRequest;
 import kitchenpos.ui.dto.order.OrderRequest;
 import kitchenpos.ui.dto.order.OrderResponse;
 import kitchenpos.ui.dto.order.OrderResponses;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,10 +48,10 @@ public class OrderService {
 
     private OrderTable findOrderTable(final OrderRequest request) {
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistedOrderTableException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new TableStatusEmptyException();
         }
         return orderTable;
     }
@@ -56,15 +59,11 @@ public class OrderService {
     private List<OrderLineItem> mapToOrderLineItems(final OrderRequest request, final Order order) {
         final List<OrderLineItemRequest> orderLineItemsRequest = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItemsRequest)) {
-            throw new IllegalArgumentException();
-        }
-
         return orderLineItemsRequest.stream()
                 .map(r -> r.toEntity(
                         order,
                         menuRepository.findById(r.getMenuId())
-                                .orElseThrow(IllegalArgumentException::new)
+                                .orElseThrow(NotExistedMenuException::new)
                 ))
                 .collect(Collectors.toList());
     }
@@ -77,7 +76,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistedOrderException::new);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
 

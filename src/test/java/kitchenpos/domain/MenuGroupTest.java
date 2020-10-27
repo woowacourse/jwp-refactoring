@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.EmptyNameException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,7 @@ class MenuGroupTest {
     @Test
     public void createFailMenuGroup() {
         assertThatThrownBy(() -> new MenuGroup(""))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EmptyNameException.class);
     }
 
     @DisplayName("MenuGroup 생성")

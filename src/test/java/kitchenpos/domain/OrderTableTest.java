@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidForChangingNumberOfGuestsException;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +50,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 4, false);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-2))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidForChangingNumberOfGuestsException.class);
     }
 
     @DisplayName("테이블 NumberOfGuests 수정 실패 - empty가 true일 경우")
@@ -58,7 +59,7 @@ class OrderTableTest {
         OrderTable orderTable = new OrderTable(null, 4, true);
 
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(3))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidForChangingNumberOfGuestsException.class);
     }
 
     @DisplayName("테이블 인원 수 수정")

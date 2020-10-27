@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class TableGroupTest {
     @Test
     public void createFailTableGroup() {
         assertThatThrownBy(() -> new TableGroup(LocalDateTime.now(), new ArrayList<>()))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderTableSizesException.class);
     }
 
     @DisplayName("TableGroup 생성")

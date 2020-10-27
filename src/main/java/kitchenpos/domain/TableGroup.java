@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
+import kitchenpos.domain.exceptions.TableAlreadyHasGroupException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class TableGroup {
 
     private void validateOrderTables(final List<OrderTable> orderTables) {
         if (orderTables.isEmpty() || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableSizesException();
         }
     }
 
@@ -53,7 +56,7 @@ public class TableGroup {
         validateOrderTables(orderTables);
         for (final OrderTable savedOrderTable : orderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
+                throw new TableAlreadyHasGroupException();
             }
             savedOrderTable.changeEmptyState(false);
             savedOrderTable.setTableGroup(this);

@@ -4,6 +4,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.application.exceptions.NotExistedOrderTableException;
+import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.ui.dto.ordertable.OrderTableRequest;
 import kitchenpos.ui.dto.ordertable.OrderTableResponse;
 import kitchenpos.ui.dto.ordertable.OrderTableResponses;
@@ -36,7 +38,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistedOrderTableException::new);
 
         validateOrderStatus(orderTableId);
 
@@ -47,14 +49,14 @@ public class TableService {
     private void validateOrderStatus(final Long orderTableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new OrderStatusNotCompletionException();
         }
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NotExistedOrderTableException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 

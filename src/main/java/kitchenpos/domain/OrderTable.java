@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidForChangingNumberOfGuestsException;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -41,7 +43,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0 || empty) {
-            throw new IllegalArgumentException();
+            throw new InvalidForChangingNumberOfGuestsException();
         }
         this.numberOfGuests = numberOfGuests;
     }

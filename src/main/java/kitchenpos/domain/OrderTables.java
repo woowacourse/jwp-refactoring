@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class OrderTables {
 
     public static OrderTables of(final List<Long> orderTableIds, final List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidOrderTableSizesException();
         }
 
         if (orderTableIds.size() != orderTables.size()) {

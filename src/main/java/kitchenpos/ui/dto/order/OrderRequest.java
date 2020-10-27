@@ -5,14 +5,22 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderRequest {
 
     private Long orderTableId;
+
+    @NotNull
     private OrderStatus orderStatus;
+
+    @NotNull
     private LocalDateTime orderedTime;
+
+    @NotEmpty
     private List<OrderLineItemRequest> orderLineItems;
 
     protected OrderRequest() { }

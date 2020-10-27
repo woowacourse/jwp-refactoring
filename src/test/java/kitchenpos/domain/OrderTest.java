@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import com.google.common.collect.Lists;
+import kitchenpos.domain.exceptions.InvalidOrderStatusException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ class OrderTest {
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidOrderStatusException.class);
     }
 
     @DisplayName("주문 상태 변경")

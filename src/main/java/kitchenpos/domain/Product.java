@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
 import io.micrometer.core.instrument.util.StringUtils;
+import kitchenpos.domain.exceptions.EmptyNameException;
+import kitchenpos.domain.exceptions.InvalidPriceException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -33,13 +35,13 @@ public class Product {
 
     private void validateName(String name) {
         if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            throw new EmptyNameException();
         }
     }
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidPriceException();
         }
     }
 

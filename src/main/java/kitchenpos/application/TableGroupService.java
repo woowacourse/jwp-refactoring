@@ -7,6 +7,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
 import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -55,7 +56,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new OrderStatusNotCompletionException();
         }
     }
 }

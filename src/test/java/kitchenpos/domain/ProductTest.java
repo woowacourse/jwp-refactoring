@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.exceptions.EmptyNameException;
+import kitchenpos.domain.exceptions.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,14 +16,14 @@ class ProductTest {
     @Test
     public void createFailNameEmpty() {
         assertThatThrownBy(() -> new Product("", BigDecimal.valueOf(10_000L)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EmptyNameException.class);
     }
 
     @DisplayName("상품 생성 실패 - 가격이 음수")
     @Test
     public void createFailPriceMinus() {
         assertThatThrownBy(() -> new Product("파스타", BigDecimal.valueOf(-10L)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidPriceException.class);
     }
 
     @DisplayName("상품 생성")

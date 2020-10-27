@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 
 import io.micrometer.core.instrument.util.StringUtils;
+import kitchenpos.domain.exceptions.EmptyNameException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class MenuGroup {
 
     private void validateMenuGroupName(String name) {
         if (StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException();
+            throw new EmptyNameException();
         }
     }
 
