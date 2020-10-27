@@ -24,6 +24,12 @@ public class OrderTableFixture {
         return orderTable;
     }
 
+    public static OrderTable createEmptyOrderTable() {
+        final OrderTable orderTable = createOrderTableWithoutId();
+        orderTable.setEmpty(true);
+        return orderTable;
+    }
+
     public static List<OrderTable> createOrderTables() {
         return Arrays.asList(createOrderTableWithId(1L), createOrderTableWithId(2L));
     }

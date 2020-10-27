@@ -31,6 +31,14 @@ public class OrderFixture {
         return order;
     }
 
+    public static Order createNoOrderLineItemsOrder() {
+        final Order order = new Order();
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderTableId(1L);
+        return order;
+    }
+
     public static List<Order> createOrders() {
         return Arrays.asList(createOrderWithId(1L), createOrderWithId(2L));
     }
