@@ -67,7 +67,7 @@ public class MenuService {
         for (final MenuProductRequest menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getTotalPrice(menuProduct.getQuantity()));
         }
         return sum;
     }
