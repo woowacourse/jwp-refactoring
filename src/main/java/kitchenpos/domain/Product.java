@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import io.micrometer.core.instrument.util.StringUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,7 +32,7 @@ public class Product {
     }
 
     private void validateName(String name) {
-        if (Objects.isNull(name) || name.isEmpty()) {
+        if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException();
         }
     }
