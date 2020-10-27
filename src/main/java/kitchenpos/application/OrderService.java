@@ -91,7 +91,6 @@ public class OrderService {
     @Transactional
     public List<OrderResponse> list() {
         final List<Order> orders = orderDao.findAll();
-
         return OrderResponse.listFrom(orders);
     }
 

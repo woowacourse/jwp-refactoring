@@ -28,6 +28,7 @@ public class ProductService {
         return ProductResponse.from(savedProduct);
     }
 
+    @Transactional
     public List<ProductResponse> list() {
         List<Product> products = productDao.findAll();
         return ProductResponse.listFrom(products);

@@ -26,6 +26,7 @@ public class MenuGroupService {
         return MenuGroupResponse.from(savedMenuGroup);
     }
 
+    @Transactional
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
         return MenuGroupResponse.listFrom(menuGroups);

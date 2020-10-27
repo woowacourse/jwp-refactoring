@@ -77,7 +77,6 @@ public class MenuService {
     @Transactional
     public List<MenuResponse> list() {
         final List<Menu> menus = menuDao.findAll();
-
         return MenuResponse.listFrom(menus);
     }
 }
