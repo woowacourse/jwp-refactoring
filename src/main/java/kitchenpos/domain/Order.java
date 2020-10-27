@@ -15,7 +15,7 @@ public class Order {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
@@ -24,7 +24,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order", fetch = LAZY)
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     protected Order() { }

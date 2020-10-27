@@ -5,12 +5,11 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "menu", cascade = ALL, orphanRemoval = true)
     private List<MenuProduct> menuProducts;
 
     protected MenuProducts() { }

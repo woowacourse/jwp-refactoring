@@ -3,13 +3,15 @@ package kitchenpos.domain;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 public class OrderTable {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 

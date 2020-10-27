@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static javax.persistence.FetchType.LAZY;
-
 @Entity
 public class TableGroup {
 
@@ -17,7 +15,7 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", fetch = LAZY)
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables = new ArrayList<>();
 
     protected TableGroup() { }

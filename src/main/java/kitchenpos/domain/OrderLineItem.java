@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 public class OrderLineItem {
 
@@ -10,11 +12,11 @@ public class OrderLineItem {
 
     private Long seq;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_id")
     private Menu menu;
 

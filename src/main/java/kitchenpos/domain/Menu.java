@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Entity
 public class Menu {
 
@@ -15,7 +17,7 @@ public class Menu {
 
     private BigDecimal price;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
