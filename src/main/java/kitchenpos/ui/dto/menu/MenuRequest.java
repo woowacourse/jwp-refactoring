@@ -5,6 +5,8 @@ import kitchenpos.domain.MenuGroup;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -16,8 +18,10 @@ public class MenuRequest {
     @DecimalMin("0")
     private BigDecimal price;
 
+    @NotNull
     private Long menuGroupId;
 
+    @NotEmpty
     private List<MenuProductRequest> menuProducts;
 
     protected MenuRequest() { }
