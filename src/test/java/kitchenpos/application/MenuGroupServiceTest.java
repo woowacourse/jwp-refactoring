@@ -20,10 +20,6 @@ class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
-    @BeforeEach
-    void setUp() {
-    }
-
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
