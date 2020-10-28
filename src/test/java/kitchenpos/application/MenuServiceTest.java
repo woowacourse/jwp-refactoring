@@ -10,8 +10,6 @@ import kitchenpos.utils.KitchenPosClassCreator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -30,10 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class MenuServiceTest {
-    public static final String TEST_MENU_GROUP_NAME = "두마리 세트";
-    public static final long TEST_MENU_PRODUCT_QUANTITY = 1L;
-    public static final String TEST_MENU_NAME = "후라이드 치킨";
-    public static final BigDecimal TEST_MENU_PRICE = new BigDecimal("16000.00");
+    private static final String 두마리_세트 = "두마리 세트";
+    private static final long 메뉴_1개 = 1L;
+    private static final String 메뉴_후라이드_치킨 = "후라이드 치킨";
+    private static final BigDecimal 메뉴_16000원 = new BigDecimal("16000.00");
+    public static final int 메뉴_잘못된_개수 = -1;
+    private static final String 후라이드_치킨 = "후라이드 치킨";
+    private static final String 코카콜라 = "코카콜라";
+    private static final BigDecimal 가격_15000원 = new BigDecimal("15000.00");
+    private static final BigDecimal 가격_1000원 = new BigDecimal("1000.00");
+
     @Autowired
     private MenuGroupDao menuGroupDao;
     @Autowired
@@ -49,20 +53,20 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product1 = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
-        product2 = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
+        product1 = KitchenPosClassCreator.createProduct(후라이드_치킨, 가격_15000원);
+        product2 = KitchenPosClassCreator.createProduct(코카콜라, 가격_1000원);
 
         product1 = productDao.save(product1);
         product2 = productDao.save(product2);
 
-        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(두마리_세트);
         menuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct1 = KitchenPosClassCreator.createMenuProduct(product1, TEST_MENU_PRODUCT_QUANTITY);
-        MenuProduct menuProduct2 = KitchenPosClassCreator.createMenuProduct(product2, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct1 = KitchenPosClassCreator.createMenuProduct(product1, 메뉴_1개);
+        MenuProduct menuProduct2 = KitchenPosClassCreator.createMenuProduct(product2, 메뉴_1개);
 
         menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-        menu = KitchenPosClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
+        menu = KitchenPosClassCreator.createMenu(메뉴_후라이드_치킨, menuGroup, 메뉴_16000원, menuProducts);
     }
 
     @DisplayName("Menu 생성이 올바르게 수행된다.")
@@ -81,10 +85,9 @@ public class MenuServiceTest {
     }
 
     @DisplayName("예외 테스트 : Menu 생성 중 가격이 0 이하일 경우, 예외가 발생한다.")
-    @ValueSource(longs = {-1000000, -42, -1})
-    @ParameterizedTest
-    void createWithNegativePriceExceptionTest(long source) {
-        BigDecimal invalidPrice = BigDecimal.valueOf(source);
+    @Test
+    void createWithNegativePriceExceptionTest() {
+        BigDecimal invalidPrice = BigDecimal.valueOf(메뉴_잘못된_개수);
         menu.setPrice(invalidPrice);
 
         assertThatThrownBy(() -> menuService.create(menu))

@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class MenuGroupServiceTest {
-    public static final String TEST_MENU_GROUP_NAME_1 = "두마리 세트";
-    public static final String TEST_MENU_GROUP_NAME_2 = "세마리 세트";
+    private static final String 두마리_세트 = "두마리 세트";
+    private static final String 세마리_세트 = "세마리 세트";
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -33,7 +33,7 @@ public class MenuGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME_1);
+        menuGroup = KitchenPosClassCreator.createMenuGroup(두마리_세트);
     }
 
     @DisplayName("MenuGroup 생성이 올바르게 수행된다.")
@@ -47,7 +47,7 @@ public class MenuGroupServiceTest {
     @DisplayName("MenuGroup 전체 목록을 요청 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        MenuGroup secondMenuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME_2);
+        MenuGroup secondMenuGroup = KitchenPosClassCreator.createMenuGroup(세마리_세트);
         MenuGroup savedMenuGroup1 = menuGroupDao.save(menuGroup);
         MenuGroup savedMenuGroup2 = menuGroupDao.save(secondMenuGroup);
 

@@ -23,10 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class ProductServiceTest {
-    public static final String TEST_PRODUCT_NAME_1 = "후라이드 치킨";
-    public static final String TEST_PRODUCT_NAME_2 = "코카콜라";
-    public static final BigDecimal TEST_PRODUCT_PRICE_1 = new BigDecimal("15000.00");
-    public static final BigDecimal TEST_PRODUCT_PRICE_2 = new BigDecimal("1000.00");
+    private static final String 후라이드_치킨 = "후라이드 치킨";
+    private static final String 코카콜라 = "코카콜라";
+    private static final BigDecimal 가격_15000원 = new BigDecimal("15000.00");
+    private static final BigDecimal 가격_1000원 = new BigDecimal("1000.00");
 
     @Autowired
     private ProductService productService;
@@ -35,7 +35,7 @@ public class ProductServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        product = KitchenPosClassCreator.createProduct(후라이드_치킨, 가격_15000원);
     }
 
 
@@ -49,10 +49,9 @@ public class ProductServiceTest {
     }
 
     @DisplayName("예외 테스트 : Product 생성 중 0 미만의 가격이 전달될 경우, 올바르게 수행된다.")
-    @ValueSource(longs = {-1000000, -42, -1})
-    @ParameterizedTest
-    void createNegativePriceExceptionTest(long source) {
-        BigDecimal invalidPrice = BigDecimal.valueOf(source);
+    @Test
+    void createNegativePriceExceptionTest() {
+        BigDecimal invalidPrice = BigDecimal.valueOf(-1);
         product.setPrice(invalidPrice);
         Assertions.assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -69,7 +68,7 @@ public class ProductServiceTest {
     @DisplayName("Product 전체 목록을 조회 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        Product secondProduct = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_2, TEST_PRODUCT_PRICE_2);
+        Product secondProduct = KitchenPosClassCreator.createProduct(코카콜라, 가격_1000원);
         product = productService.create(product);
         secondProduct = productService.create(secondProduct);
 

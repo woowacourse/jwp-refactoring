@@ -29,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class TableGroupServiceTest {
-    public static final int TEST_TABLE_NUMBER_OF_GUEST = 4;
+    private static final int 테이블_사람_4명 = 4;
+
     @Autowired
     private OrderDao orderDao;
     @Autowired
@@ -41,8 +42,8 @@ public class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, true);
-        OrderTable orderTable2 = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, true);
+        OrderTable orderTable1 = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, true);
+        OrderTable orderTable2 = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, true);
         orderTable1 = orderTableDao.save(orderTable1);
         orderTable2 = orderTableDao.save(orderTable2);
 
@@ -73,7 +74,7 @@ public class TableGroupServiceTest {
     @DisplayName("예외 테스트 : TableGroup 생성 중 2개 미만의 테이블 목록을 보내면, 예외가 발생한다.")
     @Test
     void createWithLowTablesExceptionTest() {
-        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, true);
+        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, true);
         orderTable = orderTableDao.save(orderTable);
         List<OrderTable> orderTables = Arrays.asList(orderTable);
         tableGroup.setOrderTables(orderTables);
@@ -85,7 +86,7 @@ public class TableGroupServiceTest {
     @DisplayName("예외 테스트 : TableGroup 생성 중 DB에 없는 테이블 목록을 보내면, 예외가 발생한다.")
     @Test
     void createWithDBNotFoundTablesExceptionTest() {
-        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, true);
+        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, true);
         List<OrderTable> orderTables = new ArrayList<>(tableGroup.getOrderTables());
         orderTables.add(orderTable);
         tableGroup.setOrderTables(orderTables);
@@ -97,7 +98,7 @@ public class TableGroupServiceTest {
     @DisplayName("예외 테스트 : TableGroup 생성 중 비어있지 않은 테이블 목록을 보내면, 예외가 발생한다.")
     @Test
     void createWithNotEmptyTablesExceptionTest() {
-        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, false);
+        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, false);
         orderTableDao.save(orderTable);
         List<OrderTable> orderTables = new ArrayList<>(tableGroup.getOrderTables());
         orderTables.add(orderTable);
@@ -111,7 +112,7 @@ public class TableGroupServiceTest {
     @Test
     void createWithNotFreeTablesExceptionTest() {
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(TEST_TABLE_NUMBER_OF_GUEST, false);
+        OrderTable orderTable = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, false);
         orderTable.setTableGroupId(savedTableGroup.getId());
         orderTableDao.save(orderTable);
 

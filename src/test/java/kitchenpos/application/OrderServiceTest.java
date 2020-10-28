@@ -14,14 +14,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import javax.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.application.MenuServiceTest.*;
-import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_NAME_1;
-import static kitchenpos.application.ProductServiceTest.TEST_PRODUCT_PRICE_1;
-import static kitchenpos.application.TableServiceTest.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
+import static kitchenpos.application.TableServiceTest.테이블_사람_4명;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,11 +28,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Sql("/truncate.sql")
 @SpringBootTest
 public class OrderServiceTest {
-    public static final long INVALID_MENU_ID = 10000L;
-    public static final long INVALID_ORDER_TABLE_ID = 10000L;
-    public static final long INVALID_ORDER_ID = 10000L;
-    private static final String TEST_ORDER_STATUS_COOKING = OrderStatus.COOKING.name();
-    private static final String TEST_ORDER_STATUS_COMPLETION = OrderStatus.COMPLETION.name();
+    private static final long 메뉴_잘못된_ID = -1L;
+    private static final long 주문_테이블_잘못된_ID = -1L;
+    private static final long 주문_잘못된_ID = -1L;
+    private static final String 두마리_세트 = "두마리 세트";
+    private static final String 메뉴_후라이드_치킨 = "후라이트 치킨";
+    private static final long 메뉴_1개 = 1L;
+    private static final BigDecimal 메뉴_16000원 = new BigDecimal("16000.00");
+    private static final BigDecimal 가격_15000원 = new BigDecimal("15000.00");
+    private static final String 상태_조리중 = OrderStatus.COOKING.name();
+    private static final String 상태_완료 = OrderStatus.COMPLETION.name();
     OrderTable orderTable;
     @Autowired
     private MenuDao menuDao;
@@ -51,22 +54,22 @@ public class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        Product product = KitchenPosClassCreator.createProduct(TEST_PRODUCT_NAME_1, TEST_PRODUCT_PRICE_1);
+        Product product = KitchenPosClassCreator.createProduct(메뉴_후라이드_치킨, 가격_15000원);
         product = productDao.save(product);
-        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = KitchenPosClassCreator.createMenuGroup(두마리_세트);
         menuGroup = menuGroupDao.save(menuGroup);
-        MenuProduct menuProduct = KitchenPosClassCreator.createMenuProduct(product, TEST_MENU_PRODUCT_QUANTITY);
+        MenuProduct menuProduct = KitchenPosClassCreator.createMenuProduct(product, 메뉴_1개);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
-        menu = KitchenPosClassCreator.createMenu(TEST_MENU_NAME, menuGroup, TEST_MENU_PRICE, menuProducts);
+        menu = KitchenPosClassCreator.createMenu(메뉴_후라이드_치킨, menuGroup, 메뉴_16000원, menuProducts);
         menu = menuDao.save(menu);
 
-        orderTable = KitchenPosClassCreator.createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, false);
+        orderTable = KitchenPosClassCreator.createOrderTable(테이블_사람_4명, false);
         orderTable = orderTableDao.save(orderTable);
-        OrderLineItem orderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
+        OrderLineItem orderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, 메뉴_1개);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
-        order = KitchenPosClassCreator.createOrder(orderTable, orderLineItems, TEST_ORDER_STATUS_COOKING);
+        order = KitchenPosClassCreator.createOrder(orderTable, orderLineItems, 상태_조리중);
     }
 
     @DisplayName("Order 생성이 올바르게 수행된다.")
@@ -75,7 +78,7 @@ public class OrderServiceTest {
         Order savedOrder = orderService.create(order);
 
         assertEquals(savedOrder.getOrderTableId(), order.getOrderTableId());
-        assertEquals(savedOrder.getOrderStatus(), TEST_ORDER_STATUS_COOKING);
+        assertEquals(상태_조리중, savedOrder.getOrderStatus());
         assertThat(savedOrder.getOrderLineItems())
                 .hasSize(1)
                 .extracting("menuId")
@@ -94,8 +97,8 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : Order 생성 중 잘못된 OrderLineItems를 보내면, 예외가 발생한다.")
     @Test
     void createWithInvalidOrderLineItemsExceptionTest() {
-        OrderLineItem invalidOrderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, TEST_MENU_PRODUCT_QUANTITY);
-        invalidOrderLineItem.setMenuId(INVALID_MENU_ID);
+        OrderLineItem invalidOrderLineItem = KitchenPosClassCreator.createOrderLineItem(menu, 메뉴_1개);
+        invalidOrderLineItem.setMenuId(메뉴_잘못된_ID);
         List<OrderLineItem> orderLineItems = Arrays.asList(invalidOrderLineItem);
         order.setOrderLineItems(orderLineItems);
 
@@ -106,7 +109,7 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : Order 생성 중 잚못된 OrderTable을 보내면, 예외가 발생한다.")
     @Test
     void createWithInvalidOrderTableItemsExceptionTest() {
-        order.setOrderTableId(INVALID_ORDER_TABLE_ID);
+        order.setOrderTableId(주문_테이블_잘못된_ID);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -116,7 +119,7 @@ public class OrderServiceTest {
     @Test
     void createWithEmptyOrderTableItemsExceptionTest() {
         OrderTable emptyOrderTable = KitchenPosClassCreator
-                .createOrderTable(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, true);
+                .createOrderTable(테이블_사람_4명, true);
         emptyOrderTable = orderTableDao.save(emptyOrderTable);
         order.setOrderTableId(emptyOrderTable.getId());
 
@@ -143,11 +146,11 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatusTest() {
         Order savedOrder = orderService.create(order);
-        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), 상태_완료);
 
         Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), statusOrder);
 
-        assertEquals(changedOrder.getOrderStatus(), TEST_ORDER_STATUS_COMPLETION);
+        assertEquals(상태_완료, changedOrder.getOrderStatus());
         assertEquals(changedOrder.getId(), savedOrder.getId());
         assertEquals(changedOrder.getOrderedTime(), savedOrder.getOrderedTime());
         assertEquals(changedOrder.getOrderTableId(), savedOrder.getOrderTableId());
@@ -156,9 +159,9 @@ public class OrderServiceTest {
     @DisplayName("예외 테스트 : 잘못된 Order의 ID를 전달 시, 예외가 발생한다.")
     @Test
     void changeOrderStatusInvalidIdExceptionTest() {
-        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), 상태_완료);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(INVALID_ORDER_ID, statusOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(주문_잘못된_ID, statusOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -166,7 +169,7 @@ public class OrderServiceTest {
     @Test
     void changeOrderStatusCompletionExceptionTest() {
         Order savedOrder = orderService.create(order);
-        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), TEST_ORDER_STATUS_COMPLETION);
+        Order statusOrder = KitchenPosClassCreator.createOrder(orderTable, Collections.emptyList(), 상태_완료);
 
         assertThatThrownBy(() -> {
             Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), statusOrder);
