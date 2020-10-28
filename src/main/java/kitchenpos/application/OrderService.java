@@ -63,10 +63,10 @@ public class OrderService {
             .orderTable(orderTable)
             .orderStatus(OrderStatus.COOKING)
             .build();
-
-        Order savedOrder = orderDao.save(order);
         List<Menu> menus = findMenus(request.getOrderLineItems());
         List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus, order);
+
+        Order savedOrder = orderDao.save(order);
         orderLineItemDao.saveAll(orderLineItems);
 
         return OrderResponse.from(savedOrder);
