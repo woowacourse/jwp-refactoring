@@ -15,7 +15,7 @@ public class TableGroupResponse {
     private Long id;
     private LocalDateTime createdDate;
 
-    public static TableGroupResponse from(TableGroup tableGroup) {
+    public static TableGroupResponse from(final TableGroup tableGroup) {
         if (Objects.isNull(tableGroup)) {
             return null;
         }

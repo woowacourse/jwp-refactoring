@@ -20,13 +20,13 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
-    public static List<OrderResponse> listFrom(List<Order> orders) {
+    public static List<OrderResponse> listFrom(final List<Order> orders) {
         return orders.stream()
             .map(OrderResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static OrderResponse from(Order order) {
+    public static OrderResponse from(final Order order) {
         OrderTableResponse table = OrderTableResponse.from(order.getOrderTable());
         List<OrderLineItemResponse> orderLineItems = OrderLineItemResponse
             .listFrom(order.getOrderLineItems());

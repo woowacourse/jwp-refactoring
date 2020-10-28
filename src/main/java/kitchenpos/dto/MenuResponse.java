@@ -19,13 +19,13 @@ public class MenuResponse {
     private MenuGroupResponse menuGroup;
     private List<MenuProductResponse> menuProducts;
 
-    public static List<MenuResponse> listFrom(List<Menu> menus) {
+    public static List<MenuResponse> listFrom(final List<Menu> menus) {
         return menus.stream()
             .map(MenuResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static MenuResponse from(Menu menu) {
+    public static MenuResponse from(final Menu menu) {
         MenuGroupResponse menuGroup = MenuGroupResponse.from(menu.getMenuGroup());
         List<MenuProductResponse> menuProducts = MenuProductResponse
             .listFrom(menu.getMenuProducts());

@@ -32,7 +32,7 @@ public class Menu {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
-    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    private Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
         validatePrice(price);
         this.id = id;
         this.name = name;
@@ -47,13 +47,13 @@ public class Menu {
         }
     }
 
-    private void validatePrice(BigDecimal price) {
+    private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
+    public void addMenuProduct(final MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
     }
 

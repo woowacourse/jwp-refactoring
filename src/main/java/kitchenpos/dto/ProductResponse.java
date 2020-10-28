@@ -17,13 +17,13 @@ public class ProductResponse {
     private String name;
     private BigDecimal price;
 
-    public static List<ProductResponse> listFrom(List<Product> products) {
+    public static List<ProductResponse> listFrom(final List<Product> products) {
         return products.stream()
             .map(ProductResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static ProductResponse from(Product product) {
+    public static ProductResponse from(final Product product) {
         return ProductResponse.builder()
             .id(product.getId())
             .name(product.getName())

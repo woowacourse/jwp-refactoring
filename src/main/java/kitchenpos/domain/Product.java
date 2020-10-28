@@ -26,14 +26,14 @@ public class Product {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
-    public Product(Long id, String name, BigDecimal price) {
+    public Product(final Long id, final String name, final BigDecimal price) {
         validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    private void validatePrice(BigDecimal price) {
+    private void validatePrice(final BigDecimal price) {
         if (BigDecimal.ZERO.compareTo(price) > 0) {
             throw new IllegalArgumentException();
         }

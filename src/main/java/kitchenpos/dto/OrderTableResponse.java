@@ -17,13 +17,13 @@ public class OrderTableResponse {
     private int numberOfGuests;
     private boolean empty;
 
-    public static List<OrderTableResponse> listFrom(List<OrderTable> tables) {
+    public static List<OrderTableResponse> listFrom(final List<OrderTable> tables) {
         return tables.stream()
             .map(OrderTableResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static OrderTableResponse from(OrderTable table) {
+    public static OrderTableResponse from(final OrderTable table) {
         TableGroupResponse tableGroup = TableGroupResponse.from(table.getTableGroup());
         return OrderTableResponse.builder()
             .id(table.getId())

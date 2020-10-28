@@ -59,7 +59,7 @@ public class MenuService {
         return MenuResponse.from(savedMenu);
     }
 
-    private List<Product> findProducts(List<MenuProductRequest> request) {
+    private List<Product> findProducts(final List<MenuProductRequest> request) {
         List<Long> productIds = request.stream()
             .map(MenuProductRequest::getProductId)
             .collect(Collectors.toList());
@@ -69,19 +69,27 @@ public class MenuService {
         return products;
     }
 
-    private void validateSavedProduct(List<Long> productIds, List<Product> products) {
+    private void validateSavedProduct(final List<Long> productIds, final List<Product> products) {
         if (productIds.size() != products.size()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private List<MenuProduct> convertMenuProducts(List<MenuProductRequest> requests, List<Product> products, Menu menu) {
+    private List<MenuProduct> convertMenuProducts(
+        final List<MenuProductRequest> requests,
+        final List<Product> products,
+        final Menu menu
+    ) {
         return requests.stream()
             .map(request -> convertMenuProduct(request, products, menu))
             .collect(Collectors.toList());
     }
 
-    private MenuProduct convertMenuProduct(MenuProductRequest request, List<Product> products, Menu menu) {
+    private MenuProduct convertMenuProduct(
+        final MenuProductRequest request,
+        final List<Product> products,
+        final Menu menu
+    ) {
         Product product = findProduct(request, products);
         return MenuProduct.builder()
             .product(product)
@@ -90,7 +98,7 @@ public class MenuService {
             .build();
     }
 
-    private Product findProduct(MenuProductRequest request, List<Product> products) {
+    private Product findProduct(final MenuProductRequest request, final List<Product> products) {
         return products.stream()
             .filter(product -> product.isSameId(request.getProductId()))
             .findFirst()
@@ -99,7 +107,7 @@ public class MenuService {
 
     @Transactional
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        List<Menu> menus = menuDao.findAll();
         return MenuResponse.listFrom(menus);
     }
 }

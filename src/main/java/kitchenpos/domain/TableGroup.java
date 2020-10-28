@@ -34,11 +34,11 @@ public class TableGroup {
         this.id = id;
     }
 
-    public void addOrderTable(OrderTable orderTable) {
+    public void addOrderTable(final OrderTable orderTable) {
         orderTables.add(orderTable);
     }
 
-    public void removeOrderTable(OrderTable orderTable) {
+    public void removeOrderTable(final OrderTable orderTable) {
         orderTables.remove(orderTable);
     }
 

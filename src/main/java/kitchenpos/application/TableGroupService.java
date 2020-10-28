@@ -23,8 +23,11 @@ public class TableGroupService {
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
-        final TableGroupDao tableGroupDao) {
+    public TableGroupService(
+        final OrderDao orderDao,
+        final OrderTableDao orderTableDao,
+        final TableGroupDao tableGroupDao
+    ) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
@@ -64,7 +67,7 @@ public class TableGroupService {
             .orElseThrow(IllegalArgumentException::new);
         List<OrderTable> orderTables = tableGroup.getOrderTables();
 
-        final List<Long> orderTableIds = orderTables.stream()
+        List<Long> orderTableIds = orderTables.stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
 

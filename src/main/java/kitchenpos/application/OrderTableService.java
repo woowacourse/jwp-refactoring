@@ -39,9 +39,11 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId,
-        final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    public OrderTableResponse changeEmpty(
+        final Long orderTableId,
+        final OrderTableRequest request
+    ) {
+        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -60,9 +62,11 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-        final OrderTableRequest request) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+    public OrderTableResponse changeNumberOfGuests(
+        final Long orderTableId,
+        final OrderTableRequest request
+    ) {
+        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());

@@ -16,13 +16,13 @@ public class OrderLineItemResponse {
     private MenuResponse menu;
     private long quantity;
 
-    public static List<OrderLineItemResponse> listFrom(List<OrderLineItem> orderLineItems) {
+    public static List<OrderLineItemResponse> listFrom(final List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
             .map(OrderLineItemResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static OrderLineItemResponse from(OrderLineItem orderLineItem) {
+    public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
         MenuResponse menu = MenuResponse.from(orderLineItem.getMenu());
 
         return OrderLineItemResponse.builder()

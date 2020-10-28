@@ -95,7 +95,7 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void validateNumberOfGuests(int numberOfGuests) {
+    private void validateNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }

@@ -15,13 +15,13 @@ public class MenuGroupResponse {
     private Long id;
     private String name;
 
-    public static List<MenuGroupResponse> listFrom(List<MenuGroup> menuGroups) {
+    public static List<MenuGroupResponse> listFrom(final List<MenuGroup> menuGroups) {
         return menuGroups.stream()
             .map(MenuGroupResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static MenuGroupResponse from(MenuGroup menuGroup) {
+    public static MenuGroupResponse from(final MenuGroup menuGroup) {
         return MenuGroupResponse.builder()
             .id(menuGroup.getId())
             .name(menuGroup.getName())

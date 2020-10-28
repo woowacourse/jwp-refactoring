@@ -16,13 +16,13 @@ public class MenuProductResponse {
     private ProductResponse product;
     private long quantity;
 
-    public static List<MenuProductResponse> listFrom(List<MenuProduct> menuProducts) {
+    public static List<MenuProductResponse> listFrom(final List<MenuProduct> menuProducts) {
         return menuProducts.stream()
             .map(MenuProductResponse::from)
             .collect(Collectors.toList());
     }
 
-    public static MenuProductResponse from(MenuProduct menuProduct) {
+    public static MenuProductResponse from(final MenuProduct menuProduct) {
         ProductResponse product = ProductResponse.from(menuProduct.getProduct());
         return MenuProductResponse.builder()
             .seq(menuProduct.getSeq())

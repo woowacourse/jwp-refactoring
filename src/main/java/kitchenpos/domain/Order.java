@@ -45,7 +45,7 @@ public class Order {
     private int version;
 
     @Builder
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus) {
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
         this.id = id;
         setOrderTable(orderTable);
         this.orderStatus = orderStatus;
@@ -59,13 +59,13 @@ public class Order {
         }
     }
 
-    private void validateOrderTable(OrderTable orderTable) {
+    private void validateOrderTable(final OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void addOrderLineItem(OrderLineItem orderLineItem) {
+    public void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);
     }
 
