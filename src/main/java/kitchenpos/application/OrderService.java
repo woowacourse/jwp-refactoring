@@ -42,13 +42,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest request) {
-        final List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
+        List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItemRequests.stream()
+        List<Long> menuIds = orderLineItemRequests.stream()
             .map(OrderLineItemRequest::getMenuId)
             .collect(Collectors.toList());
 
@@ -56,7 +56,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
+        OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
         Order order = Order.builder()
@@ -64,40 +64,71 @@ public class OrderService {
             .orderStatus(OrderStatus.COOKING)
             .build();
 
-        final Order savedOrder = orderDao.save(order);
-        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, order);
+        Order savedOrder = orderDao.save(order);
+        List<Menu> menus = findMenus(request.getOrderLineItems());
+        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus, order);
         orderLineItemDao.saveAll(orderLineItems);
 
         return OrderResponse.from(savedOrder);
     }
 
-    private List<OrderLineItem> convertOrderLineItems(List<OrderLineItemRequest> requests,
-        Order order) {
+    private List<Menu> findMenus(final List<OrderLineItemRequest> orderLineItems) {
+        List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItemRequest::getMenuId)
+            .collect(Collectors.toList());
+        List<Menu> menus = menuDao.findAllById(menuIds);
+        validateSavedMenu(menuIds, menus);
+
+        return menus;
+    }
+
+    private void validateSavedMenu(final List<Long> menuIds, final List<Menu> menus) {
+        if (menuIds.size() != menus.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private List<OrderLineItem> convertOrderLineItems(
+        final List<OrderLineItemRequest> requests,
+        final List<Menu> menus,
+        final Order order
+    ) {
         return requests.stream()
-            .map(request -> convertOrderLineItem(request, order))
+            .map(request -> convertOrderLineItem(request, menus, order))
             .collect(Collectors.toList());
     }
 
-    private OrderLineItem convertOrderLineItem(OrderLineItemRequest request, Order order) {
-        Menu menu = menuDao.findById(request.getMenuId())
-            .orElseThrow(IllegalArgumentException::new);
-
+    private OrderLineItem convertOrderLineItem(
+        final OrderLineItemRequest request,
+        final List<Menu> menus,
+        final Order order
+    ) {
+        Menu menu = findMenu(request, menus);
         return OrderLineItem.builder()
             .order(order)
             .menu(menu)
             .build();
     }
 
+    private Menu findMenu(final OrderLineItemRequest request, final List<Menu> menus) {
+        return menus.stream()
+            .filter(menu -> menu.isSameId(request.getMenuId()))
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
+    }
+
     @Transactional
     public List<OrderResponse> list() {
-        final List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderDao.findAll();
         return OrderResponse.listFrom(orders);
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId,
-        final OrderStatusChangeRequest request) {
-        final Order savedOrder = orderDao.findById(orderId)
+    public OrderResponse changeOrderStatus(
+        final Long orderId,
+        final OrderStatusChangeRequest request
+    ) {
+        Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(request.getOrderStatus());

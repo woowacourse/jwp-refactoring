@@ -68,6 +68,10 @@ public class Menu {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    public boolean isSameId(final Long menuId) {
+        return menuId.equals(this.id);
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts);
     }
