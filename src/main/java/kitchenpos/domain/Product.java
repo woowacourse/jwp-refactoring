@@ -43,6 +43,10 @@ public class Product {
         menuProducts.add(menuProduct);
     }
 
+    public boolean isSameId(final Long id) {
+        return id.equals(this.id);
+    }
+
     public List<MenuProduct> getMenuProducts() {
         return new ArrayList<>(menuProducts);
     }

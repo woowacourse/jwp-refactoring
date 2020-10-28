@@ -46,7 +46,9 @@ public class MenuService {
             .price(request.getPrice())
             .menuGroup(menuGroup)
             .build();
-        List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), menu);
+
+        List<Product> products = findProducts(request.getMenuProducts());
+        List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), products, menu);
 
         if (menu.isNotValidPrice()) {
             throw new IllegalArgumentException();
@@ -57,21 +59,42 @@ public class MenuService {
         return MenuResponse.from(savedMenu);
     }
 
-    private List<MenuProduct> convertMenuProducts(List<MenuProductRequest> requests, Menu menu) {
+    private List<Product> findProducts(List<MenuProductRequest> request) {
+        List<Long> productIds = request.stream()
+            .map(MenuProductRequest::getProductId)
+            .collect(Collectors.toList());
+        List<Product> products = productDao.findAllById(productIds);
+        validateSavedProduct(productIds, products);
+
+        return products;
+    }
+
+    private void validateSavedProduct(List<Long> productIds, List<Product> products) {
+        if (productIds.size() != products.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private List<MenuProduct> convertMenuProducts(List<MenuProductRequest> requests, List<Product> products, Menu menu) {
         return requests.stream()
-            .map(request -> convertMenuProduct(request, menu))
+            .map(request -> convertMenuProduct(request, products, menu))
             .collect(Collectors.toList());
     }
 
-    private MenuProduct convertMenuProduct(MenuProductRequest request, Menu menu) {
-        Product product = productDao.findById(request.getProductId())
-            .orElseThrow(IllegalArgumentException::new);
-
+    private MenuProduct convertMenuProduct(MenuProductRequest request, List<Product> products, Menu menu) {
+        Product product = findProduct(request, products);
         return MenuProduct.builder()
             .product(product)
             .menu(menu)
             .quantity(request.getQuantity())
             .build();
+    }
+
+    private Product findProduct(MenuProductRequest request, List<Product> products) {
+        return products.stream()
+            .filter(product -> product.isSameId(request.getProductId()))
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional
