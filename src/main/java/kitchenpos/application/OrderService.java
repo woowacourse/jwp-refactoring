@@ -43,18 +43,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
-        }
-
-        List<Long> menuIds = orderLineItemRequests.stream()
-            .map(OrderLineItemRequest::getMenuId)
-            .collect(Collectors.toList());
-
-        if (orderLineItemRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
+        validateNotEmptyOrderLineItems(orderLineItemRequests);
 
         OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
@@ -63,13 +52,19 @@ public class OrderService {
             .orderTable(orderTable)
             .orderStatus(OrderStatus.COOKING)
             .build();
-        List<Menu> menus = findMenus(request.getOrderLineItems());
+        List<Menu> menus = findMenus(orderLineItemRequests);
         List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus, order);
 
         Order savedOrder = orderDao.save(order);
         orderLineItemDao.saveAll(orderLineItems);
 
         return OrderResponse.from(savedOrder);
+    }
+
+    private void validateNotEmptyOrderLineItems(final List<OrderLineItemRequest> orderLineItemRequests) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private List<Menu> findMenus(final List<OrderLineItemRequest> orderLineItems) {
