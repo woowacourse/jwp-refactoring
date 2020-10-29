@@ -10,7 +10,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class JdbcTemplateOrderLineItemDaoTest extends DaoTest {
+class OrderLineItemDaoTest extends DaoTest {
 
     @DisplayName("전체조회 테스트")
     @Test
