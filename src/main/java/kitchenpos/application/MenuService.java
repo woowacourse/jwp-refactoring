@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 
@@ -38,17 +40,22 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 메뉴그룹을 찾을수 없습니다."));
+        final List<MenuProductRequest> menuProducts1 = menuRequest.getMenuProducts();
 
-        final Menu menu = menuRequest.toEntity(menuGroup);
+        List<MenuProduct> menuProducts = menuProducts1.stream().map(menuProductRequest -> {
+            final Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 상품을 찾을수 없습니다."));
+            return menuProductRequest.toEntity(product);
+        }).collect(Collectors.toList());
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final Menu menu = menuRequest.toEntity(menuGroup, menuProducts);
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 메뉴상품을 찾을수 없습니다."));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
+        menuProducts = menu.getMenuProducts();
+
+        final BigDecimal sum = menuProducts.stream()
+                .map(MenuProduct::getTotalPrice)
+                .reduce(BigDecimal::add)
+                .orElseThrow(IllegalArgumentException::new);
 
         menu.validateByPriceWithMenuProductSum(sum);
 

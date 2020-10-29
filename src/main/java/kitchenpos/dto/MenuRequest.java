@@ -2,7 +2,6 @@ package kitchenpos.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -31,11 +30,7 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toEntity(final MenuGroup menuGroup) {
-        final List<MenuProduct> menuProducts = this.menuProducts.stream()
-                .map(MenuProductRequest::toEntity)
-                .collect(Collectors.toList());
-
+    public Menu toEntity(final MenuGroup menuGroup, final List<MenuProduct> menuProducts) {
         return new Menu(name, price, menuGroup, menuProducts);
     }
 

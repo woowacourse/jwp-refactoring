@@ -17,7 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
@@ -102,13 +104,13 @@ class MenuServiceTest {
     @Test
     void listTest() {
         final Product product = productDao.save(new Product("후라이드", BigDecimal.valueOf(8000)));
-        final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 2L);
+        final MenuProduct menuProduct = new MenuProduct(product, 2L);
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
-        final MenuRequest menu = new MenuRequest("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId(),
-                Collections.singletonList(menuProduct));
-        menuRepository.save(menu.toEntity(menuGroup));
+        final Menu menu = menuRepository.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(16000), menuGroup,
+                Collections.singletonList(menuProduct)));
 
         final List<MenuResponse> menus = menuService.list();
+
         assertAll(
                 () -> assertThat(menus).hasSize(1),
                 () -> assertThat(menus.get(0).getName()).isEqualTo(menu.getName())
