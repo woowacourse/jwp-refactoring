@@ -33,6 +33,12 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
+    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
     public Long getContainOrderTableId() {
         return this.orderTable.getId();
     }
@@ -45,32 +51,16 @@ public class Order extends BaseEntity {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public boolean isCompleteOrder() {

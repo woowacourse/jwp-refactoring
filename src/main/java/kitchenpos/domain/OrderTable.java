@@ -23,6 +23,12 @@ public class OrderTable extends BaseEntity {
         this.id = id;
     }
 
+    public OrderTable(TableGroup tableGroup, NumberOfGuests numberOfGuests, Empty empty) {
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public OrderTable(Long id, TableGroup tableGroup, NumberOfGuests numberOfGuests, Empty empty) {
         this.id = id;
         this.tableGroup = tableGroup;
@@ -67,23 +73,11 @@ public class OrderTable extends BaseEntity {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(NumberOfGuests numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public Empty getEmpty() {
         return empty;
-    }
-
-    public void setEmpty(Empty empty) {
-        this.empty = empty;
     }
 }

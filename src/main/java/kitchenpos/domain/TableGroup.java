@@ -21,19 +21,15 @@ public class TableGroup extends BaseEntity {
         this.id = id;
     }
 
+    public TableGroup(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 }
