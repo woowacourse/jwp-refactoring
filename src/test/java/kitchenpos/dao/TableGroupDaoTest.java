@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableGroupDaoTest extends DaoTest {
 
@@ -19,8 +19,7 @@ class TableGroupDaoTest extends DaoTest {
 
         assertAll(
             () -> assertThat(tableGroups).hasSize(1),
-            () -> assertThat(tableGroups.get(0).getId()).isEqualTo(TABLE_GROUP_ID),
-            () -> assertThat(tableGroups.get(0).getCreatedDate()).isEqualTo(TABLE_GROUP_CREATED_DATE)
+            () -> assertThat(tableGroups.get(0)).usingRecursiveComparison().isEqualTo(TABLE_GROUP)
         );
     }
 
@@ -38,8 +37,7 @@ class TableGroupDaoTest extends DaoTest {
         TableGroup tableGroup = tableGroupDao.findById(TABLE_GROUP_ID).get();
 
         assertAll(
-            () -> assertThat(tableGroup.getId()).isEqualTo(TABLE_GROUP_ID),
-            () -> assertThat(tableGroup.getCreatedDate()).isEqualTo(TABLE_GROUP_CREATED_DATE)
+            () -> assertThat(tableGroup).usingRecursiveComparison().isEqualTo(TABLE_GROUP)
         );
     }
 }

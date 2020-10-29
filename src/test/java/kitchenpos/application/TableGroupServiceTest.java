@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Arrays;
-
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +13,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.TestFixture;
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest extends TestFixture {
@@ -42,26 +42,22 @@ class TableGroupServiceTest extends TestFixture {
     @DisplayName("테이블 그룹 생성 예외 테스트: 사이즈가 하나 이하일 때")
     @Test
     void createFailByNotEnoughTables() {
-        TableGroup notEnoughTableGroup = new TableGroup();
-        notEnoughTableGroup.setId(TABLE_GROUP_ID);
-        notEnoughTableGroup.setCreatedDate(TABLE_GROUP_CREATED_DATE);
-        notEnoughTableGroup.setOrderTables(Arrays.asList(ORDER_TABLE_1));
+        TableGroupCreateRequest notEnoughTableGroupRequest =
+            new TableGroupCreateRequest(Arrays.asList(ORDER_TABLE_ID_1));
 
-        assertThatThrownBy(() -> tableGroupService.create(notEnoughTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(notEnoughTableGroupRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 생성 예외 테스트: 테이블이 중복될 때")
     @Test
     void createFailByDuplicatedTables() {
-        TableGroup duplicatedTableGroup = new TableGroup();
-        duplicatedTableGroup.setId(TABLE_GROUP_ID);
-        duplicatedTableGroup.setCreatedDate(TABLE_GROUP_CREATED_DATE);
-        duplicatedTableGroup.setOrderTables(Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_1));
+        TableGroupCreateRequest duplicatedTableGroupRequest =
+            new TableGroupCreateRequest(Arrays.asList(ORDER_TABLE_ID_1, ORDER_TABLE_ID_1));
 
         given(orderTableDao.findAllByIdIn(any())).willReturn(Arrays.asList(ORDER_TABLE_1));
 
-        assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroupRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -81,7 +77,10 @@ class TableGroupServiceTest extends TestFixture {
         given(orderTableDao.findAllByIdIn(any())).willReturn(Arrays.asList(orderTable1, orderTable2));
         given(tableGroupDao.save(any())).willReturn(TABLE_GROUP);
 
-        assertThat(tableGroupService.create(TABLE_GROUP)).usingRecursiveComparison().isEqualTo(TABLE_GROUP);
+        TableGroupCreateRequest tableGroupCreateRequest =
+            new TableGroupCreateRequest(Arrays.asList(ORDER_TABLE_ID_1, ORDER_TABLE_ID_2));
+
+        assertThat(tableGroupService.create(tableGroupCreateRequest)).usingRecursiveComparison().isEqualTo(TABLE_GROUP);
     }
 
     @DisplayName("테이블 그룹 해제 예외 테스트: 아직 식사 중 또는 요리 중일 때")

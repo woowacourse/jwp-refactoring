@@ -76,7 +76,7 @@ public abstract class TestFixture {
     public static final long TABLE_GROUP_ID = 1L;
     public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
     public static final List<OrderTable> ORDER_TABLES = Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_2);
-    public static final TableGroup TABLE_GROUP = new TableGroup();
+    public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
 
     @BeforeEach
     void setUpFixture() {
@@ -160,9 +160,5 @@ public abstract class TestFixture {
         ORDER_TABLE_2.setTableGroupId(TABLE_GROUP_ID);
         ORDER_TABLE_2.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_2);
         ORDER_TABLE_2.setEmpty(ORDER_TABLE_EMPTY_2);
-
-        TABLE_GROUP.setId(TABLE_GROUP_ID);
-        TABLE_GROUP.setCreatedDate(TABLE_GROUP_CREATED_DATE);
-        TABLE_GROUP.setOrderTables(ORDER_TABLES);
     }
 }
