@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
-import kitchenpos.dto.OrderLineItemResponse;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.domain.order.*;
+import kitchenpos.dto.order.OrderLineItemResponse;
+import kitchenpos.dto.order.OrderRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
