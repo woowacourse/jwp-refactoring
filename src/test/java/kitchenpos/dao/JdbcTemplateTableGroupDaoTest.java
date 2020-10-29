@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ class JdbcTemplateTableGroupDaoTest extends DaoTest {
     @DisplayName("전체조회 테스트")
     @Test
     void findAllTest() {
-        List<TableGroup> tableGroups = jdbcTemplateTableGroupDao.findAll();
+        List<TableGroup> tableGroups = tableGroupDao.findAll();
 
         assertAll(
             () -> assertThat(tableGroups).hasSize(1),
@@ -28,7 +27,7 @@ class JdbcTemplateTableGroupDaoTest extends DaoTest {
     @DisplayName("단건조회 예외 테스트: id에 해당하는 주문이 존재하지 않을때")
     @Test
     void findByIdFailByNotExistTest() {
-        Optional<TableGroup> tableGroup = jdbcTemplateTableGroupDao.findById(-1L);
+        Optional<TableGroup> tableGroup = tableGroupDao.findById(-1L);
 
         assertThat(tableGroup).isEmpty();
     }
@@ -36,7 +35,7 @@ class JdbcTemplateTableGroupDaoTest extends DaoTest {
     @DisplayName("단건조회 테스트")
     @Test
     void findByIdTest() {
-        TableGroup tableGroup = jdbcTemplateTableGroupDao.findById(TABLE_GROUP_ID).get();
+        TableGroup tableGroup = tableGroupDao.findById(TABLE_GROUP_ID).get();
 
         assertAll(
             () -> assertThat(tableGroup.getId()).isEqualTo(TABLE_GROUP_ID),

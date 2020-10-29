@@ -16,7 +16,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @DisplayName("전체조회 테스트")
     @Test
     void findAllTest() {
-        List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableDao.findAll();
 
         assertAll(
             () -> assertThat(orderTables).hasSize(2),
@@ -28,7 +28,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @DisplayName("단건조회 예외 테스트: id에 해당하는 테이블이 존재하지 않을때")
     @Test
     void findByIdFailByNotExistTest() {
-        Optional<OrderTable> orderTable = jdbcTemplateOrderTableDao.findById(-1L);
+        Optional<OrderTable> orderTable = orderTableDao.findById(-1L);
 
         assertThat(orderTable).isEmpty();
     }
@@ -36,7 +36,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @DisplayName("단건조회 테스트")
     @Test
     void findByIdTest() {
-        OrderTable orderTable = jdbcTemplateOrderTableDao.findById(ORDER_TABLE_ID_1).get();
+        OrderTable orderTable = orderTableDao.findById(ORDER_TABLE_ID_1).get();
 
         assertThat(orderTable).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
     }
@@ -45,7 +45,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findAllByIdInTest() {
         List<OrderTable> orderTables =
-            jdbcTemplateOrderTableDao.findAllByIdIn(Arrays.asList(ORDER_TABLE_ID_1));
+            orderTableDao.findAllByIdIn(Arrays.asList(ORDER_TABLE_ID_1));
 
         assertAll(
             () -> assertThat(orderTables).hasSize(1),
@@ -57,7 +57,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findAllByTableGroupIdTest() {
         List<OrderTable> orderTables =
-            jdbcTemplateOrderTableDao.findAllByTableGroupId(TABLE_GROUP_ID);
+            orderTableDao.findAllByTableGroupId(TABLE_GROUP_ID);
 
         assertAll(
             () -> assertThat(orderTables).hasSize(2),
@@ -75,9 +75,9 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
         updatingOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_2);
         updatingOrderTable.setEmpty(true);
 
-        jdbcTemplateOrderTableDao.save(updatingOrderTable);
+        orderTableDao.save(updatingOrderTable);
 
-        OrderTable updatedOrderTable = jdbcTemplateOrderTableDao.findById(ORDER_TABLE_ID_1).get();
+        OrderTable updatedOrderTable = orderTableDao.findById(ORDER_TABLE_ID_1).get();
         assertAll(
             () -> assertThat(updatedOrderTable.getId()).isEqualTo(ORDER_TABLE_ID_1),
             () -> assertThat(updatedOrderTable.getTableGroupId()).isEqualTo(TABLE_GROUP_ID),

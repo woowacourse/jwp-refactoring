@@ -16,7 +16,7 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
     @DisplayName("전체조회 테스트")
     @Test
     void findAllTest() {
-        List<Order> orders = jdbcTemplateOrderDao.findAll();
+        List<Order> orders = orderDao.findAll();
 
         assertAll(
             () -> assertThat(orders).hasSize(2),
@@ -30,7 +30,7 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
     @DisplayName("단건조회 예외 테스트: id에 해당하는 주문이 존재하지 않을때")
     @Test
     void findByIdFailByNotExistTest() {
-        Optional<Order> order = jdbcTemplateOrderDao.findById(-1L);
+        Optional<Order> order = orderDao.findById(-1L);
 
         assertThat(order).isEmpty();
     }
@@ -38,7 +38,7 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
     @DisplayName("단건조회 테스트")
     @Test
     void findByIdTest() {
-        Order order = jdbcTemplateOrderDao.findById(ORDER_ID_1).get();
+        Order order = orderDao.findById(ORDER_ID_1).get();
 
         assertAll(
             () -> assertThat(order.getId()).isEqualTo(ORDER_ID_1),
@@ -49,7 +49,7 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
     @DisplayName("해당 테이블에 해당 상태들의 주문이 있는지 조회 테스트")
     @Test
     void existsByOrderTableIdAndOrderStatusInTest() {
-        boolean isExist = jdbcTemplateOrderDao
+        boolean isExist = orderDao
             .existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID_1, Arrays.asList(ORDER_STATUS_1));
 
         assertThat(isExist).isTrue();
@@ -58,7 +58,7 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
     @DisplayName("해당 테이블들에 해당 상태들의 주문이 있는지 조회 테스트")
     @Test
     void existsByOrderTableIdInAndOrderStatusInTest() {
-        boolean isExist = jdbcTemplateOrderDao
+        boolean isExist = orderDao
             .existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(ORDER_TABLE_ID_1), Arrays.asList(ORDER_STATUS_1));
 
         assertThat(isExist).isTrue();
@@ -73,9 +73,9 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
         updatingOrder.setOrderStatus("COMPLETION");
         updatingOrder.setOrderTableId(ORDER_TABLE_ID_1);
 
-        jdbcTemplateOrderDao.save(updatingOrder);
+        orderDao.save(updatingOrder);
 
-        Order updatedOrder = jdbcTemplateOrderDao.findById(ORDER_ID_1).get();
+        Order updatedOrder = orderDao.findById(ORDER_ID_1).get();
         assertAll(
             () -> assertThat(updatedOrder.getId()).isEqualTo(ORDER_ID_1),
             () -> assertThat(updatedOrder.getOrderedTime()).isEqualTo(ORDERED_TIME_1),
