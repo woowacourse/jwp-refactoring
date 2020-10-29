@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -38,15 +40,24 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    private void validateByNumberOfGuests(final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("손님 수가 0보다 작을수 없습니다.");
-        }
-    }
-
     public void existTableGroupId() {
         if (tableGroup != null) {
             throw new IllegalArgumentException("테이블 그룹이 존재합니다.");
+        }
+    }
+
+    private void validateByNotEmptyOrNonNullTableGroup() {
+        if (!empty || Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("비어있거나 테이블그룹이 존재합니다.");
+        }
+    }
+
+    private void validateByNumberOfGuests(final int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException("테이블이 비어있는 상태에서는 인원을 변경할 수 없습니다.");
+        }
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님 수가 0보다 작을수 없습니다.");
         }
     }
 
@@ -58,8 +69,20 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateByNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void setUpGroupTable(final TableGroup tableGroup) {
+        validateByNotEmptyOrNonNullTableGroup();
         this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void setUpUnGroupTable() {
+        this.tableGroup = null;
+        this.empty = true;
     }
 
     public int getNumberOfGuests() {
@@ -68,14 +91,6 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        if (empty) {
-            throw new IllegalArgumentException("테이블이 비어있는 상태에서는 인원을 변경할 수 없습니다.");
-        }
-        validateByNumberOfGuests(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
     }
 
     public void changeEmpty(final boolean empty) {

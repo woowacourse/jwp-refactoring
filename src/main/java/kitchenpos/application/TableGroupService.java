@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -45,21 +44,15 @@ public class TableGroupService {
             throw new IllegalArgumentException("입력한 테이블과 db의 테이블의 수가 다릅니다.");
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException("비어있지 않은 테이블은 그룹으로 지정할 수 없습니다.");
-            }
-        }
-
         final TableGroup tableGroup = tableGroupRequest.toEntity(savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.changeEmpty(false);
+            savedOrderTable.setUpGroupTable(tableGroup);
             orderTableRepository.save(savedOrderTable);
         }
+
         savedTableGroup.setOrderTables(savedOrderTables);
 
         return TableGroupResponse.of(savedTableGroup);
@@ -79,8 +72,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.changeEmpty(false);
+            orderTable.setUpUnGroupTable();
             orderTableRepository.save(orderTable);
         }
     }

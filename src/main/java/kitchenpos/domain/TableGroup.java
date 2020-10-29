@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
