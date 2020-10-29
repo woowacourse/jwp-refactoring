@@ -59,10 +59,9 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("입력한 테이블과 db의 테이블의 수가 다릅니다.");
+                .hasMessageContaining("입력한 테이블과 실제 테이블의 수가 다릅니다.");
     }
 
-    // TODO: 2020/10/19 아래와 같은 테스트 방식이 괜찮은지 물어보기 
     @DisplayName("ungroup: 테이블 그룹 해제 테스트")
     @Test
     void ungroupTest() {

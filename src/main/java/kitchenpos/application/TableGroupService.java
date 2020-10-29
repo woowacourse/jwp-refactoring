@@ -41,7 +41,7 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("입력한 테이블과 db의 테이블의 수가 다릅니다.");
+            throw new IllegalArgumentException("입력한 테이블과 실제 테이블의 수가 다릅니다.");
         }
 
         final TableGroup tableGroup = tableGroupRequest.toEntity(savedOrderTables);
