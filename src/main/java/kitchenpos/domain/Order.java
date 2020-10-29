@@ -4,38 +4,64 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
 import org.springframework.util.CollectionUtils;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import kitchenpos.domain.enums.OrderStatus;
+
+@Entity
+@Table(name = "orders")
 public class Order {
-    private final Long id;
-    private final LocalDateTime orderedTime;
-    private Long orderTableId;
-    private String orderStatus;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime,
-            final List<OrderLineItem> orderLineItems) {
+    private LocalDateTime orderedTime;
+
+    public Order() {
+    }
+
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
+            final List<OrderLineItem> orderLineItems, final LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+        this.orderedTime = orderedTime;
     }
 
-    public Order(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, null, LocalDateTime.now(), orderLineItems);
+    public Order(final OrderTable orderTable) {
+        this(null, orderTable, null, null, LocalDateTime.now());
     }
 
-    public Order(final Long orderTableId, final String orderStatus, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
-    }
-
-    public Order(final Long id, final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, null);
+    public Order(final OrderTable orderTable, final OrderStatus orderStatus, final List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, orderLineItems, LocalDateTime.now());
     }
 
     public boolean isCompletionStatus() {
-        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
     private List<OrderLineItem> validateByOrderLineItemsWithZero(final List<OrderLineItem> orderLineItems) {
@@ -49,19 +75,19 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 

@@ -13,10 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.enums.OrderStatus;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.dto.TableRequest;
@@ -28,17 +29,16 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("create: 테이블 그룹 생성 테스트")
     @Test
     void createTest() {
-        final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable orderTable1 = orderTableDao.save(orderTable);
-        final OrderTable orderTable2 = orderTableDao.save(orderTable);
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
 
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
@@ -52,56 +52,54 @@ class TableGroupServiceTest {
     @Test
     void createTestByNotEmptyTable() {
         final OrderTable orderTable = new OrderTable(0, false);
-        final OrderTable orderTable1 = orderTableDao.save(orderTable);
-        final OrderTable orderTable2 = orderTableDao.save(orderTable);
+        final OrderTable orderTable1 = orderTableRepository.save(orderTable);
+        final OrderTable orderTable2 = orderTableRepository.save(orderTable);
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("비어있지 않은 테이블은 그룹으로 지정할 수 없습니다.");
+                .hasMessageContaining("입력한 테이블과 db의 테이블의 수가 다릅니다.");
     }
 
     // TODO: 2020/10/19 아래와 같은 테스트 방식이 괜찮은지 물어보기 
     @DisplayName("ungroup: 테이블 그룹 해제 테스트")
     @Test
     void ungroupTest() {
-        final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable orderTable1 = orderTableDao.save(orderTable);
-        final OrderTable orderTable2 = orderTableDao.save(orderTable);
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
 
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         tableGroupService.ungroup(tableGroupResponse.getId());
 
-        final OrderTable expected1 = orderTableDao.findById(orderTable1.getId())
+        final OrderTable expected1 = orderTableRepository.findById(orderTable1.getId())
                 .orElseThrow(IllegalArgumentException::new);
-        final OrderTable expected2 = orderTableDao.findById(orderTable2.getId())
+        final OrderTable expected2 = orderTableRepository.findById(orderTable2.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
         assertAll(
-                () -> assertThat(expected1.getTableGroupId()).isNull(),
-                () -> assertThat(expected2.getTableGroupId()).isNull()
+                () -> assertThat(expected1.getTableGroup()).isNull(),
+                () -> assertThat(expected2.getTableGroup()).isNull()
         );
     }
 
     @DisplayName("ungroup: 테이블 상태가 Cocking이거나 Meal일 경우에는 예외처리")
     @Test
     void ungroupTestByStatusEqualsCokingAndMeal() {
-        final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable orderTable1 = orderTableDao.save(orderTable);
-        final OrderTable orderTable2 = orderTableDao.save(orderTable);
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
 
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(
                 Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
 
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        final Order order = new Order(orderTable1.getId(), new ArrayList<>());
-        order.setOrderStatus("COOKING");
+        final Order order = new Order(orderTable1, OrderStatus.COOKING, new ArrayList<>());
+        order.setOrderStatus(OrderStatus.COOKING);
 
-        orderDao.save(order);
+        orderRepository.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

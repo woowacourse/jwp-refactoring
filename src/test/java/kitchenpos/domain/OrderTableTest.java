@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +12,10 @@ class OrderTableTest {
     @DisplayName("existTableGroupId: 테이블 그룹이 존재하면 예외처리")
     @Test
     void existTableGroupIdTest() {
-        final OrderTable orderTable = new OrderTable(1L, 1L, 0, true);
+        final OrderTable orderTable1 = new OrderTable(0, true);
+        final OrderTable orderTable2 = new OrderTable(0, true);
+        final TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable1, orderTable2));
+        final OrderTable orderTable = new OrderTable(1L, tableGroup, 0, true);
 
         assertThatThrownBy(orderTable::existTableGroupId)
                 .isInstanceOf(IllegalArgumentException.class)

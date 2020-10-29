@@ -13,8 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.enums.OrderStatus;
 import kitchenpos.dto.TableChangeEmptyRequest;
 import kitchenpos.dto.TableChangeGuestsRequest;
 import kitchenpos.dto.TableCreateRequest;
@@ -28,7 +31,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("create: 테이블 등록 생성 테스트")
     @Test
@@ -75,13 +81,13 @@ class TableServiceTest {
     @DisplayName("changeEmpty: 테이블 주문 상태가 음식을 먹고 있거나, 요리중이면 예외처리")
     @Test
     void changeEmptyTestByOrderStatusEqualsCookingAndMeal() {
-        final TableCreateRequest tableCreateRequest = new TableCreateRequest(0, false);
-        final TableResponse tableResponse = tableService.create(tableCreateRequest);
+        final OrderTable orderTable = new OrderTable(0, false);
+        final OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         final TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(true);
-        final Order order = new Order(tableResponse.getId(), "COOKING", new ArrayList<>());
-        orderDao.save(order);
+        final Order order = new Order(orderTable, OrderStatus.COOKING, new ArrayList<>());
+        orderRepository.save(order);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(tableResponse.getId(), tableChangeEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), tableChangeEmptyRequest))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("요리중이거나 식사중이면 상태를 변경할 수 없습니다.");
     }

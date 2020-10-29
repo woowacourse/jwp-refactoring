@@ -6,14 +6,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 
 class MenuGroupRestControllerTest extends ControllerTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("create: 메뉴 그룹 등록 테스트")
     @Test
@@ -28,8 +28,8 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("list: 전체 메뉴 그룹 조회 테스트")
     @Test
     void listTest() throws Exception {
-        menuGroupDao.save(new MenuGroup("한마리메뉴"));
-        menuGroupDao.save(new MenuGroup("두마리메뉴"));
+        menuGroupRepository.save(new MenuGroup("한마리메뉴"));
+        menuGroupRepository.save(new MenuGroup("두마리메뉴"));
 
         findList("/api/menu-groups")
                 .andExpect(jsonPath("$[0].name").value("한마리메뉴"))

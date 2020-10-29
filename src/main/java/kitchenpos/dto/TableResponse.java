@@ -20,8 +20,12 @@ public class TableResponse {
     }
 
     public static TableResponse of(final OrderTable orderTable) {
-        return new TableResponse(orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(),
-                orderTable.isEmpty());
+        if (orderTable.getTableGroup() != null) {
+            return new TableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
+                    orderTable.getNumberOfGuests(),
+                    orderTable.isEmpty());
+        }
+        return new TableResponse(orderTable.getId(), null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }
 
     public static List<TableResponse> ofList(final List<OrderTable> orderTables) {

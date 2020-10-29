@@ -4,34 +4,47 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Menu {
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
-    private final Long menuGroupId;
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String name;
+
+    private BigDecimal price;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId,
+    public Menu() {
+    }
+
+    public Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts) {
         validateByPrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId,
+    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup,
             final List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu(final String name, final BigDecimal price, final Long menuGroupId) {
-        this(null, name, price, menuGroupId, null);
-    }
-
-    public Menu(final Long id, final String name, final BigDecimal price, final Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
+        this(null, name, price, menuGroup, menuProducts);
     }
 
     private void validateByPrice(final BigDecimal price) {
@@ -58,8 +71,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

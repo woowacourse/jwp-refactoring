@@ -7,11 +7,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
@@ -20,42 +21,43 @@ import kitchenpos.dto.MenuResponse;
 @Service
 public class MenuService {
 
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
-    public MenuService(final MenuDao menuDao, final MenuGroupDao menuGroupDao, final MenuProductDao menuProductDao,
-            final ProductDao productDao) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+    public MenuService(final MenuRepository menuRepository, final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository, final ProductRepository productRepository) {
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final Menu menu = menuRequest.toEntity();
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴그룹을 찾을수 없습니다."));
+
+        final Menu menu = menuRequest.toEntity(menuGroup);
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        existMenuGroup(menu.getMenuGroupId());
-
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 메뉴상품을 찾을수 없습니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
         menu.validateByPriceWithMenuProductSum(sum);
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(savedMenu.getId());
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            menuProduct.setMenu(savedMenu);
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -63,18 +65,12 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(menuProductRepository.findAllByMenu(menu));
         }
 
         return MenuResponse.ofList(menus);
-    }
-
-    private void existMenuGroup(final Long menuGroupId) {
-        if (!menuGroupDao.existsById(menuGroupId)) {
-            throw new IllegalArgumentException("해당 메뉴 그룹이 존재하지 않습니다.");
-        }
     }
 }

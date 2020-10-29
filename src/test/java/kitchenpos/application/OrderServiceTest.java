@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,13 +15,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.enums.OrderStatus;
 import kitchenpos.dto.OrderChangeStatusRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
@@ -31,13 +32,13 @@ import kitchenpos.dto.OrderResponse;
 class OrderServiceTest {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderService orderService;
@@ -45,9 +46,10 @@ class OrderServiceTest {
     @DisplayName("create: 주문 등록 테스트")
     @Test
     void createTest() {
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
-        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, false));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuRepository.save(
+                new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, new ArrayList<>()));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));
@@ -63,9 +65,10 @@ class OrderServiceTest {
     @DisplayName("create: 주문 등록 시 테이블이 비어있는 경우 예외처리")
     @Test
     void createTestByOrderTableEmpty() {
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
-        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuRepository.save(
+                new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, new ArrayList<>()));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));
@@ -77,9 +80,10 @@ class OrderServiceTest {
     @DisplayName("list: 전체 주문을 확인하는 테스트")
     @Test
     void listTest() {
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
-        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, false));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuRepository.save(
+                new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, new ArrayList<>()));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));
@@ -97,9 +101,10 @@ class OrderServiceTest {
     @DisplayName("changeOrderStatus: 주문 상태를 변경하는 테스트")
     @Test
     void changeOrderStatusTest() {
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
-        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, false));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuRepository.save(
+                new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, new ArrayList<>()));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));
@@ -110,15 +115,16 @@ class OrderServiceTest {
 
         final OrderResponse orderResponse = orderService.changeOrderStatus(order.getId(), orderChangeStatusRequest);
 
-        assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
     @DisplayName("changeOrderStatus: 주문 상태가 Completion일 경우 예외처리")
     @Test
     void changeOrderStatusTestByCompletionOfOrderState() {
-        final OrderTable orderTable = orderTableDao.save(new OrderTable(0, false));
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
-        final Menu menu = menuDao.save(new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, false));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
+        final Menu menu = menuRepository.save(
+                new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup, new ArrayList<>()));
         final OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 2);
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(orderLineItemRequest));

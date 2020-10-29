@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
@@ -22,7 +22,7 @@ import kitchenpos.dto.MenuGroupResponse;
 class MenuGroupServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -40,8 +40,8 @@ class MenuGroupServiceTest {
     @DisplayName("findMenuGroups: 전체 메뉴 그룹 목록 조회 테스트")
     @Test
     void findMenuGroupsTest() {
-        menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        menuGroupDao.save(new MenuGroup("두마리 메뉴"));
+        menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        menuGroupRepository.save(new MenuGroup("두마리 메뉴"));
 
         final List<MenuGroupResponse> menuGroups = menuGroupService.list();
 

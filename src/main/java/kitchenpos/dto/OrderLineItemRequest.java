@@ -3,6 +3,8 @@ package kitchenpos.dto;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemRequest {
@@ -16,8 +18,8 @@ public class OrderLineItemRequest {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toEntity() {
-        return new OrderLineItem(menuId, quantity);
+    public OrderLineItem toEntity(final Menu menu, final Order order) {
+        return new OrderLineItem(order, menu, quantity);
     }
 
     public Long getMenuId() {

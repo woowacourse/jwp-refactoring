@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableChangeEmptyRequest;
 import kitchenpos.dto.TableChangeGuestsRequest;
@@ -15,7 +15,7 @@ import kitchenpos.dto.TableCreateRequest;
 class TableRestControllerTest extends ControllerTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("create: 테이블 등록 테스트")
     @Test
@@ -31,9 +31,8 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("list: 테이블 전체 조회 테스트")
     @Test
     void listTest() throws Exception {
-        final OrderTable orderTable = new OrderTable(0, true);
-        orderTableDao.save(orderTable);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(new OrderTable(0, true));
+        orderTableRepository.save(new OrderTable(0, true));
 
         findList("/api/tables")
                 .andExpect(jsonPath("$[0].numberOfGuests").value(0))
@@ -44,7 +43,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void changeEmptyTest() throws Exception {
         final OrderTable orderTable = new OrderTable(0, true);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
         final TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(false);
 
         update("/api/tables/" + saved.getId() + "/empty", tableChangeEmptyRequest)
@@ -55,7 +54,7 @@ class TableRestControllerTest extends ControllerTest {
     @Test
     void changeNumberOfGuestsTest() throws Exception {
         final OrderTable orderTable = new OrderTable(0, false);
-        final OrderTable saved = orderTableDao.save(orderTable);
+        final OrderTable saved = orderTableRepository.save(orderTable);
 
         final TableChangeGuestsRequest tableChangeGuestsRequest = new TableChangeGuestsRequest(5);
 

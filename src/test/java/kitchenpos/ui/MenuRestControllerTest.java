@@ -9,9 +9,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
@@ -20,20 +20,20 @@ import kitchenpos.dto.MenuRequest;
 class MenuRestControllerTest extends ControllerTest {
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @DisplayName("create: 메뉴 등록 테스트")
     @Test
     void createTest() throws Exception {
         final Product product = productDao.save(new Product("후라이드", BigDecimal.valueOf(10000)));
         final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 2L);
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
         final MenuRequest menu = new MenuRequest("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId(),
                 Collections.singletonList(menuProduct));
 
@@ -47,10 +47,10 @@ class MenuRestControllerTest extends ControllerTest {
     void listTest() throws Exception {
         final Product product = productDao.save(new Product("후라이드", BigDecimal.valueOf(8000)));
         final MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 2L);
-        final MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("세트 메뉴"));
+        final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("세트 메뉴"));
         final MenuRequest menu = new MenuRequest("후라이드+후라이드", BigDecimal.valueOf(19000), menuGroup.getId(),
                 Collections.singletonList(menuProduct));
-        menuDao.save(menu.toEntity());
+        menuRepository.save(menu.toEntity(menuGroup));
 
         findList("/api/menus")
                 .andExpect(jsonPath("$[0].name").value("후라이드+후라이드"));

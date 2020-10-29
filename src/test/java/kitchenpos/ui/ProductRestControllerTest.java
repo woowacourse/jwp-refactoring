@@ -8,13 +8,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 
 class ProductRestControllerTest extends ControllerTest {
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productDao;
 
     @DisplayName("create: 상품을 등록할 수 있다.")
     @Test

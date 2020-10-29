@@ -1,15 +1,35 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+@Entity
 public class OrderTable {
-    private final Long id;
-    private Long tableGroupId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
+
     private boolean empty;
 
-    public OrderTable(final Long id, final Long tableGroupId, final int numberOfGuests, final boolean empty) {
+    public OrderTable() {
+    }
+
+    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
-        validateByNumberOfGuests(numberOfGuests);
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -25,7 +45,7 @@ public class OrderTable {
     }
 
     public void existTableGroupId() {
-        if (tableGroupId != null) {
+        if (tableGroup != null) {
             throw new IllegalArgumentException("테이블 그룹이 존재합니다.");
         }
     }
@@ -34,12 +54,12 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {

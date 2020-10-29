@@ -9,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuRequest {
@@ -30,12 +31,12 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toEntity() {
+    public Menu toEntity(final MenuGroup menuGroup) {
         final List<MenuProduct> menuProducts = this.menuProducts.stream()
                 .map(MenuProductRequest::toEntity)
                 .collect(Collectors.toList());
 
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return new Menu(name, price, menuGroup, menuProducts);
     }
 
     public String getName() {
