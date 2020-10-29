@@ -19,6 +19,8 @@ import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
+    private static final String PRODUCT_NAME = "후라이드치킨";
+
     @InjectMocks
     private ProductService productService;
 
@@ -28,11 +30,11 @@ class ProductServiceTest {
     @DisplayName("Product 생성 테스트")
     @Test
     void create() {
-        Product product = DomainFactory.createProduct(null, BigDecimal.ONE);
-        given(productDao.save(product)).willReturn(DomainFactory.createProduct(1L, BigDecimal.ONE));
+        Product product = DomainFactory.createProduct(null, PRODUCT_NAME, BigDecimal.ONE);
+        given(productDao.save(product)).willReturn(DomainFactory.createProduct(1L, PRODUCT_NAME, BigDecimal.ONE));
 
         Product actual = productService.create(product);
-        Product expect = DomainFactory.createProduct(1L, BigDecimal.ONE);
+        Product expect = DomainFactory.createProduct(1L, PRODUCT_NAME, BigDecimal.ONE);
 
         assertThat(actual).isEqualToComparingFieldByField(expect);
     }
@@ -40,7 +42,7 @@ class ProductServiceTest {
     @DisplayName("price가 0보다 작을 경우 예외 테스트")
     @Test
     void createPriceLessThanZero() {
-        Product product = DomainFactory.createProduct(null, new BigDecimal(-1));
+        Product product = DomainFactory.createProduct(null, PRODUCT_NAME, new BigDecimal(-1));
 
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -48,7 +50,7 @@ class ProductServiceTest {
     @DisplayName("product 전체 조회")
     @Test
     void list() {
-        given(productDao.findAll()).willReturn(Arrays.asList(DomainFactory.createProduct(1L, BigDecimal.ONE)));
+        given(productDao.findAll()).willReturn(Arrays.asList(DomainFactory.createProduct(1L, PRODUCT_NAME, BigDecimal.ONE)));
 
         assertThat(productService.list()).hasSize(1);
     }

@@ -5,70 +5,68 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.utils.DomainFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Optional;
+import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql(value = "/truncate.sql")
 class MenuServiceTest {
+    private static final String MENU_NAME = "후라이드치킨";
+    private static final String PRODUCT_NAME = "후라이드치킨";
 
-    @InjectMocks
+    @Autowired
     private MenuService menuService;
 
-    @Mock
+    @Autowired
     private MenuDao menuDao;
 
-    @Mock
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
-    @Mock
+    @Autowired
     private MenuProductDao menuProductDao;
 
-    @Mock
+    @Autowired
     private ProductDao productDao;
 
     @DisplayName("Menu 등록 성공")
     @Test
     void create() {
         BigDecimal price = new BigDecimal(10000);
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, 1L, 2L);
-        Menu menu = DomainFactory.createMenu(null, price, 1L, menuProduct);
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(DomainFactory.createProduct(1L, price)));
-        given(menuDao.save(menu)).willReturn(DomainFactory.createMenu(1L, price, 1L, menuProduct));
-        given(menuProductDao.save(menuProduct)).willReturn(DomainFactory.createMenuProduct(1L, 1L, 2L));
+        Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, price));
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 2L);
+        MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
+        Menu menu = DomainFactory.createMenu(null, MENU_NAME, price, savedMenuGroup.getId(), menuProduct);
 
         Menu actual = menuService.create(menu);
-        MenuProduct expectMenuProduct = DomainFactory.createMenuProduct(1L, 1L, 2L);
-        Menu expectMenu = DomainFactory.createMenu(1L, price, 1L, expectMenuProduct);
 
         assertAll(() -> {
-            assertThat(actual.getId()).isEqualTo(expectMenu.getId());
-            assertThat(actual.getMenuGroupId()).isEqualTo(expectMenu.getMenuGroupId());
-            assertThat(actual.getPrice()).isEqualTo(expectMenu.getPrice());
-            assertThat(actual.getMenuProducts().get(0)).isEqualToComparingFieldByField(expectMenuProduct);
+            assertThat(actual.getId()).isNotNull();
+            assertThat(actual.getName()).isEqualTo(MENU_NAME);
+            assertThat(actual.getPrice().compareTo(price)).isEqualTo(0);
+            assertThat(actual.getMenuGroupId()).isEqualTo(savedMenuGroup.getId());
+            assertThat(actual.getMenuProducts()).extracting(MenuProduct::getSeq).isNotNull();
         });
     }
 
     @DisplayName("Menu 가격이 0보다 작은 경우 예외 테스트")
     @Test
     void createPriceLessThanZero() {
-        Menu menu = DomainFactory.createMenu(null, BigDecimal.ZERO, null, null);
+        Menu menu = DomainFactory.createMenu(null, MENU_NAME, BigDecimal.ZERO, null, null);
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -76,8 +74,7 @@ class MenuServiceTest {
     @DisplayName("Menu GruopId가 존재하지 않는 경우 예외 테스트")
     @Test
     void createNotExistMenuGroupId() {
-        Menu menu = DomainFactory.createMenu(null, BigDecimal.ONE, 1L, null);
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
+        Menu menu = DomainFactory.createMenu(null, MENU_NAME, BigDecimal.ONE, 1L, null);
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -85,11 +82,10 @@ class MenuServiceTest {
     @DisplayName("메뉴에 속하는 MenuProducts의 총 금액이 메뉴의 가격보다 작은 경우 예외 테스트")
     @Test
     void createMenuProductsAmountLessThanMenuPrice() {
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, 1L, 2L);
-        Menu menu = DomainFactory.createMenu(null, new BigDecimal(20000), 1L, menuProduct);
-        Product product = DomainFactory.createProduct(null, new BigDecimal(9999));
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
+        Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, new BigDecimal(9999)));
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 1L);
+        MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
+        Menu menu = DomainFactory.createMenu(null, MENU_NAME, new BigDecimal(10000), savedMenuGroup.getId(), menuProduct);
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -97,14 +93,15 @@ class MenuServiceTest {
     @DisplayName("Menu 전체조회 테스트")
     @Test
     void list() {
-        Menu menu = new Menu();
-        menu.setId(1L);
-        given(menuDao.findAll()).willReturn(Arrays.asList(menu));
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(1L, 1L, 2L);
-        given(menuProductDao.findAllByMenuId(menu.getId())).willReturn(Arrays.asList(menuProduct));
+        BigDecimal price = new BigDecimal(10000);
+        Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, price));
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 2L);
+        MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
+        Menu menu = DomainFactory.createMenu(null, MENU_NAME, price, savedMenuGroup.getId(), menuProduct);
+        menuDao.save(menu);
 
-        Menu actual = menuService.list().get(0);
+        List<Menu> actual = menuService.list();
 
-        assertThat(actual.getMenuProducts().get(0)).isEqualToComparingFieldByField(menuProduct);
+        assertThat(actual).hasSize(1);
     }
 }

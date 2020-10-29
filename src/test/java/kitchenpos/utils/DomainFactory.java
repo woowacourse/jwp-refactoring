@@ -1,6 +1,7 @@
 package kitchenpos.utils;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -15,10 +16,11 @@ public class DomainFactory {
     private DomainFactory() {
     }
 
-    public static Menu createMenu(Long id, BigDecimal price,
+    public static Menu createMenu(Long id, String name, BigDecimal price,
                                   Long menuGroupId, MenuProduct menuProducts) {
         Menu menu = new Menu();
         menu.setId(id);
+        menu.setName(name);
         menu.setPrice(price);
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(Arrays.asList(menuProducts));
@@ -33,9 +35,10 @@ public class DomainFactory {
         return menuProduct;
     }
 
-    public static Product createProduct(Long id, BigDecimal price) {
+    public static Product createProduct(Long id, String name, BigDecimal price) {
         Product product = new Product();
         product.setId(id);
+        product.setName(name);
         product.setPrice(price);
         return product;
     }
@@ -56,5 +59,12 @@ public class DomainFactory {
         order.setOrderTableId(tableId);
         order.setOrderedTime(orderedTime);
         return order;
+    }
+
+    public static MenuGroup createMenuGroup(String name) {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(null);
+        menuGroup.setName(name);
+        return menuGroup;
     }
 }
