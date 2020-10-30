@@ -18,12 +18,15 @@ import java.util.List;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -90,35 +93,30 @@ public abstract class KitchenPosServiceTest {
     }
 
     protected long getCreatedMenuGroupId() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(TEST_MENU_GROUP_NAME);
+        MenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroupRequest);
 
         Long createdMenuGroupId = createdMenuGroup.getId();
         assertThat(createdMenuGroupId).isNotNull();
         return createdMenuGroupId;
     }
 
-    protected long getCreatedProductId() {
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(TEST_PRODUCT_PRICE);
+    protected Product getCreatedProduct() {
+        Product product = Product.entityOf(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
         Product createdProduct = productService.create(product);
 
-        Long createdProductId = createdProduct.getId();
-        assertThat(createdProductId).isNotNull();
-        return createdProductId;
+        assertThat(createdProduct.getId()).isNotNull();
+        return createdProduct;
     }
 
     protected long getCreatedMenuId() {
         MenuProduct menuProduct = getMenuProduct();
 
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(getMenuProductPrice(menuProduct));
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
-        Menu createdMenu = menuService.create(menu);
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, getMenuProductPrice(menuProduct),
+            getCreatedMenuGroupId(), Collections.singletonList(
+            new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity())));
+
+        MenuResponse createdMenu = menuService.create(menuRequest);
 
         Long createdMenuId = createdMenu.getId();
         assertThat(createdMenuId).isNotNull();
@@ -126,18 +124,15 @@ public abstract class KitchenPosServiceTest {
     }
 
     protected BigDecimal getMenuProductPrice(MenuProduct menuProduct) {
-        BigDecimal productPrice = productRepository.findById(menuProduct.getProductId())
+        BigDecimal productPrice = productRepository.findById(menuProduct.getProduct().getId())
             .orElseThrow(() -> new IllegalArgumentException(
-                menuProduct.getMenuId() + "ID에 해당하는 Product가 없습니다."))
+                menuProduct.getProduct().getId() + "ID에 해당하는 Product가 없습니다."))
             .getPrice();
         BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
         return productPrice.multiply(quantity);
     }
 
     protected MenuProduct getMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(TEST_MENU_PRODUCT_QUANTITY);
-        menuProduct.setProductId(getCreatedProductId());
-        return menuProduct;
+        return MenuProduct.entityOf(getCreatedProduct(), TEST_MENU_PRODUCT_QUANTITY);
     }
 }

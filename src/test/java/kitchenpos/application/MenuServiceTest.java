@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static kitchenpos.constants.Constants.TEST_MENU_NAME;
-import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -9,13 +8,13 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class MenuServiceTest extends KitchenPosServiceTest {
@@ -27,56 +26,61 @@ class MenuServiceTest extends KitchenPosServiceTest {
         MenuProduct menuProduct = getMenuProduct();
         BigDecimal price = getMenuProductPrice(menuProduct);
 
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(price.add(BigDecimal.valueOf(value)));
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME,
+            price.add(BigDecimal.valueOf(value)), getCreatedMenuGroupId(),
+            Collections.singletonList(
+                new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity())));
 
-        menuService.create(menu);
+        MenuResponse menu = menuService.create(menuRequest);
     }
 
     @DisplayName("Menu 생성 - 예외 발생, 유효하지 않은 금액")
     @ParameterizedTest
-    @NullSource
+//    @NullSource
     @ValueSource(ints = {-2, -1})
-    void create_InvalidPrice_ThrownException(Integer price) {
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        if (Objects.nonNull(price)) {
-            menu.setPrice(BigDecimal.valueOf(price));
+    void create_InvalidPrice_ThrownException(Integer wrongPrice) {
+        MenuProduct menuProduct = getMenuProduct();
+        BigDecimal price = null;
+        if (Objects.nonNull(wrongPrice)) {
+            price = BigDecimal.valueOf(wrongPrice);
         }
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(getMenuProduct()));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, price, getCreatedMenuGroupId(),
+            Collections.singletonList(
+                new MenuProductRequest(menuProduct.getProduct().getId(),
+                    menuProduct.getQuantity())));
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu 생성 - 예외 발생, 유효하지 않은 MenuGroupId")
     @ParameterizedTest
-    @NullSource
+//    @NullSource
     @ValueSource(longs = {-2, -1})
     void create_InvalidMenuGroupId_ThrownException(Long menuGroupId) {
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(TEST_MENU_PRICE);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(Collections.singletonList(getMenuProduct()));
+        MenuProduct menuProduct = getMenuProduct();
+        BigDecimal price = getMenuProductPrice(menuProduct);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, price, menuGroupId,
+            Collections.singletonList(new MenuProductRequest(menuProduct.getProduct().getId(),
+                menuProduct.getQuantity())));
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu 생성 - 예외 발생, MenuProduct가 Null인 경우")
     @Test
     void create_NullMenuProduct_ThrownException() {
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(TEST_MENU_PRICE);
-        menu.setMenuGroupId(getCreatedMenuGroupId());
+        MenuProduct menuProduct = getMenuProduct();
+        BigDecimal price = getMenuProductPrice(menuProduct);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, price,
+            getCreatedMenuGroupId(), null);
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(NullPointerException.class);
     }
 
@@ -86,13 +90,11 @@ class MenuServiceTest extends KitchenPosServiceTest {
         MenuProduct menuProduct = getMenuProduct();
         BigDecimal price = getMenuProductPrice(menuProduct);
 
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(price.add(BigDecimal.ONE));
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, price.add(BigDecimal.ONE),
+            getCreatedMenuGroupId(), Collections.singletonList(
+            new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity())));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -100,21 +102,17 @@ class MenuServiceTest extends KitchenPosServiceTest {
     @Test
     void list_Success() {
         MenuProduct menuProduct = getMenuProduct();
+        BigDecimal price = getMenuProductPrice(menuProduct);
 
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(getMenuProductPrice(menuProduct));
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
-        Menu createdMenu = menuService.create(menu);
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, price, getCreatedMenuGroupId(),
+            Collections.singletonList(new MenuProductRequest(menuProduct.getProduct().getId(),
+                menuProduct.getQuantity())));
 
-        List<Menu> menus = menuService.list();
+        MenuResponse createdMenu = menuService.create(menuRequest);
+
+        List<MenuResponse> menus = menuService.list();
         assertThat(menus).isNotNull();
         assertThat(menus).isNotEmpty();
-
-        List<Long> menuIds = menus.stream()
-            .map(Menu::getId)
-            .collect(Collectors.toList());
-        assertThat(menuIds).contains(createdMenu.getId());
+        assertThat(menus).contains(createdMenu);
     }
 }

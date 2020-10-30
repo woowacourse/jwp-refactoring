@@ -1,9 +1,14 @@
 package kitchenpos.domain;
 
+import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class MenuProduct {
@@ -11,58 +16,81 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long menuId;
-    private Long productId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
     private long quantity;
 
     public MenuProduct() {
     }
 
-    protected MenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+    private MenuProduct(Long seq, Menu menu, Product product, long quantity) {
         this.seq = seq;
-        this.menuId = menuId;
-        this.productId = productId;
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public static MenuProduct of(Long seq, Menu menu, Product product, long quantity) {
+        return new MenuProduct(seq, menu, product, quantity);
+    }
+
+    public static MenuProduct entityOf(Product product, long quantity) {
+        return new MenuProduct(null, null, product, quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public void setMenu(Menu menu) {
+        if (Objects.isNull(this.menu)) {
+            this.menu = menu;
+        }
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public Product getProduct() {
+        return product;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public BigDecimal getProductPrice() {
+        return this.product.getPrice();
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuProduct that = (MenuProduct) o;
+        return Objects.equals(seq, that.seq);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(seq);
     }
 
     @Override
     public String toString() {
         return "MenuProduct{" +
             "seq=" + seq +
-            ", menuId=" + menuId +
-            ", productId=" + productId +
             ", quantity=" + quantity +
             '}';
     }

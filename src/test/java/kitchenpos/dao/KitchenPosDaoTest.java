@@ -11,8 +11,10 @@ import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
 import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -45,10 +47,8 @@ public abstract class KitchenPosDaoTest {
     protected TableGroupRepository tableGroupRepository;
 
     protected Long getCreatedMenuId() {
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(TEST_MENU_PRICE);
-        menu.setMenuGroupId(getCreatedMenuGroupId());
+        Menu menu = Menu.entityOf(TEST_MENU_NAME, TEST_MENU_PRICE, getCreatedMenuGroup(),
+            Collections.singletonList(MenuProduct.entityOf(getCreatedProduct(), 1)));
 
         Menu savedMenu = menuRepository.save(menu);
 
@@ -57,15 +57,13 @@ public abstract class KitchenPosDaoTest {
         return savedMenuId;
     }
 
-    protected Long getCreatedMenuGroupId() {
+    protected MenuGroup getCreatedMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(TEST_MENU_GROUP_NAME);
 
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
-
-        Long savedMenuGroupId = savedMenuGroup.getId();
-        assertThat(savedMenuGroupId).isNotNull();
-        return savedMenuGroupId;
+        assertThat(savedMenuGroup.getId()).isNotNull();
+        return savedMenuGroup;
     }
 
     protected Long getCreatedOrderId() {
@@ -94,16 +92,15 @@ public abstract class KitchenPosDaoTest {
         return savedOrderTableId;
     }
 
-    protected Long getCreatedProductId() {
+    protected Product getCreatedProduct() {
         Product product = new Product();
         product.setName(TEST_PRODUCT_NAME);
         product.setPrice(TEST_PRODUCT_PRICE);
 
         Product savedProduct = productRepository.save(product);
 
-        Long savedProductId = savedProduct.getId();
-        assertThat(savedProductId).isNotNull();
-        return savedProductId;
+        assertThat(savedProduct.getId()).isNotNull();
+        return savedProduct;
     }
 
     protected Long getCreatedTableGroupId() {

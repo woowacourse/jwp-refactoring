@@ -15,6 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +42,14 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
-        menuGroup.setName(MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.of(MENU_GROUP_ID, MENU_GROUP_NAME);
 
         String requestBody = "{\n"
             + "  \"name\": \"" + menuGroup.getName() + "\"\n"
             + "}";
 
-        given(menuGroupService.create(any(MenuGroup.class)))
-            .willReturn(menuGroup);
+        given(menuGroupService.create(any(MenuGroupRequest.class)))
+            .willReturn(MenuGroupResponse.of(menuGroup));
 
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +72,7 @@ class MenuGroupRestControllerTest {
         menuGroup.setId(MENU_GROUP_ID);
 
         given(menuGroupService.list())
-            .willReturn(Collections.singletonList(menuGroup));
+            .willReturn(MenuGroupResponse.listOf(Collections.singletonList(menuGroup)));
 
         final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON))

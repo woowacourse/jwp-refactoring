@@ -16,7 +16,12 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +39,14 @@ class MenuRestControllerTest {
     private static final String MENU_NAME = "후라이드+후라이드";
     private static final BigDecimal MENU_PRICE = BigDecimal.valueOf(19_000);
     private static final long MENU_GROUP_ID = 10L;
+    private static final MenuGroup MENU_GROUP = MenuGroup.of(MENU_GROUP_ID, "메뉴 그룹");
     private static final long MENU_PRODUCT_SEQ = 100L;
     private static final long MENU_PRODUCT_PRODUCT_ID = 1_000L;
     private static final int MENU_PRODUCT_QUANTITY = 2;
+
+    private static final MenuProduct MENU_PRODUCT = MenuProduct.of(MENU_PRODUCT_SEQ, null,
+        Product.of(MENU_PRODUCT_PRODUCT_ID, "PRODUCTNAME", BigDecimal.ONE),
+        MENU_PRODUCT_QUANTITY);
 
     @Autowired
     private MockMvc mockMvc;
@@ -47,64 +57,65 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 추가")
     @Test
     void create() throws Exception {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(MENU_PRODUCT_SEQ);
-        menuProduct.setMenuId(MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT_QUANTITY);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(MENU_PRODUCT_PRODUCT_ID,
+            MENU_PRODUCT_QUANTITY);
 
-        Menu menu = new Menu();
-        menu.setId(MENU_ID);
-        menu.setName(MENU_NAME);
-        menu.setPrice(MENU_PRICE);
-        menu.setMenuGroupId(MENU_GROUP_ID);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuRequest menuRequest = new MenuRequest(MENU_NAME, MENU_PRICE, MENU_GROUP_ID,
+            Collections.singletonList(menuProductRequest));
 
         String requestBody = "{\n"
-            + "  \"name\": \"" + menu.getName() + "\",\n"
-            + "  \"price\": " + menu.getPrice() + ",\n"
-            + "  \"menuGroupId\": " + menu.getMenuGroupId() + ",\n"
+            + "  \"name\": \"" + menuRequest.getName() + "\",\n"
+            + "  \"price\": " + menuRequest.getPrice() + ",\n"
+            + "  \"menuGroupId\": " + menuRequest.getMenuGroupId() + ",\n"
             + "  \"menuProducts\": [\n"
             + "    {\n"
-            + "      \"productId\": " + menuProduct.getProductId() + ",\n"
-            + "      \"quantity\": " + menuProduct.getQuantity() + "\n"
+            + "      \"productId\": " + menuProductRequest.getProductId() + ",\n"
+            + "      \"quantity\": " + menuProductRequest.getQuantity() + "\n"
             + "    }\n"
             + "  ]\n"
             + "}";
 
-        given(menuService.create(any(Menu.class)))
-            .willReturn(menu);
+        Menu menu = Menu.of(MENU_ID, MENU_NAME, MENU_PRICE, MENU_GROUP,
+            Collections.singletonList(MENU_PRODUCT));
+
+        given(menuService.create(any(MenuRequest.class)))
+            .willReturn(MenuResponse.of(menu));
 
         ResultActions resultActions = mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .content(requestBody))
             .andDo(print());
 
+        MenuResponse menuResponse = MenuResponse.of(menu);
+
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(menu.getId().intValue())))
-            .andExpect(jsonPath("$.name", is(menu.getName())))
-            .andExpect(jsonPath("$.price", is(menu.getPrice().intValue())))
-            .andExpect(jsonPath("$.menuGroupId", is(menu.getMenuGroupId().intValue())))
+            .andExpect(jsonPath("$.id", is(menuResponse.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(menuResponse.getName())))
+            .andExpect(jsonPath("$.price", is(menuResponse.getPrice().intValue())))
+            .andExpect(jsonPath("$.menuGroupId", is(menuResponse.getMenuGroupId().intValue())))
             .andExpect(jsonPath("$.menuProducts", hasSize(1)))
-            .andExpect(jsonPath("$.menuProducts[0].seq", is(menuProduct.getSeq().intValue())))
-            .andExpect(jsonPath("$.menuProducts[0].menuId", is(menuProduct.getMenuId().intValue())))
+            .andExpect(
+                jsonPath("$.menuProducts[0].seq", is(MENU_PRODUCT.getSeq().intValue())))
+            .andExpect(
+                jsonPath("$.menuProducts[0].menuId", is(MENU_PRODUCT.getMenu().getId().intValue())))
             .andExpect(jsonPath("$.menuProducts[0].productId",
-                is(menuProduct.getProductId().intValue())))
-            .andExpect(jsonPath("$.menuProducts[0].quantity", is((int) menuProduct.getQuantity())))
+                is(menuProductRequest.getProductId().intValue())))
+            .andExpect(
+                jsonPath("$.menuProducts[0].quantity", is((int) menuProductRequest.getQuantity())))
             .andDo(print());
     }
 
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() throws Exception {
-        Menu menu = new Menu();
-        menu.setId(MENU_ID);
+        Menu menu = Menu.of(MENU_ID, MENU_NAME, MENU_PRICE, MENU_GROUP,
+            Collections.singletonList(MENU_PRODUCT));
 
         given(menuService.list())
-            .willReturn(Collections.singletonList(menu));
+            .willReturn(MenuResponse.listOf(Collections.singletonList(menu)));
 
         ResultActions resultActions = mockMvc.perform(get("/api/menus")
             .contentType(MediaType.APPLICATION_JSON))
