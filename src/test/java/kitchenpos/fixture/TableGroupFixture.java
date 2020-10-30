@@ -4,6 +4,8 @@ import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_1;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_2;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_3;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_4;
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_5;
+import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_6;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -16,8 +18,10 @@ public class TableGroupFixture {
 
     static {
         TABLE_GROUP_FIXTURE_1.setCreatedDate(LocalDateTime.of(2010, 1, 1, 1, 1));
-        TABLE_GROUP_FIXTURE_1.setOrderTables(Arrays.asList(ORDER_TABLE_FIXTURE_1, ORDER_TABLE_FIXTURE_2));
+        TABLE_GROUP_FIXTURE_1
+            .setOrderTables(Arrays.asList(ORDER_TABLE_FIXTURE_1, ORDER_TABLE_FIXTURE_2, ORDER_TABLE_FIXTURE_3));
         TABLE_GROUP_FIXTURE_2.setCreatedDate(LocalDateTime.of(2010, 1, 1, 1, 1));
-        TABLE_GROUP_FIXTURE_2.setOrderTables(Arrays.asList(ORDER_TABLE_FIXTURE_3, ORDER_TABLE_FIXTURE_4));
+        TABLE_GROUP_FIXTURE_2
+            .setOrderTables(Arrays.asList(ORDER_TABLE_FIXTURE_4, ORDER_TABLE_FIXTURE_5, ORDER_TABLE_FIXTURE_6));
     }
 }
