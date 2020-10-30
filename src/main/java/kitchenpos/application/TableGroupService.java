@@ -1,45 +1,46 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.TableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Table;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
+
 @Service
 public class TableGroupService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final TableDao tableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final TableDao tableDao, final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.tableDao = tableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
+        List<Long> tableIds = tableGroupCreateRequest.getTableIds();
 
-        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<Table> savedTables = tableDao.findAllByIdIn(tableIds);
 
-        if (orderTableIds.size() != savedOrderTables.size()) {
+        if (tableIds.size() != savedTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        for (final Table savedTable : savedTables) {
+            if (!savedTable.isEmpty() || Objects.nonNull(savedTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -48,10 +49,10 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableDao.save(savedOrderTable);
+        for (final Table savedTable : savedTables) {
+            savedTable.setTableGroupId(tableGroupId);
+            savedTable.setEmpty(false);
+            tableDao.save(savedTable);
         }
 
         return savedTableGroup;
@@ -59,21 +60,21 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<Table> tables = tableDao.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> tableIds = tables.stream()
+                .map(Table::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderDao.existsByTableIdInAndOrderStatusIn(
+                tableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableDao.save(orderTable);
+        for (final Table table : tables) {
+            table.setTableGroupId(null);
+            table.setEmpty(false);
+            tableDao.save(table);
         }
     }
 }

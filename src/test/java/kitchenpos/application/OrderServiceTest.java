@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderMenuDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.TestFixture;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,15 +16,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.BDDMockito.*;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderMenuDao;
+import kitchenpos.dao.TableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.Table;
+import kitchenpos.fixture.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest extends TestFixture {
@@ -39,11 +39,11 @@ class OrderServiceTest extends TestFixture {
     private OrderMenuDao orderMenuDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderMenuDao, orderTableDao);
+        orderService = new OrderService(menuDao, orderDao, orderMenuDao, tableDao);
     }
 
     @DisplayName("주문 생성 예외 테스트: 주문이 비었을 때")
@@ -51,7 +51,7 @@ class OrderServiceTest extends TestFixture {
     void createFailByEmptyOrderMenu() {
         Order emptyLineItemOrder = new Order();
         emptyLineItemOrder.setId(ORDER_ID_1);
-        emptyLineItemOrder.setOrderTableId(ORDER_TABLE_ID_1);
+        emptyLineItemOrder.setTableId(TABLE_ID_1);
         emptyLineItemOrder.setOrderStatus(ORDER_STATUS_1);
         emptyLineItemOrder.setOrderedTime(ORDERED_TIME_1);
         emptyLineItemOrder.setOrderMenus(new ArrayList<>());
@@ -65,7 +65,7 @@ class OrderServiceTest extends TestFixture {
     void createFailByDuplicatedMenu() {
         Order duplicatedMenusOrder = new Order();
         duplicatedMenusOrder.setId(ORDER_ID_1);
-        duplicatedMenusOrder.setOrderTableId(ORDER_TABLE_ID_1);
+        duplicatedMenusOrder.setTableId(TABLE_ID_1);
         duplicatedMenusOrder.setOrderStatus(ORDER_STATUS_1);
         duplicatedMenusOrder.setOrderedTime(ORDERED_TIME_1);
         duplicatedMenusOrder.setOrderMenus(Arrays.asList(ORDER_MENU_1, ORDER_MENU_1));
@@ -82,7 +82,7 @@ class OrderServiceTest extends TestFixture {
         Order notExistTableOrder = ORDER_1;
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(notExistTableOrder.getId())).willReturn(Optional.empty());
+        given(tableDao.findById(notExistTableOrder.getId())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(notExistTableOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -93,14 +93,14 @@ class OrderServiceTest extends TestFixture {
     void createFailByEmptyTable() {
         Order emptyTableOrder = ORDER_1;
 
-        OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setId(ORDER_TABLE_ID_1);
-        emptyOrderTable.setTableGroupId(TABLE_GROUP_ID);
-        emptyOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
-        emptyOrderTable.setEmpty(true);
+        Table emptyTable = new Table();
+        emptyTable.setId(TABLE_ID_1);
+        emptyTable.setTableGroupId(TABLE_GROUP_ID);
+        emptyTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
+        emptyTable.setEmpty(true);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(emptyTableOrder.getId())).willReturn(Optional.of(emptyOrderTable));
+        given(tableDao.findById(emptyTableOrder.getId())).willReturn(Optional.of(emptyTable));
 
         assertThatThrownBy(() -> orderService.create(emptyTableOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -110,7 +110,7 @@ class OrderServiceTest extends TestFixture {
     @Test
     void createTest() {
         given(menuDao.countByIdIn(any())).willReturn((long) ORDER_1.getOrderMenus().size());
-        given(orderTableDao.findById(any())).willReturn(Optional.of(ORDER_TABLE_1));
+        given(tableDao.findById(any())).willReturn(Optional.of(TABLE_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
         given(orderMenuDao.save(ORDER_MENU_1)).willReturn(ORDER_MENU_1);
 
@@ -131,7 +131,7 @@ class OrderServiceTest extends TestFixture {
     void changeOrderStatusFailByAlreadyCompletedOrder() {
         Order completedOrder = new Order();
         completedOrder.setId(ORDER_ID_1);
-        completedOrder.setOrderTableId(ORDER_TABLE_ID_1);
+        completedOrder.setTableId(TABLE_ID_1);
         completedOrder.setOrderStatus("COMPLETION");
         completedOrder.setOrderedTime(ORDERED_TIME_1);
         completedOrder.setOrderMenus(ORDER_MENUS_1);

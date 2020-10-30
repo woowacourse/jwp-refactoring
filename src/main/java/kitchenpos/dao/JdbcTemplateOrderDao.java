@@ -1,6 +1,14 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,13 +17,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import kitchenpos.domain.Order;
 
 @Repository
 public class JdbcTemplateOrderDao implements OrderDao {
@@ -55,32 +57,32 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     @Override
     public List<Order> findAll() {
-        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
+        final String sql = "SELECT id, table_id, order_status, ordered_time FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+    public boolean existsByTableIdAndOrderStatusIn(final Long tableId, final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
-                " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
+                " FROM orders WHERE table_id = (:tableId) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderTableId", orderTableId)
+                .addValue("tableId", tableId)
                 .addValue("orderStatuses", orderStatuses);
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByTableIdInAndOrderStatusIn(final List<Long> tableIds, final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
-                " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
+                " FROM orders WHERE table_id IN (:tableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("orderTableIds", orderTableIds)
+                .addValue("tableIds", tableIds)
                 .addValue("orderStatuses", orderStatuses);
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
     private Order select(final Long id) {
-        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
+        final String sql = "SELECT id, table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -97,7 +99,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private Order toEntity(final ResultSet resultSet) throws SQLException {
         final Order entity = new Order();
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
+        entity.setTableId(resultSet.getLong("table_id"));
         entity.setOrderStatus(resultSet.getString("order_status"));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
         return entity;

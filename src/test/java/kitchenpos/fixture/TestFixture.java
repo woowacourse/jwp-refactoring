@@ -1,12 +1,20 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.*;
-import org.junit.jupiter.api.BeforeEach;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
+import kitchenpos.domain.TableGroup;
 
 public abstract class TestFixture {
 
@@ -64,18 +72,18 @@ public abstract class TestFixture {
     public static final Order ORDER_1 = new Order();
     public static final Order ORDER_2 = new Order();
 
-    public static final long ORDER_TABLE_ID_1 = 1L;
-    public static final long ORDER_TABLE_ID_2 = 2L;
-    public static final int ORDER_TABLE_NUMBER_OF_GUESTS_1 = 1;
-    public static final int ORDER_TABLE_NUMBER_OF_GUESTS_2 = 2;
-    public static final boolean ORDER_TABLE_EMPTY_1 = false;
-    public static final boolean ORDER_TABLE_EMPTY_2 = false;
-    public static final OrderTable ORDER_TABLE_1 = new OrderTable();
-    public static final OrderTable ORDER_TABLE_2 = new OrderTable();
+    public static final long TABLE_ID_1 = 1L;
+    public static final long TABLE_ID_2 = 2L;
+    public static final int TABLE_NUMBER_OF_GUESTS_1 = 1;
+    public static final int TABLE_NUMBER_OF_GUESTS_2 = 2;
+    public static final boolean TABLE_EMPTY_1 = false;
+    public static final boolean TABLE_EMPTY_2 = false;
+    public static final Table TABLE_1 = new Table();
+    public static final Table TABLE_2 = new Table();
 
     public static final long TABLE_GROUP_ID = 1L;
     public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
-    public static final List<OrderTable> ORDER_TABLES = Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_2);
+    public static final List<Table> TABLES = Arrays.asList(TABLE_1, TABLE_2);
     public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
 
     @BeforeEach
@@ -122,12 +130,12 @@ public abstract class TestFixture {
         ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
 
         ORDER_1.setId(ORDER_ID_1);
-        ORDER_1.setOrderTableId(ORDER_TABLE_ID_1);
+        ORDER_1.setTableId(TABLE_ID_1);
         ORDER_1.setOrderStatus(ORDER_STATUS_1);
         ORDER_1.setOrderedTime(ORDERED_TIME_1);
         ORDER_1.setOrderMenus(ORDER_MENUS_1);
         ORDER_2.setId(ORDER_ID_2);
-        ORDER_2.setOrderTableId(ORDER_TABLE_ID_2);
+        ORDER_2.setTableId(TABLE_ID_2);
         ORDER_2.setOrderStatus(ORDER_STATUS_2);
         ORDER_2.setOrderedTime(ORDERED_TIME_2);
         ORDER_2.setOrderMenus(ORDER_MENUS_2);
@@ -142,23 +150,23 @@ public abstract class TestFixture {
         ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
 
         ORDER_1.setId(ORDER_ID_1);
-        ORDER_1.setOrderTableId(ORDER_TABLE_ID_1);
+        ORDER_1.setTableId(TABLE_ID_1);
         ORDER_1.setOrderStatus(ORDER_STATUS_1);
         ORDER_1.setOrderedTime(ORDERED_TIME_1);
         ORDER_1.setOrderMenus(ORDER_MENUS_1);
         ORDER_2.setId(ORDER_ID_2);
-        ORDER_2.setOrderTableId(ORDER_TABLE_ID_2);
+        ORDER_2.setTableId(TABLE_ID_2);
         ORDER_2.setOrderStatus(ORDER_STATUS_2);
         ORDER_2.setOrderedTime(ORDERED_TIME_2);
         ORDER_2.setOrderMenus(ORDER_MENUS_2);
 
-        ORDER_TABLE_1.setId(ORDER_TABLE_ID_1);
-        ORDER_TABLE_1.setTableGroupId(TABLE_GROUP_ID);
-        ORDER_TABLE_1.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
-        ORDER_TABLE_1.setEmpty(ORDER_TABLE_EMPTY_1);
-        ORDER_TABLE_2.setId(ORDER_TABLE_ID_2);
-        ORDER_TABLE_2.setTableGroupId(TABLE_GROUP_ID);
-        ORDER_TABLE_2.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_2);
-        ORDER_TABLE_2.setEmpty(ORDER_TABLE_EMPTY_2);
+        TABLE_1.setId(TABLE_ID_1);
+        TABLE_1.setTableGroupId(TABLE_GROUP_ID);
+        TABLE_1.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
+        TABLE_1.setEmpty(TABLE_EMPTY_1);
+        TABLE_2.setId(TABLE_ID_2);
+        TABLE_2.setTableGroupId(TABLE_GROUP_ID);
+        TABLE_2.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
+        TABLE_2.setEmpty(TABLE_EMPTY_2);
     }
 }

@@ -1,14 +1,15 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.TestFixture;
+import javax.sql.DataSource;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import javax.sql.DataSource;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.Table;
+import kitchenpos.fixture.TestFixture;
 
 //TODO: 현재 모든 조회 쿼리에 연관 테이블 join이 빠져있다
 @JdbcTest
@@ -20,7 +21,7 @@ public abstract class DaoTest extends TestFixture {
     protected MenuProductDao menuProductDao;
     protected OrderDao orderDao;
     protected OrderMenuDao orderMenuDao;
-    protected OrderTableDao orderTableDao;
+    protected TableDao tableDao;
     protected ProductDao productDao;
     protected TableGroupDao tableGroupDao;
 
@@ -34,7 +35,7 @@ public abstract class DaoTest extends TestFixture {
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
         orderDao = new JdbcTemplateOrderDao(dataSource);
         orderMenuDao = new JdbcTemplateOrderMenuDao(dataSource);
-        orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
+        tableDao = new JdbcTemplateTableDao(dataSource);
         productDao = new JdbcTemplateProductDao(dataSource);
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
 
@@ -52,10 +53,10 @@ public abstract class DaoTest extends TestFixture {
 
         tableGroupDao.save(TABLE_GROUP);
 
-        OrderTable nullIdOrderTable1 = createNullIdOrderTable(ORDER_TABLE_1);
-        OrderTable nullIdOrderTable2 = createNullIdOrderTable(ORDER_TABLE_2);
-        orderTableDao.save(nullIdOrderTable1);
-        orderTableDao.save(nullIdOrderTable2);
+        Table nullIdTable1 = createNullIdTable(TABLE_1);
+        Table nullIdTable2 = createNullIdTable(TABLE_2);
+        tableDao.save(nullIdTable1);
+        tableDao.save(nullIdTable2);
 
         Order nullIdOrder1 = createNullIdOrder(ORDER_1);
         Order nullIdOrder2 = createNullIdOrder(ORDER_2);
@@ -66,18 +67,18 @@ public abstract class DaoTest extends TestFixture {
         orderMenuDao.save(ORDER_MENU_2);
     }
 
-    private OrderTable createNullIdOrderTable(OrderTable orderTable) {
-        OrderTable output = new OrderTable();
-        output.setEmpty(orderTable.isEmpty());
-        output.setNumberOfGuests(orderTable.getNumberOfGuests());
-        output.setTableGroupId(orderTable.getTableGroupId());
+    private Table createNullIdTable(Table table) {
+        Table output = new Table();
+        output.setEmpty(table.isEmpty());
+        output.setNumberOfGuests(table.getNumberOfGuests());
+        output.setTableGroupId(table.getTableGroupId());
 
         return output;
     }
 
     private Order createNullIdOrder(Order order) {
         Order output = new Order();
-        output.setOrderTableId(order.getOrderTableId());
+        output.setTableId(order.getTableId());
         output.setOrderStatus(order.getOrderStatus());
         output.setOrderedTime(order.getOrderedTime());
         output.setOrderMenus(order.getOrderMenus());

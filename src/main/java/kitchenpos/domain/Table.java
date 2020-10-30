@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-public class OrderTable {
+public class Table {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;

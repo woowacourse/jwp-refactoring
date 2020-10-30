@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Order {
     private Long id;
-    private Long orderTableId;
+    private Long tableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderMenu> orderMenus;
@@ -18,12 +18,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public Long getTableId() {
+        return tableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setTableId(final Long tableId) {
+        this.tableId = tableId;
     }
 
     public String getOrderStatus() {
