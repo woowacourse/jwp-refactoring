@@ -23,6 +23,14 @@ public class OrderFixture {
         return createOrder(null, null, tableId, Arrays.asList(orderLineItem));
     }
 
+    public static Order createOrderWithOutId(Long tableId, String orderStatus, OrderLineItem orderLineItem) {
+        return createOrder(null, orderStatus, tableId, Arrays.asList(orderLineItem));
+    }
+
+    public static Order createOrderWithOrderStatus(String orderStatus) {
+        return createOrder(null, orderStatus, null, null);
+    }
+
     public static Order createOrderWithOrderStatusAndTableId(String orderStatus, Long tableId) {
         return createOrder(null, orderStatus, tableId, null);
     }
