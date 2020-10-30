@@ -8,7 +8,7 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderMenu> orderMenus;
 
     public Long getId() {
         return id;
@@ -42,11 +42,11 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderMenu> getOrderMenus() {
+        return orderMenus;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public void setOrderMenus(final List<OrderMenu> orderMenus) {
+        this.orderMenus = orderMenus;
     }
 }

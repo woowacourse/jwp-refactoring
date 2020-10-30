@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "orderTableId": 1,
-  "orderLineItems": [
+  "orderMenus": [
     {
       "menuId": 1,
       "quantity": 1

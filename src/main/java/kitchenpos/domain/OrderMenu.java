@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-public class OrderLineItem {
+public class OrderMenu {
     private Long seq;
     private Long orderId;
     private Long menuId;

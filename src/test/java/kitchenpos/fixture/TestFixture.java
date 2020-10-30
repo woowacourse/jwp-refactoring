@@ -46,12 +46,12 @@ public abstract class TestFixture {
     public static final Product PRODUCT_1 = new Product();
     public static final Product PRODUCT_2 = new Product();
 
-    public static final long ORDER_LINE_ITEM_SEQ_1 = 1L;
-    public static final long ORDER_LINE_ITEM_SEQ_2 = 2L;
-    public static final long ORDER_LINE_ITEM_QUANTITY_1 = 1L;
-    public static final long ORDER_LINE_ITEM_QUANTITY_2 = 2L;
-    public static final OrderLineItem ORDER_LINE_ITEM_1 = new OrderLineItem();
-    public static final OrderLineItem ORDER_LINE_ITEM_2 = new OrderLineItem();
+    public static final long ORDER_MENU_SEQ_1 = 1L;
+    public static final long ORDER_MENU_SEQ_2 = 2L;
+    public static final long ORDER_MENU_QUANTITY_1 = 1L;
+    public static final long ORDER_MENU_QUANTITY_2 = 2L;
+    public static final OrderMenu ORDER_MENU_1 = new OrderMenu();
+    public static final OrderMenu ORDER_MENU_2 = new OrderMenu();
 
     public static final long ORDER_ID_1 = 1L;
     public static final long ORDER_ID_2 = 2L;
@@ -59,8 +59,8 @@ public abstract class TestFixture {
     public static final String ORDER_STATUS_2 = "COOKING";
     public static final LocalDateTime ORDERED_TIME_1 = LocalDateTime.parse("2018-12-15T10:00:00");
     public static final LocalDateTime ORDERED_TIME_2 = LocalDateTime.parse("2018-12-16T10:00:00");
-    public static final List<OrderLineItem> ORDER_LINE_ITEMS_1 = Arrays.asList(ORDER_LINE_ITEM_1);
-    public static final List<OrderLineItem> ORDER_LINE_ITEMS_2 = Arrays.asList(ORDER_LINE_ITEM_2);
+    public static final List<OrderMenu> ORDER_MENUS_1 = Arrays.asList(ORDER_MENU_1);
+    public static final List<OrderMenu> ORDER_MENUS_2 = Arrays.asList(ORDER_MENU_2);
     public static final Order ORDER_1 = new Order();
     public static final Order ORDER_2 = new Order();
 
@@ -112,45 +112,45 @@ public abstract class TestFixture {
         PRODUCT_2.setName(PRODUCT_NAME_2);
         PRODUCT_2.setPrice(PRODUCT_PRICE_2);
 
-        ORDER_LINE_ITEM_1.setSeq(ORDER_LINE_ITEM_SEQ_1);
-        ORDER_LINE_ITEM_1.setOrderId(ORDER_ID_1);
-        ORDER_LINE_ITEM_1.setMenuId(MENU_ID_1);
-        ORDER_LINE_ITEM_1.setQuantity(ORDER_LINE_ITEM_QUANTITY_1);
-        ORDER_LINE_ITEM_2.setSeq(ORDER_LINE_ITEM_SEQ_2);
-        ORDER_LINE_ITEM_2.setOrderId(ORDER_ID_2);
-        ORDER_LINE_ITEM_2.setMenuId(MENU_ID_2);
-        ORDER_LINE_ITEM_2.setQuantity(ORDER_LINE_ITEM_QUANTITY_2);
+        ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
+        ORDER_MENU_1.setOrderId(ORDER_ID_1);
+        ORDER_MENU_1.setMenuId(MENU_ID_1);
+        ORDER_MENU_1.setQuantity(ORDER_MENU_QUANTITY_1);
+        ORDER_MENU_2.setSeq(ORDER_MENU_SEQ_2);
+        ORDER_MENU_2.setOrderId(ORDER_ID_2);
+        ORDER_MENU_2.setMenuId(MENU_ID_2);
+        ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
 
         ORDER_1.setId(ORDER_ID_1);
         ORDER_1.setOrderTableId(ORDER_TABLE_ID_1);
         ORDER_1.setOrderStatus(ORDER_STATUS_1);
         ORDER_1.setOrderedTime(ORDERED_TIME_1);
-        ORDER_1.setOrderLineItems(ORDER_LINE_ITEMS_1);
+        ORDER_1.setOrderMenus(ORDER_MENUS_1);
         ORDER_2.setId(ORDER_ID_2);
         ORDER_2.setOrderTableId(ORDER_TABLE_ID_2);
         ORDER_2.setOrderStatus(ORDER_STATUS_2);
         ORDER_2.setOrderedTime(ORDERED_TIME_2);
-        ORDER_2.setOrderLineItems(ORDER_LINE_ITEMS_2);
+        ORDER_2.setOrderMenus(ORDER_MENUS_2);
 
-        ORDER_LINE_ITEM_1.setSeq(ORDER_LINE_ITEM_SEQ_1);
-        ORDER_LINE_ITEM_1.setOrderId(ORDER_ID_1);
-        ORDER_LINE_ITEM_1.setMenuId(MENU_ID_1);
-        ORDER_LINE_ITEM_1.setQuantity(ORDER_LINE_ITEM_QUANTITY_1);
-        ORDER_LINE_ITEM_2.setSeq(ORDER_LINE_ITEM_SEQ_2);
-        ORDER_LINE_ITEM_2.setOrderId(ORDER_ID_2);
-        ORDER_LINE_ITEM_2.setMenuId(MENU_ID_2);
-        ORDER_LINE_ITEM_2.setQuantity(ORDER_LINE_ITEM_QUANTITY_2);
+        ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
+        ORDER_MENU_1.setOrderId(ORDER_ID_1);
+        ORDER_MENU_1.setMenuId(MENU_ID_1);
+        ORDER_MENU_1.setQuantity(ORDER_MENU_QUANTITY_1);
+        ORDER_MENU_2.setSeq(ORDER_MENU_SEQ_2);
+        ORDER_MENU_2.setOrderId(ORDER_ID_2);
+        ORDER_MENU_2.setMenuId(MENU_ID_2);
+        ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
 
         ORDER_1.setId(ORDER_ID_1);
         ORDER_1.setOrderTableId(ORDER_TABLE_ID_1);
         ORDER_1.setOrderStatus(ORDER_STATUS_1);
         ORDER_1.setOrderedTime(ORDERED_TIME_1);
-        ORDER_1.setOrderLineItems(ORDER_LINE_ITEMS_1);
+        ORDER_1.setOrderMenus(ORDER_MENUS_1);
         ORDER_2.setId(ORDER_ID_2);
         ORDER_2.setOrderTableId(ORDER_TABLE_ID_2);
         ORDER_2.setOrderStatus(ORDER_STATUS_2);
         ORDER_2.setOrderedTime(ORDERED_TIME_2);
-        ORDER_2.setOrderLineItems(ORDER_LINE_ITEMS_2);
+        ORDER_2.setOrderMenus(ORDER_MENUS_2);
 
         ORDER_TABLE_1.setId(ORDER_TABLE_ID_1);
         ORDER_TABLE_1.setTableGroupId(TABLE_GROUP_ID);

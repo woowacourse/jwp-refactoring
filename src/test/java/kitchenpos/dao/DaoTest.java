@@ -19,7 +19,7 @@ public abstract class DaoTest extends TestFixture {
     protected MenuGroupDao menuGroupDao;
     protected MenuProductDao menuProductDao;
     protected OrderDao orderDao;
-    protected OrderLineItemDao orderLineItemDao;
+    protected OrderMenuDao orderMenuDao;
     protected OrderTableDao orderTableDao;
     protected ProductDao productDao;
     protected TableGroupDao tableGroupDao;
@@ -33,7 +33,7 @@ public abstract class DaoTest extends TestFixture {
         menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
         orderDao = new JdbcTemplateOrderDao(dataSource);
-        orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
+        orderMenuDao = new JdbcTemplateOrderMenuDao(dataSource);
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         productDao = new JdbcTemplateProductDao(dataSource);
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
@@ -62,8 +62,8 @@ public abstract class DaoTest extends TestFixture {
         orderDao.save(nullIdOrder1);
         orderDao.save(nullIdOrder2);
 
-        orderLineItemDao.save(ORDER_LINE_ITEM_1);
-        orderLineItemDao.save(ORDER_LINE_ITEM_2);
+        orderMenuDao.save(ORDER_MENU_1);
+        orderMenuDao.save(ORDER_MENU_2);
     }
 
     private OrderTable createNullIdOrderTable(OrderTable orderTable) {
@@ -80,7 +80,7 @@ public abstract class DaoTest extends TestFixture {
         output.setOrderTableId(order.getOrderTableId());
         output.setOrderStatus(order.getOrderStatus());
         output.setOrderedTime(order.getOrderedTime());
-        output.setOrderLineItems(order.getOrderLineItems());
+        output.setOrderMenus(order.getOrderMenus());
 
         return output;
     }

@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -36,25 +36,25 @@ class OrderServiceTest extends TestFixture {
     private OrderDao orderDao;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderMenuDao orderMenuDao;
 
     @Mock
     private OrderTableDao orderTableDao;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuDao, orderDao, orderMenuDao, orderTableDao);
     }
 
     @DisplayName("주문 생성 예외 테스트: 주문이 비었을 때")
     @Test
-    void createFailByEmptyOrderLineItem() {
+    void createFailByEmptyOrderMenu() {
         Order emptyLineItemOrder = new Order();
         emptyLineItemOrder.setId(ORDER_ID_1);
         emptyLineItemOrder.setOrderTableId(ORDER_TABLE_ID_1);
         emptyLineItemOrder.setOrderStatus(ORDER_STATUS_1);
         emptyLineItemOrder.setOrderedTime(ORDERED_TIME_1);
-        emptyLineItemOrder.setOrderLineItems(new ArrayList<>());
+        emptyLineItemOrder.setOrderMenus(new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(emptyLineItemOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -68,7 +68,7 @@ class OrderServiceTest extends TestFixture {
         duplicatedMenusOrder.setOrderTableId(ORDER_TABLE_ID_1);
         duplicatedMenusOrder.setOrderStatus(ORDER_STATUS_1);
         duplicatedMenusOrder.setOrderedTime(ORDERED_TIME_1);
-        duplicatedMenusOrder.setOrderLineItems(Arrays.asList(ORDER_LINE_ITEM_1, ORDER_LINE_ITEM_1));
+        duplicatedMenusOrder.setOrderMenus(Arrays.asList(ORDER_MENU_1, ORDER_MENU_1));
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
 
@@ -109,10 +109,10 @@ class OrderServiceTest extends TestFixture {
     @DisplayName("주문 생성 성공 테스트")
     @Test
     void createTest() {
-        given(menuDao.countByIdIn(any())).willReturn((long) ORDER_1.getOrderLineItems().size());
+        given(menuDao.countByIdIn(any())).willReturn((long) ORDER_1.getOrderMenus().size());
         given(orderTableDao.findById(any())).willReturn(Optional.of(ORDER_TABLE_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderLineItemDao.save(ORDER_LINE_ITEM_1)).willReturn(ORDER_LINE_ITEM_1);
+        given(orderMenuDao.save(ORDER_MENU_1)).willReturn(ORDER_MENU_1);
 
         assertThat(orderService.create(ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
@@ -134,7 +134,7 @@ class OrderServiceTest extends TestFixture {
         completedOrder.setOrderTableId(ORDER_TABLE_ID_1);
         completedOrder.setOrderStatus("COMPLETION");
         completedOrder.setOrderedTime(ORDERED_TIME_1);
-        completedOrder.setOrderLineItems(ORDER_LINE_ITEMS_1);
+        completedOrder.setOrderMenus(ORDER_MENUS_1);
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(completedOrder));
 
@@ -147,7 +147,7 @@ class OrderServiceTest extends TestFixture {
     void changeOrderStatus() {
         given(orderDao.findById(anyLong())).willReturn(Optional.of(ORDER_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
+        given(orderMenuDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_MENUS_1);
 
         assertThat(orderService.changeOrderStatus(ORDER_ID_1, ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
@@ -156,8 +156,8 @@ class OrderServiceTest extends TestFixture {
     @Test
     void listTest() {
         given(orderDao.findAll()).willReturn(Arrays.asList(ORDER_1, ORDER_2));
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_2)).willReturn(ORDER_LINE_ITEMS_2);
+        given(orderMenuDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_MENUS_1);
+        given(orderMenuDao.findAllByOrderId(ORDER_ID_2)).willReturn(ORDER_MENUS_2);
 
         List<Order> orders = orderService.list();
         assertAll(

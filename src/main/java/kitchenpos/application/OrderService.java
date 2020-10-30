@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderMenu;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
@@ -22,34 +22,34 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderMenuDao orderMenuDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
+            final OrderMenuDao orderMenuDao,
             final OrderTableDao orderTableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderMenuDao = orderMenuDao;
         this.orderTableDao = orderTableDao;
     }
 
     @Transactional
     public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+        final List<OrderMenu> orderMenus = order.getOrderMenus();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderMenus)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderMenus.stream()
+                .map(OrderMenu::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderMenus.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
@@ -69,12 +69,12 @@ public class OrderService {
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
+        final List<OrderMenu> savedOrderMenus = new ArrayList<>();
+        for (final OrderMenu orderMenu : orderMenus) {
+            orderMenu.setOrderId(orderId);
+            savedOrderMenus.add(orderMenuDao.save(orderMenu));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        savedOrder.setOrderMenus(savedOrderMenus);
 
         return savedOrder;
     }
@@ -83,7 +83,7 @@ public class OrderService {
         final List<Order> orders = orderDao.findAll();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            order.setOrderMenus(orderMenuDao.findAllByOrderId(order.getId()));
         }
 
         return orders;
@@ -103,7 +103,7 @@ public class OrderService {
 
         orderDao.save(savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
+        savedOrder.setOrderMenus(orderMenuDao.findAllByOrderId(orderId));
 
         return savedOrder;
     }
