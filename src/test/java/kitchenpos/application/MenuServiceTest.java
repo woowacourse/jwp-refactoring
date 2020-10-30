@@ -133,7 +133,6 @@ class MenuServiceTest {
 
 		when(menuGroupDao.existsById(anyLong())).thenReturn(true);
 		when(productDao.findById(anyLong())).thenReturn(Optional.of(product));
-		when(menuDao.save(any(Menu.class))).thenReturn(menu);
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
