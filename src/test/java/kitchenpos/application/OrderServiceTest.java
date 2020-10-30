@@ -1,77 +1,83 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.utils.DomainFactory;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static kitchenpos.fixture.MenuFixture.createMenuWithGroupId;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWithoutId;
+import static kitchenpos.fixture.OrderFixture.createOrderWithOutId;
+import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItemWithMenuId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroupId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroupIdAndEmpty;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithoutId;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql(value = "/truncate.sql")
 public class OrderServiceTest {
 
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
 
-    @Mock
+    @Autowired
     private MenuDao menuDao;
 
-    @Mock
-    private OrderDao orderDao;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
-    @Mock
-    private OrderLineItemDao orderLineItemDao;
-
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @DisplayName("Order 등록 성공")
     @Test
     void create() {
-        OrderLineItem orderLineItem = DomainFactory.createOrderLineItem(1L, null, 1L);
-        Order order = DomainFactory.createOrder(null, 1L, Arrays.asList(orderLineItem));
-        OrderTable orderTable = DomainFactory.createOrderTable(1, 1L, false);
-        given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
-        Order expectOrder = DomainFactory.createOrder(OrderStatus.COOKING.name(), 1L, Arrays.asList(orderLineItem));
-        expectOrder.setId(1L);
-        given(orderDao.save(order)).willReturn(expectOrder);
-        OrderLineItem expectOrderLineItem = DomainFactory.createOrderLineItem(1L, expectOrder.getId(), 1L);
-        expectOrderLineItem.setSeq(1L);
-        given(orderLineItemDao.save(orderLineItem)).willReturn(expectOrderLineItem);
+        TableGroup tableGroup = tableGroupDao.save(createTableGroupWithoutId());
+        OrderTable orderTable = orderTableDao.save(createOrderTableWithTableGroupId(tableGroup.getId()));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroupWithoutId());
+        Menu menu = menuDao.save(createMenuWithGroupId(menuGroup.getId()));
+        OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
+        Order order = createOrderWithOutId(orderTable.getId(), orderLineItem);
 
         Order actual = orderService.create(order);
 
         assertAll(() -> {
-            assertThat(actual.getId()).isEqualTo(expectOrder.getId());
-            assertThat(actual.getOrderTableId()).isEqualTo(1L);
-            assertThat(actual.getOrderStatus()).isEqualTo(expectOrder.getOrderStatus());
-            assertThat(actual.getOrderLineItems().get(0).getOrderId()).isEqualTo(expectOrder.getId());
+            assertThat(actual.getId()).isNotNull();
+            assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+            assertThat(actual.getOrderLineItems())
+                    .extracting(OrderLineItem::getOrderId)
+                    .isEqualTo(Arrays.asList(actual.getId()));
+            assertThat(actual.getOrderLineItems())
+                    .extracting(OrderLineItem::getSeq)
+                    .doesNotContainNull();
         });
     }
 
     @DisplayName("Order에 속하는 OrderLineItem이 아무것도 없는 경우 예외 반환")
     @Test
     void createEmptyOrderLineItem() {
-        Order order = DomainFactory.createOrder(null, 1L, null);
+        Order order = OrderFixture.createOrderEmptyOrderLineItem();
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -79,9 +85,8 @@ public class OrderServiceTest {
     @DisplayName("Order에 속하는 OrderLineItem 개수와 Menu 개수가 일치하지 않을 때 예외 반환")
     @Test
     void createNotMatchOrderLineItemCountAndMenuCount() {
-        OrderLineItem orderLineItem = DomainFactory.createOrderLineItem(1L, 1L, 1L);
-        Order order = DomainFactory.createOrder(null, 1L, Arrays.asList(orderLineItem));
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
+        OrderLineItem orderLineItem = createOrderLineItemWithMenuId(1L);
+        Order order = createOrderWithOutId(3L, orderLineItem);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -89,11 +94,12 @@ public class OrderServiceTest {
     @DisplayName("Order를 받은 OrderTable이 비어있는 경우 예외 반환")
     @Test
     void createEmptyOrderTable() {
-        OrderLineItem orderLineItem = DomainFactory.createOrderLineItem(1L, 1L, 1L);
-        Order order = DomainFactory.createOrder(null, 1L, Arrays.asList(orderLineItem));
-        OrderTable orderTable = DomainFactory.createOrderTable(1, 1L, true);
-        given(menuDao.countByIdIn(anyList())).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
+        TableGroup tableGroup = tableGroupDao.save(createTableGroupWithoutId());
+        OrderTable orderTable = orderTableDao.save(createOrderTableWithTableGroupIdAndEmpty(tableGroup.getId(), true));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroupWithoutId());
+        Menu menu = menuDao.save(createMenuWithGroupId(menuGroup.getId()));
+        OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
+        Order order = createOrderWithOutId(orderTable.getId(), orderLineItem);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }

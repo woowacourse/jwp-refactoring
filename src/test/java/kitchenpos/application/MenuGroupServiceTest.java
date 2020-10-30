@@ -11,7 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWitId;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWithoutId;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,13 +27,12 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        given(menuGroupDao.save(menuGroup)).willReturn(menuGroup);
+        MenuGroup menuGroup = createMenuGroupWithoutId();
+        given(menuGroupDao.save(menuGroup)).willReturn(createMenuGroupWitId(1L));
 
         MenuGroup actual = menuGroupService.create(menuGroup);
 
-        assertThat(actual.getId()).isEqualTo(menuGroup.getId());
+        assertThat(actual.getId()).isEqualTo(1L);
     }
 
     @Test
