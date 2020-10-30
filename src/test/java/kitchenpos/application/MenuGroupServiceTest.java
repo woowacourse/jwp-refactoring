@@ -17,10 +17,10 @@ import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
-	private MenuGroupService menuGroupService;
-
 	@Mock
 	private MenuGroupDao menuGroupDao;
+
+	private MenuGroupService menuGroupService;
 
 	private MenuGroup menuGroup;
 
@@ -39,13 +39,17 @@ class MenuGroupServiceTest {
 	void create() {
 		when(menuGroupDao.save(any())).thenReturn(menuGroup);
 
-		assertThat(menuGroupService.create(menuGroup)).isEqualTo(menuGroup);
+		MenuGroup actual = menuGroupService.create(this.menuGroup);
+
+		assertThat(actual).isEqualTo(this.menuGroup);
 	}
 
 	@Test
 	void list() {
 		when(menuGroupDao.findAll()).thenReturn(menuGroups);
 
-		assertThat(menuGroupService.list()).isEqualTo(menuGroups);
+		List<MenuGroup> actual = menuGroupService.list();
+
+		assertThat(actual).isEqualTo(menuGroups);
 	}
 }

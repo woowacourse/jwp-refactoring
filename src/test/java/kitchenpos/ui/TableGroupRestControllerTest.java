@@ -19,18 +19,19 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest {
+	@MockBean
+	private TableGroupService tableGroupService;
+
 	private ObjectMapper objectMapper;
 
 	private MockMvc mockMvc;
-
-	@MockBean
-	private TableGroupService tableGroupService;
 
 	private TableGroup tableGroup;
 

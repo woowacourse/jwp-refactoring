@@ -18,17 +18,18 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest {
+	@MockBean
+	private MenuGroupService menuGroupService;
+
 	private MockMvc mockMvc;
 
 	private ObjectMapper objectMapper;
-
-	@MockBean
-	private MenuGroupService menuGroupService;
 
 	private MenuGroup menuGroup;
 

@@ -51,7 +51,8 @@ class TableServiceTest {
 		expect.setEmpty(false);
 		expect.setNumberOfGuests(1);
 
-		assertThat(expect).usingRecursiveComparison().isEqualTo(actual);
+		assertThat(actual).usingRecursiveComparison()
+			.isEqualTo(expect);
 	}
 
 	@Test
@@ -66,10 +67,9 @@ class TableServiceTest {
 
 		List<OrderTable> actual = tableService.list();
 
-		OrderTable actualItem = actual.get(0);
 		assertThat(actual).hasSize(1);
-		assertThat(orderTable).usingRecursiveComparison()
-			.isEqualTo(actualItem);
+		assertThat(actual.get(0)).usingRecursiveComparison()
+			.isEqualTo(orderTable);
 	}
 
 	@DisplayName("존재하지 않는 OrderTable의 empty 상태를 수정할 때 IllegalArgumentException이 발생한다.")
@@ -135,7 +135,7 @@ class TableServiceTest {
 
 		OrderTable actual = tableService.changeEmpty(1L, changedEmpty);
 
-		assertThat(changedEmpty.isEmpty()).isEqualTo(actual.isEmpty());
+		assertThat(actual.isEmpty()).isEqualTo(changedEmpty.isEmpty());
 	}
 
 	@DisplayName("손님의 수가 음수일 때 IllegalArgumentException 발생")
@@ -207,6 +207,6 @@ class TableServiceTest {
 
 		OrderTable actual = tableService.changeNumberOfGuests(1L, orderTable);
 
-		assertThat(orderTable.getNumberOfGuests()).isEqualTo(actual.getNumberOfGuests());
+		assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
 	}
 }

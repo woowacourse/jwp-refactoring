@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
@@ -178,12 +177,12 @@ class TableGroupServiceTest {
 		tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 28, 17, 1));
 
 		when(orderTableDao.findAllByIdIn(anyList())).thenReturn(orderTables);
-
 		when(tableGroupDao.save(any())).thenReturn(tableGroup);
 
 		TableGroup actual = tableGroupService.create(tableGroup);
 
-		assertThat(tableGroup).usingRecursiveComparison().isEqualTo(actual);
+		assertThat(actual).usingRecursiveComparison()
+			.isEqualTo(tableGroup);
 	}
 
 	@DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 IllegalArgumentException 발생")
@@ -204,7 +203,6 @@ class TableGroupServiceTest {
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(orderTable1, orderTable2));
 
 		when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(orderTables);
-
 		when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), any())).thenReturn(true);
 
 		assertThatThrownBy(() -> tableGroupService.ungroup(1L))
@@ -229,12 +227,10 @@ class TableGroupServiceTest {
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(orderTable1, orderTable2));
 
 		when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(orderTables);
-
 		when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), any())).thenReturn(false);
 
 		tableGroupService.ungroup(1L);
 
-		// TableGroupService.ungroup() 실행 시, orderTableDao.save()가 2회 발새아
 		verify(orderTableDao, times(2)).save(any(OrderTable.class));
 	}
 }

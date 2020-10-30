@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -26,7 +25,6 @@ import kitchenpos.domain.Product;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
-
 	@Mock
 	private MenuDao menuDao;
 
@@ -168,13 +166,7 @@ class MenuServiceTest {
 
 		Menu actual = menuService.create(menu);
 
-		assertAll(
-			() -> assertEquals(actual.getId(), menu.getId()),
-			() -> assertEquals(actual.getMenuGroupId(), menu.getMenuGroupId()),
-			() -> assertEquals(actual.getName(), menu.getName()),
-			() -> assertEquals(actual.getPrice(), menu.getPrice()),
-			() -> assertEquals(actual.getMenuProducts().size(), menu.getMenuProducts().size())
-		);
+		assertThat(actual).usingRecursiveComparison().isEqualTo(menu);
 	}
 
 	@Test
@@ -191,10 +183,15 @@ class MenuServiceTest {
 		menuProduct.setSeq(1L);
 		menuProduct.setQuantity(1L);
 
-		when(menuDao.findAll()).thenReturn(Collections.singletonList(menu));
+		List<Menu> expected = Collections.singletonList(menu);
+
+		when(menuDao.findAll()).thenReturn(expected);
 		when(menuProductDao.findAllByMenuId(anyLong())).thenReturn(Collections.singletonList(menuProduct));
 
-		List<Menu> expected = menuService.list();
-		assertThat(expected).hasSize(1);
+		List<Menu> actual = menuService.list();
+
+		assertThat(actual).hasSize(1);
+		assertThat(actual.get(0)).usingRecursiveComparison()
+			.isEqualTo(expected.get(0));
 	}
 }

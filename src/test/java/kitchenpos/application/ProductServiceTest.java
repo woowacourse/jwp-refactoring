@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -65,7 +64,7 @@ class ProductServiceTest {
 		when(productDao.save(any(Product.class))).thenReturn(product);
 
 		Product actual = productService.create(product);
-		assertThat(product).usingRecursiveComparison().isEqualTo(actual);
+		assertThat(actual).usingRecursiveComparison().isEqualTo(product);
 	}
 
 	@Test
@@ -78,7 +77,7 @@ class ProductServiceTest {
 		when(productDao.findAll()).thenReturn(Collections.singletonList(product));
 
 		List<Product> actual = productService.list();
-		Product actualItem = actual.get(0);
-		assertThat(product).usingRecursiveComparison().isEqualTo(actualItem);
+		assertThat(actual).hasSize(1);
+		assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(product);
 	}
 }

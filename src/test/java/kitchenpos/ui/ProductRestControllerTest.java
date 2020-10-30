@@ -23,12 +23,12 @@ import kitchenpos.domain.Product;
 
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest {
+	@MockBean
+	private ProductService productService;
+
 	private MockMvc mockMvc;
 
 	private ObjectMapper objectMapper;
-
-	@MockBean
-	private ProductService productService;
 
 	private Product product;
 

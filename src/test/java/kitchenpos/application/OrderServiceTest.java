@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
@@ -27,7 +26,6 @@ import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
-
 	@Mock
 	private MenuDao menuDao;
 
@@ -53,7 +51,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.now());
 
 		assertThatThrownBy(() -> orderService.create(order))
@@ -72,7 +70,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.now());
 		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
@@ -94,7 +92,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.now());
 		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
@@ -117,7 +115,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.now());
 		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
@@ -146,7 +144,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.now());
 		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
@@ -163,13 +161,8 @@ class OrderServiceTest {
 
 		Order actual = orderService.create(order);
 
-		assertAll(
-			() -> assertEquals(actual.getId(), order.getId()),
-			() -> assertEquals(actual.getOrderedTime(), order.getOrderedTime()),
-			() -> assertEquals(actual.getOrderLineItems(), order.getOrderLineItems()),
-			() -> assertEquals(actual.getOrderStatus(), order.getOrderStatus()),
-			() -> assertEquals(actual.getOrderTableId(), order.getOrderTableId())
-		);
+		assertThat(actual).usingRecursiveComparison()
+			.isEqualTo(order);
 	}
 
 	@Test
@@ -183,29 +176,23 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.of(2020, 10, 26, 21, 50));
 
 		when(orderDao.findAll()).thenReturn(Collections.singletonList(order));
 		when(orderLineItemDao.findAllByOrderId(anyLong())).thenReturn(Collections.singletonList(orderLineItem));
 
-		Order expect = new Order();
-		expect.setId(1L);
-		expect.setOrderTableId(1L);
-		expect.setOrderStatus("주문중");
-		expect.setOrderedTime(LocalDateTime.of(2020, 10, 26, 21, 50));
-		expect.setOrderLineItems(Collections.singletonList(orderLineItem));
+		Order expected = new Order();
+		expected.setId(1L);
+		expected.setOrderTableId(1L);
+		expected.setOrderStatus(OrderStatus.COOKING.name());
+		expected.setOrderedTime(LocalDateTime.of(2020, 10, 26, 21, 50));
+		expected.setOrderLineItems(Collections.singletonList(orderLineItem));
 
 		List<Order> actual = orderService.list();
-		Order actualItem = actual.get(0);
-
-		assertAll(
-			() -> assertEquals(actualItem.getId(), expect.getId()),
-			() -> assertEquals(actualItem.getOrderedTime(), expect.getOrderedTime()),
-			() -> assertEquals(actualItem.getOrderLineItems(), expect.getOrderLineItems()),
-			() -> assertEquals(actualItem.getOrderStatus(), expect.getOrderStatus()),
-			() -> assertEquals(actualItem.getOrderTableId(), expect.getOrderTableId())
-		);
+		assertThat(actual).hasSize(1);
+		assertThat(actual.get(0)).usingRecursiveComparison()
+			.isEqualTo(expected);
 	}
 
 	@DisplayName("존재하지 않는 order를 수정할 경우 IllegalArgumentException 발생")
@@ -220,7 +207,7 @@ class OrderServiceTest {
 		Order order = new Order();
 		order.setId(1L);
 		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
+		order.setOrderStatus(OrderStatus.COOKING.name());
 		order.setOrderedTime(LocalDateTime.of(2020, 10, 26, 21, 50));
 		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 
@@ -273,12 +260,7 @@ class OrderServiceTest {
 
 		Order actual = orderService.changeOrderStatus(1L, order);
 
-		assertAll(
-			() -> assertEquals(actual.getId(), order.getId()),
-			() -> assertEquals(actual.getOrderedTime(), order.getOrderedTime()),
-			() -> assertEquals(actual.getOrderLineItems(), order.getOrderLineItems()),
-			() -> assertEquals(actual.getOrderStatus(), order.getOrderStatus()),
-			() -> assertEquals(actual.getOrderTableId(), order.getOrderTableId())
-		);
+		assertThat(actual).usingRecursiveComparison()
+			.isEqualTo(order);
 	}
 }
