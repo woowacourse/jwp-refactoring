@@ -1,20 +1,20 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.TableGroupCreateRequest;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import kitchenpos.application.TableGroupService;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends MvcTest {
@@ -28,7 +28,7 @@ class TableGroupRestControllerTest extends MvcTest {
         given(tableGroupService.create(any())).willReturn(TABLE_GROUP);
 
         TableGroupCreateRequest tableGroupCreateRequest =
-            new TableGroupCreateRequest(Arrays.asList(ORDER_TABLE_ID_1));
+            new TableGroupCreateRequest(Arrays.asList(TABLE_ID_1));
         String inputJson = objectMapper.writeValueAsString(tableGroupCreateRequest);
         MvcResult mvcResult = postAction("/api/table-groups", inputJson)
             .andExpect(status().isCreated())

@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dao.TableDao;
+import kitchenpos.domain.Table;
 import kitchenpos.fixture.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,131 +28,131 @@ class TableServiceTest extends TestFixture {
     private OrderDao orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderDao, tableDao);
     }
 
     @DisplayName("테이블 생성 성공 테스트")
     @Test
     void createTest() {
-        given(orderTableDao.save(any())).willReturn(ORDER_TABLE_1);
+        given(tableDao.save(any())).willReturn(TABLE_1);
 
-        OrderTable persistOrderTable = tableService.create(ORDER_TABLE_1);
+        Table persistTable = tableService.create(TABLE_1);
 
-        assertThat(persistOrderTable).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        assertThat(persistTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 
     @DisplayName("테이블 조회 성공 테스트")
     @Test
     void listTest() {
-        given(orderTableDao.findAll()).willReturn(ORDER_TABLES);
+        given(tableDao.findAll()).willReturn(TABLES);
 
-        List<OrderTable> persistOrderTables = tableService.list();
+        List<Table> persistTables = tableService.list();
 
         assertAll(
-            () -> assertThat(persistOrderTables).hasSize(ORDER_TABLES.size()),
-            () -> assertThat(persistOrderTables.get(0)).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1),
-            () -> assertThat(persistOrderTables.get(1)).usingRecursiveComparison().isEqualTo(ORDER_TABLE_2)
+            () -> assertThat(persistTables).hasSize(TABLES.size()),
+            () -> assertThat(persistTables.get(0)).usingRecursiveComparison().isEqualTo(TABLE_1),
+            () -> assertThat(persistTables.get(1)).usingRecursiveComparison().isEqualTo(TABLE_2)
         );
     }
 
     @DisplayName("테이블 empty 변경 예외 테스트: 테이블이 존재하지 않을 때")
     @Test
-    void changeEmptyFailByNotExistOrderTable() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+    void changeEmptyFailByNotExistTable() {
+        given(tableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tableService.changeEmpty(ORDER_TABLE_ID_1, ORDER_TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 empty 변경 예외 테스트: 테이블이 그룹이 이미 지정되어 있을 때")
     @Test
     void changeEmptyFailByAlreadyIncluded() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE_1));
+        given(tableDao.findById(anyLong())).willReturn(Optional.of(TABLE_1));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(ORDER_TABLE_ID_1, ORDER_TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 empty 변경 예외 테스트: 아직 식사 중 또는 요리 중일 때")
     @Test
     void changeEmptyFailByNotCompleted() {
-        OrderTable notCompletedOrderTable = new OrderTable();
-        notCompletedOrderTable.setId(ORDER_TABLE_ID_1);
-        notCompletedOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
-        notCompletedOrderTable.setEmpty(ORDER_TABLE_EMPTY_1);
+        Table notCompletedTable = new Table();
+        notCompletedTable.setId(TABLE_ID_1);
+        notCompletedTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
+        notCompletedTable.setEmpty(TABLE_EMPTY_1);
 
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(notCompletedOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
+        given(tableDao.findById(anyLong())).willReturn(Optional.of(notCompletedTable));
+        given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(ORDER_TABLE_ID_1, ORDER_TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 empty 변경 성 테스트")
     @Test
     void changeEmptyTest() {
-        OrderTable notGroupedOrderTable = new OrderTable();
-        notGroupedOrderTable.setId(ORDER_TABLE_ID_1);
-        notGroupedOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
-        notGroupedOrderTable.setEmpty(ORDER_TABLE_EMPTY_1);
+        Table notGroupedTable = new Table();
+        notGroupedTable.setId(TABLE_ID_1);
+        notGroupedTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
+        notGroupedTable.setEmpty(TABLE_EMPTY_1);
 
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(notGroupedOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
-        given(orderTableDao.save(any())).willReturn(ORDER_TABLE_1);
+        given(tableDao.findById(anyLong())).willReturn(Optional.of(notGroupedTable));
+        given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
+        given(tableDao.save(any())).willReturn(TABLE_1);
 
-        OrderTable persistedOrderTable = tableService.changeEmpty(ORDER_TABLE_ID_1, ORDER_TABLE_1);
-        assertThat(persistedOrderTable).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        Table persistedTable = tableService.changeEmpty(TABLE_ID_1, TABLE_1);
+        assertThat(persistedTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 
     @DisplayName("테이블 고객수 변경 예외 테스트: 음수로 변경 시도할 때")
     @Test
     void changeNumberOfGuestsTestFailByNegativeNumberOfGuests() {
-        OrderTable negativeGuestsTable = new OrderTable();
-        negativeGuestsTable.setId(ORDER_TABLE_ID_1);
+        Table negativeGuestsTable = new Table();
+        negativeGuestsTable.setId(TABLE_ID_1);
         negativeGuestsTable.setTableGroupId(TABLE_GROUP_ID);
         negativeGuestsTable.setNumberOfGuests(-1);
-        negativeGuestsTable.setEmpty(ORDER_TABLE_EMPTY_1);
+        negativeGuestsTable.setEmpty(TABLE_EMPTY_1);
 
-        assertThatThrownBy(()-> tableService.changeEmpty(ORDER_TABLE_ID_1, negativeGuestsTable))
+        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, negativeGuestsTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 고객수 변경 예외 테스트: 테이블이 존재하지 않을 때")
     @Test
     void changeNumberOfGuestsTestFailByNotExistTable() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+        given(tableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(()-> tableService.changeEmpty(ORDER_TABLE_ID_1, ORDER_TABLE_1))
+        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 고객수 변경 예외 테스트: 테이블이 비어있을 때")
     @Test
     void changeNumberOfGuestsTestFailByEmptyTable() {
-        OrderTable emptyTable = new OrderTable();
-        emptyTable.setId(ORDER_TABLE_ID_1);
+        Table emptyTable = new Table();
+        emptyTable.setId(TABLE_ID_1);
         emptyTable.setTableGroupId(TABLE_GROUP_ID);
-        emptyTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
+        emptyTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
         emptyTable.setEmpty(true);
 
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(emptyTable));
+        given(tableDao.findById(anyLong())).willReturn(Optional.of(emptyTable));
 
-        assertThatThrownBy(()-> tableService.changeEmpty(ORDER_TABLE_ID_1, emptyTable))
+        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, emptyTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 고객수 변경 성공 테스트")
     @Test
     void changeNumberOfGuestsTest() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(ORDER_TABLE_1));
-        given(orderTableDao.save(any())).willReturn(ORDER_TABLE_1);
+        given(tableDao.findById(anyLong())).willReturn(Optional.of(TABLE_1));
+        given(tableDao.save(any())).willReturn(TABLE_1);
 
-        OrderTable persistedOrderTable = tableService.changeNumberOfGuests(ORDER_TABLE_ID_1, ORDER_TABLE_1);
+        Table persistedTable = tableService.changeNumberOfGuests(TABLE_ID_1, TABLE_1);
 
-        assertThat(persistedOrderTable).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        assertThat(persistedTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 }

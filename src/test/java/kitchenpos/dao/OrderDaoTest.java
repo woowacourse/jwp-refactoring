@@ -1,15 +1,16 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import kitchenpos.domain.Order;
 
 class OrderDaoTest extends DaoTest {
 
@@ -48,18 +49,18 @@ class OrderDaoTest extends DaoTest {
 
     @DisplayName("해당 테이블에 해당 상태들의 주문이 있는지 조회 테스트")
     @Test
-    void existsByOrderTableIdAndOrderStatusInTest() {
+    void existsByTableIdAndOrderStatusInTest() {
         boolean isExist = orderDao
-            .existsByOrderTableIdAndOrderStatusIn(ORDER_TABLE_ID_1, Arrays.asList(ORDER_STATUS_1));
+            .existsByTableIdAndOrderStatusIn(TABLE_ID_1, Arrays.asList(ORDER_STATUS_1));
 
         assertThat(isExist).isTrue();
     }
 
     @DisplayName("해당 테이블들에 해당 상태들의 주문이 있는지 조회 테스트")
     @Test
-    void existsByOrderTableIdInAndOrderStatusInTest() {
+    void existsByTableIdInAndOrderStatusInTest() {
         boolean isExist = orderDao
-            .existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(ORDER_TABLE_ID_1), Arrays.asList(ORDER_STATUS_1));
+            .existsByTableIdInAndOrderStatusIn(Arrays.asList(TABLE_ID_1), Arrays.asList(ORDER_STATUS_1));
 
         assertThat(isExist).isTrue();
     }
@@ -71,7 +72,7 @@ class OrderDaoTest extends DaoTest {
         updatingOrder.setId(ORDER_ID_1);
         updatingOrder.setOrderedTime(ORDERED_TIME_1);
         updatingOrder.setOrderStatus("COMPLETION");
-        updatingOrder.setOrderTableId(ORDER_TABLE_ID_1);
+        updatingOrder.setTableId(TABLE_ID_1);
 
         orderDao.save(updatingOrder);
 
@@ -80,7 +81,7 @@ class OrderDaoTest extends DaoTest {
             () -> assertThat(updatedOrder.getId()).isEqualTo(ORDER_ID_1),
             () -> assertThat(updatedOrder.getOrderedTime()).isEqualTo(ORDERED_TIME_1),
             () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo("COMPLETION"),
-            () -> assertThat(updatedOrder.getOrderTableId()).isEqualTo(ORDER_TABLE_ID_1)
+            () -> assertThat(updatedOrder.getTableId()).isEqualTo(TABLE_ID_1)
         );
     }
 }

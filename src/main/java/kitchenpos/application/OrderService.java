@@ -1,40 +1,41 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderMenuDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderMenu;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderMenuDao;
+import kitchenpos.dao.TableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Table;
+
 @Service
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderMenuDao orderMenuDao;
-    private final OrderTableDao orderTableDao;
+    private final TableDao tableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderMenuDao orderMenuDao,
-            final OrderTableDao orderTableDao
+            final TableDao tableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderMenuDao = orderMenuDao;
-        this.orderTableDao = orderTableDao;
+        this.tableDao = tableDao;
     }
 
     @Transactional
@@ -55,14 +56,14 @@ public class OrderService {
 
         order.setId(null);
 
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final Table table = tableDao.findById(order.getTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (orderTable.isEmpty()) {
+        if (table.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
+        order.setTableId(table.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
 
