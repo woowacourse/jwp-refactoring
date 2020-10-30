@@ -39,7 +39,7 @@ class TableServiceTest {
     @DisplayName("Table 생성")
     @Test
     void create() {
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 0, null, false);
+        OrderTable orderTable = DomainFactory.createOrderTable(0, null, false);
 
         OrderTable actual = tableService.create(orderTable);
 
@@ -49,7 +49,7 @@ class TableServiceTest {
     @DisplayName("Table 전체 조회")
     @Test
     void list() {
-        orderTableDao.save(DomainFactory.createOrderTable(null, 1, null, false));
+        orderTableDao.save(DomainFactory.createOrderTable(1, null, false));
 
         List<OrderTable> actual = tableService.list();
 
@@ -59,10 +59,10 @@ class TableServiceTest {
     @DisplayName("테이블이 비어있는지 여부 변경")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 0, null, true);
+        OrderTable orderTable = DomainFactory.createOrderTable(0, null, true);
         OrderTable saved = orderTableDao.save(orderTable);
 
-        OrderTable expect = DomainFactory.createOrderTable(null, 1, null, false);
+        OrderTable expect = DomainFactory.createOrderTable(1, null, false);
         OrderTable actual = tableService.changeEmpty(saved.getId(), expect);
 
         assertThat(actual.isEmpty()).isFalse();
@@ -74,7 +74,7 @@ class TableServiceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 0, savedTableGroup.getId(), true);
+        OrderTable orderTable = DomainFactory.createOrderTable(0, savedTableGroup.getId(), true);
         OrderTable saved = orderTableDao.save(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(saved.getId(), orderTable))
@@ -84,9 +84,9 @@ class TableServiceTest {
     @DisplayName("테이블이 비어있는지 여부 변경시 주문 상태가 식사중이거나 조리중일 때 예외 테스트")
     @Test
     void changeEmptyWrongOrderStatus() {
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 0, null, false);
+        OrderTable orderTable = DomainFactory.createOrderTable(0, null, false);
         OrderTable saved = orderTableDao.save(orderTable);
-        Order order = DomainFactory.createOrder(null, OrderStatus.MEAL.name(), saved.getId(), LocalDateTime.now());
+        Order order = DomainFactory.createOrder(OrderStatus.MEAL.name(), saved.getId(), null);
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(saved.getId(), orderTable))
@@ -96,9 +96,9 @@ class TableServiceTest {
     @DisplayName("테이블의 손님 수 바꾸기")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 7, null, false);
+        OrderTable orderTable = DomainFactory.createOrderTable(7, null, false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable expect = DomainFactory.createOrderTable(null, 2, null, false);
+        OrderTable expect = DomainFactory.createOrderTable(2, null, false);
 
         OrderTable changed = tableService.changeNumberOfGuests(savedOrderTable.getId(), expect);
 
@@ -108,7 +108,7 @@ class TableServiceTest {
     @DisplayName("테이블 바꿀 손님 수 0명 미만일 때 예외 발생")
     @Test
     void changeWrongNumberOfGuests() {
-        OrderTable wrongNumberOfGuest = DomainFactory.createOrderTable(null, -1, null, false);
+        OrderTable wrongNumberOfGuest = DomainFactory.createOrderTable(-1, null, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, wrongNumberOfGuest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -117,9 +117,9 @@ class TableServiceTest {
     @DisplayName("테이블이 비어있을 때 손님 수 변경 예외 발생")
     @Test
     void changeEmptyTableNumberOfGuests() {
-        OrderTable emptyTable = DomainFactory.createOrderTable(null, 1, null, true);
+        OrderTable emptyTable = DomainFactory.createOrderTable(1, null, true);
         OrderTable savedOrderTable = orderTableDao.save(emptyTable);
-        OrderTable orderTable = DomainFactory.createOrderTable(null, 3, null, false);
+        OrderTable orderTable = DomainFactory.createOrderTable(3, null, false);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);

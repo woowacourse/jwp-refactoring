@@ -4,12 +4,14 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 public class DomainFactory {
 
@@ -27,9 +29,9 @@ public class DomainFactory {
         return menu;
     }
 
-    public static MenuProduct createMenuProduct(Long seq, Long productId, Long quantity) {
+    public static MenuProduct createMenuProduct(Long productId, Long quantity) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
+        menuProduct.setSeq(null);
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
@@ -43,21 +45,22 @@ public class DomainFactory {
         return product;
     }
 
-    public static OrderTable createOrderTable(Long id, int numberOfGuests, Long tableGroupId, boolean empty) {
+    public static OrderTable createOrderTable(int numberOfGuests, Long tableGroupId, boolean empty) {
         OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
+        orderTable.setId(null);
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setTableGroupId(tableGroupId);
         orderTable.setEmpty(empty);
         return orderTable;
     }
 
-    public static Order createOrder(Long id, String orderStatus, Long tableId, LocalDateTime orderedTime) {
+    public static Order createOrder(String orderStatus, Long tableId, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
-        order.setId(id);
+        order.setId(null);
         order.setOrderStatus(orderStatus);
         order.setOrderTableId(tableId);
-        order.setOrderedTime(orderedTime);
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderLineItems(orderLineItems);
         return order;
     }
 
@@ -66,5 +69,14 @@ public class DomainFactory {
         menuGroup.setId(null);
         menuGroup.setName(name);
         return menuGroup;
+    }
+
+    public static OrderLineItem createOrderLineItem(Long menuId, Long orderId, Long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(null);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
     }
 }

@@ -48,7 +48,7 @@ class MenuServiceTest {
     void create() {
         BigDecimal price = new BigDecimal(10000);
         Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, price));
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 2L);
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(savedProduct.getId(), 2L);
         MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
         Menu menu = DomainFactory.createMenu(null, MENU_NAME, price, savedMenuGroup.getId(), menuProduct);
 
@@ -83,7 +83,7 @@ class MenuServiceTest {
     @Test
     void createMenuProductsAmountLessThanMenuPrice() {
         Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, new BigDecimal(9999)));
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 1L);
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(savedProduct.getId(), 1L);
         MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
         Menu menu = DomainFactory.createMenu(null, MENU_NAME, new BigDecimal(10000), savedMenuGroup.getId(), menuProduct);
 
@@ -95,7 +95,7 @@ class MenuServiceTest {
     void list() {
         BigDecimal price = new BigDecimal(10000);
         Product savedProduct = productDao.save(DomainFactory.createProduct(null, PRODUCT_NAME, price));
-        MenuProduct menuProduct = DomainFactory.createMenuProduct(null, savedProduct.getId(), 2L);
+        MenuProduct menuProduct = DomainFactory.createMenuProduct(savedProduct.getId(), 2L);
         MenuGroup savedMenuGroup = menuGroupDao.save(DomainFactory.createMenuGroup("menuGroup"));
         Menu menu = DomainFactory.createMenu(null, MENU_NAME, price, savedMenuGroup.getId(), menuProduct);
         menuDao.save(menu);
