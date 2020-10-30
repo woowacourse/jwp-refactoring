@@ -1,11 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.dto.order.OrderTableRequest;
+import kitchenpos.dto.order.TableGroupRequest;
+import kitchenpos.dto.order.TableGroupResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,120 +16,116 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static kitchenpos.DomainFactory.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class TableGroupServiceTest extends ServiceTest {
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     private TableGroupService tableGroupService;
 
-    static Stream<TableGroup> invalidTableGroupWithOrderTable() {
-        TableGroup tableGroupWithEmptyOrderTable = new TableGroup();
-        tableGroupWithEmptyOrderTable.setOrderTables(Collections.emptyList());
-
-        TableGroup tableGroupWithOrderTableSizeUnderTwo = new TableGroup();
-        tableGroupWithOrderTableSizeUnderTwo.setOrderTables(Collections.singletonList(new OrderTable()));
+    static Stream<TableGroupRequest> invalidTableGroupRequestWithOrderTable() {
+        TableGroupRequest tableGroupRequestWithEmpty = new TableGroupRequest(Collections.emptyList());
+        TableGroupRequest tableGroupRequestWithSingleOrderTable = new TableGroupRequest(
+                Collections.singletonList(new OrderTableRequest(1L)));
 
         return Stream.of(
-                tableGroupWithEmptyOrderTable, tableGroupWithOrderTableSizeUnderTwo
+                tableGroupRequestWithEmpty, tableGroupRequestWithSingleOrderTable
         );
     }
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-        orderTableIds = new ArrayList<>();
-        orderIds = new ArrayList<>();
-        tableGroupIds = new ArrayList<>();
+        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
     }
 
     @DisplayName("새로운 단체 지정")
     @Test
     void createTest() {
-        OrderTable firstOrderTable = saveOrderTable(orderTableDao, 1, true);
-        OrderTable secondOrderTable = saveOrderTable(orderTableDao, 2, true);
+        OrderTable firstOrderTable = saveOrderTable(orderTableRepository, 1, true);
+        OrderTable secondOrderTable = saveOrderTable(orderTableRepository, 2, true);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(new OrderTableRequest(firstOrderTable.getId()),
+                        new OrderTableRequest(secondOrderTable.getId()))
+        );
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        tableGroupIds.add(savedTableGroup.getId());
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(savedTableGroup.getOrderTables()).hasSize(2),
-                () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull()
+                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getCreatedDate()).isBefore(LocalDateTime.now()),
+                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
         );
     }
 
     @DisplayName("새로운 단체 지정 시 주문 테이블의 개수가 잘못 되었을 때 예외 반환")
     @ParameterizedTest
-    @MethodSource("invalidTableGroupWithOrderTable")
-    void createTableGroupWithInvalidOrderTableTest(TableGroup tableGroup) {
+    @MethodSource("invalidTableGroupRequestWithOrderTable")
+    void createTableGroupWithInvalidOrderTableTest(TableGroupRequest tableGroupRequest) {
         assertThatThrownBy(() -> {
-            tableGroupService.create(tableGroup);
+            tableGroupService.create(tableGroupRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 단체 지정 시 존재하지 않는 주문 테이블 입력 시 예외 반환")
     @Test
     void createTableGroupWithInvalidOrderTableTest() {
-        OrderTable firstInvalidOrderTable = createOrderTable(0, false);
-        OrderTable secondInvalidOrderTable = createOrderTable(0, false);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(firstInvalidOrderTable, secondInvalidOrderTable));
+        OrderTableRequest firstInvalidOrderTableRequest = new OrderTableRequest(0, false);
+        OrderTableRequest secondInvalidOrderTableRequest = new OrderTableRequest(0, false);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(firstInvalidOrderTableRequest, secondInvalidOrderTableRequest)
+        );
 
         assertThatThrownBy(() -> {
-            tableGroupService.create(tableGroup);
+            tableGroupService.create(tableGroupRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정 해제")
     @Test
     void ungroupTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
-        saveOrderTable(orderTableDao, 2, true, savedTableGroup.getId());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable firstOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
+        OrderTable secondOrderTable = saveOrderTable(orderTableRepository, 2, true, savedTableGroup.getId());
 
         tableGroupService.ungroup(savedTableGroup.getId());
-        List<OrderTable> ungroupedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        List<OrderTable> ungroupedOrderTables = orderTableRepository.findAllByIdIn(
+                Arrays.asList(firstOrderTable.getId(), secondOrderTable.getId())
+        );
 
         assertAll(
-                () -> assertThat(ungroupedOrderTables.get(0).getTableGroupId()).isNull(),
-                () -> assertThat(ungroupedOrderTables.get(0).getNumberOfGuests()).isEqualTo(1),
-                () -> assertThat(ungroupedOrderTables.get(0).isEmpty()).isFalse(),
-                () -> assertThat(ungroupedOrderTables.get(1).getTableGroupId()).isNull(),
-                () -> assertThat(ungroupedOrderTables.get(1).getNumberOfGuests()).isEqualTo(2),
-                () -> assertThat(ungroupedOrderTables.get(1).isEmpty()).isFalse()
+                () -> assertThat(ungroupedOrderTables.get(0).getTableGroup()).isNull(),
+                () -> assertThat(ungroupedOrderTables.get(0).getNumberOfGuestsCount()).isEqualTo(1),
+                () -> assertThat(ungroupedOrderTables.get(0).isEmptyTable()).isFalse(),
+                () -> assertThat(ungroupedOrderTables.get(1).getTableGroup()).isNull(),
+                () -> assertThat(ungroupedOrderTables.get(1).getNumberOfGuestsCount()).isEqualTo(2),
+                () -> assertThat(ungroupedOrderTables.get(1).isEmptyTable()).isFalse()
         );
     }
 
     @DisplayName("단체 테이블 중 결제 완료 되지 않은 주문이 남아있을 때 단체 지정 해제 시 예외 반환")
     @Test
     void ungroupWithInvalidOrderTableTest() {
-        TableGroup savedTableGroup = saveTableGroup(tableGroupDao);
-        OrderTable unPairedOrderTable = saveOrderTable(orderTableDao, 1, true, savedTableGroup.getId());
-        saveOrderTable(orderTableDao, 2, true, savedTableGroup.getId());
-        saveOrder(orderDao, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
+        OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
+        saveOrderTable(orderTableRepository, 2, true, savedTableGroup.getId());
+        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
 
         assertThatThrownBy(() -> {
             tableGroupService.ungroup(savedTableGroup.getId());
@@ -134,9 +133,10 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @AfterEach
+    @Transactional
     void tearDown() {
-        deleteOrder();
-        deleteOrderTable();
-        deleteTableGroup();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }

@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menu.MenuGroupRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,40 +16,41 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuGroupServiceTest extends ServiceTest {
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private MenuGroupService menuGroupService;
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
-        menuGroupIds = new ArrayList<>();
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("메뉴 그룹 저장")
     @Test
     void createTest() {
-        MenuGroup savedMenuGroup = saveMenuGroup(menuGroupDao, "한마리메뉴");
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("추천메뉴");
+
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
 
         assertAll(
-                () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-                () -> assertThat(savedMenuGroup.getName()).isEqualTo("한마리메뉴")
+                () -> assertThat(menuGroupResponse.getId()).isNotNull(),
+                () -> assertThat(menuGroupResponse.getName()).isEqualTo(menuGroupRequest.getName())
         );
     }
 
     @DisplayName("저장된 모든 메뉴 그룹 반환")
     @Test
     void listTest() {
-        saveMenuGroup(menuGroupDao, "한마리메뉴");
-        saveMenuGroup(menuGroupDao, "두마리메뉴");
+        saveMenuGroup(menuGroupRepository, "한마리메뉴");
+        saveMenuGroup(menuGroupRepository, "두마리메뉴");
 
-        List<MenuGroup> allMenuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroupResponses = menuGroupService.list();
 
-        assertThat(allMenuGroups).hasSize(2);
+        assertThat(menuGroupResponses).hasSize(2);
     }
 
     @AfterEach
     void tearDown() {
-        deleteMenuGroup();
+        menuGroupRepository.deleteAll();
     }
 }

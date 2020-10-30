@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.ProductRequest;
+import kitchenpos.dto.menu.ProductResponse;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 class ProductServiceTest extends ServiceTest {
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private ProductService productService;
 
@@ -35,25 +35,20 @@ class ProductServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
-        productIds = new ArrayList<>();
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("새로운 상품 생성")
     @Test
     void createTest() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17_000));
+        ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(17_000));
 
-        Product savedProduct = productService.create(product);
-        productIds.add(savedProduct.getId());
+        ProductResponse productResponse = productService.create(productRequest);
 
         assertAll(
-                () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice()).isEqualTo(
-                        product.getPrice().setScale(BIG_DECIMAL_FLOOR_SCALE, BigDecimal.ROUND_FLOOR))
+                () -> assertThat(productResponse.getId()).isNotNull(),
+                () -> assertThat(productResponse.getName()).isEqualTo(productRequest.getName()),
+                () -> assertThat(productResponse.getPrice()).isEqualTo(productRequest.getPrice())
         );
     }
 
@@ -61,27 +56,26 @@ class ProductServiceTest extends ServiceTest {
     @ParameterizedTest
     @MethodSource("invalidPrices")
     void createWithInvalidPriceTest(BigDecimal price) {
-        Product product = new Product();
-        product.setPrice(price);
+        ProductRequest productRequest = new ProductRequest("잘못된 상품", price);
 
         assertThatThrownBy(() -> {
-            productService.create(product);
+            productService.create(productRequest);
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("저장된 모든 상품 반환")
     @Test
     void listTest() {
-        saveProduct(productDao, "후라이드치킨", BigDecimal.valueOf(16_000));
-        saveProduct(productDao, "양념치킨", BigDecimal.valueOf(16_000));
+        saveProduct(productRepository, "후라이드치킨", BigDecimal.valueOf(16_000));
+        saveProduct(productRepository, "양념치킨", BigDecimal.valueOf(16_000));
 
-        List<Product> products = productService.list();
+        List<ProductResponse> productResponses = productService.list();
 
-        assertThat(products).hasSize(2);
+        assertThat(productResponses).hasSize(2);
     }
 
     @AfterEach
     void tearDown() {
-        deleteProduct();
+        productRepository.deleteAll();
     }
 }
