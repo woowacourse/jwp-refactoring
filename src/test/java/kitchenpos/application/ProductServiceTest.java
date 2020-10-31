@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 
 @SpringBootTest(classes = {

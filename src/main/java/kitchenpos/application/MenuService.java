@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -17,6 +17,7 @@ import java.util.Objects;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
