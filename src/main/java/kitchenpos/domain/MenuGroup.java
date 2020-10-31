@@ -16,6 +16,13 @@ public class MenuGroup {
     @Column
     private String name;
 
+    protected MenuGroup() {
+    }
+
+    public MenuGroup(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }
