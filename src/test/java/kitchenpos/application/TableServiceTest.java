@@ -80,10 +80,7 @@ class TableServiceTest extends TestFixture {
     @DisplayName("테이블 empty 변경 예외 테스트: 아직 식사 중 또는 요리 중일 때")
     @Test
     void changeEmptyFailByNotCompleted() {
-        Table notCompletedTable = new Table();
-        notCompletedTable.setId(TABLE_ID_1);
-        notCompletedTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        notCompletedTable.setEmpty(TABLE_EMPTY_1);
+        Table notCompletedTable = new Table(TABLE_ID_1, null, TABLE_NUMBER_OF_GUESTS_1, TABLE_EMPTY_1);
 
         given(tableDao.findById(anyLong())).willReturn(Optional.of(notCompletedTable));
         given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
@@ -95,10 +92,7 @@ class TableServiceTest extends TestFixture {
     @DisplayName("테이블 empty 변경 성 테스트")
     @Test
     void changeEmptyTest() {
-        Table notGroupedTable = new Table();
-        notGroupedTable.setId(TABLE_ID_1);
-        notGroupedTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        notGroupedTable.setEmpty(TABLE_EMPTY_1);
+        Table notGroupedTable = new Table(TABLE_ID_1, null, TABLE_NUMBER_OF_GUESTS_1, TABLE_EMPTY_1);
 
         given(tableDao.findById(anyLong())).willReturn(Optional.of(notGroupedTable));
         given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
@@ -111,11 +105,7 @@ class TableServiceTest extends TestFixture {
     @DisplayName("테이블 고객수 변경 예외 테스트: 음수로 변경 시도할 때")
     @Test
     void changeNumberOfGuestsTestFailByNegativeNumberOfGuests() {
-        Table negativeGuestsTable = new Table();
-        negativeGuestsTable.setId(TABLE_ID_1);
-        negativeGuestsTable.setTableGroupId(TABLE_GROUP_ID);
-        negativeGuestsTable.setNumberOfGuests(-1);
-        negativeGuestsTable.setEmpty(TABLE_EMPTY_1);
+        Table negativeGuestsTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, -1, TABLE_EMPTY_1);
 
         assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, negativeGuestsTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -133,11 +123,7 @@ class TableServiceTest extends TestFixture {
     @DisplayName("테이블 고객수 변경 예외 테스트: 테이블이 비어있을 때")
     @Test
     void changeNumberOfGuestsTestFailByEmptyTable() {
-        Table emptyTable = new Table();
-        emptyTable.setId(TABLE_ID_1);
-        emptyTable.setTableGroupId(TABLE_GROUP_ID);
-        emptyTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        emptyTable.setEmpty(true);
+        Table emptyTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, true);
 
         given(tableDao.findById(anyLong())).willReturn(Optional.of(emptyTable));
 

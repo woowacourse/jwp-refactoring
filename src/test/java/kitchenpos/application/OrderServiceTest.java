@@ -93,11 +93,7 @@ class OrderServiceTest extends TestFixture {
     void createFailByEmptyTable() {
         Order emptyTableOrder = ORDER_1;
 
-        Table emptyTable = new Table();
-        emptyTable.setId(TABLE_ID_1);
-        emptyTable.setTableGroupId(TABLE_GROUP_ID);
-        emptyTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        emptyTable.setEmpty(true);
+        Table emptyTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, true);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
         given(tableDao.findById(emptyTableOrder.getId())).willReturn(Optional.of(emptyTable));

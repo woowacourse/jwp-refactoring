@@ -72,19 +72,19 @@ public abstract class TestFixture {
     public static final Order ORDER_1 = new Order();
     public static final Order ORDER_2 = new Order();
 
+    public static final long TABLE_GROUP_ID = 1L;
+    public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
+    public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
+
     public static final long TABLE_ID_1 = 1L;
     public static final long TABLE_ID_2 = 2L;
     public static final int TABLE_NUMBER_OF_GUESTS_1 = 1;
     public static final int TABLE_NUMBER_OF_GUESTS_2 = 2;
     public static final boolean TABLE_EMPTY_1 = false;
     public static final boolean TABLE_EMPTY_2 = false;
-    public static final Table TABLE_1 = new Table();
-    public static final Table TABLE_2 = new Table();
-
-    public static final long TABLE_GROUP_ID = 1L;
-    public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
+    public static final Table TABLE_1 = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, TABLE_EMPTY_1);
+    public static final Table TABLE_2 = new Table(TABLE_ID_2, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_2, TABLE_EMPTY_2);
     public static final List<Table> TABLES = Arrays.asList(TABLE_1, TABLE_2);
-    public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
 
     @BeforeEach
     void setUpFixture() {
@@ -160,13 +160,13 @@ public abstract class TestFixture {
         ORDER_2.setOrderedTime(ORDERED_TIME_2);
         ORDER_2.setOrderMenus(ORDER_MENUS_2);
 
-        TABLE_1.setId(TABLE_ID_1);
-        TABLE_1.setTableGroupId(TABLE_GROUP_ID);
-        TABLE_1.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        TABLE_1.setEmpty(TABLE_EMPTY_1);
-        TABLE_2.setId(TABLE_ID_2);
-        TABLE_2.setTableGroupId(TABLE_GROUP_ID);
-        TABLE_2.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
-        TABLE_2.setEmpty(TABLE_EMPTY_2);
+        // TABLE_1.setId(TABLE_ID_1);
+        // TABLE_1.setTableGroupId(TABLE_GROUP_ID);
+        // TABLE_1.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
+        // TABLE_1.setEmpty(TABLE_EMPTY_1);
+        // TABLE_2.setId(TABLE_ID_2);
+        // TABLE_2.setTableGroupId(TABLE_GROUP_ID);
+        // TABLE_2.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
+        // TABLE_2.setEmpty(TABLE_EMPTY_2);
     }
 }

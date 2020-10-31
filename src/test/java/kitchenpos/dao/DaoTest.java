@@ -68,12 +68,7 @@ public abstract class DaoTest extends TestFixture {
     }
 
     private Table createNullIdTable(Table table) {
-        Table output = new Table();
-        output.setEmpty(table.isEmpty());
-        output.setNumberOfGuests(table.getNumberOfGuests());
-        output.setTableGroupId(table.getTableGroupId());
-
-        return output;
+        return new Table(null, table.getTableGroupId(), table.getNumberOfGuests(), table.isEmpty());
     }
 
     private Order createNullIdOrder(Order order) {

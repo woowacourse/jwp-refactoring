@@ -70,11 +70,7 @@ class TableDaoTest extends DaoTest {
     @DisplayName("기존에 존재하는 테이블 업데이트 테스트")
     @Test
     void updateTest() {
-        Table updatingTable = new Table();
-        updatingTable.setId(TABLE_ID_1);
-        updatingTable.setTableGroupId(TABLE_GROUP_ID);
-        updatingTable.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
-        updatingTable.setEmpty(true);
+        Table updatingTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_2, true);
 
         tableDao.save(updatingTable);
 
