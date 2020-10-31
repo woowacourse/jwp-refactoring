@@ -9,7 +9,7 @@ import kitchenpos.domain.Product;
 
 public class ProductFixture {
     public static final Product FRIED_CHICKEN = TestObjectUtils.createProduct(1L, "후라이드",
-            BigDecimal.valueOf(15000));
+            BigDecimal.valueOf(16000));
 
     public static final Product COLA = TestObjectUtils.createProduct(2L, "콜라",
             BigDecimal.valueOf(1000));

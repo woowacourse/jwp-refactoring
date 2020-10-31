@@ -37,20 +37,20 @@ class ProductServiceTest {
                 () -> assertThat(productService.create(FRIED_CHICKEN).getId()).isEqualTo(1L),
                 () -> assertThat(productService.create(FRIED_CHICKEN).getName()).isEqualTo("후라이드"),
                 () -> assertThat(productService.create(FRIED_CHICKEN).getPrice()).isEqualTo(
-                        BigDecimal.valueOf(15000))
+                        BigDecimal.valueOf(16000))
         );
     }
 
     @DisplayName("상품가격이 0 원 이하일 경우 상품을 생성할 수 없다.")
     @Test
-    void notCreateTest_underZeroPrice() {
+    void notCreateTest_when_underZeroPrice() {
         assertThatThrownBy(() -> productService.create(NEGATIVE_PRICE_PRODUCT))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품가격이 null 일 경우 상품을 생성할 수 없다.")
     @Test
-    void notCreateTest_priceNull() {
+    void notCreateTest_when_priceNull() {
         assertThatThrownBy(() -> productService.create(NULL_PRICE_PRODUCT))
                 .isInstanceOf(IllegalArgumentException.class);
     }
