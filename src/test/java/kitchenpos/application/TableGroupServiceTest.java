@@ -64,15 +64,8 @@ class TableGroupServiceTest extends TestFixture {
     @DisplayName("테이블 그룹 생성 성공 테스트")
     @Test
     void createTest() {
-        Table table1 = new Table();
-        Table table2 = new Table();
-
-        table1.setId(TABLE_ID_1);
-        table1.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        table1.setEmpty(!TABLE_EMPTY_1);
-        table2.setId(TABLE_ID_2);
-        table2.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
-        table2.setEmpty(!TABLE_EMPTY_2);
+        Table table1 = new Table(TABLE_ID_1, null, TABLE_NUMBER_OF_GUESTS_1, !TABLE_EMPTY_1);
+        Table table2 = new Table(TABLE_ID_2, null, TABLE_NUMBER_OF_GUESTS_2, !TABLE_EMPTY_2);
 
         given(tableDao.findAllByIdIn(any())).willReturn(Arrays.asList(table1, table2));
         given(tableGroupDao.save(any())).willReturn(TABLE_GROUP);
@@ -95,17 +88,8 @@ class TableGroupServiceTest extends TestFixture {
     @DisplayName("테이블 그룹 해제 성공 테스트")
     @Test
     void ungroupTest() {
-        Table table1 = new Table();
-        Table table2 = new Table();
-
-        table1.setId(TABLE_ID_1);
-        table1.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_1);
-        table1.setEmpty(true);
-        table1.setTableGroupId(TABLE_GROUP_ID);
-        table2.setId(TABLE_ID_2);
-        table2.setNumberOfGuests(TABLE_NUMBER_OF_GUESTS_2);
-        table2.setEmpty(true);
-        table2.setTableGroupId(TABLE_GROUP_ID);
+        Table table1 = new Table(TABLE_ID_1, TABLE_GROUP_ID, 0, TABLE_EMPTY_1);
+        Table table2 = new Table(TABLE_ID_2, TABLE_GROUP_ID, 0, TABLE_EMPTY_2);
 
         given(tableDao.findAllByTableGroupId(anyLong())).willReturn(Arrays.asList(table1, table2));
         given(orderDao.existsByTableIdInAndOrderStatusIn(any(), any())).willReturn(false);
@@ -114,8 +98,8 @@ class TableGroupServiceTest extends TestFixture {
         assertAll(
             () -> assertThat(table1.getTableGroupId()).isNull(),
             () -> assertThat(table2.getTableGroupId()).isNull(),
-            () -> assertThat(table1.isEmpty()).isFalse(),
-            () -> assertThat(table2.isEmpty()).isFalse()
+            () -> assertThat(table1.isEmpty()).isTrue(),
+            () -> assertThat(table2.isEmpty()).isTrue()
         );
     }
 }

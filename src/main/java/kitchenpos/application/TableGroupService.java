@@ -50,8 +50,7 @@ public class TableGroupService {
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final Table savedTable : savedTables) {
-            savedTable.setTableGroupId(tableGroupId);
-            savedTable.setEmpty(false);
+            savedTable.joinIn(tableGroupId);
             tableDao.save(savedTable);
         }
 
@@ -72,8 +71,7 @@ public class TableGroupService {
         }
 
         for (final Table table : tables) {
-            table.setTableGroupId(null);
-            table.setEmpty(false);
+            table.ungroup();
             tableDao.save(table);
         }
     }
