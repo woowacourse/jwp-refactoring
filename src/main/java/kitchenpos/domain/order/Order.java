@@ -49,7 +49,7 @@ public class Order extends BaseEntity {
         this(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public static Order of(OrderTable orderTable) {
+    public static Order startOf(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }

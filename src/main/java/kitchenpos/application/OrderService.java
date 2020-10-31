@@ -38,7 +38,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
-        Order orderToSave = Order.of(orderTable);
+        Order orderToSave = Order.startOf(orderTable);
         final Order savedOrder = orderRepository.save(orderToSave);
 
         addOrderLineItemToOrder(orderRequest, savedOrder);
@@ -55,9 +55,8 @@ public class OrderService {
         }
     }
 
-    @Transactional
     public List<OrderResponse> list() {
-        return OrderResponse.listOf(orderRepository.findAll());
+        return OrderResponse.listOf(orderRepository.findAllFetch());
     }
 
     @Transactional

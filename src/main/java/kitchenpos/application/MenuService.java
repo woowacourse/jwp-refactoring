@@ -8,6 +8,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -48,13 +49,13 @@ public class MenuService {
     }
 
     private BigDecimal calculateProductsPriceSum(MenuRequest menuRequest) {
-        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProducts();
         BigDecimal sum = BigDecimal.ZERO;
+        final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProducts();
         for (final MenuProductDto menuProductDto : menuProductDtos) {
             final Product product = productRepository.findById(menuProductDto.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            BigDecimal price = product.getProductPrice().getPrice();
-            sum = sum.add(price.multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
+            ProductPrice productPrice = product.getProductPrice();
+            sum = sum.add(productPrice.multiply(menuProductDto.getQuantity()));
         }
         return sum;
     }
@@ -68,8 +69,7 @@ public class MenuService {
         }
     }
 
-    @Transactional
     public List<MenuResponse> list() {
-        return MenuResponse.listOf(menuRepository.findAll());
+        return MenuResponse.listOf(menuRepository.findAllFetch());
     }
 }
