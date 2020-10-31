@@ -1,14 +1,30 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(name = "order_table_id")
     private Long orderTableId;
+
+    @Column
     private String orderStatus;
+
+    @Column
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    // private List<OrderLineItem> orderLineItems;
 
     public Long getId() {
         return id;
@@ -42,11 +58,11 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
+    // public List<OrderLineItem> getOrderLineItems() {
+    //     return orderLineItems;
+    // }
+    //
+    // public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    //     this.orderLineItems = orderLineItems;
+    // }
 }
