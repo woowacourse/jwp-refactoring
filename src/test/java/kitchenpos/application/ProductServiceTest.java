@@ -63,7 +63,7 @@ class ProductServiceTest {
         assertAll(
                 () -> assertThat(productService.list().size()).isEqualTo(2),
                 () -> assertThat(productService.list().get(0).getName()).isEqualTo("후라이드"),
-                () -> assertThat(productService.list().get(1).getName()).isEqualTo("콜라")
+                () -> assertThat(productService.list().get(1).getName()).isEqualTo("양념치킨")
         );
     }
 }

@@ -11,10 +11,10 @@ public class ProductFixture {
     public static final Product FRIED_CHICKEN = TestObjectUtils.createProduct(1L, "후라이드",
             BigDecimal.valueOf(16000));
 
-    public static final Product COLA = TestObjectUtils.createProduct(2L, "콜라",
-            BigDecimal.valueOf(1000));
+    public static final Product SEASONING_CHICKEN = TestObjectUtils.createProduct(2L, "후라이드",
+            BigDecimal.valueOf(16000));
 
-    public static final List<Product> PRODUCTS = Arrays.asList(FRIED_CHICKEN, COLA);
+    public static final List<Product> PRODUCTS = Arrays.asList(FRIED_CHICKEN, SEASONING_CHICKEN);
 
     public static final Product NEGATIVE_PRICE_PRODUCT = TestObjectUtils.createProduct(1L, "후라이드",
             BigDecimal.valueOf(-1));
