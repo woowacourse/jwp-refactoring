@@ -23,7 +23,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("create")
     void create() {
-        ProductRequest productRequest = new ProductRequest("아무이름", new BigDecimal(10_000));
+        ProductRequest productRequest = new ProductRequest("아무이름", BigDecimal.valueOf(10_000));
 
         productService.create(productRequest);
     }
@@ -31,7 +31,7 @@ class ProductServiceTest {
     @Test
     @DisplayName("create - name 이 null 일 때 예외처리")
     void create_IfNameIsNull_ThrowException() {
-        ProductRequest productRequest = new ProductRequest(null, new BigDecimal(1_000));
+        ProductRequest productRequest = new ProductRequest(null, BigDecimal.valueOf(1_000));
 
         assertThatThrownBy(() -> productService.create(productRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -50,7 +50,7 @@ class ProductServiceTest {
     @ValueSource(longs = {0L, -9_000_000L})
     @DisplayName("create - price 가 음수일 때 예외처리")
     void create_IfPriceIsIllegal_ThrowException() {
-        ProductRequest productRequest = new ProductRequest("아무이름", new BigDecimal(-1_000));
+        ProductRequest productRequest = new ProductRequest("아무이름", BigDecimal.valueOf(-1_000));
 
         assertThatThrownBy(() -> productService.create(productRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -60,10 +60,10 @@ class ProductServiceTest {
     void list() {
         assertThat(productService.list()).hasSize(0);
 
-        ProductRequest productRequest = new ProductRequest("아무이름1",new BigDecimal(10_000));
+        ProductRequest productRequest = new ProductRequest("아무이름1",BigDecimal.valueOf(10_000));
         productService.create(productRequest);
 
-        productRequest = new ProductRequest("아무이름2",new BigDecimal(20_000));
+        productRequest = new ProductRequest("아무이름2",BigDecimal.valueOf(20_000));
         productService.create(productRequest);
 
         assertThat(productService.list()).hasSize(2);

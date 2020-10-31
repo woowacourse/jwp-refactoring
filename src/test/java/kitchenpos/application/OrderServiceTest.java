@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -257,10 +258,10 @@ class OrderServiceTest {
 
     private Menu createMenu_후라이드세트() {
         // create products
-        ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨",new BigDecimal(10_000));
+        ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨",BigDecimal.valueOf(10_000));
         Product 후라이드치킨 = productService.create(후라이드치킨_request);
 
-        ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이",new BigDecimal(5_000));
+        ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이",BigDecimal.valueOf(5_000));
         Product 프랜치프라이 = productService.create(프랜치프라이_request);
 
         // create a menu group
@@ -268,14 +269,13 @@ class OrderServiceTest {
         MenuGroup 세트메뉴 = menuGroupService.create(세트메뉴_request);
 
         // create menu
-        Menu menu = new Menu();
-        menu.setName("후라이드 세트");
-        menu.setPrice(new BigDecimal(13_000));
-        menu.setMenuGroupId(세트메뉴.getId());
-        menu.setMenuProducts(createMenuProductsWithAllQuantityAsOne(
-            Arrays.asList(후라이드치킨, 프랜치프라이)));
+        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+            Arrays.asList(후라이드치킨, 프랜치프라이));
 
-        return menuService.create(menu);
+        MenuRequest menuRequest = new MenuRequest(
+            "후라이드 세트", BigDecimal.valueOf(13_000), 세트메뉴.getId(), menuProducts);
+
+        return menuService.create(menuRequest);
     }
 
     private List<MenuProduct> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
