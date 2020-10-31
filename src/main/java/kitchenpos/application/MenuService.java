@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
@@ -19,28 +19,28 @@ import java.util.List;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.menuRepository = menuRepository;
+        this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
+        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
         BigDecimal productsPriceSum = calculateProductsPriceSum(menuRequest);
-        final Menu savedMenu = menuDao.save(menuRequest.toMenu(menuGroup, productsPriceSum));
+        final Menu savedMenu = menuRepository.save(menuRequest.toMenu(menuGroup, productsPriceSum));
 
         addMenuProductToMenu(menuRequest, savedMenu);
 
@@ -51,7 +51,7 @@ public class MenuService {
         final List<MenuProductDto> menuProductDtos = menuRequest.getMenuProducts();
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductDto menuProductDto : menuProductDtos) {
-            final Product product = productDao.findById(menuProductDto.getProductId())
+            final Product product = productRepository.findById(menuProductDto.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             BigDecimal price = product.getProductPrice().getPrice();
             sum = sum.add(price.multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
@@ -62,14 +62,14 @@ public class MenuService {
     private void addMenuProductToMenu(MenuRequest menuRequest, Menu savedMenu) {
         List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
         for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
-            Product product = productDao.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
+            Product product = productRepository.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
             MenuProduct menuProductToSave = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
-            menuProducts.add(menuProductDao.save(menuProductToSave));
+            menuProducts.add(menuProductRepository.save(menuProductToSave));
         }
     }
 
     @Transactional
     public List<MenuResponse> list() {
-        return MenuResponse.listOf(menuDao.findAll());
+        return MenuResponse.listOf(menuRepository.findAll());
     }
 }

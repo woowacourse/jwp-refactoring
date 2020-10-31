@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.dto.product.ProductRequest;
 import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -26,7 +26,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("Product 생성 메서드 테스트")
     @ParameterizedTest
@@ -73,6 +73,6 @@ class ProductServiceTest {
 
     @AfterEach
     void tearDown() {
-        productDao.deleteAll();
+        productRepository.deleteAll();
     }
 }

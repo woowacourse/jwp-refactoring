@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
@@ -30,13 +30,13 @@ class OrderServiceTest extends TestFixtureFactory {
     private OrderService orderService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @DisplayName("주문 생성 메서드 테스트")
     @Test
@@ -115,10 +115,10 @@ class OrderServiceTest extends TestFixtureFactory {
     @AfterEach
     void tearDown() {
         orderLineItemDao.deleteAll();
-        orderDao.deleteAll();
-        orderTableDao.deleteAll();
-        menuDao.deleteAll();
-        menuGroupDao.deleteAll();
-        productDao.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
+        productRepository.deleteAll();
     }
 }

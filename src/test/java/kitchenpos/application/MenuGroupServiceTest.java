@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dto.menu.MenuGroupRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +20,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹 생성 기능 테스트")
     @Test
@@ -46,6 +46,6 @@ class MenuGroupServiceTest {
 
     @AfterEach
     void tearDown() {
-        menuGroupDao.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }

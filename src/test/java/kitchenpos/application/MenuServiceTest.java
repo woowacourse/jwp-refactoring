@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -28,16 +28,16 @@ class MenuServiceTest extends TestFixtureFactory {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @DisplayName("메뉴 생성 기능 테스트")
     @Test
@@ -59,7 +59,7 @@ class MenuServiceTest extends TestFixtureFactory {
 
         MenuResponse menuResponse = menuService.create(menuRequest);
 
-        List<MenuProduct> menuProductsByMenuId = menuProductDao.findAllByMenuId(menuResponse.getId());
+        List<MenuProduct> menuProductsByMenuId = menuProductRepository.findAllByMenuId(menuResponse.getId());
         assertAll(
                 () -> assertThat(menuResponse.getId()).isNotNull(),
                 () -> assertThat(menuResponse.getName()).isEqualTo(menuName),
@@ -126,9 +126,9 @@ class MenuServiceTest extends TestFixtureFactory {
 
     @AfterEach
     void tearDown() {
-        menuProductDao.deleteAll();
-        menuDao.deleteAll();
-        productDao.deleteAll();
-        menuGroupDao.deleteAll();
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        productRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }

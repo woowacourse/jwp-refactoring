@@ -1,9 +1,9 @@
 package kitchenpos.application.common;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.OrderTable;
@@ -23,16 +23,16 @@ import java.util.List;
 @SpringBootTest
 public class TestFixtureFactory {
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    protected ProductDao productDao;
+    protected ProductRepository productRepository;
 
     @Autowired
-    protected OrderTableDao orderTableDao;
+    protected OrderTableRepository orderTableRepository;
 
     @Autowired
-    protected MenuDao menuDao;
+    protected MenuRepository menuRepository;
 
     protected Menu makeSavedMenu(
             String menuName,
@@ -43,9 +43,9 @@ public class TestFixtureFactory {
             long productQuantity
     ) {
         MenuRequest menuRequest = makeMenuCreateRequest(menuName, menuPrice, menuGroupName, productName, productPrice, productQuantity);
-        MenuGroup menuGroup = menuGroupDao.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
+        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
         Menu menuToSave = menuRequest.toMenu(menuGroup, BigDecimal.valueOf(productPrice * productQuantity));
-        return menuDao.save(menuToSave);
+        return menuRepository.save(menuToSave);
     }
 
     protected MenuRequest makeMenuCreateRequest(
@@ -56,8 +56,8 @@ public class TestFixtureFactory {
             int productPrice,
             long productQuantity
     ) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup(menuGroupName));
-        Product savedProduct = productDao.save(new Product(productName, ProductPrice.of(productPrice)));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(menuGroupName));
+        Product savedProduct = productRepository.save(new Product(productName, ProductPrice.of(productPrice)));
 
         List<MenuProductDto> menuProductDtos = Arrays.asList(new MenuProductDto(savedProduct.getId(), productQuantity));
 
@@ -93,6 +93,6 @@ public class TestFixtureFactory {
     }
 
     protected OrderTable makeSavedOrderTable(int numberOfGuests, boolean isEmpty) {
-        return orderTableDao.save(new OrderTable(numberOfGuests, isEmpty));
+        return orderTableRepository.save(new OrderTable(numberOfGuests, isEmpty));
     }
 }

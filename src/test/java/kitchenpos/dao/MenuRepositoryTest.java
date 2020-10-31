@@ -13,19 +13,19 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class MenuDaoTest {
+class MenuRepositoryTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
-    @DisplayName("countByIdIn 기능 테스트")
+    @DisplayName("findAllByIdIn 기능 테스트")
     @Test
     void countByIdIn() {
-        Menu savedMenu1 = menuDao.save(new Menu(null, "a", null, null, new ArrayList<>()));
-        Menu savedMenu2 = menuDao.save(new Menu(null, "b", null, null, new ArrayList<>()));
-        menuDao.save(new Menu(null, "c", null, null, new ArrayList<>()));
+        Menu savedMenu1 = menuRepository.save(new Menu(null, "a", null, null, new ArrayList<>()));
+        Menu savedMenu2 = menuRepository.save(new Menu(null, "b", null, null, new ArrayList<>()));
+        menuRepository.save(new Menu(null, "c", null, null, new ArrayList<>()));
 
         List<Long> ids = Arrays.asList(savedMenu1.getId(), savedMenu2.getId(), 9999L);
 
-        assertThat(menuDao.findAllByIdIn(ids).size()).isEqualTo(2);
+        assertThat(menuRepository.findAllByIdIn(ids).size()).isEqualTo(2);
     }
 }

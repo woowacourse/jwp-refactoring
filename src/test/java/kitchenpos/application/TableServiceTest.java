@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
@@ -33,10 +33,10 @@ class TableServiceTest extends TestFixtureFactory {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("테이블 생성 메서드 테스트")
     @Test
@@ -108,7 +108,7 @@ class TableServiceTest extends TestFixtureFactory {
         OrderTable savedOrderTable = makeSavedOrderTable(0, true);
 
         Order order = Order.of(savedOrderTable, orderStatus);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
@@ -153,7 +153,7 @@ class TableServiceTest extends TestFixtureFactory {
 
     @AfterEach
     void tearDown() {
-        orderDao.deleteAll();
-        orderTableDao.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
     }
 }

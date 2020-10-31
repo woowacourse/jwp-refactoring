@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
@@ -32,13 +32,13 @@ class TableGroupServiceTest extends TestFixtureFactory {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
@@ -50,7 +50,7 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        OrderTable changedOrderTable = orderTableDao.findById(orderTable1.getId()).get();
+        OrderTable changedOrderTable = orderTableRepository.findById(orderTable1.getId()).get();
         assertAll(
                 () -> assertThat(tableGroupResponse.getId()).isNotNull(),
                 () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2),
@@ -111,11 +111,11 @@ class TableGroupServiceTest extends TestFixtureFactory {
         TableGroupRequest tableGroupRequest =
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
-        orderDao.save(Order.of(savedOrderTable1, OrderStatus.COMPLETION));
+        orderRepository.save(Order.of(savedOrderTable1, OrderStatus.COMPLETION));
 
         tableGroupService.ungroup(tableGroupResponse.getId());
 
-        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(tableGroupResponse.getId());
+        List<OrderTable> orderTablesByTableGroupId = orderTableRepository.findAllByTableGroupId(tableGroupResponse.getId());
         assertAll(
                 () -> assertThat(orderTablesByTableGroupId).hasSize(0)
         );
@@ -132,7 +132,7 @@ class TableGroupServiceTest extends TestFixtureFactory {
                 makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        orderDao.save(Order.of(savedOrderTable1, orderStatus));
+        orderRepository.save(Order.of(savedOrderTable1, orderStatus));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -147,9 +147,9 @@ class TableGroupServiceTest extends TestFixtureFactory {
 
     @AfterEach
     void tearDown() {
-        orderDao.deleteAll();
-        orderTableDao.deleteAll();
-        menuDao.deleteAll();
-        tableGroupDao.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }
