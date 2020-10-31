@@ -34,17 +34,16 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void createTest() {
-        Product requestProduct = TestObjectUtils.createProduct(1L, "후라이드",
-                BigDecimal.valueOf(150000));
+        Product product = TestObjectUtils.createProduct(1L, "후라이드",
+                BigDecimal.valueOf(15000));
 
-        when(productDao.save(any())).thenReturn(requestProduct);
-
-        Product product = productService.create(requestProduct);
+        when(productDao.save(any())).thenReturn(product);
 
         assertAll(
-                () -> assertThat(product.getId()).isEqualTo(product.getId()),
-                () -> assertThat(product.getName()).isEqualTo(product.getName()),
-                () -> assertThat(product.getPrice()).isEqualTo(product.getPrice())
+                () -> assertThat(productService.create(product).getId()).isEqualTo(1L),
+                () -> assertThat(productService.create(product).getName()).isEqualTo("후라이드"),
+                () -> assertThat(productService.create(product).getPrice()).isEqualTo(
+                        BigDecimal.valueOf(15000))
         );
     }
 
