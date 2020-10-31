@@ -1,58 +1,38 @@
 package kitchenpos.application;
 
-import kitchenpos.config.Dataset;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.config.IsolatedTest;
+import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponses;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends IsolatedTest {
 
-    @Mock
-    private MenuGroupDao dao;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService service;
-
-    private MenuGroup menuGroup;
-
-    @BeforeEach
-    public void setUp() {
-        menuGroup = Dataset.menuGroup_패스트_푸드();
-    }
 
     @DisplayName("메뉴 그룹 생성")
     @Test
     public void createMenuGroup() {
-        given(dao.save(any(MenuGroup.class))).willReturn(menuGroup);
+        MenuGroupRequest request = new MenuGroupRequest("패스트 푸드");
+        final MenuGroupResponse response = service.create(request);
 
-        final MenuGroup savedMenuGroup = service.create(this.menuGroup);
-
-        assertThat(savedMenuGroup.getId()).isEqualTo(1L);
-        assertThat(savedMenuGroup.getName()).isEqualTo("패스트 푸드");
+        assertThat(response.getName()).isEqualTo("패스트 푸드");
     }
 
     @DisplayName("메뉴 그룹 목록 조회")
     @Test
     public void readMenuGroup() {
-        given(dao.findAll()).willReturn(Lists.newArrayList(menuGroup));
+        MenuGroupRequest request = new MenuGroupRequest("패스트 푸드");
+        final MenuGroupResponse response = service.create(request);
 
-        final List<MenuGroup> menuGroups = service.list();
+        final MenuGroupResponses responses = service.list();
 
-        assertThat(menuGroups).hasSize(1);
-        assertThat(menuGroups).contains(menuGroup);
+        assertThat(responses.getMenuGroupResponses()).hasSize(1);
+        assertThat(responses.getMenuGroupResponses().get(0).getName()).isEqualTo("패스트 푸드");
     }
 }
