@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import kitchenpos.domain.MenuGroup;
 
 @Repository
-public interface MenuGroupDao extends JpaRepository<MenuGroup, Long> {
+public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
 
     MenuGroup save(MenuGroup entity);
 

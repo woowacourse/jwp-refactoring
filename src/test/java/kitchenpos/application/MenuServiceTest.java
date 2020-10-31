@@ -13,39 +13,35 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 @SpringBootTest(classes = {
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuProductDao.class,
-        JdbcTemplateProductDao.class,
+        MenuRepository.class,
+        MenuGroupRepository.class,
+        MenuProductRepository.class,
+        ProductRepository.class,
         MenuService.class
 })
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -56,11 +52,11 @@ class MenuServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        final Product product = productDao.save(createProduct("매콤치킨", BigDecimal.valueOf(16000)));
-        menuGroup = menuGroupDao.save(createMenuGroup("이십마리메뉴"));
+        final Product product = productRepository.save(createProduct("매콤치킨", BigDecimal.valueOf(16000)));
+        menuGroup = menuGroupRepository.save(createMenuGroup("이십마리메뉴"));
 
-        final Menu menu = menuDao.save(createMenu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
-        menuProduct = menuProductDao.save(creatMenuProduct(menu.getId(), product.getId(), 1L));
+        final Menu menu = menuRepository.save(createMenu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
+        menuProduct = menuProductRepository.save(creatMenuProduct(menu.getId(), product.getId(), 1L));
     }
 
     @DisplayName("create: 메뉴 생성")

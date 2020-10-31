@@ -13,16 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -32,27 +28,27 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest(classes = {
-        JdbcTemplateTableGroupDao.class,
-        JdbcTemplateMenuGroupDao.class,
-        JdbcTemplateMenuDao.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderLineItemDao.class,
-        JdbcTemplateOrderTableDao.class,
+        TableGroupRepository.class,
+        MenuGroupRepository.class,
+        MenuRepository.class,
+        OrderRepository.class,
+        OrderLineItemRepository.class,
+        OrderTableRepository.class,
         OrderService.class
 })
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderService orderService;
@@ -65,11 +61,11 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroup = tableGroupDao.save(createTableGroup(Collections.emptyList()));
-        orderTable = orderTableDao.save(createOrderTable(tableGroup.getId(), 5, false));
+        tableGroup = tableGroupRepository.save(createTableGroup(Collections.emptyList()));
+        orderTable = orderTableRepository.save(createOrderTable(tableGroup.getId(), 5, false));
 
-        final MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("이십마리메뉴"));
-        final Menu menu = menuDao.save(createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
+        final MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup("이십마리메뉴"));
+        final Menu menu = menuRepository.save(createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
         orderLineItem = createOrderLineItem(menu.getId(), 1L);
     }
 
@@ -116,7 +112,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("create: 주문 테이블이 비어 있을 때 예외 처리")
     @Test
     void create_IfOrderTableEmpty_Exception() {
-        final OrderTable emptyOrderTable = orderTableDao.save(createOrderTable(tableGroup.getId(), 5, true));
+        final OrderTable emptyOrderTable = orderTableRepository.save(createOrderTable(tableGroup.getId(), 5, true));
         final Order order = createOrder(emptyOrderTable.getId(), null, Collections.singletonList(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))

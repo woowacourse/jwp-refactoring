@@ -11,31 +11,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest(classes = {
-        JdbcTemplateTableGroupDao.class,
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderTableDao.class,
+        TableGroupRepository.class,
+        OrderRepository.class,
+        OrderTableRepository.class,
         TableService.class
 })
 class TableServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableService tableService;
@@ -87,8 +84,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("changeEmpty: 주문 테이블이 테이블 그룹에 속해있을 때 예외 처리")
     @Test
     void changeEmpty_IfOrderTableHasTableGroup_Exception() {
-        final TableGroup tableGroup = tableGroupDao.save(createTableGroup(Collections.emptyList()));
-        final OrderTable orderTable = orderTableDao.save(createOrderTable(tableGroup.getId(), 0, true));
+        final TableGroup tableGroup = tableGroupRepository.save(createTableGroup(Collections.emptyList()));
+        final OrderTable orderTable = orderTableRepository.save(createOrderTable(tableGroup.getId(), 0, true));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -98,7 +95,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty_IfOrderStatusIsNotCompletion_Exception() {
         final OrderTable orderTable = tableService.create(createOrderTable(null, 0, true));
-        orderDao.save(createOrder(orderTable.getId(), "MEAL", Collections.emptyList()));
+        orderRepository.save(createOrder(orderTable.getId(), "MEAL", Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
                 .isInstanceOf(IllegalArgumentException.class);

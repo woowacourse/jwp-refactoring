@@ -13,31 +13,28 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest(classes = {
-        JdbcTemplateOrderDao.class,
-        JdbcTemplateOrderTableDao.class,
-        JdbcTemplateTableGroupDao.class,
+        OrderRepository.class,
+        OrderTableRepository.class,
+        TableGroupRepository.class,
         TableGroupService.class
 })
 class TableGroupServiceTest extends ServiceTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -52,12 +49,12 @@ class TableGroupServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable1 = orderTableDao.save(createOrderTable(null, 0, true));
-        orderTable2 = orderTableDao.save(createOrderTable(null, 0, true));
-        notEmptyOrderTable = orderTableDao.save(createOrderTable(null, 2, false));
+        orderTable1 = orderTableRepository.save(createOrderTable(null, 0, true));
+        orderTable2 = orderTableRepository.save(createOrderTable(null, 0, true));
+        notEmptyOrderTable = orderTableRepository.save(createOrderTable(null, 2, false));
 
-        final TableGroup tableGroup = tableGroupDao.save(createTableGroup(Arrays.asList(orderTable1, orderTable2)));
-        orderTableHasTableGroupId = orderTableDao.save(createOrderTable(tableGroup.getId(), 0, true));
+        final TableGroup tableGroup = tableGroupRepository.save(createTableGroup(Arrays.asList(orderTable1, orderTable2)));
+        orderTableHasTableGroupId = orderTableRepository.save(createOrderTable(tableGroup.getId(), 0, true));
     }
 
     @DisplayName("create: 테이블 그룹 생성")
@@ -129,7 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup_IfOrderStatusIsNotCompletion_Exception() {
         final TableGroup tableGroup = tableGroupService.create(createTableGroup(Arrays.asList(orderTable1, orderTable2)));
-        orderDao.save(createOrder(orderTable1.getId(), "MEAL", Collections.emptyList()));
+        orderRepository.save(createOrder(orderTable1.getId(), "MEAL", Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
