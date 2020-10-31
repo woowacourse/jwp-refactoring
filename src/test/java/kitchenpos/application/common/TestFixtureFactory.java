@@ -92,6 +92,30 @@ public class TestFixtureFactory {
         return new OrderRequest(savedOrderTable.getId(), null, orderLineItems);
     }
 
+    protected OrderRequest makeOrderCreateRequest(OrderTable savedOrderTable) {
+        Menu savedMenu1 = makeSavedMenu(
+                "양념2마리",
+                20000,
+                "추천메뉴",
+                "양념",
+                11000,
+                2
+        );
+        Menu savedMenu2 = makeSavedMenu(
+                "후라이드2마리",
+                20000,
+                "추천메뉴",
+                "후라이드",
+                11000,
+                2
+        );
+        List<OrderLineItemDto> orderLineItems = Arrays.asList(
+                new OrderLineItemDto(savedMenu1.getId(), 1),
+                new OrderLineItemDto(savedMenu2.getId(), 1)
+        );
+        return new OrderRequest(savedOrderTable.getId(), null, orderLineItems);
+    }
+
     protected OrderTable makeSavedOrderTable(int numberOfGuests, boolean isEmpty) {
         return orderTableRepository.save(new OrderTable(numberOfGuests, isEmpty));
     }

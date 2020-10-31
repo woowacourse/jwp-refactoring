@@ -33,7 +33,7 @@ class OrderServiceTest extends TestFixtureFactory {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private MenuRepository menuRepository;
@@ -43,7 +43,7 @@ class OrderServiceTest extends TestFixtureFactory {
     void create() {
         OrderResponse orderResponse = orderService.create(makeOrderCreateRequest());
 
-        List<OrderLineItem> orderLineItemsByOrderId = orderLineItemDao.findAllByOrderId(orderResponse.getId());
+        List<OrderLineItem> orderLineItemsByOrderId = orderLineItemRepository.findAllByOrderId(orderResponse.getId());
         assertAll(
                 () -> assertThat(orderResponse.getId()).isNotNull(),
                 () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
@@ -114,7 +114,7 @@ class OrderServiceTest extends TestFixtureFactory {
 
     @AfterEach
     void tearDown() {
-        orderLineItemDao.deleteAll();
+        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
         orderTableRepository.deleteAll();
         menuRepository.deleteAll();

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.common.TestFixtureFactory;
+import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.order.Order;
@@ -33,10 +34,16 @@ class TableServiceTest extends TestFixtureFactory {
     private TableGroupService tableGroupService;
 
     @Autowired
+    private OrderService orderService;
+
+    @Autowired
     private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @DisplayName("테이블 생성 메서드 테스트")
     @Test
@@ -94,6 +101,7 @@ class TableServiceTest extends TestFixtureFactory {
                 Arrays.asList(new OrderTableDto(savedOrderTable1.getId()), new OrderTableDto(savedOrderTable2.getId()))
         );
         tableGroupService.create(groupingRequest);
+        orderService.create(makeOrderCreateRequest(savedOrderTable1));
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
 
@@ -105,12 +113,12 @@ class TableServiceTest extends TestFixtureFactory {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void changeEmptyWhenCooking(OrderStatus orderStatus) {
-        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable = makeSavedOrderTable(10, false);
 
         Order order = Order.of(savedOrderTable, orderStatus);
         orderRepository.save(order);
 
-        OrderTableRequest orderTableRequest = new OrderTableRequest(0, false);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(0, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -153,6 +161,7 @@ class TableServiceTest extends TestFixtureFactory {
 
     @AfterEach
     void tearDown() {
+        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
         orderTableRepository.deleteAll();
     }

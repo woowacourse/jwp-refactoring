@@ -82,10 +82,7 @@ public class OrderTable extends BaseEntity {
         return empty;
     }
 
-    public void changeEmpty(final boolean empty, List<Order> ordersByOrderTable) {
-        if (existNotCompleteOrder(ordersByOrderTable)) {
-            throw new IllegalArgumentException();
-        }
+    public void changeEmpty(final boolean empty) {
         if (Objects.nonNull(getTableGroup())) {
             throw new IllegalArgumentException();
         }

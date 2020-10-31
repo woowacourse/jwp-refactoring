@@ -71,6 +71,13 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
+    public void changeOrderTableEmpty(boolean empty) {
+        if (isNotComplete()) {
+            throw new IllegalArgumentException();
+        }
+        orderTable.changeEmpty(empty);
+    }
+
     public OrderTable getOrderTable() {
         return orderTable;
     }

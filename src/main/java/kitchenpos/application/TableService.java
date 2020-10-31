@@ -33,12 +33,26 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableRequest orderTable) {
+    public OrderTableDto changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        List<Order> ordersByOrderTable = orderRepository.findAllByOrderTable(savedOrderTable);
-
-        savedOrderTable.changeEmpty(orderTable.isEmpty(), ordersByOrderTable);
+        if (!orderTableRequest.isEmpty()) {
+            changeEmptyWhenFirstOrder(savedOrderTable);
+        }
+        if (orderTableRequest.isEmpty()) {
+            changeEmptyWhenFinishMeal(savedOrderTable);
+        }
         return OrderTableDto.of(savedOrderTable);
+    }
+
+    private void changeEmptyWhenFirstOrder(OrderTable orderTable) {
+        orderTable.changeEmpty(false);
+    }
+
+    private void changeEmptyWhenFinishMeal(OrderTable orderTable) {
+        List<Order> ordersByOrderTable = orderRepository.findAllByOrderTable(orderTable);
+        for (Order order : ordersByOrderTable) {
+            order.changeOrderTableEmpty(true);
+        }
     }
 
     @Transactional
