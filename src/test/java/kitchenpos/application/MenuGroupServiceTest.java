@@ -8,33 +8,30 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.factory.MenuGroupFactory;
+import kitchenpos.application.dto.MenuGroupRequest;
+import kitchenpos.domain.model.MenuGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
 
-    private MenuGroupFactory menuGroupFactory = new MenuGroupFactory();
-
     @Test
     void create() {
-        MenuGroup menuGroup = menuGroupFactory.create("추천 메뉴");
+        MenuGroupRequest request = new MenuGroupRequest("추천 메뉴");
 
-        menuGroupService.create(menuGroup);
+        menuGroupService.create(request);
 
-        verify(menuGroupDao).save(menuGroup);
+        verify(menuGroupRepository).save(request.toEntity());
     }
 
     @Test
     void list() {
         menuGroupService.list();
 
-        verify(menuGroupDao).findAll();
+        verify(menuGroupRepository).findAll();
     }
 }

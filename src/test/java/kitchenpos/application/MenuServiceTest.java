@@ -21,12 +21,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.model.MenuGroupRepository;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.ProductFactory;
@@ -36,7 +36,7 @@ class MenuServiceTest {
     @Mock
     private MenuDao menuDao;
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     @Mock
     private MenuProductDao menuProductDao;
     @Mock
@@ -94,7 +94,7 @@ class MenuServiceTest {
                 singletonList(menuProduct));
         MenuProduct savedMenuProduct = menuProductFactory.create(1L, 1L, 2);
 
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
+        given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
         given(menuDao.save(menu)).willReturn(savedMenu);
         given(menuProductDao.save(menuProduct)).willReturn(savedMenuProduct);
@@ -131,7 +131,7 @@ class MenuServiceTest {
         Menu menu = menuFactory.create("후라이드+후라이드", BigDecimal.valueOf(17_000L), 1L,
                 singletonList(menuProduct));
 
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
+        given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(false);
 
         assertThatIllegalArgumentException().isThrownBy(() -> menuService.create(menu));
     }
@@ -141,7 +141,7 @@ class MenuServiceTest {
         Menu menu = menuFactory.create("후라이드+후라이드", BigDecimal.valueOf(17_000L), 1L,
                 singletonList(menuProduct));
 
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
+        given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.empty());
 
         assertThatIllegalArgumentException().isThrownBy(() -> menuService.create(menu));
@@ -153,7 +153,7 @@ class MenuServiceTest {
                 singletonList(menuProduct));
         Product product = productFactory.create(1L, BigDecimal.valueOf(8_400L));
 
-        given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
+        given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
 
         assertThatIllegalArgumentException().isThrownBy(() -> menuService.create(menu));
