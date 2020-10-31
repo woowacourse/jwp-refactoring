@@ -12,6 +12,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,9 +46,8 @@ class MenuServiceTest {
         ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이",new BigDecimal(5_000));
         프랜치프라이 = productService.create(프랜치프라이_request);
 
-        세트메뉴 = new MenuGroup();
-        세트메뉴.setName("세트메뉴");
-        세트메뉴 = menuGroupService.create(세트메뉴);
+        MenuGroupRequest 세트메뉴_request = new MenuGroupRequest("세트메뉴");
+        세트메뉴 = menuGroupService.create(세트메뉴_request);
     }
 
     @Test

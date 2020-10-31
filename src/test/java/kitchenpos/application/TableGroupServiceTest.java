@@ -16,6 +16,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -226,9 +227,8 @@ class TableGroupServiceTest {
         Product 프랜치프라이 = productService.create(프랜치프라이_request);
 
         // create a menu group
-        MenuGroup 세트메뉴 = new MenuGroup();
-        세트메뉴.setName("세트메뉴");
-        세트메뉴 = menuGroupService.create(세트메뉴);
+        MenuGroupRequest 세트메뉴_request = new MenuGroupRequest("세트메뉴");
+        MenuGroup 세트메뉴 = menuGroupService.create(세트메뉴_request);
 
         // create menu
         Menu menu = new Menu();
