@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -255,15 +256,11 @@ class OrderServiceTest {
 
     private Menu createMenu_후라이드세트() {
         // create products
-        Product 후라이드치킨 = new Product();
-        후라이드치킨.setName("후라이드치킨");
-        후라이드치킨.setPrice(new BigDecimal(10_000));
-        후라이드치킨 = productService.create(후라이드치킨);
+        ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨",new BigDecimal(10_000));
+        Product 후라이드치킨 = productService.create(후라이드치킨_request);
 
-        Product 프랜치프라이 = new Product();
-        프랜치프라이.setName("프랜치프라이");
-        프랜치프라이.setPrice(new BigDecimal(5_000));
-        프랜치프라이 = productService.create(프랜치프라이);
+        ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이",new BigDecimal(5_000));
+        Product 프랜치프라이 = productService.create(프랜치프라이_request);
 
         // create a menu group
         MenuGroup 세트메뉴 = new MenuGroup();
