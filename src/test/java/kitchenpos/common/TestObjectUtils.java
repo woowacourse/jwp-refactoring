@@ -39,4 +39,15 @@ public class TestObjectUtils {
 
         return menu;
     }
+
+    public static MenuProduct createMenuProduct(Long id, Long menuId, Long productId,
+            Long quantity) {
+        MenuProduct menuProduct = new MenuProduct();
+        ReflectionTestUtils.setField(menuProduct, "seq", id);
+        ReflectionTestUtils.setField(menuProduct, "menuId", menuId);
+        ReflectionTestUtils.setField(menuProduct, "productId", productId);
+        ReflectionTestUtils.setField(menuProduct, "quantity", quantity);
+
+        return menuProduct;
+    }
 }
