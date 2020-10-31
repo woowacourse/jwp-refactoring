@@ -32,7 +32,7 @@ public class TableService {
     }
 
     @Transactional
-    public Table changeEmpty(final Long tableId, final Table table) {
+    public Table changeEmpty(final Long tableId, final boolean empty) {
         final Table savedTable = tableDao.findById(tableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,15 +45,13 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedTable.setEmpty(table.isEmpty());
+        savedTable.changeEmpty(empty);
 
         return tableDao.save(savedTable);
     }
 
     @Transactional
-    public Table changeNumberOfGuests(final Long tableId, final Table table) {
-        final int numberOfGuests = table.getNumberOfGuests();
-
+    public Table changeNumberOfGuests(final Long tableId, final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -65,7 +63,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedTable.setNumberOfGuests(numberOfGuests);
+        savedTable.changeNumberOfGuests(numberOfGuests);
 
         return tableDao.save(savedTable);
     }

@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.Table;
+import kitchenpos.dto.ChangeEmptyRequest;
+import kitchenpos.dto.ChangeNumberOfGuestsRequest;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends MvcTest {
@@ -61,9 +63,9 @@ class TableRestControllerTest extends MvcTest {
     @DisplayName("/api/tables/{tableId}/empty로 PUT 요청 성공 테스트")
     @Test
     void changeEmptyTest() throws Exception {
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(TABLE_1);
+        given(tableService.changeEmpty(anyLong(), anyBoolean())).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(TABLE_1);
+        String inputJson = objectMapper.writeValueAsString(new ChangeEmptyRequest(TABLE_EMPTY_1));
         MvcResult mvcResult = putAction(String.format("/api/tables/%d/empty", TABLE_ID_1), inputJson)
             .andExpect(status().isOk())
             .andReturn();
@@ -76,15 +78,14 @@ class TableRestControllerTest extends MvcTest {
     @DisplayName("api/table/{tableId}/number-of-guests로 PUT 요청 성공 테스트")
     @Test
     void changeNumberOfGuestsTest() throws Exception {
-        given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(TABLE_1);
+        given(tableService.changeNumberOfGuests(anyLong(), anyInt())).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(TABLE_1);
+        String inputJson = objectMapper.writeValueAsString(new ChangeNumberOfGuestsRequest(TABLE_NUMBER_OF_GUESTS_1));
         MvcResult mvcResult = putAction(String.format("/api/tables/%d/number-of-guests", TABLE_ID_1), inputJson)
             .andExpect(status().isOk())
             .andReturn();
 
-        Table tableResponse =
-            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Table.class);
+        Table tableResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Table.class);
         assertThat(tableResponse).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 }

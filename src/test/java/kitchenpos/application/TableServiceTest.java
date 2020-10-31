@@ -64,7 +64,7 @@ class TableServiceTest extends TestFixture {
     void changeEmptyFailByNotExistTable() {
         given(tableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_EMPTY_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -73,7 +73,7 @@ class TableServiceTest extends TestFixture {
     void changeEmptyFailByAlreadyIncluded() {
         given(tableDao.findById(anyLong())).willReturn(Optional.of(TABLE_1));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_EMPTY_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -85,7 +85,7 @@ class TableServiceTest extends TestFixture {
         given(tableDao.findById(anyLong())).willReturn(Optional.of(notCompletedTable));
         given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
+        assertThatThrownBy(() -> tableService.changeEmpty(TABLE_ID_1, TABLE_EMPTY_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -98,16 +98,14 @@ class TableServiceTest extends TestFixture {
         given(orderDao.existsByTableIdAndOrderStatusIn(anyLong(), any())).willReturn(false);
         given(tableDao.save(any())).willReturn(TABLE_1);
 
-        Table persistedTable = tableService.changeEmpty(TABLE_ID_1, TABLE_1);
+        Table persistedTable = tableService.changeEmpty(TABLE_ID_1, TABLE_EMPTY_1);
         assertThat(persistedTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 
     @DisplayName("테이블 고객수 변경 예외 테스트: 음수로 변경 시도할 때")
     @Test
     void changeNumberOfGuestsTestFailByNegativeNumberOfGuests() {
-        Table negativeGuestsTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, -1, TABLE_EMPTY_1);
-
-        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, negativeGuestsTable))
+        assertThatThrownBy(()-> tableService.changeNumberOfGuests(TABLE_ID_1, -1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -116,7 +114,7 @@ class TableServiceTest extends TestFixture {
     void changeNumberOfGuestsTestFailByNotExistTable() {
         given(tableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, TABLE_1))
+        assertThatThrownBy(()-> tableService.changeNumberOfGuests(TABLE_ID_1, TABLE_NUMBER_OF_GUESTS_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -127,7 +125,7 @@ class TableServiceTest extends TestFixture {
 
         given(tableDao.findById(anyLong())).willReturn(Optional.of(emptyTable));
 
-        assertThatThrownBy(()-> tableService.changeEmpty(TABLE_ID_1, emptyTable))
+        assertThatThrownBy(()-> tableService.changeNumberOfGuests(TABLE_ID_1, TABLE_NUMBER_OF_GUESTS_1))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,7 +135,7 @@ class TableServiceTest extends TestFixture {
         given(tableDao.findById(anyLong())).willReturn(Optional.of(TABLE_1));
         given(tableDao.save(any())).willReturn(TABLE_1);
 
-        Table persistedTable = tableService.changeNumberOfGuests(TABLE_ID_1, TABLE_1);
+        Table persistedTable = tableService.changeNumberOfGuests(TABLE_ID_1, TABLE_NUMBER_OF_GUESTS_1);
 
         assertThat(persistedTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
