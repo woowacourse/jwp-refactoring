@@ -2,48 +2,54 @@ package kitchenpos.ui;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.Arrays;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.TableGroupService;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.utils.TestFixture;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableRequest;
 
 class TableGroupRestControllerTest extends ControllerTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupService tableGroupService;
-
-    private TableGroup tableGroup;
-
-    @BeforeEach
-    void setUp() {
-        final OrderTable orderTable1 = orderTableDao.save(TestFixture.getOrderTableWithEmpty());
-        final OrderTable orderTable2 = orderTableDao.save(TestFixture.getOrderTableWithEmpty());
-        tableGroup = TestFixture.getTableGroup(orderTable1, orderTable2);
-    }
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("create: 단체 지정 등록 테스트")
     @Test
     void createTest() throws Exception {
-        create("/api/table-groups", tableGroup)
+        final OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        final OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
+
+        final TableGroupRequest tableGroupRequest = new TableGroupRequest(
+                Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
+
+        create("/api/table-groups", tableGroupRequest)
                 .andExpect(header().exists("Location"))
-                .andExpect(jsonPath("$.id").value(2))
-                .andExpect(jsonPath("$.orderTables[0].id").value(10));
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.orderTables[0].id").value(1))
+                .andExpect(jsonPath("$.orderTables[1].id").value(2));
     }
 
     @DisplayName("delete: 단체 지정 해제 테스트")
     @Test
-    void delete() throws Exception {
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+    void deleteTest() throws Exception {
+        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable orderTable1 = orderTableRepository.save(orderTable);
+        final OrderTable orderTable2 = orderTableRepository.save(orderTable);
 
-        deleteByPathVariable("/api/table-groups/" + savedTableGroup.getId());
+        final TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable1, orderTable2));
+        final TableGroup saved = tableGroupRepository.save(tableGroup);
+
+        deleteByPathVariable("/api/table-groups/" + saved.getId());
+
     }
 }
