@@ -12,13 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.util.NestedServletException;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -71,20 +69,16 @@ class OrderRestControllerTest {
 
     @DisplayName("주문 생성 요청 테스트 - orderLineItems가 비어있을 때 예외처리")
     @Test
-    void createWhenEmptyOrderLineItems() {
-        OrderResponse orderResponse = new OrderResponse(1L, 1L, OrderStatus.COOKING, new ArrayList<>(), LocalDateTime.now());
-
-        given(orderService.create(any())).willReturn(orderResponse);
-
-        assertThatThrownBy(() -> mockMvc.perform(post("/api/orders")
+    void createWhenEmptyOrderLineItems() throws Exception {
+        mockMvc.perform(post("/api/orders")
                 .content("{\n"
                         + "  \"orderTableId\": 1,\n"
                         + "  \"orderLineItems\": [\n"
                         + "  ]\n"
                         + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print()))
-                .isInstanceOf(NestedServletException.class);
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 
     @DisplayName("Product 목록 조회 요청 테스트")
@@ -122,12 +116,12 @@ class OrderRestControllerTest {
 
     @DisplayName("주문 상태 변경 요청 테스트 - orderStatus가 없을 때")
     @Test
-    void changeOrderStatusWhenBlankOrderStatusInRequest() {
-        assertThatThrownBy(() -> mockMvc.perform(put("/api/orders/1/order-status")
+    void changeOrderStatusWhenBlankOrderStatusInRequest() throws Exception {
+        mockMvc.perform(put("/api/orders/1/order-status")
                 .content("{\n"
                         + "}")
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print()))
-                .isInstanceOf(NestedServletException.class);
+                .andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

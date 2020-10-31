@@ -4,6 +4,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuPrice;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MenuRequest {
-    @NotNull
+    @NotBlank
     private String name;
 
     @NotNull

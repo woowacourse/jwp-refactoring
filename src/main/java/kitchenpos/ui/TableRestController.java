@@ -4,9 +4,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.dto.table.OrderTableDto;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.TableValidationGroup;
-import kitchenpos.util.BindingResultValidator;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +26,8 @@ public class TableRestController {
 
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTableDto> create(
-            @RequestBody @Validated(TableValidationGroup.create.class) final OrderTableRequest orderTableRequest,
-            BindingResult bindingResult
+            @RequestBody @Validated(TableValidationGroup.create.class) final OrderTableRequest orderTableRequest
     ) {
-        BindingResultValidator.validate(bindingResult);
         final OrderTableDto created = tableService.create(orderTableRequest);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
@@ -47,11 +43,8 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableDto> changeEmpty(
             @PathVariable final Long orderTableId,
-            @RequestBody @Validated(TableValidationGroup.changeEmpty.class) final OrderTableRequest orderTable,
-            BindingResult bindingResult
-
+            @RequestBody @Validated(TableValidationGroup.changeEmpty.class) final OrderTableRequest orderTable
     ) {
-        BindingResultValidator.validate(bindingResult);
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, orderTable));
     }
@@ -59,10 +52,8 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableDto> changeNumberOfGuests(
             @PathVariable final Long orderTableId,
-            @RequestBody @Validated(TableValidationGroup.changeNumberOfGuests.class) final OrderTableRequest orderTableRequest,
-            BindingResult bindingResult
+            @RequestBody @Validated(TableValidationGroup.changeNumberOfGuests.class) final OrderTableRequest orderTableRequest
     ) {
-        BindingResultValidator.validate(bindingResult);
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, orderTableRequest));
     }

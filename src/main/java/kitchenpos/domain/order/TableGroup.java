@@ -22,6 +22,7 @@ public class TableGroup extends BaseEntity {
     }
 
     public TableGroup(Long id, List<OrderTable> orderTables, LocalDateTime createdDate) {
+        validateOrderTablesToGrouping(orderTables);
         this.id = id;
         this.orderTables = orderTables;
         this.createdDate = createdDate;
@@ -32,13 +33,16 @@ public class TableGroup extends BaseEntity {
     }
 
     public static TableGroup of(List<OrderTable> orderTables) {
+        return new TableGroup(orderTables, LocalDateTime.now());
+    }
+
+    private void validateOrderTablesToGrouping(List<OrderTable> orderTables) {
         if (orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
         for (final OrderTable orderTable : orderTables) {
-            orderTable.ValidateGrouping();
+            orderTable.validateGrouping();
         }
-        return new TableGroup(orderTables, LocalDateTime.now());
     }
 
     public LocalDateTime getCreatedDate() {

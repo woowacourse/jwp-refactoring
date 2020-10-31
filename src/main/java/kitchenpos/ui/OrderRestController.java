@@ -4,9 +4,7 @@ import kitchenpos.application.OrderService;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderValidationGroup;
-import kitchenpos.util.BindingResultValidator;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,10 +26,8 @@ public class OrderRestController {
 
     @PostMapping("/api/orders")
     public ResponseEntity<OrderResponse> create(
-            @RequestBody @Validated(OrderValidationGroup.create.class) final OrderRequest orderRequest,
-            BindingResult bindingResult
+            @RequestBody @Validated(OrderValidationGroup.create.class) final OrderRequest orderRequest
     ) {
-        BindingResultValidator.validate(bindingResult);
         final OrderResponse created = orderService.create(orderRequest);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
@@ -47,10 +43,8 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody @Validated(OrderValidationGroup.changeOrderStatus.class) final OrderRequest orderRequest,
-            BindingResult bindingResult
+            @RequestBody @Validated(OrderValidationGroup.changeOrderStatus.class) final OrderRequest orderRequest
     ) {
-        BindingResultValidator.validate(bindingResult);
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderRequest));
     }
 }

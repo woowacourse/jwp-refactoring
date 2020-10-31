@@ -54,7 +54,7 @@ public class OrderTable extends BaseEntity {
         return ordersByOrderTable.stream().anyMatch(Order::isNotComplete);
     }
 
-    public void ValidateGrouping() {
+    public void validateGrouping() {
         if (!isEmpty() || Objects.nonNull(getTableGroup())) {
             throw new IllegalArgumentException();
         }

@@ -3,9 +3,7 @@ package kitchenpos.ui;
 import kitchenpos.application.MenuService;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.util.BindingResultValidator;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,10 +23,8 @@ public class MenuRestController {
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuResponse> create(
-            @RequestBody @Validated final MenuRequest menuRequest,
-            BindingResult bindingResult
+            @RequestBody @Validated final MenuRequest menuRequest
     ) {
-        BindingResultValidator.validate(bindingResult);
         final MenuResponse created = menuService.create(menuRequest);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)
