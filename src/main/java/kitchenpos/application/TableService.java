@@ -23,11 +23,8 @@ public class TableService {
     }
 
     @Transactional
-    public Table create(final Table table) {
-        table.setId(null);
-        table.setTableGroupId(null);
-
-        return tableDao.save(table);
+    public Table create() {
+        return tableDao.save(new Table());
     }
 
     public List<Table> list() {

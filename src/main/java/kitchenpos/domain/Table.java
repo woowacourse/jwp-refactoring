@@ -6,6 +6,13 @@ public class Table {
     private int numberOfGuests;
     private boolean empty;
 
+    public Table() {
+        this.id = null;
+        this.tableGroupId = null;
+        this.numberOfGuests = 0;
+        this.empty = true;
+    }
+
     public Long getId() {
         return id;
     }

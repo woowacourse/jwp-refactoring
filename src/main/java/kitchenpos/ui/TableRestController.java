@@ -23,8 +23,8 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<Table> create(@RequestBody final Table table) {
-        final Table created = tableService.create(table);
+    public ResponseEntity<Table> create() {
+        final Table created = tableService.create();
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);

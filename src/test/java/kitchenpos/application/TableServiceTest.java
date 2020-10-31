@@ -40,7 +40,7 @@ class TableServiceTest extends TestFixture {
     void createTest() {
         given(tableDao.save(any())).willReturn(TABLE_1);
 
-        Table persistTable = tableService.create(TABLE_1);
+        Table persistTable = tableService.create();
 
         assertThat(persistTable).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
