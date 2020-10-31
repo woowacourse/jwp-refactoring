@@ -1,5 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.MenuDetailResponse;
+import kitchenpos.dto.MenuProductResponse;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.ProductQuantityRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
@@ -36,50 +40,58 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final MenuRequest menuRequest) {
+        final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
 
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        List<ProductQuantityRequest> productQuantities = menuRequest.getProductQuantities();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
+        for (final ProductQuantityRequest productQuantityRequest : productQuantities) {
+            final Product product = productRepository.findById(productQuantityRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(productQuantityRequest.getQuantity())));
         }
 
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
+        final Menu savedMenu = menuRepository.save(menuRequest.toEntity());
 
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+
+        for (final ProductQuantityRequest productQuantityRequest : productQuantities) {
+            menuProductRepository.save(new MenuProduct(menuId, productQuantityRequest.getProductId(), productQuantityRequest
+                    .getQuantity()));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
 
         return savedMenu;
     }
 
-    public List<Menu> list() {
+    public List<MenuDetailResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
+        final List<MenuDetailResponse> menuProductResponses = new ArrayList<>();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
+            menuProductResponses.add(
+                    new MenuDetailResponse(
+                            menu.getId(),
+                            menu.getName(),
+                            menu.getPrice(),
+                            MenuProductResponse.ofList(menuProducts)
+                    )
+            );
         }
 
-        return menus;
+        return menuProductResponses;
     }
 }

@@ -24,7 +24,14 @@ public class Menu {
     @Column(name = "menu_group_id")
     private Long menuGroupId;
 
-    // private List<MenuProduct> menuProducts;
+    protected Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
 
     public Long getId() {
         return id;
@@ -57,12 +64,4 @@ public class Menu {
     public void setMenuGroupId(final Long menuGroupId) {
         this.menuGroupId = menuGroupId;
     }
-
-    // public List<MenuProduct> getMenuProducts() {
-    //     return menuProducts;
-    // }
-    //
-    // public void setMenuProducts(final List<MenuProduct> menuProducts) {
-    //     this.menuProducts = menuProducts;
-    // }
 }

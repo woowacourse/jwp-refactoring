@@ -10,12 +10,12 @@ public class MenuGroupResponse {
     protected MenuGroupResponse() {
     }
 
-    public MenuGroupResponse(Long id, String name) {
+    public MenuGroupResponse(final Long id, final String name) {
         this.id = id;
         this.name = name;
     }
 
-    public static MenuGroupResponse of(MenuGroup menuGroup) {
+    public static MenuGroupResponse of(final MenuGroup menuGroup) {
         return new MenuGroupResponse(menuGroup.getId(), menuGroup.getName());
     }
 

@@ -22,6 +22,15 @@ public class MenuProduct {
     @Column
     private long quantity;
 
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(Long menuId, Long productId, long quantity) {
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
     public Long getSeq() {
         return seq;
     }

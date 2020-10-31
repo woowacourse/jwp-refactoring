@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
 
-    MenuProduct save(MenuProduct entity);
-
     Optional<MenuProduct> findById(Long id);
 
     List<MenuProduct> findAll();
