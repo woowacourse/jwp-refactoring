@@ -1,6 +1,7 @@
 package kitchenpos.dto.menu;
 
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,5 +55,9 @@ public class MenuProductDto {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public boolean equalsProduct(Product product) {
+        return productId.equals(product.getId());
     }
 }

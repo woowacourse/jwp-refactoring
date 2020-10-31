@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -60,12 +61,21 @@ public class MenuService {
         return sum;
     }
 
-    private void addMenuProductToMenu(MenuRequest menuRequest, Menu savedMenu) {
-        List<MenuProduct> menuProducts = savedMenu.getMenuProducts();
-        for (final MenuProductDto menuProductDto : menuRequest.getMenuProducts()) {
-            Product product = productRepository.findById(menuProductDto.getProductId()).orElseThrow(IllegalArgumentException::new);
-            MenuProduct menuProductToSave = new MenuProduct(savedMenu, product, menuProductDto.getQuantity());
-            menuProducts.add(menuProductRepository.save(menuProductToSave));
+    private void addMenuProductToMenu(MenuRequest menuRequest, Menu menu) {
+        List<Long> productIds = menuRequest.getMenuProducts().stream()
+                .mapToLong(MenuProductDto::getProductId)
+                .boxed()
+                .collect(Collectors.toList());
+        List<Product> products = productRepository.findAllById(productIds);
+
+        for (Product product : products) {
+            long quantity = menuRequest.getMenuProducts().stream()
+                    .filter(menuProduct -> menuProduct.equalsProduct(product))
+                    .findAny()
+                    .orElseThrow(IllegalArgumentException::new)
+                    .getQuantity();
+            MenuProduct menuProductToSave = new MenuProduct(menu, product, quantity);
+            menu.addMenuProduct(menuProductRepository.save(menuProductToSave));
         }
     }
 

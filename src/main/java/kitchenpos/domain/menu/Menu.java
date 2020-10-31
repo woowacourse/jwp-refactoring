@@ -43,6 +43,10 @@ public class Menu extends BaseEntity {
         this(null, name, menuPrice, menuGroup, menuProducts);
     }
 
+    public void addMenuProduct(MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
+    }
+
     public String getName() {
         return name;
     }
