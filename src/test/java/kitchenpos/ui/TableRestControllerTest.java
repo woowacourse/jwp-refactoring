@@ -27,10 +27,9 @@ class TableRestControllerTest extends MvcTest {
     @DisplayName("/api/tables로 POST요청 성공 테스트")
     @Test
     void createTest() throws Exception {
-        given(tableService.create(any())).willReturn(TABLE_1);
+        given(tableService.create()).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(TABLE_1);
-        MvcResult mvcResult = postAction("/api/tables", inputJson)
+        MvcResult mvcResult = postAction("/api/tables")
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "/api/tables/1"))
             .andReturn();
