@@ -30,6 +30,14 @@ public class Table {
         this.empty = true;
     }
 
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -42,15 +50,7 @@ public class Table {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }
