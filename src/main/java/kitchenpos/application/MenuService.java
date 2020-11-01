@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.MenuDetailResponse;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductQuantityRequest;
@@ -40,7 +40,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         final BigDecimal price = menuRequest.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
@@ -68,30 +68,27 @@ public class MenuService {
 
         final Long menuId = savedMenu.getId();
 
+        final List<MenuProductResponse> menuProductResponses = new ArrayList<>();
+
         for (final ProductQuantityRequest productQuantityRequest : productQuantities) {
-            menuProductRepository.save(new MenuProduct(menuId, productQuantityRequest.getProductId(), productQuantityRequest
-                    .getQuantity()));
+            MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(menuId, productQuantityRequest.getProductId(), productQuantityRequest.getQuantity()));
+            menuProductResponses.add(MenuProductResponse.of(menuProduct));
         }
 
-        return savedMenu;
+        return MenuResponse.of(savedMenu, menuProductResponses);
     }
 
-    public List<MenuDetailResponse> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
-        final List<MenuDetailResponse> menuProductResponses = new ArrayList<>();
+        final List<MenuResponse> menuResponses = new ArrayList<>();
 
         for (final Menu menu : menus) {
             List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-            menuProductResponses.add(
-                    new MenuDetailResponse(
-                            menu.getId(),
-                            menu.getName(),
-                            menu.getPrice(),
-                            MenuProductResponse.ofList(menuProducts)
-                    )
+            menuResponses.add(
+                    MenuResponse.of(menu, MenuProductResponse.ofList(menuProducts))
             );
         }
 
-        return menuProductResponses;
+        return menuResponses;
     }
 }

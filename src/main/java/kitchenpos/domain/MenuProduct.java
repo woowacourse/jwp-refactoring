@@ -25,7 +25,7 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long menuId, Long productId, long quantity) {
+    public MenuProduct(final Long menuId, final Long productId, final long quantity) {
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;

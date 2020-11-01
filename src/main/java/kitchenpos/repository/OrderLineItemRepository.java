@@ -11,8 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderLineItemRepository extends JpaRepository<OrderLineItem, Long> {
 
-    OrderLineItem save(OrderLineItem entity);
-
     Optional<OrderLineItem> findById(Long id);
 
     List<OrderLineItem> findAll();

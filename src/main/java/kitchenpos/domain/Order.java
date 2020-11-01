@@ -24,7 +24,14 @@ public class Order {
     @Column
     private LocalDateTime orderedTime;
 
-    // private List<OrderLineItem> orderLineItems;
+    protected Order() {
+    }
+
+    public Order(final Long orderTableId, final String orderStatus, final LocalDateTime orderedTime) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
 
     public Long getId() {
         return id;
@@ -58,11 +65,7 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    // public List<OrderLineItem> getOrderLineItems() {
-    //     return orderLineItems;
-    // }
-    //
-    // public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-    //     this.orderLineItems = orderLineItems;
-    // }
+    public void updateStatus(final String name) {
+        this.orderStatus = name;
+    }
 }
