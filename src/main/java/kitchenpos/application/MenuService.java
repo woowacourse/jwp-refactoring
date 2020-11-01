@@ -2,7 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuProduct;
-import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.MenuProducts;
+import kitchenpos.dto.CreateMenuRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -11,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -34,29 +35,28 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu, List<MenuProduct> menuProducts) {
+    public Menu create(final CreateMenuRequest createMenuRequest) {
+        Menu menu = createMenuRequest.getMenu();
+        MenuProducts menuProducts = new MenuProducts(createMenuRequest.getMenuProducts());
+
         if (!menuGroupRepository.existsById(menu.getMenuGroup().getId())) {
             throw new IllegalArgumentException();
         }
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProduct().getId())
+        for (MenuProduct menuProduct : menuProducts.getMenuProducts()) {
+            Objects.requireNonNull(menuProduct.getProduct().getId());
+            productRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
+        BigDecimal sum = menuProducts.getSum();
         if (isGraterThan(menu.getPrice(), sum)) {
             throw new IllegalArgumentException();
         }
 
         final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.updateMenu(menu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
+        menuProducts.updateMenu(savedMenu);
+        menuProductRepository.saveAll(menuProducts.getMenuProducts());
         return savedMenu;
     }
 

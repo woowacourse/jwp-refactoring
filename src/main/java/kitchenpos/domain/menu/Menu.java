@@ -31,7 +31,7 @@ public class Menu extends BaseEntity {
         this.menuGroup = menuGroup;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, Long price, MenuGroup menuGroup) {
         this.name = name;
         this.price = new Price(price);
         this.menuGroup = menuGroup;

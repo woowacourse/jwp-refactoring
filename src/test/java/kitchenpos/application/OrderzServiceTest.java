@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -175,7 +174,7 @@ class OrderzServiceTest {
     }
 
     private Menu createMenu() {
-        Menu menu = new Menu("포테이토_피자", BigDecimal.valueOf(1000L), menuGroupRepository.save(new MenuGroup("피자")));
+        Menu menu = new Menu("포테이토_피자", 1000L, menuGroupRepository.save(new MenuGroup("피자")));
         return menuRepository.save(menu);
     }
 
