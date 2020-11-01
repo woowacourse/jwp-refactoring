@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.menu.Price;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
@@ -66,15 +67,6 @@ class MenuServiceTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    @DisplayName("생성 시 가격이 0원 미만이면 예외가 발생한다.")
-    @Test
-    void createExceptionTest_priceIsZero() {
-        Menu menu = create("감자_피자", -1L, menuGroup);
-
-        assertThatThrownBy(() -> menuService.create(menu, Collections.singletonList(menuProduct)))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("price가 제품의 sum보다 크면 예외가 발생한다.")
     @Test
     void createSumExceptionTest() {
@@ -85,6 +77,6 @@ class MenuServiceTest {
     }
 
     public Menu create(String name, Long price, MenuGroup menuGroup) {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroup);
+        return new Menu(name, new Price(price), menuGroup);
     }
 }
