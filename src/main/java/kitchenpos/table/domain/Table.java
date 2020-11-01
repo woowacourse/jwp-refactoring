@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.table.domain;
+
+import java.util.Objects;
 
 public class Table {
     private Long id;
@@ -29,19 +31,42 @@ public class Table {
         return numberOfGuests;
     }
 
+    public boolean getEmpty() {
+        return empty;
+    }
+
     public boolean isEmpty() {
         return empty;
     }
 
     public void changeEmpty(boolean empty) {
+        if (hasGroup()) {
+            throw new IllegalArgumentException();
+        }
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 
     public void changeTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
+    }
+
+    public boolean hasGroup() {
+        return Objects.nonNull(this.tableGroupId);
+    }
+
+    public void clear() {
+        this.empty = false;
     }
 }

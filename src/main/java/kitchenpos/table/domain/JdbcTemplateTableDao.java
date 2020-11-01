@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.table.domain;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,17 +16,15 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.domain.Table;
-
 @Repository
-public class JdbcTemplateOrderTableDao implements OrderTableDao {
+public class JdbcTemplateTableDao implements TableDao {
     private static final String TABLE_NAME = "order_table";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public JdbcTemplateOrderTableDao(final DataSource dataSource) {
+    public JdbcTemplateTableDao(final DataSource dataSource) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
             .withTableName(TABLE_NAME)

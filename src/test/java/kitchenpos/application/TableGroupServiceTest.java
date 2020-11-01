@@ -15,12 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableDao;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -30,7 +30,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -61,7 +61,7 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         TableGroup tableGroup = createTableGroup(1L, LocalDateTime.now(), Arrays.asList(table, table));
 
-        orderTableDao.save(table);
+        tableDao.save(table);
 
         assertThatThrownBy(
             () -> tableGroupService.create(tableGroup)
@@ -95,8 +95,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = orderTableDao.save(table);
-        Table savedTable2 = orderTableDao.save(table2);
+        Table savedTable1 = tableDao.save(table);
+        Table savedTable2 = tableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
             Arrays.asList(savedTable1, savedTable2));
@@ -115,8 +115,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = orderTableDao.save(table);
-        Table savedTable2 = orderTableDao.save(table2);
+        Table savedTable1 = tableDao.save(table);
+        Table savedTable2 = tableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
             Arrays.asList(savedTable1, savedTable2));
@@ -138,8 +138,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = orderTableDao.save(table);
-        Table savedTable2 = orderTableDao.save(table2);
+        Table savedTable1 = tableDao.save(table);
+        Table savedTable2 = tableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
             Arrays.asList(savedTable1, savedTable2));
@@ -152,7 +152,7 @@ class TableGroupServiceTest {
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        Table actual = orderTableDao.findById(savedTable1.getId()).get();
+        Table actual = tableDao.findById(savedTable1.getId()).get();
 
         assertThat(actual.getTableGroupId()).isNull();
     }

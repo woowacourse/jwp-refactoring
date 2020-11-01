@@ -1,7 +1,9 @@
-package kitchenpos.ui;
+package kitchenpos.table.controller;
 
 import java.net.URI;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +13,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.TableService;
-import kitchenpos.domain.Table;
+import kitchenpos.table.domain.Table;
+import kitchenpos.table.dto.TableCreateRequest;
+import kitchenpos.table.dto.TableEmptyEditRequest;
+import kitchenpos.table.dto.TableGuestEditRequest;
+import kitchenpos.table.service.TableService;
 
 @RestController
 public class TableRestController {
@@ -23,38 +28,36 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<Table> create(@RequestBody final Table table) {
-        final Table created = tableService.create(table);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<Table> create(@RequestBody @Valid TableCreateRequest request) {
+        Long id = tableService.create(request);
+        URI uri = URI.create("/api/tables/" + id);
         return ResponseEntity.created(uri)
-            .body(created)
-            ;
+            .build();
     }
 
     @GetMapping("/api/tables")
     public ResponseEntity<List<Table>> list() {
         return ResponseEntity.ok()
-            .body(tableService.list())
-            ;
+            .body(tableService.list());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<Table> changeEmpty(
-        @PathVariable final Long orderTableId,
-        @RequestBody final Table table
+    public ResponseEntity<Table> edit(
+        @PathVariable Long orderTableId,
+        @RequestBody @Valid TableEmptyEditRequest request
     ) {
-        return ResponseEntity.ok()
-            .body(tableService.changeEmpty(orderTableId, table))
-            ;
+        tableService.editEmpty(orderTableId, request);
+        return ResponseEntity.noContent()
+            .build();
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<Table> changeNumberOfGuests(
-        @PathVariable final Long orderTableId,
-        @RequestBody final Table table
+        @PathVariable Long orderTableId,
+        @RequestBody @Valid TableGuestEditRequest request
     ) {
-        return ResponseEntity.ok()
-            .body(tableService.changeNumberOfGuests(orderTableId, table))
-            ;
+        tableService.changeNumberOfGuests(orderTableId, request);
+        return ResponseEntity.noContent()
+            .build();
     }
 }

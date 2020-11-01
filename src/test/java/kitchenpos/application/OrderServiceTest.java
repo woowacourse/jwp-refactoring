@@ -17,16 +17,16 @@ import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductDao;
+import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableDao;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -36,7 +36,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @Autowired
     private MenuDao menuDao;
@@ -81,7 +81,7 @@ class OrderServiceTest {
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table table = createTable(null, false, null, 5);
-        orderTableDao.save(table);
+        tableDao.save(table);
 
         Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING, -1L);
 
@@ -99,7 +99,7 @@ class OrderServiceTest {
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table table = createTable(null, true, null, 5);
-        Table savedTable = orderTableDao.save(table);
+        Table savedTable = tableDao.save(table);
 
         Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
             savedTable.getId());
@@ -157,7 +157,7 @@ class OrderServiceTest {
 
     private Table saveOrderTable() {
         Table table = createTable(null, false, null, 5);
-        return orderTableDao.save(table);
+        return tableDao.save(table);
     }
 
     @DisplayName("주문 상태를 변경할 때 주문이 없을 시 예외가 발생한다.")

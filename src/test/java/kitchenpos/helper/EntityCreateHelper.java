@@ -10,9 +10,9 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.Table;
 
 public class EntityCreateHelper {
     public static MenuGroup createMenuGroup(Long id, String name) {
