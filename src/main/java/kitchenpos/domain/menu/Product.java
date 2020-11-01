@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Entity
 public class Product extends BaseEntity {
     private String name;
-    private BigDecimal price;
+    private Price price;
 
     public Product() {
 
@@ -19,7 +19,7 @@ public class Product extends BaseEntity {
 
     public Product(String name, BigDecimal price) {
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Long getId() {
@@ -31,6 +31,6 @@ public class Product extends BaseEntity {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 }
