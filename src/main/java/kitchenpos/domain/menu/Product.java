@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.BaseEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;

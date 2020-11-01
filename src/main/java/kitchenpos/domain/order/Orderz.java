@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
+import kitchenpos.domain.BaseEntity;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.AttributeOverride;
