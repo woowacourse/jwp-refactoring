@@ -19,7 +19,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest
@@ -41,9 +41,9 @@ class TableServiceTest {
     @DisplayName("주문테이블 추가한다.")
     @Test
     void create() {
-        OrderTable orderTable = createOrderTable(null, true, null, 1);
+        Table table = createTable(null, true, null, 1);
 
-        OrderTable actual = tableService.create(orderTable);
+        Table actual = tableService.create(table);
 
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),
@@ -54,25 +54,26 @@ class TableServiceTest {
     @DisplayName("주문테이블 리스트를 조회한다.")
     @Test
     void list() {
-        OrderTable table1 = createOrderTable(null, true, null, 1);
-        OrderTable savedOrderTable1 = tableService.create(table1);
-        OrderTable table2 = createOrderTable(null, true, null, 1);
-        OrderTable savedOrderTable2 = tableService.create(table2);
+        Table table1 = createTable(null, true, null, 1);
+        Table savedTable1 = tableService.create(table1);
+        Table table2 = createTable(null, true, null, 1);
+        Table savedTable2 = tableService.create(table2);
 
-        List<OrderTable> actual = tableService.list();
+        List<Table> actual = tableService.list();
 
         assertAll(
             () -> assertThat(actual).hasSize(2),
-            () -> assertThat(actual.get(0).getId()).isEqualTo(savedOrderTable1.getId()),
-            () -> assertThat(actual.get(1).getId()).isEqualTo(savedOrderTable2.getId())
+            () -> assertThat(actual.get(0).getId()).isEqualTo(savedTable1.getId()),
+            () -> assertThat(actual.get(1).getId()).isEqualTo(savedTable2.getId())
         );
     }
 
     @DisplayName("주문테이블이 없는경우에 테이블의 사람유무를 변경했을 때 예외가 발생한다.")
     @Test
     void changeEmptyWhenNoOrderTable() {
+        Table table = createTable(null, true, 1L, 5);
         assertThatThrownBy(
-            () -> tableService.changeEmpty(1L, new OrderTable())
+            () -> tableService.changeEmpty(1L, table)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -82,41 +83,41 @@ class TableServiceTest {
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(), Collections.emptyList());
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
-        OrderTable orderTable = createOrderTable(null, true, savedTableGroup.getId(), 1);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, savedTableGroup.getId(), 1);
+        Table savedTable = orderTableDao.save(table);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTable()))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), createTable(null, true, null, 5)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문이 들어가지 않거나, 계산이 완료되지 않은 경우 사람유무를 변경했을 때 예외가 발생한다.")
     @Test
     void changeEmptyWhenOrderStatusIsNullOrCompletion() {
-        OrderTable orderTable = createOrderTable(null, true, null, 1);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, null, 1);
+        Table savedTable = orderTableDao.save(table);
 
         Order order = createOrder(null, LocalDateTime.now(), Collections.emptyList(), OrderStatus.COOKING,
-            savedOrderTable.getId());
+            savedTable.getId());
         orderDao.save(order);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), new OrderTable()))
+        assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), createTable(null, true, null, 5)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블의 사람의 유무 여부를 변경한다")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = createOrderTable(null, true, null, 1);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, null, 1);
+        Table savedTable = orderTableDao.save(table);
 
         Order order = createOrder(null, LocalDateTime.now(), Collections.emptyList(), OrderStatus.COMPLETION,
-            savedOrderTable.getId());
+            savedTable.getId());
         orderDao.save(order);
 
-        OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), new OrderTable());
+        Table actual = tableService.changeEmpty(savedTable.getId(), createTable(null, true, null, 5));
 
         assertAll(
-            () -> assertThat(actual.getId()).isEqualTo(savedOrderTable.getId()),
+            () -> assertThat(actual.getId()).isEqualTo(savedTable.getId()),
             () -> assertThat(actual.isEmpty()).isEqualTo(false)
         );
     }
@@ -124,40 +125,40 @@ class TableServiceTest {
     @DisplayName("변경하려는 손님의 수가 0미만일 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuestsWhenNumberIsBelowZero() {
-        OrderTable orderTable = createOrderTable(null, true, null, -1);
+        Table table = createTable(null, true, null, -1);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, table))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("손님 수를 변경할 때 주문 테이블이 없는 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuestsWhenNoOrderTable() {
-        OrderTable orderTable = createOrderTable(null, true, null, 3);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, null, 3);
+        Table savedTable = orderTableDao.save(table);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), table))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("손님 수를 변경할 때 주문테이블의 착석한 손님이 없는 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuestsWhenIsEmpty() {
-        OrderTable orderTable = createOrderTable(null, true, null, 1);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, null, 1);
+        Table savedTable = orderTableDao.save(table);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), table))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문테이블의 방문한 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = createOrderTable(null, false, null, 1);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, false, null, 1);
+        Table savedTable = orderTableDao.save(table);
 
-        OrderTable changedTable = createOrderTable(null, false, null, 4);
-        OrderTable actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), changedTable);
+        Table changedTable = createTable(null, false, null, 4);
+        Table actual = tableService.changeNumberOfGuests(savedTable.getId(), changedTable);
 
         assertAll(
             () -> assertThat(actual.getId()).isNotNull(),

@@ -19,7 +19,7 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest
@@ -41,9 +41,9 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 비어있거나 1개일 시 단체지정을 하면 예외를 발생한다.")
     @Test
     void createWhenOrderTableIsEmptyOrOne() {
-        OrderTable orderTable = createOrderTable(1L, true, null, 3);
+        Table table = createTable(1L, true, null, 3);
         TableGroup tableGroup = createTableGroup(1L, LocalDateTime.now(), Collections.emptyList());
-        TableGroup tableGroup2 = createTableGroup(1L, LocalDateTime.now(), Collections.singletonList(orderTable));
+        TableGroup tableGroup2 = createTableGroup(1L, LocalDateTime.now(), Collections.singletonList(table));
 
         assertAll(
             () -> assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -58,10 +58,10 @@ class TableGroupServiceTest {
     @Test
     void createWhenOrderTableIsNullOrDuplicated() {
         //todo
-        OrderTable orderTable = createOrderTable(null, true, null, 3);
-        TableGroup tableGroup = createTableGroup(1L, LocalDateTime.now(), Arrays.asList(orderTable, orderTable));
+        Table table = createTable(null, true, null, 3);
+        TableGroup tableGroup = createTableGroup(1L, LocalDateTime.now(), Arrays.asList(table, table));
 
-        orderTableDao.save(orderTable);
+        orderTableDao.save(table);
 
         assertThatThrownBy(
             () -> tableGroupService.create(tableGroup)
@@ -71,12 +71,12 @@ class TableGroupServiceTest {
     @DisplayName("인자로 넘겨준 테이블그룹의 주문 테이블이 비어있거나 없을 시 단체지정을 하면 예외를 발생한다.")
     @Test
     void createWhenOrderTableIsNullOrDuplicated2() {
-        OrderTable orderTableWhichIsEmpty = createOrderTable(1L, true, null, 3);
+        Table tableWhichIsEmpty = createTable(1L, true, null, 3);
         TableGroup tableGroupWithTableWhichIsEmpty = createTableGroup(1L, LocalDateTime.now(),
-            Arrays.asList(orderTableWhichIsEmpty));
-        OrderTable orderTableWithNoGroupId = createOrderTable(1L, true, null, 3);
+            Arrays.asList(tableWhichIsEmpty));
+        Table tableWithNoGroupId = createTable(1L, true, null, 3);
         TableGroup tableGroupWithTableWithoutTableGroupId = createTableGroup(1L, LocalDateTime.now(),
-            Arrays.asList(orderTableWithNoGroupId));
+            Arrays.asList(tableWithNoGroupId));
         assertAll(
             () -> assertThatThrownBy(
                 () -> tableGroupService.create(tableGroupWithTableWhichIsEmpty)
@@ -92,39 +92,39 @@ class TableGroupServiceTest {
     @Test
     void create() {
         //todo
-        OrderTable orderTable = createOrderTable(null, true, null, 3);
-        OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+        Table table = createTable(null, true, null, 3);
+        Table table2 = createTable(null, true, null, 3);
 
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        Table savedTable1 = orderTableDao.save(table);
+        Table savedTable2 = orderTableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable1, savedOrderTable2));
+            Arrays.asList(savedTable1, savedTable2));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         assertAll(
             () -> assertThat(savedTableGroup.getId()).isNotNull(),
-            () -> assertThat(savedTableGroup.getOrderTables()).hasSize(2)
+            () -> assertThat(savedTableGroup.getTables()).hasSize(2)
         );
     }
 
     @DisplayName("주문 테이블 중 주문이 안 들어가거나 계산 완료되지 않은 테이블이 있을 경우 단체지정 해제할 때 예외를 발생한다.")
     @Test
     void ungroupWhenNotStatusOrderCompletion() {
-        OrderTable orderTable = createOrderTable(null, true, null, 3);
-        OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+        Table table = createTable(null, true, null, 3);
+        Table table2 = createTable(null, true, null, 3);
 
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        Table savedTable1 = orderTableDao.save(table);
+        Table savedTable2 = orderTableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable1, savedOrderTable2));
+            Arrays.asList(savedTable1, savedTable2));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         Order order = createOrder(null, LocalDateTime.now(), Collections.emptyList(), OrderStatus.MEAL,
-            savedOrderTable1.getId());
+            savedTable1.getId());
         orderDao.save(order);
 
         assertThatThrownBy(
@@ -135,24 +135,24 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정을 해제한다.")
     @Test
     void ungroup() {
-        OrderTable orderTable = createOrderTable(null, true, null, 3);
-        OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+        Table table = createTable(null, true, null, 3);
+        Table table2 = createTable(null, true, null, 3);
 
-        OrderTable savedOrderTable1 = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+        Table savedTable1 = orderTableDao.save(table);
+        Table savedTable2 = orderTableDao.save(table2);
 
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable1, savedOrderTable2));
+            Arrays.asList(savedTable1, savedTable2));
 
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
         Order order = createOrder(null, LocalDateTime.now(), Collections.emptyList(), OrderStatus.COMPLETION,
-            savedOrderTable1.getId());
+            savedTable1.getId());
         orderDao.save(order);
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        OrderTable actual = orderTableDao.findById(savedOrderTable1.getId()).get();
+        Table actual = orderTableDao.findById(savedTable1.getId()).get();
 
         assertThat(actual.getTableGroupId()).isNull();
     }

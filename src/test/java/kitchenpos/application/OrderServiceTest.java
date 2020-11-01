@@ -25,8 +25,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -80,8 +80,8 @@ class OrderServiceTest {
 
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        OrderTable orderTable = createOrderTable(null, false, null, 5);
-        orderTableDao.save(orderTable);
+        Table table = createTable(null, false, null, 5);
+        orderTableDao.save(table);
 
         Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING, -1L);
 
@@ -98,11 +98,11 @@ class OrderServiceTest {
 
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        OrderTable orderTable = createOrderTable(null, true, null, 5);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Table table = createTable(null, true, null, 5);
+        Table savedTable = orderTableDao.save(table);
 
         Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
-            savedOrderTable.getId());
+            savedTable.getId());
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -114,19 +114,19 @@ class OrderServiceTest {
         MenuGroup savedMenuGroup = getMenuGroup();
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
-        OrderTable savedOrderTable = saveOrderTable();
+        Table savedTable = saveOrderTable();
 
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
         Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
-            savedOrderTable.getId());
+            savedTable.getId());
 
         Order savedOrder = orderService.create(order);
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
             () -> assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING"),
-            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(savedOrderTable.getId())
+            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(savedTable.getId())
         );
     }
 
@@ -139,10 +139,10 @@ class OrderServiceTest {
 
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
-        OrderTable savedOrderTable = saveOrderTable();
+        Table savedTable = saveOrderTable();
 
         Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
-            savedOrderTable.getId());
+            savedTable.getId());
 
         Order savedOrder = orderService.create(order);
 
@@ -155,9 +155,9 @@ class OrderServiceTest {
         );
     }
 
-    private OrderTable saveOrderTable() {
-        OrderTable orderTable = createOrderTable(null, false, null, 5);
-        return orderTableDao.save(orderTable);
+    private Table saveOrderTable() {
+        Table table = createTable(null, false, null, 5);
+        return orderTableDao.save(table);
     }
 
     @DisplayName("주문 상태를 변경할 때 주문이 없을 시 예외가 발생한다.")
@@ -184,12 +184,12 @@ class OrderServiceTest {
         MenuGroup savedMenuGroup = getMenuGroup();
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
-        OrderTable savedOrderTable = saveOrderTable();
+        Table savedTable = saveOrderTable();
 
         OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
 
         Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
-            savedOrderTable.getId());
+            savedTable.getId());
 
         Order savedOrder = orderService.create(order);
 

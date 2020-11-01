@@ -10,8 +10,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 
 public class EntityCreateHelper {
@@ -49,13 +49,13 @@ public class EntityCreateHelper {
         return orderLineItem;
     }
 
-    public static OrderTable createOrderTable(Long id, boolean isEmpty, Long tableGroupId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setEmpty(isEmpty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+    public static Table createTable(Long id, boolean isEmpty, Long tableGroupId, int numberOfGuests) {
+        Table table = new Table();
+        table.setId(id);
+        table.setEmpty(isEmpty);
+        table.setTableGroupId(tableGroupId);
+        table.setNumberOfGuests(numberOfGuests);
+        return table;
     }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
@@ -66,11 +66,11 @@ public class EntityCreateHelper {
         return product;
     }
 
-    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.setOrderTables(tables);
         return tableGroup;
     }
 
