@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -67,25 +66,17 @@ class OrderzServiceTest {
     @Test
     void createTest() {
         // given
-        Menu menu = createMenu();
         OrderTable orderTable = createOrderTable(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-
-        Orderz order = new Orderz();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-
+        List<OrderLineItem> orderLineItem = createOrderLineItem();
         // when
-        Orderz result = orderService.create(order);
+        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
 
         // then
         Orderz savedOrder = orderRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrder(result);
 
-        assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
+        assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(savedOrder.getOrderedTime()).isNotNull();
         assertThat(savedOrderLineItems).hasSize(1);
@@ -94,10 +85,7 @@ class OrderzServiceTest {
     @DisplayName("새로운 주문 생성 시, OrderLineItem이 없으면 예외가 발생한다.")
     @Test
     void emptyOrderLineItemsExceptionTest() {
-        Orderz order = new Orderz();
-        order.setOrderLineItems(new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(1L, Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -106,11 +94,10 @@ class OrderzServiceTest {
     void emptyOrderTableExceptionTest() {
         // given
         OrderTable orderTable = createOrderTable(true);
+        List<OrderLineItem> orderLineItem = createOrderLineItem();
 
-        Orderz order = new Orderz();
-        order.setOrderTableId(orderTable.getId());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderTable.getId(), orderLineItem))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -118,16 +105,12 @@ class OrderzServiceTest {
     @Test
     void changeOrderStateTest() {
         Menu menu = createMenu();
-
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(menu.getId());
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(menu.getId());
-
-        Orderz order = new Orderz();
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        List<OrderLineItem> orderLineItems = Arrays.asList(
+                new OrderLineItem(menu.getId()),
+                new OrderLineItem(menu.getId())
+        );
+        orderLineItemRepository.saveAll(orderLineItems);
+        assertThatThrownBy(() -> orderService.create(1L, orderLineItems))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -135,17 +118,10 @@ class OrderzServiceTest {
     @Test
     void listTest() {
         // given
-        Menu menu = createMenu();
         OrderTable orderTable = createOrderTable(false);
+        List<OrderLineItem> orderLineItems = createOrderLineItem();
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-
-        Orderz order = new Orderz();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-
-        orderService.create(order);
+        orderService.create(orderTable.getId(), orderLineItems);
 
         // when
         List<Orderz> list = orderService.list();
@@ -158,22 +134,15 @@ class OrderzServiceTest {
     @DisplayName("Order 상태를 변경한다.")
     @Test
     void changeOrderStatusTest() {
-        final String CHANGED_STATUS = "COMPLETION";
+        final String CHANGED_STATUS = OrderStatus.COMPLETION.name();
 
         // given
-        Menu menu = createMenu();
         OrderTable orderTable = createOrderTable(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-
-        Orderz order = new Orderz();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        List<OrderLineItem> orderLineItem = createOrderLineItem();
 
         // when
-        Orderz result = orderService.create(order);
-        result.setOrderStatus(CHANGED_STATUS);
+        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
+        result.updateOrderStatus(CHANGED_STATUS);
         orderService.changeOrderStatus(result.getId(), result);
 
         // then
@@ -188,64 +157,30 @@ class OrderzServiceTest {
         final String CHANGED_STATUS = "NOT_VALID_STATUS";
 
         // given
-        Menu menu = createMenu();
-
         OrderTable orderTable = createOrderTable(false);
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-
-        Orderz order = new Orderz();
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        List<OrderLineItem> orderLineItem = createOrderLineItem();
 
         // when
-        Orderz result = orderService.create(order);
-        result.setOrderStatus(CHANGED_STATUS);
+        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
+        result.updateOrderStatus(CHANGED_STATUS);
         assertThatThrownBy(() -> orderService.changeOrderStatus(result.getId(), result))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-//    private OrderTable createOrderTable() {
-//        return createOrderTable(createTableGroup());
-//    }
-//
-//    private OrderTable createOrderTable(TableGroup tableGroup) {
-//        OrderTable orderTable = new OrderTable();
-//        orderTable.setNumberOfGuests(10);
-//        orderTable.setEmpty(true);
-//        return orderTableDao.save(orderTable);
-//    }
-//
-//    private TableGroup createTableGroup() {
-//        TableGroup tableGroup = new TableGroup();
-//        return tableGroupDao.save(tableGroup);
-//    }
-//
-//    private Orderz createOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
-//        Orderz order = new Orderz();
-//        order.setOrderTableId(orderTableId);
-//        order.setOrderStatus(OrderStatus.COOKING.name());
-//        order.setOrderLineItems(orderLineItems);
-//        return orderDao.save(order);
-//    }
-
-
     private OrderTable createOrderTable(boolean empty) {
-//        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable = new OrderTable();
-//        orderTable.setTableGroup(tableGroup);
-        orderTable.setEmpty(empty);
-//        tableGroupDao.save(tableGroup);
+        orderTable.updateEmpty(empty);
         orderTableRepository.save(orderTable);
         return orderTable;
     }
 
     private Menu createMenu() {
-        Menu menu = new Menu();
-        menu.setName("포테이토_피자");
-        menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroup(menuGroupRepository.save(new MenuGroup("피자")));
+        Menu menu = new Menu("포테이토_피자", BigDecimal.valueOf(1000L), menuGroupRepository.save(new MenuGroup("피자")));
         return menuRepository.save(menu);
+    }
+
+    private List<OrderLineItem> createOrderLineItem() {
+        Menu menu = createMenu();
+        return Collections.singletonList(new OrderLineItem(menu.getId()));
     }
 }

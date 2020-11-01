@@ -21,31 +21,26 @@ public class MenuProduct extends BaseEntity {
 
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public MenuProduct() {
+
     }
 
-    public void setSeq(final Long seq) {
+    public MenuProduct(Long seq, Product product, long quantity) {
         this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setMenu(Menu menu) {
+    public void updateMenu(Menu menu) {
         this.menu = menu;
     }
 }

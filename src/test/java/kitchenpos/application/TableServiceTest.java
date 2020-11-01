@@ -32,7 +32,7 @@ class TableServiceTest {
     @Test
     void createTest() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.updateEmpty(false);
         orderTable.setNumberOfGuests(10);
 
         OrderTable result = tableService.create(orderTable);
@@ -48,16 +48,16 @@ class TableServiceTest {
     void changeEmptyTest(final boolean EXPECTED) {
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(!EXPECTED);
+        orderTable.updateEmpty(!EXPECTED);
         orderTable.setNumberOfGuests(10);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Orderz order = new Orderz();
         order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 
-        savedOrderTable.setEmpty(EXPECTED);
+        savedOrderTable.updateEmpty(EXPECTED);
 
         // when
         OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
@@ -72,7 +72,7 @@ class TableServiceTest {
     void changeNumberOfGuestsTest(final int EXPECTED) {
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.updateEmpty(false);
         orderTable.setNumberOfGuests(10);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
@@ -92,7 +92,7 @@ class TableServiceTest {
 
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.updateEmpty(false);
         orderTable.setNumberOfGuests(10);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
@@ -108,7 +108,7 @@ class TableServiceTest {
     void changeNumberOfGuestsExceptionTest() {
         // given
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        orderTable.updateEmpty(true);
         orderTable.setNumberOfGuests(10);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);

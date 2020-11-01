@@ -43,7 +43,7 @@ public class TableService {
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }

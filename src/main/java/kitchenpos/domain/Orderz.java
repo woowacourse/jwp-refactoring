@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,12 +13,25 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "ORDER_ID"))
 @Entity
 public class Orderz extends BaseEntity {
+    private static final String DEFAULT_ORDER_STATUS = OrderStatus.COOKING.name();
+
     private Long orderTableId;
     private String orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
+
+    public Orderz() {
+    }
+
+    public Orderz(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderStatus = DEFAULT_ORDER_STATUS;
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;
@@ -38,16 +53,12 @@ public class Orderz extends BaseEntity {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

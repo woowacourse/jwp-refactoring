@@ -5,6 +5,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,12 +43,9 @@ class TableGroupServiceTest {
     private OrderTable orderTable2;
 
     private static Stream<Arguments> generateInvalidTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(10);
         return Stream.of(
                 Arguments.of(Collections.emptyList()),
-                Arguments.of(Collections.singletonList(orderTable))
+                Arguments.of(Collections.singletonList(new OrderTable(10, false)))
         );
     }
 
@@ -56,14 +54,22 @@ class TableGroupServiceTest {
     void setUp() {
         this.tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
         this.orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
+        orderTable1.updateEmpty(true);
         orderTable1.setId(1L);
         orderTable1.setNumberOfGuests(10);
 
         this.orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
+        orderTable2.updateEmpty(true);
         orderTable2.setId(2L);
         orderTable2.setNumberOfGuests(10);
+
+        orderTableRepository.save(orderTable1);
+        orderTableRepository.save(orderTable2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderTableRepository.deleteAll();
     }
 
     @DisplayName("Table Group을 생성하고 DB에 저장한다.")
@@ -79,7 +85,6 @@ class TableGroupServiceTest {
 
         TableGroup result = tableGroupService.create(tableGroup, orderTables);
 
-        assertThat(result.getCreatedDate()).isNotNull();
         assertThat(orderTable1.getTableGroup()).isEqualTo(tableGroup);
         assertThat(orderTable2.getTableGroup()).isEqualTo(tableGroup);
     }
@@ -90,14 +95,14 @@ class TableGroupServiceTest {
     void invalidTableSizeExceptionTest(List orderTables) {
         TableGroup tableGroup = new TableGroup();
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup, Arrays.asList(orderTable1)))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup, Collections.singletonList(orderTable1)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Table Group 생성 시, Table은 저장된 상태여야 한다.")
     @Test
     void notSavedOrderTableExceptionTest() {
-        orderTable1.setId(null);
+        orderTableRepository.deleteById(orderTable1.getId());
 
         when(orderTableRepository.findAllByIdIn(Arrays.asList(orderTable1.getId(), orderTable2.getId())))
                 .thenReturn(Collections.singletonList(orderTable2));
@@ -110,7 +115,7 @@ class TableGroupServiceTest {
     @DisplayName("Table Group 생성 시, Table이 empty가 아니라면 예외가 발생한다.")
     @Test
     void tableEmptyExceptionTest() {
-        orderTable1.setEmpty(false);
+        orderTable1.updateEmpty(false);
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(orderTableRepository.findAllByIdIn(Arrays.asList(orderTable1.getId(), orderTable2.getId())))
@@ -124,7 +129,7 @@ class TableGroupServiceTest {
     @DisplayName("Table Group 생성 시, 이미 Table Group이 있는 Table이라면 예외가 발생한다.")
     @Test
     void tableAlreadyRegisteredExceptionTest() {
-        orderTable1.setTableGroup(new TableGroup());
+        orderTable1.updateTableGroup(new TableGroup());
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());

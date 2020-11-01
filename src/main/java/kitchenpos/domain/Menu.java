@@ -20,6 +20,12 @@ public class Menu extends BaseEntity {
     public Menu() {
     }
 
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+    }
+
     public Long getId() {
         return id;
     }
@@ -32,23 +38,11 @@ public class Menu extends BaseEntity {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public void setMenuGroup(final MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
     }
 }

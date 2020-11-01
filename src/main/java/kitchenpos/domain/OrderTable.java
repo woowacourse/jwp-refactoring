@@ -16,6 +16,15 @@ public class OrderTable extends BaseEntity {
     private int numberOfGuests;
     private boolean empty;
 
+    public OrderTable() {
+
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -28,7 +37,7 @@ public class OrderTable extends BaseEntity {
         return tableGroup;
     }
 
-    public void setTableGroup(final TableGroup tableGroup) {
+    public void updateTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
@@ -44,7 +53,7 @@ public class OrderTable extends BaseEntity {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 }

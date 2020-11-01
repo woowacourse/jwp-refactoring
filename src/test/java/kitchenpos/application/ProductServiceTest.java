@@ -25,9 +25,7 @@ class ProductServiceTest {
     @DisplayName("MenuGroup을 생성하고 DB에 저장한다.")
     @Test
     void createTest() {
-        Product product = new Product();
-        product.setName("감자");
-        product.setPrice(BigDecimal.valueOf(1000L));
+        Product product = new Product("감자", BigDecimal.valueOf(1000L));
 
         Product result = productService.create(product);
 
@@ -40,9 +38,7 @@ class ProductServiceTest {
     @DisplayName("가격이 0원 미만이면 예외가 발생한다.")
     @Test
     void invalidPriceExceptionTest() {
-        Product product = new Product();
-        product.setName("토마토");
-        product.setPrice(BigDecimal.valueOf(-1));
+        Product product = new Product("토마토", BigDecimal.valueOf(-1L));
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);

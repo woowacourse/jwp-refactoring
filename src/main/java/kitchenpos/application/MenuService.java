@@ -61,7 +61,7 @@ public class MenuService {
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(menu);
+            menuProduct.updateMenu(menu);
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         return savedMenu;

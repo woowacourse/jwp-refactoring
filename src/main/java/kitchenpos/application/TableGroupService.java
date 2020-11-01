@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -50,14 +49,11 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(tableGroup);
-            savedOrderTable.setEmpty(false);
+            savedOrderTable.updateTableGroup(tableGroup);
+            savedOrderTable.updateEmpty(false);
             orderTableRepository.save(savedOrderTable);
         }
         return savedTableGroup;
@@ -79,8 +75,8 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.updateTableGroup(null);
+            orderTable.updateEmpty(false);
             orderTableRepository.save(orderTable);
         }
     }

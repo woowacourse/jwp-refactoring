@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,9 +37,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Orderz create(final Orderz order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
+    public Orderz create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
@@ -53,29 +50,21 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        final Orderz savedOrder = orderRepository.save(new Orderz(orderTableId, orderLineItems));
 
-        final Orderz savedOrder = orderRepository.save(order);
-
-        final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(order);
+            orderLineItem.updateOrder(savedOrder);
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
+        orderLineItemRepository.saveAll(savedOrderLineItems);
         return savedOrder;
     }
 
@@ -99,7 +88,7 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.updateOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
 

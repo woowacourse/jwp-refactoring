@@ -12,36 +12,27 @@ import javax.persistence.ManyToOne;
 public class OrderLineItem extends BaseEntity {
     private Long seq;
     @ManyToOne
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "ORDER_ID")
     private Orderz order;
     private Long menuId;
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public OrderLineItem() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public OrderLineItem(Long menuId) {
+        this.menuId = menuId;
+    }
+
+    public Long getSeq() {
+        return seq;
     }
 
     public Long getMenuId() {
         return menuId;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setOrder(Orderz order) {
+    public void updateOrder(Orderz order) {
         this.order = order;
     }
 }

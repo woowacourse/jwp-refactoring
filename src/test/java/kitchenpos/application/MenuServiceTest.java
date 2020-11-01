@@ -40,15 +40,10 @@ class MenuServiceTest {
     private void setUp() {
         this.menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(4000));
-        product.setName("감자");
+        Product product = new Product("감자", BigDecimal.valueOf(4000));
         Product savedProduct = productRepository.save(product);
 
-        this.menuProduct = new MenuProduct();
-        menuProduct.setQuantity(2);
-        menuProduct.setSeq(1L);
-        menuProduct.setProduct(savedProduct);
+        this.menuProduct = new MenuProduct(1L, savedProduct, 1L);
     }
 
     @DisplayName("Menu 생성을 확인한다.")
@@ -90,10 +85,6 @@ class MenuServiceTest {
     }
 
     public Menu create(String name, Long price, MenuGroup menuGroup) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroup(menuGroup);
-        return menu;
+        return new Menu(name, BigDecimal.valueOf(price), menuGroup);
     }
 }
