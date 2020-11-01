@@ -7,17 +7,16 @@ public class Product {
 
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
 
     private Product() {
     }
 
     public Product(Long id, String name, BigDecimal price) {
         validateName(name);
-        validatePrice(price);
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = new Price(price);
     }
 
     public Product(String name, BigDecimal price) {
@@ -26,12 +25,6 @@ public class Product {
 
     private void validateName(String name) {
         if (Objects.isNull(name)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -45,6 +38,6 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 }

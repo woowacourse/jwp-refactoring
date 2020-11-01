@@ -7,14 +7,14 @@ public class Menu {
 
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
     private Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
+    public Menu(Long id, String name, Price price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
@@ -23,7 +23,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId,
+    public Menu(String name, Price price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroupId, menuProducts);
     }
@@ -45,10 +45,10 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(final Price price) {
         this.price = price;
     }
 
