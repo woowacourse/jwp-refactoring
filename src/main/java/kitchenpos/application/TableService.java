@@ -2,12 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,9 +21,6 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
         return orderTableDao.save(orderTable);
     }
 
@@ -38,14 +33,23 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+//        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+//                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+//            throw new IllegalArgumentException();
+//        }
+//        List<Order> allByOrderTableId = orderDao.findAllByOrderTableId(orderTableId);
+//        long count = allByOrderTableId.stream()
+//                .filter(x -> x.getOrderStatus().equals(OrderStatus.COOKING.name()) ||
+//                        x.getOrderStatus().equals(OrderStatus.MEAL.name()))
+//                .count();
+//        if (count > 0) {
+//            throw new IllegalArgumentException();
+//        }
+
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 

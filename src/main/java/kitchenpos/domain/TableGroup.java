@@ -1,12 +1,14 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 import java.time.LocalDateTime;
-import java.util.List;
 
-public class TableGroup {
-    private Long id;
+@Entity
+@AttributeOverride(name = "id", column = @Column(name = "TABLE_GROUP_ID"))
+public class TableGroup extends BaseEntity { // 여러 테이블 한꺼번에 계산할 때
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
 
     public Long getId() {
         return id;
@@ -22,13 +24,5 @@ public class TableGroup {
 
     public void setCreatedDate(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }

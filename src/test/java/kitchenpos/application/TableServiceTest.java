@@ -32,7 +32,7 @@ class TableServiceTest {
         OrderTable result = tableService.create(orderTable);
         OrderTable savedOrderTable = orderTableDao.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
-        assertThat(savedOrderTable.getTableGroupId()).isEqualTo(orderTable.getTableGroupId());
+        assertThat(savedOrderTable.getTableGroup()).isEqualTo(orderTable.getTableGroup());
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
     }
 
@@ -87,7 +87,7 @@ class TableServiceTest {
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         savedOrderTable.setNumberOfGuests(INVALID_NUMBER_OF_GUESTS);
 
-        // when
+        // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -102,7 +102,7 @@ class TableServiceTest {
 
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
-        // when
+        // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }

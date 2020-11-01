@@ -1,8 +1,18 @@
 package kitchenpos.domain;
 
-public class OrderTable {
-    private Long id;
-    private Long tableGroupId;
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
+@AttributeOverride(name = "id", column = @Column(name = "ORDER_TABLE_ID"))
+public class OrderTable extends BaseEntity {
+    @ManyToOne
+    @JoinColumn(name = "TABLE_GROUP_ID")
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -14,12 +24,12 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setTableGroup(final TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {
