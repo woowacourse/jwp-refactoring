@@ -74,6 +74,14 @@ public class TestObjectFactory {
             .build();
     }
 
+    public static Menu createMenu(List<MenuProduct> menuProducts, int price) {
+        return Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(price))
+            .menuProducts(menuProducts)
+            .build();
+    }
+
     public static Product createProduct(int price) {
         return Product.builder()
             .name("강정치킨")
@@ -81,9 +89,8 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static MenuProduct createMenuProduct(Menu menu, Product product, int quantity) {
+    public static MenuProduct createMenuProduct(Product product, int quantity) {
         return MenuProduct.builder()
-            .menu(menu)
             .product(product)
             .quantity(quantity)
             .build();

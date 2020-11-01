@@ -41,14 +41,15 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupDao.findById(request.getMenuGroupId())
             .orElseThrow(IllegalArgumentException::new);
 
+        List<Product> products = findProducts(request.getMenuProducts());
+        List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), products);
+
         Menu menu = Menu.builder()
             .name(request.getName())
             .price(request.getPrice())
             .menuGroup(menuGroup)
+            .menuProducts(menuProducts)
             .build();
-
-        List<Product> products = findProducts(request.getMenuProducts());
-        List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), products, menu);
 
         if (menu.isNotValidPrice()) {
             throw new IllegalArgumentException();
@@ -77,23 +78,20 @@ public class MenuService {
 
     private List<MenuProduct> convertMenuProducts(
         final List<MenuProductRequest> requests,
-        final List<Product> products,
-        final Menu menu
+        final List<Product> products
     ) {
         return requests.stream()
-            .map(request -> convertMenuProduct(request, products, menu))
+            .map(request -> convertMenuProduct(request, products))
             .collect(Collectors.toList());
     }
 
     private MenuProduct convertMenuProduct(
         final MenuProductRequest request,
-        final List<Product> products,
-        final Menu menu
+        final List<Product> products
     ) {
         Product product = findProduct(request, products);
         return MenuProduct.builder()
             .product(product)
-            .menu(menu)
             .quantity(request.getQuantity())
             .build();
     }

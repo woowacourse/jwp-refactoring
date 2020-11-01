@@ -29,24 +29,27 @@ public class MenuProduct {
     private long quantity;
 
     @Builder
-    public MenuProduct(final Long seq, final Menu menu, final Product product, final long quantity) {
+    public MenuProduct(final Long seq, final Product product, final long quantity) {
         this.seq = seq;
-        setMenu(menu);
         setProduct(product);
         this.quantity = quantity;
-    }
-
-    private void setMenu(final Menu menu) {
-        if (Objects.isNull(this.menu) && Objects.nonNull(menu)) {
-            this.menu = menu;
-            this.menu.addMenuProduct(this);
-        }
     }
 
     private void setProduct(final Product product) {
         if (Objects.isNull(this.product) && Objects.nonNull(product)) {
             this.product = product;
             this.product.addMenuProduct(this);
+        }
+    }
+
+    public void setMenu(final Menu menu) {
+        validateAccessThroughMenu(menu);
+        this.menu = menu;
+    }
+
+    private void validateAccessThroughMenu(final Menu menu) {
+        if (Objects.isNull(menu) || !menu.getMenuProducts().contains(this)) {
+            throw new IllegalStateException();
         }
     }
 

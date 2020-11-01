@@ -32,12 +32,24 @@ public class Menu {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
-    private Menu(final Long id, final String name, final BigDecimal price, final MenuGroup menuGroup) {
+    public Menu(
+        final Long id,
+        final String name,
+        final BigDecimal price,
+        final MenuGroup menuGroup,
+        final List<MenuProduct> menuProducts
+    ) {
         validatePrice(price);
-        this.id = id;
         this.name = name;
         this.price = price;
         setMenuGroup(menuGroup);
+        setMenuProducts(menuProducts);
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void setMenuGroup(final MenuGroup menuGroup) {
@@ -47,14 +59,15 @@ public class Menu {
         }
     }
 
-    private void validatePrice(final BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+    private void setMenuProducts(final List<MenuProduct> menuProducts) {
+        if (Objects.nonNull(menuProducts)) {
+            menuProducts.forEach(this::addMenuProduct);
         }
     }
 
     public void addMenuProduct(final MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
+        menuProduct.setMenu(this);
     }
 
     public boolean isNotValidPrice() {
