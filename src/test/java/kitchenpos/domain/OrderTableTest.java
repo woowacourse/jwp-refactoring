@@ -1,10 +1,13 @@
 package kitchenpos.domain;
 
 import static kitchenpos.TestObjectFactory.createOrderTable;
+import static kitchenpos.TestObjectFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -23,48 +26,21 @@ class OrderTableTest {
     @DisplayName("[예외] 그룹에 포함된 테이블의 주문 등록 불가 여부 변경")
     @Test
     void changeEmpty_Fail_With_TableInGroup() {
-        TableGroup tableGroup = createTableGroup();
-        OrderTable orderTable = OrderTable.builder()
-            .empty(true)
-            .build();
-        orderTable.groupBy(tableGroup);
+        OrderTable orderTable = createOrderTable(true);
+
+        OrderTable orderTable2 = createOrderTable(true);
+        List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
+        createTableGroup(orderTables);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
             .isInstanceOf(IllegalStateException.class);
     }
 
-    @DisplayName("테이블 그룹 지정")
+    @DisplayName("[예외] TableGroup.addOrderTable을 통하지 않은 groupBy 접근")
     @Test
-    void groupBy() {
+    void groupBy_Fail_NotThrough_TableGroup() {
+        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable = createOrderTable(true);
-        TableGroup tableGroup = createTableGroup();
-
-        orderTable.groupBy(tableGroup);
-
-        assertAll(
-            () -> assertThat(orderTable.getTableGroup()).isEqualTo(tableGroup),
-            () -> assertThat(orderTable.isEmpty()).isFalse()
-        );
-    }
-
-    @DisplayName("[예외] 주문 가능한 테이블의 그룹 설정")
-    @Test
-    void groupBy_Fail_With_NotEmptyTable() {
-        OrderTable orderTable = createOrderTable(false);
-        TableGroup tableGroup = createTableGroup();
-
-        assertThatThrownBy(
-            () -> orderTable.groupBy(tableGroup)
-        ).isInstanceOf(IllegalStateException.class);
-
-    }
-
-    @DisplayName("[예외] 이미 다른 그룹에 속한 테이블의 그룹 설정")
-    @Test
-    void groupBy_Fail_With_AlreadyGroupedTable() {
-        OrderTable orderTable = createOrderTable(true);
-        TableGroup tableGroup = createTableGroup();
-        orderTable.groupBy(tableGroup);
 
         assertThatThrownBy(
             () -> orderTable.groupBy(tableGroup)
@@ -75,8 +51,9 @@ class OrderTableTest {
     @Test
     void ungroup() {
         OrderTable orderTable = createOrderTable(true);
-        TableGroup tableGroup = createTableGroup();
-        orderTable.groupBy(tableGroup);
+        OrderTable orderTable2 = createOrderTable(true);
+        List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
+        createTableGroup(orderTables);
 
         orderTable.ungroup();
 
@@ -115,11 +92,4 @@ class OrderTableTest {
             () -> orderTable.changeNumberOfGuests(10)
         ).isInstanceOf(IllegalStateException.class);
     }
-
-    private TableGroup createTableGroup() {
-        return TableGroup.builder()
-            .build();
-    }
-
-
 }

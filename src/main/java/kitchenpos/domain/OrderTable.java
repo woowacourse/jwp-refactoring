@@ -55,14 +55,15 @@ public class OrderTable {
     }
 
     public void groupBy(final TableGroup tableGroup) {
+        validateAccessThroughTableGroup(tableGroup);
         validateEmpty();
-        validateTableGroup();
-        if (Objects.isNull(this.tableGroup)) {
-            changeEmpty(false);
-            this.tableGroup = tableGroup;
-            this.tableGroup.addOrderTable(this);
-        } else if (Objects.isNull(tableGroup)) {
-            ungroup();
+        changeEmpty(false);
+        this.tableGroup = tableGroup;
+    }
+
+    private void validateAccessThroughTableGroup(final TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup) || !tableGroup.getOrderTables().contains(this)) {
+            throw new IllegalStateException();
         }
     }
 

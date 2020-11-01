@@ -50,13 +50,11 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        TableGroup tableGroup = TableGroup.builder().build();
+        TableGroup tableGroup = TableGroup.builder()
+            .orderTables(savedOrderTables)
+            .build();
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-
-        for (OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.groupBy(savedTableGroup);
-            orderTableDao.save(savedOrderTable);
-        }
+        orderTableDao.saveAll(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
     }

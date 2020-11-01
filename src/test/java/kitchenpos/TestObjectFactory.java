@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.OrderTableIdRequest;
@@ -92,6 +93,12 @@ public class TestObjectFactory {
         return OrderTable.builder()
             .numberOfGuests(0)
             .empty(empty)
+            .build();
+    }
+
+    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
+        return TableGroup.builder()
+            .orderTables(orderTables)
             .build();
     }
 }

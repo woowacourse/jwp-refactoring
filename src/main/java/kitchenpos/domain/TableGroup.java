@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.CollectionUtils;
 
 @NoArgsConstructor
 @Getter
@@ -30,12 +31,24 @@ public class TableGroup {
     private List<OrderTable> orderTables = new ArrayList<>();
 
     @Builder
-    public TableGroup(final Long id) {
-        this.id = id;
+    public TableGroup(final List<OrderTable> orderTables) {
+        setOrderTables(orderTables);
+    }
+
+    private void setOrderTables(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        orderTables.forEach(this::addOrderTable);
+    }
+
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public void addOrderTable(final OrderTable orderTable) {
         orderTables.add(orderTable);
+        orderTable.groupBy(this);
     }
 
     public void removeOrderTable(final OrderTable orderTable) {
