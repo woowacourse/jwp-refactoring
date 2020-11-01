@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -18,6 +18,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -269,7 +270,7 @@ class OrderServiceTest {
         MenuGroup 세트메뉴 = menuGroupService.create(세트메뉴_request);
 
         // create menu
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
 
         MenuRequest menuRequest = new MenuRequest(
@@ -278,16 +279,11 @@ class OrderServiceTest {
         return menuService.create(menuRequest);
     }
 
-    private List<MenuProduct> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
+        List<MenuProductRequest> menuProducts = products.stream()
+            .map(product -> new MenuProductRequest(product.getId(), 1))
+            .collect(Collectors.toList());
 
-        for (Product product : products) {
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(product.getId());
-            menuProduct.setQuantity(1);
-
-            menuProducts.add(menuProduct);
-        }
         return Collections.unmodifiableList(menuProducts);
     }
 
@@ -298,7 +294,7 @@ class OrderServiceTest {
             OrderLineItem orderLineItem = new OrderLineItem();
 
             orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(2);
+            orderLineItem.setQuantity(quantity);
 
             orderLineItems.add(orderLineItem);
         }

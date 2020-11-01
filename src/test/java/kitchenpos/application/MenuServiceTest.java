@@ -10,9 +10,9 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +54,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("create")
     void create() {
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
 
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(13_000),
@@ -71,7 +71,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("create - price 가 null 일 때 예외처리")
     void create_IfPriceIsNull_ThrowException() {
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
 
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(-13_000),
@@ -84,7 +84,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("create - price 가 음수일 때 예외처리")
     void create_IfPriceIsNegative_ThrowException() {
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(-13_000),
             세트메뉴.getId(), menuProducts);
@@ -96,7 +96,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("create - 존재하지 않는 메뉴그룹 사용 예외처리")
     void create_IfMenuGroupIsNotExists_ThrowException() {
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(-13_000), 500L,
             menuProducts);
@@ -108,9 +108,8 @@ class MenuServiceTest {
     @Test
     @DisplayName("create - 존재하지 않는 product 를 포함하는 경우 예외처리")
     void create_IfProductNotExists_ThrowException() {
-        MenuProduct notExistProduct = new MenuProduct();
-        notExistProduct.setProductId(500L);    // not existing product id
-        notExistProduct.setQuantity(1);
+        //500L은 존재하지 않는 productId를 뜻함
+        MenuProductRequest notExistProduct = new MenuProductRequest(500L, 1);
 
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(-13_000), 500L,
             Collections.singletonList(notExistProduct));
@@ -123,9 +122,7 @@ class MenuServiceTest {
     @ValueSource(ints = {0, -1})
     @DisplayName("create - 메뉴의 수량 값이 비정상적인 경우 예외처리")
     void create_IfMenuProductQuantityIsIllegal_ThrowException(int quantity) {
-        MenuProduct menuProductWithIllegalQuantity = new MenuProduct();
-        menuProductWithIllegalQuantity.setProductId(후라이드치킨.getId());
-        menuProductWithIllegalQuantity.setQuantity(quantity);
+        MenuProductRequest menuProductWithIllegalQuantity = new MenuProductRequest(후라이드치킨.getId(), quantity);
 
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(-13_000), 500L,
             Collections.singletonList(menuProductWithIllegalQuantity));
@@ -137,7 +134,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("create - 메뉴 가격이 상품가격 총합보다 클 때 예외처리")
     void create_IfPriceIsLargerThenSumOfProductPrices_ThrowException() {
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(15_001),
             세트메뉴.getId(), menuProducts);
@@ -151,7 +148,7 @@ class MenuServiceTest {
         assertThat(menuService.list()).hasSize(0);
 
         // given
-        List<MenuProduct> menuProducts = createMenuProductsWithAllQuantityAsOne(
+        List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(
             Arrays.asList(후라이드치킨, 프랜치프라이));
 
         MenuRequest request = new MenuRequest(
@@ -167,14 +164,11 @@ class MenuServiceTest {
         assertThat(menus.get(0).getId()).isEqualTo(savedMenu.getId());
     }
 
-    private List<MenuProduct> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
-        List<MenuProduct> menuProducts = new ArrayList<>();
+    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
+        List<MenuProductRequest> menuProducts = new ArrayList<>();
 
         for (Product product : products) {
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setProductId(product.getId());
-            menuProduct.setQuantity(1);
-
+            MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 1);
             menuProducts.add(menuProduct);
         }
         return Collections.unmodifiableList(menuProducts);
