@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +22,7 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -48,25 +50,16 @@ class MenuServiceTest {
         when(menuDao.save(any())).thenReturn(MENU1);
         when(menuProductDao.save(any())).thenReturn(MENU_PRODUCT1);
 
+        Menu menu = menuService.create(MENU1);
         assertAll(
-                () -> assertThat(menuService.create(MENU1).getId()).isEqualTo(1L),
-                () -> assertThat(menuService.create(MENU1).getMenuGroupId()).isEqualTo(2L),
-                () -> assertThat(menuService.create(MENU1).getName()).isEqualTo("후라이드치킨"),
-                () -> assertThat(menuService.create(MENU1).getPrice()).isEqualTo(
-                        BigDecimal.valueOf(16000)),
-                () -> assertThat(menuService.create(MENU1).getMenuProducts().size()).isEqualTo(1),
-                () -> assertThat(
-                        menuService.create(MENU1).getMenuProducts().get(0).getMenuId()).isEqualTo(
-                        1L),
-                () -> assertThat(
-                        menuService.create(MENU1)
-                                .getMenuProducts()
-                                .get(0)
-                                .getProductId()).isEqualTo(
-                        1L),
-                () -> assertThat(
-                        menuService.create(MENU1).getMenuProducts().get(0).getQuantity()).isEqualTo(
-                        1)
+                () -> assertThat(menu.getId()).isEqualTo(1L),
+                () -> assertThat(menu.getMenuGroupId()).isEqualTo(2L),
+                () -> assertThat(menu.getName()).isEqualTo("후라이드치킨"),
+                () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(16000)),
+                () -> assertThat(menu.getMenuProducts().size()).isEqualTo(1),
+                () -> assertThat(menu.getMenuProducts().get(0).getMenuId()).isEqualTo(1L),
+                () -> assertThat(menu.getMenuProducts().get(0).getProductId()).isEqualTo(1L),
+                () -> assertThat(menu.getMenuProducts().get(0).getQuantity()).isEqualTo(1)
         );
     }
 
@@ -100,10 +93,11 @@ class MenuServiceTest {
         when(menuProductDao.findAllByMenuId(1L)).thenReturn(MENU1.getMenuProducts());
         when(menuProductDao.findAllByMenuId(2L)).thenReturn(MENU2.getMenuProducts());
 
+        List<Menu> list = menuService.list();
         assertAll(
-                () -> assertThat(menuService.list().size()).isEqualTo(2),
-                () -> assertThat(menuService.list().get(0).getId()).isEqualTo(1L),
-                () -> assertThat(menuService.list().get(1).getId()).isEqualTo(2L)
+                () -> assertThat(list.size()).isEqualTo(2),
+                () -> assertThat(list.get(0).getId()).isEqualTo(1L),
+                () -> assertThat(list.get(1).getId()).isEqualTo(2L)
         );
     }
 }

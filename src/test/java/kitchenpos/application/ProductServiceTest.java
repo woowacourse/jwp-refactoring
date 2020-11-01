@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -33,11 +35,11 @@ class ProductServiceTest {
     void createTest() {
         when(productDao.save(any())).thenReturn(FRIED_CHICKEN);
 
+        Product product = productService.create(FRIED_CHICKEN);
         assertAll(
-                () -> assertThat(productService.create(FRIED_CHICKEN).getId()).isEqualTo(1L),
-                () -> assertThat(productService.create(FRIED_CHICKEN).getName()).isEqualTo("후라이드"),
-                () -> assertThat(productService.create(FRIED_CHICKEN).getPrice()).isEqualTo(
-                        BigDecimal.valueOf(16000))
+                () -> assertThat(product.getId()).isEqualTo(1L),
+                () -> assertThat(product.getName()).isEqualTo("후라이드"),
+                () -> assertThat(product.getPrice()).isEqualTo(BigDecimal.valueOf(16000))
         );
     }
 
@@ -60,10 +62,11 @@ class ProductServiceTest {
     void listTest() {
         when(productDao.findAll()).thenReturn(PRODUCTS);
 
+        List<Product> list = productService.list();
         assertAll(
-                () -> assertThat(productService.list().size()).isEqualTo(2),
-                () -> assertThat(productService.list().get(0).getName()).isEqualTo("후라이드"),
-                () -> assertThat(productService.list().get(1).getName()).isEqualTo("양념치킨")
+                () -> assertThat(list.size()).isEqualTo(2),
+                () -> assertThat(list.get(0).getName()).isEqualTo("후라이드"),
+                () -> assertThat(list.get(1).getName()).isEqualTo("양념치킨")
         );
     }
 }

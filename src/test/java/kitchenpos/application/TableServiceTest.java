@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
@@ -44,10 +46,11 @@ class TableServiceTest {
     void listTest() {
         when(orderTableDao.findAll()).thenReturn(ORDER_TABLES);
 
+        List<OrderTable> list = tableService.list();
         assertAll(
-                () -> assertThat(tableService.list().size()).isEqualTo(2),
-                () -> assertThat(tableService.list().get(0).getId()).isEqualTo(1L),
-                () -> assertThat(tableService.list().get(1).getId()).isEqualTo(2L)
+                () -> assertThat(list.size()).isEqualTo(2),
+                () -> assertThat(list.get(0).getId()).isEqualTo(1L),
+                () -> assertThat(list.get(1).getId()).isEqualTo(2L)
         );
     }
 

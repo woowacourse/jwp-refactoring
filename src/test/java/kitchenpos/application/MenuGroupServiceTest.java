@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -31,9 +34,10 @@ class MenuGroupServiceTest {
     void createTest() {
         when(menuGroupDao.save(any())).thenReturn(MENU_GROUP1);
 
+        MenuGroup menuGroup = menuGroupService.create(MENU_GROUP1);
         assertAll(
-                () -> assertThat(menuGroupService.create(MENU_GROUP1).getId()).isEqualTo(1L),
-                () -> assertThat(menuGroupService.create(MENU_GROUP1).getName()).isEqualTo(
+                () -> assertThat(menuGroup.getId()).isEqualTo(1L),
+                () -> assertThat(menuGroup.getName()).isEqualTo(
                         "두마리메뉴")
         );
     }
@@ -41,14 +45,13 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 조회 할 수 있다.")
     @Test
     void listTest() {
-        when(menuGroupService.list()).thenReturn(MENU_GROUPS);
+        when(menuGroupDao.findAll()).thenReturn(MENU_GROUPS);
 
+        List<MenuGroup> list = menuGroupService.list();
         assertAll(
-                () -> assertThat(menuGroupService.list().size()).isEqualTo(2),
-                () -> assertThat(menuGroupService.list().get(0).getName()).isEqualTo(
-                        "두마리메뉴"),
-                () -> assertThat(menuGroupService.list().get(1).getName()).isEqualTo(
-                        "한마리메뉴")
+                () -> assertThat(list.size()).isEqualTo(2),
+                () -> assertThat(list.get(0).getName()).isEqualTo("두마리메뉴"),
+                () -> assertThat(list.get(1).getName()).isEqualTo("한마리메뉴")
         );
     }
 }

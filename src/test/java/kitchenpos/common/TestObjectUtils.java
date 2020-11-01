@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class TestObjectUtils {
     public static Product createProduct(Long id, String name, BigDecimal price) {
@@ -87,5 +88,15 @@ public class TestObjectUtils {
         ReflectionTestUtils.setField(orderLineItem, "quantity", quantity);
 
         return orderLineItem;
+    }
+
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate,
+            List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        ReflectionTestUtils.setField(tableGroup, "id", id);
+        ReflectionTestUtils.setField(tableGroup, "createdDate", createdDate);
+        ReflectionTestUtils.setField(tableGroup, "orderTables", orderTables);
+
+        return tableGroup;
     }
 }
