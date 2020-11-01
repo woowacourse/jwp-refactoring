@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.product.domain;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -15,8 +15,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import kitchenpos.domain.Product;
 
 @Repository
 public class JdbcTemplateProductDao implements ProductDao {

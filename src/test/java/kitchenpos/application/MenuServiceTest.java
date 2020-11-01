@@ -15,11 +15,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductDao;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
