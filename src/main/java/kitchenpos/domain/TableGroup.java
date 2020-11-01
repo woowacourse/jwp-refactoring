@@ -51,8 +51,10 @@ public class TableGroup {
         orderTable.groupBy(this);
     }
 
-    public void removeOrderTable(final OrderTable orderTable) {
-        orderTables.remove(orderTable);
+    public void ungroup() {
+        List<OrderTable> orderTables = getOrderTables();
+        this.orderTables.clear();
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public List<OrderTable> getOrderTables() {

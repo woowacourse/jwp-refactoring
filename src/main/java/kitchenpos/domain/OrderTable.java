@@ -55,13 +55,13 @@ public class OrderTable {
     }
 
     public void groupBy(final TableGroup tableGroup) {
-        validateAccessThroughTableGroup(tableGroup);
+        validateAccessGroupByThroughTableGroup(tableGroup);
         validateEmpty();
         changeEmpty(false);
         this.tableGroup = tableGroup;
     }
 
-    private void validateAccessThroughTableGroup(final TableGroup tableGroup) {
+    private void validateAccessGroupByThroughTableGroup(final TableGroup tableGroup) {
         if (Objects.isNull(tableGroup) || !tableGroup.getOrderTables().contains(this)) {
             throw new IllegalStateException();
         }
@@ -74,9 +74,15 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup.removeOrderTable(this);
-        this.tableGroup = null;
+        validateAccessUngroupThroughTableGroup();
+        tableGroup = null;
         changeEmpty(false);
+    }
+
+    private void validateAccessUngroupThroughTableGroup() {
+        if (Objects.isNull(tableGroup) || tableGroup.getOrderTables().contains(this)) {
+            throw new IllegalStateException();
+        }
     }
 
     public void changeEmpty(final boolean empty) {

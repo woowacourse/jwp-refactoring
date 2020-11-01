@@ -50,4 +50,22 @@ class TableGroupTest {
             () -> assertThat(orderTable2.isEmpty()).isFalse()
         );
     }
+
+    @DisplayName("그룹 해제 시 모든 테이블의 그룹 등록 해제 여부 확인")
+    @Test
+    void ungroup() {
+        OrderTable orderTable1 = createOrderTable(true);
+        OrderTable orderTable2 = createOrderTable(true);
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+
+        TableGroup tableGroup = createTableGroup(orderTables);
+
+        tableGroup.ungroup();
+
+        assertAll(
+            () -> assertThat(tableGroup.getOrderTables()).isEmpty(),
+            () -> assertThat(orderTable1.getTableGroup()).isNull(),
+            () -> assertThat(orderTable2.getTableGroup()).isNull()
+        );
+    }
 }

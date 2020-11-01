@@ -4,7 +4,6 @@ import static kitchenpos.TestObjectFactory.createOrderTable;
 import static kitchenpos.TestObjectFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +46,7 @@ class OrderTableTest {
         ).isInstanceOf(IllegalStateException.class);
     }
 
-    @DisplayName("테이블 그룹 해제")
+    @DisplayName("[예외] TableGroup.nugroup를 통하지 않은 ungroup 접근")
     @Test
     void ungroup() {
         OrderTable orderTable = createOrderTable(true);
@@ -55,12 +54,9 @@ class OrderTableTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable, orderTable2);
         createTableGroup(orderTables);
 
-        orderTable.ungroup();
-
-        assertAll(
-            () -> assertThat(orderTable.getTableGroup()).isNull(),
-            () -> assertThat(orderTable.isEmpty()).isFalse()
-        );
+        assertThatThrownBy(
+            orderTable::ungroup
+        ).isInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("손님 수 변경")
