@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("MenuGroup을 생성하고 DB에 저장한다.")
     @Test
@@ -27,7 +27,7 @@ class MenuGroupServiceTest {
 
         MenuGroup result = menuGroupService.create(input);
 
-        MenuGroup savedMenuGroup = menuGroupDao.findById(result.getId())
+        MenuGroup savedMenuGroup = menuGroupRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
         assertThat(savedMenuGroup.getName()).isEqualTo(input.getName());
     }
@@ -36,6 +36,6 @@ class MenuGroupServiceTest {
     @Test
     void listTest() {
         List<MenuGroup> menuGroups = menuGroupService.list();
-        assertThat(menuGroups).hasSize(menuGroupDao.findAll().size());
+        assertThat(menuGroups).hasSize(menuGroupRepository.findAll().size());
     }
 }

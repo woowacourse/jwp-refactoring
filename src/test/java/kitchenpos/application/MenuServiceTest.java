@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,25 +25,25 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private MenuGroup menuGroup;
     private MenuProduct menuProduct;
 
     @BeforeEach
     private void setUp() {
-        this.menuGroup = menuGroupDao.save(new MenuGroup("피자"));
+        this.menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
 
         Product product = new Product();
         product.setPrice(BigDecimal.valueOf(4000));
         product.setName("감자");
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         this.menuProduct = new MenuProduct();
         menuProduct.setQuantity(2);
@@ -58,7 +58,7 @@ class MenuServiceTest {
 
         Menu result = menuService.create(menu, Collections.singletonList(menuProduct));
 
-        Menu savedMenu = menuDao.findById(result.getId()).get();
+        Menu savedMenu = menuRepository.findById(result.getId()).get();
         assertThat(savedMenu.getName()).isEqualTo(menu.getName());
     }
 

@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orderz;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,10 +23,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("OrderTable을 생성하고 DB에 저장한다.")
     @Test
@@ -36,7 +36,7 @@ class TableServiceTest {
         orderTable.setNumberOfGuests(10);
 
         OrderTable result = tableService.create(orderTable);
-        OrderTable savedOrderTable = orderTableDao.findById(result.getId())
+        OrderTable savedOrderTable = orderTableRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
         assertThat(savedOrderTable.getTableGroup()).isEqualTo(orderTable.getTableGroup());
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
@@ -50,12 +50,12 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(!EXPECTED);
         orderTable.setNumberOfGuests(10);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Orderz order = new Orderz();
         order.setOrderTableId(savedOrderTable.getId());
         order.setOrderStatus(OrderStatus.COMPLETION.name());
-        orderDao.save(order);
+        orderRepository.save(order);
 
         savedOrderTable.setEmpty(EXPECTED);
 
@@ -75,7 +75,7 @@ class TableServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(10);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         savedOrderTable.setNumberOfGuests(EXPECTED);
 
         // when
@@ -95,7 +95,7 @@ class TableServiceTest {
         orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(10);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         savedOrderTable.setNumberOfGuests(INVALID_NUMBER_OF_GUESTS);
 
         // when, then
@@ -111,7 +111,7 @@ class TableServiceTest {
         orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(10);
 
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable))

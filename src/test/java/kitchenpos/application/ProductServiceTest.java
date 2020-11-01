@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("MenuGroup을 생성하고 DB에 저장한다.")
     @Test
@@ -31,7 +31,7 @@ class ProductServiceTest {
 
         Product result = productService.create(product);
 
-        Product savedProduct = productDao.findById(result.getId())
+        Product savedProduct = productRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
         assertThat(savedProduct.getName()).isEqualTo(product.getName());
         assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isZero();
@@ -52,6 +52,6 @@ class ProductServiceTest {
     @Test
     void listTest() {
         List<Product> products = productService.list();
-        assertThat(products).hasSize(productDao.findAll().size());
+        assertThat(products).hasSize(productRepository.findAll().size());
     }
 }

@@ -1,18 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orderz;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,32 +35,32 @@ class OrderzServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @AfterEach
     void tearDown() {
-        menuProductDao.deleteAll();
-        productDao.deleteAll();
-        menuDao.deleteAll();
-        menuGroupDao.deleteAll();
+        menuProductRepository.deleteAll();
+        productRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 
     @DisplayName("새로운 주문를 생성한다.")
@@ -81,9 +81,9 @@ class OrderzServiceTest {
         Orderz result = orderService.create(order);
 
         // then
-        Orderz savedOrder = orderDao.findById(result.getId())
+        Orderz savedOrder = orderRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
-        List<OrderLineItem> savedOrderLineItems = orderLineItemDao.findAllByOrder(result);
+        List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrder(result);
 
         assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId());
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
@@ -151,7 +151,7 @@ class OrderzServiceTest {
         List<Orderz> list = orderService.list();
 
         // when
-        assertThat(list).hasSize(orderDao.findAll().size());
+        assertThat(list).hasSize(orderRepository.findAll().size());
         assertThat(list.get(0).getOrderLineItems()).hasSize(1);
     }
 
@@ -177,7 +177,7 @@ class OrderzServiceTest {
         orderService.changeOrderStatus(result.getId(), result);
 
         // then
-        Orderz changeOrder = orderDao.findById(result.getId())
+        Orderz changeOrder = orderRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         assertThat(changeOrder.getOrderStatus()).isEqualTo(CHANGED_STATUS);
     }
@@ -237,7 +237,7 @@ class OrderzServiceTest {
 //        orderTable.setTableGroup(tableGroup);
         orderTable.setEmpty(empty);
 //        tableGroupDao.save(tableGroup);
-        orderTableDao.save(orderTable);
+        orderTableRepository.save(orderTable);
         return orderTable;
     }
 
@@ -245,7 +245,7 @@ class OrderzServiceTest {
         Menu menu = new Menu();
         menu.setName("포테이토_피자");
         menu.setPrice(BigDecimal.valueOf(1000L));
-        menu.setMenuGroup(menuGroupDao.save(new MenuGroup("피자")));
-        return menuDao.save(menu);
+        menu.setMenuGroup(menuGroupRepository.save(new MenuGroup("피자")));
+        return menuRepository.save(menu);
     }
 }
