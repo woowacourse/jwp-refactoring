@@ -1,0 +1,102 @@
+package kitchenpos.application;
+
+import static kitchenpos.fixture.OrderTableFixture.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+
+@ExtendWith(MockitoExtension.class)
+class TableServiceTest {
+    @Mock
+    private OrderDao orderDao;
+    @Mock
+    private OrderTableDao orderTableDao;
+
+    private TableService tableService;
+
+    @BeforeEach
+    void setUp() {
+        this.tableService = new TableService(orderDao, orderTableDao);
+    }
+
+    @DisplayName("주문 테이블을 등록할 수 있다.")
+    @Test
+    void createTable() {
+        when(orderTableDao.save(any())).thenReturn(CREATE_ORDER_TABLE);
+
+        assertThat(tableService.create(CREATE_ORDER_TABLE).getNumberOfGuests()).isEqualTo(3);
+    }
+
+    @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
+    @Test
+    void listTest() {
+        when(orderTableDao.findAll()).thenReturn(ORDER_TABLES);
+
+        assertAll(
+                () -> assertThat(tableService.list().size()).isEqualTo(2),
+                () -> assertThat(tableService.list().get(0).getId()).isEqualTo(1L),
+                () -> assertThat(tableService.list().get(1).getId()).isEqualTo(2L)
+        );
+    }
+
+    @DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+    @Test
+    void notChangeEmptyTest_when_tableGroupNotNull() {
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE1));
+
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE))
+                .isInstanceOf(IllegalArgumentException.class)
+        ;
+    }
+
+    @DisplayName("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+    @Test
+    void notChangeEmptyTest_when_orderStatusIsMEALAndCOOKING() {
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
+        when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
+
+        assertThatThrownBy(
+                () -> tableService.changeEmpty(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("방문한 손님 수를 입력할 수 있다.")
+    @Test
+    void changeNumberOfGuestsTest() {
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE1));
+        when(orderTableDao.save(any())).thenReturn(CHANGING_ORDER_TABLE);
+
+        assertThat(tableService.changeNumberOfGuests(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE)
+                .getNumberOfGuests()).isEqualTo(5);
+    }
+
+    @DisplayName("방문한 손님 수가 올바르지 않으면 입력할 수 없다.")
+    @Test
+    void notChangeNumberOfGuestsTest_when_invalidNumberOfGuest() {
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(ORDER_TABLE1.getId(),
+                        INVALID_NUMBER_OF_GUEST_ORDER_TABLE)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+    @Test
+    void notChangeNumberOfGuestsTest_when_emptyTable() {
+        assertThatThrownBy(
+                () -> tableService.changeNumberOfGuests(ORDER_TABLE1.getId(), EMPTY_ORDER_TABLE)
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+}
