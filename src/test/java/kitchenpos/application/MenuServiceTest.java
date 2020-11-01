@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -38,63 +38,62 @@ class MenuServiceTest {
 
     @BeforeEach
     private void setUp() {
-        this.menuGroup = menuGroupDao.save(new MenuGroup("새로운_메뉴_그룹"));
+        this.menuGroup = menuGroupDao.save(new MenuGroup("피자"));
 
         Product product = new Product();
         product.setPrice(BigDecimal.valueOf(4000));
-        product.setName("제품_이름");
+        product.setName("감자");
         Product savedProduct = productDao.save(product);
 
         this.menuProduct = new MenuProduct();
         menuProduct.setQuantity(2);
         menuProduct.setSeq(1L);
-        menuProduct.setProductId(savedProduct.getId());
+        menuProduct.setProduct(savedProduct);
     }
 
     @DisplayName("Menu 생성을 확인한다.")
     @Test
     void createTest() {
-        Menu menu = create("새로운_메뉴", menuProduct, 1000L, menuGroup.getId());
+        Menu menu = create("감자_피자", 1000L, menuGroup);
 
-        Menu result = menuService.create(menu);
+        Menu result = menuService.create(menu, Collections.singletonList(menuProduct));
 
         Menu savedMenu = menuDao.findById(result.getId()).get();
         assertThat(savedMenu.getName()).isEqualTo(menu.getName());
     }
 
-    @DisplayName("생성 시 그룹 id를 보유해야 한다.")
+    @DisplayName("생성 시 menu group를 보유해야 한다.")
     @Test
     void createExceptionTest_noGroupId() {
-        Menu menu = create("새로운_메뉴", menuProduct, 10000L, null);
+        Menu menu = create("감자_피자", 10000L, null);
 
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menu, Collections.singletonList(menuProduct)))
+                .isInstanceOf(NullPointerException.class);
     }
 
     @DisplayName("생성 시 가격이 0원 미만이면 예외가 발생한다.")
     @Test
     void createExceptionTest_priceIsZero() {
-        Menu menu = create("새로운_메뉴", menuProduct, -1L, menuGroup.getId());
+        Menu menu = create("감자_피자", -1L, menuGroup);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu, Collections.singletonList(menuProduct)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("price가 sum보다 크면 예외가 발생한다.")
+    @DisplayName("price가 제품의 sum보다 크면 예외가 발생한다.")
     @Test
     void createSumExceptionTest() {
-        Menu menu = create("새로운_메뉴", menuProduct, 10000L, menuGroup.getId());
+        Menu menu = create("감자_피자", 10000L, menuGroup);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menu, Collections.singletonList(menuProduct)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Menu create(String name, MenuProduct menuProduct, Long price, Long menuGroupId) {
+    public Menu create(String name, Long price, MenuGroup menuGroup) {
         Menu menu = new Menu();
         menu.setName(name);
-        menu.setMenuProducts(Arrays.asList(menuProduct));
         menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuGroup(menuGroup);
         return menu;
     }
 }

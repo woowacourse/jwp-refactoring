@@ -1,14 +1,21 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.List;
 
-public class Menu {
-    private Long id;
+@Entity
+@AttributeOverride(name = "id", column = @Column(name = "MENU_ID"))
+public class Menu extends BaseEntity {
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+
+    @ManyToOne
+    @JoinColumn(name = "MENU_GROUP_ID")
+    private MenuGroup menuGroup;
 
     public Menu() {
     }
@@ -37,19 +44,11 @@ public class Menu {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public void setMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 }

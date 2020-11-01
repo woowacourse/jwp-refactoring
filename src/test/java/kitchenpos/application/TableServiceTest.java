@@ -1,7 +1,10 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orderz;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +24,9 @@ class TableServiceTest {
 
     @Autowired
     private OrderTableDao orderTableDao;
+
+    @Autowired
+    private OrderDao orderDao;
 
     @DisplayName("OrderTable을 생성하고 DB에 저장한다.")
     @Test
@@ -44,8 +50,13 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(!EXPECTED);
         orderTable.setNumberOfGuests(10);
-
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
+
+        Orderz order = new Orderz();
+        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        orderDao.save(order);
+
         savedOrderTable.setEmpty(EXPECTED);
 
         // when

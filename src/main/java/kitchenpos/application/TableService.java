@@ -2,10 +2,12 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,20 +39,10 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-//        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-//                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-//            throw new IllegalArgumentException();
-//        }
-//        List<Order> allByOrderTableId = orderDao.findAllByOrderTableId(orderTableId);
-//        long count = allByOrderTableId.stream()
-//                .filter(x -> x.getOrderStatus().equals(OrderStatus.COOKING.name()) ||
-//                        x.getOrderStatus().equals(OrderStatus.MEAL.name()))
-//                .count();
-//        if (count > 0) {
-//            throw new IllegalArgumentException();
-//        }
-
-
+        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
         return orderTableDao.save(savedOrderTable);

@@ -1,13 +1,21 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public class Order {
-    private Long id;
+
+@AttributeOverride(name = "id", column = @Column(name = "ORDER_ID"))
+@Entity
+public class Orderz extends BaseEntity {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     public Long getId() {

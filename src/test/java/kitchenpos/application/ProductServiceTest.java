@@ -26,7 +26,7 @@ class ProductServiceTest {
     @Test
     void createTest() {
         Product product = new Product();
-        product.setName("새로운_상품");
+        product.setName("감자");
         product.setPrice(BigDecimal.valueOf(1000L));
 
         Product result = productService.create(product);
@@ -41,7 +41,7 @@ class ProductServiceTest {
     @Test
     void invalidPriceExceptionTest() {
         Product product = new Product();
-        product.setName("새로운_상품");
+        product.setName("토마토");
         product.setPrice(BigDecimal.valueOf(-1));
 
         assertThatThrownBy(() -> productService.create(product))
