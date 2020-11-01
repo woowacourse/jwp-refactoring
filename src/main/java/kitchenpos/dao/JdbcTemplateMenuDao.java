@@ -1,7 +1,9 @@
 package kitchenpos.dao;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,7 +53,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
 
     @Override
     public List<Menu> findAll() {
-        final String sql = "SELECT id, name, price, menu_group_id FROM menu ";
+        final String sql = "SELECT  id, name, price, menu_group_id FROM menu ";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
@@ -71,11 +73,10 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
-        return entity;
+        Long id = resultSet.getLong("id");
+        String name = resultSet.getString("name");
+        BigDecimal price = resultSet.getBigDecimal("price");
+        Long menuGroupId = resultSet.getLong("menu_group_id");
+        return new Menu(id, name, price, menuGroupId, new ArrayList<>());
     }
 }

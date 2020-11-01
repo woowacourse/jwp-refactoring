@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -98,11 +99,10 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        Long orderTableId = resultSet.getLong("order_table_id");
+        String orderStatus = resultSet.getString("order_status");
+        LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
+        return new Order(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
     }
 }

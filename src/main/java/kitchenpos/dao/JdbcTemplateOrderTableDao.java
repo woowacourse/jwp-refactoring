@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableDao {
@@ -35,7 +35,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public OrderTable save(final OrderTable entity) {
+    public Table save(final Table entity) {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
@@ -46,7 +46,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public Optional<OrderTable> findById(final Long id) {
+    public Optional<Table> findById(final Long id) {
         try {
             return Optional.of(select(id));
         } catch (final EmptyResultDataAccessException e) {
@@ -55,13 +55,13 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public List<OrderTable> findAll() {
+    public List<Table> findAll() {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     @Override
-    public List<OrderTable> findAllByIdIn(final List<Long> ids) {
+    public List<Table> findAllByIdIn(final List<Long> ids) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id IN (:ids)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("ids", ids);
@@ -69,7 +69,7 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
     }
 
     @Override
-    public List<OrderTable> findAllByTableGroupId(final Long tableGroupId) {
+    public List<Table> findAllByTableGroupId(final Long tableGroupId) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty" +
             " FROM order_table WHERE table_group_id = (:tableGroupId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -77,14 +77,14 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private OrderTable select(final Long id) {
+    private Table select(final Long id) {
         final String sql = "SELECT id, table_group_id, number_of_guests, empty FROM order_table WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
-    private void update(final OrderTable entity) {
+    private void update(final Table entity) {
         final String sql = "UPDATE order_table SET table_group_id = (:tableGroupId)," +
             " number_of_guests = (:numberOfGuests), empty = (:empty) WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -95,12 +95,11 @@ public class JdbcTemplateOrderTableDao implements OrderTableDao {
         jdbcTemplate.update(sql, parameters);
     }
 
-    private OrderTable toEntity(final ResultSet resultSet) throws SQLException {
-        final OrderTable entity = new OrderTable();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setTableGroupId(resultSet.getObject("table_group_id", Long.class));
-        entity.setNumberOfGuests(resultSet.getInt("number_of_guests"));
-        entity.setEmpty(resultSet.getBoolean("empty"));
-        return entity;
+    private Table toEntity(final ResultSet resultSet) throws SQLException {
+        Long id = resultSet.getLong(KEY_COLUMN_NAME);
+        Long tableGroupId = resultSet.getObject("table_group_id", Long.class);
+        int numberOfGuests = resultSet.getInt("number_of_guests");
+        boolean empty = resultSet.getBoolean("empty");
+        return new Table(id, tableGroupId, numberOfGuests, empty);
     }
 }

@@ -3,16 +3,16 @@ package kitchenpos.dao;
 import java.util.List;
 import java.util.Optional;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 
 public interface OrderTableDao {
-    OrderTable save(OrderTable entity);
+    Table save(Table entity);
 
-    Optional<OrderTable> findById(Long id);
+    Optional<Table> findById(Long id);
 
-    List<OrderTable> findAll();
+    List<Table> findAll();
 
-    List<OrderTable> findAllByIdIn(List<Long> ids);
+    List<Table> findAllByIdIn(List<Long> ids);
 
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+    List<Table> findAllByTableGroupId(Long tableGroupId);
 }
