@@ -40,8 +40,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createTableGroup() throws Exception {
-        OrderTable orderTable1 = orderTableFactory.create(1L);
-        OrderTable orderTable2 = orderTableFactory.create(2L);
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
         TableGroup tableGroup = tableGroupFactory.create(asList(orderTable1, orderTable2));
 
         String request = objectMapper.writeValueAsString(tableGroup);

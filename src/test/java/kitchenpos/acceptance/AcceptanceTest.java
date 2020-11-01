@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
-import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.factory.TableGroupFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,8 +36,6 @@ public class AcceptanceTest {
     protected OrderFactory orderFactory;
     @Autowired
     protected OrderLineItemFactory orderLineItemFactory;
-    @Autowired
-    protected OrderTableFactory orderTableFactory;
     @Autowired
     protected TableGroupFactory tableGroupFactory;
 
@@ -112,7 +109,7 @@ public class AcceptanceTest {
     }
 
     protected OrderTable changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
-        OrderTable orderTable = orderTableFactory.create(empty);
+        OrderTable orderTable = new OrderTable(null, null, 0, false);
 
         String request = objectMapper.writeValueAsString(orderTable);
         return put(OrderTable.class, request, API_TABLES + "/" + orderTableId + "/empty");

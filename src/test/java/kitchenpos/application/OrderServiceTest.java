@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -31,7 +31,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
-import kitchenpos.factory.OrderTableFactory;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -42,13 +41,12 @@ class OrderServiceTest {
     @Mock
     private OrderLineItemDao orderLineItemDao;
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @InjectMocks
     private OrderService orderService;
 
     private OrderFactory orderFactory = new OrderFactory();
     private OrderLineItemFactory orderLineItemFactory = new OrderLineItemFactory();
-    private OrderTableFactory orderTableFactory = new OrderTableFactory();
 
     @DisplayName("주문 생성")
     @TestFactory
@@ -100,10 +98,10 @@ class OrderServiceTest {
     private void createSuccess() {
         OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1);
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
-        OrderTable orderTable = orderTableFactory.create(1L, false);
+        OrderTable orderTable = new OrderTable(1L, null, 0, false);
 
         given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
+        given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
         given(orderDao.save(order))
                 .willReturn(
                         orderFactory.create(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
@@ -143,7 +141,7 @@ class OrderServiceTest {
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
 
         given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
+        given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
         assertThatIllegalArgumentException().isThrownBy(() -> orderService.create(order));
     }
@@ -151,10 +149,10 @@ class OrderServiceTest {
     private void emptyOrderTable() {
         OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1);
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
-        OrderTable orderTable = orderTableFactory.create(1L, true);
+        OrderTable orderTable = new OrderTable(1L, null, 0, true);
 
         given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
+        given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
 
         assertThatIllegalArgumentException().isThrownBy(() -> orderService.create(order));
     }

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.MenuProduct;
 
@@ -15,4 +16,5 @@ public class RequestFixture {
             BigDecimal.valueOf(19_000L), 1L, singletonList(new MenuProduct(null, null, 1L, 2L)));
     public static final ProductRequest PRODUCT_REQUEST = new ProductRequest("강정치킨",
             BigDecimal.valueOf(17_000L));
+    public static final OrderTableRequest ORDER_TABLE_REQUEST = new OrderTableRequest(0, true);
 }

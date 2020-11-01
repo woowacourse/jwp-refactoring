@@ -66,14 +66,14 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createTable() throws Exception {
-        OrderTable orderTable = orderTableFactory.create(0, true);
+        OrderTable orderTable = new OrderTable(null, null, 0, true);
 
         String request = objectMapper.writeValueAsString(orderTable);
         return post(request, API_TABLES);
     }
 
     private OrderTable changNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
-        OrderTable orderTable = orderTableFactory.create(numberOfGuests);
+        OrderTable orderTable = new OrderTable(null, null, numberOfGuests, false);
         
         String request = objectMapper.writeValueAsString(orderTable);
         return put(OrderTable.class, request,
