@@ -9,7 +9,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
@@ -53,7 +52,6 @@ public class OrderService {
 
         Order order = Order.builder()
             .orderTable(orderTable)
-            .orderStatus(OrderStatus.COOKING)
             .orderLineItems(orderLineItems)
             .build();
 

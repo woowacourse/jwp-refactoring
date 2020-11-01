@@ -37,7 +37,7 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
     @Enumerated(value = EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatus.COOKING;
     @CreatedDate
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order")
@@ -46,13 +46,8 @@ public class Order {
     private int version;
 
     @Builder
-    public Order(
-        final OrderTable orderTable,
-        final OrderStatus orderStatus,
-        final List<OrderLineItem> orderLineItems
-    ) {
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
         setOrderTable(orderTable);
-        this.orderStatus = orderStatus;
         setOrderLineItems(orderLineItems);
     }
 

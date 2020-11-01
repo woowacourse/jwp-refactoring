@@ -58,7 +58,6 @@ class OrderDaoTest {
 
         order = Order.builder()
             .orderTable(orderTableDao.save(orderTable))
-            .orderStatus(OrderStatus.COOKING)
             .orderLineItems(orderLineItems)
             .build();
     }
