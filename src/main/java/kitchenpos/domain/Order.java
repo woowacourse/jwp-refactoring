@@ -21,6 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.CollectionUtils;
 
 @NoArgsConstructor
 @Getter
@@ -45,10 +46,14 @@ public class Order {
     private int version;
 
     @Builder
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
-        this.id = id;
+    public Order(
+        final OrderTable orderTable,
+        final OrderStatus orderStatus,
+        final List<OrderLineItem> orderLineItems
+    ) {
         setOrderTable(orderTable);
         this.orderStatus = orderStatus;
+        setOrderLineItems(orderLineItems);
     }
 
     private void setOrderTable(final OrderTable orderTable) {
@@ -65,8 +70,20 @@ public class Order {
         }
     }
 
-    public void addOrderLineItem(final OrderLineItem orderLineItem) {
+    private void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+        orderLineItems.forEach(this::addOrderLineItem);
+    }
+
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);
+        orderLineItem.setOrder(this);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

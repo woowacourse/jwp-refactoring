@@ -48,12 +48,14 @@ public class OrderService {
         OrderTable orderTable = orderTableDao.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
+        List<Menu> menus = findMenus(orderLineItemRequests);
+        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus);
+
         Order order = Order.builder()
             .orderTable(orderTable)
             .orderStatus(OrderStatus.COOKING)
+            .orderLineItems(orderLineItems)
             .build();
-        List<Menu> menus = findMenus(orderLineItemRequests);
-        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus, order);
 
         Order savedOrder = orderDao.save(order);
         orderLineItemDao.saveAll(orderLineItems);
@@ -85,22 +87,19 @@ public class OrderService {
 
     private List<OrderLineItem> convertOrderLineItems(
         final List<OrderLineItemRequest> requests,
-        final List<Menu> menus,
-        final Order order
+        final List<Menu> menus
     ) {
         return requests.stream()
-            .map(request -> convertOrderLineItem(request, menus, order))
+            .map(request -> convertOrderLineItem(request, menus))
             .collect(Collectors.toList());
     }
 
     private OrderLineItem convertOrderLineItem(
         final OrderLineItemRequest request,
-        final List<Menu> menus,
-        final Order order
+        final List<Menu> menus
     ) {
         Menu menu = findMenu(request, menus);
         return OrderLineItem.builder()
-            .order(order)
             .menu(menu)
             .build();
     }

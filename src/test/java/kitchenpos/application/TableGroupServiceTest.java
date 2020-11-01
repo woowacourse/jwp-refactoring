@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static kitchenpos.TestObjectFactory.createOrderTable;
 import static kitchenpos.TestObjectFactory.createOrderTableIdRequest;
 import static kitchenpos.TestObjectFactory.createTableGroupRequest;
@@ -13,7 +15,9 @@ import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableIdRequest;
 import kitchenpos.dto.TableGroupRequest;
@@ -138,7 +142,10 @@ class TableGroupServiceTest {
             .get()
             .getOrderTables()
             .get(0);
-        Order order = createOrder(groupedTable);
+        Menu menu = createMenu(18_000);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Order order = createOrder(groupedTable, orderLineItems);
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

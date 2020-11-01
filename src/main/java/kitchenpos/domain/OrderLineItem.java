@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,17 +27,20 @@ public class OrderLineItem {
     private long quantity;
 
     @Builder
-    public OrderLineItem(final Long seq, final Order order, final Menu menu, final long quantity) {
+    public OrderLineItem(final Long seq, final Menu menu, final long quantity) {
         this.seq = seq;
-        setOrder(order);
         this.menu = menu;
         this.quantity = quantity;
     }
 
-    private void setOrder(final Order order) {
-        if (Objects.isNull(this.order)) {
-            this.order = order;
-            this.order.addOrderLineItem(this);
+    public void setOrder(final Order order) {
+        validateAccessThroughOrder(order);
+        this.order = order;
+    }
+
+    private void validateAccessThroughOrder(final Order order) {
+        if (!order.getOrderLineItems().contains(this)) {
+            throw new IllegalStateException();
         }
     }
 }

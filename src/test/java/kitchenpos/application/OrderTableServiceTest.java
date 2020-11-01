@@ -1,13 +1,18 @@
 package kitchenpos.application;
 
+import static kitchenpos.TestObjectFactory.createMenu;
+import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -27,10 +32,10 @@ class OrderTableServiceTest {
     private OrderTableService orderTableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderDao orderDao;
 
     @DisplayName("테이블 추가")
     @Test
@@ -84,10 +89,10 @@ class OrderTableServiceTest {
         OrderTableResponse orderTableResponse = orderTableService.create(table);
 
         OrderTable savedTable = orderTableDao.findById(orderTableResponse.getId()).get();
-        Order order = Order.builder()
-            .orderTable(savedTable)
-            .orderStatus(OrderStatus.COOKING)
-            .build();
+        Menu menu = createMenu(18_000);
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Order order = createOrder(savedTable, orderLineItems);
         orderDao.save(order);
 
         OrderTableRequest request = createTableRequest(true);

@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
@@ -45,10 +46,17 @@ public class TestObjectFactory {
             .build();
     }
 
-    public static Order createOrder(OrderTable table) {
+    public static OrderLineItem createOrderLineItem(Menu menu) {
+        return OrderLineItem.builder()
+            .menu(menu)
+            .build();
+    }
+
+    public static Order createOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
         return Order.builder()
             .orderTable(table)
             .orderStatus(OrderStatus.COOKING)
+            .orderLineItems(orderLineItems)
             .build();
     }
 
