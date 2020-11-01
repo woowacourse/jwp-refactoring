@@ -53,16 +53,8 @@ class TableGroupServiceTest {
     @Test
     void setUp() {
         this.tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
-        this.orderTable1 = new OrderTable();
-        orderTable1.updateEmpty(true);
-        orderTable1.setId(1L);
-        orderTable1.setNumberOfGuests(10);
-
-        this.orderTable2 = new OrderTable();
-        orderTable2.updateEmpty(true);
-        orderTable2.setId(2L);
-        orderTable2.setNumberOfGuests(10);
-
+        this.orderTable1 = new OrderTable(10, true);
+        this.orderTable2 = new OrderTable(10, true);
         orderTableRepository.save(orderTable1);
         orderTableRepository.save(orderTable2);
     }

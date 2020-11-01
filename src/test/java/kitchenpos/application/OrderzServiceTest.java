@@ -67,6 +67,7 @@ class OrderzServiceTest {
         // given
         OrderTable orderTable = createOrderTable(false);
         List<OrderLineItem> orderLineItem = createOrderLineItem();
+
         // when
         Orderz result = orderService.create(orderTable.getId(), orderLineItem);
 
@@ -167,10 +168,8 @@ class OrderzServiceTest {
     }
 
     private OrderTable createOrderTable(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.updateEmpty(empty);
-        orderTableRepository.save(orderTable);
-        return orderTable;
+        OrderTable orderTable = new OrderTable(10, empty);
+        return orderTableRepository.save(orderTable);
     }
 
     private Menu createMenu() {

@@ -11,6 +11,8 @@ import javax.persistence.ManyToOne;
 @Entity
 @AttributeOverride(name = "id", column = @Column(name = "ORDER_TABLE_ID"))
 public class OrderTable extends BaseEntity {
+    private static final int MIN_NUMBER_OF_GUEST = 0;
+
     @ManyToOne
     @JoinColumn(name = "TABLE_GROUP_ID")
     private TableGroup tableGroup;
@@ -18,11 +20,13 @@ public class OrderTable extends BaseEntity {
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
-
+    private OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUEST) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -47,7 +51,10 @@ public class OrderTable extends BaseEntity {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty() || numberOfGuests < MIN_NUMBER_OF_GUEST) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

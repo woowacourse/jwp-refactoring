@@ -49,6 +49,25 @@ public class TableService {
     }
 
     @Transactional
+    public OrderTable changeEmpty2(final Long orderTableId, boolean empty) {
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
+        savedOrderTable.updateEmpty(empty);
+
+        return savedOrderTable;
+    }
+
+
+    @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
@@ -63,8 +82,16 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
+    }
+
+    @Transactional
+    public OrderTable changeNumberOfGuests2(final Long orderTableId, final int numberOfGuests) {
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
+        savedOrderTable.updateNumberOfGuests(numberOfGuests);
+        return savedOrderTable;
     }
 }
