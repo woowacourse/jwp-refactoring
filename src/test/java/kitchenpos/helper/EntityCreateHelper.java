@@ -16,72 +16,36 @@ import kitchenpos.domain.TableGroup;
 
 public class EntityCreateHelper {
     public static MenuGroup createMenuGroup(Long id, String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(id, name);
     }
 
     public static Menu createMenu(Long id, Long menuGroupId, List<MenuProduct> menuProducts, String name,
         BigDecimal price) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        menu.setName(name);
-        menu.setPrice(price);
-        return menu;
+        return new Menu(id, name, price, menuGroupId, menuProducts);
     }
 
-    public static MenuProduct createMenuProduct(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        return new MenuProduct(seq, menuId, productId, quantity);
     }
 
-    public static OrderLineItem createOrderLineItem(Long orderId, Long menuId, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 
     public static Table createTable(Long id, boolean isEmpty, Long tableGroupId, int numberOfGuests) {
-        Table table = new Table();
-        table.setId(id);
-        table.setEmpty(isEmpty);
-        table.setTableGroupId(tableGroupId);
-        table.setNumberOfGuests(numberOfGuests);
-        return table;
+        return new Table(id, tableGroupId, numberOfGuests, isEmpty);
     }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(tables);
-        return tableGroup;
+        return new TableGroup(id, createdDate, tables);
     }
 
     public static Order createOrder(Long id, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems,
         OrderStatus orderStatus, Long orderTableId) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(orderTableId);
-        return order;
+        return new Order(id, orderTableId, orderStatus.name(), orderedTime, orderLineItems);
     }
 }

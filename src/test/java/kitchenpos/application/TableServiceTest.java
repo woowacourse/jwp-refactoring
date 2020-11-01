@@ -114,7 +114,7 @@ class TableServiceTest {
             savedTable.getId());
         orderDao.save(order);
 
-        Table actual = tableService.changeEmpty(savedTable.getId(), createTable(null, true, null, 5));
+        Table actual = tableService.changeEmpty(savedTable.getId(), createTable(null, false, null, 5));
 
         assertAll(
             () -> assertThat(actual.getId()).isEqualTo(savedTable.getId()),

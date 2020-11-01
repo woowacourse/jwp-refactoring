@@ -43,7 +43,7 @@ class MenuServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct = createMenuProduct(null, savedProduct.getId(), 1L);
+        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
         Menu menu = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "콜라 세트",
             BigDecimal.valueOf(1900L));
 
@@ -91,7 +91,7 @@ class MenuServiceTest {
     @Test
     void createInvalidDiscountMenu() {
         Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
-        MenuProduct menuProduct = createMenuProduct(null, 2L, 1L);
+        MenuProduct menuProduct = createMenuProduct(null, null, 2L, 1L);
         Menu menu = createMenu(1L, 1L, Arrays.asList(menuProduct), "콜라세트", BigDecimal.valueOf(2100L));
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
 
@@ -112,7 +112,7 @@ class MenuServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct = createMenuProduct(null, savedProduct.getId(), 1L);
+        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
         Menu menu = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "콜라 세트",
             BigDecimal.valueOf(1900L));
 

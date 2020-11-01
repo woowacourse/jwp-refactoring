@@ -63,7 +63,7 @@ class OrderServiceTest {
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Order order = createOrder(1L, LocalDateTime.now(), Arrays.asList(주문된_치킨세트, 주문된_치킨세트), OrderStatus.COOKING, 1L);
 
@@ -78,7 +78,7 @@ class OrderServiceTest {
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table table = createTable(null, false, null, 5);
         orderTableDao.save(table);
@@ -96,7 +96,7 @@ class OrderServiceTest {
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table table = createTable(null, true, null, 5);
         Table savedTable = orderTableDao.save(table);
@@ -116,7 +116,7 @@ class OrderServiceTest {
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
         Table savedTable = saveOrderTable();
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
             savedTable.getId());
@@ -137,7 +137,7 @@ class OrderServiceTest {
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table savedTable = saveOrderTable();
 
@@ -186,7 +186,7 @@ class OrderServiceTest {
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
         Table savedTable = saveOrderTable();
 
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, savedMenu.getId(), 3);
+        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Order order = createOrder(null, LocalDateTime.now(), Arrays.asList(주문된_치킨세트), OrderStatus.COOKING,
             savedTable.getId());
@@ -200,7 +200,7 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu(MenuGroup savedMenuGroup, Product savedProduct) {
-        MenuProduct menuProduct = createMenuProduct(null, savedProduct.getId(), 1L);
+        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
         Menu 치킨세트 = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "둘둘치킨",
             BigDecimal.valueOf(1900L));
 
