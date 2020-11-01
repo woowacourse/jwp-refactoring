@@ -39,24 +39,31 @@ public class TableGroupService {
             .stream()
             .map(OrderTableIdRequest::getId)
             .collect(Collectors.toList());
-
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTablesCount(orderTableIds);
 
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        validateSavedTable(orderTableIds, savedOrderTables);
 
         TableGroup tableGroup = TableGroup.builder()
             .orderTables(savedOrderTables)
             .build();
+
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
         orderTableDao.saveAll(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private void validateOrderTablesCount(final List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateSavedTable(final List<Long> orderTableIds, final List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
