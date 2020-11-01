@@ -40,4 +40,8 @@ public class Table {
     public void changeNumberOfGuests(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
+
+    public void changeTableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
 }

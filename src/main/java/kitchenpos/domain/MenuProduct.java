@@ -28,4 +28,8 @@ public class MenuProduct {
     public long getQuantity() {
         return quantity;
     }
+
+    public void changeMenuId(Long menuId) {
+        this.menuId = menuId;
+    }
 }

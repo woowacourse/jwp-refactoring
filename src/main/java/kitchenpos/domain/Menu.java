@@ -43,4 +43,7 @@ public class Menu {
         return menuProducts;
     }
 
+    public void changeMenuProducts(List<MenuProduct> savedMenuProducts) {
+        this.menuProducts = savedMenuProducts;
+    }
 }

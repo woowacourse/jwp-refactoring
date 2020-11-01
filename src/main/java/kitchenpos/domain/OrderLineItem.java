@@ -28,4 +28,8 @@ public class OrderLineItem {
     public long getQuantity() {
         return quantity;
     }
+
+    public void changeOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
 }

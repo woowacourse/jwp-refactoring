@@ -43,4 +43,24 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
+
+    public void changeId(Long id) {
+        this.id = id;
+    }
+
+    public void changeOrderTableId(Long id) {
+        this.orderTableId = id;
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public void changeOrderedTime(LocalDateTime localDateTime) {
+        this.orderedTime = localDateTime;
+    }
+
+    public void changeOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
+        this.orderLineItems = savedOrderLineItems;
+    }
 }
