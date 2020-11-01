@@ -11,11 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
-    OrderTable save(OrderTable entity);
-
-    Optional<OrderTable> findById(Long id);
-
-    List<OrderTable> findAll();
-
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }

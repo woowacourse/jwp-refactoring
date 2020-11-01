@@ -15,7 +15,7 @@ public class OrderLineItemResponse {
     protected OrderLineItemResponse() {
     }
 
-    public OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
+    private OrderLineItemResponse(final Long seq, final Long orderId, final Long menuId, final long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;

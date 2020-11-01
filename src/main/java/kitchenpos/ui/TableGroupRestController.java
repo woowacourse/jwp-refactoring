@@ -12,6 +12,7 @@ import java.net.URI;
 
 @RestController
 public class TableGroupRestController {
+
     private final TableGroupService tableGroupService;
 
     public TableGroupRestController(final TableGroupService tableGroupService) {

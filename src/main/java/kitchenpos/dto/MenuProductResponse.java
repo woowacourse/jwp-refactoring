@@ -15,7 +15,7 @@ public class MenuProductResponse {
     protected MenuProductResponse() {
     }
 
-    public MenuProductResponse(Long seq, Long menuId, Long productId, Long quantity) {
+    private MenuProductResponse(final Long seq, final Long menuId, final Long productId, final Long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;

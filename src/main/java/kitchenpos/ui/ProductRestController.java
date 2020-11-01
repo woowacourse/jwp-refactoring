@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 public class ProductRestController {
+
     private final ProductService productService;
 
     public ProductRestController(final ProductService productService) {
@@ -31,7 +32,7 @@ public class ProductRestController {
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
         return ResponseEntity.ok()
                 .body(productService.list());
     }

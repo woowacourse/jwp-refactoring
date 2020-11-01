@@ -15,7 +15,7 @@ public class ProductResponse {
     protected ProductResponse() {
     }
 
-    public ProductResponse(Long id, String name, BigDecimal price) {
+    private ProductResponse(final Long id, final String name, final BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;

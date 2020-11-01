@@ -10,10 +10,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TableGroupRepository extends JpaRepository<TableGroup, Long> {
-
-    TableGroup save(TableGroup entity);
-
-    Optional<TableGroup> findById(Long id);
-
-    List<TableGroup> findAll();
 }

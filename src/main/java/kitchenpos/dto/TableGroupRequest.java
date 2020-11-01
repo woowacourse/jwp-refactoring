@@ -12,7 +12,7 @@ public class TableGroupRequest {
     protected TableGroupRequest() {
     }
 
-    public TableGroupRequest(List<Long> orderTableIds) {
+    public TableGroupRequest(final List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 

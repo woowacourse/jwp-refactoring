@@ -55,7 +55,7 @@ public class TestObjects {
     public static OrderTable createOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = new OrderTable();
         orderTable.updateTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.updateNumberOfGuests(numberOfGuests);
         orderTable.updateEmpty(empty);
         return orderTable;
     }

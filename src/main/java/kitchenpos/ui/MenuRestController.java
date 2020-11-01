@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 public class MenuRestController {
+
     private final MenuService menuService;
 
     public MenuRestController(final MenuService menuService) {
