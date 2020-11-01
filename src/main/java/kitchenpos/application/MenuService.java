@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -13,21 +14,23 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+        final MenuDao menuDao,
+        final MenuGroupDao menuGroupDao,
+        final MenuProductDao menuProductDao,
+        final ProductDao productDao
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
@@ -52,7 +55,7 @@ public class MenuService {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductRequest menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
@@ -72,13 +75,10 @@ public class MenuService {
         return savedMenu;
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+    public List<MenuResponse> list() {
+        return menuDao.findAll()
+            .stream()
+            .map(menu -> MenuResponse.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
+            .collect(Collectors.toList());
     }
 }

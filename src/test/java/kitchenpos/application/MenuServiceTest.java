@@ -14,6 +14,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -157,7 +158,7 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(request);
 
         // when
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         // then
         assertThat(menus).hasSize(1);
