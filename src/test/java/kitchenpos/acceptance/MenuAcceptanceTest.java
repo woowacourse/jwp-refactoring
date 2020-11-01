@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 관리한다.")
     void manageMenu() {
         // 메뉴 등록
-        Menu response = createMenu("후라이드 세트", products, 16_000L, 세트_메뉴.getId());
+        MenuResponse response = createMenu("후라이드 세트", products, 16_000L, 세트_메뉴.getId());
 
         assertThat(response.getId()).isNotNull();
         assertThat(response.getMenuGroupId()).isEqualTo(세트_메뉴.getId());
@@ -57,11 +57,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThatMenuContainsProducts(response, products);
 
         // 메뉴 목록 조회
-        List<Menu> menus = findMenus();
+        List<MenuResponse> menus = findMenus();
         doesMenuExistInMenus(response, menus);
     }
 
-    private List<Menu> findMenus() {
+    private List<MenuResponse> findMenus() {
         return given()
             .when()
                 .get("/api/menus")
@@ -70,10 +70,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 .log().all()
                 .extract()
                 .jsonPath()
-                .getList("", Menu.class);
+                .getList("", MenuResponse.class);
     }
 
-    private boolean doesMenuExistInMenus(Menu menu, List<Menu> menus) {
+    private boolean doesMenuExistInMenus(MenuResponse menu, List<MenuResponse> menus) {
         return menus.stream()
             .anyMatch(menuEntity -> menuEntity
                 .getId()
@@ -122,7 +122,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThatFailToCreateMenuWithoutMenuGroupId("후라이드 세트", products, 1_000L);
     }
 
-    private void assertThatMenuContainsProducts(Menu menu, List<Product> products) {
+    private void assertThatMenuContainsProducts(MenuResponse menu, List<Product> products) {
         List<MenuProduct> responseMenuProducts = menu.getMenuProducts();
 
         for (Product product : products) {

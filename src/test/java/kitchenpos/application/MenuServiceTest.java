@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
@@ -60,7 +59,7 @@ class MenuServiceTest {
 
         MenuRequest menuRequest = new MenuRequest("후라이드 세트", BigDecimal.valueOf(13_000),
             세트메뉴.getId(), menuProducts);
-        Menu savedMenu = menuService.create(menuRequest);
+        MenuResponse savedMenu = menuService.create(menuRequest);
 
         assertThat(savedMenu.getId()).isNotNull();
         assertThat(savedMenu.getName()).isEqualTo("후라이드 세트");
@@ -155,7 +154,7 @@ class MenuServiceTest {
         MenuRequest request = new MenuRequest(
             "후라이드 세트", BigDecimal.valueOf(13_000), 세트메뉴.getId(), menuProducts);
 
-        Menu savedMenu = menuService.create(request);
+        MenuResponse savedMenu = menuService.create(request);
 
         // when
         List<MenuResponse> menus = menuService.list();

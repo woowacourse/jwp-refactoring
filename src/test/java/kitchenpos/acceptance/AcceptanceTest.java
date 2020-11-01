@@ -10,13 +10,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -112,7 +112,7 @@ public abstract class AcceptanceTest {
                 .extract().as(OrderTable.class);
     }
 
-    Menu createMenu(String menuName, List<Product> products, Long menuPrice, Long menuGroupId) {
+    MenuResponse createMenu(String menuName, List<Product> products, Long menuPrice, Long menuGroupId) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("name", menuName);
@@ -139,7 +139,7 @@ public abstract class AcceptanceTest {
         return Collections.unmodifiableList(menuProducts);
     }
 
-    private Menu sendCreateMenuRequest(Map<String, Object> body) {
+    private MenuResponse sendCreateMenuRequest(Map<String, Object> body) {
         return
             given()
                 .body(body)
@@ -149,7 +149,7 @@ public abstract class AcceptanceTest {
                 .post("/api/menus")
             .then()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(Menu.class);
+                .extract().as(MenuResponse.class);
     }
 
     OrderTable changeEmptyToFalse(OrderTable table) {

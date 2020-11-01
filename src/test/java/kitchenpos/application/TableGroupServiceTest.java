@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -18,6 +17,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -188,7 +188,7 @@ class TableGroupServiceTest {
     @DisplayName("ungroup - 주문상태가 COMPLETION 이 아닌 테이블이 그룹에 속해있는 경우 예외처리")
     void ungroup_IfAnyTableIsNotInCompletion_ThrowException() {
         // given
-        Menu menu = createMenu_후라이드세트();
+        MenuResponse menu = createMenu_후라이드세트();
 
         TableGroup tableGroup = groupTableABC();
 
@@ -207,7 +207,7 @@ class TableGroupServiceTest {
         return tableGroupService.create(tableGroup);
     }
 
-    private Order orderOneMenu(OrderTable table, Menu menu) {
+    private Order orderOneMenu(OrderTable table, MenuResponse menu) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);
@@ -219,7 +219,7 @@ class TableGroupServiceTest {
         return orderService.create(order);
     }
 
-    private Menu createMenu_후라이드세트() {
+    private MenuResponse createMenu_후라이드세트() {
         // create products
         ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨", BigDecimal.valueOf(10_000));
         Product 후라이드치킨 = productService.create(후라이드치킨_request);

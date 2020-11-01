@@ -28,6 +28,10 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
+    public boolean isPriceBiggerThen(Price price) {
+        return this.price.isBiggerThen(price.getValue());
+    }
+
     public Long getId() {
         return id;
     }

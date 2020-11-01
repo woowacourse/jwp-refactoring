@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -132,10 +132,10 @@ class TableAcceptanceTest extends AcceptanceTest{
         치킨세트_구성상품들.add(createProduct("감자 튀김", 4_000));
         치킨세트_구성상품들.add(createProduct("매운 치즈 떡볶이", 5_000));
 
-        Menu 치킨_세트 = createMenu("치킨 세트", 치킨세트_구성상품들, 16_000L, 세트메뉴_그룹.getId());
+        MenuResponse 치킨_세트 = createMenu("치킨 세트", 치킨세트_구성상품들, 16_000L, 세트메뉴_그룹.getId());
 
         Product beerProduct = createProduct("맥주 500CC", 4_000);
-        Menu 맥주 = createMenu("맥주 500cc", Collections.singletonList(beerProduct),
+        MenuResponse 맥주 = createMenu("맥주 500cc", Collections.singletonList(beerProduct),
             beerProduct.getPrice().longValue(), 음료수_그룹.getId());
 
         // 1.2. tableA 에 손님이 앉아서 주문함
@@ -181,10 +181,10 @@ class TableAcceptanceTest extends AcceptanceTest{
         치킨세트_구성상품들.add(createProduct("감자 튀김", 4_000));
         치킨세트_구성상품들.add(createProduct("매운 치즈 떡볶이", 5_000));
 
-        Menu 치킨_세트 = createMenu("치킨 세트", 치킨세트_구성상품들, 16_000L, 세트메뉴_그룹.getId());
+        MenuResponse 치킨_세트 = createMenu("치킨 세트", 치킨세트_구성상품들, 16_000L, 세트메뉴_그룹.getId());
 
         Product beerProduct = createProduct("맥주 500CC", 4_000);
-        Menu 맥주 = createMenu("맥주 500cc", Collections.singletonList(beerProduct),
+        MenuResponse 맥주 = createMenu("맥주 500cc", Collections.singletonList(beerProduct),
             beerProduct.getPrice().longValue(), 음료수_그룹.getId());
 
         // 2. tableA 에 손님이 앉아서 주문함

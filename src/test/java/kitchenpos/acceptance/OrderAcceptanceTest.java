@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import org.junit.jupiter.api.Test;
 class OrderAcceptanceTest extends AcceptanceTest {
 
     private OrderTable tableA;
-    private Menu 치킨_세트;
-    private Menu 맥주;
+    private MenuResponse 치킨_세트;
+    private MenuResponse 맥주;
 
     @BeforeEach
     void setUp() {

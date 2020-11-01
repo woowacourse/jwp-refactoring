@@ -7,7 +7,7 @@ public class Price {
 
     private BigDecimal value;
 
-    public Price() {
+    private Price() {
     }
 
     public Price(BigDecimal value) {
@@ -23,5 +23,9 @@ public class Price {
 
     public BigDecimal getValue() {
         return value;
+    }
+
+    public boolean isBiggerThen(BigDecimal price) {
+        return value.compareTo(price) > 0;
     }
 }

@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -20,6 +19,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +50,7 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
-    private Menu menu;
+    private MenuResponse menu;
     private OrderTable table;
 
     @BeforeEach
@@ -257,7 +257,7 @@ class OrderServiceTest {
         return tableService.create(orderTable);
     }
 
-    private Menu createMenu_후라이드세트() {
+    private MenuResponse createMenu_후라이드세트() {
         // create products
         ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨",BigDecimal.valueOf(10_000));
         Product 후라이드치킨 = productService.create(후라이드치킨_request);
@@ -287,10 +287,10 @@ class OrderServiceTest {
         return Collections.unmodifiableList(menuProducts);
     }
 
-    private Order orderWithEqualAmountOfAllMenus(OrderTable table, List<Menu> menus, int quantity) {
+    private Order orderWithEqualAmountOfAllMenus(OrderTable table, List<MenuResponse> menus, int quantity) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-        for (Menu menu : menus) {
+        for (MenuResponse menu : menus) {
             OrderLineItem orderLineItem = new OrderLineItem();
 
             orderLineItem.setMenuId(menu.getId());
