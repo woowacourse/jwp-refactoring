@@ -18,7 +18,10 @@ public class OrderTableFixture {
             TestObjectUtils.createOrderTable(2L, null, 3, true);
 
     public static final OrderTable ORDER_TABLE3 =
-            TestObjectUtils.createOrderTable(3L, null, 3, false);
+            TestObjectUtils.createOrderTable(3L, 1L, 3, false);
+
+    public static final OrderTable ORDER_TABLE4 =
+            TestObjectUtils.createOrderTable(4L, 1L, 3, false);
 
     public static final OrderTable CHANGING_ORDER_TABLE =
             TestObjectUtils.createOrderTable(3L, null, 5, false);
@@ -30,6 +33,8 @@ public class OrderTableFixture {
             TestObjectUtils.createOrderTable(3L, null, 8, true);
 
     public static final List<OrderTable>
-            ORDER_TABLES = Arrays.asList(ORDER_TABLE1, ORDER_TABLE2);
+            ORDER_TABLES1 = Arrays.asList(ORDER_TABLE1, ORDER_TABLE2);
 
+    public static final List<OrderTable>
+            ORDER_TABLES2 = Arrays.asList(ORDER_TABLE3, ORDER_TABLE4);
 }

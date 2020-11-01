@@ -41,10 +41,10 @@ class TableGroupServiceTest {
     @DisplayName("2 개 이상의 빈 테이블을 단체로 지정할 수 있다.")
     @Test
     void createTest() {
-        when(orderTableDao.findAllByIdIn(anyList())).thenReturn(ORDER_TABLES);
-        when(tableGroupDao.save(any())).thenReturn(TABLE_GROUP);
+        when(orderTableDao.findAllByIdIn(anyList())).thenReturn(ORDER_TABLES1);
+        when(tableGroupDao.save(any())).thenReturn(TABLE_GROUP1);
 
-        TableGroup tableGroup = tableGroupService.create(TABLE_GROUP);
+        TableGroup tableGroup = tableGroupService.create(TABLE_GROUP1);
         assertAll(
                 () -> assertThat(tableGroup.getId()).isEqualTo(1L),
                 () -> assertThat(tableGroup.getOrderTables().size()).isEqualTo(2),
@@ -59,34 +59,31 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(
                 Collections.singletonList(ORDER_TABLE1));
 
-        assertThatThrownBy(() -> tableGroupService.create(TABLE_GROUP))
+        assertThatThrownBy(() -> tableGroupService.create(TABLE_GROUP1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정은 중복될 수 없다.")
     @Test
     void createTest_when_OrderTable() {
-        when(orderTableDao.findAllByIdIn(anyList())).thenReturn(ORDER_TABLES);
-        when(tableGroupDao.save(any())).thenReturn(TABLE_GROUP);
+        when(orderTableDao.findAllByIdIn(anyList())).thenReturn(ORDER_TABLES2);
 
-        tableGroupService.create(TABLE_GROUP);
-
-        assertThatThrownBy(() -> tableGroupService.create(TABLE_GROUP))
+        assertThatThrownBy(() -> tableGroupService.create(TABLE_GROUP2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정을 해지할 수 있다.")
     @Test
     void ungroupTest() {
-        when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(ORDER_TABLES);
+        when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(ORDER_TABLES2);
 
-        tableGroupService.ungroup(TABLE_GROUP.getId());
+        tableGroupService.ungroup(TABLE_GROUP1.getId());
 
         assertAll(
-                () -> assertThat(ORDER_TABLES.get(0).getTableGroupId()).isNull(),
-                () -> assertThat(ORDER_TABLES.get(1).getTableGroupId()).isNull(),
-                () -> assertThat(ORDER_TABLES.get(0).isEmpty()).isFalse(),
-                () -> assertThat(ORDER_TABLES.get(1).isEmpty()).isFalse()
+                () -> assertThat(ORDER_TABLES2.get(0).getTableGroupId()).isNull(),
+                () -> assertThat(ORDER_TABLES2.get(1).getTableGroupId()).isNull(),
+                () -> assertThat(ORDER_TABLES2.get(0).isEmpty()).isFalse(),
+                () -> assertThat(ORDER_TABLES2.get(1).isEmpty()).isFalse()
         );
     }
 
@@ -96,7 +93,7 @@ class TableGroupServiceTest {
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(
                 true);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(TABLE_GROUP.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(TABLE_GROUP1.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

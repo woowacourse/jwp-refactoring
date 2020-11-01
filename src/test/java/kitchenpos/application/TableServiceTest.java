@@ -44,7 +44,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
     @Test
     void listTest() {
-        when(orderTableDao.findAll()).thenReturn(ORDER_TABLES);
+        when(orderTableDao.findAll()).thenReturn(ORDER_TABLES1);
 
         List<OrderTable> list = tableService.list();
         assertAll(
@@ -57,10 +57,10 @@ class TableServiceTest {
     @DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
     @Test
     void notChangeEmptyTest_when_tableGroupNotNull() {
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE1));
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE))
+                () -> tableService.changeEmpty(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE))
                 .isInstanceOf(IllegalArgumentException.class)
         ;
     }
@@ -68,21 +68,21 @@ class TableServiceTest {
     @DisplayName("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
     @Test
     void notChangeEmptyTest_when_orderStatusIsMEALAndCOOKING() {
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE1));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE)
+                () -> tableService.changeEmpty(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("방문한 손님 수를 입력할 수 있다.")
     @Test
     void changeNumberOfGuestsTest() {
-        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE1));
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
         when(orderTableDao.save(any())).thenReturn(CHANGING_ORDER_TABLE);
 
-        assertThat(tableService.changeNumberOfGuests(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE)
+        assertThat(tableService.changeNumberOfGuests(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE)
                 .getNumberOfGuests()).isEqualTo(5);
     }
 
