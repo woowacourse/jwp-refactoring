@@ -1,7 +1,9 @@
-package kitchenpos.ui;
+package kitchenpos.order.controller;
 
 import java.net.URI;
 import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,8 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderEditRequest;
+import kitchenpos.order.service.OrderService;
 
 @RestController
 public class OrderRestController {
@@ -23,12 +27,11 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+    public ResponseEntity<Void> create(@RequestBody @Valid OrderCreateRequest request) {
+        final Long id = orderService.create(request);
+        final URI uri = URI.create("/api/orders/" + id);
         return ResponseEntity.created(uri)
-            .body(created)
-            ;
+            .build();
     }
 
     @GetMapping("/api/orders")
@@ -38,11 +41,13 @@ public class OrderRestController {
             ;
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
-        @PathVariable final Long orderId,
-        @RequestBody final Order order
+    @PutMapping("/api/orders/{orderId}")
+    public ResponseEntity<Void> edit(
+        @PathVariable Long orderId,
+        @RequestBody @Valid OrderEditRequest request
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        orderService.changeOrderStatus(orderId, request);
+        return ResponseEntity.noContent()
+            .build();
     }
 }

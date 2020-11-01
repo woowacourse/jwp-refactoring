@@ -1,21 +1,22 @@
-package kitchenpos.application;
+package kitchenpos.order.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.menu.domain.MenuDao;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderDao;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemDao;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderEditRequest;
+import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableDao;
 
@@ -39,45 +40,42 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Long create(final OrderCreateRequest request) {
+        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItemDtos();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderLineItemDtos.stream()
+            .map(OrderLineItemDto::getMenuId)
             .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItemDtos.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        order.changeId(null);
-
-        final Table table = tableDao.findById(order.getOrderTableId())
+        final Table table = tableDao.findById(request.getTableId())
             .orElseThrow(IllegalArgumentException::new);
 
         if (table.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.changeOrderTableId(table.getId());
-        order.changeOrderStatus(OrderStatus.COOKING.name());
-        order.changeOrderedTime(LocalDateTime.now());
+        Order order = new Order(table.getId(), OrderStatus.COOKING.name());
 
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.changeOrderId(orderId);
+        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+            OrderLineItem orderLineItem = new OrderLineItem(orderId, orderLineItemDto.getMenuId(),
+                orderLineItemDto.getQuantity());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.changeOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return savedOrder.getId();
     }
 
     public List<Order> list() {
@@ -91,21 +89,14 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public void changeOrderStatus(Long orderId, OrderEditRequest request) {
         final Order savedOrder = orderDao.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
+        final OrderStatus orderStatus = request.getOrderStatus();
+        savedOrder.changeOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
-
         savedOrder.changeOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
     }
 }

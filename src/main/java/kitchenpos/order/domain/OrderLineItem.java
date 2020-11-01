@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.domain;
 
 public class OrderLineItem {
     private Long seq;
@@ -11,6 +11,10 @@ public class OrderLineItem {
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public OrderLineItem(Long orderId, Long menuId, Long quantity) {
+        this(null, orderId, menuId, quantity);
     }
 
     public Long getSeq() {

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.order.domain;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,8 +14,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import kitchenpos.domain.OrderLineItem;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {

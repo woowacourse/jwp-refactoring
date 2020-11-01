@@ -6,8 +6,8 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.OrderDao;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableDao;
 import kitchenpos.table.dto.TableCreateRequest;
