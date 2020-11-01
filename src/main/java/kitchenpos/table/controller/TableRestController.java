@@ -28,7 +28,7 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<Table> create(@RequestBody @Valid TableCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid TableCreateRequest request) {
         Long id = tableService.create(request);
         URI uri = URI.create("/api/tables/" + id);
         return ResponseEntity.created(uri)

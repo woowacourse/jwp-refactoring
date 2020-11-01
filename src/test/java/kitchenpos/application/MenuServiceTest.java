@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuGroupDao;
+import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuProductDto;
+import kitchenpos.menu.service.MenuService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductDao;
 
@@ -43,33 +45,25 @@ class MenuServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
-        Menu menu = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "콜라 세트",
-            BigDecimal.valueOf(1900L));
+        MenuCreateRequest request = new MenuCreateRequest("콜라 세트", 1900L, savedMenuGroup.getId(),
+            Arrays.asList(new MenuProductDto(savedProduct.getId(), 1L)));
 
-        Menu savedMenu = menuService.create(menu);
+        Long id = menuService.create(request);
 
-        assertAll(
-            () -> assertThat(savedMenu.getId()).isNotNull(),
-            () -> assertThat(savedMenu.getPrice().longValue()).isEqualTo(1900L),
-            () -> assertThat(savedMenu.getName()).isEqualTo("콜라 세트"),
-            () -> assertThat(savedMenu.getMenuProducts().get(0).getQuantity()).isEqualTo(1L)
-        );
+        assertThat(id).isNotNull();
     }
 
     @DisplayName("메뉴 가격이 음수거나 null일 경우 예외가 발생하는지 확인한다.")
     @Test
     void createInvalidPriceMenu() {
-        Menu menuWithNullPrice = createMenu(null, null, null, "test", null);
-
-        Menu menuWithMinusPrice = createMenu(null, null, null, "test", BigDecimal.valueOf(-1));
-
+        MenuCreateRequest request1 = new MenuCreateRequest("콜라 세트", null, null, null);
+        MenuCreateRequest request2 = new MenuCreateRequest("콜라 세트", -1L, null, null);
         assertAll(
             () -> assertThatThrownBy(
-                () -> menuService.create(menuWithNullPrice)
+                () -> menuService.create(request1)
             ).isInstanceOf(IllegalArgumentException.class),
             () -> assertThatThrownBy(
-                () -> menuService.create(menuWithMinusPrice)
+                () -> menuService.create(request2)
             ).isInstanceOf(IllegalArgumentException.class)
         );
     }
@@ -77,13 +71,10 @@ class MenuServiceTest {
     @DisplayName("메뉴가 아무 메뉴 그룹에도 속하지 않을 시 예외가 발생하는지 확인한다.")
     @Test
     void createInvalidMenuGroup() {
-        MenuGroup menuGroup = createMenuGroup(null, "음료류");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Menu menu = createMenu(1L, savedMenuGroup.getId(), Arrays.asList(), "둘둘치킨", BigDecimal.valueOf(2000L));
+        MenuCreateRequest request = new MenuCreateRequest("콜라 세트", 2000L, null, null);
 
         assertThatThrownBy(
-            () -> menuService.create(menu)
+            () -> menuService.create(request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,15 +82,17 @@ class MenuServiceTest {
     @Test
     void createInvalidDiscountMenu() {
         Product product = createProduct(1L, "콜라", BigDecimal.valueOf(2000L));
-        MenuProduct menuProduct = createMenuProduct(null, null, 2L, 1L);
-        Menu menu = createMenu(1L, 1L, Arrays.asList(menuProduct), "콜라세트", BigDecimal.valueOf(2100L));
+
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
 
-        menuGroupDao.save(menuGroup);
-        productDao.save(product);
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        Product savedProduct = productDao.save(product);
+
+        MenuCreateRequest request = new MenuCreateRequest("콜라 세트", 2100L, savedMenuGroup.getId(),
+            Arrays.asList(new MenuProductDto(savedProduct.getId(), 1L)));
 
         assertThatThrownBy(
-            () -> menuService.create(menu)
+            () -> menuService.create(request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -112,11 +105,10 @@ class MenuServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
-        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
-        Menu menu = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "콜라 세트",
-            BigDecimal.valueOf(1900L));
+        MenuCreateRequest request = new MenuCreateRequest("콜라 세트", 1900L, savedMenuGroup.getId(),
+            Arrays.asList(new MenuProductDto(savedProduct.getId(), 1L)));
 
-        menuService.create(menu);
+        menuService.create(request);
         List<Menu> menus = menuService.list();
 
         assertAll(

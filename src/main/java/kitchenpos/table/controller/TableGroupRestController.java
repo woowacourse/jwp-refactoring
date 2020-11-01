@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 import kitchenpos.table.service.TableGroupService;
 
@@ -24,7 +23,7 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroup> create(@RequestBody @Valid TableGroupCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody @Valid TableGroupCreateRequest request) {
         Long id = tableGroupService.create(request);
         URI uri = URI.create("/api/table-groups/" + id);
         return ResponseEntity.created(uri)

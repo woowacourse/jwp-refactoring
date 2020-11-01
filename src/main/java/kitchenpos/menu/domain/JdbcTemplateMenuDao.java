@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
@@ -16,8 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import kitchenpos.domain.Menu;
 
 @Repository
 public class JdbcTemplateMenuDao implements MenuDao {
@@ -63,6 +61,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("ids", ids);
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
+    }
+
+    private MenuProduct toMenuProduct(ResultSet resultSet) throws SQLException {
+        Long seq = resultSet.getLong("seq");
+        Long menuId = resultSet.getLong("menu_id");
+        Long productId = resultSet.getLong("product_id");
+        Long quantity = resultSet.getLong("quantity");
+        return new MenuProduct(seq, menuId, productId, quantity);
     }
 
     private Menu select(final Long id) {
