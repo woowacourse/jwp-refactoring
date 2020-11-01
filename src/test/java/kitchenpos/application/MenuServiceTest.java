@@ -1,27 +1,25 @@
 package kitchenpos.application;
 
-import static kitchenpos.helper.EntityCreateHelper.createMenu;
-import static kitchenpos.helper.EntityCreateHelper.createMenuGroup;
-import static kitchenpos.helper.EntityCreateHelper.createMenuProduct;
-import static kitchenpos.helper.EntityCreateHelper.createProduct;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static kitchenpos.helper.EntityCreateHelper.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -62,11 +60,9 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 음수거나 null일 경우 예외가 발생하는지 확인한다.")
     @Test
     void createInvalidPriceMenu() {
-        Menu menuWithNullPrice = new Menu();
-        menuWithNullPrice.setPrice(null);
+        Menu menuWithNullPrice = createMenu(null, null, null, "test", null);
 
-        Menu menuWithMinusPrice = new Menu();
-        menuWithMinusPrice.setPrice(BigDecimal.valueOf(-1L));
+        Menu menuWithMinusPrice = createMenu(null, null, null, "test", BigDecimal.valueOf(-1));
 
         assertAll(
             () -> assertThatThrownBy(

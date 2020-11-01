@@ -172,9 +172,9 @@ class OrderServiceTest {
     @DisplayName("주문상태를 변경할 때 주문상태가 'COMPLETION' 인 경우 예외가 발생한다.")
     @Test
     void changeOrderStatusWhenCompletion() {
-        createOrder(1L, LocalDateTime.now(), null, OrderStatus.COMPLETION, 2L);
+        Order order = createOrder(1L, LocalDateTime.now(), null, OrderStatus.COMPLETION, 2L);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
