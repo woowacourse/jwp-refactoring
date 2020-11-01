@@ -20,9 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.model.Menu;
+import kitchenpos.domain.entity.Menu;
 import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.factory.ProductFactory;
 
 @ExtendWith(MockitoExtension.class)
 class MenuCreateServiceTest {
@@ -32,8 +31,6 @@ class MenuCreateServiceTest {
     private ProductDao productDao;
     @InjectMocks
     private MenuCreateService menuCreateService;
-
-    private ProductFactory productFactory = new ProductFactory();
 
     @DisplayName("메뉴 생성 유효성 검사")
     @TestFactory
@@ -48,7 +45,7 @@ class MenuCreateServiceTest {
 
     private void validateSuccess() {
         Menu menu = MENU_REQUEST.toEntity();
-        Product product = productFactory.create(1L, BigDecimal.valueOf(17_000L));
+        Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(17_000L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menu.getMenuProducts().get(0).getProductId())).willReturn(
@@ -81,7 +78,7 @@ class MenuCreateServiceTest {
 
     private void bigMenuPrice() {
         Menu menu = MENU_REQUEST.toEntity();
-        Product product = productFactory.create(1L, BigDecimal.valueOf(8_400L));
+        Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(8_400L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menu.getMenuProducts().get(0).getProductId()))

@@ -25,7 +25,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
-import kitchenpos.factory.ProductFactory;
 import kitchenpos.factory.TableGroupFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -42,8 +41,6 @@ public class AcceptanceTest {
     protected OrderTableFactory orderTableFactory;
     @Autowired
     protected TableGroupFactory tableGroupFactory;
-    @Autowired
-    protected ProductFactory productFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;

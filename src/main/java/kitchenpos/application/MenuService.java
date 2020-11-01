@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.domain.model.Menu;
+import kitchenpos.domain.entity.Menu;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.service.MenuCreateService;
 
@@ -25,8 +25,7 @@ public class MenuService {
     @Transactional
     public Long create(final MenuRequest request) {
         Menu menu = request.toEntity();
-        menu.create(menuCreateService);
-        Menu saved = menuRepository.save(menu);
+        Menu saved = menuRepository.save(menu.create(menuCreateService));
         return saved.getId();
     }
 

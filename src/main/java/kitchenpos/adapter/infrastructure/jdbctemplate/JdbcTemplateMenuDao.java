@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.domain.model.Menu;
+import kitchenpos.domain.entity.Menu;
 import kitchenpos.domain.repository.MenuRepository;
 
 @Repository

@@ -4,7 +4,7 @@ import static java.util.stream.Collectors.*;
 
 import java.util.List;
 
-import kitchenpos.domain.model.MenuGroup;
+import kitchenpos.domain.entity.MenuGroup;
 
 public class MenuGroupResponse {
     private Long id;

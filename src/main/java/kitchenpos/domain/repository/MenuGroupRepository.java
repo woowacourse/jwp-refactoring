@@ -3,7 +3,7 @@ package kitchenpos.domain.repository;
 import java.util.List;
 import java.util.Optional;
 
-import kitchenpos.domain.model.MenuGroup;
+import kitchenpos.domain.entity.MenuGroup;
 
 public interface MenuGroupRepository {
     MenuGroup save(MenuGroup entity);

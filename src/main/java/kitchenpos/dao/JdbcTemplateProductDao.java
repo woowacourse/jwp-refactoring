@@ -1,6 +1,12 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Product;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,11 +15,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.Product;
 
 @Repository
 public class JdbcTemplateProductDao implements ProductDao {
@@ -57,14 +59,12 @@ public class JdbcTemplateProductDao implements ProductDao {
         final String sql = "SELECT id, name, price FROM product WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private Product toEntity(final ResultSet resultSet) throws SQLException {
-        final Product entity = new Product();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        return entity;
+        return new Product(resultSet.getLong(KEY_COLUMN_NAME), resultSet.getString("name"),
+                resultSet.getBigDecimal("price"));
     }
 }

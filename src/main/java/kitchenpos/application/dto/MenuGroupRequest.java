@@ -2,7 +2,7 @@ package kitchenpos.application.dto;
 
 import javax.validation.constraints.NotBlank;
 
-import kitchenpos.domain.model.MenuGroup;
+import kitchenpos.domain.entity.MenuGroup;
 
 public class MenuGroupRequest {
     @NotBlank

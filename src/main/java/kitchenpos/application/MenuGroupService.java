@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.domain.model.MenuGroup;
+import kitchenpos.domain.entity.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 
 @Service

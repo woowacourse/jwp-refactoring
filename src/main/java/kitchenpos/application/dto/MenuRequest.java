@@ -9,12 +9,12 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.model.Menu;
+import kitchenpos.domain.entity.Menu;
 
 public class MenuRequest {
     @NotBlank
     private String name;
-    @Min(value = 0)
+    @Min(0)
     private BigDecimal price;
     @NotNull
     private Long menuGroupId;

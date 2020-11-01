@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.model.Menu;
+import kitchenpos.domain.entity.Menu;
 
 public class MenuResponse {
     private Long id;

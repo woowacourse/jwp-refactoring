@@ -1,4 +1,4 @@
-package kitchenpos.domain.model;
+package kitchenpos.domain.entity;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -22,8 +22,9 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void create(MenuCreateService menuCreateService) {
+    public Menu create(MenuCreateService menuCreateService) {
         menuCreateService.validate(menuGroupId, price, menuProducts);
+        return this;
     }
 
     public Long getId() {
