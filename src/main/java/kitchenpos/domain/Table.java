@@ -94,6 +94,14 @@ public class Table {
         this.empty = empty;
     }
 
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 해지되지 않았습니다.");
+        }
+
+        setEmpty(empty);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

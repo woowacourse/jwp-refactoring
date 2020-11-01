@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
@@ -63,15 +63,16 @@ class TableServiceTest extends KitchenPosServiceTest {
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
         Long savedOrderTableId = savedTable.getId();
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        TableResponse changedTable = tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty);
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse changedTable
+            = tableService.changeEmpty(savedOrderTableId, tableChangeEmptyRequest);
         assertThat(changedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_TRUE);
 
-        Table otherTableOnlyEmpty = new Table();
-        otherTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableChangeEmptyRequest orderTableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_FALSE);
         TableResponse changedOtherTable = tableService
-            .changeEmpty(savedOrderTableId, otherTableOnlyEmpty);
+            .changeEmpty(savedOrderTableId, orderTableChangeEmptyRequest);
         assertThat(changedOtherTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
     }
 
@@ -84,9 +85,10 @@ class TableServiceTest extends KitchenPosServiceTest {
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
         Long wrongOrderTableId = savedTable.getId() + 1;
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, tableOnlyEmpty))
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(wrongOrderTableId, tableChangeEmptyRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -95,9 +97,10 @@ class TableServiceTest extends KitchenPosServiceTest {
     void changeEmpty_NullId_ThrownException() {
         Long wrongOrderTableId = null;
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, tableOnlyEmpty))
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(wrongOrderTableId, tableChangeEmptyRequest))
             .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
@@ -115,9 +118,10 @@ class TableServiceTest extends KitchenPosServiceTest {
 
         Long savedOrderTableId = savedTable.getId();
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty))
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_FALSE);
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(savedOrderTableId, tableChangeEmptyRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -137,10 +141,11 @@ class TableServiceTest extends KitchenPosServiceTest {
         order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        TableResponse changedTable = tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty);
-        assertThat(changedTable.isEmpty()).isEqualTo(tableOnlyEmpty.isEmpty());
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse changedTable = tableService
+            .changeEmpty(savedOrderTableId, tableChangeEmptyRequest);
+        assertThat(changedTable.isEmpty()).isEqualTo(tableChangeEmptyRequest.isEmpty());
     }
 
     @DisplayName("Empty 상태 변경 - 예외 발생, Order 상태가 Cooking/Meal인 경우")
@@ -159,9 +164,10 @@ class TableServiceTest extends KitchenPosServiceTest {
         order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
 
-        Table tableOnlyEmpty = new Table();
-        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty))
+        TableChangeEmptyRequest tableChangeEmptyRequest
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(
+            () -> tableService.changeEmpty(savedOrderTableId, tableChangeEmptyRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

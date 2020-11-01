@@ -3,7 +3,7 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
@@ -44,8 +44,9 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<TableResponse> changeEmpty(@PathVariable final Long orderTableId,
-        @RequestBody final Table table) {
-        TableResponse changedTable = tableService.changeEmpty(orderTableId, table);
+        @RequestBody final TableChangeEmptyRequest tableChangeEmptyRequest) {
+        TableResponse changedTable = tableService
+            .changeEmpty(orderTableId, tableChangeEmptyRequest);
 
         return ResponseEntity.ok()
             .body(changedTable);

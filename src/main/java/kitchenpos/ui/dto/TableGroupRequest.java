@@ -7,7 +7,7 @@ public class TableGroupRequest {
 
     private List<TableOfTableGroupRequest> orderTables;
 
-    public TableGroupRequest() {
+    private TableGroupRequest() {
     }
 
     public TableGroupRequest(List<Long> orderTableIds) {

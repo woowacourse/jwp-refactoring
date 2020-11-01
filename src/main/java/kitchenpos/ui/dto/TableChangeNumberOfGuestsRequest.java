@@ -4,7 +4,7 @@ public class TableChangeNumberOfGuestsRequest {
 
     private int numberOfGuests;
 
-    public TableChangeNumberOfGuestsRequest() {
+    private TableChangeNumberOfGuestsRequest() {
     }
 
     public TableChangeNumberOfGuestsRequest(int numberOfGuests) {

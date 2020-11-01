@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
@@ -108,7 +109,7 @@ class TableRestControllerTest {
             + "  \"empty\": " + table.isEmpty() + "\n"
             + "}";
 
-        given(tableService.changeEmpty(anyLong(), any(Table.class)))
+        given(tableService.changeEmpty(anyLong(), any(TableChangeEmptyRequest.class)))
             .willReturn(TableResponse.of(table));
 
         ResultActions resultActions = mockMvc

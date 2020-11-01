@@ -2,11 +2,11 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
@@ -40,21 +40,17 @@ public class TableService {
     }
 
     @Transactional
-    public TableResponse changeEmpty(final Long orderTableId, final Table table) {
-        final Table savedOrderTable = tableRepository.findById(orderTableId)
+    public TableResponse changeEmpty(final Long orderTableId,
+        final TableChangeEmptyRequest tableChangeEmptyRequest) {
+        final Table savedTable = tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setEmpty(table.isEmpty());
-        Table savedTable = tableRepository.save(savedOrderTable);
+        savedTable.changeEmpty(tableChangeEmptyRequest.isEmpty());
 
         return TableResponse.of(savedTable);
     }
