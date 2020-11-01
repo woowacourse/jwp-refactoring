@@ -30,7 +30,7 @@ class OrderTableTest {
         orderTable.groupBy(tableGroup);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(false))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("테이블 그룹 지정")
@@ -55,7 +55,7 @@ class OrderTableTest {
 
         assertThatThrownBy(
             () -> orderTable.groupBy(tableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalStateException.class);
 
     }
 
@@ -68,7 +68,7 @@ class OrderTableTest {
 
         assertThatThrownBy(
             () -> orderTable.groupBy(tableGroup)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("테이블 그룹 해제")
@@ -113,7 +113,7 @@ class OrderTableTest {
 
         assertThatThrownBy(
             () -> orderTable.changeNumberOfGuests(10)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalStateException.class);
     }
 
     private TableGroup createTableGroup() {

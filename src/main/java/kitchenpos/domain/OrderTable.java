@@ -68,7 +68,7 @@ public class OrderTable {
 
     private void validateEmpty() {
         if (!empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
     }
 
@@ -85,7 +85,7 @@ public class OrderTable {
 
     private void validateTableGroup() {
         if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
     }
 
@@ -103,7 +103,7 @@ public class OrderTable {
 
     private void validateNotEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
     }
 
