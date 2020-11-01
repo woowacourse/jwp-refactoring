@@ -2,7 +2,6 @@ package kitchenpos.utils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import kitchenpos.domain.Menu;
@@ -55,9 +54,9 @@ public class TestObjects {
 
     public static OrderTable createOrderTable(final Long tableGroupId, final int numberOfGuests, final boolean empty) {
         final OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(tableGroupId);
+        orderTable.updateTableGroupId(tableGroupId);
         orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        orderTable.updateEmpty(empty);
         return orderTable;
     }
 

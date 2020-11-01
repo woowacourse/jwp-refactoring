@@ -18,7 +18,12 @@ public class TableGroup {
     @Column
     private LocalDateTime createdDate;
 
-    // private List<OrderTable> orderTables;
+    protected TableGroup() {
+    }
+
+    public TableGroup(final LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
 
     public Long getId() {
         return id;
@@ -35,12 +40,4 @@ public class TableGroup {
     public void setCreatedDate(final LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
-
-    // public List<OrderTable> getOrderTables() {
-    //     return orderTables;
-    // }
-    //
-    // public void setOrderTables(final List<OrderTable> orderTables) {
-    //     this.orderTables = orderTables;
-    // }
 }

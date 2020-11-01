@@ -2,6 +2,9 @@ package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +20,11 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
-        final OrderTable created = tableService.create(orderTable);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableRequest orderTableRequest) {
+        final OrderTableResponse orderTableResponse = tableService.create(orderTableRequest);
+        final URI uri = URI.create("/api/tables/" + orderTableResponse.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(orderTableResponse);
     }
 
     @GetMapping("/api/tables")

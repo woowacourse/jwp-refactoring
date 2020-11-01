@@ -11,5 +11,4 @@ import kitchenpos.domain.MenuGroup;
 public interface MenuGroupRepository extends JpaRepository<MenuGroup, Long> {
 
     Optional<MenuGroup> findById(Long id);
-
 }

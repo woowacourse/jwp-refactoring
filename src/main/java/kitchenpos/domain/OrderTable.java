@@ -22,6 +22,14 @@ public class OrderTable {
     @Column
     private boolean empty;
 
+    protected OrderTable() {
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }
@@ -34,7 +42,7 @@ public class OrderTable {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
+    public void updateTableGroupId(final Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
@@ -50,7 +58,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 }

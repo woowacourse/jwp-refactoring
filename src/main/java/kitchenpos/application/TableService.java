@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
@@ -22,11 +24,10 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
+        final OrderTable orderTable = orderTableRepository.save(orderTableRequest.toEntity());
 
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(orderTable);
     }
 
     public List<OrderTable> list() {
@@ -47,7 +48,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.updateEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
