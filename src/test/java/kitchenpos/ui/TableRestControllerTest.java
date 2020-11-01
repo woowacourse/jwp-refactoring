@@ -1,8 +1,8 @@
 package kitchenpos.ui;
 
 import static kitchenpos.OrderTableFixture.*;
-import static kitchenpos.ProductFixture.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
@@ -25,7 +25,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest {

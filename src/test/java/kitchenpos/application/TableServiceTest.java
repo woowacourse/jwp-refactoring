@@ -15,29 +15,29 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     private TableService tableService;
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
+        tableService = new TableService(orderRepository, orderTableRepository);
     }
 
     @DisplayName("id가 없는 테이블로 id가 있는 테이블을 정상적으로 생성한다.")
     @Test
     void createTest() {
         final OrderTable expectedTable = createOrderTableWithId(1L);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(expectedTable);
+        given(orderTableRepository.save(any(OrderTable.class))).willReturn(expectedTable);
 
         assertThat(tableService.create(createOrderTableWithoutId())).isEqualToComparingFieldByField(expectedTable);
     }
@@ -46,7 +46,7 @@ class TableServiceTest {
     @Test
     void listTest() {
         final List<OrderTable> expectedOrderTables = createOrderTables();
-        given(orderTableDao.findAll()).willReturn(expectedOrderTables);
+        given(orderTableRepository.findAll()).willReturn(expectedOrderTables);
 
         assertThat(tableService.list()).usingRecursiveComparison()
             .isEqualTo(expectedOrderTables);
@@ -56,10 +56,10 @@ class TableServiceTest {
     @Test
     void changeEmptyTest() {
         final OrderTable expectedOrderTable = createOrderTableWithId(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(expectedOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(expectedOrderTable));
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
         expectedOrderTable.setEmpty(true);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(expectedOrderTable);
+        given(orderTableRepository.save(any(OrderTable.class))).willReturn(expectedOrderTable);
 
         assertThat(tableService.changeEmpty(1L, expectedOrderTable)).isEqualToComparingFieldByField(expectedOrderTable);
     }
@@ -67,7 +67,7 @@ class TableServiceTest {
     @DisplayName("없는 테이블을 빈 테이블로 수정 시도하면 예외를 반환한다.")
     @Test
     void changeEmptyTest2() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, createOrderTableWithId(1L)))
             .isInstanceOf(IllegalArgumentException.class);
@@ -78,7 +78,7 @@ class TableServiceTest {
     void changeEmptyTest3() {
         final OrderTable groupOrderTable = createOrderTableWithId(1L);
         groupOrderTable.setTableGroupId(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(groupOrderTable));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(groupOrderTable));
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, groupOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
@@ -87,8 +87,8 @@ class TableServiceTest {
     @DisplayName("계산 완료되지 않은 주문이 있는 테이블을 빈 테이블로 수정 시도하면 예외를 반환한다.")
     @Test
     void changeEmptyTest4() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(createOrderTableWithId(1L)));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(true);
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(createOrderTableWithId(1L)));
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(1L, createOrderTableWithId(1L)))
             .isInstanceOf(IllegalArgumentException.class);
@@ -98,8 +98,8 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsTest() {
         final OrderTable expectedOrderTable = createOrderTableWithId(1L);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(expectedOrderTable));
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(expectedOrderTable);
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(expectedOrderTable));
+        given(orderTableRepository.save(any(OrderTable.class))).willReturn(expectedOrderTable);
 
         assertThat(tableService.changeNumberOfGuests(1L, createOrderTableWithId(1L)))
             .isEqualToComparingFieldByField(expectedOrderTable);
@@ -118,7 +118,7 @@ class TableServiceTest {
     @DisplayName("없는 테이블의 손님 수를 수정하려고 하면 예외를 반환한다.")
     @Test
     void changeNumberOfGuestsTest3() {
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, createOrderTableWithoutId()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -129,7 +129,7 @@ class TableServiceTest {
     void changeNumberOfGuestsTest4() {
         final OrderTable savedOrderTable = createOrderTableWithId(1L);
         savedOrderTable.setEmpty(true);
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(savedOrderTable));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, createOrderTableWithoutId()))
             .isInstanceOf(IllegalArgumentException.class);

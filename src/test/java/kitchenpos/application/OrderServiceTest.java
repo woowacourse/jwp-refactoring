@@ -18,10 +18,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -29,31 +29,31 @@ import kitchenpos.domain.OrderStatus;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     private OrderService orderService;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuRepository, orderRepository, orderLineItemRepository, orderTableRepository);
     }
 
     @DisplayName("id가 없는 주문으로 id가 있는 주문을 정상적으로 생성한다.")
     @Test
     void createTest() {
         final Order expectedOrder = createOrderWithId(1L);
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(expectedOrder.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(createOrderTableWithId(1L)));
-        given(orderDao.save(any(Order.class))).willReturn(createOrderWithId(1L));
-        given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(createOrderLineItemWithOrderId(1L));
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(expectedOrder.getOrderLineItems().size()));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(createOrderTableWithId(1L)));
+        given(orderRepository.save(any(Order.class))).willReturn(createOrderWithId(1L));
+        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(createOrderLineItemWithOrderId(1L));
         final Order persistOrder = orderService.create(createOrderWithoutId());
 
         assertThat(expectedOrder).usingRecursiveComparison()
@@ -74,7 +74,7 @@ class OrderServiceTest {
     @Test
     void createTest3() {
         final Order invalidOrder = createOrderWithoutId();
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size() + 1));
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size() + 1));
 
         assertThatThrownBy(() -> orderService.create(invalidOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -84,8 +84,8 @@ class OrderServiceTest {
     @Test
     void createTest4() {
         final Order invalidOrder = createOrderWithId(-1L);
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size()));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(invalidOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -95,8 +95,8 @@ class OrderServiceTest {
     @Test
     void createTest5() {
         final Order invalidOrder = createOrderWithoutId();
-        given(menuDao.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(createEmptyOrderTable()));
+        given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size()));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(createEmptyOrderTable()));
 
         assertThatThrownBy(() -> orderService.create(invalidOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -106,10 +106,10 @@ class OrderServiceTest {
     @Test
     void listTest() {
         final List<Order> expectedOrders = createOrders();
-        given(orderDao.findAll()).willReturn(createOrders());
-        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(
+        given(orderRepository.findAll()).willReturn(createOrders());
+        given(orderLineItemRepository.findAllByOrderId(1L)).willReturn(
             Arrays.asList(createOrderLineItemWithOrderId(1L), createOrderLineItemWithOrderId(1L)));
-        given(orderLineItemDao.findAllByOrderId(2L)).willReturn(
+        given(orderLineItemRepository.findAllByOrderId(2L)).willReturn(
             Arrays.asList(createOrderLineItemWithOrderId(2L), createOrderLineItemWithOrderId(2L)));
 
         final List<Order> persistOrders = orderService.list();
@@ -125,11 +125,11 @@ class OrderServiceTest {
         final Order requestOrder = createOrderWithId(1L);
         requestOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 
-        given(orderDao.findById(anyLong())).willReturn(Optional.of(createOrderWithId(1L)));
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(createOrderWithId(1L)));
         final Order savedOrder = createOrderWithId(1L);
         savedOrder.setOrderStatus(requestOrder.getOrderStatus());
-        given(orderDao.save(any(Order.class))).willReturn(savedOrder);
-        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(
+        given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
+        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(
             Arrays.asList(createOrderLineItemWithOrderId(1L), createOrderLineItemWithOrderId(1L)));
 
         assertThat(orderService.changeOrderStatus(1L, requestOrder))
@@ -143,7 +143,7 @@ class OrderServiceTest {
     void changeOrderStatusTest2() {
         final Order requestOrder = createOrderWithId(1L);
 
-        given(orderDao.findById(anyLong())).willReturn(Optional.empty());
+        given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, requestOrder))
             .isInstanceOf(IllegalArgumentException.class);
@@ -155,11 +155,11 @@ class OrderServiceTest {
         final Order requestOrder = createOrderWithId(1L);
         requestOrder.setOrderStatus(OrderStatus.COMPLETION.name());
 
-        given(orderDao.findById(anyLong())).willReturn(Optional.of(createOrderWithId(1L)));
+        given(orderRepository.findById(anyLong())).willReturn(Optional.of(createOrderWithId(1L)));
         final Order savedOrder = createOrderWithId(1L);
         savedOrder.setOrderStatus(requestOrder.getOrderStatus());
-        given(orderDao.save(any(Order.class))).willReturn(savedOrder);
-        given(orderLineItemDao.findAllByOrderId(anyLong())).willReturn(
+        given(orderRepository.save(any(Order.class))).willReturn(savedOrder);
+        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(
             Arrays.asList(createOrderLineItemWithOrderId(1L), createOrderLineItemWithOrderId(1L)));
 
         assertThat(orderService.changeOrderStatus(1L, requestOrder))

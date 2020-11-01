@@ -4,15 +4,11 @@ import static kitchenpos.OrderTableFixture.*;
 import static kitchenpos.TableGroupFixture.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,36 +17,36 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     private TableGroupService tableGroupService;
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
+        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
     }
 
     @DisplayName("여러 빈 테이블들을 정상적으로 단체지정한다.")
     @Test
     void createTest() {
         final TableGroup expectedTableGroup = createTableGroupWithId(1L);
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(expectedTableGroup.getOrderTables());
-        given(tableGroupDao.save(any(TableGroup.class))).willReturn(expectedTableGroup);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(createOrderTableWithId(1L));
+        given(orderTableRepository.findAllByIdIn(anyList())).willReturn(expectedTableGroup.getOrderTables());
+        given(tableGroupRepository.save(any(TableGroup.class))).willReturn(expectedTableGroup);
+        given(orderTableRepository.save(any(OrderTable.class))).willReturn(createOrderTableWithId(1L));
 
         assertThat(tableGroupService.create(createTableGroupWithId(1L)))
             .isEqualToComparingFieldByField(expectedTableGroup);
@@ -79,7 +75,7 @@ class TableGroupServiceTest {
     @DisplayName("없는 테이블을 포함해서 단체지정을 시도하면 예외를 반환한다.")
     @Test
     void createTest4() {
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(Collections.singletonList(createOrderTableWithId(1L)));
+        given(orderTableRepository.findAllByIdIn(anyList())).willReturn(Collections.singletonList(createOrderTableWithId(1L)));
 
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupWithoutId()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -88,7 +84,7 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정할 테이블 중 빈 테이블이 아닌 테이블이 있으면 예외를 반환한다.")
     @Test
     void createTest5() {
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(createOrderTables());
+        given(orderTableRepository.findAllByIdIn(anyList())).willReturn(createOrderTables());
 
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupWithoutId()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -100,7 +96,7 @@ class TableGroupServiceTest {
         final List<OrderTable> emptyOrderTables = createEmptyOrderTables();
         final OrderTable firstOrderTable = emptyOrderTables.get(0);
         firstOrderTable.setTableGroupId(1L);
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(emptyOrderTables);
+        given(orderTableRepository.findAllByIdIn(anyList())).willReturn(emptyOrderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(createTableGroupWithoutId()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -110,9 +106,9 @@ class TableGroupServiceTest {
     @Test
     void ungroupTest() {
         final TableGroup expectedTableGroup = createTableGroupWithId(1L);
-        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(expectedTableGroup.getOrderTables());
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(createOrderTableWithId(1L));
+        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(expectedTableGroup.getOrderTables());
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
+        given(orderTableRepository.save(any(OrderTable.class))).willReturn(createOrderTableWithId(1L));
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
     }
@@ -121,8 +117,8 @@ class TableGroupServiceTest {
     @Test
     void ungroupTest2() {
         final TableGroup expectedTableGroup = createTableGroupWithId(1L);
-        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(expectedTableGroup.getOrderTables());
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
+        given(orderTableRepository.findAllByTableGroupId(anyLong())).willReturn(expectedTableGroup.getOrderTables());
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
             .isInstanceOf(IllegalArgumentException.class);

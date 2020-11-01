@@ -15,25 +15,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("id가 없는 상품으로 id가 있는 상품을 정상적으로 생성한다.")
     @Test
     void createTest() {
         final Product expectedProduct = createProductWithId(1L);
-        given(productDao.save(any(Product.class))).willReturn(expectedProduct);
+        given(productRepository.save(any(Product.class))).willReturn(expectedProduct);
 
         assertThat(productService.create(createProductWithoutId())).isEqualToComparingFieldByField(expectedProduct);
     }
@@ -60,7 +60,7 @@ class ProductServiceTest {
     @Test
     void listTest() {
         final List<Product> expectedProducts = createProducts();
-        given(productDao.findAll()).willReturn(expectedProducts);
+        given(productRepository.findAll()).willReturn(expectedProducts);
 
         assertThat(productService.list()).usingRecursiveComparison()
             .isEqualTo(expectedProducts);

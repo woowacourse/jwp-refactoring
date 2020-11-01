@@ -13,25 +13,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
     private MenuGroupService menuGroupService;
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("id가 없는 메뉴 그룹으로 id가 있는 메뉴 그룹을 정상적으로 생성한다.")
     @Test
     void createTest() {
         final MenuGroup expectedMenuGroup = createMenuGroupWithId(1L);
-        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(createMenuGroupWithId(1L));
+        given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(createMenuGroupWithId(1L));
         final MenuGroup persistMenuGroup = menuGroupService.create(createMenuGroupWithoutId());
 
         assertThat(expectedMenuGroup).isEqualToComparingFieldByField(persistMenuGroup);
@@ -41,7 +41,7 @@ class MenuGroupServiceTest {
     @Test
     void listTest() {
         final List<MenuGroup> expectedMenuGroups = createMenuGroups();
-        given(menuGroupDao.findAll()).willReturn(createMenuGroups());
+        given(menuGroupRepository.findAll()).willReturn(createMenuGroups());
         final List<MenuGroup> persistMenuGroups = menuGroupService.list();
 
         assertThat(expectedMenuGroups).usingRecursiveComparison().isEqualTo(persistMenuGroups);
