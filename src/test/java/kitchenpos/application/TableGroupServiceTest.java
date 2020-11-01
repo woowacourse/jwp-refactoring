@@ -12,8 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,117 +29,103 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @DisplayName("tableGroup 생성 - 성공")
     @Test
     void create_Success() {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        tableGroup.setOrderTables(orderTables);
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
 
         assertThat(createdTableGroup.getId()).isNotNull();
         assertThat(createdTableGroup.getCreatedDate()).isNotNull();
-        assertThat(createdTableGroup.getOrderTables()).hasSize(orderTables.size());
+        assertThat(createdTableGroup.getOrderTables()).hasSize(tableIds.size());
 
-        List<Long> orderTableIds = getIds(orderTables);
         List<Long> orderTableIdsOfCreatedOrTableGroup = getIds(createdTableGroup.getOrderTables());
-        assertThat(orderTableIdsOfCreatedOrTableGroup).containsAll(orderTableIds);
+        assertThat(orderTableIdsOfCreatedOrTableGroup).isEqualTo(tableIds);
     }
 
     @DisplayName("tableGroup 생성 - 예외 발생, OrderTables가 기준 값(2)보다 작음")
     @ParameterizedTest
     @ValueSource(ints = {0, 1})
     void create_OrderTablesCountLessThanDefaultCount_ThrownException(int count) {
-        TableGroup tableGroup = new TableGroup();
-
-        List<OrderTable> orderTables = new ArrayList<>();
+        List<Long> tableIds = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
+            tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
         }
-        tableGroup.setOrderTables(orderTables);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("tableGroup 생성 - 예외 발생, OrderTable 일부가 존재하지 않음")
     @Test
     void create_NotExistsSomeOrderTable_ThrownException() {
-        TableGroup tableGroup = new TableGroup();
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(TEST_ORDER_WRONG_ID).getId());
 
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(TEST_ORDER_WRONG_ID));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        tableGroup.setOrderTables(orderTables);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("tableGroup 생성 - 예외 발생, OrderTable 일부가 비어있지 않음")
     @Test
     void create_NotEmptySomeOrderTable_ThrownException() {
-        TableGroup tableGroup = new TableGroup();
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedNotEmptyOrderTableId()).getId());
 
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedNotEmptyOrderTableId()));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        tableGroup.setOrderTables(orderTables);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("tableGroup 생성 - Table에 TableGroup 설정, 생성 성공한 경우")
     @Test
     void create_Success_SettingTableGroupAtTable() {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        tableGroup.setOrderTables(orderTables);
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
 
-        List<OrderTable> foundOrderTables = foundOrderTables(orderTables);
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isTrue();
-            assertThat(foundOrderTable.getTableGroupId()).isNull();
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isTrue();
+            assertThat(foundTable.getTableGroup()).isNull();
         }
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        foundOrderTables = createdTableGroup.getOrderTables();
-//        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
+        tableGroupService.create(tableGroupRequest);
 
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNotNull();
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNotNull();
         }
     }
 
     @DisplayName("TableGroup 해제 - 성공")
     @Test
     void ungroup_Success() {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        tableGroup.setOrderTables(orderTables);
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNotNull();
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNotNull();
         }
 
-        tableGroupService.ungroup(createdTableGroup.getId());
-        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNull();
+        tableGroupService.ungroup(tableGroupResponse.getId());
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNull();
         }
     }
 
@@ -146,24 +135,21 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     void ungroup_OrderOfTableNotCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(savedOrderTableId));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        tableGroup.setOrderTables(orderTables);
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(savedOrderTableId).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNotNull();
+        TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNotNull();
         }
 
         tableGroupService.ungroup(createdTableGroup.getId());
-        foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNull();
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNull();
         }
     }
 
@@ -173,65 +159,42 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     void ungroup_OrderOfTableCookingOrMeal_ThrownException(OrderStatus orderStatus) {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(makeOrderTableWithId(savedOrderTableId));
-        orderTables.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()));
-        tableGroup.setOrderTables(orderTables);
+        List<Long> tableIds = new ArrayList<>();
+        tableIds.add(makeOrderTableWithId(savedOrderTableId).getId());
+        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
-        List<OrderTable> foundOrderTables = foundOrderTablesByTableId(createdTableGroup.getId());
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            assertThat(foundOrderTable.isEmpty()).isFalse();
-            assertThat(foundOrderTable.getTableGroupId()).isNotNull();
+        TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
+        for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
+            assertThat(foundTable.isEmpty()).isFalse();
+            assertThat(foundTable.getTableGroup()).isNotNull();
         }
 
         assertThatThrownBy(() -> tableGroupService.ungroup(createdTableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private List<Long> getIds(List<OrderTable> orderTables) {
-        return orderTables.stream()
-            .map(OrderTable::getId)
+    private List<Long> getIds(List<TableResponse> tables) {
+        return tables.stream()
+            .map(TableResponse::getId)
             .collect(Collectors.toList());
     }
 
-    private OrderTable makeOrderTableWithId(long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        return orderTable;
-    }
-
-    private List<OrderTable> foundOrderTablesByTableId(Long tableId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableId);
-
-        return orderTables.stream()
-            .map(this::findOrderTableById)
-            .collect(Collectors.toList());
-    }
-
-    private List<OrderTable> foundOrderTables(List<OrderTable> orderTables) {
-        return orderTables.stream()
-            .map(this::findOrderTableById)
-            .collect(Collectors.toList());
-    }
-
-    private OrderTable findOrderTableById(OrderTable orderTable) {
-        Long id = orderTable.getId();
-        return orderTableRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException(id + "에 해당하는 OrderTable이 없습니다."));
+    private Table makeOrderTableWithId(long id) {
+        Table table = new Table();
+        table.setId(id);
+        return table;
     }
 
     private Long getCreatedOrderTableWithOrderStatus(OrderStatus orderStatus) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        Long savedOrderTableId = savedOrderTable.getId();
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
+        Long savedOrderTableId = savedTable.getId();
 
         Order order = new Order();
         order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTableId(savedTable.getId());
         order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
         return savedOrderTableId;

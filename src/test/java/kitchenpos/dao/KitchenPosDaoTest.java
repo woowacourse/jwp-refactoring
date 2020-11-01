@@ -17,8 +17,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +38,7 @@ public abstract class KitchenPosDaoTest {
     protected OrderRepository orderRepository;
 
     @Autowired
-    protected OrderTableRepository orderTableRepository;
+    protected TableRepository tableRepository;
 
     @Autowired
     protected ProductRepository productRepository;
@@ -58,9 +58,7 @@ public abstract class KitchenPosDaoTest {
     }
 
     protected MenuGroup getCreatedMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
-
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
         assertThat(savedMenuGroup.getId()).isNotNull();
         return savedMenuGroup;
@@ -80,14 +78,13 @@ public abstract class KitchenPosDaoTest {
     }
 
     protected Long getCreatedOrderTableId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTable.setTableGroupId(getCreatedTableGroupId());
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        table.setTableGroup(getCreatedTableGroup());
 
-        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        Table savedTable = tableRepository.save(table);
 
-        Long savedOrderTableId = savedOrderTable.getId();
+        Long savedOrderTableId = savedTable.getId();
         assertThat(savedOrderTableId).isNotNull();
         return savedOrderTableId;
     }
@@ -112,5 +109,15 @@ public abstract class KitchenPosDaoTest {
         Long savedTableGroupId = savedTableGroup.getId();
         assertThat(savedTableGroupId).isNotNull();
         return savedTableGroupId;
+    }
+
+    protected TableGroup getCreatedTableGroup() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+
+        assertThat(savedTableGroup.getId()).isNotNull();
+        return savedTableGroup;
     }
 }

@@ -5,25 +5,35 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
-public class OrderTable {
+@javax.persistence.Table(name = "order_table")
+public class Table {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "table_group_id")
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    public Table() {
     }
 
-    protected OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    protected Table(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static Table entityOf(int numberOfGuests, boolean empty) {
+        return new Table(null, null, numberOfGuests, empty);
     }
 
     public Long getId() {
@@ -34,12 +44,28 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void setTableGroup(final TableGroup tableGroup) {
+        if (Objects.nonNull(tableGroup) && Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 이미 존재합니다.");
+        }
+        if (Objects.isNull(tableGroup) && Objects.isNull(this.tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 이미 존재하지 않습니다.");
+        }
+        this.tableGroup = tableGroup;
+        if (Objects.nonNull(tableGroup)) {
+            tableGroup.addTables(this);
+        }
+    }
+
+    public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+        return this.tableGroup.getId();
     }
 
     public int getNumberOfGuests() {
@@ -66,7 +92,7 @@ public class OrderTable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        OrderTable that = (OrderTable) o;
+        Table that = (Table) o;
         return Objects.equals(id, that.id);
     }
 
@@ -79,7 +105,6 @@ public class OrderTable {
     public String toString() {
         return "OrderTable{" +
             "id=" + id +
-            ", tableGroupId=" + tableGroupId +
             ", numberOfGuests=" + numberOfGuests +
             ", empty=" + empty +
             '}';

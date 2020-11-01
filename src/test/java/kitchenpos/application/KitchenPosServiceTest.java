@@ -9,24 +9,24 @@ import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
-import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.dto.MenuGroupRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,38 +57,33 @@ public abstract class KitchenPosServiceTest {
     protected ProductRepository productRepository;
 
     @Autowired
-    protected OrderTableRepository orderTableRepository;
+    protected TableRepository tableRepository;
 
     @Autowired
     protected OrderRepository orderRepository;
 
-    protected void setCreatedTableGroup(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-        tableGroup.setOrderTables(orderTables);
-
-        tableGroupService.create(tableGroup);
+    protected void setCreatedTableGroup(List<Long> tableIds) {
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+        tableGroupService.create(tableGroupRequest);
     }
 
     protected long getCreatedEmptyOrderTableId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse createdTable = tableService.create(tableCreateRequest);
 
-        Long createdOrderTableId = createdOrderTable.getId();
-        assertThat(createdOrderTable).isNotNull();
+        Long createdOrderTableId = createdTable.getId();
+        assertThat(createdTable).isNotNull();
         return createdOrderTableId;
     }
 
     protected long getCreatedNotEmptyOrderTableId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse createdTable = tableService.create(tableCreateRequest);
 
-        Long createdOrderTableId = createdOrderTable.getId();
-        assertThat(createdOrderTable).isNotNull();
+        Long createdOrderTableId = createdTable.getId();
+        assertThat(createdTable).isNotNull();
         return createdOrderTableId;
     }
 

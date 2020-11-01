@@ -15,8 +15,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,27 +45,27 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 추가")
     @Test
     void create() throws Exception {
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(createdOrderTable(ORDER_TABLES_FIRST_ID));
-        orderTables.add(createdOrderTable(ORDER_TABLES_SECOND_ID));
+        List<Table> tables = new ArrayList<>();
+        tables.add(createdOrderTable(ORDER_TABLES_FIRST_ID));
+        tables.add(createdOrderTable(ORDER_TABLES_SECOND_ID));
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(TABLE_GROUP_ID);
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.setTables(tables);
 
         String requestBody = "{\n"
             + "  \"orderTables\": [\n"
             + "    {\n"
-            + "      \"id\": " + orderTables.get(0).getId() + "\n"
+            + "      \"id\": " + tables.get(0).getId() + "\n"
             + "    },\n"
             + "    {\n"
-            + "      \"id\": " + orderTables.get(1).getId() + "\n"
+            + "      \"id\": " + tables.get(1).getId() + "\n"
             + "    }\n"
             + "  ]\n"
             + "}";
 
-        given(tableGroupService.create(any(TableGroup.class)))
-            .willReturn(tableGroup);
+        given(tableGroupService.create(any(TableGroupRequest.class)))
+            .willReturn(TableGroupResponse.of(tableGroup));
 
         ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
@@ -76,8 +78,8 @@ class TableGroupRestControllerTest {
             .andExpect(header().exists(HttpHeaders.LOCATION))
             .andExpect(jsonPath("$.id", is(tableGroup.getId().intValue())))
             .andExpect(jsonPath("$.orderTables", hasSize(2)))
-            .andExpect(jsonPath("$.orderTables[0].id", is(orderTables.get(0).getId().intValue())))
-            .andExpect(jsonPath("$.orderTables[1].id", is(orderTables.get(1).getId().intValue())))
+            .andExpect(jsonPath("$.orderTables[0].id", is(tables.get(0).getId().intValue())))
+            .andExpect(jsonPath("$.orderTables[1].id", is(tables.get(1).getId().intValue())))
             .andDo(print());
     }
 
@@ -93,9 +95,9 @@ class TableGroupRestControllerTest {
             .andDo(print());
     }
 
-    private OrderTable createdOrderTable(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        return orderTable;
+    private Table createdOrderTable(Long id) {
+        Table table = new Table();
+        table.setId(id);
+        return table;
     }
 }

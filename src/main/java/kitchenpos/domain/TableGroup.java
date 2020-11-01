@@ -1,13 +1,15 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
@@ -17,8 +19,8 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @Transient
-    private List<OrderTable> orderTables;
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL)
+    private List<Table> tables = new ArrayList<>();
 
     public TableGroup() {
     }
@@ -28,11 +30,26 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    protected TableGroup(Long id, LocalDateTime createdDate,
-        List<OrderTable> orderTables) {
+    private TableGroup(Long id, LocalDateTime createdDate,
+        List<Table> tables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.tables = tables;
+        setTableGroup(tables);
+    }
+
+    public static TableGroup entityOf(List<Table> tables) {
+        return new TableGroup(null, LocalDateTime.now(), tables);
+    }
+
+    private void setTableGroup(List<Table> tables) {
+        for (Table table : tables) {
+            if (!table.isEmpty()) {
+                throw new IllegalArgumentException("Table이 비어있지 않으므로 TableGroup을 설정할 수 없습니다.");
+            }
+            table.setTableGroup(this);
+            table.setEmpty(false);
+        }
     }
 
     public Long getId() {
@@ -51,12 +68,18 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<Table> getTables() {
+        return tables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void setTables(final List<Table> tables) {
+        this.tables = tables;
+    }
+
+    public void addTables(Table table) {
+        if (!tables.contains(table)) {
+            this.tables.add(table);
+        }
     }
 
     @Override
@@ -81,7 +104,7 @@ public class TableGroup {
         return "TableGroup{" +
             "id=" + id +
             ", createdDate=" + createdDate +
-            ", orderTables=" + orderTables +
+            ", orderTables=" + tables +
             '}';
     }
 }

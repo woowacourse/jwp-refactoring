@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,32 +16,34 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     public TableService(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository) {
+        final TableRepository tableRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+    public TableResponse create(final TableCreateRequest orderTableRequest) {
+        Table table = orderTableRequest.toOrderTable();
+        Table savedTable = tableRepository.save(table);
 
-        return orderTableRepository.save(orderTable);
+        return TableResponse.of(savedTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<TableResponse> list() {
+
+        List<Table> foundTables = tableRepository.findAll();
+        return TableResponse.listOf(foundTables);
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+    public TableResponse changeEmpty(final Long orderTableId, final Table table) {
+        final Table savedOrderTable = tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
@@ -48,20 +52,22 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(table.isEmpty());
+        Table savedTable = tableRepository.save(savedOrderTable);
 
-        return orderTableRepository.save(savedOrderTable);
+        return TableResponse.of(savedTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public TableResponse changeNumberOfGuests(final Long orderTableId,
+        final Table table) {
+        final int numberOfGuests = table.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+        final Table savedOrderTable = tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
@@ -70,6 +76,7 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        Table savedTable = tableRepository.save(savedOrderTable);
+        return TableResponse.of(savedTable);
     }
 }

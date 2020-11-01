@@ -10,10 +10,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,97 +28,64 @@ class TableServiceTest extends KitchenPosServiceTest {
     @DisplayName("OrderTable 생성 - 성공")
     @Test
     void create_Success() {
-        OrderTable orderTable = new OrderTable();
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getNumberOfGuests())
+        assertThat(savedTable.getId()).isNotNull();
+        assertThat(savedTable.getNumberOfGuests())
             .isEqualTo(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
-    }
-
-    @DisplayName("OrderTable 생성 - 성공, ID와 TableGroupID가 있는 경우 제거")
-    @Test
-    void create_ExistsIdAndTableGroupId_RemoveThatAndSuccess() {
-        OrderTable orderTable = new OrderTable();
-
-        long removedId = -1L;
-        orderTable.setId(removedId);
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTable.setTableGroupId(removedId);
-
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getId()).isNotEqualTo(removedId);
-        assertThat(savedOrderTable.getNumberOfGuests())
-            .isEqualTo(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        assertThat(savedTable.getTableGroupId()).isNull();
     }
 
     @DisplayName("전체 orderTable 조회 - 성공")
     @Test
-    void list_Succes() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+    void list_Success() {
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        List<OrderTable> orderTables = tableService.list();
+        List<TableResponse> tables = tableService.list();
 
-        assertThat(orderTables).isNotNull();
-        assertThat(orderTables).isNotEmpty();
-
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        assertThat(orderTableIds).contains(savedOrderTable.getId());
+        assertThat(tables).isNotNull();
+        assertThat(tables).isNotEmpty();
+        assertThat(tables).contains(savedTable);
     }
 
     @DisplayName("Empty 상태 변경 - 성공")
     @Test
     void changeEmpty_Success() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        Long savedOrderTableId = savedOrderTable.getId();
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
+        assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Long savedOrderTableId = savedTable.getId();
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        OrderTable changedOrderTable
-            = tableService.changeEmpty(savedOrderTableId, orderTableOnlyEmpty);
-        assertThat(changedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_TRUE);
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse changedTable = tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty);
+        assertThat(changedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_TRUE);
 
-        OrderTable otherOrderTableOnlyEmpty = new OrderTable();
-        otherOrderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable changedOtherOrderTable
-            = tableService.changeEmpty(savedOrderTableId, otherOrderTableOnlyEmpty);
-        assertThat(changedOtherOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table otherTableOnlyEmpty = new Table();
+        otherTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse changedOtherTable = tableService
+            .changeEmpty(savedOrderTableId, otherTableOnlyEmpty);
+        assertThat(changedOtherTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
     }
 
     @DisplayName("Empty 상태 변경 - 예외 발생, ID가 존재하지 않는 경우")
     @Test
     void changeEmpty_NotExistsId_ThrownException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        Long wrongOrderTableId = savedOrderTable.getId() + 1;
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
+        assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Long wrongOrderTableId = savedTable.getId() + 1;
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableOnlyEmpty))
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, tableOnlyEmpty))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,31 +94,29 @@ class TableServiceTest extends KitchenPosServiceTest {
     void changeEmpty_NullId_ThrownException() {
         Long wrongOrderTableId = null;
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableOnlyEmpty))
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, tableOnlyEmpty))
             .isInstanceOf(InvalidDataAccessApiUsageException.class);
     }
 
     @DisplayName("Empty 상태 변경 - 예외 발생, TableGroup이 세팅된 경우")
     @Test
     void changeEmpty_SetTableGroup_ThrownException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        OrderTable otherOrderTable = new OrderTable();
-        otherOrderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        otherOrderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        OrderTable savedOtherOrderTable = tableService.create(otherOrderTable);
-        setCreatedTableGroup(Arrays.asList(savedOrderTable, savedOtherOrderTable));
+        TableCreateRequest orderTableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse savedOtherTable = tableService.create(orderTableCreateRequest);
+        setCreatedTableGroup(Arrays.asList(savedTable.getId(), savedOtherTable.getId()));
 
-        Long savedOrderTableId = savedOrderTable.getId();
+        Long savedOrderTableId = savedTable.getId();
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, orderTableOnlyEmpty))
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -158,84 +124,77 @@ class TableServiceTest extends KitchenPosServiceTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"}, mode = Mode.EXCLUDE)
     void changeEmpty_OrderNotCookingOrMeal_ThrownException(OrderStatus orderStatus) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        Long savedOrderTableId = savedOrderTable.getId();
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
+        assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Long savedOrderTableId = savedTable.getId();
 
         Order order = new Order();
         order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTableId(savedTable.getId());
         order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        OrderTable changedOrderTable
-            = tableService.changeEmpty(savedOrderTableId, orderTableOnlyEmpty);
-        assertThat(changedOrderTable.isEmpty()).isEqualTo(orderTableOnlyEmpty.isEmpty());
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse changedTable = tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty);
+        assertThat(changedTable.isEmpty()).isEqualTo(tableOnlyEmpty.isEmpty());
     }
 
     @DisplayName("Empty 상태 변경 - 예외 발생, Order 상태가 Cooking/Meal인 경우")
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmpty_OrderCookingOrMeal_ThrownException(OrderStatus orderStatus) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        OrderTable savedOrderTable = tableService.create(orderTable);
-        assertThat(savedOrderTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        Long savedOrderTableId = savedOrderTable.getId();
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
+        assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Long savedOrderTableId = savedTable.getId();
 
         Order order = new Order();
         order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedOrderTable.getId());
+        order.setOrderTableId(savedTable.getId());
         order.setOrderedTime(LocalDateTime.now());
         orderRepository.save(order);
 
-        OrderTable orderTableOnlyEmpty = new OrderTable();
-        orderTableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, orderTableOnlyEmpty))
+        Table tableOnlyEmpty = new Table();
+        tableOnlyEmpty.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableId, tableOnlyEmpty))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("손님 수 변경 - 성공")
     @Test
     void changeNumberOfGuests_Success() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        Table tableOnlyNumberOfGuests = new Table();
+        tableOnlyNumberOfGuests.setNumberOfGuests(20);
+        TableResponse changedTable = tableService
+            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests);
 
-        OrderTable orderTableOnlyNumberOfGuests = new OrderTable();
-        orderTableOnlyNumberOfGuests.setNumberOfGuests(20);
-        OrderTable changedOrderTable = tableService
-            .changeNumberOfGuests(savedOrderTable.getId(), orderTableOnlyNumberOfGuests);
-
-        assertThat(changedOrderTable.getId()).isEqualTo(savedOrderTable.getId());
-        assertThat(changedOrderTable.isEmpty()).isEqualTo(savedOrderTable.isEmpty());
-        assertThat(changedOrderTable.getNumberOfGuests())
-            .isEqualTo(orderTableOnlyNumberOfGuests.getNumberOfGuests());
-        assertThat(changedOrderTable.getTableGroupId())
-            .isEqualTo(savedOrderTable.getTableGroupId());
+        assertThat(changedTable.getId()).isEqualTo(savedTable.getId());
+        assertThat(changedTable.isEmpty()).isEqualTo(savedTable.isEmpty());
+        assertThat(changedTable.getNumberOfGuests())
+            .isEqualTo(tableOnlyNumberOfGuests.getNumberOfGuests());
+        assertThat(changedTable.getTableGroupId())
+            .isEqualTo(savedTable.getTableGroupId());
     }
 
     @DisplayName("손님 수 변경 - 예외 발생, 테이블이 비어있는 경우")
     @Test
     void changeNumberOfGuests_EmptyTable_ThrownException() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        OrderTable orderTableOnlyNumberOfGuests = new OrderTable();
-        orderTableOnlyNumberOfGuests.setNumberOfGuests(20);
+        Table tableOnlyNumberOfGuests = new Table();
+        tableOnlyNumberOfGuests.setNumberOfGuests(20);
         assertThatThrownBy(() -> tableService
-            .changeNumberOfGuests(savedOrderTable.getId(), orderTableOnlyNumberOfGuests))
+            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -243,17 +202,16 @@ class TableServiceTest extends KitchenPosServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
     void changeNumberOfGuests_WrongNumberOfGuests_ThrownException(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY);
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE
+        );
+        TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
-
-        OrderTable orderTableOnlyNumberOfGuests = new OrderTable();
-        orderTableOnlyNumberOfGuests.setNumberOfGuests(numberOfGuests);
+        Table tableOnlyNumberOfGuests = new Table();
+        tableOnlyNumberOfGuests.setNumberOfGuests(numberOfGuests);
 
         assertThatThrownBy(() -> tableService
-            .changeNumberOfGuests(savedOrderTable.getId(), orderTableOnlyNumberOfGuests))
+            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

@@ -22,7 +22,7 @@ class TableGroupRepositoryTest extends KitchenPosDaoTest {
 
         assertThat(savedTableGroup.getId()).isNotNull();
         assertThat(savedTableGroup.getCreatedDate()).isEqualTo(TEST_TABLE_GROUP_CREATED_DATE);
-        assertThat(savedTableGroup.getOrderTables()).isNull();
+        assertThat(savedTableGroup.getTables()).isEmpty();
     }
 
     @DisplayName("TableGroup ID로 TableGroup 조회 - 조회됨, ID가 존재하는 경우")
@@ -37,7 +37,7 @@ class TableGroupRepositoryTest extends KitchenPosDaoTest {
 
         assertThat(foundTableGroup.getId()).isEqualTo(savedTableGroup.getId());
         assertThat(foundTableGroup.getCreatedDate()).isEqualTo(savedTableGroup.getCreatedDate());
-        assertThat(foundTableGroup.getOrderTables()).isEqualTo(savedTableGroup.getOrderTables());
+        assertThat(foundTableGroup.getTables()).isEqualTo(savedTableGroup.getTables());
     }
 
     @DisplayName("TableGroup ID로 TableGroup 조회 - 조회되지 않음, ID가 존재하지 않는 경우")
