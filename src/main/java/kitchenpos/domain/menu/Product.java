@@ -17,7 +17,7 @@ public class Product extends BaseEntity {
 
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(String name, Long price) {
         this.name = name;
         this.price = new Price(price);
     }

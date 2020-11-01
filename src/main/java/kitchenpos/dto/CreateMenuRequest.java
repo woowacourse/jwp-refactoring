@@ -7,10 +7,10 @@ import kitchenpos.domain.menu.MenuProduct;
 import java.util.List;
 
 public class CreateMenuRequest {
-    private String name;
-    private Long price;
-    private MenuGroup menuGroup;
-    private List<MenuProduct> menuProducts;
+    private final String name;
+    private final Long price;
+    private final MenuGroup menuGroup;
+    private final List<MenuProduct> menuProducts;
 
     public CreateMenuRequest(String name, Long price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.name = name;

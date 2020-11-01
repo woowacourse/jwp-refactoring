@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +40,7 @@ class MenuServiceTest {
     private void setUp() {
         this.menuGroup = menuGroupRepository.save(new MenuGroup("피자"));
 
-        Product product = new Product("감자", BigDecimal.valueOf(4000));
+        Product product = new Product("감자", 4000L);
         Product savedProduct = productRepository.save(product);
 
         this.menuProduct = new MenuProduct(1L, savedProduct, 1L);
@@ -76,7 +75,7 @@ class MenuServiceTest {
     @DisplayName("생성 시 menu group의 product는 저장된 상태여야 한다.")
     @Test
     void name() {
-        Product notSavedProduct = new Product("감자", BigDecimal.valueOf(4000));
+        Product notSavedProduct = new Product("감자", 4000L);
         this.menuProduct = new MenuProduct(1L, notSavedProduct, 1L);
 
         CreateMenuRequest request = new CreateMenuRequest("감자_피자", 1000L, menuGroup, Collections.singletonList(menuProduct));
