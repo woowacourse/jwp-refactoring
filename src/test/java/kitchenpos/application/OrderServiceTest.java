@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
 import static kitchenpos.TestObjectFactory.createMenuGroup;
+import static kitchenpos.TestObjectFactory.createMenuProduct;
 import static kitchenpos.TestObjectFactory.createOrderTable;
+import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,8 +16,10 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
@@ -88,9 +92,13 @@ class OrderServiceTest {
     void create_Fail_With_NotExistMenu() {
         OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
         Menu notSavedMenu = Menu.builder()
             .id(1000L)
             .price(BigDecimal.valueOf(18_000))
+            .menuProducts(menuProducts)
             .build();
 
         OrderLineItemRequest orderLineItem = createOrderLineItemRequest(notSavedMenu);
@@ -164,10 +172,15 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu() {
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+
         Menu menu = Menu.builder()
             .name("강정치킨")
             .price(BigDecimal.valueOf(18_000))
             .menuGroup(savedMenuGroup)
+            .menuProducts(menuProducts)
             .build();
         return menuDao.save(menu);
     }

@@ -19,10 +19,14 @@ class MenuTest {
     @Test
     void setMenuGroup() {
         MenuGroup menuGroup = MenuGroup.builder().build();
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
         Menu menu = Menu.builder()
             .price(BigDecimal.valueOf(18_000))
             .menuGroup(menuGroup)
+            .menuProducts(menuProducts)
             .build();
 
         assertAll(
@@ -58,31 +62,20 @@ class MenuTest {
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 가격 / 포함된 상품 가격 총합 비교 - 메뉴 가격이 더 작은 경우")
+    @DisplayName("[예외] 메뉴상품 가격의 총합보다 가격이 높은 메뉴 생성")
     @Test
-    void isValidPrice_True() {
+    void create_Fail_With_MenuProductsPriceOver() {
         Product product1 = createProduct(15_000);
         Product product2 = createProduct(16_000);
         MenuProduct menuProduct1 = createMenuProduct(product1, 1);
         MenuProduct menuProduct2 = createMenuProduct(product2, 1);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
 
-        Menu menu = createMenu(menuProducts, 100_000_000);
-
-        assertThat(menu.isNotValidPrice()).isTrue();
-    }
-
-    @DisplayName("메뉴 가격 / 포함된 상품 가격 총합 비교 - 메뉴 가격이 더 큰 경우")
-    @Test
-    void isValidPrice_False() {
-        Product product1 = createProduct(15_000);
-        Product product2 = createProduct(16_000);
-        MenuProduct menuProduct1 = createMenuProduct(product1, 1);
-        MenuProduct menuProduct2 = createMenuProduct(product2, 1);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
-
-        Menu menu = createMenu(menuProducts, 10);
-
-        assertThat(menu.isNotValidPrice()).isFalse();
+        assertThatThrownBy(
+            () -> Menu.builder()
+            .price(BigDecimal.valueOf(100_000_000))
+            .menuProducts(menuProducts)
+            .build()
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 }

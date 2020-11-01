@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createOrder;
 import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static kitchenpos.TestObjectFactory.createOrderTable;
@@ -15,11 +14,12 @@ import org.junit.jupiter.api.Test;
 
 class OrderTest {
 
+    private Menu menu = new Menu();
+
     @DisplayName("주문 등록 시 주문테이블 등록 여부 확인")
     @Test
     void setOrderTable() {
         OrderTable orderTable = createOrderTable(false);
-        Menu menu = createMenu(18_000);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
@@ -34,7 +34,6 @@ class OrderTest {
     @Test
     void setOrderLineItemsTest() {
         OrderTable orderTable = createOrderTable(false);
-        Menu menu = createMenu(18_000);
         OrderLineItem orderLineItem1 = createOrderLineItem(menu);
         OrderLineItem orderLineItem2 = createOrderLineItem(menu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem1, orderLineItem2);
@@ -74,7 +73,6 @@ class OrderTest {
     @Test
     void changeOrderStatus() {
         OrderTable orderTable = createOrderTable(false);
-        Menu menu = createMenu(18_000);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
@@ -88,7 +86,6 @@ class OrderTest {
     @Test
     void changeOrderStatus_With_CompletedOrder() {
         OrderTable orderTable = createOrderTable(false);
-        Menu menu = createMenu(18_000);
         OrderLineItem orderLineItem = createOrderLineItem(menu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);

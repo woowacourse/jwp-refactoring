@@ -63,6 +63,7 @@ public class Menu {
         if (Objects.nonNull(menuProducts)) {
             menuProducts.forEach(this::addMenuProduct);
         }
+        validateMenuProductsPrice();
     }
 
     public void addMenuProduct(final MenuProduct menuProduct) {
@@ -70,9 +71,11 @@ public class Menu {
         menuProduct.setMenu(this);
     }
 
-    public boolean isNotValidPrice() {
+    private void validateMenuProductsPrice() {
         BigDecimal sum = calculateProductPrice();
-        return price.compareTo(sum) > 0;
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private BigDecimal calculateProductPrice() {

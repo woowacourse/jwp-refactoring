@@ -51,10 +51,6 @@ public class MenuService {
             .menuProducts(menuProducts)
             .build();
 
-        if (menu.isNotValidPrice()) {
-            throw new IllegalArgumentException();
-        }
-
         Menu savedMenu = menuDao.save(menu);
         menuProductDao.saveAll(menuProducts);
         return MenuResponse.from(savedMenu);

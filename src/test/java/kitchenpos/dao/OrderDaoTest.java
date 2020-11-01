@@ -1,17 +1,21 @@
 package kitchenpos.dao;
 
 import static kitchenpos.TestObjectFactory.createMenu;
+import static kitchenpos.TestObjectFactory.createMenuProduct;
 import static kitchenpos.TestObjectFactory.createOrderLineItem;
+import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,7 +48,10 @@ class OrderDaoTest {
         OrderTable orderTable = OrderTable.builder()
             .empty(false)
             .build();
-        Menu menu = createMenu(18_000);
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+        Menu menu = createMenu(menuProducts,18_000);
         OrderLineItem orderLineItem = createOrderLineItem(menuDao.save(menu));
         OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
         List<OrderLineItem> orderLineItems = Arrays.asList(savedOrderLineItem);
