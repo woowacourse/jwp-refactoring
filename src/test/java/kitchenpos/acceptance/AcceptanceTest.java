@@ -13,8 +13,8 @@ import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,13 +84,13 @@ public abstract class AcceptanceTest {
                 .extract().as(MenuGroup.class);
     }
 
-    OrderTable createTable(int numberOfGuests, boolean empty) {
+    Table createTable(int numberOfGuests, boolean empty) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("numberOfGuests", numberOfGuests);
         body.put("empty", empty);
 
-        OrderTable response = sendCreateTableRequest(body);
+        Table response = sendCreateTableRequest(body);
 
         assertThat(response.getId()).isNotNull();
         assertThat(response.getTableGroupId()).isEqualTo(null);
@@ -99,7 +99,7 @@ public abstract class AcceptanceTest {
         return response;
     }
 
-    OrderTable sendCreateTableRequest(Map<String, Object> body) {
+    Table sendCreateTableRequest(Map<String, Object> body) {
         return
             given()
                 .body(body)
@@ -109,7 +109,7 @@ public abstract class AcceptanceTest {
                 .post("/api/tables")
             .then()
                 .statusCode(HttpStatus.CREATED.value())
-                .extract().as(OrderTable.class);
+                .extract().as(Table.class);
     }
 
     MenuResponse createMenu(String menuName, List<Product> products, Long menuPrice, Long menuGroupId) {
@@ -152,7 +152,7 @@ public abstract class AcceptanceTest {
                 .extract().as(MenuResponse.class);
     }
 
-    OrderTable changeEmptyToFalse(OrderTable table) {
+    Table changeEmptyToFalse(Table table) {
         Map<String, Object> body = new HashMap<>();
         body.put("empty", false);
 
@@ -165,10 +165,10 @@ public abstract class AcceptanceTest {
                 .put("/api/tables/" + table.getId() + "/empty")
             .then()
                 .statusCode(HttpStatus.OK.value())
-                .extract().as(OrderTable.class);
+                .extract().as(Table.class);
     }
 
-    OrderTable changeNumberOfGuests(OrderTable table, int numberOfGuests) {
+    Table changeNumberOfGuests(Table table, int numberOfGuests) {
         Map<String, Object> body = new HashMap<>();
         body.put("numberOfGuests", numberOfGuests);
 
@@ -180,21 +180,21 @@ public abstract class AcceptanceTest {
                 .put("/api/tables/" + table.getId() + "/number-of-guests")
             .then()
                 .statusCode(HttpStatus.OK.value())
-                .extract().as(OrderTable.class);
+                .extract().as(Table.class);
     }
 
-    TableGroup groupTables(List<OrderTable> orderTables) {
+    TableGroup groupTables(List<Table> tables) {
         Map<String, Object> body = new HashMap<>();
 
-        List<Map> tablesForGroupingRequest = new ArrayList<>();
+        List<Map<String, Object>> tablesForGroupingRequest = new ArrayList<>();
 
-        for (OrderTable orderTable : orderTables) {
+        for (Table table : tables) {
             Map<String, Object> tableForGroupingRequest = new HashMap<>();
-            tableForGroupingRequest.put("id", orderTable.getId());
+            tableForGroupingRequest.put("id", table.getId());
 
             tablesForGroupingRequest.add(tableForGroupingRequest);
         }
-        body.put("orderTables", tablesForGroupingRequest);
+        body.put("tables", tablesForGroupingRequest);
 
         return
             given()
@@ -208,10 +208,10 @@ public abstract class AcceptanceTest {
                 .extract().as(TableGroup.class);
     }
 
-    Order requestOrder(OrderTable orderTable, List<OrderLineItemForTest> orderLineItems) {
+    Order requestOrder(Table table, List<OrderLineItemForTest> orderLineItems) {
         Map<String, Object> body = new HashMap<>();
 
-        body.put("orderTableId", orderTable.getId());
+        body.put("orderTableId", table.getId());
 
         List<Map> orderLineItemsForRequest = new ArrayList<>();
 

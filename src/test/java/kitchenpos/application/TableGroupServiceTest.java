@@ -11,14 +11,16 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.TableChangeRequest;
+import kitchenpos.dto.TableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,35 +52,33 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTable tableA;
-    private OrderTable tableB;
-    private OrderTable tableC;
+    private Table tableA;
+    private Table tableB;
+    private Table tableC;
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
+        TableCreateRequest table = new TableCreateRequest(true, 0);
 
-        tableA = tableService.create(orderTable);
-        tableB = tableService.create(orderTable);
-        tableC = tableService.create(orderTable);
+        tableA = tableService.create(table);
+        tableB = tableService.create(table);
+        tableC = tableService.create(table);
     }
 
     @Test
     @DisplayName("create")
     void create() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC));
+        tableGroup.setTables(Arrays.asList(tableA, tableB, tableC));
 
         TableGroup result = tableGroupService.create(tableGroup);
 
         assertThat(result.getId()).isNotNull();
-        assertThat(result.getOrderTables()).hasSize(3);
+        assertThat(result.getTables()).hasSize(3);
 
         // group 에 속한 테이블들은 empty 가 false 로 바뀐다.
-        for (OrderTable orderTable : result.getOrderTables()) {
-            assertThat(orderTable.isEmpty()).isFalse();
+        for (Table table : result.getTables()) {
+            assertThat(table.isEmpty()).isFalse();
         }
     }
 
@@ -86,7 +86,7 @@ class TableGroupServiceTest {
     @DisplayName("create - 테이블 한개로 그룹 생성을 시도할 경우 예외처리")
     void create_IfTryWithOneTable_ThrowException() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.singletonList(tableA));
+        tableGroup.setTables(Collections.singletonList(tableA));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -95,22 +95,9 @@ class TableGroupServiceTest {
     @ParameterizedTest
     @NullAndEmptySource
     @DisplayName("create - 테이블이 없는 테이블 그룹 생성을 시도할 경우 예외처리")
-    void create_IfTryWithoutTable_ThrowException(List<OrderTable> tables) {
+    void create_IfTryWithoutTable_ThrowException(List<Table> tables) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(tables);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("create - 존재하지 않는 테이블 id를 포함할 경우 예외처리")
-    void create_IfThereIsTableThatDoesNotExist_ThrowException() {
-        OrderTable tableThatDoesNotExist = new OrderTable();
-        tableThatDoesNotExist.setId(1_000L);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC, tableThatDoesNotExist));
+        tableGroup.setTables(tables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -120,13 +107,12 @@ class TableGroupServiceTest {
     @DisplayName("create - 비어있지 않은 테이블을 테이블 그룹에 포함시키기를 시도할 경우 예외처리")
     void create_IfTryWithNotEmptyTable_ThrowException() {
         // given
-        OrderTable notEmptyTable = new OrderTable();
-        notEmptyTable.setEmpty(false);
-        tableService.changeEmpty(tableB.getId(), notEmptyTable);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        tableService.changeEmpty(tableB.getId(), changeRequest);
 
         // when & then
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC));
+        tableGroup.setTables(Arrays.asList(tableA, tableB, tableC));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -137,12 +123,12 @@ class TableGroupServiceTest {
     void create_IfTryWithTableBelongingAnotherGroup_ThrowException() {
         // given
         TableGroup anotherGroup = new TableGroup();
-        anotherGroup.setOrderTables(Arrays.asList(tableA, tableB));
+        anotherGroup.setTables(Arrays.asList(tableA, tableB));
         tableGroupService.create(anotherGroup);
 
         // when & then
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC));
+        tableGroup.setTables(Arrays.asList(tableA, tableB, tableC));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -153,7 +139,7 @@ class TableGroupServiceTest {
     void ungroup() {
         // given
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC));
+        tableGroup.setTables(Arrays.asList(tableA, tableB, tableC));
 
         TableGroup result = tableGroupService.create(tableGroup);
 
@@ -161,7 +147,7 @@ class TableGroupServiceTest {
         tableGroupService.ungroup(result.getId());
 
         // then
-        for (OrderTable table : tableService.list()) {
+        for (Table table : tableService.list()) {
             assertThat(table.getTableGroupId()).isNull();
             assertThat(table.isEmpty()).isFalse();
         }
@@ -171,7 +157,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("ungroup - 존재하지 않는 테이블 그룹에 대한 ungroup 요청시")
     void ungroup_IfTryWithNotExistTableGroupId_ThrowException() {
-        List<OrderTable> beforeTables = tableService.list();
+        List<Table> beforeTables = tableService.list();
 
         // when
         tableGroupService.ungroup(100L);
@@ -179,7 +165,7 @@ class TableGroupServiceTest {
         // then 아무런 변화 없음
         assertThat(tableService.list()).hasSize(beforeTables.size());
 
-        for (OrderTable table : beforeTables) {
+        for (Table table : beforeTables) {
             assertThat(table.getTableGroupId()).isNull();
         }
     }
@@ -203,11 +189,11 @@ class TableGroupServiceTest {
 
     private TableGroup groupTableABC() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(tableA, tableB, tableC));
+        tableGroup.setTables(Arrays.asList(tableA, tableB, tableC));
         return tableGroupService.create(tableGroup);
     }
 
-    private Order orderOneMenu(OrderTable table, MenuResponse menu) {
+    private Order orderOneMenu(Table table, MenuResponse menu) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);

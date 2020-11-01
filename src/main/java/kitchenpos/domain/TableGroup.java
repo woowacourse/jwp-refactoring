@@ -6,7 +6,7 @@ import java.util.List;
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private List<Table> tables;
 
     public Long getId() {
         return id;
@@ -24,11 +24,11 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<Table> getTables() {
+        return tables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public void setTables(final List<Table> tables) {
+        this.tables = tables;
     }
 }

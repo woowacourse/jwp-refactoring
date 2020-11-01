@@ -11,8 +11,8 @@ import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,8 +56,8 @@ class TableAcceptanceTest extends AcceptanceTest{
     @DisplayName("테이블을 관리한다.")
     void manageTable() {
         // 생성 (create)
-        OrderTable tableA = createTable(5, false);
-        OrderTable tableB = createTable(0, true);
+        Table tableA = createTable(5, false);
+        Table tableB = createTable(0, true);
 
         assertThat(tableA.getId()).isNotNull();
         assertThat(tableA.getTableGroupId()).isNull();
@@ -70,7 +70,7 @@ class TableAcceptanceTest extends AcceptanceTest{
         assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
 
         // 조회 (inquiry)
-        List<OrderTable> tables = findTables();
+        List<Table> tables = findTables();
         assertThat(doesTableExistInTables(tableA.getId(), tables)).isTrue();
         assertThat(doesTableExistInTables(tableB.getId(), tables)).isTrue();
 
@@ -103,11 +103,11 @@ class TableAcceptanceTest extends AcceptanceTest{
     @Test
     @DisplayName("테이블 생성시 테이블 id와 그룹 id 지정 시도")
     void createTable_ExceptionalCase() {
-        OrderTable orderTable = createTableWithTableId(12_000L, 10L, 0, true);
+        Table table = createTableWithTableId(12_000L, 10L, 0, true);
 
-        assertThat(orderTable.getId()).isNotNull();
-        assertThat(orderTable.getId()).isNotEqualTo(12_000L);
-        assertThat(orderTable.getTableGroupId()).isNull();
+        assertThat(table.getId()).isNotNull();
+        assertThat(table.getId()).isNotEqualTo(12_000L);
+        assertThat(table.getTableGroupId()).isNull();
     }
 
     /**
@@ -121,7 +121,7 @@ class TableAcceptanceTest extends AcceptanceTest{
     void changeEmptyOfTableInOrderCompletion() {
         // 1. given
         // 1.1. 영업준비
-        OrderTable tableA = createTable(0, true);
+        Table tableA = createTable(0, true);
 
         MenuGroup 세트메뉴_그룹 = createMenuGroup("세트 메뉴");
         MenuGroup 음료수_그룹 = createMenuGroup("음료수");
@@ -170,7 +170,7 @@ class TableAcceptanceTest extends AcceptanceTest{
     void changeEmptyOfTableInOrder() {
         // given
         // 1. 영업준비
-        OrderTable tableA = createTable(0, true);
+        Table tableA = createTable(0, true);
 
         MenuGroup 세트메뉴_그룹 = createMenuGroup("세트 메뉴");
         MenuGroup 음료수_그룹 = createMenuGroup("음료수");
@@ -216,11 +216,11 @@ class TableAcceptanceTest extends AcceptanceTest{
     @Test
     @DisplayName("테이블 손님 수 변경 - 테이블이 empty=true 인 경우 예외처리")
     void changeNumberOfGuests_ExceptionalCase() {
-        OrderTable tableA = createTable(0, true);
+        Table tableA = createTable(0, true);
         failToChangeNumberOfGuests(tableA, 5);
     }
 
-    private List<OrderTable> findTables() {
+    private List<Table> findTables() {
         return given()
             .when()
                 .get("/api/tables")
@@ -229,15 +229,15 @@ class TableAcceptanceTest extends AcceptanceTest{
                 .log().all()
                 .extract()
                 .jsonPath()
-                .getList("", OrderTable.class);
+                .getList("", Table.class);
     }
 
-    private boolean doesTableExistInTables(Long tableId, List<OrderTable> orderTables) {
-        return orderTables.stream()
+    private boolean doesTableExistInTables(Long tableId, List<Table> tables) {
+        return tables.stream()
             .anyMatch(orderTable -> orderTable.getId().equals(tableId));
     }
 
-    private OrderTable changeEmptyToTrue(OrderTable table) {
+    private Table changeEmptyToTrue(Table table) {
         Map<String, Object> body = new HashMap<>();
         body.put("empty", true);
 
@@ -249,10 +249,10 @@ class TableAcceptanceTest extends AcceptanceTest{
                 .put("/api/tables/" + table.getId() + "/empty")
             .then()
                 .statusCode(HttpStatus.OK.value())
-                .extract().as(OrderTable.class);
+                .extract().as(Table.class);
     }
 
-    private void failToChangeEmptyToTrue(OrderTable table) {
+    private void failToChangeEmptyToTrue(Table table) {
         Map<String, Object> body = new HashMap<>();
         body.put("empty", true);
 
@@ -266,7 +266,7 @@ class TableAcceptanceTest extends AcceptanceTest{
             .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
     }
 
-    private OrderTable createTableWithTableId(Long tableId, Long tableGroupId, int numberOfGuests,
+    private Table createTableWithTableId(Long tableId, Long tableGroupId, int numberOfGuests,
         boolean empty) {
         Map<String, Object> body = new HashMap<>();
 
@@ -278,7 +278,7 @@ class TableAcceptanceTest extends AcceptanceTest{
         return sendCreateTableRequest(body);
     }
 
-    private void failToChangeNumberOfGuests(OrderTable table, int numberOfGuests) {
+    private void failToChangeNumberOfGuests(Table table, int numberOfGuests) {
         Map<String, Object> body = new HashMap<>();
         body.put("numberOfGuests", numberOfGuests);
 

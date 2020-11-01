@@ -10,8 +10,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 // Todo 여기 할 차례
 class OrderAcceptanceTest extends AcceptanceTest {
 
-    private OrderTable tableA;
+    private Table tableA;
     private MenuResponse 치킨_세트;
     private MenuResponse 맥주;
 

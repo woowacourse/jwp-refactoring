@@ -13,14 +13,16 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.TableChangeRequest;
+import kitchenpos.dto.TableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +53,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     private MenuResponse menu;
-    private OrderTable table;
+    private Table table;
 
     @BeforeEach
     void setUp() {
@@ -62,11 +64,11 @@ class OrderServiceTest {
     @Test
     void create() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
         OrderLineItem orderLineItem = new OrderLineItem();
@@ -89,10 +91,10 @@ class OrderServiceTest {
     @DisplayName("create - 그룹에 속한 테이블에서 주문")
     void createWithGroupedTable() {
         // given
-        OrderTable anotherTable = createTable();
+        Table anotherTable = createTable();
 
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(anotherTable, table));
+        tableGroup.setTables(Arrays.asList(anotherTable, table));
         tableGroupService.create(tableGroup);
 
         // when
@@ -115,11 +117,11 @@ class OrderServiceTest {
     @DisplayName("create - 아무 메뉴도 포함하지 않는 주문시 예외처리")
     void create_IfOrderContainsNoMenu_ThrowException() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
         Order order = new Order();
@@ -134,11 +136,11 @@ class OrderServiceTest {
     @DisplayName("create - 존재하지 않는 메뉴 id로 주문시 예외처리")
     void create_IfOrderContainsWrongMenu_ThrowException() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
         OrderLineItem orderLineItem = new OrderLineItem();
@@ -173,11 +175,11 @@ class OrderServiceTest {
         assertThat(orderService.list()).hasSize(0);
 
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
         orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
@@ -190,11 +192,11 @@ class OrderServiceTest {
     @DisplayName("changeOrderStatus")
     void changeOrderStatus() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
@@ -213,11 +215,11 @@ class OrderServiceTest {
     @DisplayName("changeOrderStatus - 요리중인 상태에서 식사를 거치지 않고 식사완료 상태로 바꾸려는 경우")
     void changeOrderStatus_IfAfterCookingIsCompletion() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
@@ -233,11 +235,11 @@ class OrderServiceTest {
     @DisplayName("changeOrderStatus - 존재하지 않는 상태 문자열 사용시 예외처리")
     void changeOrderStatus_IfTryWithUndefinedStatus_ThrowException() {
         // given (change table to not empty)
-        table.setEmpty(false);
-        table = tableService.changeEmpty(table.getId(), table);
+        TableChangeRequest changeRequest = new TableChangeRequest(false);
+        table = tableService.changeEmpty(table.getId(), changeRequest);
 
-        table.setNumberOfGuests(4);
-        table = tableService.changeNumberOfGuests(table.getId(), table);
+        changeRequest = new TableChangeRequest(4);
+        table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
@@ -248,13 +250,11 @@ class OrderServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private OrderTable createTable() {
+    private Table createTable() {
         // create table
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(0);
+        TableCreateRequest createRequest = new TableCreateRequest(true, 0);
 
-        return tableService.create(orderTable);
+        return tableService.create(createRequest);
     }
 
     private MenuResponse createMenu_후라이드세트() {
@@ -287,7 +287,7 @@ class OrderServiceTest {
         return Collections.unmodifiableList(menuProducts);
     }
 
-    private Order orderWithEqualAmountOfAllMenus(OrderTable table, List<MenuResponse> menus, int quantity) {
+    private Order orderWithEqualAmountOfAllMenus(Table table, List<MenuResponse> menus, int quantity) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (MenuResponse menu : menus) {

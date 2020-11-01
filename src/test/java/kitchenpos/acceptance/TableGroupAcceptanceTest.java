@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,9 +19,9 @@ import org.springframework.http.MediaType;
 
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    private OrderTable tableA;
-    private OrderTable tableB;
-    private OrderTable tableC;
+    private Table tableA;
+    private Table tableB;
+    private Table tableC;
 
     @BeforeEach
     void setUp() {
@@ -110,26 +110,26 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private void assertThatOrderTableBelongsTableGroup(OrderTable table, TableGroup tableGroup) {
-        List<Long> tableIds = tableGroup.getOrderTables()
+    private void assertThatOrderTableBelongsTableGroup(Table table, TableGroup tableGroup) {
+        List<Long> tableIds = tableGroup.getTables()
             .stream()
-            .map(OrderTable::getId)
+            .map(Table::getId)
             .collect(Collectors.toList());
         assertThat(tableIds).contains(table.getId());
     }
 
-    private void assertThatFailToGroupTables(List<OrderTable> orderTables) {
+    private void assertThatFailToGroupTables(List<Table> tables) {
         Map<String, Object> body = new HashMap<>();
 
         List<Map> tablesForGroupingRequest = new ArrayList<>();
 
-        for (OrderTable orderTable : orderTables) {
+        for (Table table : tables) {
             Map<String, Object> tableForGroupingRequest = new HashMap<>();
-            tableForGroupingRequest.put("id", orderTable.getId());
+            tableForGroupingRequest.put("id", table.getId());
 
             tablesForGroupingRequest.add(tableForGroupingRequest);
         }
-        body.put("orderTables", tablesForGroupingRequest);
+        body.put("tables", tablesForGroupingRequest);
 
         given()
             .body(body)
