@@ -53,4 +53,13 @@ public class TableGroupResponse {
     public int hashCode() {
         return Objects.hash(id, createdDate, orderTables);
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupResponse{" +
+            "id=" + id +
+            ", createdDate=" + createdDate +
+            ", orderTables=" + orderTables +
+            '}';
+    }
 }

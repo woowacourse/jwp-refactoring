@@ -18,4 +18,12 @@ public class TableCreateRequest {
     public Table toOrderTable() {
         return Table.entityOf(numberOfGuests, empty);
     }
+
+    @Override
+    public String toString() {
+        return "TableCreateRequest{" +
+            "numberOfGuests=" + numberOfGuests +
+            ", empty=" + empty +
+            '}';
+    }
 }

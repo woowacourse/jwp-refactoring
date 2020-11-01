@@ -3,7 +3,9 @@ package kitchenpos.ui;
 import java.net.URI;
 import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.ui.dto.OrderChangeStatusRequest;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,8 +24,9 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
+    public ResponseEntity<OrderResponse> create(
+        @RequestBody final OrderCreateRequest orderCreateRequest) {
+        final OrderResponse created = orderService.create(orderCreateRequest);
         final URI uri = URI.create("/api/orders/" + created.getId());
 
         return ResponseEntity.created(uri)
@@ -31,17 +34,18 @@ public class OrderRestController {
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
-        List<Order> list = orderService.list();
+    public ResponseEntity<List<OrderResponse>> list() {
+        List<OrderResponse> orders = orderService.list();
 
         return ResponseEntity.ok()
-            .body(list);
+            .body(orders);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(@PathVariable final Long orderId,
-        @RequestBody final Order order) {
-        Order changedOrder = orderService.changeOrderStatus(orderId, order);
+    public ResponseEntity<OrderResponse> changeOrderStatus(@PathVariable final Long orderId,
+        @RequestBody final OrderChangeStatusRequest orderChangeStatusRequest) {
+        OrderResponse changedOrder = orderService
+            .changeOrderStatus(orderId, orderChangeStatusRequest);
 
         return ResponseEntity.ok()
             .body(changedOrder);

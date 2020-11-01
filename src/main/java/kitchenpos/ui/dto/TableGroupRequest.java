@@ -25,4 +25,11 @@ public class TableGroupRequest {
     public List<TableOfTableGroupRequest> getOrderTables() {
         return orderTables;
     }
+
+    @Override
+    public String toString() {
+        return "TableGroupRequest{" +
+            "orderTables=" + orderTables +
+            '}';
+    }
 }

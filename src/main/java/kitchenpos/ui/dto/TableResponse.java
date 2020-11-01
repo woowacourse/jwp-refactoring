@@ -65,4 +65,14 @@ public class TableResponse {
     public int hashCode() {
         return Objects.hash(id, tableGroupId, numberOfGuests, empty);
     }
+
+    @Override
+    public String toString() {
+        return "TableResponse{" +
+            "id=" + id +
+            ", tableGroupId=" + tableGroupId +
+            ", numberOfGuests=" + numberOfGuests +
+            ", empty=" + empty +
+            '}';
+    }
 }

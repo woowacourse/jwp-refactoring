@@ -42,4 +42,14 @@ public class MenuRequest {
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
+
+    @Override
+    public String toString() {
+        return "MenuRequest{" +
+            "name='" + name + '\'' +
+            ", price=" + price +
+            ", menuGroupId=" + menuGroupId +
+            ", menuProducts=" + menuProducts +
+            '}';
+    }
 }

@@ -14,4 +14,11 @@ public class TableChangeNumberOfGuestsRequest {
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
+
+    @Override
+    public String toString() {
+        return "TableChangeNumberOfGuestsRequest{" +
+            "numberOfGuests=" + numberOfGuests +
+            '}';
+    }
 }

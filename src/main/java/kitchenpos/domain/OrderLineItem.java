@@ -2,9 +2,12 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
@@ -12,42 +15,56 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
+
     private long quantity;
 
     public OrderLineItem() {
     }
 
-    protected OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    protected OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.order = order;
+        this.menu = menu;
         this.quantity = quantity;
+    }
+
+    public static OrderLineItem of(Long seq, Menu menu, long quantity) {
+        return new OrderLineItem(seq, null, menu, quantity);
+    }
+
+    public static OrderLineItem entityOf(Menu menu, long quantity) {
+        return new OrderLineItem(null, null, menu, quantity);
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public void setOrder(Order order) {
+        if (Objects.nonNull(this.order)) {
+            throw new IllegalArgumentException("OrderLineItem에 이미 Order가 설정되어있습니다.");
+        }
+        this.order = order;
     }
 
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
     public long getQuantity() {
@@ -79,8 +96,6 @@ public class OrderLineItem {
     public String toString() {
         return "OrderLineItem{" +
             "seq=" + seq +
-            ", orderId=" + orderId +
-            ", menuId=" + menuId +
             ", quantity=" + quantity +
             '}';
     }

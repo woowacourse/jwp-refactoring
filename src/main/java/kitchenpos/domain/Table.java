@@ -32,6 +32,10 @@ public class Table {
         this.empty = empty;
     }
 
+    public static Table of(Long id, int numberOfGuests, boolean empty) {
+        return new Table(id, null, numberOfGuests, empty);
+    }
+
     public static Table entityOf(int numberOfGuests, boolean empty) {
         return new Table(null, null, numberOfGuests, empty);
     }

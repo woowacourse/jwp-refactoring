@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
-import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableGroupResponse;
 import kitchenpos.ui.dto.TableResponse;
@@ -187,16 +186,12 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     }
 
     private Long getCreatedOrderTableWithOrderStatus(OrderStatus orderStatus) {
-        TableCreateRequest tableCreateRequest = new TableCreateRequest(
-            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
-        TableResponse savedTable = tableService.create(tableCreateRequest);
-        Long savedOrderTableId = savedTable.getId();
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
+        Table savedTable = tableRepository.save(table);
 
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
         orderRepository.save(order);
-        return savedOrderTableId;
+        return savedTable.getId();
     }
 }

@@ -1,9 +1,6 @@
 package kitchenpos.dao;
 
 import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
-import static kitchenpos.constants.Constants.TEST_MENU_NAME;
-import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
-import static kitchenpos.constants.Constants.TEST_ORDER_ORDERED_TIME;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_FALSE;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
@@ -11,12 +8,7 @@ import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
 import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
@@ -46,17 +38,6 @@ public abstract class KitchenPosDaoTest {
     @Autowired
     protected TableGroupRepository tableGroupRepository;
 
-    protected Long getCreatedMenuId() {
-        Menu menu = Menu.entityOf(TEST_MENU_NAME, TEST_MENU_PRICE, getCreatedMenuGroup(),
-            Collections.singletonList(MenuProduct.entityOf(getCreatedProduct(), 1)));
-
-        Menu savedMenu = menuRepository.save(menu);
-
-        Long savedMenuId = savedMenu.getId();
-        assertThat(savedMenuId).isNotNull();
-        return savedMenuId;
-    }
-
     protected MenuGroup getCreatedMenuGroup() {
         MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
@@ -64,29 +45,15 @@ public abstract class KitchenPosDaoTest {
         return savedMenuGroup;
     }
 
-    protected Long getCreatedOrderId() {
-        Order order = new Order();
-        order.setOrderedTime(TEST_ORDER_ORDERED_TIME);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(getCreatedOrderTableId());
-
-        Order savedOrder = orderRepository.save(order);
-
-        Long savedOrderId = savedOrder.getId();
-        assertThat(savedOrderId).isNotNull();
-        return savedOrderId;
-    }
-
-    protected Long getCreatedOrderTableId() {
+    protected Table getCreatedTable() {
         Table table = Table
             .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         table.setTableGroup(getCreatedTableGroup());
 
         Table savedTable = tableRepository.save(table);
 
-        Long savedOrderTableId = savedTable.getId();
-        assertThat(savedOrderTableId).isNotNull();
-        return savedOrderTableId;
+        assertThat(savedTable.getId()).isNotNull();
+        return savedTable;
     }
 
     protected Product getCreatedProduct() {

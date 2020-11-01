@@ -19,4 +19,12 @@ public class ProductRequest {
     public Product toProduct() {
         return Product.entityOf(name, price);
     }
+
+    @Override
+    public String toString() {
+        return "ProductRequest{" +
+            "name='" + name + '\'' +
+            ", price=" + price +
+            '}';
+    }
 }

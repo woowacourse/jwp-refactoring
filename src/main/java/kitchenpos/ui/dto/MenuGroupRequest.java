@@ -16,4 +16,11 @@ public class MenuGroupRequest {
     public MenuGroup toMenuGroup() {
         return MenuGroup.entityOf(name);
     }
+
+    @Override
+    public String toString() {
+        return "MenuGroupRequest{" +
+            "name='" + name + '\'' +
+            '}';
+    }
 }

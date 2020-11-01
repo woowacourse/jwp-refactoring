@@ -14,4 +14,11 @@ public class TableOfTableGroupRequest {
     public Long getId() {
         return id;
     }
+
+    @Override
+    public String toString() {
+        return "TableOfTableGroupRequest{" +
+            "id=" + id +
+            '}';
+    }
 }

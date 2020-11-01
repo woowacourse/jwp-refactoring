@@ -65,4 +65,14 @@ public class MenuProductResponse {
     public int hashCode() {
         return Objects.hash(seq, menuId, productId, quantity);
     }
+
+    @Override
+    public String toString() {
+        return "MenuProductResponse{" +
+            "seq=" + seq +
+            ", menuId=" + menuId +
+            ", productId=" + productId +
+            ", quantity=" + quantity +
+            '}';
+    }
 }

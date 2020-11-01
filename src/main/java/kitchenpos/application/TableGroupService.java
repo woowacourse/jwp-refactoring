@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.dao.TableRepository;
@@ -45,12 +44,8 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
 
-        final List<Long> orderTableIds = tables.stream()
-            .map(Table::getId)
-            .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByTableInAndOrderStatusIn(tables,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 

@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Table;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
@@ -129,22 +130,18 @@ class TableServiceTest extends KitchenPosServiceTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"}, mode = Mode.EXCLUDE)
     void changeEmpty_OrderNotCookingOrMeal_ThrownException(OrderStatus orderStatus) {
-        TableCreateRequest tableCreateRequest = new TableCreateRequest(
-            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
-        TableResponse savedTable = tableService.create(tableCreateRequest);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table savedTable = tableRepository.save(table);
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
-        Long savedOrderTableId = savedTable.getId();
 
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
         orderRepository.save(order);
 
         TableChangeEmptyRequest tableChangeEmptyRequest
             = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
         TableResponse changedTable = tableService
-            .changeEmpty(savedOrderTableId, tableChangeEmptyRequest);
+            .changeEmpty(savedTable.getId(), tableChangeEmptyRequest);
         assertThat(changedTable.isEmpty()).isEqualTo(tableChangeEmptyRequest.isEmpty());
     }
 
@@ -152,16 +149,13 @@ class TableServiceTest extends KitchenPosServiceTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmpty_OrderCookingOrMeal_ThrownException(OrderStatus orderStatus) {
-        TableCreateRequest tableCreateRequest = new TableCreateRequest(
-            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
-        TableResponse savedTable = tableService.create(tableCreateRequest);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table savedTable = tableRepository.save(table);
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
         Long savedOrderTableId = savedTable.getId();
 
-        Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(savedTable.getId());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
         orderRepository.save(order);
 
         TableChangeEmptyRequest tableChangeEmptyRequest
