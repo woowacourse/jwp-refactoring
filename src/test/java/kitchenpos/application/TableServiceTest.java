@@ -15,12 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableDao;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupDao;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;

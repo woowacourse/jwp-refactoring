@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.table.domain;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,8 +16,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
-
-import kitchenpos.domain.TableGroup;
 
 @Repository
 public class JdbcTemplateTableGroupDao implements TableGroupDao {

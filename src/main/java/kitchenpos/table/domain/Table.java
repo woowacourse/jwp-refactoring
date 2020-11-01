@@ -66,7 +66,7 @@ public class Table {
         return Objects.nonNull(this.tableGroupId);
     }
 
-    public void clear() {
+    public void fill() {
         this.empty = false;
     }
 }
