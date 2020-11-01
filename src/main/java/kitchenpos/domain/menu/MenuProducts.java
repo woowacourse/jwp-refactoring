@@ -8,7 +8,7 @@ import java.util.List;
 public class MenuProducts {
     private final List<MenuProduct> menuProducts;
 
-    public MenuProducts() {
+    private MenuProducts() {
         this.menuProducts = new ArrayList<>();
     }
 

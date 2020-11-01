@@ -41,8 +41,8 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Orderz> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Orderz order
+            @RequestBody final String status
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, status));
     }
 }

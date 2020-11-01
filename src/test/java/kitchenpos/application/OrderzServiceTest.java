@@ -142,8 +142,7 @@ class OrderzServiceTest {
 
         // when
         Orderz result = orderService.create(orderTable.getId(), orderLineItem);
-        result.updateOrderStatus(CHANGED_STATUS);
-        orderService.changeOrderStatus(result.getId(), result);
+        orderService.changeOrderStatus(result.getId(), CHANGED_STATUS);
 
         // then
         Orderz changeOrder = orderRepository.findById(result.getId())
@@ -151,7 +150,7 @@ class OrderzServiceTest {
         assertThat(changeOrder.getOrderStatus()).isEqualTo(CHANGED_STATUS);
     }
 
-    @DisplayName("존재하지 않는 Order 상태로 변경한다.")
+    @DisplayName("존재하지 않는 Order 상태로 변경할 수 없다.")
     @Test
     void changeOrderStatusExceptionTest() {
         final String CHANGED_STATUS = "NOT_VALID_STATUS";
@@ -162,8 +161,7 @@ class OrderzServiceTest {
 
         // when
         Orderz result = orderService.create(orderTable.getId(), orderLineItem);
-        result.updateOrderStatus(CHANGED_STATUS);
-        assertThatThrownBy(() -> orderService.changeOrderStatus(result.getId(), result))
+        assertThatThrownBy(() -> result.updateOrderStatus(CHANGED_STATUS))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

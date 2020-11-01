@@ -23,8 +23,7 @@ public class MenuProduct extends BaseEntity {
 
     private long quantity;
 
-    public MenuProduct() {
-
+    private MenuProduct() {
     }
 
     public MenuProduct(Long seq, Product product, long quantity) {

@@ -55,6 +55,9 @@ public class Orderz extends BaseEntity {
     }
 
     public void updateOrderStatus(final String orderStatus) {
+        if (!OrderStatus.isOrderStatus(orderStatus) || OrderStatus.isCompletion(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 

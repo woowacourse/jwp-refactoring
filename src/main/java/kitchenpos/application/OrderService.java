@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.Orderz;
 import kitchenpos.repository.MenuRepository;
@@ -10,12 +10,8 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -38,18 +34,6 @@ public class OrderService {
 
     @Transactional
     public Orderz create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) { // orderLineItem 주문항목은 중복 menu를 가지면 안된다.
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -57,14 +41,10 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Orderz savedOrder = orderRepository.save(new Orderz(orderTableId, orderLineItems));
+        Orderz savedOrder = orderRepository.save(new Orderz(orderTableId, orderLineItems));
+        OrderLineItems orderLineItems_ = new OrderLineItems(orderLineItems, savedOrder);
+        orderLineItemRepository.saveAll(orderLineItems_.getOrderLineItems());
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.updateOrder(savedOrder);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        orderLineItemRepository.saveAll(savedOrderLineItems);
         return savedOrder;
     }
 
@@ -79,21 +59,10 @@ public class OrderService {
     }
 
     @Transactional
-    public Orderz changeOrderStatus(final Long orderId, final Orderz order) {
-        final Orderz savedOrder = orderRepository.findById(orderId)
+    public Orderz changeOrderStatus(final Long orderId, final String orderStatus) {
+        final Orderz order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.updateOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrder(order));
-
-        return savedOrder;
+        order.updateOrderStatus(orderStatus);
+        return order;
     }
 }
