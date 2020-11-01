@@ -20,6 +20,7 @@ public class Product {
     }
 
     private Product(Long id, String name, BigDecimal price) {
+        validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
@@ -31,6 +32,15 @@ public class Product {
 
     public static Product entityOf(String name, BigDecimal price) {
         return new Product(null, name, price);
+    }
+
+    private void validate(BigDecimal price) {
+        if (Objects.isNull(price)) {
+            throw new IllegalArgumentException("Product의 Price는 Null일 수 없습니다.");
+        }
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Product의 Price는 0보다 작을 수 없습니다.");
+        }
     }
 
     public Long getId() {

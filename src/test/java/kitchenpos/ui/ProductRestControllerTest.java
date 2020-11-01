@@ -16,6 +16,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,8 +54,8 @@ class ProductRestControllerTest {
             + "  \"price\": " + product.getPrice() + "\n"
             + "}";
 
-        given(productService.create(any(Product.class)))
-            .willReturn(product);
+        given(productService.create(any(ProductRequest.class)))
+            .willReturn(ProductResponse.of(product));
 
         ResultActions resultActions = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
@@ -77,7 +79,7 @@ class ProductRestControllerTest {
         product.setId(PRODUCT_ID);
 
         given(productService.list())
-            .willReturn(Collections.singletonList(product));
+            .willReturn(ProductResponse.listOf(Collections.singletonList(product)));
 
         ResultActions resultActions = mockMvc.perform(get("/api/products")
             .contentType(MediaType.APPLICATION_JSON))

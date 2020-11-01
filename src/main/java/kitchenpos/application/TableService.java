@@ -34,8 +34,8 @@ public class TableService {
     }
 
     public List<TableResponse> list() {
-
         List<Table> foundTables = tableRepository.findAll();
+
         return TableResponse.listOf(foundTables);
     }
 
@@ -49,7 +49,6 @@ public class TableService {
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
         savedTable.changeEmpty(tableChangeEmptyRequest.isEmpty());
 
         return TableResponse.of(savedTable);

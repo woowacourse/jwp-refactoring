@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,11 +24,9 @@ class ProductServiceTest extends KitchenPosServiceTest {
     void create_CorrectPrice_Success(int price) {
         BigDecimal productPrice = BigDecimal.valueOf(price);
 
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(productPrice);
+        ProductRequest productRequest = new ProductRequest(TEST_PRODUCT_NAME, productPrice);
 
-        Product createdProduct = productService.create(product);
+        ProductResponse createdProduct = productService.create(productRequest);
 
         assertThat(createdProduct.getId()).isNotNull();
         assertThat(createdProduct.getName()).isEqualTo(TEST_PRODUCT_NAME);
@@ -45,31 +43,22 @@ class ProductServiceTest extends KitchenPosServiceTest {
             productPrice = BigDecimal.valueOf(price);
         }
 
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(productPrice);
+        ProductRequest productRequest = new ProductRequest(TEST_PRODUCT_NAME, productPrice);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 Product 조회 - 성공")
     @Test
-    void list_Succsss() {
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(TEST_PRODUCT_PRICE);
-        Product createdProduct = productService.create(product);
+    void list_Success() {
+        ProductRequest productRequest = new ProductRequest(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
+        ProductResponse createdProduct = productService.create(productRequest);
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
 
         assertThat(products).isNotNull();
         assertThat(products).isNotEmpty();
-
-        List<Long> productIds = products.stream()
-            .map(Product::getId)
-            .collect(Collectors.toList());
-
-        assertThat(productIds).contains(createdProduct.getId());
+        assertThat(products).contains(createdProduct);
     }
 }

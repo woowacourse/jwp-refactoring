@@ -98,7 +98,7 @@ public abstract class KitchenPosServiceTest {
 
     protected Product getCreatedProduct() {
         Product product = Product.entityOf(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
-        Product createdProduct = productService.create(product);
+        Product createdProduct = productRepository.save(product);
 
         assertThat(createdProduct.getId()).isNotNull();
         return createdProduct;
