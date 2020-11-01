@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.adapter.infrastructure.jdbctemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,10 +15,11 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Product;
+import kitchenpos.domain.repository.ProductRepository;
 
 @Repository
-public class JdbcTemplateProductDao implements ProductDao {
+public class JdbcTemplateProductDao implements ProductRepository {
     private static final String TABLE_NAME = "product";
     private static final String KEY_COLUMN_NAME = "id";
 

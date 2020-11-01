@@ -18,17 +18,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.entity.Menu;
+import kitchenpos.domain.entity.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuCreateServiceTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
     @InjectMocks
     private MenuCreateService menuCreateService;
 
@@ -48,7 +48,7 @@ class MenuCreateServiceTest {
         Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(17_000L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(menu.getMenuProducts().get(0).getProductId())).willReturn(
+        given(productRepository.findById(menu.getMenuProducts().get(0).getProductId())).willReturn(
                 Optional.of(product));
 
         assertDoesNotThrow(() -> menuCreateService.validate(menu.getMenuGroupId(), menu.getPrice(),
@@ -68,7 +68,7 @@ class MenuCreateServiceTest {
     private void noProduct() {
         Menu menu = MENU_REQUEST.toEntity();
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(menu.getMenuProducts().get(0).getProductId()))
+        given(productRepository.findById(menu.getMenuProducts().get(0).getProductId()))
                 .willReturn(Optional.empty());
 
         assertThatIllegalArgumentException().isThrownBy(
@@ -81,7 +81,7 @@ class MenuCreateServiceTest {
         Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(8_400L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(menu.getMenuProducts().get(0).getProductId()))
+        given(productRepository.findById(menu.getMenuProducts().get(0).getProductId()))
                 .willReturn(Optional.of(product));
 
         assertThatIllegalArgumentException().isThrownBy(

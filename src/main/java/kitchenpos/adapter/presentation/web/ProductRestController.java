@@ -1,6 +1,6 @@
-package kitchenpos.ui;
+package kitchenpos.adapter.presentation.web;
 
-import static kitchenpos.ui.ProductRestController.*;
+import static kitchenpos.adapter.presentation.web.ProductRestController.*;
 
 import java.net.URI;
 import java.util.List;

@@ -10,26 +10,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.application.dto.ProductResponse;
 
 @SpringBootTest
-class MenuGroupServiceTest {
+class ProductServiceTest {
     @Autowired
-    private MenuGroupService menuGroupService;
+    private ProductService productService;
 
-    @DisplayName("메뉴 그룹 생성")
+    @DisplayName("상품 생성")
     @Test
     void create() {
-        Long menuId = menuGroupService.create(MENU_GROUP_REQUEST);
+        Long productId = productService.create(PRODUCT_REQUEST);
 
-        assertThat(menuId).isNotNull();
+        assertThat(productId).isNotNull();
     }
 
-    @DisplayName("메뉴 그룹 전체 조회")
+    @DisplayName("상품 전체 조회")
     @Test
     void list() {
-        menuGroupService.create(MENU_GROUP_REQUEST);
-        List<MenuGroupResponse> list = menuGroupService.list();
+        productService.create(PRODUCT_REQUEST);
+        List<ProductResponse> list = productService.list();
 
         assertThat(list.isEmpty()).isFalse();
     }

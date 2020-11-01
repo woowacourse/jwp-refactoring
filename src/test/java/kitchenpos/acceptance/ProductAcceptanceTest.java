@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
+import static kitchenpos.adapter.presentation.web.ProductRestController.*;
 import static kitchenpos.fixture.RequestFixture.*;
-import static kitchenpos.ui.ProductRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 

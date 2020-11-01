@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
+    @DisplayName("메뉴 생성")
     @Test
     void create() {
         Long menuId = menuService.create(MENU_REQUEST);
@@ -23,6 +25,7 @@ class MenuServiceTest {
         assertThat(menuId).isNotNull();
     }
 
+    @DisplayName("메뉴 전체 조회")
     @Test
     void list() {
         menuService.create(MENU_REQUEST);

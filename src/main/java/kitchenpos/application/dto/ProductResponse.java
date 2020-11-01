@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Product;
 
 public class ProductResponse {
     private Long id;

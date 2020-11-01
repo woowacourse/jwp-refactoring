@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Product;
 
 public class ProductRequest {
     @NotBlank

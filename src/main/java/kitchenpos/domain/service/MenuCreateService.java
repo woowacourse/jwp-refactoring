@@ -5,19 +5,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.entity.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.ProductRepository;
 
 @Service
 public class MenuCreateService {
     private final MenuGroupRepository menuGroupRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuCreateService(MenuGroupRepository menuGroupRepository, ProductDao productDao) {
+    public MenuCreateService(MenuGroupRepository menuGroupRepository, ProductRepository productRepository) {
         this.menuGroupRepository = menuGroupRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     public void validate(Long menuGroupId, BigDecimal price, List<MenuProduct> menuProducts) {
@@ -34,7 +34,7 @@ public class MenuCreateService {
     private void validatePrice(BigDecimal price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(
                     product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));

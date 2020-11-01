@@ -1,11 +1,11 @@
-package kitchenpos.dao;
-
-import kitchenpos.domain.Product;
+package kitchenpos.domain.repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductDao {
+import kitchenpos.domain.entity.Product;
+
+public interface ProductRepository {
     Product save(Product entity);
 
     Optional<Product> findById(Long id);
