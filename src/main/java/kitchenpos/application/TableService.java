@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
@@ -60,23 +61,13 @@ public class TableService {
 
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId,
-        final Table table) {
-        final int numberOfGuests = table.getNumberOfGuests();
+        final TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestRequest) {
+        final int numberOfGuests = tableChangeNumberOfGuestRequest.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Table savedOrderTable = tableRepository.findById(orderTableId)
+        final Table savedTable = tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
+        savedTable.changeNumberOfGuests(numberOfGuests);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        Table savedTable = tableRepository.save(savedOrderTable);
         return TableResponse.of(savedTable);
     }
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -171,15 +172,15 @@ class TableServiceTest extends KitchenPosServiceTest {
             TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        Table tableOnlyNumberOfGuests = new Table();
-        tableOnlyNumberOfGuests.setNumberOfGuests(20);
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest
+            = new TableChangeNumberOfGuestsRequest(20);
         TableResponse changedTable = tableService
-            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests);
+            .changeNumberOfGuests(savedTable.getId(), tableChangeNumberOfGuestsRequest);
 
         assertThat(changedTable.getId()).isEqualTo(savedTable.getId());
         assertThat(changedTable.isEmpty()).isEqualTo(savedTable.isEmpty());
         assertThat(changedTable.getNumberOfGuests())
-            .isEqualTo(tableOnlyNumberOfGuests.getNumberOfGuests());
+            .isEqualTo(tableChangeNumberOfGuestsRequest.getNumberOfGuests());
         assertThat(changedTable.getTableGroupId())
             .isEqualTo(savedTable.getTableGroupId());
     }
@@ -191,10 +192,10 @@ class TableServiceTest extends KitchenPosServiceTest {
             TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
         TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        Table tableOnlyNumberOfGuests = new Table();
-        tableOnlyNumberOfGuests.setNumberOfGuests(20);
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest
+            = new TableChangeNumberOfGuestsRequest(20);
         assertThatThrownBy(() -> tableService
-            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests))
+            .changeNumberOfGuests(savedTable.getId(), tableChangeNumberOfGuestsRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -207,11 +208,11 @@ class TableServiceTest extends KitchenPosServiceTest {
         );
         TableResponse savedTable = tableService.create(tableCreateRequest);
 
-        Table tableOnlyNumberOfGuests = new Table();
-        tableOnlyNumberOfGuests.setNumberOfGuests(numberOfGuests);
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest
+            = new TableChangeNumberOfGuestsRequest(numberOfGuests);
 
         assertThatThrownBy(() -> tableService
-            .changeNumberOfGuests(savedTable.getId(), tableOnlyNumberOfGuests))
+            .changeNumberOfGuests(savedTable.getId(), tableChangeNumberOfGuestsRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

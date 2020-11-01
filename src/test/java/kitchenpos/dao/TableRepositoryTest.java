@@ -19,7 +19,7 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void save_Success() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
@@ -34,7 +34,7 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void findById_ExistsId_ReturnOrderTable() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
@@ -52,7 +52,7 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void findById_NotExistsId_ReturnEmpty() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
@@ -65,7 +65,7 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void findAll_Success() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
@@ -81,17 +81,17 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void findAllByIdIn_ExistsOrderTableIds_ReturnOrderTables() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         Table otherTable = new Table();
-        otherTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        otherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         otherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedOtherTable = tableRepository.save(otherTable);
 
         Table anotherTable = new Table();
-        anotherTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        anotherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         anotherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         tableRepository.save(anotherTable);
 
@@ -108,7 +108,7 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @Test
     void findAllByIdIn_NotExistsOrderTableIds_ReturnEmpty() {
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
@@ -124,19 +124,19 @@ class TableRepositoryTest extends KitchenPosDaoTest {
         TableGroup tableGroup = getCreatedTableGroup();
 
         Table table = new Table();
-        table.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         table.setTableGroup(tableGroup);
         Table savedTable = tableRepository.save(table);
 
         Table otherTable = new Table();
-        otherTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        otherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         otherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         otherTable.setTableGroup(tableGroup);
         Table savedOtherTable = tableRepository.save(otherTable);
 
         Table anotherTable = new Table();
-        anotherTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
+        anotherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
         anotherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
         tableRepository.save(anotherTable);
 

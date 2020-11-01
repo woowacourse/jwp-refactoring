@@ -72,8 +72,18 @@ public class Table {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateOfChangeNumberOfGuest(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateOfChangeNumberOfGuest(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("numberOfGuest가 0보다 작습니다.");
+        }
+        if (empty) {
+            throw new IllegalArgumentException("Table이 현재 비어있기 때문에 numberOfGuest를 설정할 수 없습니다.");
+        }
     }
 
     public boolean isEmpty() {

@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +53,9 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<TableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId,
-        @RequestBody final Table table) {
-        TableResponse changedTable = tableService.changeNumberOfGuests(orderTableId, table);
+        @RequestBody final TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest) {
+        TableResponse changedTable = tableService
+            .changeNumberOfGuests(orderTableId, tableChangeNumberOfGuestsRequest);
 
         return ResponseEntity.ok()
             .body(changedTable);

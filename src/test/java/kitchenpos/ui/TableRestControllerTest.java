@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.Table;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,7 @@ class TableRestControllerTest {
     void create() throws Exception {
         Table table = new Table();
         table.setId(ORDER_TABLE_ID);
-        table.setNumberOfGuests(NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(NUMBER_OF_GUESTS);
         table.setEmpty(true);
 
         String requestBody = "{\n"
@@ -129,13 +130,14 @@ class TableRestControllerTest {
     void changeNumberOfGuests() throws Exception {
         Table table = new Table();
         table.setId(ORDER_TABLE_ID);
-        table.setNumberOfGuests(NUMBER_OF_GUESTS);
+        table.changeNumberOfGuests(NUMBER_OF_GUESTS);
 
         String requestBody = "{\n"
             + "  \"numberOfGuests\": " + table.getNumberOfGuests() + "\n"
             + "}";
 
-        given(tableService.changeNumberOfGuests(anyLong(), any(Table.class)))
+        given(tableService
+            .changeNumberOfGuests(anyLong(), any(TableChangeNumberOfGuestsRequest.class)))
             .willReturn(TableResponse.of(table));
 
         ResultActions resultActions = mockMvc
