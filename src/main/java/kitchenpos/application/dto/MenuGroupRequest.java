@@ -1,8 +1,11 @@
 package kitchenpos.application.dto;
 
+import javax.validation.constraints.NotBlank;
+
 import kitchenpos.domain.model.MenuGroup;
 
 public class MenuGroupRequest {
+    @NotBlank
     private String name;
 
     private MenuGroupRequest() {

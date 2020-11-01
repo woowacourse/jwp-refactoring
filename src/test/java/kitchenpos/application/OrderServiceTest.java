@@ -21,7 +21,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -29,6 +28,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
@@ -36,7 +36,7 @@ import kitchenpos.factory.OrderTableFactory;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
     @Mock
     private OrderDao orderDao;
     @Mock
@@ -102,7 +102,7 @@ class OrderServiceTest {
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
         OrderTable orderTable = orderTableFactory.create(1L, false);
 
-        given(menuDao.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
+        given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
         given(orderDao.save(order))
                 .willReturn(
@@ -133,7 +133,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1);
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
 
-        given(menuDao.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(2L);
 
         assertThatIllegalArgumentException().isThrownBy(() -> orderService.create(order));
     }
@@ -142,7 +142,7 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1);
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
 
-        given(menuDao.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
+        given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
         assertThatIllegalArgumentException().isThrownBy(() -> orderService.create(order));
@@ -153,7 +153,7 @@ class OrderServiceTest {
         Order order = orderFactory.create(1L, singletonList(orderLineItem));
         OrderTable orderTable = orderTableFactory.create(1L, true);
 
-        given(menuDao.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
+        given(menuRepository.countByIdIn(singletonList(orderLineItem.getMenuId()))).willReturn(1L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
 
         assertThatIllegalArgumentException().isThrownBy(() -> orderService.create(order));

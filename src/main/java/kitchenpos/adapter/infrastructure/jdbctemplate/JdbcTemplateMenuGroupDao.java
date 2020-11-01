@@ -16,7 +16,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import kitchenpos.domain.model.MenuGroup;
-import kitchenpos.domain.model.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 
 @Repository
 public class JdbcTemplateMenuGroupDao implements MenuGroupRepository {

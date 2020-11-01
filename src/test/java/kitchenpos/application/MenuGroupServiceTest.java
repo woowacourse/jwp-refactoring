@@ -1,37 +1,33 @@
 package kitchenpos.application;
 
-import static org.mockito.Mockito.*;
+import static kitchenpos.fixture.RequestFixture.*;
+import static org.assertj.core.api.Assertions.*;
+
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.application.dto.MenuGroupRequest;
-import kitchenpos.domain.model.MenuGroupRepository;
+import kitchenpos.application.dto.MenuGroupResponse;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MenuGroupServiceTest {
-    @Mock
-    private MenuGroupRepository menuGroupRepository;
-
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @Test
     void create() {
-        MenuGroupRequest request = new MenuGroupRequest("추천 메뉴");
+        Long menuId = menuGroupService.create(MENU_GROUP_REQUEST);
 
-        menuGroupService.create(request);
-
-        verify(menuGroupRepository).save(request.toEntity());
+        assertThat(menuId).isNotNull();
     }
 
     @Test
     void list() {
-        menuGroupService.list();
+        menuGroupService.create(MENU_GROUP_REQUEST);
+        List<MenuGroupResponse> list = menuGroupService.list();
 
-        verify(menuGroupRepository).findAll();
+        assertThat(list.isEmpty()).isFalse();
     }
 }

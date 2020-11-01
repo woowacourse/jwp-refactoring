@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.adapter.presentation.MenuGroupRestController.*;
+import static kitchenpos.adapter.presentation.web.MenuGroupRestController.*;
+import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
@@ -11,7 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
 
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
@@ -43,7 +43,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createMenuGroup() throws Exception {
-        String request = objectMapper.writeValueAsString(new MenuGroupRequest("추천 메뉴"));
+        String request = objectMapper.writeValueAsString(MENU_GROUP_REQUEST);
         return post(request, API_MENU_GROUPS);
     }
 }
