@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.util.ObjectUtil.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,11 +49,8 @@ class MenuGroupRestControllerTest {
     @Test
     void create() throws Exception {
         String name = "메뉴";
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        MenuGroup result = new MenuGroup();
-        result.setId(5L);
-        result.setName(name);
+        MenuGroup menuGroup = createMenuGroup(null, name);
+        MenuGroup result = createMenuGroup(5L, name);
 
         mvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
@@ -65,21 +63,11 @@ class MenuGroupRestControllerTest {
 
     @Test
     void list() throws Exception {
-        MenuGroup first = new MenuGroup();
-        first.setId(1L);
-        first.setName("두마리메뉴");
-        MenuGroup second = new MenuGroup();
-        second.setId(2L);
-        second.setName("한마리메뉴");
-        MenuGroup third = new MenuGroup();
-        third.setId(3L);
-        third.setName("순살파닭두마리메뉴");
-        MenuGroup fourth = new MenuGroup();
-        fourth.setId(4L);
-        fourth.setName("신메뉴");
-        MenuGroup fifth = new MenuGroup();
-        fifth.setId(5L);
-        fifth.setName("메뉴");
+        MenuGroup first = createMenuGroup(1L, "두마리메뉴");
+        MenuGroup second = createMenuGroup(2L, "한마리메뉴");
+        MenuGroup third = createMenuGroup(3L, "순살파닭두마리메뉴");
+        MenuGroup fourth = createMenuGroup(4L, "신메뉴");
+        MenuGroup fifth = createMenuGroup(5L, "메뉴");
         List<MenuGroup> list = Arrays.asList(first, second, third, fourth, fifth);
 
         mvc.perform(get("/api/menu-groups")

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -25,6 +26,13 @@ public class ObjectUtil {
             .price(value)
             .menuGroupId(menuGroupId)
             .menuProducts(menuProducts)
+            .build();
+    }
+
+    public static MenuGroup createMenuGroup(Long id, String name) {
+        return MenuGroup.builder()
+            .id(id)
+            .name(name)
             .build();
     }
 
