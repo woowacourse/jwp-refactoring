@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;

@@ -29,8 +29,8 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @Test
     void create_Success() {
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedEmptyOrderTableId());
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
         TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
@@ -49,7 +49,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     void create_OrderTablesCountLessThanDefaultCount_ThrownException(int count) {
         List<Long> tableIds = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+            tableIds.add(getCreatedEmptyOrderTableId());
         }
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
@@ -61,9 +61,9 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @Test
     void create_NotExistsSomeOrderTable_ThrownException() {
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(TEST_ORDER_WRONG_ID).getId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(TEST_ORDER_WRONG_ID);
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
@@ -75,9 +75,9 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @Test
     void create_NotEmptySomeOrderTable_ThrownException() {
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedNotEmptyOrderTableId()).getId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedNotEmptyOrderTableId());
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
@@ -89,8 +89,8 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @Test
     void create_Success_SettingTableGroupAtTable() {
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedEmptyOrderTableId());
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
         for (Table foundTable : tableRepository.findAllByIdIn(tableIds)) {
@@ -110,8 +110,8 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
     @Test
     void ungroup_Success() {
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(getCreatedEmptyOrderTableId());
+        tableIds.add(getCreatedEmptyOrderTableId());
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
@@ -135,8 +135,8 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(savedOrderTableId).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(savedOrderTableId);
+        tableIds.add(getCreatedEmptyOrderTableId());
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
         TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
@@ -159,8 +159,8 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         Long savedOrderTableId = getCreatedOrderTableWithOrderStatus(orderStatus);
 
         List<Long> tableIds = new ArrayList<>();
-        tableIds.add(makeOrderTableWithId(savedOrderTableId).getId());
-        tableIds.add(makeOrderTableWithId(getCreatedEmptyOrderTableId()).getId());
+        tableIds.add(savedOrderTableId);
+        tableIds.add(getCreatedEmptyOrderTableId());
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
         TableGroupResponse createdTableGroup = tableGroupService.create(tableGroupRequest);
@@ -177,12 +177,6 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
         return tables.stream()
             .map(TableResponse::getId)
             .collect(Collectors.toList());
-    }
-
-    private Table makeOrderTableWithId(long id) {
-        Table table = new Table();
-        table.setId(id);
-        return table;
     }
 
     private Long getCreatedOrderTableWithOrderStatus(OrderStatus orderStatus) {

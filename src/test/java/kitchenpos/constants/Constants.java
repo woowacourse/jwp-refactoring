@@ -24,8 +24,6 @@ public class Constants {
     public static final boolean TEST_ORDER_TABLE_EMPTY_TRUE = true;
     public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY = 0;
 
-    public static final LocalDateTime TEST_TABLE_GROUP_CREATED_DATE = LocalDateTime.now();
-
     public static final LocalDateTime TEST_ORDER_ORDERED_TIME = LocalDateTime.now();
     public static final long TEST_ORDER_WRONG_ID = -1L;
 

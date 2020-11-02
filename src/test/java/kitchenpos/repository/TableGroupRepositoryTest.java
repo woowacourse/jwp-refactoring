@@ -1,35 +1,34 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
-import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableGroupRepositoryTest extends KitchenPosDaoTest {
+class TableGroupRepositoryTest extends KitchenPosRepositoryTest {
 
     @DisplayName("TableGroup 저장 - 성공")
     @Test
     void save_Success() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+        List<Table> createdTables = getCreatedTables();
+        TableGroup tableGroup = TableGroup.entityOf(createdTables);
 
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         assertThat(savedTableGroup.getId()).isNotNull();
-        assertThat(savedTableGroup.getCreatedDate()).isEqualTo(TEST_TABLE_GROUP_CREATED_DATE);
-        assertThat(savedTableGroup.getTables()).isEmpty();
+        assertThat(savedTableGroup.getCreatedDate()).isNotNull();
+        assertThat(savedTableGroup.getTables()).containsAll(createdTables);
     }
 
     @DisplayName("TableGroup ID로 TableGroup 조회 - 조회됨, ID가 존재하는 경우")
     @Test
     void findById_ExistsId_ReturnTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+        TableGroup tableGroup = TableGroup.entityOf(getCreatedTables());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         TableGroup foundTableGroup = tableGroupRepository.findById(savedTableGroup.getId())
@@ -43,8 +42,7 @@ class TableGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("TableGroup ID로 TableGroup 조회 - 조회되지 않음, ID가 존재하지 않는 경우")
     @Test
     void findById_NotExistsId_ReturnEmpty() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+        TableGroup tableGroup = TableGroup.entityOf(getCreatedTables());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         Optional<TableGroup> foundTableGroup = tableGroupRepository
@@ -56,19 +54,19 @@ class TableGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("전체 TableGroup 조회 - 성공")
     @Test
     void findAll_Success() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+        TableGroup tableGroup = TableGroup.entityOf(getCreatedTables());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         List<TableGroup> tableGroups = tableGroupRepository.findAll();
 
         assertThat(tableGroups).isNotNull();
         assertThat(tableGroups).isNotEmpty();
+        assertThat(tableGroups).contains(savedTableGroup);
+    }
 
-        List<Long> tableGroupIds = tableGroups.stream()
-            .map(TableGroup::getId)
-            .collect(Collectors.toList());
-
-        assertThat(tableGroupIds).contains(savedTableGroup.getId());
+    private List<Table> getCreatedTables() {
+        Table table = Table.entityOf(10, true);
+        Table savedTable = tableRepository.save(table);
+        return Collections.singletonList(savedTable);
     }
 }

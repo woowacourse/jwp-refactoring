@@ -26,7 +26,7 @@ public class OrderLineItem {
 
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     protected OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
@@ -63,16 +63,8 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     @Override

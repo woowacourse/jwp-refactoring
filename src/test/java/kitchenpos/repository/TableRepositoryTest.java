@@ -1,6 +1,7 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_FALSE;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_TRUE;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,14 +14,13 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class TableRepositoryTest extends KitchenPosDaoTest {
+class TableRepositoryTest extends KitchenPosRepositoryTest {
 
     @DisplayName("OrderTable 저장 - 성공")
     @Test
     void save_Success() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         assertThat(savedTable.getId()).isNotNull();
@@ -33,9 +33,8 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("OrderTable ID로 OrderTable 조회 - 조회됨, ID가 존재하는 경우")
     @Test
     void findById_ExistsId_ReturnOrderTable() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         Table foundTable = tableRepository.findById(savedTable.getId())
@@ -51,9 +50,8 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("OrderTable ID로 OrderTable 조회 - 조회되지 않음, ID가 존재하지 않는 경우")
     @Test
     void findById_NotExistsId_ReturnEmpty() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         Optional<Table> foundOrderTable = tableRepository
@@ -64,9 +62,8 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("전체 OrderTable 조회 - 성공")
     @Test
     void findAll_Success() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         List<Table> tables = tableRepository.findAll();
@@ -80,36 +77,31 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("OrderTable ID들로 OrderTable들 조회 - 조회됨, OrderTable ID들이 존재하는 경우")
     @Test
     void findAllByIdIn_ExistsOrderTableIds_ReturnOrderTables() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
-        Table otherTable = new Table();
-        otherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        otherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table otherTable = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedOtherTable = tableRepository.save(otherTable);
 
-        Table anotherTable = new Table();
-        anotherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        anotherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table anotherTable = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         tableRepository.save(anotherTable);
 
-        List<Long> ids = Arrays.asList(savedTable.getId(), savedOtherTable.getId());
+        List<Table> tables = Arrays.asList(savedTable, savedOtherTable);
+        List<Long> ids = getIds(tables);
 
-        List<Table> tables = tableRepository.findAllByIdIn(ids);
-        assertThat(tables).hasSize(ids.size());
-
-        List<Long> orderTableIds = getIds(tables);
-        assertThat(orderTableIds).containsAll(orderTableIds);
+        List<Table> foundTables = tableRepository.findAllByIdIn(ids);
+        assertThat(foundTables).hasSize(ids.size());
+        assertThat(foundTables).containsAll(tables);
     }
 
     @DisplayName("OrderTable ID들로 OrderTable들 조회 - 조회되지 않음, OrderTable ID들이 존재하지 않는 경우")
     @Test
     void findAllByIdIn_NotExistsOrderTableIds_ReturnEmpty() {
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         Table savedTable = tableRepository.save(table);
 
         List<Long> ids = Arrays.asList(savedTable.getId() + 1, savedTable.getId() + 2);
@@ -121,43 +113,24 @@ class TableRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("TableGroup ID로 OrderTable들 조회 - 조회됨, TableGroup ID에 매치되는 경우")
     @Test
     void findAllByTableGroupId_MatchedTableGroupId_ReturnOrderTable() {
-        TableGroup tableGroup = getCreatedTableGroup();
-
-        Table table = new Table();
-        table.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        table.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        table.setTableGroup(tableGroup);
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedTable = tableRepository.save(table);
 
-        Table otherTable = new Table();
-        otherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        otherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        otherTable.setTableGroup(tableGroup);
+        Table otherTable = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedOtherTable = tableRepository.save(otherTable);
 
-        Table anotherTable = new Table();
-        anotherTable.changeNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        anotherTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
+        Table anotherTable = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
         tableRepository.save(anotherTable);
 
-        List<Long> ids = Arrays.asList(savedTable.getId(), savedOtherTable.getId());
+        List<Table> tables = Arrays.asList(savedTable, savedOtherTable);
+        TableGroup tableGroup = getCreatedTableGroup(tables);
 
-        List<Table> foundTables = tableRepository
-            .findAllByTableGroup_Id(tableGroup.getId());
-        assertThat(foundTables).hasSize(ids.size());
-
-        List<Long> foundOrderTableIds = getIds(foundTables);
-        assertThat(foundOrderTableIds).containsAll(ids);
-    }
-
-    @DisplayName("TableGroup ID로 OrderTable들 조회 - 조회되지 않음, TableGroup ID에 매치되지 않는 경우")
-    @Test
-    void findAllByTableGroupId_NotMatchedTableGroupId_ReturnOrderTable() {
-        Long tableGroupId = getCreatedTableGroupId();
-
-        List<Table> foundTables = tableRepository
-            .findAllByTableGroup_Id(tableGroupId);
-        assertThat(foundTables).isEmpty();
+        List<Table> foundTables = tableRepository.findAllByTableGroup_Id(tableGroup.getId());
+        assertThat(foundTables).hasSize(tables.size());
+        assertThat(foundTables).containsAll(tables);
     }
 
     private List<Long> getIds(List<Table> tables) {

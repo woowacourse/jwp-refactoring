@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.OrderAssembler;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
@@ -90,7 +90,7 @@ public class OrderService {
 
         final OrderStatus orderStatus = OrderStatus
             .valueOf(orderChangeStatusRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         return OrderResponse.of(savedOrder);
     }

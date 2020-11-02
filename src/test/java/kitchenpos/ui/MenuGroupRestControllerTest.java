@@ -68,8 +68,7 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
+        MenuGroup menuGroup = MenuGroup.of(MENU_GROUP_ID, MENU_GROUP_NAME);
 
         given(menuGroupService.list())
             .willReturn(MenuGroupResponse.listOf(Collections.singletonList(menuGroup)));

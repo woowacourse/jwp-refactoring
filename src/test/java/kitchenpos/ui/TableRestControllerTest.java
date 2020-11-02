@@ -48,10 +48,7 @@ class TableRestControllerTest {
     @DisplayName("테이블 추가")
     @Test
     void create() throws Exception {
-        Table table = new Table();
-        table.setId(ORDER_TABLE_ID);
-        table.changeNumberOfGuests(NUMBER_OF_GUESTS);
-        table.setEmpty(true);
+        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
 
         String requestBody = "{\n"
             + "  \"numberOfGuests\": " + table.getNumberOfGuests() + ",\n"
@@ -79,8 +76,7 @@ class TableRestControllerTest {
     @DisplayName("테이블 전체 조회")
     @Test
     void list() throws Exception {
-        Table table = new Table();
-        table.setId(ORDER_TABLE_ID);
+        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
 
         given(tableService.list())
             .willReturn(TableResponse.listOf(Collections.singletonList(table)));
@@ -101,9 +97,7 @@ class TableRestControllerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) throws Exception {
-        Table table = new Table();
-        table.setId(ORDER_TABLE_ID);
-        table.setEmpty(empty);
+        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, empty);
 
         String requestBody = "{\n"
             + "  \"empty\": " + table.isEmpty() + "\n"
@@ -129,9 +123,7 @@ class TableRestControllerTest {
     @DisplayName("테이블 손님 수 변경")
     @Test
     void changeNumberOfGuests() throws Exception {
-        Table table = new Table();
-        table.setId(ORDER_TABLE_ID);
-        table.changeNumberOfGuests(NUMBER_OF_GUESTS);
+        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
 
         String requestBody = "{\n"
             + "  \"numberOfGuests\": " + table.getNumberOfGuests() + "\n"

@@ -22,10 +22,10 @@ public class Table {
     private int numberOfGuests;
     private boolean empty;
 
-    public Table() {
+    protected Table() {
     }
 
-    protected Table(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    private Table(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -42,10 +42,6 @@ public class Table {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public TableGroup getTableGroup() {

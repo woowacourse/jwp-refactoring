@@ -1,13 +1,14 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
-import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_FALSE;
+import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_EMPTY_TRUE;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
-import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.Table;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-public abstract class KitchenPosDaoTest {
+public abstract class KitchenPosRepositoryTest {
 
     @Autowired
     protected MenuRepository menuRepository;
@@ -47,40 +48,24 @@ public abstract class KitchenPosDaoTest {
 
     protected Table getCreatedTable() {
         Table table = Table
-            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
-        table.setTableGroup(getCreatedTableGroup());
-
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedTable = tableRepository.save(table);
 
+        getCreatedTableGroup(Collections.singletonList(savedTable));
         assertThat(savedTable.getId()).isNotNull();
         return savedTable;
     }
 
     protected Product getCreatedProduct() {
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(TEST_PRODUCT_PRICE);
-
+        Product product = Product.entityOf(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
         Product savedProduct = productRepository.save(product);
 
         assertThat(savedProduct.getId()).isNotNull();
         return savedProduct;
     }
 
-    protected Long getCreatedTableGroupId() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        Long savedTableGroupId = savedTableGroup.getId();
-        assertThat(savedTableGroupId).isNotNull();
-        return savedTableGroupId;
-    }
-
-    protected TableGroup getCreatedTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
+    protected TableGroup getCreatedTableGroup(List<Table> tables) {
+        TableGroup tableGroup = TableGroup.entityOf(tables);
 
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 

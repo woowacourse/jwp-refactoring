@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.constants.Constants.TEST_ORDER_ORDERED_TIME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,7 +12,7 @@ import kitchenpos.domain.Table;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class OrderRepositoryTest extends KitchenPosDaoTest {
+class OrderRepositoryTest extends KitchenPosRepositoryTest {
 
     @DisplayName("Order 저장 - 성공")
     @Test

@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.dao.TableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.TableGroupAssembler;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableGroupResponse;

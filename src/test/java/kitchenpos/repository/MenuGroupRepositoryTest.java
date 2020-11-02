@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.constants.Constants.TEST_MENU_GROUP_NAME;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,13 +10,12 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuGroupRepositoryTest extends KitchenPosDaoTest {
+class MenuGroupRepositoryTest extends KitchenPosRepositoryTest {
 
     @DisplayName("MenuGroup 저장 - 성공")
     @Test
     void save_Success() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
 
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
@@ -27,8 +26,7 @@ class MenuGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("MenuGroup ID로 MenuGroup 조회 - 조회됨, ID가 존재하는 경우")
     @Test
     void findById_ExistsId_ReturnMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         MenuGroup foundMenuGroup = menuGroupRepository.findById(savedMenuGroup.getId())
@@ -41,8 +39,7 @@ class MenuGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("MenuGroup ID로 MenuGroup 조회 - 조회되지 않음, ID가 존재하지 않는 경우")
     @Test
     void findById_NotExistsId_ReturnEmpty() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         Optional<MenuGroup> foundMenuGroup = menuGroupRepository
@@ -54,8 +51,7 @@ class MenuGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("전체 MenuGroup 조회 - 성공")
     @Test
     void findAll_Success() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         List<MenuGroup> menuGroups = menuGroupRepository.findAll();
@@ -73,8 +69,7 @@ class MenuGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("MenuGroup ID 존재여부 확인 - True, ID 존재")
     @Test
     void existsById_ExistsId_ReturnTrue() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         boolean existsMenuGroup = menuGroupRepository.existsById(savedMenuGroup.getId());
@@ -85,8 +80,7 @@ class MenuGroupRepositoryTest extends KitchenPosDaoTest {
     @DisplayName("MenuGroup ID 존재여부 확인 - False, ID 존재하지 않음")
     @Test
     void existsById_NotExistsId_ReturnFalse() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroup.entityOf(TEST_MENU_GROUP_NAME);
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         boolean existsMenuGroup = menuGroupRepository.existsById(savedMenuGroup.getId() + 1);

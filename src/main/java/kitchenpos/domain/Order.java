@@ -30,7 +30,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long id, kitchenpos.domain.Table table, String orderStatus,
@@ -69,10 +69,6 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public kitchenpos.domain.Table getTable() {
         return table;
     }
@@ -81,7 +77,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -89,16 +85,8 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     @Override

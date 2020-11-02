@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.constants.Constants.TEST_MENU_NAME;
 import static kitchenpos.constants.Constants.TEST_MENU_PRICE;
@@ -16,7 +16,7 @@ import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-class MenuRepositoryTest extends KitchenPosDaoTest {
+class MenuRepositoryTest extends KitchenPosRepositoryTest {
 
     @DisplayName("Menu 저장 - 성공")
     @Test

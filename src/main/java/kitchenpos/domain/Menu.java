@@ -28,12 +28,11 @@ public class Menu {
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
-        validate(name);
         validate(price);
         validate(menuGroup);
         validate(menuProducts);
@@ -47,11 +46,6 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup,
-        List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
-    }
-
     public static Menu of(Long id, String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         return new Menu(id, name, price, menuGroup, menuProducts);
@@ -60,9 +54,6 @@ public class Menu {
     public static Menu entityOf(String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         return new Menu(null, name, price, menuGroup, menuProducts);
-    }
-
-    private void validate(String name) {
     }
 
     private void validate(BigDecimal price) {

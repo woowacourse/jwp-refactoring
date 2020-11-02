@@ -26,7 +26,7 @@ public class MenuProduct {
     private Product product;
     private long quantity;
 
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     private MenuProduct(Long seq, Menu menu, Product product, long quantity) {

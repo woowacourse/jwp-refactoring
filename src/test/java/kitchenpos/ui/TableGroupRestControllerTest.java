@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.TableGroupService;
@@ -49,9 +50,7 @@ class TableGroupRestControllerTest {
         tables.add(createdOrderTable(ORDER_TABLES_FIRST_ID));
         tables.add(createdOrderTable(ORDER_TABLES_SECOND_ID));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(TABLE_GROUP_ID);
-        tableGroup.setTables(tables);
+        TableGroup tableGroup = TableGroup.of(TABLE_GROUP_ID, LocalDateTime.now(), tables);
 
         String requestBody = "{\n"
             + "  \"orderTables\": [\n"
@@ -96,8 +95,6 @@ class TableGroupRestControllerTest {
     }
 
     private Table createdOrderTable(Long id) {
-        Table table = new Table();
-        table.setId(id);
-        return table;
+        return Table.of(id, 10, true);
     }
 }

@@ -144,7 +144,7 @@ class OrderRestControllerTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) throws Exception {
-        order.setOrderStatus(orderStatus.name());
+        order.changeOrderStatus(orderStatus.name());
 
         String requestBody = "{\n"
             + "  \"orderStatus\": \"" + order.getOrderStatus() + "\"\n"

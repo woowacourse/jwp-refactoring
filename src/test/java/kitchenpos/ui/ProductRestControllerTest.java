@@ -44,10 +44,7 @@ class ProductRestControllerTest {
     @DisplayName("상품 추가")
     @Test
     void create() throws Exception {
-        Product product = new Product();
-        product.setId(PRODUCT_ID);
-        product.setName(PRODUCT_NAME);
-        product.setPrice(ProductRestControllerTest.PRODUCT_PRICE);
+        Product product = Product.of(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE);
 
         String requestBody = "{\n"
             + "  \"name\": \"" + product.getName() + "\",\n"
@@ -75,8 +72,7 @@ class ProductRestControllerTest {
     @DisplayName("상품 조회")
     @Test
     void list() throws Exception {
-        Product product = new Product();
-        product.setId(PRODUCT_ID);
+        Product product = Product.of(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE);
 
         given(productService.list())
             .willReturn(ProductResponse.listOf(Collections.singletonList(product)));

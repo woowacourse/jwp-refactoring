@@ -22,12 +22,7 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL)
     private List<Table> tables = new ArrayList<>();
 
-    public TableGroup() {
-    }
-
-    protected TableGroup(Long id, LocalDateTime createdDate) {
-        this.id = id;
-        this.createdDate = createdDate;
+    protected TableGroup() {
     }
 
     private TableGroup(Long id, LocalDateTime createdDate,
@@ -36,6 +31,10 @@ public class TableGroup {
         this.createdDate = createdDate;
         this.tables = tables;
         setTableGroup(tables);
+    }
+
+    public static TableGroup of(Long id, LocalDateTime createdDate, List<Table> tables) {
+        return new TableGroup(id, createdDate, tables);
     }
 
     public static TableGroup entityOf(List<Table> tables) {
@@ -56,24 +55,12 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<Table> getTables() {
         return tables;
-    }
-
-    public void setTables(final List<Table> tables) {
-        this.tables = tables;
     }
 
     public void addTables(Table table) {
