@@ -2,19 +2,40 @@ package kitchenpos.table.domain;
 
 import java.util.Objects;
 
-public class Table {
-    private Long id;
-    private Long tableGroupId;
-    private int numberOfGuests;
-    private boolean empty;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
-    public Table(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+@Entity
+@javax.persistence.Table(name = "order_table")
+public class Table {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    private TableGroup tableGroup;
+
+    @Column(nullable = false)
+    private Integer numberOfGuests;
+
+    @Column(nullable = false)
+    private Boolean empty;
+
+    public Table() {
     }
 
-    public Table(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public Table(TableGroup tableGroup, int numberOfGuests, Boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public Table(Long id, TableGroup tableGroup, int numberOfGuests, Boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -23,8 +44,8 @@ public class Table {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -58,12 +79,12 @@ public class Table {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void changeTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public boolean hasGroup() {
-        return Objects.nonNull(this.tableGroupId);
+        return Objects.nonNull(this.tableGroup);
     }
 
     public void fill() {

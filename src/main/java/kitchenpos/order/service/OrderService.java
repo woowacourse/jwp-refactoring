@@ -18,25 +18,25 @@ import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.table.domain.Table;
-import kitchenpos.table.domain.TableDao;
+import kitchenpos.table.domain.TableRepository;
 
 @Service
 public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final TableDao tableDao;
+    private final TableRepository tableRepository;
 
     public OrderService(
         final MenuDao menuDao,
         final OrderDao orderDao,
         final OrderLineItemDao orderLineItemDao,
-        final TableDao tableDao
+        final TableRepository tableRepository
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.tableDao = tableDao;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
@@ -55,7 +55,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Table table = tableDao.findById(request.getTableId())
+        final Table table = tableRepository.findById(request.getTableId())
             .orElseThrow(IllegalArgumentException::new);
 
         if (table.isEmpty()) {

@@ -19,9 +19,9 @@ import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.Table;
-import kitchenpos.table.domain.TableDao;
 import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupDao;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableRepository;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 import kitchenpos.table.service.TableGroupService;
 
@@ -31,13 +31,10 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
-
     @Autowired
-    private TableDao tableDao;
-
+    private TableRepository tableRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
-
+    private TableGroupRepository tableGroupRepository;
     @Autowired
     private OrderDao orderDao;
 
@@ -61,7 +58,7 @@ class TableGroupServiceTest {
     void createWhenOrderTableIsNullOrDuplicated() {
         Table table = createTable(null, true, null, 3);
         TableGroup tableGroup = createTableGroup(1L, LocalDateTime.now(), Arrays.asList(table, table));
-        Table savedTable = tableDao.save(table);
+        Table savedTable = tableRepository.save(table);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable.getId(), savedTable.getId()));
@@ -77,8 +74,8 @@ class TableGroupServiceTest {
         Table table1 = createTable(null, true, null, 3);
         Table table2 = createTable(null, false, null, 3);
 
-        Table savedTable1 = tableDao.save(table1);
-        Table savedTable2 = tableDao.save(table2);
+        Table savedTable1 = tableRepository.save(table1);
+        Table savedTable2 = tableRepository.save(table2);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable1.getId(), savedTable2.getId()));
@@ -91,12 +88,15 @@ class TableGroupServiceTest {
     @DisplayName("인자로 넘겨준 테이블그룹이 그룹이 있는 테이블이면 Exception이 발생한다.")
     @Test
     void test2() {
-        TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(1L, Collections.emptyList()));
-        Table table1 = createTable(null, true, savedTableGroup.getId(), 3);
+        Table saved1 = tableRepository.save(createTable(null, true, null, 3));
+        Table saved2 = tableRepository.save(createTable(null, true, null, 3));
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(Arrays.asList(saved1, saved2)));
+
+        Table table1 = createTable(null, true, savedTableGroup, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = tableDao.save(table1);
-        Table savedTable2 = tableDao.save(table2);
+        Table savedTable1 = tableRepository.save(table1);
+        Table savedTable2 = tableRepository.save(table2);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable1.getId(), savedTable2.getId()));
@@ -112,8 +112,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = tableDao.save(table);
-        Table savedTable2 = tableDao.save(table2);
+        Table savedTable1 = tableRepository.save(table);
+        Table savedTable2 = tableRepository.save(table2);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable1.getId(), savedTable2.getId()));
@@ -129,8 +129,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = tableDao.save(table);
-        Table savedTable2 = tableDao.save(table2);
+        Table savedTable1 = tableRepository.save(table);
+        Table savedTable2 = tableRepository.save(table2);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable1.getId(), savedTable2.getId()));
@@ -152,8 +152,8 @@ class TableGroupServiceTest {
         Table table = createTable(null, true, null, 3);
         Table table2 = createTable(null, true, null, 3);
 
-        Table savedTable1 = tableDao.save(table);
-        Table savedTable2 = tableDao.save(table2);
+        Table savedTable1 = tableRepository.save(table);
+        Table savedTable2 = tableRepository.save(table2);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Sets.newSet(savedTable1.getId(), savedTable2.getId()));
@@ -166,8 +166,8 @@ class TableGroupServiceTest {
 
         tableGroupService.ungroup(groupId);
 
-        Table actual = tableDao.findById(savedTable1.getId()).get();
+        Table actual = tableRepository.findById(savedTable1.getId()).get();
 
-        assertThat(actual.getTableGroupId()).isNull();
+        assertThat(actual.getTableGroup()).isNull();
     }
 }

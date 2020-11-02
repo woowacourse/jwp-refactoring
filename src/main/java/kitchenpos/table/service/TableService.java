@@ -9,29 +9,30 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.order.domain.OrderDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.Table;
-import kitchenpos.table.domain.TableDao;
+import kitchenpos.table.domain.TableRepository;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
     private final OrderDao orderDao;
-    private final TableDao tableDao;
+    private final TableRepository tableRepository;
 
-    public TableService(final OrderDao orderDao, final TableDao tableDao) {
+    public TableService(OrderDao orderDao, TableRepository tableRepository) {
         this.orderDao = orderDao;
-        this.tableDao = tableDao;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
     public Long create(TableCreateRequest request) {
         Table table = request.toEntity();
-        return tableDao.save(table).getId();
+        return tableRepository.save(table).getId();
     }
 
     public List<Table> list() {
-        return tableDao.findAll();
+        return tableRepository.findAll();
     }
 
     @Transactional
@@ -44,18 +45,16 @@ public class TableService {
         }
 
         savedTable.changeEmpty(request.getEmpty());
-        tableDao.save(savedTable);
     }
 
     @Transactional
     public void changeNumberOfGuests(final Long orderTableId, final TableGuestEditRequest request) {
         Table savedTable = findOne(orderTableId);
         savedTable.changeNumberOfGuests(request.getNumberOfGuests());
-        tableDao.save(savedTable);
     }
 
     private Table findOne(Long orderTableId) {
-        return tableDao.findById(orderTableId)
+        return tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
     }
 }

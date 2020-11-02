@@ -32,8 +32,8 @@ public class EntityCreateHelper {
         return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 
-    public static Table createTable(Long id, boolean isEmpty, Long tableGroupId, int numberOfGuests) {
-        return new Table(id, tableGroupId, numberOfGuests, isEmpty);
+    public static Table createTable(Long id, boolean isEmpty, TableGroup tableGroup, int numberOfGuests) {
+        return new Table(id, tableGroup, numberOfGuests, isEmpty);
     }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
