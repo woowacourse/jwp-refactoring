@@ -52,10 +52,6 @@ public class TableService {
     public Table changeNumberOfGuests(final Long orderTableId, final TableChangeRequest request) {
         final int numberOfGuests = request.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final Table savedTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
