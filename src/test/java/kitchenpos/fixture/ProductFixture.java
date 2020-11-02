@@ -16,6 +16,10 @@ public class ProductFixture {
         return product;
     }
 
+    public static Product createProductWithId(Long id) {
+        return createProduct(id, null);
+    }
+
     public static Product createProductWithPrice(BigDecimal price) {
         return createProduct(null, price);
     }
