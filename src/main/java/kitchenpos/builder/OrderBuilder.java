@@ -13,6 +13,18 @@ public class OrderBuilder {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
+    public OrderBuilder() {
+    }
+
+    public OrderBuilder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+        List<OrderLineItem> orderLineItems) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
     public OrderBuilder id(Long id) {
         this.id = id;
         return this;

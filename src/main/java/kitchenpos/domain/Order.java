@@ -6,11 +6,11 @@ import java.util.List;
 import kitchenpos.builder.OrderBuilder;
 
 public class Order {
-    private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final Long id;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
@@ -25,43 +25,27 @@ public class Order {
         return new OrderBuilder();
     }
 
-    public Long getId() {
-        return id;
+    public OrderBuilder toBuilder() {
+        return new OrderBuilder(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

@@ -45,16 +45,6 @@ public class ObjectUtil {
             .build();
     }
 
-    public static Product createProduct(Long id, String name, Integer price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        if (price != null) {
-            product.setPrice(BigDecimal.valueOf(price));
-        }
-        return product;
-    }
-
     public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
         return Order.builder()
@@ -67,12 +57,22 @@ public class ObjectUtil {
     }
 
     public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return OrderLineItem.builder()
+            .seq(seq)
+            .orderId(orderId)
+            .menuId(menuId)
+            .quantity(quantity)
+            .build();
+    }
+
+    public static Product createProduct(Long id, String name, Integer price) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(name);
+        if (price != null) {
+            product.setPrice(BigDecimal.valueOf(price));
+        }
+        return product;
     }
 
     public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {

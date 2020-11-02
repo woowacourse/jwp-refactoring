@@ -8,6 +8,16 @@ public class MenuProductBuilder {
     private Long productId;
     private long quantity;
 
+    public MenuProductBuilder() {
+    }
+
+    public MenuProductBuilder(Long seq, Long menuId, Long productId, long quantity) {
+        this.seq = seq;
+        this.menuId = menuId;
+        this.productId = productId;
+        this.quantity = quantity;
+    }
+
     public MenuProductBuilder seq(Long seq) {
         this.seq = seq;
         return this;
