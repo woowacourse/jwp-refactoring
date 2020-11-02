@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -45,11 +43,7 @@ public class OrderTableService {
     ) {
         OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderStatus(savedOrderTable);
 
         savedOrderTable.changeEmpty(request.getEmpty());
 
@@ -58,6 +52,12 @@ public class OrderTableService {
             return OrderTableResponse.from(changedTable);
         } catch (ObjectOptimisticLockingFailureException e) {
             return changeEmpty(orderTableId, request);
+        }
+    }
+
+    private void validateOrderStatus(final OrderTable orderTable) {
+        if (orderTable.isInProgress()){
+            throw new IllegalArgumentException();
         }
     }
 
