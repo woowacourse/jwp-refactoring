@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -22,9 +24,10 @@ class OrderLineItemsTest {
     @DisplayName("OrderLineItem의 메뉴은 중복될 수 없다.")
     @Test
     void notDuplicateTest() {
+        Menu menu = new Menu("포테이토 피자", 1000L, new MenuGroup("피자"));
         List<OrderLineItem> orderLineItems = Arrays.asList(
-                new OrderLineItem(1L),
-                new OrderLineItem(1L)
+                new OrderLineItem(menu),
+                new OrderLineItem(menu)
         );
         assertThatThrownBy(() -> new OrderLineItems(orderLineItems, null))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -33,9 +36,10 @@ class OrderLineItemsTest {
     @DisplayName("OrderLineItem은 지정된 Menu를 가진다")
     @Test
     void menuTest() {
+        Menu menu = new Menu("포테이토 피자", 1000L, new MenuGroup("피자"));
         Order order = new Order();
 
-        OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(new OrderLineItem(1L)), order);
+        OrderLineItems orderLineItems = new OrderLineItems(Arrays.asList(new OrderLineItem(menu)), order);
 
         OrderLineItem orderLineItem = orderLineItems.getOrderLineItems().get(0);
         assertThat(orderLineItem.getOrder()).isEqualTo(order);

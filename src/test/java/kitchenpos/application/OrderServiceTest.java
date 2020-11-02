@@ -85,10 +85,8 @@ class OrderServiceTest {
     @DisplayName("새로운 주문 생성 시, 테이블이 비어있다면 예외가 발생한다.")
     @Test
     void emptyOrderTableExceptionTest() {
-        // given
         OrderTable orderTable = createOrderTable(true);
         List<OrderLineItem> orderLineItem = createOrderLineItem();
-
 
         assertThatThrownBy(() -> orderService.create(orderTable.getId(), orderLineItem))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -99,8 +97,8 @@ class OrderServiceTest {
     void changeOrderStateTest() {
         Menu menu = createMenu();
         List<OrderLineItem> orderLineItems = Arrays.asList(
-                new OrderLineItem(menu.getId()),
-                new OrderLineItem(menu.getId())
+                new OrderLineItem(menu),
+                new OrderLineItem(menu)
         );
         orderLineItemRepository.saveAll(orderLineItems);
         assertThatThrownBy(() -> orderService.create(1L, orderLineItems))
@@ -113,7 +111,6 @@ class OrderServiceTest {
         // given
         OrderTable orderTable = createOrderTable(false);
         List<OrderLineItem> orderLineItems = createOrderLineItem();
-
         orderService.create(orderTable.getId(), orderLineItems);
 
         // when
@@ -148,11 +145,9 @@ class OrderServiceTest {
     void changeOrderStatusExceptionTest() {
         final String CHANGED_STATUS = "NOT_VALID_STATUS";
 
-        // given
         OrderTable orderTable = createOrderTable(false);
         List<OrderLineItem> orderLineItem = createOrderLineItem();
 
-        // when
         Order result = orderService.create(orderTable.getId(), orderLineItem);
         assertThatThrownBy(() -> result.updateOrderStatus(CHANGED_STATUS))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -170,14 +165,16 @@ class OrderServiceTest {
 
     private List<OrderLineItem> createOrderLineItem() {
         Menu menu = createMenu();
-        return Collections.singletonList(orderLineItemRepository.save(new OrderLineItem(menu.getId())));
+        return Collections.singletonList(orderLineItemRepository.save(new OrderLineItem(menu)));
     }
 
     @AfterEach
     void tearDown() {
         menuProductRepository.deleteAll();
+        orderLineItemRepository.deleteAll();
         productRepository.deleteAll();
         menuRepository.deleteAll();
+        orderRepository.deleteAll();
         menuGroupRepository.deleteAll();
     }
 }

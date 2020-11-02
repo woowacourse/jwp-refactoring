@@ -1,5 +1,6 @@
 package kitchenpos.domain.order;
 
+import kitchenpos.domain.menu.Menu;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
@@ -20,11 +21,11 @@ public class OrderLineItems {
     }
 
     private void validateNotDuplicateMenu() {
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Menu> menus = orderLineItems.stream()
+                .map(OrderLineItem::getMenu)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != new LinkedHashSet<>(menuIds).size()) {
+        if (orderLineItems.size() != new LinkedHashSet<>(menus).size()) {
             throw new IllegalArgumentException();
         }
     }

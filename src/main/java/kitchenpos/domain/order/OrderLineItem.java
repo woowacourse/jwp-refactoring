@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.BaseEntity;
+import kitchenpos.domain.menu.Menu;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -16,22 +17,26 @@ public class OrderLineItem extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "ORDER_ID")
     private Order order;
-    private Long menuId;
+
+    @ManyToOne
+    @JoinColumn(name = "MENU_ID")
+    private Menu menu;
+
     private long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long menuId) {
-        this.menuId = menuId;
+    public OrderLineItem(Menu menu) {
+        this.menu = menu;
     }
 
     public void updateOrder(Order order) {
         this.order = order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
     public Order getOrder() {
