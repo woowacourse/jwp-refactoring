@@ -28,4 +28,8 @@ public class OrderTableFixture {
     public static OrderTable createOrderTableWithNumberOfGuest(int numberOfGuest) {
         return createOrderTable(null, numberOfGuest, null, false);
     }
+
+    public static OrderTable createOrderTableWithId(Long id) {
+        return createOrderTable(id, 2, null, true);
+    }
 }
