@@ -9,7 +9,4 @@ public interface OrderDao extends JpaRepository<Order, Long> {
 
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId,
         List<OrderStatus> orderStatuses);
-
-    boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds,
-        List<OrderStatus> orderStatuses);
 }
