@@ -107,6 +107,12 @@ class ServiceIntegrationTest {
         return order;
     }
 
+    static OrderTable getOrderTableEmpty(Long id) {
+        OrderTable orderTable = getOrderTableWithId(id);
+        orderTable.setEmpty(true);
+        return orderTable;
+    }
+
     static OrderTable getOrderTableNotEmpty() {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);

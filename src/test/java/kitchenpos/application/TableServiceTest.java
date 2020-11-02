@@ -63,4 +63,31 @@ public class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeEmpty(tableId, getOrderTableNotEmpty()))
             .isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("방문한 손님 수가 0명 미만이면 손님 수를 입력할 수 없다.")
+    @Test
+    void changeNumberOfGuests_willThrowException_whenNumberIsUnderZero() {
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, getOrderTableWithGuests(-3)))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블이 등록되어 있지 않으면 방문한 손님 수를 변경할 수 없다.")
+    @Test
+    void changeNumberOfGuests_willThrowException_whenTableDoesNotExist() {
+        given(orderTableDao.findById(anyLong())).willThrow(IllegalArgumentException.class);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(2L, getOrderTableWithGuests(3)))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+    @Test
+    void changeNumberOfGuests_willThrowException_whenTableIsEmpty() {
+        Long tableId = 2L;
+        OrderTable orderTable = getOrderTableEmpty(tableId);
+        given(orderTableDao.findById(anyLong())).willReturn(Optional.of(orderTable));
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(tableId, getOrderTableNotEmpty()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
 }
