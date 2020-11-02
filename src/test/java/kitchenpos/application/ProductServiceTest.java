@@ -53,8 +53,7 @@ class ProductServiceTest {
         assertThat(result).isNotNull();
         assertAll(
             () -> assertThat(result).hasSize(1),
-            () -> assertThat(result.get(0)).usingRecursiveComparison()
-                .isEqualTo(product)
+            () -> assertThat(result).containsExactly(product)
         );
     }
 
