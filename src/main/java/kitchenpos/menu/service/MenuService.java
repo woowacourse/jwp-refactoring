@@ -14,6 +14,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
+import kitchenpos.menu.dto.MenuRequestDto;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 
