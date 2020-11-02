@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.Orderz;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(10, !EXPECTED);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Orderz order = new Orderz(savedOrderTable.getId(), Collections.emptyList());
+        Order order = new Order(savedOrderTable.getId(), Collections.emptyList());
         order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 

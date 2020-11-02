@@ -7,13 +7,15 @@ import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
 
 
+@Table(name = "`Order`")
 @AttributeOverride(name = "id", column = @Column(name = "ORDER_ID"))
 @Entity
-public class Orderz extends BaseEntity {
+public class Order extends BaseEntity {
     private static final String DEFAULT_ORDER_STATUS = OrderStatus.COOKING.name();
 
     private Long orderTableId;
@@ -25,10 +27,10 @@ public class Orderz extends BaseEntity {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Orderz() {
+    public Order() {
     }
 
-    public Orderz(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = DEFAULT_ORDER_STATUS;
         this.orderLineItems = orderLineItems;

@@ -2,10 +2,10 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.Orderz;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-class OrderzServiceTest {
+class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
@@ -69,10 +69,10 @@ class OrderzServiceTest {
         List<OrderLineItem> orderLineItem = createOrderLineItem();
 
         // when
-        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
+        Order result = orderService.create(orderTable.getId(), orderLineItem);
 
         // then
-        Orderz savedOrder = orderRepository.findById(result.getId())
+        Order savedOrder = orderRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrder(result);
 
@@ -124,7 +124,7 @@ class OrderzServiceTest {
         orderService.create(orderTable.getId(), orderLineItems);
 
         // when
-        List<Orderz> list = orderService.list();
+        List<Order> list = orderService.list();
 
         // when
         assertThat(list).hasSize(orderRepository.findAll().size());
@@ -141,11 +141,11 @@ class OrderzServiceTest {
         List<OrderLineItem> orderLineItem = createOrderLineItem();
 
         // when
-        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
+        Order result = orderService.create(orderTable.getId(), orderLineItem);
         orderService.changeOrderStatus(result.getId(), CHANGED_STATUS);
 
         // then
-        Orderz changeOrder = orderRepository.findById(result.getId())
+        Order changeOrder = orderRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         assertThat(changeOrder.getOrderStatus()).isEqualTo(CHANGED_STATUS);
     }
@@ -160,7 +160,7 @@ class OrderzServiceTest {
         List<OrderLineItem> orderLineItem = createOrderLineItem();
 
         // when
-        Orderz result = orderService.create(orderTable.getId(), orderLineItem);
+        Order result = orderService.create(orderTable.getId(), orderLineItem);
         assertThatThrownBy(() -> result.updateOrderStatus(CHANGED_STATUS))
                 .isInstanceOf(IllegalArgumentException.class);
     }

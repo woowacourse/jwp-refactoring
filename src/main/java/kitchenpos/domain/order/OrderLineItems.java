@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class OrderLineItems {
     private final List<OrderLineItem> orderLineItems;
 
-    public OrderLineItems(List<OrderLineItem> orderLineItems, Orderz order) {
+    public OrderLineItems(List<OrderLineItem> orderLineItems, Order order) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
@@ -29,7 +29,7 @@ public class OrderLineItems {
         }
     }
 
-    public void updateOrder(Orderz order) {
+    public void updateOrder(Order order) {
         for (final OrderLineItem orderLineItem : orderLineItems) {
             orderLineItem.updateOrder(order);
         }

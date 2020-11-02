@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.Orderz;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -33,7 +33,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Orderz create(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public Order create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -41,17 +41,17 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Orderz savedOrder = orderRepository.save(new Orderz(orderTableId, orderLineItems));
+        Order savedOrder = orderRepository.save(new Order(orderTableId, orderLineItems));
         OrderLineItems orderLineItems_ = new OrderLineItems(orderLineItems, savedOrder);
         orderLineItemRepository.saveAll(orderLineItems_.getOrderLineItems());
 
         return savedOrder;
     }
 
-    public List<Orderz> list() {
-        final List<Orderz> orders = orderRepository.findAll();
+    public List<Order> list() {
+        final List<Order> orders = orderRepository.findAll();
 
-        for (final Orderz order : orders) {
+        for (final Order order : orders) {
             order.updateOrderLineItems(orderLineItemRepository.findAllByOrder(order));
         }
 
@@ -59,8 +59,8 @@ public class OrderService {
     }
 
     @Transactional
-    public Orderz changeOrderStatus(Long orderId, String orderStatus) {
-        final Orderz order = orderRepository.findById(orderId)
+    public Order changeOrderStatus(Long orderId, String orderStatus) {
+        final Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         order.updateOrderStatus(orderStatus);
         return order;

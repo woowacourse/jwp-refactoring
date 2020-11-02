@@ -15,7 +15,7 @@ public class OrderLineItem extends BaseEntity {
     private Long seq;
     @ManyToOne
     @JoinColumn(name = "ORDER_ID")
-    private Orderz order;
+    private Order order;
     private Long menuId;
     private long quantity;
 
@@ -30,7 +30,7 @@ public class OrderLineItem extends BaseEntity {
         return menuId;
     }
 
-    public void updateOrder(Orderz order) {
+    public void updateOrder(Order order) {
         this.order = order;
     }
 }
