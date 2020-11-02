@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
@@ -16,18 +18,20 @@ import java.util.List;
 @AttributeOverride(name = "id", column = @Column(name = "ORDER_ID"))
 @Entity
 public class Order extends BaseEntity {
-    private static final String DEFAULT_ORDER_STATUS = OrderStatus.COOKING.name();
+    private static final OrderStatus DEFAULT_ORDER_STATUS = OrderStatus.COOKING;
 
     private Long orderTableId;
-    private String orderStatus;
 
-    @CreatedDate
-    private LocalDateTime orderedTime;
+    @Enumerated(EnumType.STRING)
+    public OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    @CreatedDate
+    private LocalDateTime orderedTime;
+
+    protected Order() {
     }
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
@@ -37,10 +41,10 @@ public class Order extends BaseEntity {
     }
 
     public void updateOrderStatus(final String orderStatus) {
-        if (!OrderStatus.isOrderStatus(orderStatus) || OrderStatus.isCompletion(this.orderStatus)) {
+        if (OrderStatus.COMPLETION == this.orderStatus) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
     }
 
     public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -51,7 +55,7 @@ public class Order extends BaseEntity {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

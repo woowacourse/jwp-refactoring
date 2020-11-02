@@ -53,14 +53,6 @@ class OrderServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    @AfterEach
-    void tearDown() {
-        menuProductRepository.deleteAll();
-        productRepository.deleteAll();
-        menuRepository.deleteAll();
-        menuGroupRepository.deleteAll();
-    }
-
     @DisplayName("새로운 주문를 생성한다.")
     @Test
     void createTest() {
@@ -77,7 +69,7 @@ class OrderServiceTest {
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrder(result);
 
         assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
-        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(savedOrder.getOrderedTime()).isNotNull();
         assertThat(savedOrderLineItems).hasSize(1);
     }
@@ -134,7 +126,7 @@ class OrderServiceTest {
     @DisplayName("Order 상태를 변경한다.")
     @Test
     void changeOrderStatusTest() {
-        final String CHANGED_STATUS = OrderStatus.COMPLETION.name();
+        final OrderStatus CHANGED_STATUS = OrderStatus.COMPLETION;
 
         // given
         OrderTable orderTable = createOrderTable(false);
@@ -142,7 +134,7 @@ class OrderServiceTest {
 
         // when
         Order result = orderService.create(orderTable.getId(), orderLineItem);
-        orderService.changeOrderStatus(result.getId(), CHANGED_STATUS);
+        orderService.changeOrderStatus(result.getId(), CHANGED_STATUS.name());
 
         // then
         Order changeOrder = orderRepository.findById(result.getId())
@@ -177,6 +169,14 @@ class OrderServiceTest {
 
     private List<OrderLineItem> createOrderLineItem() {
         Menu menu = createMenu();
-        return Collections.singletonList(new OrderLineItem(menu.getId()));
+        return Collections.singletonList(orderLineItemRepository.save(new OrderLineItem(menu.getId())));
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuProductRepository.deleteAll();
+        productRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }
