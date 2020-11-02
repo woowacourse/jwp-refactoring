@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.dto.MenuQuantityRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
@@ -9,7 +10,6 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;

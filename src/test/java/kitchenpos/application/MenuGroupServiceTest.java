@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
@@ -8,15 +7,10 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 
-@SpringBootTest(classes = {
-        MenuGroupRepository.class,
-        MenuGroupService.class
-})
 class MenuGroupServiceTest extends ServiceTest {
 
     @Autowired
@@ -25,8 +19,9 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("create: 메뉴 그룹 생성")
     @Test
     void create() {
-        final MenuGroup menuGroup = createMenuGroup("이십마리메뉴");
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroupRequest menuGroupRequest = new MenuGroupRequest("이십마리메뉴");
+
+        final MenuGroupResponse actual = menuGroupService.create(menuGroupRequest);
 
         assertThat(actual).isNotNull();
         assertThat(actual.getId()).isNotNull();
@@ -36,12 +31,13 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("list: 메뉴 그룹 전체 조회")
     @Test
     void list() {
-        final MenuGroup menuGroup = createMenuGroup("이십마리메뉴");
-        menuGroupService.create(menuGroup);
+        final MenuGroupRequest menuGroupRequest1 = new MenuGroupRequest("이십마리메뉴");
+        final MenuGroupRequest menuGroupRequest2 = new MenuGroupRequest("삼십마리메뉴");
+        menuGroupService.create(menuGroupRequest1);
+        menuGroupService.create(menuGroupRequest2);
 
-        final List<MenuGroup> menuGroups = menuGroupService.list();
+        final List<MenuGroupResponse> actual = menuGroupService.list();
 
-        assertThat(menuGroups).isNotEmpty();
-        assertThat(menuGroups).hasSize(1);
+        assertThat(actual).hasSize(2);
     }
 }

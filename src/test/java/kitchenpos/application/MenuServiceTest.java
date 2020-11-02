@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
@@ -11,24 +10,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.ProductQuantityRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
-@SpringBootTest(classes = {
-        MenuRepository.class,
-        MenuGroupRepository.class,
-        MenuProductRepository.class,
-        ProductRepository.class,
-        MenuService.class
-})
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
@@ -48,81 +42,90 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuGroup menuGroup;
 
-    private MenuProduct menuProduct;
+    private ProductQuantityRequest productQuantityRequest;
 
     @BeforeEach
     void setUp() {
-        final Product product = productRepository.save(createProduct("매콤치킨", BigDecimal.valueOf(16000)));
-        menuGroup = menuGroupRepository.save(createMenuGroup("이십마리메뉴"));
+        final Product product = productRepository.save(new Product("매콤치킨", BigDecimal.valueOf(16000)));
+        menuGroup = menuGroupRepository.save(new MenuGroup("이십마리메뉴"));
 
-        final Menu menu = menuRepository.save(createMenu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.emptyList()));
-        menuProduct = menuProductRepository.save(creatMenuProduct(menu.getId(), product.getId(), 1L));
+        final Menu menu = menuRepository.save(new Menu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId()));
+        final MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(menu.getId(), product.getId(), 1L));
+
+        productQuantityRequest = new ProductQuantityRequest(menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     @DisplayName("create: 메뉴 생성")
     @Test
     void create() {
-        final Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(menuProduct));
-        final Menu actual = menuService.create(menu);
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
+
+        final MenuResponse actual = menuService.create(menuRequest);
 
         assertThat(actual).isNotNull();
         assertThat(actual.getName()).isEqualTo("후라이드치킨");
         assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16000));
         assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
-        assertThat(actual.getMenuProducts()).isNotEmpty();
+        assertThat(actual.getMenuProductResponses()).isNotEmpty();
     }
 
     @DisplayName("create: 가격이 null일 때 예외 처리")
     @Test
     void create_IfPriceIsNull_Exception() {
-        final Menu menu = createMenu("후라이드치킨", null, menuGroup.getId(), Collections.singletonList(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", null, menuGroup.getId(), Collections.singletonList(productQuantityRequest));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 가격이 음수일 때 예외 처리")
     @Test
     void create_IfPriceIsNegative_Exception() {
-        final Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(-1L), menuGroup.getId(), Collections.singletonList(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(-1L), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: MenuGroup의 Id가 존재하지 않을 때 예외 처리")
     @Test
     void create_IfMenuGroupIdDoesNotExist_Exception() {
-        final Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16000),0L, Collections.singletonList(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000),0L, Collections.singletonList(productQuantityRequest));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 상품의 Id가 존재하지 않을 때 예외 처리")
     @Test
     void create_IfProductIdDoesNotExist_InMenuProduct_Exception() {
-        final MenuProduct menuProductNotExistId = creatMenuProduct(1L, 0L, 1L);
-        final Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(menuProductNotExistId));
+        final MenuProduct menuProduct = new MenuProduct(1L, 0L, 1L);
+        final ProductQuantityRequest menuProductNotExistId = new ProductQuantityRequest(menuProduct.getProductId(), menuProduct.getQuantity());
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(menuProductNotExistId));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 가격이 메뉴상품의 가격의 총 합보다 클 때 예외 처리")
     @Test
     void create_IfPriceIsGreaterThanSumOfMenuProduct_Exception() {
-        final Menu menu = createMenu("후라이드치킨", BigDecimal.valueOf(Integer.MAX_VALUE), menuGroup.getId(), Collections.singletonList(menuProduct));
+        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(Integer.MAX_VALUE), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("list: 메뉴 전체 조회")
     @Test
     void list() {
-        final List<Menu> menus = menuService.list();
+        final MenuRequest menuRequest1 = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
+        final MenuRequest menuRequest2 = new MenuRequest("양념치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
+        menuService.create(menuRequest1);
+        menuService.create(menuRequest2);
 
-        assertThat(menus).isNotEmpty();
+        final List<MenuResponse> actual = menuService.list();
+
+        assertThat(actual).isNotEmpty();
     }
 }
