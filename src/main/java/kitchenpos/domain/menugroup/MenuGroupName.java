@@ -20,7 +20,7 @@ public class MenuGroupName {
 
     private void validate(String name) {
         if (Objects.isNull(name)) {
-            throw new NullPointerException("MenuGroup name은 null일 수 없습니다.");
+            throw new IllegalArgumentException("MenuGroup name은 null일 수 없습니다.");
         }
         if (name.isEmpty()) {
             throw new IllegalArgumentException("MenuGroup name은 비어있을 수 없습니다.");

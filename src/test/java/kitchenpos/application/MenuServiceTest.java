@@ -57,7 +57,6 @@ class MenuServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("Menu 생성 - 예외 발생, 유효하지 않은 MenuGroupId")
     @ParameterizedTest
-//    @NullSource
     @ValueSource(longs = {-2, -1})
     void create_InvalidMenuGroupId_ThrownException(Long menuGroupId) {
         MenuProduct menuProduct = getMenuProduct();

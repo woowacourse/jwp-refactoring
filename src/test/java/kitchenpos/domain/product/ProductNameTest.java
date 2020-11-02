@@ -4,25 +4,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class ProductNameTest {
 
-    @DisplayName("생성자 테스트 - NPE 발생, Name이 Null인 경우")
-    @Test
-    void constructor_NullName_ThrownNullPointerException() {
-        assertThatThrownBy(() -> new ProductName(null))
-            .isInstanceOf(NullPointerException.class);
-    }
-
-    @DisplayName("생성자 테스트 - IAE 발생, Name이 공란인 경우")
-    @Test
-    void constructor_EmptyName_ThrownIllegalArgumentException() {
-        String emptyName = "";
-
-        assertThatThrownBy(() -> new ProductName(emptyName))
+    @DisplayName("생성자 테스트 - IAE 발생, Name이 Null이거나 공란인 경우")
+    @ParameterizedTest
+    @NullAndEmptySource
+    void constructor_NullOrEmptyName_ThrownIllegalArgumentException(String name) {
+        assertThatThrownBy(() -> new ProductName(name))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

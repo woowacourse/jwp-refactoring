@@ -1,7 +1,6 @@
 package kitchenpos.constants;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class Constants {
 
@@ -16,7 +15,6 @@ public class Constants {
     public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS = 1;
     public static final boolean TEST_ORDER_TABLE_EMPTY_TRUE = true;
     public static final int TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY = 0;
-    public static final LocalDateTime TEST_ORDER_ORDERED_TIME = LocalDateTime.now();
     public static final long TEST_ORDER_WRONG_ID = -1L;
     public static final long TEST_ORDER_LINE_ITEM_QUANTITY = 1L;
 

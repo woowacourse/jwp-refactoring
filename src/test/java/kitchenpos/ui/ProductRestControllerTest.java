@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -19,16 +18,14 @@ import kitchenpos.ui.dto.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(ProductRestController.class)
-class ProductRestControllerTest {
+class ProductRestControllerTest extends KitchenPosControllerTest {
 
     private static final ProductResponse PRODUCT;
 
@@ -40,26 +37,20 @@ class ProductRestControllerTest {
         PRODUCT = ProductResponse.of(id, name, price);
     }
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private ProductService productService;
 
     @DisplayName("상품 추가")
     @Test
     void create() throws Exception {
-        String requestBody = "{\n"
-            + "  \"name\": \"" + PRODUCT.getName() + "\",\n"
-            + "  \"price\": " + PRODUCT.getPrice() + "\n"
-            + "}";
+        ProductRequest productRequest = new ProductRequest(PRODUCT.getName(), PRODUCT.getPrice());
 
-        given(productService.create(any(ProductRequest.class)))
+        given(productService.create(productRequest))
             .willReturn(PRODUCT);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/products")
+        final ResultActions resultActions = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(productRequest)))
             .andDo(print());
 
         resultActions
@@ -78,7 +69,7 @@ class ProductRestControllerTest {
         given(productService.list())
             .willReturn(Collections.singletonList(PRODUCT));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/products")
+        final ResultActions resultActions = mockMvc.perform(get("/api/products")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 

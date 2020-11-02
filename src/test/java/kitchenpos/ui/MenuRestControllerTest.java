@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,21 +14,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.MenuService;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuProductResponse;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuRestController.class)
-class MenuRestControllerTest {
+class MenuRestControllerTest extends KitchenPosControllerTest {
 
     private static final MenuResponse MENU;
 
@@ -48,33 +46,23 @@ class MenuRestControllerTest {
             .of(menuId, menuName, menuPrice, menuGroupId, Collections.singletonList(menuProduct));
     }
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private MenuService menuService;
 
     @DisplayName("메뉴 추가")
     @Test
     void create() throws Exception {
-        String requestBody = "{\n"
-            + "  \"name\": \"" + MENU.getName() + "\",\n"
-            + "  \"price\": " + MENU.getPrice() + ",\n"
-            + "  \"menuGroupId\": " + MENU.getMenuGroupId() + ",\n"
-            + "  \"menuProducts\": [\n"
-            + "    {\n"
-            + "      \"productId\": " + MENU.getMenuProducts().get(0).getProductId() + ",\n"
-            + "      \"quantity\": " + MENU.getMenuProducts().get(0).getQuantity() + "\n"
-            + "    }\n"
-            + "  ]\n"
-            + "}";
+        MenuRequest menuRequest = new MenuRequest(MENU.getName(), MENU.getPrice(),
+            MENU.getMenuGroupId(), Collections
+            .singletonList(new MenuProductRequest(MENU.getMenuProducts().get(0).getProductId(),
+                MENU.getMenuProducts().get(0).getQuantity())));
 
-        given(menuService.create(any(MenuRequest.class)))
+        given(menuService.create(menuRequest))
             .willReturn(MENU);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(menuRequest)))
             .andDo(print());
 
         resultActions
@@ -103,7 +91,7 @@ class MenuRestControllerTest {
         given(menuService.list())
             .willReturn(Collections.singletonList(MENU));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(get("/api/menus")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 

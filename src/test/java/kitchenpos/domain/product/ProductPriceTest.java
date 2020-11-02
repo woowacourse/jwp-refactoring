@@ -11,11 +11,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class ProductPriceTest {
 
-    @DisplayName("생성자 테스트 - NPE 발생, Price가 Null인 경우")
+    @DisplayName("생성자 테스트 - IAE 발생, Price가 Null인 경우")
     @Test
-    void constructor_NullPrice_ThrownNullPointerException() {
+    void constructor_NullPrice_ThrownIllegalArgumentException() {
         assertThatThrownBy(() -> new ProductPrice(null))
-            .isInstanceOf(NullPointerException.class);
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("생성자 테스트 - IAE 발생, Price가 0보다 작은 경우")

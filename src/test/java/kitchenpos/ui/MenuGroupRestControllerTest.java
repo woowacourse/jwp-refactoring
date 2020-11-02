@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -18,16 +17,14 @@ import kitchenpos.ui.dto.MenuGroupRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest {
+class MenuGroupRestControllerTest extends KitchenPosControllerTest {
 
     private static final MenuGroupResponse MENU_GROUP;
 
@@ -37,25 +34,20 @@ class MenuGroupRestControllerTest {
         MENU_GROUP = MenuGroupResponse.of(id, name);
     }
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() throws Exception {
-        String requestBody = "{\n"
-            + "  \"name\": \"" + MENU_GROUP.getName() + "\"\n"
-            + "}";
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(MENU_GROUP.getName());
 
-        given(menuGroupService.create(any(MenuGroupRequest.class)))
+        given(menuGroupService.create(menuGroupRequest))
             .willReturn(MENU_GROUP);
 
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(menuGroupRequest)))
             .andDo(print());
 
         resultActions

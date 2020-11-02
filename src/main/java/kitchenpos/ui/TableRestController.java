@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import javax.validation.Valid;
 import kitchenpos.application.TableService;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
@@ -26,7 +27,7 @@ public class TableRestController {
 
     @PostMapping("/api/tables")
     public ResponseEntity<TableResponse> create(
-        @RequestBody final TableCreateRequest tableCreateRequest) {
+        @RequestBody @Valid final TableCreateRequest tableCreateRequest) {
         final TableResponse tableResponse = tableService.create(tableCreateRequest);
         final URI uri = URI.create("/api/tables/" + tableResponse.getId());
 
@@ -44,7 +45,7 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<TableResponse> changeEmpty(@PathVariable final Long orderTableId,
-        @RequestBody final TableChangeEmptyRequest tableChangeEmptyRequest) {
+        @RequestBody @Valid final TableChangeEmptyRequest tableChangeEmptyRequest) {
         TableResponse changedTable = tableService
             .changeEmpty(orderTableId, tableChangeEmptyRequest);
 
@@ -54,7 +55,7 @@ public class TableRestController {
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<TableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId,
-        @RequestBody final TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest) {
+        @RequestBody @Valid final TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest) {
         TableResponse changedTable = tableService
             .changeNumberOfGuests(orderTableId, tableChangeNumberOfGuestsRequest);
 

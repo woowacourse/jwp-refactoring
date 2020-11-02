@@ -2,8 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,16 +22,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableRestController.class)
-class TableRestControllerTest {
+class TableRestControllerTest extends KitchenPosControllerTest {
 
     private static final TableResponse EMPTY_TABLE;
 
@@ -45,26 +41,21 @@ class TableRestControllerTest {
         EMPTY_TABLE = TableResponse.of(orderTableId, null, numberOfGuests, empty);
     }
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private TableService tableService;
 
     @DisplayName("테이블 추가")
     @Test
     void create() throws Exception {
-        String requestBody = "{\n"
-            + "  \"numberOfGuests\": " + EMPTY_TABLE.getNumberOfGuests() + ",\n"
-            + "  \"empty\": " + EMPTY_TABLE.isEmpty() + "\n"
-            + "}";
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            EMPTY_TABLE.getNumberOfGuests(), EMPTY_TABLE.isEmpty());
 
-        given(tableService.create(any(TableCreateRequest.class)))
+        given(tableService.create(tableCreateRequest))
             .willReturn(EMPTY_TABLE);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(tableCreateRequest)))
             .andDo(print());
 
         resultActions
@@ -83,7 +74,7 @@ class TableRestControllerTest {
         given(tableService.list())
             .willReturn(Collections.singletonList(EMPTY_TABLE));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(get("/api/tables")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 
@@ -99,21 +90,20 @@ class TableRestControllerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) throws Exception {
+        Long tableId = EMPTY_TABLE.getId();
+        TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(empty);
+
         TableResponse table = TableResponse
-            .of(EMPTY_TABLE.getId(), EMPTY_TABLE.getTableGroupId(), EMPTY_TABLE.getNumberOfGuests(),
-                empty);
+            .of(tableId, EMPTY_TABLE.getTableGroupId(), EMPTY_TABLE.getNumberOfGuests(),
+                tableChangeEmptyRequest.isEmpty());
 
-        String requestBody = "{\n"
-            + "  \"empty\": " + table.isEmpty() + "\n"
-            + "}";
-
-        given(tableService.changeEmpty(anyLong(), any(TableChangeEmptyRequest.class)))
+        given(tableService.changeEmpty(tableId, tableChangeEmptyRequest))
             .willReturn(table);
 
-        ResultActions resultActions = mockMvc
-            .perform(put("/api/tables/" + table.getId() + "/empty")
+        final ResultActions resultActions = mockMvc
+            .perform(put("/api/tables/" + tableId + "/empty")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content(objectMapper.writeValueAsBytes(tableChangeEmptyRequest)))
             .andDo(print());
 
         resultActions
@@ -128,21 +118,20 @@ class TableRestControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 3})
     void changeNumberOfGuests(int numberOfGuests) throws Exception {
-        TableResponse table = TableResponse
-            .of(EMPTY_TABLE.getId(), EMPTY_TABLE.getTableGroupId(), numberOfGuests, false);
+        Long tableId = EMPTY_TABLE.getId();
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest
+            = new TableChangeNumberOfGuestsRequest(numberOfGuests);
 
-        String requestBody = "{\n"
-            + "  \"numberOfGuests\": " + table.getNumberOfGuests() + "\n"
-            + "}";
+        TableResponse table = TableResponse.of(tableId, EMPTY_TABLE.getTableGroupId(),
+            tableChangeNumberOfGuestsRequest.getNumberOfGuests(), false);
 
-        given(tableService
-            .changeNumberOfGuests(anyLong(), any(TableChangeNumberOfGuestsRequest.class)))
+        given(tableService.changeNumberOfGuests(tableId, tableChangeNumberOfGuestsRequest))
             .willReturn(table);
 
-        ResultActions resultActions = mockMvc
+        final ResultActions resultActions = mockMvc
             .perform(put("/api/tables/" + table.getId() + "/number-of-guests")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content(objectMapper.writeValueAsBytes(tableChangeNumberOfGuestsRequest)))
             .andDo(print());
 
         resultActions

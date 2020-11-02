@@ -2,12 +2,22 @@ package kitchenpos.ui.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 public class MenuRequest {
 
+    @NotEmpty
     private String name;
+
+    @NotNull
     private BigDecimal price;
+
+    @NotNull
     private Long menuGroupId;
+
+    @NotEmpty
     private List<MenuProductRequest> menuProducts;
 
     private MenuRequest() {
@@ -41,6 +51,26 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuRequest that = (MenuRequest) o;
+        return Objects.equals(name, that.name) &&
+            Objects.equals(price, that.price) &&
+            Objects.equals(menuGroupId, that.menuGroupId) &&
+            Objects.equals(menuProducts, that.menuProducts);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price, menuGroupId, menuProducts);
     }
 
     @Override

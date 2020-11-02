@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,16 +20,14 @@ import kitchenpos.ui.dto.TableGroupResponse;
 import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableGroupRestController.class)
-class TableGroupRestControllerTest {
+class TableGroupRestControllerTest extends KitchenPosControllerTest {
 
     private static final TableGroupResponse TABLE_GROUP;
 
@@ -46,32 +43,23 @@ class TableGroupRestControllerTest {
         TABLE_GROUP = TableGroupResponse.of(tableGroupId, LocalDateTime.now(), orderTables);
     }
 
-    @Autowired
-    private MockMvc mockMvc;
-
     @MockBean
     private TableGroupService tableGroupService;
 
     @DisplayName("테이블 그룹 추가")
     @Test
     void create() throws Exception {
-        String requestBody = "{\n"
-            + "  \"orderTables\": [\n"
-            + "    {\n"
-            + "      \"id\": " + TABLE_GROUP.getOrderTables().get(0).getId() + "\n"
-            + "    },\n"
-            + "    {\n"
-            + "      \"id\": " + TABLE_GROUP.getOrderTables().get(1).getId() + "\n"
-            + "    }\n"
-            + "  ]\n"
-            + "}";
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(
+            TABLE_GROUP.getOrderTables().get(0).getId(),
+            TABLE_GROUP.getOrderTables().get(1).getId())
+        );
 
-        given(tableGroupService.create(any(TableGroupRequest.class)))
+        given(tableGroupService.create(tableGroupRequest))
             .willReturn(TABLE_GROUP);
 
-        ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
+        final ResultActions resultActions = mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(tableGroupRequest)))
             .andDo(print());
 
         resultActions
@@ -90,7 +78,7 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 제거")
     @Test
     void ungroup() throws Exception {
-        ResultActions resultActions = mockMvc
+        final ResultActions resultActions = mockMvc
             .perform(delete("/api/table-groups/" + TABLE_GROUP.getId())
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());

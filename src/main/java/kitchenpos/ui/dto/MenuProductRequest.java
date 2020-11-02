@@ -1,9 +1,15 @@
 package kitchenpos.ui.dto;
 
+import java.util.Objects;
+import javax.validation.constraints.NotNull;
+
 public class MenuProductRequest {
 
+    @NotNull
     private Long productId;
-    private long quantity;
+
+    @NotNull
+    private Long quantity;
 
     private MenuProductRequest() {
     }
@@ -19,6 +25,24 @@ public class MenuProductRequest {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuProductRequest that = (MenuProductRequest) o;
+        return Objects.equals(productId, that.productId) &&
+            Objects.equals(quantity, that.quantity);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, quantity);
     }
 
     @Override

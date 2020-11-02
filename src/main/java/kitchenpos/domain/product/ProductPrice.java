@@ -21,7 +21,7 @@ public class ProductPrice {
 
     private void validate(BigDecimal price) {
         if (Objects.isNull(price)) {
-            throw new NullPointerException("Product의 Price는 Null일 수 없습니다.");
+            throw new IllegalArgumentException("Product의 Price는 Null일 수 없습니다.");
         }
         if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Product의 Price는 0보다 작을 수 없습니다.");

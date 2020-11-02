@@ -20,7 +20,7 @@ public class MenuName {
 
     private void validate(String name) {
         if (Objects.isNull(name)) {
-            throw new NullPointerException("Menu Name은 Null일 수 없습니다.");
+            throw new IllegalArgumentException("Menu Name은 Null일 수 없습니다.");
         }
         if (name.isEmpty()) {
             throw new IllegalArgumentException("Menu Name은 비어있을 수 없습니다.");
