@@ -75,7 +75,7 @@ class TableServiceTest {
     }
 
     @Test
-    @DisplayName("create - OrderTable 데이터 초기화 없이 생성")
+    @DisplayName("create - Table 데이터 초기화 없이 생성")
     void createWithoutAnyInitializing() {
         TableCreateRequest table = new TableCreateRequest();
 

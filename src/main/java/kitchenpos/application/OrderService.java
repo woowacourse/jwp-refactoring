@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -22,18 +22,18 @@ public class OrderService {
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final TableDao tableDao;
 
     public OrderService(
             final MenuDao menuDao,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+            final TableDao tableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.tableDao = tableDao;
     }
 
     @Transactional
@@ -54,7 +54,7 @@ public class OrderService {
 
         order.setId(null);
 
-        final Table table = orderTableDao.findById(order.getOrderTableId())
+        final Table table = tableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (table.isEmpty()) {

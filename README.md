@@ -72,7 +72,7 @@
 | 메뉴 | menu | 메뉴 그룹에 속하는 실제 주문 가능 단위 |
 | 메뉴 상품 | menu product | 메뉴에 속하는 수량이 있는 상품 |
 | 금액 | amount | 가격 * 수량 |
-| 주문 테이블 | order table | 매장에서 주문이 발생하는 영역 |
+| 주문 테이블 | order table  | 매장의 테이블. 매장에서 주문이 발생하는 영역. (=table)
 | 빈 테이블 | empty table | 주문을 등록할 수 없는 주문 테이블 |
 | 주문 | order | 매장에서 발생하는 주문 |
 | 주문 상태 | order status | 주문은 조리(cooking) ➜ 식사(meal) ➜ 계산 완료(completion) 순서로 진행된다. |

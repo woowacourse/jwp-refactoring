@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
@@ -18,12 +18,12 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final TableDao tableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
+    public TableGroupService(final OrderDao orderDao, final TableDao tableDao, final TableGroupDao tableGroupDao) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.tableDao = tableDao;
         this.tableGroupDao = tableGroupDao;
     }
 
@@ -39,7 +39,7 @@ public class TableGroupService {
                 .map(Table::getId)
                 .collect(Collectors.toList());
 
-        final List<Table> savedTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<Table> savedTables = tableDao.findAllByIdIn(orderTableIds);
 
         if (tables.size() != savedTables.size()) {
             throw new IllegalArgumentException();
@@ -58,7 +58,7 @@ public class TableGroupService {
         final Long tableGroupId = savedTableGroup.getId();
         for (final Table savedTable : savedTables) {
             savedTable.putInGroup(tableGroupId);
-            orderTableDao.save(savedTable);
+            tableDao.save(savedTable);
         }
         savedTableGroup.setTables(savedTables);
 
@@ -67,19 +67,19 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = orderTableDao.findAllByTableGroupId(tableGroupId);
+        final List<Table> tables = tableDao.findAllByTableGroupId(tableGroupId);
 
         final List<Long> orderTableIds = tables.stream()
                 .map(Table::getId)
                 .collect(Collectors.toList());
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        if (orderDao.existsByTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
         for (final Table table : tables) {
             table.excludeFromGroup();
-            orderTableDao.save(table);
+            tableDao.save(table);
         }
     }
 }

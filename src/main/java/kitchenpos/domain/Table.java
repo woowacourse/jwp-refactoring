@@ -51,19 +51,11 @@ public class Table {
         tableGroupId = null;
     }
 
-    public Long getId() {
-        return id;
+    public void changeEmpty(final boolean empty) {
+        this.empty = empty;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -74,7 +66,15 @@ public class Table {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public Long getId() {
+        return id;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroupId;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
     }
 }
