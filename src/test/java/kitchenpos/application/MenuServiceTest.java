@@ -21,7 +21,7 @@ import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductDto;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -31,7 +31,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -40,7 +40,7 @@ class MenuServiceTest {
     @Test
     void create() {
         Product product = createProduct(null, "콜라", BigDecimal.valueOf(2000L));
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
@@ -86,7 +86,7 @@ class MenuServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
 
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         MenuCreateRequest request = new MenuCreateRequest("콜라 세트", 2100L, savedMenuGroup.getId(),
             Arrays.asList(new MenuProductDto(savedProduct.getId(), 1L)));
@@ -100,7 +100,7 @@ class MenuServiceTest {
     @Test
     void list() {
         Product product = createProduct(null, "콜라", BigDecimal.valueOf(2000L));
-        Product savedProduct = productDao.save(product);
+        Product savedProduct = productRepository.save(product);
 
         MenuGroup menuGroup = createMenuGroup(null, "음료류");
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);

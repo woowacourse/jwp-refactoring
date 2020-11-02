@@ -6,24 +6,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.dto.ProductCreateRequest;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public Long create(final ProductCreateRequest request) {
         Product product = request.toEntity();
-        return productDao.save(product).getId();
+        return productRepository.save(product).getId();
     }
 
     public List<Product> list() {
-        return productDao.findAll();
+        return productRepository.findAll();
     }
 }

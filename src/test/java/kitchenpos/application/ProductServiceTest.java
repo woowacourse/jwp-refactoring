@@ -54,7 +54,7 @@ class ProductServiceTest {
         assertAll(
             () -> assertThat(products).hasSize(1),
             () -> assertThat(products.get(0).getName()).isEqualTo("콜라"),
-            () -> assertThat(products.get(0).getPrice().longValue()).isEqualTo(2000L)
+            () -> assertThat(products.get(0).getProductPrice().getPrice().longValue()).isEqualTo(2000L)
         );
     }
 }

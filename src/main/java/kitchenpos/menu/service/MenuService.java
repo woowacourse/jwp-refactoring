@@ -15,25 +15,25 @@ import kitchenpos.menu.domain.MenuProductDao;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductDto;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 
 @Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
         final MenuDao menuDao,
         final MenuGroupDao menuGroupDao,
         final MenuProductDao menuProductDao,
-        final ProductDao productDao
+        final ProductRepository productRepository
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -44,9 +44,10 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (MenuProductDto menuProductDto : request.getMenuProductDtos()) {
-            final Product product = productDao.findById(menuProductDto.getProductId())
+            final Product product = productRepository.findById(menuProductDto.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
+            BigDecimal price = product.getProductPrice().getPrice();
+            sum = sum.add(price.multiply(BigDecimal.valueOf(menuProductDto.getQuantity())));
         }
 
         BigDecimal price = BigDecimal.valueOf(request.getPrice());

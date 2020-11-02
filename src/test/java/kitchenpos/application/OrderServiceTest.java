@@ -27,7 +27,7 @@ import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.domain.ProductDao;
+import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableRepository;
 
@@ -48,7 +48,7 @@ class OrderServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("주문 생성 시 주문항목이 없을 시 예외가 발생한다.")
     @Test
@@ -198,7 +198,7 @@ class OrderServiceTest {
 
     private Product saveProduct() {
         Product product = createProduct(null, "양념치킨", BigDecimal.valueOf(2000L));
-        return productDao.save(product);
+        return productRepository.save(product);
     }
 
     private MenuGroup getMenuGroup() {

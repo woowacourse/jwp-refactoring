@@ -1,1 +1,1 @@
-ALTER TABLE table_group ALTER COLUMN created_date columnType NULL
+ALTER TABLE table_group ALTER COLUMN created_date DATETIME NULL
