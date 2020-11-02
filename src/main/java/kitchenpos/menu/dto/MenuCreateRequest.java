@@ -5,27 +5,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
 
 public class MenuCreateRequest {
 
     private String name;
     private Long price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProductDtos;
+    private List<MenuProductRequest> menuProductRequest;
 
     public MenuCreateRequest() {
     }
 
     public MenuCreateRequest(String name, Long price, Long menuGroupId,
-        List<MenuProductDto> menuProductDtos) {
+        List<MenuProductRequest> menuProductRequest) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductDtos = menuProductDtos;
+        this.menuProductRequest = menuProductRequest;
     }
 
-    public List<MenuProductDto> getMenuProductDtos() {
-        return menuProductDtos;
+    public List<MenuProductRequest> getMenuProductRequest() {
+        return menuProductRequest;
     }
 
     public Long getPrice() {
@@ -40,7 +41,7 @@ public class MenuCreateRequest {
         return name;
     }
 
-    public Menu toEntity() {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroupId, new ArrayList<>());
+    public Menu toEntity(MenuGroup menuGroup) {
+        return new Menu(name, BigDecimal.valueOf(price), menuGroup, new ArrayList<>());
     }
 }

@@ -19,13 +19,13 @@ public class EntityCreateHelper {
         return new MenuGroup(id, name);
     }
 
-    public static Menu createMenu(Long id, Long menuGroupId, List<MenuProduct> menuProducts, String name,
+    public static Menu createMenu(Long id, MenuGroup menuGroup, List<MenuProduct> menuProducts, String name,
         BigDecimal price) {
-        return new Menu(id, name, price, menuGroupId, menuProducts);
+        return new Menu(id, name, price, menuGroup, menuProducts);
     }
 
-    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
-        return new MenuProduct(seq, menuId, productId, quantity);
+    public static MenuProduct createMenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        return new MenuProduct(seq, menu, product, quantity);
     }
 
     public static OrderLineItem createOrderLineItem(Long seq, Order order, Long menuId, long quantity) {

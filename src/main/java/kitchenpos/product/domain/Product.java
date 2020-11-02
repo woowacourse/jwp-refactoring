@@ -45,4 +45,7 @@ public class Product {
         return name;
     }
 
+    public BigDecimal multiply(Long quantity) {
+        return productPrice.multiply(quantity);
+    }
 }

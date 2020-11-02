@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,10 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuDao;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupDao;
+import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -42,10 +43,10 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -53,7 +54,7 @@ class OrderServiceTest {
     @DisplayName("주문 생성 시 주문항목이 없을 시 예외가 발생한다.")
     @Test
     void createWithNoOrderItem() {
-        OrderCreateRequest request = new OrderCreateRequest(1L, null);
+        OrderCreateRequest request = new OrderCreateRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
@@ -189,11 +190,11 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu(MenuGroup savedMenuGroup, Product savedProduct) {
-        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct.getId(), 1L);
-        Menu 치킨세트 = createMenu(null, savedMenuGroup.getId(), Arrays.asList(menuProduct), "둘둘치킨",
+        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct, 1L);
+        Menu 치킨세트 = createMenu(null, savedMenuGroup, Arrays.asList(menuProduct), "둘둘치킨",
             BigDecimal.valueOf(1900L));
 
-        return menuDao.save(치킨세트);
+        return menuRepository.save(치킨세트);
     }
 
     private Product saveProduct() {
@@ -203,6 +204,6 @@ class OrderServiceTest {
 
     private MenuGroup getMenuGroup() {
         MenuGroup menuGroup = createMenuGroup(null, "치킨류");
-        return menuGroupDao.save(menuGroup);
+        return menuGroupRepository.save(menuGroup);
     }
 }

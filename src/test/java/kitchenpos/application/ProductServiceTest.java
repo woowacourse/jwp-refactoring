@@ -38,7 +38,6 @@ class ProductServiceTest {
     @CsvSource(value = {"-1,"})
     void createInvalidProduct(Long price) {
         ProductCreateRequest request = new ProductCreateRequest("콜라", price);
-        // todo csv 변경
         assertThatThrownBy(
             () -> productService.create(request)
         ).isInstanceOf(IllegalArgumentException.class);

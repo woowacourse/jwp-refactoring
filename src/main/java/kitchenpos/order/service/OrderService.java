@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.domain.MenuDao;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
@@ -21,18 +21,18 @@ import kitchenpos.table.domain.Table;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-        final MenuDao menuDao,
+        final MenuRepository menuRepository,
         final OrderRepository orderRepository,
         final OrderLineItemRepository orderLineItemRepository,
         final OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
@@ -46,7 +46,7 @@ public class OrderService {
             .map(OrderLineItemDto::getMenuId)
             .collect(Collectors.toList());
 
-        if (orderLineItemDtos.size() != menuDao.countByIdIn(menuIds) || orderLineItemDtos.isEmpty()) {
+        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds) || orderLineItemDtos.isEmpty()) {
             throw new IllegalArgumentException();
         }
 

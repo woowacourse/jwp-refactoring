@@ -7,7 +7,7 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class ProductPrice {
-    
+
     private BigDecimal price;
 
     public ProductPrice() {
@@ -22,5 +22,9 @@ public class ProductPrice {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public BigDecimal multiply(Long quantity) {
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 }
