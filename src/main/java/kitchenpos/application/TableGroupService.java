@@ -77,10 +77,8 @@ public class TableGroupService {
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
         for (final Table table : tables) {
-            table.setTableGroupId(null);
-            table.setEmpty(false);
+            table.excludeFromGroup();
             orderTableDao.save(table);
         }
     }

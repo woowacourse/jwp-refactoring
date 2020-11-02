@@ -62,7 +62,6 @@ public class TableService {
         if (savedTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-
         savedTable.setNumberOfGuests(numberOfGuests);
 
         return orderTableDao.save(savedTable);

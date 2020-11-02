@@ -149,7 +149,6 @@ class TableGroupServiceTest {
         // then
         for (Table table : tableService.list()) {
             assertThat(table.getTableGroupId()).isNull();
-            assertThat(table.isEmpty()).isFalse();
         }
     }
 
