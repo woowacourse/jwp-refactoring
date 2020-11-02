@@ -107,7 +107,7 @@ class ServiceIntegrationTest {
         return order;
     }
 
-    static OrderTable getNotEmptyOrderTable() {
+    static OrderTable getOrderTableNotEmpty() {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         return orderTable;
@@ -119,13 +119,19 @@ class ServiceIntegrationTest {
         return orderTable;
     }
 
+    static OrderTable getOrderTableWithTableGroupId(Long id, Long tableGroupId) {
+        OrderTable orderTable = getOrderTableWithId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        return orderTable;
+    }
+
     static List<OrderTable> getOrderTablesWithId(Long... ids) {
         return Arrays.stream(ids)
             .map(id -> getOrderTableWithId(id))
             .collect(Collectors.toList());
     }
 
-    private static OrderTable getOrderTableWithId(Long id) {
+    static OrderTable getOrderTableWithId(Long id) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
         return orderTable;

@@ -44,7 +44,7 @@ class TableServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("테이블의 빈 테이블 여부를 변경한다.")
     @Test
     void changeEmpty() {
-        OrderTable changedTable = tableService.changeEmpty(1L, getNotEmptyOrderTable());
+        OrderTable changedTable = tableService.changeEmpty(1L, getOrderTableNotEmpty());
 
         assertThat(changedTable.isEmpty()).isFalse();
     }
