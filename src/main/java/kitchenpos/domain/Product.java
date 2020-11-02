@@ -2,32 +2,32 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 
+import kitchenpos.builder.ProductBuilder;
+
 public class Product {
-    private Long id;
-    private String name;
-    private BigDecimal price;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+
+    public Product(Long id, String name, BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    public static ProductBuilder builder() {
+        return new ProductBuilder();
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }

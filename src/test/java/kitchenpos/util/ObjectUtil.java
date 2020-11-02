@@ -75,13 +75,15 @@ public class ObjectUtil {
     }
 
     public static Product createProduct(Long id, String name, Integer price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
+        BigDecimal value = null;
         if (price != null) {
-            product.setPrice(BigDecimal.valueOf(price));
+            value = BigDecimal.valueOf(price);
         }
-        return product;
+        return Product.builder()
+            .id(id)
+            .name(name)
+            .price(value)
+            .build();
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<OrderTable> orderTables) {
