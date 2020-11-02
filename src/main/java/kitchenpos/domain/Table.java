@@ -47,20 +47,17 @@ public class Table {
         this.empty = false;
     }
 
+    public void excludeFromGroup() {
+        tableGroupId = null;
+        empty = true;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
     }
 
     public int getNumberOfGuests() {

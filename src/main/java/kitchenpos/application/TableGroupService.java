@@ -79,8 +79,7 @@ public class TableGroupService {
         }
 
         for (final Table table : tables) {
-            table.setTableGroupId(null);
-            table.setEmpty(false);
+            table.excludeFromGroup();
             orderTableDao.save(table);
         }
     }
