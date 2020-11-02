@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_고기;
 import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_국;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,10 @@ class MenuGroupDaoTest {
 
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        assertThat(persistMenuGroup.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistMenuGroup.getId()).isNotNull(),
+            () -> assertThat(persistMenuGroup.getName()).isEqualTo(menuGroup.getName())
+        );
     }
 
     @Test

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.ProductFixture.PRODUCT_FIXTURE_1;
 import static kitchenpos.fixture.ProductFixture.PRODUCT_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,11 @@ class ProductServiceTest {
 
         Product persistProduct = productService.create(product);
 
-        assertThat(persistProduct).isNotNull();
+        assertAll(
+            () -> assertThat(persistProduct.getId()).isNotNull(),
+            () -> assertThat(persistProduct.getName()).isEqualTo(product.getName()),
+            () -> assertThat(persistProduct.getPrice().longValue()).isEqualTo(product.getPrice().longValue())
+        );
     }
 
     @Test

@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import static kitchenpos.fixture.MenuFixture.MENU_FIXTURE_1;
 import static kitchenpos.fixture.MenuFixture.MENU_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,7 +25,13 @@ class MenuDaoTest {
 
         Menu persistMenu = menuDao.save(menu);
 
-        assertThat(persistMenu.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistMenu.getId()).isNotNull(),
+            () -> assertThat(persistMenu).isEqualToComparingOnlyGivenFields(menu, "name", "menuGroupId"),
+            () -> assertThat(persistMenu.getPrice().longValue()).isEqualTo(menu.getPrice().longValue()),
+            () -> assertThat(persistMenu.getMenuProducts()).usingElementComparatorIgnoringFields("seq")
+                .isEqualTo(menu.getMenuProducts())
+        );
     }
 
     @Test

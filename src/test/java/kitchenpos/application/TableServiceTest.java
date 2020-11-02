@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_1;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,11 @@ class TableServiceTest {
 
         OrderTable persistOrderTable = tableService.create(orderTable);
 
-        assertThat(persistOrderTable.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistOrderTable.getId()).isNotNull(),
+            () -> assertThat(persistOrderTable.getTableGroupId()).isNull(),
+            () -> assertThat(persistOrderTable).isEqualToIgnoringGivenFields(orderTable, "id", "tableGroupId")
+        );
     }
 
     @Test

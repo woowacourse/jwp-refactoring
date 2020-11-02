@@ -3,6 +3,7 @@ package kitchenpos.dao;
 import static kitchenpos.fixture.OrderFixture.ORDER_FIXTURE_1;
 import static kitchenpos.fixture.OrderFixture.ORDER_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -25,7 +26,10 @@ class OrderDaoTest {
 
         Order persistOrder = orderDao.save(order);
 
-        assertThat(persistOrder.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistOrder.getId()).isNotNull(),
+            () -> assertThat(persistOrder).isEqualToIgnoringGivenFields(order, "id", "orderLineItems")
+        );
     }
 
     @Test
@@ -64,6 +68,7 @@ class OrderDaoTest {
     void existsByOrderTableIdInAndOrderStatusIn() {
         orderDao.save(ORDER_FIXTURE_1);
         orderDao.save(ORDER_FIXTURE_2);
+
         assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(1L, 2L),
             Arrays.asList("MEAL"))
         ).isTrue();

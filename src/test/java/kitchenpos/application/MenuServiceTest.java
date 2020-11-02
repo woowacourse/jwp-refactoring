@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -57,8 +58,13 @@ class MenuServiceTest {
     void create() {
         Menu persistMenu = menuService.create(menu);
 
-        assertThat(persistMenu.getName()).isEqualTo(menu.getName());
-        assertThat(persistMenu.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistMenu.getId()).isNotNull(),
+            () -> assertThat(persistMenu).isEqualToComparingOnlyGivenFields(menu, "name", "menuGroupId"),
+            () -> assertThat(persistMenu.getPrice().longValue()).isEqualTo(menu.getPrice().longValue()),
+            () -> assertThat(persistMenu.getMenuProducts()).usingElementComparatorIgnoringFields("seq")
+                .isEqualTo(menu.getMenuProducts())
+        );
     }
 
     @Test

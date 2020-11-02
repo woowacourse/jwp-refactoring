@@ -23,6 +23,7 @@ class MenuProductDaoTest {
         MenuProduct menuProduct = MENU_PRODUCT_FIXTURE_1;
 
         MenuProduct persistMenuProduct = menuProductDao.save(menuProduct);
+
         assertThat(menuProduct).isEqualToIgnoringGivenFields(persistMenuProduct, "seq");
     }
 

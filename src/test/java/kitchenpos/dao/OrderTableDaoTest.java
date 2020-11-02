@@ -6,6 +6,7 @@ import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_3;
 import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_4;
 import static kitchenpos.fixture.TableGroupFixture.TABLE_GROUP_FIXTURE_1;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
@@ -31,7 +32,12 @@ class OrderTableDaoTest {
 
         OrderTable persistOrderTable = orderTableDao.save(orderTable);
 
-        assertThat(persistOrderTable.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(persistOrderTable.getId()).isNotNull(),
+            () -> assertThat(persistOrderTable.getTableGroupId()).isNull(),
+            () -> assertThat(persistOrderTable).isEqualToIgnoringGivenFields(orderTable, "id", "tableGroupId")
+        );
+
     }
 
     @Test
