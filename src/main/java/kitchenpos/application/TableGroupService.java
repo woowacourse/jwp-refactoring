@@ -35,7 +35,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
         validateOrderTablesCount(orderTableIds);
 
-        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        List<OrderTable> savedOrderTables = orderTableDao.findAllById(orderTableIds);
         validateSavedTable(orderTableIds, savedOrderTables);
 
         TableGroup tableGroup = TableGroup.builder()
