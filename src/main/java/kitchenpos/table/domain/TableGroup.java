@@ -4,18 +4,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @CreatedDate
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup")
@@ -25,13 +31,12 @@ public class TableGroup {
     }
 
     public TableGroup(List<Table> tables) {
-        this(null, LocalDateTime.now(), tables);
+        this(null, tables);
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
+    public TableGroup(Long id, List<Table> tables) {
         validate(tables);
         this.id = id;
-        this.createdDate = createdDate;
         this.tables = tables;
     }
 
@@ -41,7 +46,7 @@ public class TableGroup {
         }
 
         for (final Table savedTable : tables) {
-            if (!savedTable.isEmpty() || savedTable.hasGroup()) {
+            if (savedTable.existCustomer() || savedTable.hasGroup()) {
                 throw new IllegalArgumentException();
             }
         }

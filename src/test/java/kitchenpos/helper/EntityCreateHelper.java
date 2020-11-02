@@ -41,7 +41,7 @@ public class EntityCreateHelper {
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
-        return new TableGroup(id, createdDate, tables);
+        return new TableGroup(id, tables);
     }
 
     public static Order createOrder(Long id, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems,

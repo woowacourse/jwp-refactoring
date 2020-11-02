@@ -3,6 +3,7 @@ package kitchenpos.table.domain;
 import java.util.Objects;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,10 +22,12 @@ public class Table {
     private TableGroup tableGroup;
 
     @Column(nullable = false)
-    private Integer numberOfGuests;
+    @Embedded
+    private TableNumberOfGuests tableNumberOfGuests;
 
     @Column(nullable = false)
-    private Boolean empty;
+    @Embedded
+    private TableEmpty tableEmpty;
 
     public Table() {
     }
@@ -36,8 +39,36 @@ public class Table {
     public Table(Long id, TableGroup tableGroup, int numberOfGuests, Boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+        this.tableNumberOfGuests = new TableNumberOfGuests(numberOfGuests);
+        this.tableEmpty = new TableEmpty(empty);
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.tableEmpty.changeEmpty(empty, hasGroup());
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.tableNumberOfGuests.changeGuest(numberOfGuests, tableEmpty.isEmpty());
+    }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void fill() {
+        tableEmpty.fill();
+    }
+
+    public boolean existCustomer() {
+        return tableEmpty.existCustomer();
+    }
+
+    public boolean isEmpty() {
+        return tableEmpty.isEmpty();
+    }
+
+    public boolean hasGroup() {
+        return Objects.nonNull(this.tableGroup);
     }
 
     public Long getId() {
@@ -46,48 +77,5 @@ public class Table {
 
     public TableGroup getTableGroup() {
         return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public boolean getEmpty() {
-        return empty;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void changeEmpty(boolean empty) {
-        if (hasGroup()) {
-            throw new IllegalArgumentException();
-        }
-        this.empty = empty;
-    }
-
-    public void changeNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public void changeTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public boolean hasGroup() {
-        return Objects.nonNull(this.tableGroup);
-    }
-
-    public void fill() {
-        this.empty = false;
     }
 }

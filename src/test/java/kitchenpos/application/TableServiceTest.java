@@ -88,6 +88,7 @@ class TableServiceTest {
         Table saved1 = tableRepository.save(createTable(null, true, null, 3));
         Table saved2 = tableRepository.save(createTable(null, true, null, 3));
         TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(Arrays.asList(saved1, saved2)));
+        System.out.println(savedTableGroup.getCreatedDate().toString());
 
         Table table = createTable(null, true, savedTableGroup, 1);
         Table savedTable = tableRepository.save(table);
@@ -125,7 +126,7 @@ class TableServiceTest {
 
         Table actual = tableRepository.findById(savedTable.getId()).get();
 
-        assertThat(actual.getEmpty()).isEqualTo(expect);
+        assertThat(actual.isEmpty()).isEqualTo(expect);
     }
 
     @DisplayName("변경하려는 손님의 수가 0미만일 경우 예외가 발생한다.")
