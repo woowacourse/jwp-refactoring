@@ -8,37 +8,38 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.order.domain.OrderDao;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
-import kitchenpos.table.domain.TableRepository;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 
 @Service
 @Transactional(readOnly = true)
 public class TableGroupService {
-    private final OrderDao orderDao;
-    private final TableRepository tableRepository;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderDao orderDao, TableRepository tableRepository,
+    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
         final TableGroupRepository tableGroupRepository) {
-        this.orderDao = orderDao;
-        this.tableRepository = tableRepository;
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public Long create(TableGroupCreateRequest request) {
-        final List<Table> savedTables = tableRepository.findAllByIdIn(new ArrayList<>(request.getTableIds()));
+        final List<Table> savedTables = orderTableRepository.findAllByIdIn(
+            new ArrayList<>(request.getTableIds()));
 
         TableGroup tableGroup = new TableGroup(savedTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         // TODO 이거 JPA 옵션 있을텐데
-        for (final Table savedTable : savedTables) {
+        for (final Table savedTable : tableGroup.getTables()) {
             savedTable.changeTableGroup(savedTableGroup);
             savedTable.fill();
         }
@@ -48,21 +49,25 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = tableRepository.findAllByTableGroupId(tableGroupId);
+        final List<Table> tables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         final List<Long> tableIds = tables.stream()
             .map(Table::getId)
             .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            tableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        //
+        // List<Order> orders = orderRepository.findAllByTableIdIn(tableIds);
+        //
+        // orders
+        //
+        if (orderRepository.existsByTableIdInAndOrderStatusIn(
+            tableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 
         for (final Table table : tables) {
             table.changeTableGroup(null);
             table.fill();
-            tableRepository.save(table);
+            orderTableRepository.save(table);
         }
     }
 }

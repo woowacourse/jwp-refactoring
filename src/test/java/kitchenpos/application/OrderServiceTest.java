@@ -28,8 +28,8 @@ import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
+import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.Table;
-import kitchenpos.table.domain.TableRepository;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
@@ -39,7 +39,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private TableRepository tableRepository;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -81,7 +81,7 @@ class OrderServiceTest {
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
         Table table = createTable(null, false, null, 5);
-        tableRepository.save(table);
+        orderTableRepository.save(table);
 
         OrderLineItemDto orderLineItemDto = new OrderLineItemDto(savedMenu.getId(), 2L);
         OrderCreateRequest request = new OrderCreateRequest(null, Arrays.asList(orderLineItemDto, orderLineItemDto));
@@ -98,7 +98,7 @@ class OrderServiceTest {
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
 
         Table table = createTable(null, true, null, 5);
-        Table savedTable = tableRepository.save(table);
+        Table savedTable = orderTableRepository.save(table);
 
         OrderLineItemDto orderLineItemDto = new OrderLineItemDto(savedMenu.getId(), 2L);
         OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(), Arrays.asList(orderLineItemDto));
@@ -151,7 +151,7 @@ class OrderServiceTest {
 
     private Table saveOrderTable() {
         Table table = createTable(null, false, null, 5);
-        return tableRepository.save(table);
+        return orderTableRepository.save(table);
     }
 
     @DisplayName("주문 상태를 변경할 때 주문이 없을 시 예외가 발생한다.")

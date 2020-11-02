@@ -3,38 +3,70 @@ package kitchenpos.order.domain;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import kitchenpos.table.domain.Table;
+
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@javax.persistence.Table(name = "orders")
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne
+    private Table table;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
+    public Order() {
+    }
+
+    public Order(Long id, Table table, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        if (table.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.table = table;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long tableId, String orderStatus) {
-        this(null, tableId, orderStatus, LocalDateTime.now(), Collections.emptyList());
+    public Order(Table table, OrderStatus orderStatus) {
+        this(null, table, orderStatus, Collections.emptyList());
+    }
+
+    public Table getTable() {
+        return table;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public String getOrderStatus() {
-        return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
@@ -49,16 +81,15 @@ public class Order {
         this.id = id;
     }
 
-    public void changeOrderTableId(Long id) {
-        this.orderTableId = id;
+    public void changeOrderTableId(Table table) {
+        this.table = table;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.getOrderStatus())) {
+        if (orderStatus.isCompletion()) {
             throw new IllegalArgumentException();
         }
-
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     public void changeOrderedTime(LocalDateTime localDateTime) {

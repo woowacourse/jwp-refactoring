@@ -1,1 +1,2 @@
-ALTER TABLE table_group ALTER COLUMN created_date DATETIME NULL
+ALTER TABLE table_group ALTER COLUMN created_date DATETIME NULL;
+ALTER TABLE orders ALTER COLUMN ordered_time DATETIME NULL;

@@ -28,8 +28,8 @@ public class EntityCreateHelper {
         return new MenuProduct(seq, menuId, productId, quantity);
     }
 
-    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
-        return new OrderLineItem(seq, orderId, menuId, quantity);
+    public static OrderLineItem createOrderLineItem(Long seq, Order order, Long menuId, long quantity) {
+        return new OrderLineItem(seq, order, menuId, quantity);
     }
 
     public static Table createTable(Long id, boolean isEmpty, TableGroup tableGroup, int numberOfGuests) {
@@ -44,8 +44,8 @@ public class EntityCreateHelper {
         return new TableGroup(id, tables);
     }
 
-    public static Order createOrder(Long id, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems,
-        OrderStatus orderStatus, Long orderTableId) {
-        return new Order(id, orderTableId, orderStatus.name(), orderedTime, orderLineItems);
+    public static Order createOrder(Long id, List<OrderLineItem> orderLineItems,
+        OrderStatus orderStatus, Table table) {
+        return new Order(id, table, orderStatus, orderLineItems);
     }
 }
