@@ -16,7 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.Table;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
@@ -36,8 +35,15 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest {
 
-    private static final long ORDER_TABLE_ID = 1L;
-    private static final int NUMBER_OF_GUESTS = 0;
+    private static final TableResponse EMPTY_TABLE;
+
+    static {
+        final Long orderTableId = 1L;
+        final int numberOfGuests = 0;
+        final boolean empty = true;
+
+        EMPTY_TABLE = TableResponse.of(orderTableId, null, numberOfGuests, empty);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -48,15 +54,13 @@ class TableRestControllerTest {
     @DisplayName("테이블 추가")
     @Test
     void create() throws Exception {
-        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
-
         String requestBody = "{\n"
-            + "  \"numberOfGuests\": " + table.getNumberOfGuests() + ",\n"
-            + "  \"empty\": " + table.isEmpty() + "\n"
+            + "  \"numberOfGuests\": " + EMPTY_TABLE.getNumberOfGuests() + ",\n"
+            + "  \"empty\": " + EMPTY_TABLE.isEmpty() + "\n"
             + "}";
 
         given(tableService.create(any(TableCreateRequest.class)))
-            .willReturn(TableResponse.of(table));
+            .willReturn(EMPTY_TABLE);
 
         ResultActions resultActions = mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
@@ -67,19 +71,17 @@ class TableRestControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(table.getId().intValue())))
-            .andExpect(jsonPath("$.numberOfGuests", is(table.getNumberOfGuests())))
-            .andExpect(jsonPath("$.empty", is(table.isEmpty())))
+            .andExpect(jsonPath("$.id", is(EMPTY_TABLE.getId().intValue())))
+            .andExpect(jsonPath("$.numberOfGuests", is(EMPTY_TABLE.getNumberOfGuests())))
+            .andExpect(jsonPath("$.empty", is(EMPTY_TABLE.isEmpty())))
             .andDo(print());
     }
 
     @DisplayName("테이블 전체 조회")
     @Test
     void list() throws Exception {
-        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
-
         given(tableService.list())
-            .willReturn(TableResponse.listOf(Collections.singletonList(table)));
+            .willReturn(Collections.singletonList(EMPTY_TABLE));
 
         ResultActions resultActions = mockMvc.perform(get("/api/tables")
             .contentType(MediaType.APPLICATION_JSON))
@@ -89,7 +91,7 @@ class TableRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(table.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(EMPTY_TABLE.getId().intValue())))
             .andDo(print());
     }
 
@@ -97,14 +99,16 @@ class TableRestControllerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) throws Exception {
-        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, empty);
+        TableResponse table = TableResponse
+            .of(EMPTY_TABLE.getId(), EMPTY_TABLE.getTableGroupId(), EMPTY_TABLE.getNumberOfGuests(),
+                empty);
 
         String requestBody = "{\n"
             + "  \"empty\": " + table.isEmpty() + "\n"
             + "}";
 
         given(tableService.changeEmpty(anyLong(), any(TableChangeEmptyRequest.class)))
-            .willReturn(TableResponse.of(table));
+            .willReturn(table);
 
         ResultActions resultActions = mockMvc
             .perform(put("/api/tables/" + table.getId() + "/empty")
@@ -121,9 +125,11 @@ class TableRestControllerTest {
     }
 
     @DisplayName("테이블 손님 수 변경")
-    @Test
-    void changeNumberOfGuests() throws Exception {
-        Table table = Table.of(ORDER_TABLE_ID, NUMBER_OF_GUESTS, true);
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void changeNumberOfGuests(int numberOfGuests) throws Exception {
+        TableResponse table = TableResponse
+            .of(EMPTY_TABLE.getId(), EMPTY_TABLE.getTableGroupId(), numberOfGuests, false);
 
         String requestBody = "{\n"
             + "  \"numberOfGuests\": " + table.getNumberOfGuests() + "\n"
@@ -131,7 +137,7 @@ class TableRestControllerTest {
 
         given(tableService
             .changeNumberOfGuests(anyLong(), any(TableChangeNumberOfGuestsRequest.class)))
-            .willReturn(TableResponse.of(table));
+            .willReturn(table);
 
         ResultActions resultActions = mockMvc
             .perform(put("/api/tables/" + table.getId() + "/number-of-guests")

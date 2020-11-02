@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 
 public class OrderResponse {
 
@@ -21,6 +21,11 @@ public class OrderResponse {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public static OrderResponse of(Long id, Long orderTableId, String orderStatus,
+        LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
+        return new OrderResponse(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 
     public static OrderResponse of(Order order) {

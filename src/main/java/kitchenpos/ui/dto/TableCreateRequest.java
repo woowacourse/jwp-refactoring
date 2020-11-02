@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Table;
+import kitchenpos.domain.table.Table;
 
 public class TableCreateRequest {
 

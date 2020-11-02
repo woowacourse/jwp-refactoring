@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemResponse {
 
@@ -12,11 +12,15 @@ public class OrderLineItemResponse {
     private Long menuId;
     private long quantity;
 
-    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, long quantity) {
+    private OrderLineItemResponse(Long seq, Long orderId, Long menuId, long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
         this.quantity = quantity;
+    }
+
+    public static OrderLineItemResponse of(Long seq, Long orderId, Long menuId, long quantity) {
+        return new OrderLineItemResponse(seq, orderId, menuId, quantity);
     }
 
     public static OrderLineItemResponse of(OrderLineItem orderLineItem, Long orderId) {

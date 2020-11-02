@@ -2,8 +2,8 @@ package kitchenpos.ui.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.OrderLineItem;
 
 public class OrderLineItemAssembler {
 

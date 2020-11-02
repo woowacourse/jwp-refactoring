@@ -9,8 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.Table;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

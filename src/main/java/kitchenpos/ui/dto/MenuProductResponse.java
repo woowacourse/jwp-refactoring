@@ -3,20 +3,24 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.MenuProduct;
 
 public class MenuProductResponse {
 
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+    private final Long seq;
+    private final Long menuId;
+    private final Long productId;
+    private final long quantity;
 
-    public MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
+    private MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
         this.quantity = quantity;
+    }
+
+    public static MenuProductResponse of(Long seq, Long menuId, Long productId, long quantity) {
+        return new MenuProductResponse(seq, menuId, productId, quantity);
     }
 
     public static MenuProductResponse of(MenuProduct menuProduct) {

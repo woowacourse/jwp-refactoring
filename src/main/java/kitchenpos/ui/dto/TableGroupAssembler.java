@@ -2,8 +2,8 @@ package kitchenpos.ui.dto;
 
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.Table;
+import kitchenpos.domain.tablegroup.TableGroup;
 import org.springframework.util.CollectionUtils;
 
 public class TableGroupAssembler {

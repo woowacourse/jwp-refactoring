@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.Table;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.repository.TableRepository;
@@ -45,7 +45,7 @@ public class TableGroupService {
         final List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
 
         if (orderRepository.existsByTableInAndOrderStatusIn(tables,
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

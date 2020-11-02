@@ -1,30 +1,33 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import kitchenpos.domain.base.BaseIdEntity;
 
 @Entity
 public class MenuGroup extends BaseIdEntity {
 
-    private String name;
+    @Embedded
+    private MenuGroupName name;
 
     protected MenuGroup() {
     }
 
-    private MenuGroup(Long id, String name) {
+    private MenuGroup(Long id, MenuGroupName name) {
         super(id);
         this.name = name;
     }
 
     public static MenuGroup of(Long id, String name) {
-        return new MenuGroup(id, name);
+        return new MenuGroup(id, new MenuGroupName(name));
     }
 
     public static MenuGroup entityOf(String name) {
-        return new MenuGroup(null, name);
+        return of(null, name);
     }
 
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     @Override

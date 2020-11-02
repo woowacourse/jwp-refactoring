@@ -1,10 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.base.BaseSeqEntity;
+import kitchenpos.domain.menu.Menu;
 
 @Entity
 public class OrderLineItem extends BaseSeqEntity {
@@ -17,12 +20,13 @@ public class OrderLineItem extends BaseSeqEntity {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    private long quantity;
+    @Embedded
+    private OrderLineItemQuantity quantity;
 
     protected OrderLineItem() {
     }
 
-    protected OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+    protected OrderLineItem(Long seq, Order order, Menu menu, OrderLineItemQuantity quantity) {
         super(seq);
         this.order = order;
         this.menu = menu;
@@ -30,11 +34,11 @@ public class OrderLineItem extends BaseSeqEntity {
     }
 
     public static OrderLineItem of(Long seq, Menu menu, long quantity) {
-        return new OrderLineItem(seq, null, menu, quantity);
+        return new OrderLineItem(seq, null, menu, new OrderLineItemQuantity(quantity));
     }
 
     public static OrderLineItem entityOf(Menu menu, long quantity) {
-        return new OrderLineItem(null, null, menu, quantity);
+        return of(null, menu, quantity);
     }
 
     public Order getOrder() {
@@ -53,7 +57,7 @@ public class OrderLineItem extends BaseSeqEntity {
     }
 
     public long getQuantity() {
-        return quantity;
+        return quantity.getQuantity();
     }
 
     @Override

@@ -1,15 +1,22 @@
-package kitchenpos.domain;
+package kitchenpos.domain.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.base.BaseIdEntity;
+import kitchenpos.domain.table.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup extends BaseIdEntity {
 
+    @CreatedDate
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL)
@@ -18,8 +25,7 @@ public class TableGroup extends BaseIdEntity {
     protected TableGroup() {
     }
 
-    private TableGroup(Long id, LocalDateTime createdDate,
-        List<Table> tables) {
+    private TableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
         super(id);
         this.createdDate = createdDate;
         this.tables = tables;

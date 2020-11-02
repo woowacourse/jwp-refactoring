@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.ProductRequest;
 import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -31,9 +30,15 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest {
 
-    private static final long PRODUCT_ID = 1L;
-    private static final String PRODUCT_NAME = "강정치킨";
-    private static final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(17_000);
+    private static final ProductResponse PRODUCT;
+
+    static {
+        final long id = 1L;
+        final String name = "강정치킨";
+        final BigDecimal price = BigDecimal.valueOf(17_000);
+
+        PRODUCT = ProductResponse.of(id, name, price);
+    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,15 +49,13 @@ class ProductRestControllerTest {
     @DisplayName("상품 추가")
     @Test
     void create() throws Exception {
-        Product product = Product.of(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE);
-
         String requestBody = "{\n"
-            + "  \"name\": \"" + product.getName() + "\",\n"
-            + "  \"price\": " + product.getPrice() + "\n"
+            + "  \"name\": \"" + PRODUCT.getName() + "\",\n"
+            + "  \"price\": " + PRODUCT.getPrice() + "\n"
             + "}";
 
         given(productService.create(any(ProductRequest.class)))
-            .willReturn(ProductResponse.of(product));
+            .willReturn(PRODUCT);
 
         ResultActions resultActions = mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
@@ -63,19 +66,17 @@ class ProductRestControllerTest {
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(product.getId().intValue())))
-            .andExpect(jsonPath("$.name", is(product.getName())))
-            .andExpect(jsonPath("$.price", is(product.getPrice().intValue())))
+            .andExpect(jsonPath("$.id", is(PRODUCT.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(PRODUCT.getName())))
+            .andExpect(jsonPath("$.price", is(PRODUCT.getPrice().intValue())))
             .andDo(print());
     }
 
     @DisplayName("상품 조회")
     @Test
     void list() throws Exception {
-        Product product = Product.of(PRODUCT_ID, PRODUCT_NAME, PRODUCT_PRICE);
-
         given(productService.list())
-            .willReturn(ProductResponse.listOf(Collections.singletonList(product)));
+            .willReturn(Collections.singletonList(PRODUCT));
 
         ResultActions resultActions = mockMvc.perform(get("/api/products")
             .contentType(MediaType.APPLICATION_JSON))
@@ -85,7 +86,7 @@ class ProductRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(product.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(PRODUCT.getId().intValue())))
             .andDo(print());
     }
 }

@@ -1,11 +1,11 @@
 package kitchenpos.ui.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.Table;
 
 public class OrderAssembler {
 
@@ -14,7 +14,9 @@ public class OrderAssembler {
 
     public static Order assemble(OrderCreateRequest orderCreateRequest, Table table,
         List<Menu> menus) {
-        return Order.entityOf(table, OrderStatus.COOKING.name(), LocalDateTime.now(),
-            OrderLineItemAssembler.listAssemble(orderCreateRequest.getOrderLineItems(), menus));
+        List<OrderLineItem> orderLineItems = OrderLineItemAssembler
+            .listAssemble(orderCreateRequest.getOrderLineItems(), menus);
+
+        return Order.entityOf(table, OrderStatus.COOKING, orderLineItems);
     }
 }

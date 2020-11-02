@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.Table;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
@@ -46,7 +46,7 @@ public class TableService {
             .orElseThrow(IllegalArgumentException::new);
 
         if (orderRepository.existsByTable_IdAndOrderStatusIn(orderTableId,
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
         savedTable.changeEmpty(tableChangeEmptyRequest.isEmpty());

@@ -7,12 +7,11 @@ import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS_E
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.Table;
 import kitchenpos.ui.dto.TableChangeEmptyRequest;
 import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
 import kitchenpos.ui.dto.TableCreateRequest;
@@ -135,7 +134,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         Table savedTable = tableRepository.save(table);
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
 
-        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
+        Order order = Order.entityOf(savedTable, orderStatus, null);
         orderRepository.save(order);
 
         TableChangeEmptyRequest tableChangeEmptyRequest
@@ -155,7 +154,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         assertThat(savedTable.isEmpty()).isEqualTo(TEST_ORDER_TABLE_EMPTY_FALSE);
         Long savedOrderTableId = savedTable.getId();
 
-        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
+        Order order = Order.entityOf(savedTable, orderStatus, null);
         orderRepository.save(order);
 
         TableChangeEmptyRequest tableChangeEmptyRequest

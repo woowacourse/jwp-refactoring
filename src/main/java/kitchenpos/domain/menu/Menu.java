@@ -1,38 +1,42 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import kitchenpos.domain.base.BaseIdEntity;
+import kitchenpos.domain.menugroup.MenuGroup;
 
 @Entity
 public class Menu extends BaseIdEntity {
 
-    private String name;
-    private BigDecimal price;
+    @Column(nullable = false)
+    private MenuName name;
+
+    @Embedded
+    private MenuPrice price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuProduct> menuProducts;
 
     protected Menu() {
     }
 
-    private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
+    private Menu(Long id, MenuName name, MenuPrice price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         super(id);
 
-        validate(price);
-        validate(menuGroup);
-        validate(menuProducts);
-
+        validate(menuGroup, menuProducts);
         setMenu(menuProducts);
         this.name = name;
         this.price = price;
@@ -42,22 +46,17 @@ public class Menu extends BaseIdEntity {
 
     public static Menu of(Long id, String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
-        return new Menu(id, name, price, menuGroup, menuProducts);
+        return new Menu(id, new MenuName(name), new MenuPrice(price), menuGroup, menuProducts);
     }
 
     public static Menu entityOf(String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
-        return new Menu(null, name, price, menuGroup, menuProducts);
+        return of(null, name, price, menuGroup, menuProducts);
     }
 
-    private void validate(BigDecimal price) {
-        if (Objects.isNull(price)) {
-            throw new IllegalArgumentException("Price는 Null일 수 없습니다.");
-        }
-
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Price는 0보다 작을 수 없습니다.");
-        }
+    private void validate(MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validate(menuGroup);
+        validate(menuProducts);
     }
 
     private void validate(MenuGroup menuGroup) {
@@ -83,11 +82,11 @@ public class Menu extends BaseIdEntity {
     }
 
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public MenuGroup getMenuGroup() {

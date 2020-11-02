@@ -4,15 +4,15 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.menu.Menu;
 
 public class MenuResponse {
 
-    private Long id;
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProductResponse> menuProducts;
+    private final Long id;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProductResponse> menuProducts;
 
     private MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
         List<MenuProductResponse> menuProducts) {
@@ -21,6 +21,11 @@ public class MenuResponse {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public static MenuResponse of(Long id, String name, BigDecimal price, Long menuGroupId,
+        List<MenuProductResponse> menuProducts) {
+        return new MenuResponse(id, name, price, menuGroupId, menuProducts);
     }
 
     public static MenuResponse of(Menu menu) {

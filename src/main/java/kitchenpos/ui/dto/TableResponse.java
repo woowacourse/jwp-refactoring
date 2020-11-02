@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Table;
+import kitchenpos.domain.table.Table;
 
 public class TableResponse {
 
@@ -17,6 +17,10 @@ public class TableResponse {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static TableResponse of(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        return new TableResponse(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static TableResponse of(Table table) {

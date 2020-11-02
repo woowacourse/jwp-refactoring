@@ -1,9 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.table;
 
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.base.BaseIdEntity;
+import kitchenpos.domain.tablegroup.TableGroup;
 
 @Entity
 @javax.persistence.Table(name = "order_table")
@@ -12,13 +16,17 @@ public class Table extends BaseIdEntity {
     @ManyToOne
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-    private int numberOfGuests;
+
+    @Embedded
+    private NumberOfGuests numberOfGuests;
+
+    @Column
     private boolean empty;
 
     protected Table() {
     }
 
-    private Table(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    private Table(Long id, TableGroup tableGroup, NumberOfGuests numberOfGuests, boolean empty) {
         super(id);
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -26,11 +34,11 @@ public class Table extends BaseIdEntity {
     }
 
     public static Table of(Long id, int numberOfGuests, boolean empty) {
-        return new Table(id, null, numberOfGuests, empty);
+        return new Table(id, null, new NumberOfGuests(numberOfGuests), empty);
     }
 
     public static Table entityOf(int numberOfGuests, boolean empty) {
-        return new Table(null, null, numberOfGuests, empty);
+        return of(null, numberOfGuests, empty);
     }
 
     public TableGroup getTableGroup() {
@@ -58,18 +66,15 @@ public class Table extends BaseIdEntity {
     }
 
     public int getNumberOfGuests() {
-        return numberOfGuests;
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateOfChangeNumberOfGuest(numberOfGuests);
-        this.numberOfGuests = numberOfGuests;
+        validateTableNotEmpty();
+        this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
-    private void validateOfChangeNumberOfGuest(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("numberOfGuest가 0보다 작습니다.");
-        }
+    private void validateTableNotEmpty() {
         if (empty) {
             throw new IllegalArgumentException("Table이 현재 비어있기 때문에 numberOfGuest를 설정할 수 없습니다.");
         }

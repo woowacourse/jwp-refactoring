@@ -1,0 +1,59 @@
+package kitchenpos.domain.menu;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
+@Embeddable
+public class MenuPrice {
+
+    @Column(nullable = false)
+    private BigDecimal price;
+
+    public MenuPrice() {
+    }
+
+    protected MenuPrice(BigDecimal price) {
+        validate(price);
+        this.price = price;
+    }
+
+    private void validate(BigDecimal price) {
+        if (Objects.isNull(price)) {
+            throw new NullPointerException("Menu의 Price는 Null일 수 없습니다.");
+        }
+
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Menu의 Price는 0보다 작을 수 없습니다. : {" + price + "}");
+        }
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        MenuPrice menuPrice = (MenuPrice) o;
+        return Objects.equals(price, menuPrice.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price);
+    }
+
+    @Override
+    public String toString() {
+        return "MenuPrice{" +
+            "price=" + price +
+            '}';
+    }
+}

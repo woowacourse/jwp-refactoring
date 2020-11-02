@@ -6,13 +6,12 @@ import static kitchenpos.constants.Constants.TEST_ORDER_WRONG_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.Table;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableGroupResponse;
 import kitchenpos.ui.dto.TableResponse;
@@ -184,7 +183,7 @@ class TableGroupServiceTest extends KitchenPosServiceTest {
             .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedTable = tableRepository.save(table);
 
-        Order order = Order.entityOf(savedTable, orderStatus.name(), LocalDateTime.now(), null);
+        Order order = Order.entityOf(savedTable, orderStatus, null);
         orderRepository.save(order);
         return savedTable.getId();
     }

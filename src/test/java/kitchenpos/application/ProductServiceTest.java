@@ -13,7 +13,6 @@ import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class ProductServiceTest extends KitchenPosServiceTest {
@@ -35,7 +34,6 @@ class ProductServiceTest extends KitchenPosServiceTest {
 
     @DisplayName("Product 생성 - 실패, 올바르지 않은 Price일 때")
     @ParameterizedTest
-    @NullSource
     @ValueSource(ints = {-2, -1})
     void create_IncorrectPrice_ThrownException(Integer price) {
         BigDecimal productPrice = null;
