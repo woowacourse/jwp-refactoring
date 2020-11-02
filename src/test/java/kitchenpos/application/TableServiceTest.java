@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.common.TestObjectUtils;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -33,9 +34,11 @@ class TableServiceTest {
     @DisplayName("주문 테이블을 등록할 수 있다.")
     @Test
     void createTable() {
-        when(orderTableDao.save(any())).thenReturn(CREATE_ORDER_TABLE);
+        OrderTable createOrderTable =
+                TestObjectUtils.createOrderTable(null, 1L, 3, true);
+        when(orderTableDao.save(any())).thenReturn(ORDER_TABLE1);
 
-        assertThat(tableService.create(CREATE_ORDER_TABLE).getNumberOfGuests()).isEqualTo(3);
+        assertThat(tableService.create(createOrderTable).getNumberOfGuests()).isEqualTo(3);
     }
 
     @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
@@ -57,7 +60,7 @@ class TableServiceTest {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE))
+                () -> tableService.changeEmpty(ORDER_TABLE3.getId(), CHANGING_GUEST_ORDER_TABLE))
                 .isInstanceOf(IllegalArgumentException.class)
         ;
     }
@@ -69,7 +72,7 @@ class TableServiceTest {
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
 
         assertThatThrownBy(
-                () -> tableService.changeEmpty(ORDER_TABLE1.getId(), CHANGING_ORDER_TABLE)
+                () -> tableService.changeEmpty(ORDER_TABLE1.getId(), CHANGING_GUEST_ORDER_TABLE)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -77,9 +80,10 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsTest() {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(ORDER_TABLE3));
-        when(orderTableDao.save(any())).thenReturn(CHANGING_ORDER_TABLE);
+        when(orderTableDao.save(any())).thenReturn(CHANGING_GUEST_ORDER_TABLE);
 
-        assertThat(tableService.changeNumberOfGuests(ORDER_TABLE3.getId(), CHANGING_ORDER_TABLE)
+        assertThat(tableService.changeNumberOfGuests(ORDER_TABLE3.getId(),
+                CHANGING_GUEST_ORDER_TABLE)
                 .getNumberOfGuests()).isEqualTo(5);
     }
 

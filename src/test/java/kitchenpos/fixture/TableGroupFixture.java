@@ -13,5 +13,4 @@ public class TableGroupFixture {
 
     public static final TableGroup TABLE_GROUP2 = TestObjectUtils.createTableGroup(
             2L, LocalDateTime.now(), ORDER_TABLES2);
-
 }

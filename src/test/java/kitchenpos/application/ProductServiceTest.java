@@ -15,12 +15,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.common.TestObjectUtils;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
-    
+
     @Mock
     private ProductDao productDao;
 
@@ -30,9 +31,11 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void createTest() {
+        Product createProduct = TestObjectUtils.createProduct(null, "후라이드",
+                BigDecimal.valueOf(16000));
         when(productDao.save(any())).thenReturn(FRIED_CHICKEN);
 
-        Product product = productService.create(FRIED_CHICKEN);
+        Product product = productService.create(createProduct);
         assertAll(
                 () -> assertThat(product.getId()).isEqualTo(1L),
                 () -> assertThat(product.getName()).isEqualTo("후라이드"),

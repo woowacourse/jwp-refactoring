@@ -14,12 +14,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.common.TestObjectUtils;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
-    
+
     @Mock
     private MenuGroupDao menuGroupDao;
 
@@ -29,12 +30,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void createTest() {
+        MenuGroup createMenuGroup = TestObjectUtils.createMenuGroup(null, "두마리메뉴");
+
         when(menuGroupDao.save(any())).thenReturn(MENU_GROUP1);
 
-        MenuGroup menuGroup = menuGroupService.create(MENU_GROUP1);
+        MenuGroup savedMenuGroup = menuGroupService.create(createMenuGroup);
         assertAll(
-                () -> assertThat(menuGroup.getId()).isEqualTo(1L),
-                () -> assertThat(menuGroup.getName()).isEqualTo(
+                () -> assertThat(savedMenuGroup.getId()).isEqualTo(1L),
+                () -> assertThat(savedMenuGroup.getName()).isEqualTo(
                         "두마리메뉴")
         );
     }

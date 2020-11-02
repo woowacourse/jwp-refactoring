@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.common.TestObjectUtils;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -36,13 +38,19 @@ class TableGroupServiceTest {
     @DisplayName("2 개 이상의 빈 테이블을 단체로 지정할 수 있다.")
     @Test
     void createTest() {
+        TableGroup createTableGroup = TestObjectUtils.createTableGroup(null, null,
+                Arrays.asList(ORDER_TABLE1, ORDER_TABLE2));
+
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(ORDER_TABLES1);
         when(tableGroupDao.save(any())).thenReturn(TABLE_GROUP1);
 
-        TableGroup tableGroup = tableGroupService.create(TABLE_GROUP1);
+        TableGroup tableGroup = tableGroupService.create(createTableGroup);
         assertAll(
                 () -> assertThat(tableGroup.getId()).isEqualTo(1L),
-                () -> assertThat(tableGroup.getOrderTables().size()).isEqualTo(2),
+                () -> assertThat(tableGroup.getOrderTables().get(0).getTableGroupId())
+                        .isEqualTo(1L),
+                () -> assertThat(tableGroup.getOrderTables().get(1).getTableGroupId())
+                        .isEqualTo(1L),
                 () -> assertThat(tableGroup.getOrderTables().get(0).getId()).isEqualTo(1L),
                 () -> assertThat(tableGroup.getOrderTables().get(1).getId()).isEqualTo(2L)
         );

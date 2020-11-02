@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.common.TestObjectUtils;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -26,7 +28,7 @@ import kitchenpos.domain.Menu;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
-    
+
     @Mock
     private MenuDao menuDao;
     @Mock
@@ -42,21 +44,24 @@ class MenuServiceTest {
     @DisplayName("1 개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.")
     @Test
     void createTest() {
+        Menu createdMenu = TestObjectUtils.createMenu(null, "후라이드치킨",
+                BigDecimal.valueOf(16000), 2L, Collections.singletonList(MENU_PRODUCT1));
+
         when(menuGroupDao.existsById(anyLong())).thenReturn(true);
         when(productDao.findById(anyLong())).thenReturn(Optional.of(FRIED_CHICKEN));
         when(menuDao.save(any())).thenReturn(MENU1);
         when(menuProductDao.save(any())).thenReturn(MENU_PRODUCT1);
 
-        Menu menu = menuService.create(MENU1);
+        Menu savedMenu = menuService.create(createdMenu);
         assertAll(
-                () -> assertThat(menu.getId()).isEqualTo(1L),
-                () -> assertThat(menu.getMenuGroupId()).isEqualTo(2L),
-                () -> assertThat(menu.getName()).isEqualTo("후라이드치킨"),
-                () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(16000)),
-                () -> assertThat(menu.getMenuProducts().size()).isEqualTo(1),
-                () -> assertThat(menu.getMenuProducts().get(0).getMenuId()).isEqualTo(1L),
-                () -> assertThat(menu.getMenuProducts().get(0).getProductId()).isEqualTo(1L),
-                () -> assertThat(menu.getMenuProducts().get(0).getQuantity()).isEqualTo(1)
+                () -> assertThat(savedMenu.getId()).isEqualTo(1L),
+                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(2L),
+                () -> assertThat(savedMenu.getName()).isEqualTo("후라이드치킨"),
+                () -> assertThat(savedMenu.getPrice()).isEqualTo(BigDecimal.valueOf(16000)),
+                () -> assertThat(savedMenu.getMenuProducts().size()).isEqualTo(1),
+                () -> assertThat(savedMenu.getMenuProducts().get(0).getMenuId()).isEqualTo(1L),
+                () -> assertThat(savedMenu.getMenuProducts().get(0).getProductId()).isEqualTo(1L),
+                () -> assertThat(savedMenu.getMenuProducts().get(0).getQuantity()).isEqualTo(1)
         );
     }
 
