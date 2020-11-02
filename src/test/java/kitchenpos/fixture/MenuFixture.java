@@ -21,6 +21,10 @@ public class MenuFixture {
         return menu;
     }
 
+    public static Menu createMenuWithId(Long id) {
+        return createMenu(id, null, null, null);
+    }
+
     public static Menu createMenuWithoutId(Long groupId, BigDecimal price, MenuProduct menuProducts) {
         return createMenu(null, groupId, price, Arrays.asList(menuProducts));
     }
