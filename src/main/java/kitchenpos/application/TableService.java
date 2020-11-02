@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -14,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
 
@@ -34,17 +34,15 @@ public class TableService {
     @Transactional
     public Table changeEmpty(final Long orderTableId, final TableChangeRequest request) {
         final Table savedTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedTable.getTableGroupId())) {
+        if (savedTable.isGrouped()) {
             throw new IllegalArgumentException();
         }
-
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
-
         savedTable.setEmpty(request.isEmpty());
 
         return orderTableDao.save(savedTable);
@@ -59,7 +57,7 @@ public class TableService {
         }
 
         final Table savedTable = orderTableDao.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (savedTable.isEmpty()) {
             throw new IllegalArgumentException();
