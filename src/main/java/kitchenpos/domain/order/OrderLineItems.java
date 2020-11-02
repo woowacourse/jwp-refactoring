@@ -2,19 +2,13 @@ package kitchenpos.domain.order;
 
 import org.springframework.util.CollectionUtils;
 
-import javax.persistence.Embeddable;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Embeddable
 public class OrderLineItems {
     private final List<OrderLineItem> orderLineItems;
-
-    public OrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
 
     public OrderLineItems(List<OrderLineItem> orderLineItems, Orderz order) {
         if (CollectionUtils.isEmpty(orderLineItems)) {

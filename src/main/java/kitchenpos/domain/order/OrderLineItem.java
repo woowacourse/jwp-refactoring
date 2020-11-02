@@ -19,15 +19,11 @@ public class OrderLineItem extends BaseEntity {
     private Long menuId;
     private long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     public OrderLineItem(Long menuId) {
         this.menuId = menuId;
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Long getMenuId() {

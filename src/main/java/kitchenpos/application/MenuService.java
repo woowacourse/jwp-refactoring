@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.MenuProducts;
 import kitchenpos.dto.CreateMenuRequest;
 import kitchenpos.repository.MenuGroupRepository;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -35,7 +33,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final CreateMenuRequest createMenuRequest) {
+    public Menu create(CreateMenuRequest createMenuRequest) {
         Menu menu = createMenuRequest.getMenu();
         MenuProducts menuProducts = new MenuProducts(createMenuRequest.getMenuProducts());
 
@@ -43,10 +41,9 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        for (MenuProduct menuProduct : menuProducts.getMenuProducts()) {
-            Objects.requireNonNull(menuProduct.getProduct().getId());
-            productRepository.findById(menuProduct.getProduct().getId())
-                    .orElseThrow(IllegalArgumentException::new);
+        List<Long> productIds = menuProducts.getProductIds();
+        if (productRepository.countByIdIn(productIds) != menuProducts.getSize()) {
+            throw new IllegalArgumentException();
         }
 
         BigDecimal sum = menuProducts.getSum();
@@ -54,7 +51,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
         menuProducts.updateMenu(savedMenu);
         menuProductRepository.saveAll(menuProducts.getMenuProducts());
         return savedMenu;
@@ -65,7 +62,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-        return menus;
+        return menuRepository.findAll();
     }
 }

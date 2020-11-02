@@ -20,7 +20,7 @@ public class OrderTable extends BaseEntity {
     private int numberOfGuests;
     private boolean empty;
 
-    private OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {
@@ -28,6 +28,26 @@ public class OrderTable extends BaseEntity {
             throw new IllegalArgumentException();
         }
         this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public void removeGroup() {
+        updateTableGroup(null);
+        updateEmpty(false);
+    }
+
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        if (isEmpty() || numberOfGuests < MIN_NUMBER_OF_GUEST) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
+    }
+
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 
@@ -49,20 +69,5 @@ public class OrderTable extends BaseEntity {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void updateNumberOfGuests(final int numberOfGuests) {
-        if (isEmpty() || numberOfGuests < MIN_NUMBER_OF_GUEST) {
-            throw new IllegalArgumentException();
-        }
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void updateEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

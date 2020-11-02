@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,8 +49,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(10, !EXPECTED);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Orderz order = new Orderz();
-        order.setOrderTableId(savedOrderTable.getId());
+        Orderz order = new Orderz(savedOrderTable.getId(), Collections.emptyList());
         order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 
@@ -73,7 +73,7 @@ class TableServiceTest {
         savedOrderTable.updateNumberOfGuests(EXPECTED);
 
         // when
-        OrderTable result = tableService.changeNumberOfGuests2(savedOrderTable.getId(), EXPECTED);
+        OrderTable result = tableService.changeNumberOfGuests(savedOrderTable.getId(), EXPECTED);
 
         // then
         assertThat(result.getNumberOfGuests()).isEqualTo(EXPECTED);

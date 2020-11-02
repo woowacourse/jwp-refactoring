@@ -54,7 +54,6 @@ public class TableGroupService {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.updateTableGroup(tableGroup);
             savedOrderTable.updateEmpty(false);
-            orderTableRepository.save(savedOrderTable);
         }
         return savedTableGroup;
     }
@@ -75,9 +74,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.updateTableGroup(null);
-            orderTable.updateEmpty(false);
-            orderTableRepository.save(orderTable);
+            orderTable.removeGroup();
         }
     }
 }

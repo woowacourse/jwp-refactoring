@@ -1,16 +1,12 @@
 package kitchenpos.domain.menu;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuProducts {
     private final List<MenuProduct> menuProducts;
-
-    private MenuProducts() {
-        this.menuProducts = new ArrayList<>();
-    }
 
     public MenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
@@ -32,5 +28,17 @@ public class MenuProducts {
 
     public List<MenuProduct> getMenuProducts() {
         return Collections.unmodifiableList(menuProducts);
+    }
+
+    public int getSize() {
+        return menuProducts.size();
+    }
+
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+                .map(MenuProduct::getProduct)
+                .mapToLong(Product::getId)
+                .boxed()
+                .collect(Collectors.toList());
     }
 }

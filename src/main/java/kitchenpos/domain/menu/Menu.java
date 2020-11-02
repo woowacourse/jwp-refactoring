@@ -22,7 +22,7 @@ public class Menu extends BaseEntity {
     @JoinColumn(name = "MENU_GROUP_ID")
     private MenuGroup menuGroup;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(String name, Price price, MenuGroup menuGroup) {
@@ -39,14 +39,6 @@ public class Menu extends BaseEntity {
 
     public BigDecimal getPrice() {
         return price.getPrice();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {

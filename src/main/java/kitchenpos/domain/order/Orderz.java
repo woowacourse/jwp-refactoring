@@ -34,31 +34,23 @@ public class Orderz extends BaseEntity {
         this.orderLineItems = orderLineItems;
     }
 
-    public Long getId() {
-        return id;
+    public void updateOrderStatus(final String orderStatus) {
+        if (!OrderStatus.isOrderStatus(orderStatus) || OrderStatus.isCompletion(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
-    }
-
-    public void updateOrderStatus(final String orderStatus) {
-        if (!OrderStatus.isOrderStatus(orderStatus) || OrderStatus.isCompletion(this.orderStatus)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
@@ -67,9 +59,5 @@ public class Orderz extends BaseEntity {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

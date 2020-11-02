@@ -13,17 +13,12 @@ public class Product extends BaseEntity {
     private String name;
     private Price price;
 
-    public Product() {
-
+    protected Product() {
     }
 
     public Product(String name, Long price) {
         this.name = name;
         this.price = new Price(price);
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {

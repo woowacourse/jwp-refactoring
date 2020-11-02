@@ -33,7 +33,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Orderz create(final Long orderTableId, final List<OrderLineItem> orderLineItems) {
+    public Orderz create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -52,14 +52,14 @@ public class OrderService {
         final List<Orderz> orders = orderRepository.findAll();
 
         for (final Orderz order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrder(order));
+            order.updateOrderLineItems(orderLineItemRepository.findAllByOrder(order));
         }
 
         return orders;
     }
 
     @Transactional
-    public Orderz changeOrderStatus(final Long orderId, final String orderStatus) {
+    public Orderz changeOrderStatus(Long orderId, String orderStatus) {
         final Orderz order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         order.updateOrderStatus(orderStatus);

@@ -10,15 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @AttributeOverride(name = "id", column = @Column(name = "TABLE_GROUP_ID"))
-public class TableGroup extends BaseEntity { // 여러 테이블 한꺼번에 계산할 때
+public class TableGroup extends BaseEntity {
     @CreatedDate
     private LocalDateTime createdDate;
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
 }
