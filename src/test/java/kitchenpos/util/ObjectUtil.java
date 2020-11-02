@@ -55,15 +55,15 @@ public class ObjectUtil {
         return product;
     }
 
-    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderDateTime,
+    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderDateTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return Order.builder()
+            .id(id)
+            .orderTableId(orderTableId)
+            .orderStatus(orderStatus)
+            .orderedTime(orderedTime)
+            .orderLineItems(orderLineItems)
+            .build();
     }
 
     public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
