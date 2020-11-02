@@ -26,7 +26,7 @@ import java.util.List;
 import static kitchenpos.fixture.MenuFixture.createMenuWithGroupId;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWithoutId;
 import static kitchenpos.fixture.OrderFixture.createOrderWithOrderStatus;
-import static kitchenpos.fixture.OrderFixture.createOrderWithOutId;
+import static kitchenpos.fixture.OrderFixture.createOrderWithoutId;
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItemWithMenuId;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroupIdAndEmpty;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithoutId;
@@ -65,7 +65,7 @@ public class OrderServiceTest {
         OrderTable orderTable = saveOrderTableWithEmpty(false);
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
-        Order order = createOrderWithOutId(orderTable.getId(), orderLineItem);
+        Order order = createOrderWithoutId(orderTable.getId(), orderLineItem);
 
         Order actual = orderService.create(order);
 
@@ -93,7 +93,7 @@ public class OrderServiceTest {
     @Test
     void createNotMatchOrderLineItemCountAndMenuCount() {
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(1L);
-        Order order = createOrderWithOutId(3L, orderLineItem);
+        Order order = createOrderWithoutId(3L, orderLineItem);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -104,7 +104,7 @@ public class OrderServiceTest {
         OrderTable orderTable = saveOrderTableWithEmpty(true);
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
-        Order order = createOrderWithOutId(orderTable.getId(), orderLineItem);
+        Order order = createOrderWithoutId(orderTable.getId(), orderLineItem);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -115,7 +115,7 @@ public class OrderServiceTest {
         OrderTable orderTable = saveOrderTableWithEmpty(false);
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
-        Order savedOrder = orderDao.save(createOrderWithOutId(orderTable.getId(), OrderStatus.COOKING.name(), orderLineItem));
+        Order savedOrder = orderDao.save(OrderFixture.createOrderWithoutId(orderTable.getId(), OrderStatus.COOKING.name(), orderLineItem));
         orderLineItem.setOrderId(savedOrder.getId());
         orderLineItemDao.save(orderLineItem);
 
@@ -130,7 +130,7 @@ public class OrderServiceTest {
         OrderTable orderTable = saveOrderTableWithEmpty(false);
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
-        Order savedOrder = orderDao.save(createOrderWithOutId(orderTable.getId(), OrderStatus.COOKING.name(), orderLineItem));
+        Order savedOrder = orderDao.save(OrderFixture.createOrderWithoutId(orderTable.getId(), OrderStatus.COOKING.name(), orderLineItem));
 
         Order expect = createOrderWithOrderStatus(OrderStatus.COMPLETION.name());
         Order actual = orderService.changeOrderStatus(savedOrder.getId(), expect);
@@ -144,7 +144,7 @@ public class OrderServiceTest {
         OrderTable orderTable = saveOrderTableWithEmpty(false);
         Menu menu = saveMenu();
         OrderLineItem orderLineItem = createOrderLineItemWithMenuId(menu.getId());
-        Order savedOrder = orderDao.save(createOrderWithOutId(orderTable.getId(), OrderStatus.COMPLETION.name(), orderLineItem));
+        Order savedOrder = orderDao.save(OrderFixture.createOrderWithoutId(orderTable.getId(), OrderStatus.COMPLETION.name(), orderLineItem));
 
         Order expect = createOrderWithOrderStatus(OrderStatus.COMPLETION.name());
 

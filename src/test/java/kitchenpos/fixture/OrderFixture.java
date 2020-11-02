@@ -19,11 +19,17 @@ public class OrderFixture {
         return order;
     }
 
-    public static Order createOrderWithOutId(Long tableId, OrderLineItem orderLineItem) {
+    public static Order createOrderWithId(Long id) {
+        Order order = new Order();
+        order.setId(id);
+        return order;
+    }
+
+    public static Order createOrderWithoutId(Long tableId, OrderLineItem orderLineItem) {
         return createOrder(null, null, tableId, Arrays.asList(orderLineItem));
     }
 
-    public static Order createOrderWithOutId(Long tableId, String orderStatus, OrderLineItem orderLineItem) {
+    public static Order createOrderWithoutId(Long tableId, String orderStatus, OrderLineItem orderLineItem) {
         return createOrder(null, orderStatus, tableId, Arrays.asList(orderLineItem));
     }
 
