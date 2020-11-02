@@ -26,11 +26,15 @@ public class OrderLineItem extends BaseEntity {
         this.menuId = menuId;
     }
 
+    public void updateOrder(Order order) {
+        this.order = order;
+    }
+
     public Long getMenuId() {
         return menuId;
     }
 
-    public void updateOrder(Order order) {
-        this.order = order;
+    public Order getOrder() {
+        return order;
     }
 }

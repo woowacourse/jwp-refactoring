@@ -15,11 +15,11 @@ public class OrderLineItems {
             throw new IllegalArgumentException();
         }
         this.orderLineItems = orderLineItems;
-        validateNotDuplicateProduct();
+        validateNotDuplicateMenu();
         updateOrder(order);
     }
 
-    private void validateNotDuplicateProduct() {
+    private void validateNotDuplicateMenu() {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
