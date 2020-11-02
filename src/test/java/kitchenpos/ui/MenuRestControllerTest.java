@@ -1,11 +1,11 @@
 package kitchenpos.ui;
 
+import static kitchenpos.util.ObjectUtil.*;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -54,17 +54,9 @@ class MenuRestControllerTest {
 
     @Test
     void create() throws Exception {
-        Menu menu = new Menu();
-        menu.setMenuGroupId(1L);
-        menu.setName("메뉴");
-        menu.setMenuProducts(Collections.emptyList());
-        menu.setPrice(BigDecimal.valueOf(0));
-        Menu result = new Menu();
-        result.setId(7L);
-        result.setMenuGroupId(1L);
-        result.setName("메뉴");
-        result.setMenuProducts(Collections.emptyList());
-        result.setPrice(BigDecimal.valueOf(0));
+        String name = "메뉴";
+        Menu menu = createMenu(1L, name, 0, 1L, Collections.emptyList());
+        Menu result = createMenu(7L, name, 0, 1L, Collections.emptyList());
 
         mvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
@@ -81,7 +73,7 @@ class MenuRestControllerTest {
             + "\"price\":16000.00,\"menuGroupId\":2,"
             + "\"menuProducts\":"
             + "[{\"seq\":1,\"menuId\":1,\"productId\":1,\"quantity\":1}]}";
-        
+
         mvc.perform(get("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
         )

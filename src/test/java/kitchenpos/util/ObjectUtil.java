@@ -15,15 +15,17 @@ import kitchenpos.domain.TableGroup;
 public class ObjectUtil {
     public static Menu createMenu(Long id, String name, Integer price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
+        BigDecimal value = null;
         if (price != null) {
-            menu.setPrice(BigDecimal.valueOf(price));
+            value = BigDecimal.valueOf(price);
         }
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return Menu.builder()
+            .id(id)
+            .name(name)
+            .price(value)
+            .menuGroupId(menuGroupId)
+            .menuProducts(menuProducts)
+            .build();
     }
 
     public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
