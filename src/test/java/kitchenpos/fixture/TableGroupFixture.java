@@ -23,4 +23,10 @@ public class TableGroupFixture {
     public static TableGroup createTableGroupWithoutId() {
         return createTableGroup(null, null);
     }
+
+    public static TableGroup createTableGroupWithId(Long id) {
+        TableGroup tableGroup = createTableGroup(id, null);
+        tableGroup.setCreatedDate(null);
+        return tableGroup;
+    }
 }
