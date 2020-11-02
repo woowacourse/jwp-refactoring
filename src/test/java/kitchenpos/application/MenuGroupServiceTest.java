@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.dto.MenuGroupResponse;
 import kitchenpos.menu.service.MenuGroupService;
 
 @SpringBootTest
@@ -38,7 +38,7 @@ class MenuGroupServiceTest {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("음료");
 
         Long id = menuGroupService.create(menuGroupCreateRequest);
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list().getMenuGroupResponses();
 
         assertAll(
             () -> assertThat(menuGroups).hasSize(1),

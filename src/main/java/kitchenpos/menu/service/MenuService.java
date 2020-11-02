@@ -15,6 +15,7 @@ import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuRequestDto;
+import kitchenpos.menu.dto.MenuResponses;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 
@@ -77,7 +78,8 @@ public class MenuService {
             .orElseThrow(IllegalArgumentException::new);
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public MenuResponses list() {
+        List<Menu> menus = menuRepository.findAll();
+        return MenuResponses.from(menus);
     }
 }

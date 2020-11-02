@@ -1,7 +1,6 @@
 package kitchenpos.table.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -13,10 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.table.domain.Table;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;
+import kitchenpos.table.dto.TableResponses;
 import kitchenpos.table.service.TableService;
 
 @RestController
@@ -36,7 +35,7 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<Table>> list() {
+    public ResponseEntity<TableResponses> list() {
         return ResponseEntity.ok()
             .body(tableService.list());
     }

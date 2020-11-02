@@ -13,6 +13,7 @@ import kitchenpos.table.domain.Table;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;
+import kitchenpos.table.dto.TableResponses;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,8 +32,9 @@ public class TableService {
         return orderTableRepository.save(table).getId();
     }
 
-    public List<Table> list() {
-        return orderTableRepository.findAll();
+    public TableResponses list() {
+        List<Table> tables = orderTableRepository.findAll();
+        return TableResponses.from(tables);
     }
 
     @Transactional

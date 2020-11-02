@@ -15,11 +15,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -113,7 +113,7 @@ class MenuServiceTest {
             Arrays.asList(new MenuProductRequest(savedProduct.getId(), 1L)));
 
         menuService.create(request);
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list().getMenuResponses();
 
         assertAll(
             () -> assertThat(menus.size()).isEqualTo(1),

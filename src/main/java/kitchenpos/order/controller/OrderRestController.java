@@ -1,7 +1,6 @@
 package kitchenpos.order.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -13,9 +12,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
+import kitchenpos.order.dto.OrderResponses;
 import kitchenpos.order.service.OrderService;
 
 @RestController
@@ -35,7 +34,7 @@ public class OrderRestController {
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<OrderResponses> list() {
         return ResponseEntity.ok()
             .body(orderService.list())
             ;

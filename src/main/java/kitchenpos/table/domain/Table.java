@@ -43,6 +43,14 @@ public class Table {
         this.tableEmpty = new TableEmpty(empty);
     }
 
+    public TableNumberOfGuests getTableNumberOfGuests() {
+        return tableNumberOfGuests;
+    }
+
+    public TableEmpty getTableEmpty() {
+        return tableEmpty;
+    }
+
     public void changeEmpty(boolean empty) {
         this.tableEmpty.changeEmpty(empty, hasGroup());
     }

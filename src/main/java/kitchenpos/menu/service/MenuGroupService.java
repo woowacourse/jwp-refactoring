@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.dto.MenuGroupCreateRequest;
+import kitchenpos.menu.dto.MenuGroupResponses;
 
 @Service
 public class MenuGroupService {
@@ -24,7 +25,8 @@ public class MenuGroupService {
             .getId();
     }
 
-    public List<MenuGroup> list() {
-        return menuGroupRepository.findAll();
+    public MenuGroupResponses list() {
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
+        return MenuGroupResponses.from(menuGroups);
     }
 }

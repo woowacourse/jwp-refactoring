@@ -16,6 +16,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
+import kitchenpos.order.dto.OrderResponses;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.Table;
 
@@ -69,13 +70,9 @@ public class OrderService {
         return savedOrder.getId();
     }
 
-    public List<Order> list() {
-        // todo 패치조인 필요
-        // for (final Order order : orders) {
-        //     order.changeOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        // }
-
-        return orderRepository.findAll();
+    public OrderResponses list() {
+        List<Order> orders = orderRepository.findAllWithOrderLineItems();
+        return OrderResponses.from(orders);
     }
 
     @Transactional

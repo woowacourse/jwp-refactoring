@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponse;
 import kitchenpos.product.service.ProductService;
 
 @SpringBootTest
@@ -48,12 +48,12 @@ class ProductServiceTest {
     void list() {
         ProductCreateRequest request = new ProductCreateRequest("콜라", 2000L);
         productService.create(request);
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list().getProductResponses();
 
         assertAll(
             () -> assertThat(products).hasSize(1),
             () -> assertThat(products.get(0).getName()).isEqualTo("콜라"),
-            () -> assertThat(products.get(0).getProductPrice().getPrice().longValue()).isEqualTo(2000L)
+            () -> assertThat(products.get(0).getPrice().longValue()).isEqualTo(2000L)
         );
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponses;
 
 @Service
 public class ProductService {
@@ -23,7 +24,8 @@ public class ProductService {
         return productRepository.save(product).getId();
     }
 
-    public List<Product> list() {
-        return productRepository.findAll();
+    public ProductResponses list() {
+        List<Product> products = productRepository.findAll();
+        return ProductResponses.from(products);
     }
 }

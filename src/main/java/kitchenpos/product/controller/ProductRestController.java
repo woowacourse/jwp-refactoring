@@ -1,7 +1,6 @@
 package kitchenpos.product.controller;
 
 import java.net.URI;
-import java.util.List;
 
 import javax.validation.Valid;
 
@@ -11,8 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.product.domain.Product;
 import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponses;
 import kitchenpos.product.service.ProductService;
 
 @RestController
@@ -32,9 +31,8 @@ public class ProductRestController {
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<ProductResponses> list() {
         return ResponseEntity.ok()
-            .body(productService.list())
-            ;
+            .body(productService.list());
     }
 }

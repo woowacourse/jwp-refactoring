@@ -20,12 +20,12 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
+import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -142,7 +142,7 @@ class OrderServiceTest {
 
         Long id = orderService.create(request);
 
-        List<Order> actual = orderService.list();
+        List<OrderResponse> actual = orderService.list().getOrderResponses();
 
         assertAll(
             () -> assertThat(actual).hasSize(1),

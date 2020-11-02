@@ -24,6 +24,7 @@ import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;
+import kitchenpos.table.dto.TableResponse;
 import kitchenpos.table.service.TableService;
 
 @SpringBootTest
@@ -60,7 +61,7 @@ class TableServiceTest {
         TableCreateRequest request2 = new TableCreateRequest(1, true);
         Long requestTwoId = tableService.create(request2);
 
-        List<Table> actual = tableService.list();
+        List<TableResponse> actual = tableService.list().getTableResponses();
 
         assertAll(
             () -> assertThat(actual).hasSize(2),
