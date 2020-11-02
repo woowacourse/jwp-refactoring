@@ -87,10 +87,10 @@ public class ObjectUtil {
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDateTime);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return TableGroup.builder()
+            .id(id)
+            .createdDate(createdDateTime)
+            .orderTables(orderTables)
+            .build();
     }
 }

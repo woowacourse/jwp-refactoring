@@ -54,9 +54,11 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup newTalbeGroup = tableGroup.toBuilder()
+            .createdDate(LocalDateTime.now())
+            .build();
 
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupDao.save(newTalbeGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
@@ -66,9 +68,10 @@ public class TableGroupService {
                 .build();
             orderTableDao.save(newOrderTable);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return savedTableGroup.toBuilder()
+            .orderTables(orderTables)
+            .build();
     }
 
     @Transactional
