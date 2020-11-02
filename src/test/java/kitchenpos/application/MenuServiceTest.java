@@ -123,7 +123,8 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴에 상품이 존재하지 않는 경우 예외 발생")
     void productDoesNotExist() {
-        Menu menu = createMenu(1L, null, 1000, 1L, Collections.singletonList(new MenuProduct()));
+        MenuProduct menuProduct = createMenuProduct(null, null, null, 0);
+        Menu menu = createMenu(1L, null, 1000, 1L, Collections.singletonList(menuProduct));
 
         given(menuGroupDao.existsById(1L)).willReturn(true);
         given(productDao.findById(any())).willReturn(Optional.empty());

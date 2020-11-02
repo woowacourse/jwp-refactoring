@@ -37,12 +37,12 @@ public class ObjectUtil {
     }
 
     public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return MenuProduct.builder()
+            .seq(seq)
+            .menuId(menuId)
+            .productId(productId)
+            .quantity(quantity)
+            .build();
     }
 
     public static Product createProduct(Long id, String name, Integer price) {
