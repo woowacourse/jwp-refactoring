@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,8 +45,6 @@ class OrderServiceTest extends ServiceTest {
     @Autowired
     private OrderService orderService;
 
-    private TableGroup tableGroup;
-
     private OrderTable orderTable;
 
     private OrderLineItem orderLineItem;
@@ -54,7 +53,6 @@ class OrderServiceTest extends ServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         orderTable = orderTableRepository.save(new OrderTable(5, false));
 
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("이십마리메뉴"));
@@ -69,10 +67,12 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(), Collections.singletonList(menuQuantityRequest));
         final OrderResponse actual = orderService.create(orderCreateRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId());
-        assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(actual.getOrderLineItemResponses()).isNotEmpty();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getOrderTableId()).isEqualTo(orderTable.getId()),
+                () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(actual.getOrderLineItemResponses()).isNotEmpty()
+        );
     }
 
     @DisplayName("create: 주문 항목이 비어있을 때 예외 처리")
@@ -81,7 +81,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId() , Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-        .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 주문 항목의 메뉴와 메뉴에서 조회한 것이 다를 때 예외 처리")
@@ -91,7 +91,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(), Collections.singletonList(notSameMenu));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-        .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 주문 테이블이 없을 때 예외 처리")
@@ -100,7 +100,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(0L, Collections.singletonList(menuQuantityRequest));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-        .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 주문 테이블이 비어 있을 때 예외 처리")
@@ -110,7 +110,7 @@ class OrderServiceTest extends ServiceTest {
         final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(emptyOrderTable.getId(), Collections.singletonList(menuQuantityRequest));
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-        .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("list: 주문 전체 조회")

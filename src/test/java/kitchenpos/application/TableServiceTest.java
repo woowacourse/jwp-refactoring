@@ -68,9 +68,11 @@ class TableServiceTest extends ServiceTest {
         final OrderTableChangeEmptyRequest inputOrderTableRequest = new OrderTableChangeEmptyRequest(false);
         final OrderTableResponse actual = tableService.changeEmpty(orderTableResponse.getId(), inputOrderTableRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.isEmpty()).isFalse();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNotNull(),
+                () ->assertThat(actual.isEmpty()).isFalse()
+        );
     }
 
     @DisplayName("changeEmpty: 주문 테이블이 없을 때 예외 처리")
@@ -114,9 +116,12 @@ class TableServiceTest extends ServiceTest {
 
         final OrderTableResponse actual = tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeNumberOfGuestsRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getNumberOfGuests()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () ->assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(2)
+        );
+
     }
 
     @DisplayName("changeNumberOfGuests: 방문한 손님 수가 음수일 때 예외 처리")

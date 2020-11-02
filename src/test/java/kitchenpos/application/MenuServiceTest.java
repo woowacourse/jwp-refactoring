@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -62,11 +63,14 @@ class MenuServiceTest extends ServiceTest {
 
         final MenuResponse actual = menuService.create(menuRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getName()).isEqualTo("후라이드치킨");
-        assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16000));
-        assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId());
-        assertThat(actual.getMenuProductResponses()).isNotEmpty();
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo("후라이드치킨"),
+                () -> assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16000)),
+                () -> assertThat(actual.getMenuGroupId()).isEqualTo(menuGroup.getId()),
+                () -> assertThat(actual.getMenuProductResponses()).isNotEmpty()
+        );
+
     }
 
     @DisplayName("create: 가격이 null일 때 예외 처리")

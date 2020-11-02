@@ -54,8 +54,10 @@ class TableGroupServiceTest extends ServiceTest {
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
         final TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getOrderTableResponses()).hasSize(2);
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getOrderTableResponses()).hasSize(2)
+        );
     }
 
     @DisplayName("create: 주문 테이블이 빈 목록일 때 예외 처리")

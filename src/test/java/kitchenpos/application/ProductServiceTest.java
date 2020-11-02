@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,10 +24,12 @@ class ProductServiceTest extends ServiceTest {
         final ProductRequest productRequest = new ProductRequest("매콤치킨", BigDecimal.valueOf(16000));
         final ProductResponse actual = productService.create(productRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getName()).isEqualTo("매콤치킨");
-        assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16000));
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo("매콤치킨"),
+                () -> assertThat(actual.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16000))
+        );
     }
 
     @DisplayName("create: 상품의 가격이 null일 때 예외 처리")

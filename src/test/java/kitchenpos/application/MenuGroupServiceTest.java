@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -23,9 +24,11 @@ class MenuGroupServiceTest extends ServiceTest {
 
         final MenuGroupResponse actual = menuGroupService.create(menuGroupRequest);
 
-        assertThat(actual).isNotNull();
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getName()).isEqualTo("이십마리메뉴");
+        assertAll(
+                () -> assertThat(actual).isNotNull(),
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getName()).isEqualTo("이십마리메뉴")
+        );
     }
 
     @DisplayName("list: 메뉴 그룹 전체 조회")
