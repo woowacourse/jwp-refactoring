@@ -55,9 +55,6 @@ class TableServiceTest {
     @DisplayName("주문테이블 리스트를 조회한다.")
     @Test
     void list() {
-        //todo 이게 맞는거냐>?
-        orderTableRepository.deleteAll();
-
         TableCreateRequest request1 = new TableCreateRequest(1, true);
         Long requestOneId = tableService.create(request1);
         TableCreateRequest request2 = new TableCreateRequest(1, true);
