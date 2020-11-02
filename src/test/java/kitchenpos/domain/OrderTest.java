@@ -95,4 +95,22 @@ class OrderTest {
             () -> order.changeOrderStatus(OrderStatus.COMPLETION)
         ).isInstanceOf(IllegalArgumentException.class);
     }
+
+    @DisplayName("주문이 조리, 식사 중안 경우 확인")
+    @Test
+    void isInProgress_True() {
+        Order order = new Order();
+        order.changeOrderStatus(OrderStatus.MEAL);
+
+        assertThat(order.isInProgress()).isTrue();
+    }
+
+    @DisplayName("주문이 완료된 경우 확인")
+    @Test
+    void isInProgress_False() {
+        Order order = new Order();
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+
+        assertThat(order.isInProgress()).isFalse();
+    }
 }

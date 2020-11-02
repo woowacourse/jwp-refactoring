@@ -92,6 +92,10 @@ public class Order {
         }
     }
 
+    public boolean isInProgress() {
+        return !orderStatus.equals(OrderStatus.COMPLETION);
+    }
+
     public List<OrderLineItem> getOrderLineItems() {
         return new ArrayList<>(orderLineItems);
     }

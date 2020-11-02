@@ -122,6 +122,11 @@ public class OrderTable {
         return empty;
     }
 
+    public boolean isInProgress() {
+        return orders.stream()
+            .anyMatch(Order::isInProgress);
+    }
+
     public List<Order> getOrders() {
         return new ArrayList<>(orders);
     }

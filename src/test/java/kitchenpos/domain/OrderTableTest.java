@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import static kitchenpos.TestObjectFactory.createOrder;
+import static kitchenpos.TestObjectFactory.createOrderLineItem;
 import static kitchenpos.TestObjectFactory.createOrderTable;
 import static kitchenpos.TestObjectFactory.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,5 +89,28 @@ class OrderTableTest {
         assertThatThrownBy(
             () -> orderTable.changeNumberOfGuests(10)
         ).isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("조리, 식사 중인 테이블일 경우 확인")
+    @Test
+    void isInProgress_True() {
+        OrderTable orderTable = createOrderTable(false);
+        OrderLineItem orderLineItem = createOrderLineItem(new Menu());
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        createOrder(orderTable, orderLineItems);
+
+        assertThat(orderTable.isInProgress()).isTrue();
+    }
+
+    @DisplayName("완료된 테이블일 경우 확인")
+    @Test
+    void isInProgress_False() {
+        OrderTable orderTable = createOrderTable(false);
+        OrderLineItem orderLineItem = createOrderLineItem(new Menu());
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Order order = createOrder(orderTable, orderLineItems);
+        order.changeOrderStatus(OrderStatus.COMPLETION);
+
+        assertThat(orderTable.isInProgress()).isFalse();
     }
 }

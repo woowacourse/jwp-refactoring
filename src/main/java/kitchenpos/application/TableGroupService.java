@@ -1,12 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableIdRequest;
@@ -19,16 +16,13 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
     public TableGroupService(
-        final OrderDao orderDao,
         final OrderTableDao orderTableDao,
         final TableGroupDao tableGroupDao
     ) {
-        this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -70,20 +64,22 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
             .orElseThrow(IllegalArgumentException::new);
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
-
-        List<Long> orderTableIds = orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderStatus(tableGroup.getOrderTables());
 
         tableGroup.ungroup();
 
-        orderTableDao.saveAll(orderTables);
+        orderTableDao.saveAll(tableGroup.getOrderTables());
         tableGroupDao.save(tableGroup);
+    }
+
+    private void validateOrderStatus(final List<OrderTable> orderTables) {
+        if (isAnyOrderTableInProgress(orderTables)){
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean isAnyOrderTableInProgress(final List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .anyMatch(OrderTable::isInProgress);
     }
 }
