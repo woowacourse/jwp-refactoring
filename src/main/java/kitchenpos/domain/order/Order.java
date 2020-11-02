@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.List;
 public class Order extends BaseEntity {
     private static final OrderStatus DEFAULT_ORDER_STATUS = OrderStatus.COOKING;
 
-    private Long orderTableId;
+    @OneToOne
+    private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
     public OrderStatus orderStatus;
@@ -34,8 +36,8 @@ public class Order extends BaseEntity {
     protected Order() {
     }
 
-    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        this.orderTableId = orderTableId;
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
         this.orderStatus = DEFAULT_ORDER_STATUS;
         this.orderLineItems = orderLineItems;
     }
@@ -51,8 +53,8 @@ public class Order extends BaseEntity {
         this.orderLineItems = orderLineItems;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public OrderStatus getOrderStatus() {

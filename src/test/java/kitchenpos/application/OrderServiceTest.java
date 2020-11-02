@@ -68,7 +68,8 @@ class OrderServiceTest {
                 .orElseThrow(() -> new NoSuchElementException("주문이 저장되지 않았습니다."));
         List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrder(result);
 
-        assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId());
+        assertThat(savedOrder.getOrderTable().getId()).isNotNull();
+        assertThat(savedOrder.getOrderTable().getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(savedOrder.getOrderedTime()).isNotNull();
         assertThat(savedOrderLineItems).hasSize(1);

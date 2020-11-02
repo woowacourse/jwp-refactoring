@@ -41,7 +41,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order savedOrder = orderRepository.save(new Order(orderTableId, orderLineItems));
+        Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
         OrderLineItems orderLineItems_ = new OrderLineItems(orderLineItems, savedOrder);
         orderLineItemRepository.saveAll(orderLineItems_.getOrderLineItems());
 

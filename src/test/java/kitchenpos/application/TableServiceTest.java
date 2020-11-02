@@ -49,7 +49,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(10, !EXPECTED);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order(savedOrderTable.getId(), Collections.emptyList());
+        Order order = new Order(savedOrderTable, Collections.emptyList());
         order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 
