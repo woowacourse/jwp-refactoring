@@ -5,19 +5,13 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Menu {
+public class Menu extends BaseIdEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private String name;
     private BigDecimal price;
 
@@ -33,13 +27,13 @@ public class Menu {
 
     private Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
+        super(id);
+
         validate(price);
         validate(menuGroup);
         validate(menuProducts);
 
         setMenu(menuProducts);
-
-        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
@@ -88,10 +82,6 @@ public class Menu {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
     }
@@ -109,26 +99,9 @@ public class Menu {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Menu menu = (Menu) o;
-        return Objects.equals(id, menu.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "Menu{" +
-            "id=" + id +
+            "id=" + getId() +
             ", name='" + name + '\'' +
             ", price=" + price +
             ", menuProducts=" + menuProducts +

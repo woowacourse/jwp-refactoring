@@ -3,20 +3,13 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class TableGroup {
+public class TableGroup extends BaseIdEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private LocalDateTime createdDate;
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.ALL)
@@ -27,7 +20,7 @@ public class TableGroup {
 
     private TableGroup(Long id, LocalDateTime createdDate,
         List<Table> tables) {
-        this.id = id;
+        super(id);
         this.createdDate = createdDate;
         this.tables = tables;
         setTableGroup(tables);
@@ -51,10 +44,6 @@ public class TableGroup {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -70,26 +59,9 @@ public class TableGroup {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        TableGroup that = (TableGroup) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "TableGroup{" +
-            "id=" + id +
+            "id=" + getId() +
             ", createdDate=" + createdDate +
             ", orderTables=" + tables +
             '}';

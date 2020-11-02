@@ -5,9 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
@@ -15,11 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "orders")
-public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Order extends BaseIdEntity {
 
     @OneToOne
     @JoinColumn(name = "order_table_id")
@@ -36,7 +29,7 @@ public class Order {
     public Order(Long id, kitchenpos.domain.Table table, String orderStatus,
         LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
-        this.id = id;
+        super(id);
         this.table = table;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -65,10 +58,6 @@ public class Order {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public kitchenpos.domain.Table getTable() {
         return table;
     }
@@ -77,8 +66,13 @@ public class Order {
         return orderStatus;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException(
+                "OrderStatus가 Completion이므로 OrderStatus를 변경할 수 없습니다.");
+        }
+
+        this.orderStatus = orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
@@ -90,26 +84,9 @@ public class Order {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Order order = (Order) o;
-        return Objects.equals(id, order.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "Order{" +
-            "id=" + id +
+            "id=" + getId() +
             ", orderStatus='" + orderStatus + '\'' +
             ", orderedTime=" + orderedTime +
             '}';

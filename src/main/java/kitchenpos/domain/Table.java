@@ -2,19 +2,12 @@ package kitchenpos.domain;
 
 import java.util.Objects;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
 @javax.persistence.Table(name = "order_table")
-public class Table {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Table extends BaseIdEntity {
 
     @ManyToOne
     @JoinColumn(name = "table_group_id")
@@ -26,7 +19,7 @@ public class Table {
     }
 
     private Table(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.id = id;
+        super(id);
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
@@ -38,10 +31,6 @@ public class Table {
 
     public static Table entityOf(int numberOfGuests, boolean empty) {
         return new Table(null, null, numberOfGuests, empty);
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public TableGroup getTableGroup() {
@@ -103,26 +92,9 @@ public class Table {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Table that = (Table) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
     public String toString() {
         return "OrderTable{" +
-            "id=" + id +
+            "id=" + getId() +
             ", numberOfGuests=" + numberOfGuests +
             ", empty=" + empty +
             '}';

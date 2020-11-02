@@ -4,18 +4,11 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class MenuProduct {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+public class MenuProduct extends BaseSeqEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id")
@@ -30,7 +23,7 @@ public class MenuProduct {
     }
 
     private MenuProduct(Long seq, Menu menu, Product product, long quantity) {
-        this.seq = seq;
+        super(seq);
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
@@ -42,10 +35,6 @@ public class MenuProduct {
 
     public static MenuProduct entityOf(Product product, long quantity) {
         return new MenuProduct(null, null, product, quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Menu getMenu() {
@@ -71,26 +60,9 @@ public class MenuProduct {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        MenuProduct that = (MenuProduct) o;
-        return Objects.equals(seq, that.seq);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq);
-    }
-
-    @Override
     public String toString() {
         return "MenuProduct{" +
-            "seq=" + seq +
+            "seq=" + getSeq() +
             ", quantity=" + quantity +
             '}';
     }

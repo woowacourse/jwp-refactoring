@@ -3,18 +3,11 @@ package kitchenpos.domain;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class OrderLineItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+public class OrderLineItem extends BaseSeqEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
@@ -30,7 +23,7 @@ public class OrderLineItem {
     }
 
     protected OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
-        this.seq = seq;
+        super(seq);
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
@@ -42,10 +35,6 @@ public class OrderLineItem {
 
     public static OrderLineItem entityOf(Menu menu, long quantity) {
         return new OrderLineItem(null, null, menu, quantity);
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Order getOrder() {
@@ -68,26 +57,9 @@ public class OrderLineItem {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        OrderLineItem that = (OrderLineItem) o;
-        return Objects.equals(seq, that.seq);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(seq);
-    }
-
-    @Override
     public String toString() {
         return "OrderLineItem{" +
-            "seq=" + seq +
+            "seq=" + getSeq() +
             ", quantity=" + quantity +
             '}';
     }

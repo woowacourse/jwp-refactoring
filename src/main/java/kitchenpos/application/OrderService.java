@@ -1,12 +1,9 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.repository.MenuRepository;
@@ -59,8 +56,6 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-
         List<Long> orderLineItemsOfOrderMenuIds = OrderLineItemsOfOrderRequests.stream()
             .map(OrderLineItemsOfOrderRequest::getMenuId)
             .collect(Collectors.toList());
@@ -84,13 +79,9 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderStatus orderStatus = OrderStatus
             .valueOf(orderChangeStatusRequest.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.of(savedOrder);
     }
