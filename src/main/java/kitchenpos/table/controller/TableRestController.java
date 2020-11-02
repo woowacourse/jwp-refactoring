@@ -42,7 +42,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<Table> edit(
+    public ResponseEntity<Void> edit(
         @PathVariable Long orderTableId,
         @RequestBody @Valid TableEmptyEditRequest request
     ) {
@@ -52,7 +52,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<Table> changeNumberOfGuests(
+    public ResponseEntity<Void> changeNumberOfGuests(
         @PathVariable Long orderTableId,
         @RequestBody @Valid TableGuestEditRequest request
     ) {
