@@ -65,6 +65,15 @@ public class ObjectUtil {
             .build();
     }
 
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+        return OrderTable.builder()
+            .id(id)
+            .tableGroupId(tableGroupId)
+            .numberOfGuests(numberOfGuests)
+            .empty(empty)
+            .build();
+    }
+
     public static Product createProduct(Long id, String name, Integer price) {
         Product product = new Product();
         product.setId(id);
@@ -73,15 +82,6 @@ public class ObjectUtil {
             product.setPrice(BigDecimal.valueOf(price));
         }
         return product;
-    }
-
-    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
     }
 
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<OrderTable> orderTables) {

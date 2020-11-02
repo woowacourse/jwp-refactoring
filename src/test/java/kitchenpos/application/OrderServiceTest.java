@@ -113,7 +113,6 @@ class OrderServiceTest {
         OrderLineItem orderLineItem = createOrderLineItem(null, null, 2L, 0);
         Order order = createOrder(1L, 3L, null, null, Collections.singletonList(orderLineItem));
         OrderTable orderTable = createOrderTable(null, null, 0, true);
-        orderTable.setEmpty(true);
 
         given(menuDao.countByIdIn(Collections.singletonList(2L))).willReturn(1L);
         given(orderTableDao.findById(3L)).willReturn(Optional.of(orderTable));

@@ -66,7 +66,6 @@ class TableServiceTest {
     void changeEmpty() {
         OrderTable saved = createOrderTable(1L, null, 0, true);
         OrderTable ordered = createOrderTable(null, null, 0, false);
-        ordered.setEmpty(false);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L,
@@ -134,7 +133,6 @@ class TableServiceTest {
     void emptyTable() {
         OrderTable saved = createOrderTable(null, null, 0, true);
         OrderTable ordered = createOrderTable(null, null, 2, false);
-        ordered.setNumberOfGuests(2);
 
         given(orderTableDao.findById(1L)).willReturn(Optional.of(saved));
 
