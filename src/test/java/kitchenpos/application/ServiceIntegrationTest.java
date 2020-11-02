@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Ignore;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +21,7 @@ import kitchenpos.domain.Product;
 @SpringBootTest
 @Import(ServiceIntegrationTestConfig.class)
 @Transactional
-@Ignore
 class ServiceIntegrationTest {
-    static final String ORDER_STATUS_COOKING = "COOKING";
     private static final int PRICE_SCALE = 2;
 
     static MenuProduct getMenuProduct(long quantity, Long id) {
@@ -104,9 +101,9 @@ class ServiceIntegrationTest {
         return orderLineItem;
     }
 
-    static Order getOrderWithCookingStatus() {
+    static Order getOrderWithStatus(String orderStatus) {
         Order order = new Order();
-        order.setOrderStatus(ORDER_STATUS_COOKING);
+        order.setOrderStatus(orderStatus);
         return order;
     }
 

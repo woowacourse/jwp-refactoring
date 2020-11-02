@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 class OrderServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
@@ -28,7 +29,7 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
         Order persist = orderService.create(order);
 
         assertAll(
-            () -> assertThat(persist.getOrderStatus()).isEqualTo(ORDER_STATUS_COOKING),
+            () -> assertThat(persist.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
             () -> assertThat(persist.getOrderTableId()).isEqualTo(order.getOrderTableId()),
             () -> assertThat(persist.getOrderLineItems().get(0)).isEqualToIgnoringNullFields(orderLineItem)
         );
@@ -101,7 +102,8 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
         Order twoFriedOrder = getOrder(2L, Arrays.asList(twoFriedChicken));
         Order persist = orderService.create(twoFriedOrder);
 
-        Order changedOrder = orderService.changeOrderStatus(persist.getId(), getOrderWithCookingStatus());
+        Order changedOrder = orderService.changeOrderStatus(persist.getId(),
+            getOrderWithStatus(OrderStatus.COOKING.name()));
 
         List<Long> orderLineItemsSeqs = persist.getOrderLineItems().stream()
             .map(OrderLineItem::getSeq)
@@ -109,8 +111,20 @@ class OrderServiceIntegrationTest extends ServiceIntegrationTest {
 
         assertAll(
             () -> assertThat(changedOrder).isEqualToIgnoringGivenFields(persist, "orderStatus", "orderLineItems"),
-            () -> assertThat(changedOrder.getOrderStatus()).isEqualTo(ORDER_STATUS_COOKING),
-            () -> assertThat(changedOrder.getOrderLineItems()).flatExtracting(OrderLineItem::getSeq).containsExactlyInAnyOrderElementsOf(orderLineItemsSeqs)
+            () -> assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(changedOrder.getOrderLineItems()).flatExtracting(OrderLineItem::getSeq)
+                .containsExactlyInAnyOrderElementsOf(orderLineItemsSeqs)
         );
+    }
+
+    @DisplayName("주문이 등록되어 있지 않으면 주문 상태를 변경할 수 없다.")
+    @Test
+    void changeOrderStatus_willThrowException_whenOrderDoesNotExist() {
+        OrderLineItem twoFriedChicken = getOrderLineItem(1L, 2);
+        Order order = getOrder(2L, Arrays.asList(twoFriedChicken));
+
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(order.getId(), getOrderWithStatus(OrderStatus.COOKING.name())))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 }
