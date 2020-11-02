@@ -32,4 +32,3 @@ INSERT INTO order_table (id, number_of_guests, empty) VALUES (5, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (6, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (7, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty) VALUES (8, 0, true);
--- todo : 테스트용 데이터를 테스트 환경에서만 활용하도록 설정하기

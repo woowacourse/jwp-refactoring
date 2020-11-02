@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.config.ServiceIntegrationTestConfig;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,7 +17,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @SpringBootTest
-@Import(ServiceIntegrationTestConfig.class)
 @Transactional
 class ServiceIntegrationTest {
     private static final int PRICE_SCALE = 2;
