@@ -8,10 +8,10 @@ import static org.mockito.Mockito.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,17 +21,14 @@ import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
+
     @Mock
     private OrderDao orderDao;
     @Mock
     private OrderTableDao orderTableDao;
 
+    @InjectMocks
     private TableService tableService;
-
-    @BeforeEach
-    void setUp() {
-        this.tableService = new TableService(orderDao, orderTableDao);
-    }
 
     @DisplayName("주문 테이블을 등록할 수 있다.")
     @Test

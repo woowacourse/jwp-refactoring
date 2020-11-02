@@ -16,6 +16,9 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class TestObjectUtils {
+    private TestObjectUtils() {
+    }
+
     public static Product createProduct(Long id, String name, BigDecimal price) {
         Product product = new Product();
         ReflectionTestUtils.setField(product, "id", id);

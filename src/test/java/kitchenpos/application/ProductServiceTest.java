@@ -8,10 +8,10 @@ import static org.mockito.Mockito.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,15 +20,12 @@ import kitchenpos.domain.Product;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
+    
     @Mock
     private ProductDao productDao;
 
+    @InjectMocks
     private ProductService productService;
-
-    @BeforeEach
-    void setUp() {
-        this.productService = new ProductService(productDao);
-    }
 
     @DisplayName("상품을 생성할 수 있다.")
     @Test

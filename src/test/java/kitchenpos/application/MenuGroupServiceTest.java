@@ -7,10 +7,10 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -19,15 +19,12 @@ import kitchenpos.domain.MenuGroup;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
+    
     @Mock
     private MenuGroupDao menuGroupDao;
 
+    @InjectMocks
     private MenuGroupService menuGroupService;
-
-    @BeforeEach
-    void setUp() {
-        this.menuGroupService = new MenuGroupService(menuGroupDao);
-    }
 
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test

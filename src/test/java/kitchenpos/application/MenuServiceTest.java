@@ -11,10 +11,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -26,6 +26,7 @@ import kitchenpos.domain.Menu;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
+    
     @Mock
     private MenuDao menuDao;
     @Mock
@@ -35,12 +36,8 @@ class MenuServiceTest {
     @Mock
     private ProductDao productDao;
 
+    @InjectMocks
     private MenuService menuService;
-
-    @BeforeEach
-    void setUp() {
-        this.menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-    }
 
     @DisplayName("1 개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.")
     @Test

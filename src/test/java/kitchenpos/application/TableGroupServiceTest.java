@@ -8,10 +8,10 @@ import static org.mockito.Mockito.*;
 
 import java.util.Collections;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,21 +22,16 @@ import kitchenpos.domain.TableGroup;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
+
     @Mock
     private OrderDao orderDao;
-
     @Mock
     private OrderTableDao orderTableDao;
-
     @Mock
     private TableGroupDao tableGroupDao;
 
+    @InjectMocks
     private TableGroupService tableGroupService;
-
-    @BeforeEach
-    void setUp() {
-        this.tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-    }
 
     @DisplayName("2 개 이상의 빈 테이블을 단체로 지정할 수 있다.")
     @Test
