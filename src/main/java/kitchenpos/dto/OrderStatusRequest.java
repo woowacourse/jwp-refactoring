@@ -1,7 +1,10 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.NotBlank;
+
 public class OrderStatusRequest {
 
+    @NotBlank
     private String orderStatus;
 
     protected OrderStatusRequest() {

@@ -1,7 +1,10 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.Min;
+
 public class OrderTableChangeNumberOfGuestsRequest {
 
+    @Min(value = 0)
     private int numberOfGuests;
 
     protected OrderTableChangeNumberOfGuestsRequest() {

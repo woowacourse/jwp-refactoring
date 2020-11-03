@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class TableService {
 
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderRepository orderRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository, final OrderRepository orderRepository) {
         this.orderTableRepository = orderTableRepository;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -42,8 +42,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = findById(orderTableId);
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
@@ -65,12 +64,7 @@ public class TableService {
             final OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest) {
         final int numberOfGuests = orderTableChangeNumberOfGuestsRequest.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = findById(orderTableId);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -79,5 +73,10 @@ public class TableService {
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.of(savedOrderTable);
+    }
+
+    public OrderTable findById(final Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 }

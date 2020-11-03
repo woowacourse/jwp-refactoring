@@ -1,7 +1,10 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class ProductQuantityRequest {
 
+    @NotNull
     private Long productId;
     private long quantity;
 

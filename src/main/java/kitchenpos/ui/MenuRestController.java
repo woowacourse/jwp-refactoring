@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class MenuRestController {
 
@@ -24,7 +26,7 @@ public class MenuRestController {
     }
 
     @PostMapping("/api/menus")
-    public ResponseEntity<MenuResponse> create(@RequestBody final MenuRequest menuRequest) {
+    public ResponseEntity<MenuResponse> create(@RequestBody @Valid final MenuRequest menuRequest) {
         final MenuResponse created = menuService.create(menuRequest);
         final URI uri = URI.create("/api/menus/" + created.getId());
         return ResponseEntity.created(uri)

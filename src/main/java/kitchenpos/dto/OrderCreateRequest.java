@@ -3,12 +3,19 @@ package kitchenpos.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderCreateRequest {
 
+    @NotNull
     private Long orderTableId;
+
+    @NotEmpty
     private List<MenuQuantityRequest> menuQuantities;
 
     protected OrderCreateRequest() {
@@ -27,7 +34,7 @@ public class OrderCreateRequest {
         return menuQuantities;
     }
 
-    public Order toEntity() {
-        return new Order(this.orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
+    public Order toEntity(final OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
     }
 }

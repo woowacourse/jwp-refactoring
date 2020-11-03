@@ -31,9 +31,6 @@ import kitchenpos.repository.TableGroupRepository;
 class OrderServiceTest extends ServiceTest {
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @Autowired
@@ -56,9 +53,9 @@ class OrderServiceTest extends ServiceTest {
         orderTable = orderTableRepository.save(new OrderTable(5, false));
 
         final MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("이십마리메뉴"));
-        final Menu menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId()));
-        orderLineItem = new OrderLineItem(null, menu.getId(), 1L);
-        menuQuantityRequest = new MenuQuantityRequest(orderLineItem.getMenuId(), orderLineItem.getQuantity());
+        final Menu menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup));
+        orderLineItem = new OrderLineItem(null, menu, 1L);
+        menuQuantityRequest = new MenuQuantityRequest(orderLineItem.getMenu().getId(), orderLineItem.getQuantity());
     }
 
     @DisplayName("create: 주문 생성")
@@ -73,15 +70,6 @@ class OrderServiceTest extends ServiceTest {
                 () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(actual.getOrderLineItemResponses()).isNotEmpty()
         );
-    }
-
-    @DisplayName("create: 주문 항목이 비어있을 때 예외 처리")
-    @Test
-    void create_IfOrderLineItemEmpty_Exception() {
-        final OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId() , Collections.emptyList());
-
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 주문 항목의 메뉴와 메뉴에서 조회한 것이 다를 때 예외 처리")

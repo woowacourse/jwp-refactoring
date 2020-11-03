@@ -27,15 +27,15 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final MenuRepository menuRepository;
+    private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
+            final OrderTableRepository orderTableRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderLineItemRepository orderLineItemRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -46,10 +46,6 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
         final List<MenuQuantityRequest> menuQuantities = orderCreateRequest.getMenuQuantities();
-
-        if (CollectionUtils.isEmpty(menuQuantities)) {
-            throw new IllegalArgumentException();
-        }
 
         final List<Long> menuIds = menuQuantities.stream()
                 .map(MenuQuantityRequest::getMenuId)
@@ -66,7 +62,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity());
+        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity(orderTable));
 
         final List<OrderLineItemResponse> orderLineItemResponses = new ArrayList<>();
 

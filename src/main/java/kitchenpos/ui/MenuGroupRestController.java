@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class MenuGroupRestController {
 
@@ -24,7 +26,7 @@ public class MenuGroupRestController {
     }
 
     @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroupResponse> create(@RequestBody final MenuGroupRequest menuGroupRequest) {
+    public ResponseEntity<MenuGroupResponse> create(@RequestBody @Valid  final MenuGroupRequest menuGroupRequest) {
         final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
         final URI uri = URI.create("/api/menu-groups/" + menuGroupResponse.getId());
         return ResponseEntity.created(uri)

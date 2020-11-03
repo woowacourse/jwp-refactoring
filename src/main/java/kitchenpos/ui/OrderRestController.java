@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class OrderRestController {
 
@@ -21,7 +23,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
+    public ResponseEntity<OrderResponse> create(@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
         final OrderResponse orderResponse = orderService.create(orderCreateRequest);
         final URI uri = URI.create("/api/orders/" + orderResponse.getId());
         return ResponseEntity.created(uri)
@@ -37,7 +39,7 @@ public class OrderRestController {
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final OrderStatusRequest orderStatusRequest
+            @RequestBody @Valid  final OrderStatusRequest orderStatusRequest
     ) {
         return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusRequest));
     }

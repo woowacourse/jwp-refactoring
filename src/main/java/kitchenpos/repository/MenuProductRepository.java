@@ -1,5 +1,6 @@
 package kitchenpos.repository;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import java.util.List;
@@ -11,5 +12,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
 
-    List<MenuProduct> findAllByMenuId(Long menuId);
+    List<MenuProduct> findAllByMenu(Menu menu);
 }

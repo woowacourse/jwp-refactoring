@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 @RestController
 public class TableGroupRestController {
 
@@ -20,7 +22,7 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupRequest tableGroupRequest) {
+    public ResponseEntity<TableGroupResponse> create(@RequestBody @Valid final TableGroupRequest tableGroupRequest) {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
         final URI uri = URI.create("/api/table-groups/" + tableGroupResponse.getId());
         return ResponseEntity.created(uri)

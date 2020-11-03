@@ -43,8 +43,16 @@ public class MenuProduct {
         return menu;
     }
 
+    public Long getMenuId() {
+        return menu.getId();
+    }
+
     public Product getProduct() {
         return product;
+    }
+
+    public Long getProductId() {
+        return product.getId();
     }
 
     public long getQuantity() {

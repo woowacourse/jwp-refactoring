@@ -3,10 +3,15 @@ package kitchenpos.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
+
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
+    @NotEmpty
+    @Size(min = 2)
     private List<Long> orderTableIds;
 
     protected TableGroupRequest() {

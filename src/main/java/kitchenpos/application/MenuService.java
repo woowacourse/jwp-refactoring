@@ -1,56 +1,47 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.MenuResponse;
-import kitchenpos.dto.MenuProductResponse;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.dto.ProductQuantityRequest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductResponse;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.ProductQuantityRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuService {
 
+    private final ProductRepository productRepository;
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
 
     public MenuService(
+            final ProductRepository productRepository,
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
+            final MenuProductRepository menuProductRepository
     ) {
+        this.productRepository = productRepository;
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
-        final BigDecimal price = menuRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
         List<ProductQuantityRequest> productQuantities = menuRequest.getProductQuantities();
 
         BigDecimal sum = BigDecimal.ZERO;
@@ -60,11 +51,16 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(productQuantityRequest.getQuantity())));
         }
 
+        final BigDecimal price = menuRequest.getPrice();
+
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menuRequest.toEntity());
+        final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        final Menu savedMenu = menuRepository.save(menuRequest.toEntity(menuGroup));
 
         final List<MenuProductResponse> menuProductResponses = new ArrayList<>();
 
@@ -83,7 +79,7 @@ public class MenuService {
         final List<MenuResponse> menuResponses = new ArrayList<>();
 
         for (final Menu menu : menus) {
-            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
+            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenu(menu);
             menuResponses.add(
                     MenuResponse.of(menu, MenuProductResponse.ofList(menuProducts))
             );

@@ -50,8 +50,8 @@ class MenuServiceTest extends ServiceTest {
         final Product product = productRepository.save(new Product("매콤치킨", BigDecimal.valueOf(16000)));
         menuGroup = menuGroupRepository.save(new MenuGroup("이십마리메뉴"));
 
-        final Menu menu = menuRepository.save(new Menu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup.getId()));
-        final MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(menu.getId(), product.getId(), 1L));
+        final Menu menu = menuRepository.save(new Menu("마늘간장치킨", BigDecimal.valueOf(16000), menuGroup));
+        final MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(menu, product, 1L));
 
         productQuantityRequest = new ProductQuantityRequest(menuProduct.getProductId(), menuProduct.getQuantity());
     }
@@ -73,24 +73,6 @@ class MenuServiceTest extends ServiceTest {
 
     }
 
-    @DisplayName("create: 가격이 null일 때 예외 처리")
-    @Test
-    void create_IfPriceIsNull_Exception() {
-        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", null, menuGroup.getId(), Collections.singletonList(productQuantityRequest));
-
-        assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("create: 가격이 음수일 때 예외 처리")
-    @Test
-    void create_IfPriceIsNegative_Exception() {
-        final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(-1L), menuGroup.getId(), Collections.singletonList(productQuantityRequest));
-
-        assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("create: MenuGroup의 Id가 존재하지 않을 때 예외 처리")
     @Test
     void create_IfMenuGroupIdDoesNotExist_Exception() {
@@ -103,8 +85,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("create: 상품의 Id가 존재하지 않을 때 예외 처리")
     @Test
     void create_IfProductIdDoesNotExist_InMenuProduct_Exception() {
-        final MenuProduct menuProduct = new MenuProduct(1L, 0L, 1L);
-        final ProductQuantityRequest menuProductNotExistId = new ProductQuantityRequest(menuProduct.getProductId(), menuProduct.getQuantity());
+        final ProductQuantityRequest menuProductNotExistId = new ProductQuantityRequest(0L, 1);
         final MenuRequest menuRequest = new MenuRequest("후라이드치킨", BigDecimal.valueOf(16000), menuGroup.getId(), Collections.singletonList(menuProductNotExistId));
 
         assertThatThrownBy(() -> menuService.create(menuRequest))

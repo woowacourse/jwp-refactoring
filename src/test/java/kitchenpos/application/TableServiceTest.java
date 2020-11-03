@@ -71,7 +71,7 @@ class TableServiceTest extends ServiceTest {
         assertAll(
                 () -> assertThat(actual).isNotNull(),
                 () -> assertThat(actual.getId()).isNotNull(),
-                () ->assertThat(actual.isEmpty()).isFalse()
+                () -> assertThat(actual.isEmpty()).isFalse()
         );
     }
 
@@ -89,7 +89,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_IfOrderTableHasTableGroup_Exception() {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
-        orderTable.updateTableGroup(tableGroup.getId());
+        orderTable.updateTableGroup(tableGroup);
         orderTableRepository.save(orderTable);
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(false);
 
@@ -100,11 +100,11 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("changeEmpty: 주문이 완료되지 않았을 때 예외 처리")
     @Test
     void changeEmpty_IfOrderStatusIsNotCompletion_Exception() {
-        final OrderTableResponse orderTableResponse = tableService.create(new OrderTableRequest(0, true));
-        orderRepository.save(new Order(orderTableResponse.getId(), "MEAL", LocalDateTime.now()));
+        final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
+        orderRepository.save(new Order(orderTable, "MEAL", LocalDateTime.now()));
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(false);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableResponse.getId(), orderTableChangeEmptyRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTableChangeEmptyRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -118,20 +118,10 @@ class TableServiceTest extends ServiceTest {
 
         assertAll(
                 () -> assertThat(actual).isNotNull(),
-                () ->assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.getId()).isNotNull(),
                 () -> assertThat(actual.getNumberOfGuests()).isEqualTo(2)
         );
 
-    }
-
-    @DisplayName("changeNumberOfGuests: 방문한 손님 수가 음수일 때 예외 처리")
-    @Test
-    void changeNumberOfGuests_IfNumberOfGuestsIsNegative_Exception() {
-        final OrderTableResponse orderTableResponse = tableService.create(new OrderTableRequest(0, false));
-        final OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(-1);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeNumberOfGuestsRequest))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeNumberOfGuests: 주문 테이블이 존재하지 않을 때 예외 처리")

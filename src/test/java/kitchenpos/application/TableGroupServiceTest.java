@@ -60,24 +60,6 @@ class TableGroupServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("create: 주문 테이블이 빈 목록일 때 예외 처리")
-    @Test
-    void create_IfOrderTablesIsEmpty_Exception() {
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest((Collections.emptyList()));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("create: 주문 테이블이 2개 미만일 때 예외 처리")
-    @Test
-    void create_IfOrderTablesIsLessThanTwo_Exception() {
-        final TableGroupRequest tableGroupRequest = new TableGroupRequest(Collections.singletonList(orderTable1.getId()));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("create: 주문 테이블이 사이즈와 조회 사이즈가 같지 않을 때 예외 처리")
     @Test
     void create_IfOrderTablesNotSameFindOrderTables_Exception() {
@@ -101,7 +83,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_IfTableGroupExistInOrderTable_Exception() {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTableHasTableGroupId = orderTableRepository.save(new OrderTable(0, true));
-        orderTableHasTableGroupId.updateTableGroup(tableGroup.getId());
+        orderTableHasTableGroupId.updateTableGroup(tableGroup);
         orderTableRepository.save(orderTableHasTableGroupId);
 
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(orderTableHasTableGroupId.getId(), orderTable2.getId()));
@@ -122,7 +104,7 @@ class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup_IfOrderStatusIsNotCompletion_Exception() {
         final TableGroupResponse tableGroupResponse = tableGroupService.create(new TableGroupRequest((Arrays.asList(orderTable1.getId(), orderTable2.getId()))));
-        orderRepository.save(new Order(orderTable1.getId(), "MEAL", LocalDateTime.now()));
+        orderRepository.save(new Order(orderTable1, "MEAL", LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

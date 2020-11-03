@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class ProductRestController {
 
@@ -24,7 +26,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody final ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductRequest productRequest) {
         final ProductResponse productResponse = productService.create(productRequest);
         final URI uri = URI.create("/api/products/" + productResponse.getId());
         return ResponseEntity.created(uri)

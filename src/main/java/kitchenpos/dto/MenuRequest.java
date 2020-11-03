@@ -3,13 +3,27 @@ package kitchenpos.dto;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 
 public class MenuRequest {
 
+    @NotBlank
     private String name;
+
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal price;
+
+    @NotNull
     private Long menuGroupId;
+
+    @NotEmpty
     private List<ProductQuantityRequest> productQuantities;
 
     protected MenuRequest() {
@@ -39,7 +53,7 @@ public class MenuRequest {
         return productQuantities;
     }
 
-    public Menu toEntity() {
-        return new Menu(this.name, this.price, this.menuGroupId);
+    public Menu toEntity(final MenuGroup menuGroup) {
+        return new Menu(this.name, this.price, menuGroup);
     }
 }

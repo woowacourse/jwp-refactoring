@@ -32,24 +32,6 @@ class ProductServiceTest extends ServiceTest {
         );
     }
 
-    @DisplayName("create: 상품의 가격이 null일 때 예외 처리")
-    @Test
-    void create_IfPriceIsNull_Exception() {
-        final ProductRequest productRequest = new ProductRequest("매콤치킨", null);
-
-        assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("create: 상품의 가격이 음수일 때 예외 처리")
-    @Test
-    void create_IfPriceIsNegative_Exception() {
-        final ProductRequest productRequest = new ProductRequest("매콤치킨", BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() ->productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("list: 상품 전체 조회")
     @Test
     void list() {
