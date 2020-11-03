@@ -20,7 +20,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemResponse;
-import kitchenpos.ui.dto.OrderLineItemsOfOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,7 +61,7 @@ class OrderRestControllerTest extends KitchenPosControllerTest {
     void create() throws Exception {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             ORDER.getOrderTableId(),
-            Collections.singletonList(new OrderLineItemsOfOrderRequest(
+            Collections.singletonList(new OrderLineItemsRequest(
                 ORDER.getOrderLineItems().get(0).getMenuId(),
                 ORDER.getOrderLineItems().get(0).getQuantity()
             ))

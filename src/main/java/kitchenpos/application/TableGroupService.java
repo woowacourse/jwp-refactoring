@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
+import static kitchenpos.domain.order.OrderStatus.NOT_COMPLETION_ORDER_STATUSES;
+
 import java.util.List;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.Table;
 import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.repository.OrderRepository;
@@ -33,26 +33,33 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         List<Long> tableIds = tableGroupRequest.getOrderTableIds();
         List<Table> tables = tableRepository.findAllByIdIn(tableIds);
-        TableGroup tableGroup = TableGroupAssembler.assemble(tableGroupRequest, tables);
-
+        validateTableSize(tableIds, tables);
+        TableGroup tableGroup = TableGroupAssembler.assemble(tables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.of(savedTableGroup);
     }
 
+    private void validateTableSize(List<Long> tableIds, List<Table> tables) {
+        if (tableIds.size() != tables.size()) {
+            throw new IllegalArgumentException("올바르지 않은 테이블 ID가 포함되어 있습니다.");
+        }
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
-
-        if (orderRepository.existsByTableInAndOrderStatusIn(tables,
-            Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderCompletion(tables);
 
         for (final Table table : tables) {
-            table.setTableGroup(null);
-            table.setEmpty(false);
-            tableRepository.save(table);
+            table.unGroup();
+        }
+    }
+
+    private void validateOrderCompletion(List<Table> tables) {
+        if (orderRepository
+            .existsByTableInAndOrderStatusIn(tables, NOT_COMPLETION_ORDER_STATUSES)) {
+            throw new IllegalArgumentException("진행중인 주문건이 있습니다.");
         }
     }
 }

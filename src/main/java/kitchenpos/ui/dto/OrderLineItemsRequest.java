@@ -3,7 +3,7 @@ package kitchenpos.ui.dto;
 import java.util.Objects;
 import javax.validation.constraints.NotNull;
 
-public class OrderLineItemsOfOrderRequest {
+public class OrderLineItemsRequest {
 
     @NotNull
     private Long menuId;
@@ -11,10 +11,10 @@ public class OrderLineItemsOfOrderRequest {
     @NotNull
     private Long quantity;
 
-    private OrderLineItemsOfOrderRequest() {
+    private OrderLineItemsRequest() {
     }
 
-    public OrderLineItemsOfOrderRequest(long menuId, long quantity) {
+    public OrderLineItemsRequest(long menuId, long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
@@ -35,7 +35,7 @@ public class OrderLineItemsOfOrderRequest {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        OrderLineItemsOfOrderRequest that = (OrderLineItemsOfOrderRequest) o;
+        OrderLineItemsRequest that = (OrderLineItemsRequest) o;
         return Objects.equals(menuId, that.menuId) &&
             Objects.equals(quantity, that.quantity);
     }

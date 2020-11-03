@@ -2,7 +2,7 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.table.Table;
@@ -67,6 +67,9 @@ class TableGroupRepositoryTest extends KitchenPosRepositoryTest {
     private List<Table> getCreatedTables() {
         Table table = Table.entityOf(10, true);
         Table savedTable = tableRepository.save(table);
-        return Collections.singletonList(savedTable);
+
+        Table otherTable = Table.entityOf(10, true);
+        Table savedOtherTable = tableRepository.save(otherTable);
+        return Arrays.asList(savedTable, savedOtherTable);
     }
 }

@@ -36,7 +36,7 @@ public class Menu extends BaseIdEntity {
         List<MenuProduct> menuProducts) {
         super(id);
 
-        validate(menuGroup, menuProducts);
+        validate(price, menuGroup, menuProducts);
         setMenu(menuProducts);
         this.name = name;
         this.price = price;
@@ -54,24 +54,39 @@ public class Menu extends BaseIdEntity {
         return of(null, name, price, menuGroup, menuProducts);
     }
 
-    private void validate(MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validate(menuGroup);
-        validate(menuProducts);
+    private void validate(MenuPrice price, MenuGroup menuGroup,
+        List<MenuProduct> menuProducts) {
+        validateMenuGroup(menuGroup);
+        validateMenuProducts(menuProducts);
+        validatePrice(price, menuProducts);
     }
 
-    private void validate(MenuGroup menuGroup) {
+    private void validateMenuGroup(MenuGroup menuGroup) {
         if (Objects.isNull(menuGroup)) {
             throw new IllegalArgumentException("MenuGroup은 Null일 수 없습니다.");
         }
     }
 
-    private void validate(List<MenuProduct> menuProducts) {
+    private void validateMenuProducts(List<MenuProduct> menuProducts) {
         if (Objects.isNull(menuProducts)) {
             throw new IllegalArgumentException("MenuProducts는 Null일 수 없습니다.");
         }
 
         if (menuProducts.isEmpty()) {
             throw new IllegalArgumentException("MenuProducts는 Empty일 수 없습니다.");
+        }
+    }
+
+    private void validatePrice(MenuPrice price, List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            BigDecimal productPrice = menuProduct.getProductPrice();
+            BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
+            sum = sum.add(productPrice.multiply(quantity));
+        }
+
+        if (price.isMoreThan(sum)) {
+            throw new IllegalArgumentException("금액은 메뉴 상품의 합보다 클 수 없습니다.");
         }
     }
 

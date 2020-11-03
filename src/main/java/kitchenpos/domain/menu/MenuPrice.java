@@ -29,6 +29,10 @@ public class MenuPrice {
         }
     }
 
+    public boolean isMoreThan(BigDecimal sum) {
+        return price.compareTo(sum) > 0;
+    }
+
     public BigDecimal getPrice() {
         return price;
     }

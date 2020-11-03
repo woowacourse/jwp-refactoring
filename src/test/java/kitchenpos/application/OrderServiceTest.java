@@ -11,7 +11,7 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemResponse;
-import kitchenpos.ui.dto.OrderLineItemsOfOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     @DisplayName("Order 생성 - 성공")
     @Test
     void create_Success() {
-        OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+        OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
             getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             getCreatedNotEmptyOrderTableId(),
-            Collections.singletonList(orderLineItemsOfOrderRequest)
+            Collections.singletonList(orderLineItemsRequest)
         );
 
         OrderResponse createdOrder = orderService.create(orderCreateRequest);
@@ -46,12 +46,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     @DisplayName("Order 생성 - 예외 발생, MenuId가 존재하지 않는 경우")
     @Test
     void create_NotExistsMenuId_ThrownException() {
-        OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+        OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
             getCreatedMenuId() + 1, TEST_ORDER_LINE_ITEM_QUANTITY);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             getCreatedNotEmptyOrderTableId(),
-            Collections.singletonList(orderLineItemsOfOrderRequest)
+            Collections.singletonList(orderLineItemsRequest)
         );
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -85,12 +85,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     @DisplayName("Order 생성 - 예외 발생, 빈 테이블인 경우")
     @Test
     void create_EmptyTable_ThrownException() {
-        OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+        OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
             getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             getCreatedEmptyOrderTableId(),
-            Collections.singletonList(orderLineItemsOfOrderRequest)
+            Collections.singletonList(orderLineItemsRequest)
         );
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
@@ -100,12 +100,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     @DisplayName("전체 order 조회 - 성공")
     @Test
     void list_Success() {
-        OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+        OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
             getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             getCreatedNotEmptyOrderTableId(),
-            Collections.singletonList(orderLineItemsOfOrderRequest)
+            Collections.singletonList(orderLineItemsRequest)
         );
 
         OrderResponse createdOrder = orderService.create(orderCreateRequest);
@@ -122,12 +122,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     void changeOrderStatus_OrderStatusNotCompletion_Success(OrderStatus orderStatus) {
         for (OrderStatus targetOrderStatus : OrderStatus.values()) {
 
-            OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+            OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
                 getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
 
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 getCreatedNotEmptyOrderTableId(),
-                Collections.singletonList(orderLineItemsOfOrderRequest)
+                Collections.singletonList(orderLineItemsRequest)
             );
 
             OrderResponse createdOrder = orderService.create(orderCreateRequest);
@@ -152,12 +152,12 @@ class OrderServiceTest extends KitchenPosServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COMPLETION"})
     void changeOrderStatus_OrderStatusCompletion_ThrownException(OrderStatus orderStatus) {
         for (OrderStatus targetOrderStatus : OrderStatus.values()) {
-            OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest = new OrderLineItemsOfOrderRequest(
+            OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
                 getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
 
             OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
                 getCreatedNotEmptyOrderTableId(),
-                Collections.singletonList(orderLineItemsOfOrderRequest)
+                Collections.singletonList(orderLineItemsRequest)
             );
 
             OrderResponse createdOrder = orderService.create(orderCreateRequest);

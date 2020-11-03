@@ -12,7 +12,7 @@ import kitchenpos.repository.TableRepository;
 import kitchenpos.ui.dto.OrderAssembler;
 import kitchenpos.ui.dto.OrderChangeStatusRequest;
 import kitchenpos.ui.dto.OrderCreateRequest;
-import kitchenpos.ui.dto.OrderLineItemsOfOrderRequest;
+import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,18 +34,18 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItemsOfOrderRequest> OrderLineItemsOfOrderRequests
+        final List<OrderLineItemsRequest> orderLineItemsRequests
             = orderCreateRequest.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(OrderLineItemsOfOrderRequests)) {
+        if (CollectionUtils.isEmpty(orderLineItemsRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = OrderLineItemsOfOrderRequests.stream()
-            .map(OrderLineItemsOfOrderRequest::getMenuId)
+        final List<Long> menuIds = orderLineItemsRequests.stream()
+            .map(OrderLineItemsRequest::getMenuId)
             .collect(Collectors.toList());
 
-        if (OrderLineItemsOfOrderRequests.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemsRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
@@ -56,8 +56,8 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        List<Long> orderLineItemsOfOrderMenuIds = OrderLineItemsOfOrderRequests.stream()
-            .map(OrderLineItemsOfOrderRequest::getMenuId)
+        List<Long> orderLineItemsOfOrderMenuIds = orderLineItemsRequests.stream()
+            .map(OrderLineItemsRequest::getMenuId)
             .collect(Collectors.toList());
         List<Menu> foundMenus = menuRepository.findAllById(orderLineItemsOfOrderMenuIds);
 

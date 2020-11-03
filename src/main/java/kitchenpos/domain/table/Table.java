@@ -41,6 +41,18 @@ public class Table extends BaseIdEntity {
         return of(null, numberOfGuests, empty);
     }
 
+    public void changeEmpty(final boolean empty) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 해지되지 않았습니다.");
+        }
+        setEmpty(empty);
+    }
+
+    public void unGroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
     public TableGroup getTableGroup() {
         return tableGroup;
     }
@@ -86,14 +98,6 @@ public class Table extends BaseIdEntity {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
-    }
-
-    public void changeEmpty(final boolean empty) {
-        if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 해지되지 않았습니다.");
-        }
-
-        setEmpty(empty);
     }
 
     @Override

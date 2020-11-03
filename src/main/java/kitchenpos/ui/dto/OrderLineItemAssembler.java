@@ -11,20 +11,20 @@ public class OrderLineItemAssembler {
     }
 
     public static OrderLineItem assemble(
-        OrderLineItemsOfOrderRequest orderLineItemsOfOrderRequest, List<Menu> menus) {
-        Menu menu = findMenu(menus, orderLineItemsOfOrderRequest.getMenuId());
-        return OrderLineItem.entityOf(menu, orderLineItemsOfOrderRequest.getQuantity());
+        OrderLineItemsRequest orderLineItemsRequest, List<Menu> menus) {
+        Menu menu = findMenu(menus, orderLineItemsRequest.getMenuId());
+        return OrderLineItem.entityOf(menu, orderLineItemsRequest.getQuantity());
     }
 
     private static Menu findMenu(List<Menu> menus, long menuId) {
         return menus.stream()
             .filter(menu -> menu.getId().equals(menuId))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Menu ID에 해당하는 Menu가 없습니다."));
+            .orElse(null);
     }
 
     public static List<OrderLineItem> listAssemble(
-        List<OrderLineItemsOfOrderRequest> orderLineItems, List<Menu> menus) {
+        List<OrderLineItemsRequest> orderLineItems, List<Menu> menus) {
         return orderLineItems.stream()
             .map(orderLineItemsOfOrderRequest -> assemble(orderLineItemsOfOrderRequest, menus))
             .collect(Collectors.toList());

@@ -28,6 +28,7 @@ public class OrderLineItem extends BaseSeqEntity {
 
     protected OrderLineItem(Long seq, Order order, Menu menu, OrderLineItemQuantity quantity) {
         super(seq);
+        validate(menu, quantity);
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
@@ -39,6 +40,15 @@ public class OrderLineItem extends BaseSeqEntity {
 
     public static OrderLineItem entityOf(Menu menu, long quantity) {
         return of(null, menu, quantity);
+    }
+
+    private void validate(Menu menu, OrderLineItemQuantity quantity) {
+        if (Objects.isNull(menu)) {
+            throw new IllegalArgumentException("Menu는 Null일 수 없습니다.");
+        }
+        if (Objects.isNull(quantity)) {
+            throw new IllegalArgumentException("Quantity는 Null일 수 없습니다.");
+        }
     }
 
     public Order getOrder() {

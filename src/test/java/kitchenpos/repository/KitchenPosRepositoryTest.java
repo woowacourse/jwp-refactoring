@@ -7,7 +7,7 @@ import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
@@ -51,8 +51,13 @@ public abstract class KitchenPosRepositoryTest {
             .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedTable = tableRepository.save(table);
 
-        getCreatedTableGroup(Collections.singletonList(savedTable));
+        Table otherTable = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
+        Table savedOtherTable = tableRepository.save(otherTable);
+
+        getCreatedTableGroup(Arrays.asList(savedTable, savedOtherTable));
         assertThat(savedTable.getId()).isNotNull();
+        assertThat(savedOtherTable.getId()).isNotNull();
         return savedTable;
     }
 
