@@ -1,59 +1,102 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.CollectionUtils;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Entity
+@Table(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    @ManyToOne
+    @JoinColumn(name = "order_table_id")
+    private OrderTable orderTable;
+    @Enumerated(value = EnumType.STRING)
+    private OrderStatus orderStatus = OrderStatus.COOKING;
+    @CreatedDate
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    @OneToMany(mappedBy = "order")
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @Version
+    private int version;
 
-    public Long getId() {
-        return id;
+    @Builder
+    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
+        setOrderTable(orderTable);
+        setOrderLineItems(orderLineItems);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private void setOrderTable(final OrderTable orderTable) {
+        validateOrderTable(orderTable);
+        if (Objects.isNull(this.orderTable)) {
+            this.orderTable = orderTable;
+            this.orderTable.addOrder(this);
+        }
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    private void validateOrderTable(final OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    private void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        validateOrderLineItems(orderLineItems);
+        orderLineItems.forEach(this::addOrderLineItem);
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
+    private void validateOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    private void addOrderLineItem(final OrderLineItem orderLineItem) {
+        orderLineItems.add(orderLineItem);
+        orderLineItem.setOrder(this);
+    }
+
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateOrderStatus();
         this.orderStatus = orderStatus;
     }
 
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
+    private void validateOrderStatus() {
+        if (orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
+    public boolean isInProgress() {
+        return !orderStatus.equals(OrderStatus.COMPLETION);
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+        return new ArrayList<>(orderLineItems);
     }
 }

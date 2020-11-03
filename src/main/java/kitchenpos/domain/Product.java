@@ -1,40 +1,53 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Entity
 public class Product {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
+    @OneToMany(mappedBy = "product")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
+    @Builder
+    public Product(final Long id, final String name, final BigDecimal price) {
+        validatePrice(price);
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
         this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
         this.price = price;
+    }
+
+    private void validatePrice(final BigDecimal price) {
+        if (BigDecimal.ZERO.compareTo(price) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
+    }
+
+    public boolean isSameId(final Long id) {
+        return id.equals(this.id);
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return new ArrayList<>(menuProducts);
     }
 }

@@ -3,33 +3,30 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @SpringBootTest
-@Sql("/deleteAll.sql")
+@Sql(value = "/deleteAll.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
-    private MenuGroup menuGroup;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = MenuGroup.builder()
-            .name("반반메뉴")
-            .build();
-    }
 
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupRequest request = MenuGroupRequest.builder()
+            .name("반반메뉴")
+            .build();
+
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
 
         assertThat(savedMenuGroup.getId()).isNotNull();
     }
@@ -37,10 +34,16 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() {
-        menuGroupService.create(menuGroup);
-        menuGroupService.create(menuGroup);
+        MenuGroupRequest request1 = MenuGroupRequest.builder()
+            .name("반반메뉴")
+            .build();
+        MenuGroupRequest request2 = MenuGroupRequest.builder()
+            .name("강정메뉴")
+            .build();
+        menuGroupService.create(request1);
+        menuGroupService.create(request2);
 
-        List<MenuGroup> list = menuGroupService.list();
+        List<MenuGroupResponse> list = menuGroupService.list();
 
         assertThat(list).hasSize(2);
     }

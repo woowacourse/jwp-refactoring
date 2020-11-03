@@ -1,83 +1,77 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createMenu;
 import static kitchenpos.TestObjectFactory.createMenuGroup;
 import static kitchenpos.TestObjectFactory.createMenuProduct;
-import static kitchenpos.TestObjectFactory.createOrder;
-import static kitchenpos.TestObjectFactory.createOrderLineItem;
+import static kitchenpos.TestObjectFactory.createOrderTable;
 import static kitchenpos.TestObjectFactory.createProduct;
-import static kitchenpos.TestObjectFactory.createTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @SpringBootTest
-@Sql("/deleteAll.sql")
+@Sql(value = "/deleteAll.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 class OrderServiceTest {
 
     @Autowired
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao tableDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
-
-    @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
 
     private MenuGroup savedMenuGroup;
-    private Product savedProduct;
-    private MenuProduct menuProduct;
-    private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = menuGroupDao.save(createMenuGroup());
-        savedProduct = productDao.save(createProduct(18_000));
-        menuProduct = createMenuProduct(savedProduct);
-        menuProducts = Arrays.asList(menuProduct);
+        savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
     }
 
     @DisplayName("주문 추가")
     @Test
     void create() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Menu savedMenu = saveMenu();
 
-        Order order = createOrder(savedTable, orderLineItems);
-        Order savedOrder = orderService.create(order);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
+
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
+        OrderResponse savedOrder = orderService.create(request);
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
             () -> assertThat(savedOrder.getOrderLineItems().get(0).getSeq()).isNotNull()
         );
     }
@@ -85,74 +79,71 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
-        Order order = createOrder(savedTable, null);
+        OrderRequest request = createOrderRequest(savedTable, null);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable table = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
-        Menu notSavedMenu = createMenu(18_000, savedMenuGroup, menuProducts);
-        OrderLineItem orderLineItem = createOrderLineItem(notSavedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
+        Menu notSavedMenu = Menu.builder()
+            .id(1000L)
+            .price(BigDecimal.valueOf(18_000))
+            .menuProducts(menuProducts)
+            .build();
 
-        Order order = createOrder(table, orderLineItems);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(notSavedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        assertThatThrownBy(() -> orderService.create(order))
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
+
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = createTable(false);
+        OrderTable notSavedTable = OrderTable.builder()
+            .id(1000L)
+            .build();
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Menu savedMenu = saveMenu();
 
-        Order order = createOrder(notSavedTable, orderLineItems);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
+        OrderRequest request = createOrderRequest(notSavedTable, orderLineItems);
 
-    @DisplayName("[예외] 빈 테이블의 주문 추가")
-    @Test
-    void create_Fail_With_EmptyTable() {
-        OrderTable emptyTable = tableDao.save(createTable(true));
-
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
-
-        Order order = createOrder(emptyTable, orderLineItems);
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Menu savedMenu = saveMenu();
 
-        Order order = createOrder(savedTable, orderLineItems);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        orderService.create(order);
-        orderService.create(order);
+        OrderRequest request = createOrderRequest(savedTable, orderLineItems);
 
-        List<Order> list = orderService.list();
+        orderService.create(request);
+        orderService.create(request);
+
+        List<OrderResponse> list = orderService.list();
 
         assertThat(list).hasSize(2);
     }
@@ -160,42 +151,52 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
+        Menu savedMenu = saveMenu();
 
-        Order order = createOrder(savedTable, orderLineItems);
+        OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
+        List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        Order savedOrder = orderService.create(order);
-        Order target = Order.builder()
-            .orderStatus(OrderStatus.COMPLETION.name())
+        OrderRequest order = createOrderRequest(savedTable, orderLineItems);
+
+        OrderResponse savedOrder = orderService.create(order);
+        OrderStatusChangeRequest request = OrderStatusChangeRequest.builder()
+            .orderStatus(OrderStatus.COMPLETION)
             .build();
 
-        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), target);
+        OrderResponse changeOrderStatus = orderService
+            .changeOrderStatus(savedOrder.getId(), request);
 
-        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
+        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 
-    @DisplayName("[예외] 이미 완료된 주문의 상태 변경")
-    @Test
-    void changeOrderStatus_With_CompletedOrder() {
-        OrderTable savedTable = tableDao.save(createTable(false));
+    private Menu saveMenu() {
+        Product product = createProduct(10_000);
+        MenuProduct menuProduct = createMenuProduct(product, 2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
-        Menu savedMenu = menuService.create(createMenu(18_000, savedMenuGroup, menuProducts));
-        OrderLineItem orderLineItem = createOrderLineItem(savedMenu);
-        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
-
-        Order order = createOrder(savedTable, orderLineItems);
-
-        Order crsavedOrder = orderService.create(order);
-        Order target = Order.builder()
-            .orderStatus(OrderStatus.COMPLETION.name())
+        Menu menu = Menu.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(18_000))
+            .menuGroup(savedMenuGroup)
+            .menuProducts(menuProducts)
             .build();
-        orderService.changeOrderStatus(crsavedOrder.getId(), target);
+        return menuDao.save(menu);
+    }
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(crsavedOrder.getId(), target))
-            .isInstanceOf(IllegalArgumentException.class);
+    private OrderLineItemRequest createOrderLineItemRequest(Menu savedMenu) {
+        return OrderLineItemRequest.builder()
+            .menuId(savedMenu.getId())
+            .quantity(2)
+            .build();
+    }
+
+    private OrderRequest createOrderRequest(OrderTable savedTable,
+        List<OrderLineItemRequest> orderLineItems) {
+        return OrderRequest.builder()
+            .orderTableId(savedTable.getId())
+            .orderLineItems(orderLineItems)
+            .build();
     }
 }

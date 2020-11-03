@@ -1,32 +1,34 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class MenuService {
+
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductDao productDao;
 
     public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
+        final MenuDao menuDao,
+        final MenuGroupDao menuGroupDao,
+        final MenuProductDao menuProductDao,
+        final ProductDao productDao
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
@@ -35,50 +37,71 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public MenuResponse create(final MenuRequest request) {
+        MenuGroup menuGroup = menuGroupDao.findById(request.getMenuGroupId())
+            .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        List<Product> products = findProducts(request.getMenuProducts());
+        List<MenuProduct> menuProducts = convertMenuProducts(request.getMenuProducts(), products);
 
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
+        Menu menu = Menu.builder()
+            .name(request.getName())
+            .price(request.getPrice())
+            .menuGroup(menuGroup)
+            .menuProducts(menuProducts)
+            .build();
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        Menu savedMenu = menuDao.save(menu);
+        menuProductDao.saveAll(menuProducts);
+        return MenuResponse.from(savedMenu);
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+    private List<Product> findProducts(final List<MenuProductRequest> request) {
+        List<Long> productIds = request.stream()
+            .map(MenuProductRequest::getProductId)
+            .collect(Collectors.toList());
+        List<Product> products = productDao.findAllById(productIds);
+        validateSavedProduct(productIds, products);
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+        return products;
+    }
+
+    private void validateSavedProduct(final List<Long> productIds, final List<Product> products) {
+        if (productIds.size() != products.size()) {
+            throw new IllegalArgumentException();
         }
+    }
 
-        return menus;
+    private List<MenuProduct> convertMenuProducts(
+        final List<MenuProductRequest> requests,
+        final List<Product> products
+    ) {
+        return requests.stream()
+            .map(request -> convertMenuProduct(request, products))
+            .collect(Collectors.toList());
+    }
+
+    private MenuProduct convertMenuProduct(
+        final MenuProductRequest request,
+        final List<Product> products
+    ) {
+        Product product = findProduct(request, products);
+        return MenuProduct.builder()
+            .product(product)
+            .quantity(request.getQuantity())
+            .build();
+    }
+
+    private Product findProduct(final MenuProductRequest request, final List<Product> products) {
+        return products.stream()
+            .filter(product -> product.isSameId(request.getProductId()))
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
+    }
+
+    @Transactional
+    public List<MenuResponse> list() {
+        List<Menu> menus = menuDao.findAll();
+        return MenuResponse.listFrom(menus);
     }
 }

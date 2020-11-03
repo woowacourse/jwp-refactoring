@@ -1,41 +1,63 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.util.CollectionUtils;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Entity
+@EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @CreatedDate
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    @OneToMany(mappedBy = "tableGroup")
+    private List<OrderTable> orderTables = new ArrayList<>();
 
-    public Long getId() {
-        return id;
+    @Builder
+    public TableGroup(final List<OrderTable> orderTables) {
+        setOrderTables(orderTables);
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private void setOrderTables(final List<OrderTable> orderTables) {
+        validateOrderTables(orderTables);
+        orderTables.forEach(this::addOrderTable);
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    private void validateOrderTables(final List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void addOrderTable(final OrderTable orderTable) {
+        orderTables.add(orderTable);
+        orderTable.groupBy(this);
+    }
+
+    public void ungroup() {
+        List<OrderTable> orderTables = getOrderTables();
+        this.orderTables.clear();
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        return new ArrayList<>(orderTables);
     }
 }

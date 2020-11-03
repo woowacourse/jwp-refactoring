@@ -1,59 +1,94 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.AllArgsConstructor;
+import java.util.Objects;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Entity
 public class Menu {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+    @OneToMany(mappedBy = "menu")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
+    @Builder
+    public Menu(
+        final Long id,
+        final String name,
+        final BigDecimal price,
+        final MenuGroup menuGroup,
+        final List<MenuProduct> menuProducts
+    ) {
+        validatePrice(price);
         this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
         this.price = price;
+        setMenuGroup(menuGroup);
+        setMenuProducts(menuProducts);
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    private void validatePrice(final BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    private void setMenuGroup(final MenuGroup menuGroup) {
+        if (Objects.isNull(this.menuGroup) && Objects.nonNull(menuGroup)) {
+            this.menuGroup = menuGroup;
+            this.menuGroup.addMenu(this);
+        }
+    }
+
+    private void setMenuProducts(final List<MenuProduct> menuProducts) {
+        if (Objects.nonNull(menuProducts)) {
+            menuProducts.forEach(this::addMenuProduct);
+        }
+        validateMenuProductsPrice();
+    }
+
+    public void addMenuProduct(final MenuProduct menuProduct) {
+        menuProducts.add(menuProduct);
+        menuProduct.setMenu(this);
+    }
+
+    private void validateMenuProductsPrice() {
+        BigDecimal sum = calculateProductPrice();
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private BigDecimal calculateProductPrice() {
+        return menuProducts.stream()
+            .map(MenuProduct::calculatePrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public boolean isSameId(final Long menuId) {
+        return menuId.equals(this.id);
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+        return new ArrayList<>(menuProducts);
     }
 }

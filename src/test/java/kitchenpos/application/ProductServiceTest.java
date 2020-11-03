@@ -1,19 +1,20 @@
 package kitchenpos.application;
 
-import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @SpringBootTest
-@Sql("/deleteAll.sql")
+@Sql(value = "/deleteAll.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
 class ProductServiceTest {
 
     @Autowired
@@ -22,32 +23,31 @@ class ProductServiceTest {
     @DisplayName("상품 추가")
     @Test
     void create() {
-        Product product = createProduct(18_000);
+        ProductRequest request = createProductRequest(18_000);
 
-        Product savedProduct = productService.create(product);
+        ProductResponse savedProduct = productService.create(request);
 
         assertThat(savedProduct.getId()).isNotNull();
-    }
-
-    @DisplayName("[예외] 가격이 0보다 작은 상품 추가")
-    @Test
-    void create_Fail_With_InvalidPrice() {
-        Product product = createProduct(-1);
-
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 상품 조회")
     @Test
     void list() {
-        Product product = createProduct(18_000);
+        ProductRequest request1 = createProductRequest(18_000);
+        ProductRequest request2 = createProductRequest(20_000);
 
-        productService.create(product);
-        productService.create(product);
+        productService.create(request1);
+        productService.create(request2);
 
-        List<Product> list = productService.list();
+        List<ProductResponse> list = productService.list();
 
         assertThat(list).hasSize(2);
+    }
+
+    private ProductRequest createProductRequest(int price) {
+        return ProductRequest.builder()
+            .name("강정치킨")
+            .price(BigDecimal.valueOf(price))
+            .build();
     }
 }
