@@ -1,13 +1,17 @@
 package kitchenpos.db;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import sun.rmi.runtime.Log;
 
 public class TestDataFactory {
 
@@ -43,6 +47,34 @@ public class TestDataFactory {
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
+    }
+
+    public static Order createOrder(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+        List<OrderLineItem> orderLineItems) {
+        Order order = new Order();
+        order.setId(id);
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus.name());
+        order.setOrderedTime(orderedTime);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    public static OrderLineItem createOrderLineItem(Long orderId, Long menuId, long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numOfGuests, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numOfGuests);
+        orderTable.setEmpty(empty);
+        return orderTable;
     }
 
 }
