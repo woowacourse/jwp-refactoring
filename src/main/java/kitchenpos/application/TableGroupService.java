@@ -12,7 +12,6 @@ import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -37,27 +36,31 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
+        validateOrderTableCount(orderTableIds, savedOrderTables);
+        validateGroupingTable(savedOrderTables);
+
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroupRequest.toEntity());
+
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.updateTableGroup(savedTableGroup);
+            savedOrderTable.updateEmpty(false);
+        }
+
+        return TableGroupResponse.of(savedTableGroup, OrderTableResponse.ofList(savedOrderTables));
+    }
+
+    private void validateOrderTableCount(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validateGroupingTable(final List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroupRequest.toEntity());
-
-        final List<OrderTableResponse> orderTableResponses = new ArrayList<>();
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.updateTableGroup(savedTableGroup);
-            savedOrderTable.updateEmpty(false);
-            orderTableResponses.add(OrderTableResponse.of(savedOrderTable));
-        }
-
-        return TableGroupResponse.of(savedTableGroup, orderTableResponses);
     }
 
     @Transactional
@@ -70,14 +73,18 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        validateOrdersStatusCompletion(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateTableGroup(null);
             orderTable.updateEmpty(false);
+        }
+    }
+
+    private void validateOrdersStatusCompletion(final List<Long> orderTableIds) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
         }
     }
 }
