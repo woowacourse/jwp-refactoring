@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.dto.TableCreateRequest;
@@ -20,21 +20,21 @@ import kitchenpos.table.dto.TableResponses;
 @Transactional(readOnly = true)
 public class TableService {
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+    public TableService(OrderRepository orderRepository, TableRepository tableRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
     public Long create(TableCreateRequest request) {
         Table table = request.toEntity();
-        return orderTableRepository.save(table).getId();
+        return tableRepository.save(table).getId();
     }
 
     public TableResponses list() {
-        List<Table> tables = orderTableRepository.findAll();
+        List<Table> tables = tableRepository.findAll();
         return TableResponses.from(tables);
     }
 
@@ -57,7 +57,7 @@ public class TableService {
     }
 
     private Table findOne(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
+        return tableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
     }
 }

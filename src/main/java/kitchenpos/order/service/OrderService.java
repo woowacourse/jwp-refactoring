@@ -13,7 +13,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
@@ -25,18 +25,18 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
 
     public OrderService(
         final MenuRepository menuRepository,
         final OrderRepository orderRepository,
         final OrderLineItemRepository orderLineItemRepository,
-        final OrderTableRepository orderTableRepository
+        final TableRepository tableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
     }
 
     @Transactional
@@ -86,7 +86,7 @@ public class OrderService {
     }
 
     private Table findTable(OrderCreateRequest request) {
-        return orderTableRepository.findById(request.getTableId())
+        return tableRepository.findById(request.getTableId())
             .orElseThrow(IllegalArgumentException::new);
     }
 }

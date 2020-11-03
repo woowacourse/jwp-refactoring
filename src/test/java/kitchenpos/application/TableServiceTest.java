@@ -17,7 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.order.exception.TableEmptyException;
 import kitchenpos.table.domain.Table;
@@ -38,7 +38,7 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableRepository orderTableRepository;
+    private TableRepository tableRepository;
 
     @Autowired
     private OrderRepository orderRepository;
@@ -85,13 +85,13 @@ class TableServiceTest {
     @DisplayName("단체가 지정되어 있는 경우 사람유무를 변경했을 때 예외가 발생한다.")
     @Test
     void changeEmptyWhenHasTableGroupId() {
-        Table saved1 = orderTableRepository.save(createTable(null, true, null, 3));
-        Table saved2 = orderTableRepository.save(createTable(null, true, null, 3));
+        Table saved1 = tableRepository.save(createTable(null, true, null, 3));
+        Table saved2 = tableRepository.save(createTable(null, true, null, 3));
         TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(Arrays.asList(saved1, saved2)));
         System.out.println(savedTableGroup.getCreatedDate().toString());
 
         Table table = createTable(null, true, savedTableGroup, 1);
-        Table savedTable = orderTableRepository.save(table);
+        Table savedTable = tableRepository.save(table);
 
         assertThatThrownBy(() -> tableService.editEmpty(savedTable.getId(), new TableEmptyEditRequest(true)))
             .isInstanceOf(InvalidTableEmptyException.class);
@@ -101,7 +101,7 @@ class TableServiceTest {
     @Test
     void changeEmptyWhenOrderStatusIsNullOrCompletion() {
         Table table = createTable(null, false, null, 1);
-        Table savedTable = orderTableRepository.save(table);
+        Table savedTable = tableRepository.save(table);
 
         Order order = createOrder(null, Collections.emptyList(), OrderStatus.COOKING,
             savedTable);
@@ -115,7 +115,7 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         Table table = createTable(null, false, null, 1);
-        Table savedTable = orderTableRepository.save(table);
+        Table savedTable = tableRepository.save(table);
         boolean expect = false;
 
         Order order = createOrder(null, Collections.emptyList(), OrderStatus.COMPLETION, savedTable);
@@ -123,7 +123,7 @@ class TableServiceTest {
 
         tableService.editEmpty(savedTable.getId(), new TableEmptyEditRequest(expect));
 
-        Table actual = orderTableRepository.findById(savedTable.getId()).get();
+        Table actual = tableRepository.findById(savedTable.getId()).get();
 
         assertThat(actual.isEmpty()).isEqualTo(expect);
     }
@@ -141,7 +141,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWhenIsEmpty() {
         Table table = createTable(null, true, null, 1);
-        Table savedTable = orderTableRepository.save(table);
+        Table savedTable = tableRepository.save(table);
 
         TableGuestEditRequest request = new TableGuestEditRequest(2);
 
@@ -153,7 +153,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuests() {
         Table table = createTable(null, false, null, 1);
-        Table savedTable = orderTableRepository.save(table);
+        Table savedTable = tableRepository.save(table);
 
         TableGuestEditRequest request = new TableGuestEditRequest(4);
 

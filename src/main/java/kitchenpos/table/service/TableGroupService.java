@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
@@ -21,19 +21,19 @@ import kitchenpos.table.dto.TableGroupCreateRequest;
 @Transactional(readOnly = true)
 public class TableGroupService {
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final TableRepository tableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository,
+    public TableGroupService(OrderRepository orderRepository, TableRepository tableRepository,
         final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.tableRepository = tableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public Long create(TableGroupCreateRequest request) {
-        final List<Table> savedTables = orderTableRepository.findAllByIdIn(
+        final List<Table> savedTables = tableRepository.findAllByIdIn(
             new ArrayList<>(request.getTableIds()));
 
         TableGroup tableGroup = new TableGroup(savedTables);
@@ -50,7 +50,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final List<Table> tables = tableRepository.findAllByTableGroupId(tableGroupId);
 
         final List<Long> tableIds = tables.stream()
             .map(Table::getId)
@@ -68,7 +68,7 @@ public class TableGroupService {
         for (final Table table : tables) {
             table.changeTableGroup(null);
             table.fill();
-            orderTableRepository.save(table);
+            tableRepository.save(table);
         }
     }
 }
