@@ -44,18 +44,25 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         final OrderTable savedOrderTable = findById(orderTableId);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        validateGroupingTable(savedOrderTable);
+        validateIsCompletionOrder(orderTableId);
 
         savedOrderTable.updateEmpty(orderTableChangeEmptyRequest.isEmpty());
 
         return OrderTableResponse.of(savedOrderTable);
+    }
+
+    private void validateGroupingTable(final OrderTable savedOrderTable) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateIsCompletionOrder(Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
@@ -66,13 +73,17 @@ public class TableService {
 
         final OrderTable savedOrderTable = findById(orderTableId);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validateNotEmptyTable(savedOrderTable);
 
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.of(savedOrderTable);
+    }
+
+    private void validateNotEmptyTable(final OrderTable savedOrderTable) {
+        if (savedOrderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public OrderTable findById(final Long orderTableId) {
