@@ -45,6 +45,10 @@ public class OrderLineItem {
         return order;
     }
 
+    public void updateOrder(final Order order) {
+        this.order = order;
+    }
+
     public Menu getMenu() {
         return menu;
     }

@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         List<MenuProduct> menuProducts = makeMenuProductsWithoutMenu(menuRequest.getProductQuantities());
 
-        validPrice(menuProducts, menuRequest.getPrice());
+        validatePrice(menuProducts, menuRequest.getPrice());
 
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -57,8 +56,7 @@ public class MenuService {
             menuProductRepository.save(menuProduct);
         }
 
-        List<MenuProductResponse> menuProductResponses = MenuProductResponse.ofList(menuProducts);
-        return MenuResponse.of(savedMenu, menuProductResponses);
+        return MenuResponse.of(savedMenu, MenuProductResponse.ofList(menuProducts));
     }
 
     private List<MenuProduct> makeMenuProductsWithoutMenu(final List<ProductQuantityRequest> productQuantities) {
@@ -70,7 +68,7 @@ public class MenuService {
                 }).collect(Collectors.toList());
     }
 
-    private void validPrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
+    private void validatePrice(final List<MenuProduct> menuProducts, final BigDecimal price) {
         BigDecimal sum = BigDecimal.ZERO;
 
         for (final MenuProduct menuProduct : menuProducts) {
