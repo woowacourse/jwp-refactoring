@@ -101,7 +101,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_IfTableGroupExistInOrderTable_Exception() {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTableHasTableGroupId = orderTableRepository.save(new OrderTable(0, true));
-        orderTableHasTableGroupId.updateTableGroupId(tableGroup.getId());
+        orderTableHasTableGroupId.updateTableGroup(tableGroup.getId());
         orderTableRepository.save(orderTableHasTableGroupId);
 
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(orderTableHasTableGroupId.getId(), orderTable2.getId()));

@@ -89,7 +89,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_IfOrderTableHasTableGroup_Exception() {
         final TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         final OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
-        orderTable.updateTableGroupId(tableGroup.getId());
+        orderTable.updateTableGroup(tableGroup.getId());
         orderTableRepository.save(orderTable);
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(false);
 

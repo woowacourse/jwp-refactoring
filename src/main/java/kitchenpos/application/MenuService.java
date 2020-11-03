@@ -66,12 +66,12 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(menuRequest.toEntity());
 
-        final Long menuId = savedMenu.getId();
-
         final List<MenuProductResponse> menuProductResponses = new ArrayList<>();
 
         for (final ProductQuantityRequest productQuantityRequest : productQuantities) {
-            MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(menuId, productQuantityRequest.getProductId(), productQuantityRequest.getQuantity()));
+            final Product product = productRepository.findById(productQuantityRequest.getProductId())
+                    .orElseThrow(IllegalArgumentException::new);
+            MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(savedMenu, product, productQuantityRequest.getQuantity()));
             menuProductResponses.add(MenuProductResponse.of(menuProduct));
         }
 
