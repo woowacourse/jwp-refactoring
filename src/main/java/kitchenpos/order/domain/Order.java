@@ -83,23 +83,11 @@ public class Order {
         return orderLineItems;
     }
 
-    public void changeId(Long id) {
-        this.id = id;
-    }
-
-    public void changeOrderTableId(Table table) {
-        this.table = table;
-    }
-
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (orderStatus.isCompletion()) {
             throw new IllegalOrderStatusException("OrderStatus를 바꿀 수 없는 상태입니다.");
         }
         this.orderStatus = orderStatus;
-    }
-
-    public void changeOrderedTime(LocalDateTime localDateTime) {
-        this.orderedTime = localDateTime;
     }
 
     public void changeOrderLineItems(List<OrderLineItem> savedOrderLineItems) {

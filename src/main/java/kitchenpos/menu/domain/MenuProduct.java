@@ -48,8 +48,4 @@ public class MenuProduct {
     public Product getProduct() {
         return product;
     }
-
-    public void changeMenuId(Menu menu) {
-        this.menu = menu;
-    }
 }

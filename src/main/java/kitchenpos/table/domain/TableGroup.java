@@ -66,12 +66,4 @@ public class TableGroup {
     public List<Table> getTables() {
         return tables;
     }
-
-    public void changeOrderTables(List<Table> savedTables) {
-        this.tables = savedTables;
-    }
-
-    public void changeCreatedDate(LocalDateTime localDateTime) {
-        this.createdDate = localDateTime;
-    }
 }
