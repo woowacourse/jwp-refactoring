@@ -31,24 +31,25 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        List<Long> tableIds = tableGroupRequest.getOrderTableIds();
-        List<Table> tables = tableRepository.findAllByIdIn(tableIds);
-        validateTableSize(tableIds, tables);
+        List<Table> tables = getTables(tableGroupRequest);
         TableGroup tableGroup = TableGroupAssembler.assemble(tables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         return TableGroupResponse.of(savedTableGroup);
     }
 
-    private void validateTableSize(List<Long> tableIds, List<Table> tables) {
+    private List<Table> getTables(TableGroupRequest tableGroupRequest) {
+        List<Long> tableIds = tableGroupRequest.getOrderTableIds();
+        List<Table> tables = tableRepository.findAllByIdIn(tableIds);
         if (tableIds.size() != tables.size()) {
             throw new IllegalArgumentException("올바르지 않은 테이블 ID가 포함되어 있습니다.");
         }
+        return tables;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
+        List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
         validateOrderCompletion(tables);
 
         for (final Table table : tables) {

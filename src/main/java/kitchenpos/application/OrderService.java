@@ -16,7 +16,6 @@ import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -34,55 +33,52 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItemsRequest> orderLineItemsRequests
-            = orderCreateRequest.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItemsRequests)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItemsRequests.stream()
-            .map(OrderLineItemsRequest::getMenuId)
-            .collect(Collectors.toList());
-
-        if (orderLineItemsRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        final Table table = tableRepository.findById(orderCreateRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
-
-        if (table.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        List<Long> orderLineItemsOfOrderMenuIds = orderLineItemsRequests.stream()
-            .map(OrderLineItemsRequest::getMenuId)
-            .collect(Collectors.toList());
-        List<Menu> foundMenus = menuRepository.findAllById(orderLineItemsOfOrderMenuIds);
+        Long tableId = orderCreateRequest.getOrderTableId();
+        Table table = tableRepository.findById(tableId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("ID에 해당하는 Table이 없습니다. {" + tableId + "}"));
+        List<Menu> foundMenus = findMenus(orderCreateRequest);
 
         Order order = OrderAssembler.assemble(orderCreateRequest, table, foundMenus);
 
-        final Order savedOrder = orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
         return OrderResponse.of(savedOrder);
     }
 
+    private List<Menu> findMenus(OrderCreateRequest orderCreateRequest) {
+        List<Long> menuIds = orderCreateRequest.getOrderLineItems()
+            .stream()
+            .map(OrderLineItemsRequest::getMenuId)
+            .collect(Collectors.toList());
+
+        List<Menu> foundMenus = menuRepository.findAllById(menuIds);
+        validateMenuIds(menuIds, foundMenus);
+
+        return foundMenus;
+    }
+
+    private void validateMenuIds(List<Long> menuIds, List<Menu> foundMenus) {
+        if (menuIds.size() != foundMenus.size()) {
+            throw new IllegalArgumentException("메뉴 ID 중 일부가 유효하지 않습니다.");
+        }
+    }
+
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findAll();
 
         return OrderResponse.listOf(orders);
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId,
-        final OrderChangeStatusRequest orderChangeStatusRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+        OrderChangeStatusRequest orderChangeStatusRequest) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("ID에 해당하는 Order가 없습니다. {" + orderId + "}"));
 
-        final OrderStatus orderStatus = OrderStatus
-            .valueOf(orderChangeStatusRequest.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus);
+        OrderStatus orderStatus = OrderStatus.valueOf(orderChangeStatusRequest.getOrderStatus());
+        order.changeOrderStatus(orderStatus);
 
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.of(order);
     }
 }

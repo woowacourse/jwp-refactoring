@@ -35,13 +35,19 @@ public class MenuService {
         MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
             .orElseThrow(
                 () -> new IllegalArgumentException(menuGroupId + " : MenuGroupID가 존재하지 않습니다."));
-
-        final List<MenuProductRequest> menuProducts = menuRequest.getMenuProducts();
-        List<Product> products = productRepository.findAllById(getProductIds(menuProducts));
+        List<Product> products = getProducts(menuRequest.getMenuProducts());
 
         Menu menu = MenuAssembler.assemble(menuRequest, menuGroup, products);
         Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.of(savedMenu);
+    }
+
+    private List<Product> getProducts(List<MenuProductRequest> menuProducts) {
+        List<Product> products = productRepository.findAllById(getProductIds(menuProducts));
+        if (menuProducts.size() != products.size()) {
+            throw new IllegalArgumentException("MenuProduct에 해당하는 Product가 유효하지 않습니다.");
+        }
+        return products;
     }
 
     private List<Long> getProductIds(List<MenuProductRequest> menuProducts) {

@@ -4,7 +4,6 @@ import static kitchenpos.constants.Constants.TEST_ORDER_LINE_ITEM_QUANTITY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.order.OrderStatus;
@@ -51,45 +50,6 @@ class OrderServiceTest extends KitchenPosServiceTest {
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
             getCreatedNotEmptyOrderTableId(),
-            Collections.singletonList(orderLineItemsRequest)
-        );
-
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Order 생성 - 예외 발생, OrderLineItem이 비어있는 경우")
-    @Test
-    void create_EmptyOrderLineItem_ThrownException() {
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
-            getCreatedNotEmptyOrderTableId(),
-            new ArrayList<>()
-        );
-
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Order 생성 - 예외 발생, OrderLineItem이 Null인 경우")
-    @Test
-    void create_NullOrderLineItem_ThrownException() {
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
-            getCreatedNotEmptyOrderTableId(),
-            null
-        );
-
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Order 생성 - 예외 발생, 빈 테이블인 경우")
-    @Test
-    void create_EmptyTable_ThrownException() {
-        OrderLineItemsRequest orderLineItemsRequest = new OrderLineItemsRequest(
-            getCreatedMenuId(), TEST_ORDER_LINE_ITEM_QUANTITY);
-
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
-            getCreatedEmptyOrderTableId(),
             Collections.singletonList(orderLineItemsRequest)
         );
 

@@ -40,29 +40,36 @@ public class TableService {
     }
 
     @Transactional
-    public TableResponse changeEmpty(final Long orderTableId,
+    public TableResponse changeEmpty(final Long tableId,
         final TableChangeEmptyRequest tableChangeEmptyRequest) {
-        final Table savedTable = tableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+        Table table = findById(tableId);
+        validationOrderStatusCompletion(tableId);
+        table.changeEmpty(tableChangeEmptyRequest.isEmpty());
 
-        if (orderRepository.existsByTable_IdAndOrderStatusIn(orderTableId,
+        return TableResponse.of(table);
+    }
+
+    private void validationOrderStatusCompletion(Long tableId) {
+        if (orderRepository.existsByTable_IdAndOrderStatusIn(tableId,
             Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("진행중인 주문건이 있습니다.");
         }
-        savedTable.changeEmpty(tableChangeEmptyRequest.isEmpty());
+    }
 
-        return TableResponse.of(savedTable);
+    private Table findById(Long tableId) {
+        return tableRepository.findById(tableId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("ID에 해당하는 Table이 없습니다. {" + tableId + "}"));
     }
 
     @Transactional
-    public TableResponse changeNumberOfGuests(final Long orderTableId,
-        final TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestRequest) {
-        final int numberOfGuests = tableChangeNumberOfGuestRequest.getNumberOfGuests();
+    public TableResponse changeNumberOfGuests(final Long tableId,
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestRequest) {
+        int numberOfGuests = tableChangeNumberOfGuestRequest.getNumberOfGuests();
 
-        final Table savedTable = tableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
-        savedTable.changeNumberOfGuests(numberOfGuests);
+        Table table = findById(tableId);
+        table.changeNumberOfGuests(numberOfGuests);
 
-        return TableResponse.of(savedTable);
+        return TableResponse.of(table);
     }
 }
