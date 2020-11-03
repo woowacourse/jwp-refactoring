@@ -67,7 +67,7 @@ class OrderServiceTest {
             void setUp() {
                 List<OrderLineItem> orderLineItems =
                         Arrays.asList(createOrderLineItem(1L, 2L), createOrderLineItem(2L, 1L));
-                orderTable = createOrderTable(10L, false);
+                orderTable = createOrderTable(10L, false, 5L, 1);
                 request = createOrderRequest(orderLineItems, 10L);
             }
 
