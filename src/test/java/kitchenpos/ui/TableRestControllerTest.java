@@ -1,8 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.OrderTableDto;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +36,10 @@ class TableRestControllerTest {
     @DisplayName("테이블 생성 요청 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
-        orderTable.setId(1L);
+        OrderTableDto response =
+                new OrderTableDto(1L, null, 0, true);
 
-        given(tableService.create(any())).willReturn(orderTable);
+        given(tableService.create(any())).willReturn(response);
 
         mockMvc.perform(post("/api/tables")
                 .content("{\n"
@@ -60,9 +59,9 @@ class TableRestControllerTest {
     @DisplayName("테이블 목록 요청 테스트")
     @Test
     void list() throws Exception {
-        List<OrderTable> orderTables = new ArrayList<>();
-        orderTables.add(new OrderTable());
-        orderTables.add(new OrderTable());
+        List<OrderTableDto> orderTables = new ArrayList<>();
+        orderTables.add(new OrderTableDto());
+        orderTables.add(new OrderTableDto());
 
         given(tableService.list()).willReturn(orderTables);
 
@@ -75,11 +74,9 @@ class TableRestControllerTest {
     @DisplayName("테이블의 setEmpty를 변경 요청 테스트")
     @Test
     void changeEmpty() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
+        OrderTableDto orderTableDto = new OrderTableDto(1L, null, 1, false);
 
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTable);
+        given(tableService.changeEmpty(anyLong(), any())).willReturn(orderTableDto);
 
         mockMvc.perform(put("/api/tables/1/empty")
                 .content("{\n"
@@ -95,12 +92,9 @@ class TableRestControllerTest {
     @DisplayName("고객 수 변경 요청 테스트")
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = TestObjectFactory.creatOrderTableDto();
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(4);
+        OrderTableDto orderTable = new OrderTableDto(1L, null, 4, false);
 
         given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(orderTable);
-
 
         mockMvc.perform(put("/api/tables/1/number-of-guests")
                 .content("{\n"

@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.TestObjectFactory;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dto.menu.MenuGroupRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,15 @@ class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
     @DisplayName("메뉴 그룹 생성 기능 테스트")
     @Test
     void create() {
         String name = "추천메뉴";
-        MenuGroup savedMenuGroup = menuGroupService.create(TestObjectFactory.createMenuGroupDto(name));
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(name);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroupRequest);
 
         assertAll(
                 () -> assertThat(savedMenuGroup.getId()).isNotNull(),
@@ -32,9 +38,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 목록 조희 기능 테스트")
     @Test
     void list() {
-        menuGroupService.create(TestObjectFactory.createMenuGroupDto("1"));
-        menuGroupService.create(TestObjectFactory.createMenuGroupDto("2"));
+        menuGroupService.create(new MenuGroupRequest("name1"));
+        menuGroupService.create(new MenuGroupRequest("name2"));
 
         assertThat(menuGroupService.list()).hasSize(2);
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuGroupRepository.deleteAll();
     }
 }

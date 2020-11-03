@@ -1,111 +1,121 @@
 package kitchenpos.application;
 
-import kitchenpos.TestObjectFactory;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.common.TestFixtureFactory;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.OrderTableDto;
+import kitchenpos.dto.table.TableGroupRequest;
+import kitchenpos.dto.table.TableGroupResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@SpringBootTest
 @Sql("/delete_all.sql")
-class TableGroupServiceTest {
+class TableGroupServiceTest extends TestFixtureFactory {
     @Autowired
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 그룹 생성 메서드 테스트")
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        OrderTable orderTable1 = makeSavedOrderTable(0, true);
+        OrderTable orderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+        OrderTable changedOrderTable = orderTableRepository.findById(orderTable1.getId()).get();
         assertAll(
-                () -> assertThat(savedTableGroup.getId()).isNotNull(),
-                () -> assertThat(orderTablesByTableGroupId).hasSize(2)
+                () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+                () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2),
+                () -> assertThat(changedOrderTable.getTableGroup().getId()).isEqualTo(tableGroupResponse.getId())
         );
     }
 
     @DisplayName("테이블 그룹 생성 - 그룹을 맺으려는 테이블의 수가 2보다 작은 경우 예외 처리")
     @Test
     void createWithOrderTablesLessTwo() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1);
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId()));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 생성 - 존재하지 않는 테이블의 아이디를 입력받은 경우 예외처리")
     @Test
     void createWithNotFoundOrderTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId() + 1));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹 생성 - 이미 그룹핑된 테이블인 경우 예외처리")
     @Test
     void createWithGroupedTable() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        tableGroupService.create(tableGroup);
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable3 = makeSavedOrderTable(0, true);
 
-        OrderTable orderTable3 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables2 = Arrays.asList(orderTable2, orderTable3);
-        TableGroup tableGroupContainsGroupedTable = TestObjectFactory.createTableGroupDto(orderTables2);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
+        tableGroupService.create(tableGroupRequest);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupContainsGroupedTable))
+        TableGroupRequest tableGroupRequest2 =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable2.getId(), savedOrderTable3.getId()));
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest2))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹을 해지하는 메서드 테스트")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
+        orderRepository.save(Order.of(savedOrderTable1, OrderStatus.COMPLETION));
 
-        tableGroupService.ungroup(savedTableGroup.getId());
+        tableGroupService.ungroup(tableGroupResponse.getId());
 
-        List<OrderTable> orderTablesByTableGroupId = orderTableDao.findAllByTableGroupId(savedTableGroup.getId());
+        List<OrderTable> orderTablesByTableGroupId = orderTableRepository.findAllByTableGroupId(tableGroupResponse.getId());
         assertAll(
                 () -> assertThat(orderTablesByTableGroupId).hasSize(0)
         );
@@ -114,18 +124,32 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해지 - OrderStatus가 COOKING 혹은 MEAL 인 경우 예외처리")
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
-    void ungroupWhenCookingOrMeal(String orderStatus) {
-        OrderTable orderTable1 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        OrderTable orderTable2 = orderTableDao.save(TestObjectFactory.creatOrderTableDto());
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+    void ungroupWhenCookingOrMeal(OrderStatus orderStatus) {
+        OrderTable savedOrderTable1 = makeSavedOrderTable(0, true);
+        OrderTable savedOrderTable2 = makeSavedOrderTable(0, true);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest =
+                makeTableGroupingRequest(Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
-        Order order = TestObjectFactory.createOrder(orderTable1.getId(), orderStatus, new ArrayList<>());
-        orderDao.save(order);
+        orderRepository.save(Order.of(savedOrderTable1, orderStatus));
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private TableGroupRequest makeTableGroupingRequest(List<Long> ids) {
+        List<OrderTableDto> orderTableDtos = ids.stream()
+                .map(OrderTableDto::new)
+                .collect(Collectors.toList());
+        return new TableGroupRequest(orderTableDtos);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }

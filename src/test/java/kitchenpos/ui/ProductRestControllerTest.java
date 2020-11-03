@@ -1,8 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +35,9 @@ class ProductRestControllerTest {
     @DisplayName("Product 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        Product product = TestObjectFactory.createProduct(1L, "강정치킨", 17000);
+        ProductResponse productResponse = new ProductResponse(1L, "강정치킨", BigDecimal.valueOf(17000));
 
-        given(productService.create(any())).willReturn(product);
+        given(productService.create(any())).willReturn(productResponse);
 
         mockMvc.perform(post("/api/products")
                 .content("{\n"
@@ -56,11 +56,11 @@ class ProductRestControllerTest {
     @DisplayName("Product 목록 조회 요청 테스트")
     @Test
     void list() throws Exception {
-        List<Product> products = new ArrayList<>();
-        products.add(TestObjectFactory.createProduct(1L, "강정치킨", 17000));
-        products.add(TestObjectFactory.createProduct(2L, "양념치킨", 17000));
+        List<ProductResponse> productResponses = new ArrayList<>();
+        productResponses.add(new ProductResponse(1L, "강정치킨", BigDecimal.valueOf(17000)));
+        productResponses.add(new ProductResponse(2L, "양념치킨", BigDecimal.valueOf(17000)));
 
-        given(productService.list()).willReturn(products);
+        given(productService.list()).willReturn(productResponses);
 
         mockMvc.perform(get("/api/products"))
                 .andDo(print())

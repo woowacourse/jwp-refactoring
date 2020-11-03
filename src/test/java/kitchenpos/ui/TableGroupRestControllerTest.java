@@ -1,9 +1,8 @@
 package kitchenpos.ui;
 
-import kitchenpos.TestObjectFactory;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.OrderTableDto;
+import kitchenpos.dto.table.TableGroupResponse;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,16 +36,13 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성 요청 테스트")
     @Test
     void create() throws Exception {
-        OrderTable orderTable1 = TestObjectFactory.creatOrderTableDto();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = TestObjectFactory.creatOrderTableDto();
-        orderTable2.setId(2L);
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        OrderTableDto orderTable1 = new OrderTableDto(1L, 1L, 0, false);
+        OrderTableDto orderTable2 = new OrderTableDto(2L, 1L, 0, false);
+        List<OrderTableDto> orderTableDtos = Arrays.asList(orderTable1, orderTable2);
 
-        TableGroup tableGroup = TestObjectFactory.createTableGroupDto(orderTables);
-        tableGroup.setId(1L);
+        TableGroupResponse tableGroupResponse = new TableGroupResponse(1L, orderTableDtos, LocalDateTime.now());
 
-        given(tableGroupService.create(any())).willReturn(tableGroup);
+        given(tableGroupService.create(any())).willReturn(tableGroupResponse);
 
         mockMvc.perform(post("/api/table-groups/")
                 .content("{\n"
@@ -63,6 +60,7 @@ class TableGroupRestControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/table-groups/1"))
                 .andExpect(jsonPath("$.id", Matchers.instanceOf(Number.class)))
+                .andExpect(jsonPath("$.createdDate", Matchers.instanceOf(String.class)))
                 .andExpect(jsonPath("$.orderTables", Matchers.hasSize(2)));
     }
 
