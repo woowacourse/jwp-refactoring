@@ -43,6 +43,10 @@ public class MenuProduct {
         return menu;
     }
 
+    public void updateMenu(final Menu menu) {
+        this.menu = menu;
+    }
+
     public Long getMenuId() {
         return menu.getId();
     }
