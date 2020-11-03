@@ -13,11 +13,11 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.dto.OrderResponses;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.Table;
 
 @Service
@@ -47,15 +47,14 @@ public class OrderService {
             .map(OrderLineItemDto::getMenuId)
             .collect(Collectors.toList());
 
+        // todo 이게 필요한가?
         if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds) || orderLineItemDtos.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        final Table table = orderTableRepository.findById(request.getTableId())
-            .orElseThrow(IllegalArgumentException::new);
+        final Table table = findTable(request);
 
         Order order = new Order(table, OrderStatus.COOKING);
-
         final Order savedOrder = orderRepository.save(order);
 
         // todo 엔티티관련 옵션있었는데 찾아보기.
@@ -83,6 +82,11 @@ public class OrderService {
 
     private Order findOne(Long orderId) {
         return orderRepository.findById(orderId)
+            .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private Table findTable(OrderCreateRequest request) {
+        return orderTableRepository.findById(request.getTableId())
             .orElseThrow(IllegalArgumentException::new);
     }
 }

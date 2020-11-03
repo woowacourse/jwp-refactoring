@@ -19,11 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
 import kitchenpos.table.dto.TableGroupCreateRequest;
+import kitchenpos.table.exception.IllegalTableStateException;
+import kitchenpos.table.exception.InvalidTableQuantityException;
 import kitchenpos.table.service.TableGroupService;
 
 @SpringBootTest
@@ -48,10 +51,10 @@ class TableGroupServiceTest {
 
         assertAll(
             () -> assertThatThrownBy(() -> tableGroupService.create(request1))
-                .isInstanceOf(IllegalArgumentException.class),
+                .isInstanceOf(InvalidTableQuantityException.class),
 
             () -> assertThatThrownBy(() -> tableGroupService.create(request2))
-                .isInstanceOf(IllegalArgumentException.class)
+                .isInstanceOf(InvalidTableQuantityException.class)
         );
     }
 
@@ -67,7 +70,7 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(
             () -> tableGroupService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(InvalidTableQuantityException.class);
     }
 
     @DisplayName("인자로 넘겨준 테이블그룹이 손님이 있는 테이블이면 Exception이 발생한다.")
@@ -84,7 +87,7 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(
             () -> tableGroupService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalTableStateException.class);
     }
 
     @DisplayName("인자로 넘겨준 테이블그룹이 그룹이 있는 테이블이면 Exception이 발생한다.")
@@ -105,7 +108,7 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(
             () -> tableGroupService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalTableStateException.class);
     }
 
     @DisplayName("단체 지정을 한다.")
@@ -144,7 +147,7 @@ class TableGroupServiceTest {
 
         assertThatThrownBy(
             () -> tableGroupService.ungroup(groupId)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(IllegalOrderStatusException.class);
     }
 
     @DisplayName("단체 지정을 해제한다.")

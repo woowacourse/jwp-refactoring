@@ -22,14 +22,15 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.exception.TableEmptyException;
 import kitchenpos.order.service.OrderService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
-import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.Table;
 
 @SpringBootTest
@@ -105,7 +106,7 @@ class OrderServiceTest {
         OrderCreateRequest request = new OrderCreateRequest(savedTable.getId(), Arrays.asList(orderLineItemDto));
 
         assertThatThrownBy(() -> orderService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableEmptyException.class);
     }
 
     @DisplayName("주문을 생성한다.")

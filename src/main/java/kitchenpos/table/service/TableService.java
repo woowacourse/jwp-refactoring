@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
@@ -43,7 +44,7 @@ public class TableService {
 
         if (orderRepository.existsByTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalOrderStatusException("테이블을 비울 때, 유효하지않은 OrderStatus 상태입니다.");
         }
 
         savedTable.changeEmpty(request.getEmpty());

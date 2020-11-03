@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import kitchenpos.menu.exception.InvalidMenuPriceException;
+
 @Entity
 public class Menu {
 
@@ -47,7 +49,7 @@ public class Menu {
 
     private void validate(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidMenuPriceException(price);
         }
     }
 

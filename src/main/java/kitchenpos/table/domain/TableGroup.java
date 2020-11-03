@@ -13,6 +13,9 @@ import javax.persistence.OneToMany;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import kitchenpos.table.exception.IllegalTableStateException;
+import kitchenpos.table.exception.InvalidTableQuantityException;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class TableGroup {
@@ -42,12 +45,12 @@ public class TableGroup {
 
     private void validate(List<Table> tables) {
         if (tables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableQuantityException();
         }
 
         for (final Table savedTable : tables) {
             if (savedTable.existCustomer() || savedTable.hasGroup()) {
-                throw new IllegalArgumentException();
+                throw new IllegalTableStateException();
             }
         }
     }

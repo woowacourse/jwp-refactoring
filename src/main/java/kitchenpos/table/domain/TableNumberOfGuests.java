@@ -2,6 +2,9 @@ package kitchenpos.table.domain;
 
 import javax.persistence.Embeddable;
 
+import kitchenpos.order.exception.TableEmptyException;
+import kitchenpos.table.dto.InvalidNumberOfGuestException;
+
 @Embeddable
 public class TableNumberOfGuests {
 
@@ -16,11 +19,11 @@ public class TableNumberOfGuests {
 
     public void changeGuest(int numberOfGuests, boolean isEmpty) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidNumberOfGuestException();
         }
 
         if (isEmpty) {
-            throw new IllegalArgumentException();
+            throw new TableEmptyException("빈 테이블은 Guest를 변경할 수 없습니다.");
         }
 
         this.numberOfGuests = numberOfGuests;

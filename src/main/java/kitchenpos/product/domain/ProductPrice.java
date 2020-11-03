@@ -5,6 +5,8 @@ import java.util.Objects;
 
 import javax.persistence.Embeddable;
 
+import kitchenpos.product.exception.InvalidProductPriceException;
+
 @Embeddable
 public class ProductPrice {
 
@@ -14,10 +16,14 @@ public class ProductPrice {
     }
 
     public ProductPrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        validate(price);
         this.price = price;
+    }
+
+    private void validate(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidProductPriceException();
+        }
     }
 
     public BigDecimal getPrice() {

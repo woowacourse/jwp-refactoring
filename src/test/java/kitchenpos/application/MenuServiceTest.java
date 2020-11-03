@@ -20,6 +20,8 @@ import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.menu.exception.InvalidMenuPriceException;
+import kitchenpos.menu.exception.MenuPriceExceededException;
 import kitchenpos.menu.service.MenuService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
@@ -62,7 +64,7 @@ class MenuServiceTest {
         MenuCreateRequest request = new MenuCreateRequest("콜라 세트", -1L, menuGroup.getId(), Collections.emptyList());
         assertThatThrownBy(
             () -> menuService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("메뉴가 아무 메뉴 그룹에도 속하지 않을 시 예외가 발생하는지 확인한다.")
@@ -97,7 +99,7 @@ class MenuServiceTest {
 
         assertThatThrownBy(
             () -> menuService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(MenuPriceExceededException.class);
     }
 
     @DisplayName("메뉴그룹을 조회한다.")

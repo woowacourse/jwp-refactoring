@@ -15,6 +15,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.product.dto.ProductCreateRequest;
 import kitchenpos.product.dto.ProductResponse;
+import kitchenpos.product.exception.InvalidProductPriceException;
 import kitchenpos.product.service.ProductService;
 
 @SpringBootTest
@@ -40,7 +41,7 @@ class ProductServiceTest {
         ProductCreateRequest request = new ProductCreateRequest("콜라", price);
         assertThatThrownBy(
             () -> productService.create(request)
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("상품 리스트를 조회한다.")

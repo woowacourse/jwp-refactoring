@@ -16,6 +16,7 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuRequestDto;
 import kitchenpos.menu.dto.MenuResponses;
+import kitchenpos.menu.exception.MenuPriceExceededException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 
@@ -50,7 +51,7 @@ public class MenuService {
 
         BigDecimal price = BigDecimal.valueOf(request.getPrice());
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new MenuPriceExceededException();
         }
 
         MenuGroup menuGroup = findMenuGroup(request.getMenuGroupId());

@@ -2,6 +2,8 @@ package kitchenpos.table.domain;
 
 import javax.persistence.Embeddable;
 
+import kitchenpos.table.dto.InvalidTableEmptyException;
+
 @Embeddable
 public class TableEmpty {
 
@@ -24,7 +26,7 @@ public class TableEmpty {
 
     public void changeEmpty(boolean empty, boolean hasGroup) {
         if (hasGroup) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableEmptyException();
         }
         this.empty = empty;
     }

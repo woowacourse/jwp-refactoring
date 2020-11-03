@@ -17,10 +17,13 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.order.exception.TableEmptyException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.dto.InvalidTableEmptyException;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;
@@ -91,7 +94,7 @@ class TableServiceTest {
         Table savedTable = orderTableRepository.save(table);
 
         assertThatThrownBy(() -> tableService.editEmpty(savedTable.getId(), new TableEmptyEditRequest(true)))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidTableEmptyException.class);
     }
 
     @DisplayName("주문이 들어가지 않거나, 계산이 완료되지 않은 경우 사람유무를 변경했을 때 예외가 발생한다.")
@@ -105,7 +108,7 @@ class TableServiceTest {
         orderRepository.save(order);
 
         assertThatThrownBy(() -> tableService.editEmpty(savedTable.getId(), new TableEmptyEditRequest(true)))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalOrderStatusException.class);
     }
 
     @DisplayName("테이블의 사람의 유무 여부를 변경한다")
@@ -134,18 +137,6 @@ class TableServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("손님 수를 변경할 때 주문 테이블이 없는 경우 예외가 발생한다.")
-    @Test
-    void changeNumberOfGuestsWhenNoOrderTable() {
-        Table table = createTable(null, true, null, 3);
-        Table savedTable = orderTableRepository.save(table);
-
-        TableGuestEditRequest request = new TableGuestEditRequest(2);
-
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("손님 수를 변경할 때 주문테이블의 착석한 손님이 없는 경우 예외가 발생한다.")
     @Test
     void changeNumberOfGuestsWhenIsEmpty() {
@@ -155,7 +146,7 @@ class TableServiceTest {
         TableGuestEditRequest request = new TableGuestEditRequest(2);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTable.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableEmptyException.class);
     }
 
     @DisplayName("주문테이블의 방문한 손님 수를 변경한다.")

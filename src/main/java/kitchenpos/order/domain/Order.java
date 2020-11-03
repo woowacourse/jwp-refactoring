@@ -17,6 +17,8 @@ import javax.persistence.OneToMany;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import kitchenpos.order.exception.IllegalOrderStatusException;
+import kitchenpos.order.exception.TableEmptyException;
 import kitchenpos.table.domain.Table;
 
 @Entity
@@ -44,9 +46,7 @@ public class Order {
     }
 
     public Order(Long id, Table table, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        if (table.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        validate(table);
         this.id = id;
         this.table = table;
         this.orderStatus = orderStatus;
@@ -55,6 +55,12 @@ public class Order {
 
     public Order(Table table, OrderStatus orderStatus) {
         this(null, table, orderStatus, Collections.emptyList());
+    }
+
+    private void validate(Table table) {
+        if (table.isEmpty()) {
+            throw new TableEmptyException("빈 테이블은 주문할 수 없습니다.");
+        }
     }
 
     public Table getTable() {
@@ -87,7 +93,7 @@ public class Order {
 
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (orderStatus.isCompletion()) {
-            throw new IllegalArgumentException();
+            throw new IllegalOrderStatusException("OrderStatus를 바꿀 수 없는 상태입니다.");
         }
         this.orderStatus = orderStatus;
     }
