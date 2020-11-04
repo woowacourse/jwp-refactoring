@@ -153,7 +153,7 @@ class TableServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("이미 없는 테이블에, 손님의 수를 추가할 수 없다.")
+    @DisplayName("이미 비어있는 테이블에, 손님의 수를 추가할 수 없다.")
     @Test
     void changeNumberOfGuestsEmptyNumber() {
         OrderTable expected = tables.get(0);
