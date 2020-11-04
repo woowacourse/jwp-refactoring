@@ -24,6 +24,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.fixture.OrderTableFixture;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -59,48 +62,18 @@ class OrderServiceTest {
     void setUp() {
         orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
 
-        orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setOrderId(null);
-
-        orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setOrderId(null);
-
-        orderLineItem3 = new OrderLineItem();
-        orderLineItem3.setMenuId(2L);
-        orderLineItem3.setOrderId(null);
+        orderLineItem1 = OrderLineItemFixture.createWithoutId(1L, null);
+        orderLineItem2 = OrderLineItemFixture.createWithoutId(2L, null);
+        orderLineItem3 = OrderLineItemFixture.createWithoutId(3L, null);
 
         lineItems = Arrays.asList(orderLineItem1, orderLineItem2, orderLineItem3);
 
-        notEmptyTable = new OrderTable();
-        notEmptyTable.setId(1L);
-        notEmptyTable.setEmpty(false);
-        notEmptyTable.setNumberOfGuests(3);
-        notEmptyTable.setTableGroupId(null);
+        notEmptyTable = OrderTableFixture.createNotEmptyWithId(1L);
+        emptyTable = OrderTableFixture.createEmptyWithId(1L);
 
-        emptyTable = new OrderTable();
-        emptyTable.setId(1L);
-        emptyTable.setEmpty(true);
-        emptyTable.setNumberOfGuests(3);
-        emptyTable.setTableGroupId(null);
-
-        order1 = new Order();
-        order1.setOrderStatus(OrderStatus.MEAL.name());
-        order1.setOrderTableId(1L);
-        order1.setOrderLineItems(lineItems);
-
-        order2 = new Order();
-        order2.setId(1L);
-        order2.setOrderStatus(OrderStatus.MEAL.name());
-        order2.setOrderTableId(1L);
-        order2.setOrderLineItems(lineItems);
-
-        order3 = new Order();
-        order3.setId(2L);
-        order3.setOrderStatus(OrderStatus.COMPLETION.name());
-        order3.setOrderTableId(2L);
-        order3.setOrderLineItems(lineItems);
+        order1 = OrderFixture.createWithoutId(OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
+        order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
+        order3 = OrderFixture.createWithId(OrderFixture.ID2, OrderStatus.COMPLETION.name(), OrderTableFixture.ID2, lineItems);
     }
 
     @DisplayName("정상적으로 Order를 생성한다")
