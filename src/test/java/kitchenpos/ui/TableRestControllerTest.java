@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderTableFixture;
 
 @WebMvcTest(controllers = TableRestController.class)
 class TableRestControllerTest {
@@ -38,23 +39,9 @@ class TableRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(null);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setEmpty(true);
-
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(null);
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(true);
-
-        OrderTable orderTable3 = new OrderTable();
-        orderTable3.setId(3L);
-        orderTable3.setTableGroupId(null);
-        orderTable3.setNumberOfGuests(0);
-        orderTable3.setEmpty(true);
+        OrderTable orderTable1 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
+        OrderTable orderTable2 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2);
+        OrderTable orderTable3 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID3);
 
         tables = Arrays.asList(orderTable1, orderTable2, orderTable3);
     }
@@ -62,11 +49,7 @@ class TableRestControllerTest {
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void createTable() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
+        OrderTable orderTable = OrderTableFixture.createEmptyWithoutId();
 
         when(tableService.create(any(OrderTable.class))).thenReturn(tables.get(0));
 

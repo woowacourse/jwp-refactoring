@@ -21,6 +21,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.fixture.TableGroupFixture;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -49,38 +51,15 @@ class TableGroupServiceTest {
     void setUp() {
         tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
-        orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(null);
-        orderTable1.setNumberOfGuests(0);
-        orderTable1.setEmpty(true);
-
-        orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(null);
-        orderTable2.setNumberOfGuests(0);
-        orderTable2.setEmpty(true);
-
-        notEmptyTable = new OrderTable();
-        notEmptyTable.setId(3L);
-        notEmptyTable.setTableGroupId(null);
-        notEmptyTable.setNumberOfGuests(0);
-        notEmptyTable.setEmpty(false);
-
-        alreadyGroupTable = new OrderTable();
-        alreadyGroupTable.setId(4L);
-        alreadyGroupTable.setTableGroupId(1L);
-        alreadyGroupTable.setNumberOfGuests(0);
-        alreadyGroupTable.setEmpty(true);
+        orderTable1 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
+        orderTable2 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2);
+        notEmptyTable = OrderTableFixture.createNotEmptyWithId(OrderTableFixture.ID3);
+        alreadyGroupTable = OrderTableFixture.createGroupTableWithId(OrderTableFixture.ID4);
 
         tables = Lists.newArrayList(orderTable1, orderTable2);
 
-        tableGroup1 = new TableGroup();
-        tableGroup1.setOrderTables(tables);
-
-        tableGroup2 = new TableGroup();
-        tableGroup2.setId(1L);
-        tableGroup2.setOrderTables(tables);
+        tableGroup1 = TableGroupFixture.createWithoutId(tables);
+        tableGroup2 = TableGroupFixture.createWithId(TableGroupFixture.ID1, tables);
     }
 
     @DisplayName("정상적으로 테이블을 그룹화 한다.")
