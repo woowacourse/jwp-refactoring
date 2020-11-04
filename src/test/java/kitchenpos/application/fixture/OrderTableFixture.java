@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.application.fixture;
 
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableFixture {
-    static OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
+    public static OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
         orderTable.setEmpty(empty);
@@ -12,20 +12,20 @@ public class OrderTableFixture {
         return orderTable;
     }
 
-    static OrderTable createOrderTableRequest(int numberOfGuests, boolean empty) {
+    public static OrderTable createOrderTableRequest(int numberOfGuests, boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
     }
 
-    static OrderTable modifyOrderTableStatusRequest(boolean empty) {
+    public static OrderTable modifyOrderTableStatusRequest(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
         return orderTable;
     }
 
-    static OrderTable modifyOrderTableNumOfGuestRequest(int numberOfGuests) {
+    public static OrderTable modifyOrderTableNumOfGuestRequest(int numberOfGuests) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         return orderTable;

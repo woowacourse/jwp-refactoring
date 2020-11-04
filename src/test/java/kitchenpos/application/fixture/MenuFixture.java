@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.fixture;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class MenuFixture {
-    static Menu createMenuRequest(
+    public static Menu createMenuRequest(
             String name,
             BigDecimal price,
             Long menuGroupId,
@@ -21,7 +21,7 @@ public class MenuFixture {
         return menu;
     }
 
-    static Menu createMenu(
+    public static Menu createMenu(
             Long id,
             String name,
             BigDecimal price,
@@ -37,14 +37,14 @@ public class MenuFixture {
         return menu;
     }
 
-    static MenuProduct createMenuProductRequest(Long productId, int quantity) {
+    public static MenuProduct createMenuProductRequest(Long productId, int quantity) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(productId);
         menuProduct.setQuantity(quantity);
         return menuProduct;
     }
 
-    static MenuProduct createMenuProduct(Long seq, Long productId, int quantity, Long menuId) {
+    public static MenuProduct createMenuProduct(Long seq, Long productId, int quantity, Long menuId) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setSeq(seq);
         menuProduct.setProductId(productId);

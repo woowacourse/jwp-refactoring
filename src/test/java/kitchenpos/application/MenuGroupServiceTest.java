@@ -14,8 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.MenuGroupFixture.createMenuGroupRequest;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;

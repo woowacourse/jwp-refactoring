@@ -18,8 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.TableGroupFixture.createTableGroupRequest;
+import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.application.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

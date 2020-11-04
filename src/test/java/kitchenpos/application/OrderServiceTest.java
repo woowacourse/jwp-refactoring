@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.fixture.OrderFixture;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -18,10 +19,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
-import static kitchenpos.application.OrderFixture.createOrder;
-import static kitchenpos.application.OrderFixture.createOrderRequest;
+import static kitchenpos.application.fixture.OrderFixture.createOrder;
+import static kitchenpos.application.fixture.OrderFixture.createOrderRequest;
 import static kitchenpos.application.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.application.OrderTableFixture.createOrderTable;
+import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
