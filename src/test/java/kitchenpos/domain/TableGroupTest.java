@@ -2,11 +2,13 @@ package kitchenpos.domain;
 
 import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
 import kitchenpos.domain.exceptions.TableAlreadyHasGroupException;
+import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,7 +30,19 @@ class TableGroupTest {
     public void createTableGroup() {
         TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
 
-        assertThat(tableGroup).isNotNull();
+        OrderTable orderTable1 = new OrderTable(1L, null, 5, true);
+        OrderTable orderTable2 = new OrderTable(11L, null, 6, true);
+
+        final List<OrderTable> validatedTables = OrderTables.validatedForGrouping(Lists.newArrayList(1L, 11L),
+                Lists.newArrayList(orderTable1, orderTable2), tableGroup);
+
+        TableGroupResponse response = TableGroupResponse.of(tableGroup, validatedTables);
+
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getOrderTables().get(0).getId()).isEqualTo(1L);
+        assertThat(response.getOrderTables().get(0).getNumberOfGuests()).isEqualTo(5);
+        assertThat(response.getOrderTables().get(1).getId()).isEqualTo(11L);
+        assertThat(response.getOrderTables().get(1).getNumberOfGuests()).isEqualTo(6);
     }
 
     @DisplayName("이미 TableGroup 되어 있는 경우 grouping 불가")
