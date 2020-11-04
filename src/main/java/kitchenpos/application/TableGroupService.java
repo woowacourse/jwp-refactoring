@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
@@ -7,7 +8,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.application.exceptions.OrderStatusNotCompletionException;
 import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
 import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -34,10 +34,11 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupRequest request) {
         final List<Long> orderTableIds = request.getOrderTableIds();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        TableGroup tableGroup = request.toEntity(OrderTables.of(orderTableIds, savedOrderTables));
+        TableGroup tableGroup = request.toEntity();
 
-        tableGroup.addOrderTables(savedOrderTables);
-        return TableGroupResponse.from(tableGroupRepository.save(tableGroup));
+        List<OrderTable> orderTables = OrderTables.validatedForGrouping(orderTableIds, savedOrderTables, tableGroup);
+
+        return TableGroupResponse.of(tableGroupRepository.save(tableGroup), orderTables);
     }
 
     @Transactional

@@ -1,6 +1,5 @@
 package kitchenpos.ui.dto.tablegroup;
 
-import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
@@ -16,8 +15,8 @@ public class TableGroupRequest {
         this.orderTableIds = orderTableIds;
     }
 
-    public TableGroup toEntity(OrderTables orderTables) {
-        return new TableGroup(LocalDateTime.now(), orderTables.getOrderTables());
+    public TableGroup toEntity() {
+        return new TableGroup(LocalDateTime.now());
     }
 
     public List<Long> getOrderTableIds() {
