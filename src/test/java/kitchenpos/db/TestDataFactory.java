@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class TestDataFactory {
 
@@ -77,4 +78,11 @@ public class TestDataFactory {
         return orderTable;
     }
 
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
 }
