@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
 
 @Sql("/truncate.sql")
-@SpringBootTest
+@DataJpaTest
 public class ServiceTest {
 }
 

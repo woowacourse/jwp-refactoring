@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,13 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuQuantityRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
@@ -26,8 +25,8 @@ import kitchenpos.dto.OrderStatusRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 
+@Import(OrderService.class)
 class OrderServiceTest extends ServiceTest {
 
     @Autowired

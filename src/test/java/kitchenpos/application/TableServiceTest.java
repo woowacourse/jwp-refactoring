@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -21,6 +22,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 
+@Import(TableService.class)
 class TableServiceTest extends ServiceTest {
 
     @Autowired

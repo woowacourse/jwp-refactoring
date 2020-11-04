@@ -9,10 +9,12 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 
+@Import(ProductService.class)
 class ProductServiceTest extends ServiceTest {
 
     @Autowired

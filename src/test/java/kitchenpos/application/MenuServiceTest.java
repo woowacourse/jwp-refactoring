@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -24,6 +25,7 @@ import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
+@Import(MenuService.class)
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
