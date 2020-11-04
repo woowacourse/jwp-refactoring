@@ -7,7 +7,6 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,7 +20,7 @@ import java.util.*;
 
 import static kitchenpos.application.fixture.OrderFixture.createOrder;
 import static kitchenpos.application.fixture.OrderFixture.createOrderRequest;
-import static kitchenpos.application.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,22 +60,19 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("주문 테이블, 주문 항목들이 주어지면")
-        class IfGiven {
-            private OrderTable orderTable;
-
+        class WithOrderTableIdAndOrderLineItems {
             @BeforeEach
             void setUp() {
                 List<OrderLineItem> orderLineItems =
                         Arrays.asList(createOrderLineItem(1L, 2L), createOrderLineItem(2L, 1L));
-                orderTable = createOrderTable(10L, false, 5L, 1);
                 request = createOrderRequest(orderLineItems, 10L);
+                given(menuDao.countByIdIn(anyList())).willReturn((long) request.getOrderLineItems().size());
+                given(orderTableDao.findById(10L)).willReturn(Optional.of(createOrderTable(10L, false, 5L, 1)));
             }
 
             @Test
             @DisplayName("초기상태가 조리 중인 주문을 생성한다")
             void createOrder() {
-                given(menuDao.countByIdIn(anyList())).willReturn((long) request.getOrderLineItems().size());
-                given(orderTableDao.findById(10L)).willReturn(Optional.of(orderTable));
                 given(orderDao.save(any(Order.class))).willAnswer(i -> {
                     Order savedOrder = i.getArgument(0, Order.class);
                     savedOrder.setId(1L);
@@ -98,7 +94,7 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("요청에서 주문 항목이 비어있을 경우")
-        class EmptyOrderLineItems {
+        class WithEmptyOrderLineItems {
             @BeforeEach
             void setUp() {
                 request = createOrderRequest(null, 5L);
@@ -113,18 +109,17 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("요청의 주문 테이블 id에 해당하는 주문 테이블이 없는 경우")
-        class NotExistIOrderTable {
+        class WhenNotExistIOrderTable {
             @BeforeEach
             void setUp() {
                 request = createOrderRequest(Arrays.asList(new OrderLineItem(), new OrderLineItem()), 5L);
+                given(menuDao.countByIdIn(anyList())).willReturn(2L);
+                given(orderTableDao.findById(5L)).willReturn(Optional.empty());
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(menuDao.countByIdIn(anyList())).willReturn(2L);
-                given(orderTableDao.findById(5L)).willReturn(Optional.empty());
-
                 assertThatThrownBy(CreateOrder.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -139,7 +134,7 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("주문과 주문 항목들이 저장되어 있으면")
-        class IfGiven {
+        class WhenOrderAndOrderLineItemsSaved {
             private List<Order> orders;
             private Map<Long, List<OrderLineItem>> orderLineItems;
 
@@ -155,15 +150,14 @@ class OrderServiceTest {
                     put(2L, Arrays.asList(createOrderLineItem(2L, 1L, 2L), createOrderLineItem(2L, 2L, 1L)));
                     put(3L, Arrays.asList(createOrderLineItem(3L, 1L, 1L), createOrderLineItem(3L, 2L, 2L)));
                 }};
+                given(orderDao.findAll()).willReturn(orders);
+                given(orderLineItemDao.findAllByOrderId(anyLong()))
+                        .willAnswer(i -> orderLineItems.get(i.getArgument(0, Long.class)));
             }
 
             @Test
             @DisplayName("주문과 주문 항목들을 조회한다")
             void findOrderAndOrderLineItems() {
-                given(orderDao.findAll()).willReturn(orders);
-                given(orderLineItemDao.findAllByOrderId(anyLong()))
-                        .willAnswer(i -> orderLineItems.get(i.getArgument(0, Long.class)));
-
                 List<Order> result = subject();
 
                 assertThat(result).usingElementComparatorIgnoringFields("orderLineItems").isEqualTo(orders);
@@ -184,19 +178,18 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("주문이 저장되어 있고, 주문 id와 주문 상태가 주어지면")
-        class IfGiven {
+        class WhenOrderSavedAndWithOrderIdAndOrderStatus {
             @BeforeEach
             void setUp() {
                 orderId = 1L;
                 request = OrderFixture.updateOrderRequest(MEAL);
+                given(orderDao.findById(orderId))
+                        .willReturn(Optional.of(createOrder(orderId, COOKING, 5L)));
             }
 
             @Test
             @DisplayName("주문의 상태를 수정하고 바뀐 주문을 반환한다")
             void findOrderAndOrderLineItems() {
-                given(orderDao.findById(orderId))
-                        .willReturn(Optional.of(createOrder(orderId, COOKING, 5L)));
-
                 Order result = subject();
 
                 verify(orderDao).save(refEq(createOrder(orderId, MEAL, 5L), "orderedTime", "orderLineItems"));
@@ -206,37 +199,35 @@ class OrderServiceTest {
 
         @Nested
         @DisplayName("주문 id에 해당하는 주문이 없을 경우")
-        class NotExistOrder {
+        class WhenNotExistOrder {
             @BeforeEach
             void setUp() {
                 orderId = 1L;
                 request = OrderFixture.updateOrderRequest(MEAL);
+                given(orderDao.findById(orderId)).willReturn(Optional.empty());
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderDao.findById(orderId)).willReturn(Optional.empty());
-
                 assertThatThrownBy(ChangeOrder.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
 
         @Nested
         @DisplayName("기존 주문 상태가 '계산 완료'인 경우")
-        class CompletedOrder {
+        class WhenCompletedOrder {
             @BeforeEach
             void setUp() {
                 orderId = 1L;
                 request = OrderFixture.updateOrderRequest(COOKING);
+                given(orderDao.findById(orderId))
+                        .willReturn(Optional.of(createOrder(orderId, COMPLETION, 5L)));
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderDao.findById(orderId))
-                        .willReturn(Optional.of(createOrder(orderId, COMPLETION, 5L)));
-
                 assertThatThrownBy(ChangeOrder.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }

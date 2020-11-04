@@ -57,7 +57,6 @@ class ProductServiceTest {
                     saved.setId(7L);
                     return saved;
                 });
-
                 Product result = subject();
 
                 assertAll(
@@ -107,7 +106,7 @@ class ProductServiceTest {
 
         @Nested
         @DisplayName("상품이 저장되어 있으면")
-        class WithProductSaved {
+        class WhenProductSaved {
             private List<Product> products;
 
             @BeforeEach
@@ -117,13 +116,12 @@ class ProductServiceTest {
                         createProduct(2L, "마요", BigDecimal.TEN),
                         createProduct(3L, "돈가", BigDecimal.valueOf(10000))
                 );
+                given(productDao.findAll()).willReturn(products);
             }
 
             @Test
             @DisplayName("전체 상품을 조회한다")
             void findAll() {
-                given(productDao.findAll()).willReturn(products);
-
                 List<Product> result = subject();
 
                 assertThat(result).usingRecursiveComparison().isEqualTo(products);

@@ -46,7 +46,7 @@ class TableServiceTest {
 
         @Nested
         @DisplayName("손님 수와 빈 테이블 여부가 주어지면")
-        class IfGiven {
+        class WithNumOfGuestAndIsEmpty {
             @BeforeEach
             void setUp() {
                 request = createOrderTableRequest(3, false);
@@ -81,7 +81,7 @@ class TableServiceTest {
 
         @Nested
         @DisplayName("주문 테이블이 저장되어 있으면")
-        class IfGiven {
+        class WhenOrderTableSaved {
             private List<OrderTable> orderTables;
 
             @BeforeEach
@@ -92,13 +92,12 @@ class TableServiceTest {
                         createOrderTable(3L, true, 2L, 2),
                         createOrderTable(4L, false, null, 2)
                 );
+                given(orderTableDao.findAll()).willReturn(orderTables);
             }
 
             @Test
             @DisplayName("전체 주문 테이블을 조회한다")
             void createOrderTables() {
-                given(orderTableDao.findAll()).willReturn(orderTables);
-
                 List<OrderTable> result = subject();
 
                 assertThat(result).usingRecursiveComparison().isEqualTo(orderTables);
@@ -118,7 +117,7 @@ class TableServiceTest {
 
         @Nested
         @DisplayName("주문 테이블이 저장되어 있고, 테이블 id와 빈 테이블 여부가 주어지면")
-        class IfGiven {
+        class WhenOrderTableSavedAndWithTableIdAndIsEmpty {
             private OrderTable orderTable;
 
             @BeforeEach
@@ -126,16 +125,15 @@ class TableServiceTest {
                 orderTableId = 1L;
                 orderTable = createOrderTable(orderTableId, false, null, 4);
                 request = modifyOrderTableStatusRequest(true);
+                given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(orderTable));
+                given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(false);
             }
 
             @Test
             @DisplayName("해당 주문 테이블의 빈 테이블 여부를 수정한다")
             void createOrderTables() {
-                given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(orderTable));
-                given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(false);
                 given(orderTableDao.save(any(OrderTable.class)))
                         .willAnswer(i -> i.getArgument(0, OrderTable.class));
-
                 OrderTable result = subject();
 
                 assertAll(
@@ -152,13 +150,12 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 request = modifyOrderTableStatusRequest(true);
+                given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwsException() {
-                given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
-
                 assertThatThrownBy(ChangeEmptyOrderTable.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -170,14 +167,13 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 request = modifyOrderTableStatusRequest(true);
+                given(orderTableDao.findById(orderTableId))
+                        .willReturn(Optional.of(createOrderTable(orderTableId, false, 2L, 4)));
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwsException() {
-                given(orderTableDao.findById(orderTableId))
-                        .willReturn(Optional.of(createOrderTable(orderTableId, false, 2L, 4)));
-
                 assertThatThrownBy(ChangeEmptyOrderTable.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -189,15 +185,14 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 request = modifyOrderTableStatusRequest(true);
+                given(orderTableDao.findById(orderTableId))
+                        .willReturn(Optional.of(createOrderTable(orderTableId, false, null, 4)));
+                given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(true);
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwsException() {
-                given(orderTableDao.findById(orderTableId))
-                        .willReturn(Optional.of(createOrderTable(orderTableId, false, null, 4)));
-                given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(true);
-
                 assertThatThrownBy(ChangeEmptyOrderTable.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -215,7 +210,7 @@ class TableServiceTest {
 
         @Nested
         @DisplayName("주문 테이블이 저장되어 있고, 테이블 id와 손님 수가 주어지면")
-        class IfGiven {
+        class WhenOrderTableSavedAndWithTableIdAndNumOfGuests {
             private OrderTable orderTable;
 
             @BeforeEach
@@ -223,12 +218,12 @@ class TableServiceTest {
                 orderTableId = 1L;
                 orderTable = createOrderTable(orderTableId, false, null, 4);
                 request = modifyOrderTableNumOfGuestRequest(2);
+                given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(orderTable));
             }
 
             @Test
             @DisplayName("해당 주문 테이블의 손님 수를 수정한다")
             void createOrderTables() {
-                given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(orderTable));
                 given(orderTableDao.save(any(OrderTable.class)))
                         .willAnswer(i -> i.getArgument(0, OrderTable.class));
 
@@ -248,13 +243,12 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 request = modifyOrderTableNumOfGuestRequest(4);
+                given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwsException() {
-                given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
-
                 assertThatThrownBy(ChangeNumberOfGuestOrderTable.this::subject)
                         .isInstanceOf(IllegalArgumentException.class);
             }
@@ -284,14 +278,13 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 request = modifyOrderTableNumOfGuestRequest(2);
+                given(orderTableDao.findById(orderTableId))
+                        .willReturn(Optional.of(createOrderTable(orderTableId, true, null, 4)));
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwsException() {
-                given(orderTableDao.findById(orderTableId))
-                        .willReturn(Optional.of(createOrderTable(orderTableId, true, null, 4)));
-
                 assertThatThrownBy(ChangeNumberOfGuestOrderTable.this::subject)
                         .isInstanceOf(IllegalArgumentException.class);
             }

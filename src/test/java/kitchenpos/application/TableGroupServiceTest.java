@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
@@ -54,21 +55,19 @@ class TableGroupServiceTest {
         @Nested
         @DisplayName("주문 테이블의 id 리스트가 주어지면")
         class WithOrderTableIds {
-            private List<OrderTable> orderTables;
-
             @BeforeEach
             void setUp() {
                 request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                orderTables = Arrays.asList(
+                List<OrderTable> orderTables = Arrays.asList(
                         createOrderTable(1L, true, null, 1),
                         createOrderTable(2L, true, null, 3)
                 );
+                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
             }
 
             @Test
-            @DisplayName("단체 주문을 생성하고, 해당하는 주문 테이블들의 단체 id와 빈 테이블 여부를 업데이트한다")
+            @DisplayName("단체 지정을 생성하고, 해당하는 주문 테이블들의 단체 id와 빈 테이블 여부를 업데이트한다")
             void createTableGroups() {
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
                 given(tableGroupDao.save(any(TableGroup.class))).willAnswer(i -> {
                     TableGroup tableGroup = i.getArgument(0, TableGroup.class);
                     tableGroup.setId(5L);
@@ -90,19 +89,16 @@ class TableGroupServiceTest {
         @Nested
         @DisplayName("주문 테이블의 id에 해당하는 주문 테이블이 하나라도 없는 경우")
         class WhenOrderTableNotExist {
-            private List<OrderTable> orderTables;
-
             @BeforeEach
             void setUp() {
                 request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                orderTables = Arrays.asList(createOrderTable(1L, true, null, 1));
+                List<OrderTable> orderTables = Collections.singletonList(createOrderTable(1L, true, null, 1));
+                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
-
                 assertThatThrownBy(CreateTableGroup.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -110,22 +106,19 @@ class TableGroupServiceTest {
         @Nested
         @DisplayName("주문 테이블 중 하나라도 비어있지 않은 경우")
         class WhenNotAllOrderTableEmpty {
-            private List<OrderTable> orderTables;
-
             @BeforeEach
             void setUp() {
                 request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                orderTables = Arrays.asList(
+                List<OrderTable> orderTables = Arrays.asList(
                         createOrderTable(1L, true, null, 1),
                         createOrderTable(2L, false, null, 3)
                 );
+                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
-
                 assertThatThrownBy(CreateTableGroup.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -133,22 +126,19 @@ class TableGroupServiceTest {
         @Nested
         @DisplayName("주문 테이블의 단체 그룹 id가 하나라도 이미 존재하는 경우")
         class WhenTableGroupIdAlreadyExist {
-            private List<OrderTable> orderTables;
-
             @BeforeEach
             void setUp() {
                 request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                orderTables = Arrays.asList(
+                List<OrderTable> orderTables = Arrays.asList(
                         createOrderTable(1L, true, null, 1),
                         createOrderTable(2L, true, 4L, 3)
                 );
+                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
-
                 assertThatThrownBy(CreateTableGroup.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
@@ -164,58 +154,54 @@ class TableGroupServiceTest {
         }
 
         @Nested
-        @DisplayName("Ungroup할 단체의 id가 주어지면")
-        class WhenGroupIdGiven {
-            private List<OrderTable> orderTables;
-
+        @DisplayName("Ungroup할 단체의 id가 주어지고, 해당하는 주문 테이블들의 상태가 모두 '조리' 또는 '식사 중'이 아닐 경우")
+        class WithGroupId {
             @BeforeEach
             void setUp() {
                 tableGroupId = 5L;
-                orderTables = Arrays.asList(
+                List<OrderTable> orderTables = Arrays.asList(
                         createOrderTable(1L, true, null, 1),
                         createOrderTable(2L, true, null, 3)
                 );
+                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
+                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
+                        .willReturn(false);
             }
 
             @Test
             @DisplayName("해당하는 주문 테이블들에서 단체 id를 제거하고 비어있는 상태로 만든다")
             void ungroupTableGroup() {
-                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
-                        .willReturn(false);
-
                 subject();
 
                 ArgumentCaptor<OrderTable> orderTable = ArgumentCaptor.forClass(OrderTable.class);
                 verify(orderTableDao, times(2)).save(orderTable.capture());
-                assertThat(orderTable.getAllValues()).extracting(OrderTable::getTableGroupId).containsOnlyNulls();
-                assertThat(orderTable.getAllValues()).extracting(OrderTable::isEmpty).containsOnly(false);
+                assertAll(
+                        () -> assertThat(orderTable.getAllValues()).extracting(OrderTable::getTableGroupId).containsOnlyNulls(),
+                        () -> assertThat(orderTable.getAllValues()).extracting(OrderTable::isEmpty).containsOnly(false)
+                );
             }
         }
 
         @Nested
         @DisplayName("해당하는 주문 테이블들의 상태가 하나라도 '조리' 또는 '식사 중'일 경우")
         class WhenOrderTableInCookingOrMeal {
-            private List<OrderTable> orderTables;
 
             @BeforeEach
             void setUp() {
                 tableGroupId = 5L;
-                orderTables = Arrays.asList(
+                List<OrderTable> orderTables = Arrays.asList(
                         createOrderTable(1L, true, null, 1),
                         createOrderTable(2L, true, null, 3)
                 );
+                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
+                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
+                        .willReturn(true);
             }
 
             @Test
             @DisplayName("예외가 발생한다")
             void throwException() {
-                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
-                        .willReturn(true);
-
                 assertThatThrownBy(UngroupTableGroup.this::subject).isInstanceOf(IllegalArgumentException.class);
-
             }
         }
     }

@@ -78,6 +78,11 @@ class MenuServiceTest {
                     Long id = i.getArgument(0, Long.class);
                     return Optional.of(createProduct(id, "후라이드", BigDecimal.valueOf(10000)));
                 });
+            }
+
+            @Test
+            @DisplayName("메뉴가 생성된다")
+            void createMenus() {
                 given(menuDao.save(any(Menu.class))).willAnswer(i -> {
                     Menu saved = i.getArgument(0, Menu.class);
                     saved.setId(1L);
@@ -88,11 +93,6 @@ class MenuServiceTest {
                     saved.setSeq(1L);
                     return saved;
                 });
-            }
-
-            @Test
-            @DisplayName("메뉴가 생성된다")
-            void createMenus() {
                 Menu result = subject();
 
                 assertThat(result).usingRecursiveComparison().ignoringFields("id", "seq").isEqualTo(request);
@@ -149,7 +149,7 @@ class MenuServiceTest {
 
         @Nested
         @DisplayName("메뉴 그룹 id에 해당하는 메뉴 그룹이 없는 경우")
-        class WithNotExistMenuGroup {
+        class WhenNotExistMenuGroup {
             @BeforeEach
             void setUp() {
                 List<MenuProduct> menuProducts = Arrays.asList(
@@ -162,7 +162,6 @@ class MenuServiceTest {
                         2L,
                         menuProducts
                 );
-
                 given(menuGroupDao.existsById(2L)).willReturn(false);
             }
 
@@ -233,7 +232,6 @@ class MenuServiceTest {
                         createMenu(2L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L, menuProducts.get(2L)),
                         createMenu(3L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L, menuProducts.get(3L))
                 );
-
                 given(menuDao.findAll()).willReturn(menus);
                 given(menuProductDao.findAllByMenuId(anyLong())).willAnswer(i -> {
                     Long id = i.getArgument(0, Long.class);
