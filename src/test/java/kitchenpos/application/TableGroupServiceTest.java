@@ -143,7 +143,9 @@ class TableGroupServiceTest {
         Long groupId = tableGroupService.create(request);
 
         Order order = createOrder(null, Collections.emptyList(), OrderStatus.MEAL, savedTable1);
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        savedTable1.changeOrder(savedOrder);
 
         assertThatThrownBy(
             () -> tableGroupService.ungroup(groupId)

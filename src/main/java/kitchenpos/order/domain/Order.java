@@ -11,8 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -30,7 +30,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     private Table table;
 
     @Enumerated(EnumType.STRING)
@@ -92,5 +92,9 @@ public class Order {
 
     public void changeOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
         this.orderLineItems = savedOrderLineItems;
+    }
+
+    public boolean isNotCompletion() {
+        return this.getOrderStatus().isNotCompletion();
     }
 }
