@@ -1,9 +1,6 @@
 package kitchenpos.ui.dto.order;
 
-import kitchenpos.domain.Order;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class OrderResponses {
 
@@ -13,12 +10,8 @@ public class OrderResponses {
         this.orders = orders;
     }
 
-    public static OrderResponses from(List<Order> orders) {
-        return new OrderResponses(
-                orders.stream()
-                    .map(OrderResponse::from)
-                    .collect(Collectors.toList())
-        );
+    public static OrderResponses from(List<OrderResponse> orders) {
+        return new OrderResponses(orders);
     }
 
     public List<OrderResponse> getOrders() {

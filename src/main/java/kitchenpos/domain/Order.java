@@ -1,11 +1,9 @@
 package kitchenpos.domain;
 
-import com.google.common.collect.Lists;
 import kitchenpos.domain.exceptions.InvalidOrderStatusException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
 
@@ -25,21 +23,17 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
     protected Order() { }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, orderedTime, Lists.newArrayList());
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTable, orderStatus, orderedTime);
     }
 
     public Long getId() {
@@ -56,14 +50,6 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

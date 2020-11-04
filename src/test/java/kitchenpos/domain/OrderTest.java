@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import com.google.common.collect.Lists;
 import kitchenpos.domain.exceptions.InvalidOrderStatusException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ class OrderTest {
     @Test
     public void createOrder() {
         final OrderTable orderTable = new OrderTable(1L, null, 4, false);
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), Lists.newArrayList());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
 
         assertThat(order).isNotNull();
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
@@ -26,7 +25,7 @@ class OrderTest {
     @Test
     public void changeOrderStatusFail() {
         final OrderTable orderTable = new OrderTable(1L, null, 4, false);
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), Lists.newArrayList());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))
@@ -37,7 +36,7 @@ class OrderTest {
     @Test
     public void changeOrderStatus() {
         final OrderTable orderTable = new OrderTable(1L, null, 4, false);
-        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), Lists.newArrayList());
+        final Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);

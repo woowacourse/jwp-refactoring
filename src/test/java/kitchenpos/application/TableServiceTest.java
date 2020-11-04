@@ -11,7 +11,6 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.ui.dto.ordertable.OrderTableRequest;
 import kitchenpos.ui.dto.ordertable.OrderTableResponse;
 import kitchenpos.ui.dto.ordertable.OrderTableResponses;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,7 +136,7 @@ class TableServiceTest extends IsolatedTest {
 
     private void createOrderWithOrderStatusOf(OrderStatus orderStatus) {
         OrderTable orderTable = new OrderTable(1L, null, 4, false);
-        Order order = new Order(orderTable, orderStatus, LocalDateTime.now(), Lists.newArrayList());
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
         orderRepository.save(order);
     }
 }

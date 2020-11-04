@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.application.exceptions.NotExistedMenuException;
 import kitchenpos.application.exceptions.NotExistedOrderException;
 import kitchenpos.application.exceptions.NotExistedOrderTableException;
 import kitchenpos.application.exceptions.TableStatusEmptyException;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.ui.dto.order.OrderLineItemRequest;
 import kitchenpos.ui.dto.order.OrderRequest;
 import kitchenpos.ui.dto.order.OrderResponse;
@@ -25,15 +26,18 @@ import java.util.stream.Collectors;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
+            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -42,8 +46,7 @@ public class OrderService {
         final OrderTable orderTable = findOrderTable(request);
         final Order savedOrder = orderRepository.save(request.toEntity(orderTable));
 
-        savedOrder.setOrderLineItems(mapToOrderLineItems(request, savedOrder));
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.of(savedOrder, mapToOrderLineItems(request, savedOrder));
     }
 
     private OrderTable findOrderTable(final OrderRequest request) {
@@ -70,7 +73,11 @@ public class OrderService {
 
     public OrderResponses list() {
         final List<Order> orders = orderRepository.findAll();
-        return OrderResponses.from(orders);
+        final List<OrderResponse> orderResponses = orders.stream()
+                .map(o -> OrderResponse.of(o, orderLineItemRepository.findAllBy(o.getId())))
+                .collect(Collectors.toList());
+
+        return OrderResponses.from(orderResponses);
     }
 
     @Transactional
@@ -80,6 +87,6 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(request.getOrderStatus());
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.of(savedOrder, mapToOrderLineItems(request, savedOrder));
     }
 }
