@@ -4,7 +4,6 @@ import kitchenpos.domain.exceptions.InvalidPriceException;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
@@ -23,22 +22,18 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @Embedded
-    private MenuProducts menuProducts;
-
     protected Menu() { }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, MenuProducts menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
         validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup, null);
+        this(null, name, price, menuGroup);
     }
 
     private void validatePrice(BigDecimal price) {
@@ -61,13 +56,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public MenuProducts getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = new MenuProducts(menuProducts);
     }
 }

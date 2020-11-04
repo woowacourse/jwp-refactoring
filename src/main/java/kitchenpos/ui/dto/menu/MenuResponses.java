@@ -1,9 +1,6 @@
 package kitchenpos.ui.dto.menu;
 
-import kitchenpos.domain.Menu;
-
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuResponses {
 
@@ -13,12 +10,8 @@ public class MenuResponses {
         this.menuResponses = menuResponses;
     }
 
-    public static MenuResponses from(List<Menu> menus) {
-        return new MenuResponses(
-                menus.stream()
-                        .map(MenuResponse::from)
-                        .collect(Collectors.toList())
-        );
+    public static MenuResponses from(List<MenuResponse> menus) {
+        return new MenuResponses(menus);
     }
 
     public List<MenuResponse> getMenuResponses() {
