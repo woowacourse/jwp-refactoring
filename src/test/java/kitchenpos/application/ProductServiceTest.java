@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -32,23 +33,11 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         productService = new ProductService(productDao);
-        product1 = new Product();
-        product1.setName("chicken");
-        product1.setPrice(BigDecimal.valueOf(18000));
 
-        product2 = new Product();
-        product2.setId(1L);
-        product2.setName("chicken");
-        product2.setPrice(BigDecimal.valueOf(18000));
-
-        nullPriceProduct = new Product();
-        nullPriceProduct.setId(2L);
-        nullPriceProduct.setName("pizza");
-
-        negativePriceProduct = new Product();
-        negativePriceProduct.setId(3L);
-        negativePriceProduct.setName("coke");
-        product2.setPrice(BigDecimal.valueOf(-1000));
+        product1 = ProductFixture.createWithoutId(ProductFixture.PRICE1);
+        product2 = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
+        nullPriceProduct = ProductFixture.createWithId(ProductFixture.ID2, null);
+        negativePriceProduct = ProductFixture.createWithId(ProductFixture.ID2, -1000L);
     }
 
     @DisplayName("정상적으로 Product를 생성한다.")
