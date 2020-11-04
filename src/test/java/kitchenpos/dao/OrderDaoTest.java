@@ -40,7 +40,7 @@ class OrderDaoTest {
         order.setOrderTableId(1L);
         order.setOrderStatus(OrderStatus.COMPLETION.name());
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(Lists.emptyList());
+        order.setOrderLineItems(null);
     }
 
     @Test
