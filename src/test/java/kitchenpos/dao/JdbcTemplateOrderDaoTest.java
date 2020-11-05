@@ -44,6 +44,7 @@ class JdbcTemplateOrderDaoTest {
     }
 
     @Test
+    @DisplayName("주문 엔티티를 저장하면 id가 부여되고, 엔티티의 필드인 메뉴 상품 리스트는 저장되지 않는다")
     void insert() {
         Order order = createOrder(null, COOKING, orderTableId, LocalDateTime.now());
 
