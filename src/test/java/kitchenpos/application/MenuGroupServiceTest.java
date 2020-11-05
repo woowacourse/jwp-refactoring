@@ -18,6 +18,7 @@ import org.springframework.mock.env.MockEnvironment;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.fixture.MenuGroupFixture;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -34,12 +35,8 @@ class MenuGroupServiceTest {
     void setUp() {
         menuGroupService = new MenuGroupService(menuGroupDao);
 
-        menuGroup1 = new MenuGroup();
-        menuGroup1.setName("DD");
-
-        menuGroup2 = new MenuGroup();
-        menuGroup2.setId(1L);
-        menuGroup2.setName("DD");
+        menuGroup1 = MenuGroupFixture.createWithoutId();
+        menuGroup2 = MenuGroupFixture.createWithId(1L);
     }
 
     @DisplayName("정상 Menu Group 생성")
