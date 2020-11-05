@@ -5,9 +5,14 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
+import kitchenpos.dto.menu.MenuProductDto;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.exception.NotFoundProductException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +21,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -94,6 +100,31 @@ class MenuServiceTest extends TestFixtureFactory {
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 생성 - 존재하지 않는 product의 id를 전달받은 경우")
+    @Test
+    void createWhenNotFoundProduct() {
+        String menuName = "양념2마리";
+        int menuPrice = 20000;
+        String menuGroupName = "추천메뉴";
+        String productName = "양념";
+        int productPrice = 13000;
+
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup(menuGroupName));
+        Product savedProduct = productRepository.save(new Product(productName, ProductPrice.of(productPrice)));
+        List<MenuProductDto> menuProductDtos = Arrays.asList(
+                new MenuProductDto(savedProduct.getId(), 2),
+                new MenuProductDto(savedProduct.getId() + 1, 3)
+        );
+
+        MenuRequest menuRequest = new MenuRequest(menuName,
+                BigDecimal.valueOf(menuPrice),
+                savedMenuGroup.getId(),
+                menuProductDtos);
+
+        assertThatThrownBy(() -> menuService.create(menuRequest))
+                .isInstanceOf(NotFoundProductException.class);
     }
 
     @DisplayName("메뉴 목록 조회 기능 테스트")

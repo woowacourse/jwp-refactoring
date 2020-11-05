@@ -10,6 +10,7 @@ import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.exception.NotFoundMenuException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +53,7 @@ public class OrderService {
                 .map(OrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
         if (menuRepository.countAllByIdIn(menuIds) != menuIds.size()) {
-            throw new IllegalArgumentException();
+            throw new NotFoundMenuException();
         }
         for (OrderLineItemDto orderLineItemDto : orderRequest.getOrderLineItems()) {
             OrderLineItem orderLineItem = new OrderLineItem(savedOrder, orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity());
