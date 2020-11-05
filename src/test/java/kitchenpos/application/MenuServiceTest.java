@@ -22,6 +22,9 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuProductFixture;
+import kitchenpos.fixture.ProductFixture;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -44,9 +47,6 @@ class MenuServiceTest {
     private Menu menu2;
     private Menu menu3;
 
-    private MenuProduct menuProduct1;
-    private MenuProduct menuProduct2;
-
     private Product product1;
     private Product product2;
 
@@ -54,40 +54,15 @@ class MenuServiceTest {
     void setUp() {
         menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
 
-        product1 = new Product();
-        product1.setId(1L);
-        product1.setPrice(BigDecimal.valueOf(9000));
+        product1 = ProductFixture.createWithId(ProductFixture.ID1, 9000L);
+        product2 = ProductFixture.createWithId(ProductFixture.ID2, 1000L);
 
-        product2 = new Product();
-        product1.setId(2L);
-        product2.setPrice(BigDecimal.valueOf(1000));
+        MenuProduct menuProduct1 = MenuProductFixture.create(1L, 2);
+        MenuProduct menuProduct2 = MenuProductFixture.create(2L, 2);
 
-        menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(2);
-
-        menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(2L);
-        menuProduct2.setQuantity(2);
-
-        menu1 = new Menu();
-        menu1.setMenuGroupId(1L);
-        menu1.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menu1.setName("chicken");
-        menu1.setPrice(BigDecimal.valueOf(18000L));
-
-        menu2 = new Menu();
-        menu2.setId(1L);
-        menu2.setMenuGroupId(1L);
-        menu2.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menu2.setName("chicken");
-        menu2.setPrice(BigDecimal.valueOf(22000L));
-
-        menu3 = new Menu();
-        menu3.setMenuGroupId(3L);
-        menu3.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        menu3.setName("coke");
-        menu3.setPrice(BigDecimal.valueOf(-1500L));
+        menu1 = MenuFixture.createWithoutId(1L, Arrays.asList(menuProduct1, menuProduct2), 18000L);
+        menu2 = MenuFixture.createWithId(1L, 1L, Arrays.asList(menuProduct1, menuProduct2), 22000L);
+        menu3 = MenuFixture.createWithoutId(3L, Arrays.asList(menuProduct1, menuProduct2), -1500L);
     }
 
     @DisplayName("정상적으로 Menu를 생성한다")

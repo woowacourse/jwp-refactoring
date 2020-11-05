@@ -22,7 +22,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 
 @JdbcTest
-@Transactional()
 class OrderDaoTest {
 
     @Autowired

@@ -36,7 +36,7 @@ class ProductServiceTest {
 
         product1 = ProductFixture.createWithoutId(ProductFixture.PRICE1);
         product2 = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
-        nullPriceProduct = ProductFixture.createWithId(ProductFixture.ID2, null);
+        nullPriceProduct = ProductFixture.createNullPriceWithId(ProductFixture.ID2);
         negativePriceProduct = ProductFixture.createWithId(ProductFixture.ID2, -1000L);
     }
 
@@ -46,7 +46,7 @@ class ProductServiceTest {
         when(productDao.save(product1)).thenReturn(product2);
 
         assertThat(productService.create(product1))
-            .isEqualToComparingFieldByField(product2);
+            .isEqualToIgnoringGivenFields(product2, "id");
     }
 
     @DisplayName("가격이 null이거나 음수인 Product를 생성요청하면 예외를 반환한다.")

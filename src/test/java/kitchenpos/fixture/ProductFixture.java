@@ -27,4 +27,12 @@ public class ProductFixture {
 
         return product;
     }
+
+    public static Product createNullPriceWithId(Long id) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(NAME1);
+
+        return product;
+    }
 }
