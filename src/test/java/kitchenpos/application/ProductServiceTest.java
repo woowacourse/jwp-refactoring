@@ -19,12 +19,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductFixture;
 
 class ProductServiceTest extends AbstractServiceTest {
-
-    @Autowired
-    private DataSource dataSource;
-
     private ProductService productService;
-    JdbcTemplateProductDao productDao;
+    private JdbcTemplateProductDao productDao;
 
     @BeforeEach
     void setUp() {

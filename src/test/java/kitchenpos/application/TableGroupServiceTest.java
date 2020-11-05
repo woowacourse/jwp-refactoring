@@ -28,10 +28,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupFixture;
 
 class TableGroupServiceTest extends AbstractServiceTest {
-
-    @Autowired
-    private DataSource dataSource;
-
     private TableGroupService tableGroupService;
     private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
     private JdbcTemplateOrderDao jdbcTemplateOrderDao;

@@ -6,21 +6,15 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupFixture;
 
-class MenuGroupServiceTest extends AbstractServiceTest{
-    @Autowired
-    private DataSource dataSource;
-
+class MenuGroupServiceTest extends AbstractServiceTest {
     private MenuGroupService menuGroupService;
 
     @BeforeEach
