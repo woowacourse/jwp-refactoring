@@ -73,7 +73,7 @@ class OrderServiceTest {
     void createTest2(final List<OrderLineItem> input) {
         final Order order = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), input);
         assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+           .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 항목과 존재하는 메뉴의 크기가 다를 경우 예외를 반환한다.")

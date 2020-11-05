@@ -103,4 +103,3 @@ class OrderRestControllerTest {
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrder)));
     }
 }
-

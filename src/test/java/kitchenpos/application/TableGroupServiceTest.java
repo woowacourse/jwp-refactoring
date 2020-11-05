@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,11 +42,6 @@ class TableGroupServiceTest {
 
     @InjectMocks
     private TableGroupService tableGroupService;
-
-    @BeforeEach
-    void setUp() {
-        tableGroupService = new TableGroupService(orderRepository, orderTableRepository, tableGroupRepository);
-    }
 
     @DisplayName("여러 빈 테이블들을 정상적으로 단체지정한다.")
     @Test

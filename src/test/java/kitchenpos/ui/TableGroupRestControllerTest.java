@@ -76,4 +76,3 @@ class TableGroupRestControllerTest {
             .andExpect(status().isNoContent());
     }
 }
-

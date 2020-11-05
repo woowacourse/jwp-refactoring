@@ -25,6 +25,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest {
@@ -107,4 +108,3 @@ class TableRestControllerTest {
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrderTable)));
     }
 }
-
