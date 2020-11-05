@@ -51,7 +51,6 @@ class MenuServiceTest {
         menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
 
         menuGroup = menuGroupDao.save(createMenuGroup("Menu Group1"));
-
         product1 = productDao.save(createProduct("product1", BigDecimal.valueOf(1000)));
         product2 = productDao.save(createProduct("product2", BigDecimal.valueOf(1000)));
 
@@ -93,12 +92,12 @@ class MenuServiceTest {
         Menu menu2 = createMenu("menu2", menuGroup.getId(), BigDecimal.valueOf(1000));
         menu1.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
         menu2.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        List<Menu> menus = Arrays.asList(menu1, menu2);
+
         menuService.create(menu1);
         menuService.create(menu2);
 
         List<Menu> expectedMenus = menuService.list();
 
-        assertThat(expectedMenus.size()).isEqualTo(menus.size());
+        assertThat(expectedMenus.size()).isEqualTo(2);
     }
 }

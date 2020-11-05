@@ -37,7 +37,6 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있어야 한다.")
     void create() {
         Product product = createProduct("product", BigDecimal.valueOf(1000));
-        productDao.save(product);
 
         Product createdProduct = productService.create(product);
 
@@ -61,12 +60,11 @@ class ProductServiceTest {
     void list() {
         Product product1 = createProduct("product1", BigDecimal.valueOf(1000));
         Product product2 = createProduct("product2", BigDecimal.valueOf(1000));
-        productDao.save(product1);
-        productDao.save(product2);
-        List<Product> products = Arrays.asList(product1, product2);
+        productService.create(product1);
+        productService.create(product2);
 
         List<Product> savedProducts = productService.list();
 
-        assertThat(savedProducts.size()).isEqualTo(products.size());
+        assertThat(savedProducts.size()).isEqualTo(2);
     }
 }

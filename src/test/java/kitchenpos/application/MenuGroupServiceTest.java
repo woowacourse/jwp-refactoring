@@ -47,9 +47,7 @@ class MenuGroupServiceTest {
         menuGroupService.create(menuGroup1);
         menuGroupService.create(menuGroup2);
 
-        List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
-
         List<MenuGroup> expectedMenuGroups = menuGroupService.list();
-        assertThat(expectedMenuGroups.size()).isEqualTo(menuGroups.size());
+        assertThat(expectedMenuGroups.size()).isEqualTo(2);
     }
 }

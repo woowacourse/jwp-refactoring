@@ -64,7 +64,6 @@ class OrderServiceTest {
         orderLineItem2.setQuantity(2);
 
         orderTable = orderTableDao.save(createOrderTable(false));
-        // orderTable.setId(1L);
     }
 
     @Test
@@ -97,9 +96,10 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문하려는 테이블은 empty 상태가 아니어야 한다.")
     void createFailWhenTableIsEmpty() {
-        Order order = createOrder(OrderStatus.COMPLETION, orderTable.getId());
         orderTable.setEmpty(true);
         orderTableDao.save(orderTable);
+
+        Order order = createOrder(OrderStatus.COMPLETION, orderTable.getId());
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -112,24 +112,29 @@ class OrderServiceTest {
     void list() {
         Order order1 = createOrder(OrderStatus.COOKING, orderTable.getId());
         Order order2 = createOrder(OrderStatus.COOKING, orderTable.getId());
+
+        order1.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
         order2.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-        List<Order> orders = Arrays.asList(order1, order2);
-        orderDao.save(order1);
-        orderDao.save(order2);
+
+        orderService.create(order1);
+        orderService.create(order2);
 
         List<Order> expectedOrders = orderService.list();
 
-        assertThat(expectedOrders.size()).isEqualTo(orders.size());
+        assertThat(expectedOrders.size()).isEqualTo(2);
     }
 
     @Test
     @DisplayName("주문상태 변경이 가능하다.")
     void changeOrderStatus() {
-        Order order = orderDao.save(createOrder(OrderStatus.MEAL, orderTable.getId()));
-        Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
+        Order order = createOrder(OrderStatus.MEAL, orderTable.getId());
+        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        Order savedOrder = orderService.create(order);
 
-        String orderStatus = order.getOrderStatus();
-        Order expectedOrder = orderService.changeOrderStatus(order.getId(), orderToChange);
+        String orderStatus = savedOrder.getOrderStatus();
+
+        Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
+        Order expectedOrder = orderService.changeOrderStatus(savedOrder.getId(), orderToChange);
 
         assertThat(expectedOrder.getOrderStatus()).isNotEqualTo(orderStatus);
         assertThat(expectedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -138,10 +143,15 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 상태가 결제 완료인 경우, 주문 상태를 변경할 수 없다.")
     void changeOrderStatusFail() {
-        Order order = orderDao.save(createOrder(OrderStatus.COMPLETION, orderTable.getId()));
+        Order order = createOrder(OrderStatus.COOKING, orderTable.getId());
+        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+
+        Order savedOrder = orderService.create(order);
+        orderService.changeOrderStatus(savedOrder.getId(), createOrder(OrderStatus.COMPLETION, null));
+
         Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), orderToChange))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("changeOrderStatus Error: 결제 완료된 주문은 상태를 변경할 수 없습니다.");
     }
