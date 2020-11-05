@@ -1,10 +1,15 @@
-package kitchenpos.domain;
+package kitchenpos.domain.entity;
+
+import kitchenpos.domain.service.OrderTableChangeEmptyService;
 
 public class OrderTable {
-    private final Long id;
-    private final Long tableGroupId;
+    private Long id;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
+
+    private OrderTable() {
+    }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
@@ -13,11 +18,15 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeEmpty(boolean empty) {
+    public void changeEmpty(boolean empty, OrderTableChangeEmptyService orderTableChangeEmptyService) {
+        orderTableChangeEmptyService.validate(id, tableGroupId);
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

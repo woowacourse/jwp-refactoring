@@ -1,4 +1,4 @@
-package kitchenpos.domain.service;
+package kitchenpos.domain.entity;
 
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -18,13 +18,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.entity.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.domain.service.MenuCreateService;
 
 @ExtendWith(MockitoExtension.class)
-class MenuCreateServiceTest {
+class MenuTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
     @Mock
@@ -32,7 +31,7 @@ class MenuCreateServiceTest {
     @InjectMocks
     private MenuCreateService menuCreateService;
 
-    @DisplayName("메뉴 생성 유효성 검사")
+    @DisplayName("메뉴 생성")
     @TestFactory
     Stream<DynamicTest> create() {
         return Stream.of(
@@ -51,8 +50,7 @@ class MenuCreateServiceTest {
         given(productRepository.findById(menu.getMenuProducts().get(0).getProductId())).willReturn(
                 Optional.of(product));
 
-        assertDoesNotThrow(() -> menuCreateService.validate(menu.getMenuGroupId(), menu.getPrice(),
-                menu.getMenuProducts()));
+        assertDoesNotThrow(() -> menu.create(menuCreateService));
     }
 
     private void noMenuGroup() {
@@ -61,8 +59,7 @@ class MenuCreateServiceTest {
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(false);
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> menuCreateService.validate(menu.getMenuGroupId(), menu.getPrice(),
-                        menu.getMenuProducts()));
+                () -> menu.create(menuCreateService));
     }
 
     private void noProduct() {
@@ -72,8 +69,7 @@ class MenuCreateServiceTest {
                 .willReturn(Optional.empty());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> menuCreateService.validate(menu.getMenuGroupId(), menu.getPrice(),
-                        menu.getMenuProducts()));
+                () -> menu.create(menuCreateService));
     }
 
     private void bigMenuPrice() {
@@ -85,7 +81,6 @@ class MenuCreateServiceTest {
                 .willReturn(Optional.of(product));
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> menuCreateService.validate(menu.getMenuGroupId(), menu.getPrice(),
-                        menu.getMenuProducts()));
+                () -> menu.create(menuCreateService));
     }
 }

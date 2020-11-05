@@ -2,17 +2,17 @@ package kitchenpos.application.dto;
 
 import javax.validation.constraints.Min;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.entity.OrderTable;
 
-public class OrderTableRequest {
+public class OrderTableCreateRequest {
     @Min(0)
     private int numberOfGuests;
     private boolean empty;
 
-    private OrderTableRequest() {
+    private OrderTableCreateRequest() {
     }
 
-    public OrderTableRequest(int numberOfGuests, boolean empty) {
+    public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }

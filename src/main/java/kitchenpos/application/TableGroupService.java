@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
 
 @Service
 public class TableGroupService {

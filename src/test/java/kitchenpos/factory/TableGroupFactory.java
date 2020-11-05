@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.entity.OrderTable;
 
 @Component
 public class TableGroupFactory {

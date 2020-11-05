@@ -23,12 +23,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 

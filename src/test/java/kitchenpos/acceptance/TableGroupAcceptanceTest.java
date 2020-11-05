@@ -11,8 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.entity.OrderTable;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
     /**

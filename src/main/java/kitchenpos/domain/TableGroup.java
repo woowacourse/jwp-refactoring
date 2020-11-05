@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import kitchenpos.domain.entity.OrderTable;
+
 public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.adapter.infrastructure.jdbctemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +16,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.domain.repository.OrderTableRepository;
 
 @Repository
 public class JdbcTemplateOrderTableDao implements OrderTableRepository {
