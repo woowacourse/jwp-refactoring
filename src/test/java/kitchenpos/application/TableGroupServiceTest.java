@@ -5,6 +5,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import javax.sql.DataSource;
 
@@ -12,19 +16,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderFixture;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableFixture;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupFixture;
 
-
-class TableGroupServiceTest extends AbstractServiceTest{
+class TableGroupServiceTest extends AbstractServiceTest {
 
     @Autowired
     private DataSource dataSource;
@@ -116,9 +119,37 @@ class TableGroupServiceTest extends AbstractServiceTest{
         );
     }
 
-    private void createOrderTableCountBy(int count) {
-        for (int i = 0; i < count; i++) {
-            jdbcTemplateOrderTableDao.save(OrderTableFixture.createBeforeSave());
-        }
+    @DisplayName("조리중인이거나, 식사중인 테이블은 ungroup할 수 없다.")
+    @Test
+    void isAlreadyCookingOrMeal() {
+        List<OrderTable> orderTables = createOrderTableCountBy(3);
+        TableGroup tableGroup = tableGroupService.create(TableGroupFixture.createTableGroupWithOrderTableSize(orderTables));
+        createOrderCountBy(3, Arrays.asList("COOKCING", "MEAL", "COOKING"));
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("ungroup을 성공적으로 수행한다.")
+    @Test
+    void ungroup() {
+        List<OrderTable> orderTables = createOrderTableCountBy(3);
+        TableGroup tableGroup = tableGroupService.create(TableGroupFixture.createTableGroupWithOrderTableSize(orderTables));
+        createOrderCountBy(3, Arrays.asList("DONE", "DONE", "DONE"));
+        tableGroupService.ungroup(tableGroup.getId());
+
+        assertThat(jdbcTemplateOrderTableDao.findAllByTableGroupId(tableGroup.getId())).hasSize(0);
+    }
+
+    private List<OrderTable> createOrderTableCountBy(int count) {
+        return IntStream.range(0, count)
+            .mapToObj(i -> jdbcTemplateOrderTableDao.save(OrderTableFixture.createBeforeSave()))
+            .collect(Collectors.toList());
+    }
+
+    private List<Order> createOrderCountBy(int count, List<String> status) {
+        return LongStream.range(1, count + 1)
+            .mapToObj(i -> jdbcTemplateOrderDao.save(OrderFixture.createWithStatus(i, status.get((int)(i - 1)))))
+            .collect(Collectors.toList());
     }
 }

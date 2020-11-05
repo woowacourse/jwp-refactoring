@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.List;
 
 public class TableGroupFixture {
 
@@ -19,6 +20,15 @@ public class TableGroupFixture {
         tableGroup.setId(1L);
         tableGroup.setCreatedDate(LocalDateTime.now());
         tableGroup.setOrderTables(OrderTableFixture.createOrderTableCountBy(count));
+
+        return tableGroup;
+    }
+
+    public static TableGroup createTableGroupWithOrderTableSize(List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(1L);
+        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup.setOrderTables(orderTables);
 
         return tableGroup;
     }
