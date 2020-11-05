@@ -6,6 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.builder.MenuGroupBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class MenuGroup {
     @Id
@@ -15,19 +23,7 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
+    public static MenuGroupBuilder builder() {
+        return new MenuGroupBuilder();
     }
 }

@@ -1,11 +1,13 @@
 package kitchenpos.ui;
 
-import static kitchenpos.MenuFixture.*;
+import static kitchenpos.util.ObjectUtil.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +25,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest {
@@ -45,12 +48,16 @@ class MenuRestControllerTest {
     @DisplayName("정상적인 요청에 created 상태로 응답하는지 확인한다.")
     @Test
     void createTest() throws Exception {
-        final Menu savedMenu = createMenuWithId(1L);
+        final String name = "메뉴";
+        final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
+        final Menu savedMenu = createMenu(1L, name, 0, 1L, Collections.singletonList(menuProduct));
+        final Menu menuWithoutId = createMenu(null, name, 0, 1L, Collections.singletonList(menuProduct));
+
         given(menuService.create(any(Menu.class))).willReturn(savedMenu);
 
         mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createMenuWithoutId()))
+            .content(objectMapper.writeValueAsBytes(menuWithoutId))
         )
             .andExpect(status().isCreated())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedMenu)))
@@ -60,7 +67,11 @@ class MenuRestControllerTest {
     @DisplayName("정상적인 메뉴 리스트 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void listTest() throws Exception {
-        final List<Menu> menus = createMenus();
+        final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
+        final Menu first = createMenu(1L, "후라이드", 0, 1L, Collections.singletonList(menuProduct));
+        final Menu second = createMenu(2L, "양념", 0, 1L, Collections.singletonList(menuProduct));
+        final List<Menu> menus = Arrays.asList(first, second);
+
         given(menuService.list()).willReturn(menus);
 
         mockMvc.perform(get("/api/menus"))

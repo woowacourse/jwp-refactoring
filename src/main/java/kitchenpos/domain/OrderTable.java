@@ -6,6 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.builder.OrderTableBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class OrderTable {
     @Id
@@ -21,35 +29,11 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    public static OrderTableBuilder builder() {
+        return new OrderTableBuilder();
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public OrderTableBuilder toBuilder() {
+        return new OrderTableBuilder(id, tableGroupId, numberOfGuests, empty);
     }
 }

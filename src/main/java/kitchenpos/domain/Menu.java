@@ -10,6 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import kitchenpos.builder.MenuBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class Menu {
     @Id
@@ -28,43 +36,11 @@ public class Menu {
     @OneToMany(mappedBy = "menuId")
     private List<MenuProduct> menuProducts;
 
-    public Long getId() {
-        return id;
+    public static MenuBuilder builder() {
+        return new MenuBuilder();
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public MenuBuilder toBuilder() {
+        return new MenuBuilder(id, name, price, menuGroupId, menuProducts);
     }
 }

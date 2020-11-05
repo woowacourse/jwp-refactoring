@@ -1,12 +1,15 @@
 package kitchenpos.ui;
 
-import static kitchenpos.OrderFixture.*;
+import static kitchenpos.util.ObjectUtil.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +27,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 
 @WebMvcTest(OrderRestController.class)
@@ -47,12 +51,17 @@ class OrderRestControllerTest {
     @DisplayName("정상적인 주문 생성 요청에 created 상태로 응답하는지 확인한다.")
     @Test
     void createTest() throws Exception {
-        final Order savedOrder = createOrderWithId(1L);
+        final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
+        final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
+        final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
+        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+
         given(orderService.create(any(Order.class))).willReturn(savedOrder);
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createOrderWithoutId()))
+            .content(objectMapper.writeValueAsBytes(orderWithoutId))
         )
             .andExpect(status().isCreated())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrder)))
@@ -62,7 +71,12 @@ class OrderRestControllerTest {
     @DisplayName("정상적인 주문 리스트 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void listTest() throws Exception {
-        final List<Order> orders = createOrders();
+        final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
+        final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
+        final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        final List<Order> orders = Collections.singletonList(savedOrder);
+
         given(orderService.list()).willReturn(orders);
 
         mockMvc.perform(get("/api/orders"))
@@ -73,13 +87,17 @@ class OrderRestControllerTest {
     @DisplayName("정상적인 주문 상태 변경 요청에 ok 상태로 응답하는지 확인한다.")
     @Test
     void changeOrderStatusTest() throws Exception {
-        final Order savedOrder = createOrderWithId(1L);
-        savedOrder.setOrderStatus(OrderStatus.MEAL.name());
+        final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
+        final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
+        final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+
         given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(savedOrder);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", 1L)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createOrderWithoutId()))
+            .content(objectMapper.writeValueAsBytes(orderWithoutId))
         )
             .andExpect(status().isOk())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrder)));

@@ -6,6 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.builder.OrderLineItemBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class OrderLineItem {
     @Id
@@ -21,35 +29,11 @@ public class OrderLineItem {
     @Column(nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public static OrderLineItemBuilder builder() {
+        return new OrderLineItemBuilder();
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public OrderLineItemBuilder toBuilder() {
+        return new OrderLineItemBuilder(seq, orderId, menuId, quantity);
     }
 }

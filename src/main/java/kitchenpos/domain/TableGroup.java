@@ -12,6 +12,14 @@ import javax.persistence.OneToMany;
 
 import org.springframework.data.annotation.CreatedDate;
 
+import kitchenpos.builder.TableGroupBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class TableGroup {
     @Id
@@ -25,27 +33,11 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroupId")
     private List<OrderTable> orderTables;
 
-    public Long getId() {
-        return id;
+    public static TableGroupBuilder builder() {
+        return new TableGroupBuilder();
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public TableGroupBuilder toBuilder() {
+        return new TableGroupBuilder(id, createdDate, orderTables);
     }
 }

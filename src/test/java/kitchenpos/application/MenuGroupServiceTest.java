@@ -1,49 +1,49 @@
 package kitchenpos.application;
 
-import static kitchenpos.MenuGroupFixture.*;
+import static kitchenpos.util.ObjectUtil.*;
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
-    private MenuGroupService menuGroupService;
 
-    @BeforeEach
-    void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupRepository);
-    }
+    @InjectMocks
+    private MenuGroupService menuGroupService;
 
     @DisplayName("id가 없는 메뉴 그룹으로 id가 있는 메뉴 그룹을 정상적으로 생성한다.")
     @Test
     void createTest() {
-        final MenuGroup expectedMenuGroup = createMenuGroupWithId(1L);
-        given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(createMenuGroupWithId(1L));
-        final MenuGroup persistMenuGroup = menuGroupService.create(createMenuGroupWithoutId());
+        final MenuGroup expectedMenuGroup = createMenuGroup(1L, "메뉴");
 
-        assertThat(expectedMenuGroup).isEqualToComparingFieldByField(persistMenuGroup);
+        given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(expectedMenuGroup);
+
+        final MenuGroup persistMenuGroup = menuGroupService.create(createMenuGroup(null, "메뉴"));
+        assertThat(persistMenuGroup).isEqualToComparingFieldByField(expectedMenuGroup);
     }
 
     @DisplayName("메뉴 그룹들을 정상적으로 조회한다.")
     @Test
     void listTest() {
-        final List<MenuGroup> expectedMenuGroups = createMenuGroups();
-        given(menuGroupRepository.findAll()).willReturn(createMenuGroups());
-        final List<MenuGroup> persistMenuGroups = menuGroupService.list();
+        final List<MenuGroup> expectedMenuGroups = Collections.singletonList(createMenuGroup(1L, "메뉴"));
 
-        assertThat(expectedMenuGroups).usingRecursiveComparison().isEqualTo(persistMenuGroups);
+        given(menuGroupRepository.findAll()).willReturn(expectedMenuGroups);
+
+        final List<MenuGroup> persistMenuGroups = menuGroupService.list();
+        assertThat(persistMenuGroups).usingRecursiveComparison().isEqualTo(expectedMenuGroups);
     }
 }

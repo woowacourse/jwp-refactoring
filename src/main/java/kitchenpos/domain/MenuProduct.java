@@ -6,6 +6,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.builder.MenuProductBuilder;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 @Entity
 public class MenuProduct {
     @Id
@@ -21,35 +29,11 @@ public class MenuProduct {
     @Column(nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public static MenuProductBuilder builder() {
+        return new MenuProductBuilder();
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
+    public MenuProductBuilder toBuilder() {
+        return new MenuProductBuilder(seq, menuId, productId, quantity);
     }
 }

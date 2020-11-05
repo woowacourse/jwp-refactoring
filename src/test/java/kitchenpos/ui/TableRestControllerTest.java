@@ -1,13 +1,13 @@
 package kitchenpos.ui;
 
-import static kitchenpos.OrderTableFixture.*;
+import static kitchenpos.util.ObjectUtil.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -47,12 +47,14 @@ class TableRestControllerTest {
     @DisplayName("정상적인 주문 테이블 생성 요청에 created 상태로 응답하는지 확인한다.")
     @Test
     void createTest() throws Exception {
-        final OrderTable savedOrderTable = createOrderTableWithId(1L);
+        final OrderTable requestOrderTable = createOrderTable(null, 1L, 0, true);
+        final OrderTable savedOrderTable = createOrderTable(1L, 1L, 0, true);
+
         given(tableService.create(any(OrderTable.class))).willReturn(savedOrderTable);
 
         mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createOrderTableWithoutId()))
+            .content(objectMapper.writeValueAsBytes(requestOrderTable))
         )
             .andExpect(status().isCreated())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrderTable)))
@@ -62,7 +64,10 @@ class TableRestControllerTest {
     @DisplayName("정상적인 주문 테이블 리스트 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void listTest() throws Exception {
-        final List<OrderTable> orderTables = createOrderTables();
+        final OrderTable firstTable = createOrderTable(1L, 1L, 0, true);
+        final OrderTable secondTable = createOrderTable(2L, 1L, 0, true);
+        final List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
+
         given(tableService.list()).willReturn(orderTables);
 
         mockMvc.perform(get("/api/tables"))
@@ -73,13 +78,14 @@ class TableRestControllerTest {
     @DisplayName("정상적인 빈 테이블로 수정 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void changeEmptyTest() throws Exception {
-        final OrderTable savedOrderTable = createOrderTableWithId(1L);
-        savedOrderTable.setEmpty(true);
+        final OrderTable requestOrderTable = createOrderTable(null, 1L, 2, false);
+        final OrderTable savedOrderTable = createOrderTable(1L, 1L, 0, true);
+
         given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(savedOrderTable);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/empty", 1L)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createOrderTableWithId(1L)))
+            .content(objectMapper.writeValueAsBytes(requestOrderTable))
         )
             .andExpect(status().isOk())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrderTable)));
@@ -88,13 +94,14 @@ class TableRestControllerTest {
     @DisplayName("정상적인 테이블 손님 수 수정 요청에 ok상태로 응답하는지 확인한다.")
     @Test
     void changeNumberOfGuestsTest() throws Exception {
-        final OrderTable savedOrderTable = createOrderTableWithId(1L);
-        savedOrderTable.setNumberOfGuests(4);
+        final OrderTable requestOrderTable = createOrderTable(null, 1L, 4, false);
+        final OrderTable savedOrderTable = createOrderTable(1L, 1L, 4, false);
+
         given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(savedOrderTable);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", 1L)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createOrderTableWithId(1L)))
+            .content(objectMapper.writeValueAsBytes(requestOrderTable))
         )
             .andExpect(status().isOk())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedOrderTable)));
