@@ -12,12 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.OrderFixture;
 
 @JdbcTest
+@Sql("classpath:/truncate.sql")
 class OrderDaoTest {
 
     @Autowired

@@ -1,5 +1,6 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.OrderTable;
@@ -11,6 +12,7 @@ public class TableGroupFixture {
     public static TableGroup createWithoutId(List<OrderTable> tables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(tables);
+        tableGroup.setCreatedDate(LocalDateTime.now());
 
         return tableGroup;
     }
@@ -19,6 +21,7 @@ public class TableGroupFixture {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setOrderTables(tables);
+        tableGroup.setCreatedDate(LocalDateTime.now());
 
         return tableGroup;
     }
