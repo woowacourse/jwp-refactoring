@@ -29,7 +29,7 @@ public class OrderLineItemDto {
         return new OrderLineItemDto(
                 orderLineItem.getId(),
                 orderLineItem.getOrder().getId(),
-                orderLineItem.getMenu().getId(),
+                orderLineItem.getMenuId(),
                 orderLineItem.getQuantity()
         );
     }
