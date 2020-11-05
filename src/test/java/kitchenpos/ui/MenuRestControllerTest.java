@@ -54,7 +54,7 @@ class MenuRestControllerTest {
     @Test
     @DisplayName("메뉴를 생성한다")
     void create() throws Exception {
-        Menu menuRequest = createMenuRequest(
+        Menu request = createMenuRequest(
                 "후라이드+후라이드",
                 BigDecimal.valueOf(19000),
                 4L,
@@ -68,7 +68,7 @@ class MenuRestControllerTest {
             saved.setId(1L);
             return saved;
         });
-        byte[] content = objectMapper.writeValueAsBytes(menuRequest);
+        byte[] content = objectMapper.writeValueAsBytes(request);
 
         mockMvc.perform(post("/api/menus")
                 .content(content)
