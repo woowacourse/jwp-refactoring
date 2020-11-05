@@ -10,13 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
-import kitchenpos.builder.MenuBuilder;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Entity
 public class Menu {
@@ -42,5 +42,54 @@ public class Menu {
 
     public MenuBuilder toBuilder() {
         return new MenuBuilder(id, name, price, menuGroupId, menuProducts);
+    }
+
+    public static class MenuBuilder {
+        private Long id;
+        private String name;
+        private BigDecimal price;
+        private Long menuGroupId;
+        private List<MenuProduct> menuProducts;
+
+        public MenuBuilder() {
+        }
+
+        public MenuBuilder(Long id, String name, BigDecimal price, Long menuGroupId,
+            List<MenuProduct> menuProducts) {
+            this.id = id;
+            this.name = name;
+            this.price = price;
+            this.menuGroupId = menuGroupId;
+            this.menuProducts = menuProducts;
+        }
+
+        public MenuBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public MenuBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MenuBuilder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public MenuBuilder menuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
+            return this;
+        }
+
+        public MenuBuilder menuProducts(List<MenuProduct> menuProducts) {
+            this.menuProducts = menuProducts;
+            return this;
+        }
+
+        public Menu build() {
+            return new Menu(id, name, price, menuGroupId, menuProducts);
+        }
     }
 }

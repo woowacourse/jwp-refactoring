@@ -12,13 +12,13 @@ import javax.persistence.OneToMany;
 
 import org.springframework.data.annotation.CreatedDate;
 
-import kitchenpos.builder.TableGroupBuilder;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 @Entity
 public class TableGroup {
@@ -39,5 +39,39 @@ public class TableGroup {
 
     public TableGroupBuilder toBuilder() {
         return new TableGroupBuilder(id, createdDate, orderTables);
+    }
+
+    public static class TableGroupBuilder {
+        private Long id;
+        private LocalDateTime createdDate;
+        private List<OrderTable> orderTables;
+
+        public TableGroupBuilder() {
+        }
+
+        public TableGroupBuilder(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+            this.id = id;
+            this.createdDate = createdDate;
+            this.orderTables = orderTables;
+        }
+
+        public TableGroupBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public TableGroupBuilder createdDate(LocalDateTime createdDate) {
+            this.createdDate = createdDate;
+            return this;
+        }
+
+        public TableGroupBuilder orderTables(List<OrderTable> orderTables) {
+            this.orderTables = orderTables;
+            return this;
+        }
+
+        public TableGroup build() {
+            return new TableGroup(id, createdDate, orderTables);
+        }
     }
 }
