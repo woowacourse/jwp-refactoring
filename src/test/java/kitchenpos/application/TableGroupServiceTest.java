@@ -185,7 +185,6 @@ class TableGroupServiceTest {
         @Nested
         @DisplayName("해당하는 주문 테이블들의 상태가 하나라도 '조리' 또는 '식사 중'일 경우")
         class WhenOrderTableInCookingOrMeal {
-
             @BeforeEach
             void setUp() {
                 tableGroupId = 5L;
