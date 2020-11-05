@@ -124,7 +124,7 @@ class TableServiceTest {
             void setUp() {
                 orderTableId = 1L;
                 orderTable = createOrderTable(orderTableId, false, null, 4);
-                request = modifyOrderTableStatusRequest(true);
+                request = modifyOrderTableEmptyRequest(true);
                 given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(orderTable));
                 given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(false);
             }
@@ -149,7 +149,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 orderTableId = 1L;
-                request = modifyOrderTableStatusRequest(true);
+                request = modifyOrderTableEmptyRequest(true);
                 given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
             }
 
@@ -166,7 +166,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 orderTableId = 1L;
-                request = modifyOrderTableStatusRequest(true);
+                request = modifyOrderTableEmptyRequest(true);
                 given(orderTableDao.findById(orderTableId))
                         .willReturn(Optional.of(createOrderTable(orderTableId, false, 2L, 4)));
             }
@@ -184,7 +184,7 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 orderTableId = 1L;
-                request = modifyOrderTableStatusRequest(true);
+                request = modifyOrderTableEmptyRequest(true);
                 given(orderTableDao.findById(orderTableId))
                         .willReturn(Optional.of(createOrderTable(orderTableId, false, null, 4)));
                 given(orderDao.existsByOrderTableIdAndOrderStatusIn(eq(orderTableId), anyList())).willReturn(true);

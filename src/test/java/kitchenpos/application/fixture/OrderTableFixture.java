@@ -19,7 +19,7 @@ public class OrderTableFixture {
         return orderTable;
     }
 
-    public static OrderTable modifyOrderTableStatusRequest(boolean empty) {
+    public static OrderTable modifyOrderTableEmptyRequest(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
         return orderTable;
