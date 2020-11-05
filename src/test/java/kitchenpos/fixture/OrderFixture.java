@@ -1,5 +1,6 @@
 package kitchenpos.fixture;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.Order;
@@ -17,6 +18,7 @@ public class OrderFixture {
         order.setOrderStatus(status);
         order.setOrderTableId(tableId);
         order.setOrderLineItems(items);
+        order.setOrderedTime(LocalDateTime.now());
 
         return order;
     }
@@ -27,6 +29,7 @@ public class OrderFixture {
         order.setOrderStatus(status);
         order.setOrderTableId(tableId);
         order.setOrderLineItems(items);
+        order.setOrderedTime(LocalDateTime.now());
 
         return order;
     }
