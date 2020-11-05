@@ -14,7 +14,7 @@ public class ProductFixture {
     public static Product createWithoutId(long price) {
         Product product = new Product();
         product.setName(NAME1);
-        product.setPrice(BigDecimal.valueOf(price));
+        product.setPrice(BigDecimal.valueOf(price, 2));
 
         return product;
     }
@@ -23,7 +23,7 @@ public class ProductFixture {
         Product product = new Product();
         product.setId(id);
         product.setName(NAME1);
-        product.setPrice(BigDecimal.valueOf(price));
+        product.setPrice(BigDecimal.valueOf(price, 2));
 
         return product;
     }
