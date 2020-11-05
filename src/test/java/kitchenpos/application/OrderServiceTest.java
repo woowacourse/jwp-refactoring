@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -13,34 +12,39 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
+@Sql("classpath:delete.sql")
 class OrderServiceTest {
     @Autowired
     private OrderService orderService;
-    @Mock
+    @Autowired
     private MenuDao menuDao;
-    @Mock
+    @Autowired
     private OrderDao orderDao;
-    @Mock
+    @Autowired
     private OrderLineItemDao orderLineItemDao;
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
+    @Autowired
+    private MenuGroupDao menuGroupDao;
 
     private OrderTable orderTable;
     private OrderLineItem orderLineItem1;
@@ -49,36 +53,33 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("menuGroup"));
 
-        Menu menu = createMenu("menu", 1L, BigDecimal.valueOf(1000));
+        Menu menu = menuDao.save(createMenu("menu", menuGroup.getId(), BigDecimal.valueOf(1000)));
+        Menu menu2 = menuDao.save(createMenu("menu", menuGroup.getId(), BigDecimal.valueOf(1000)));
 
-        orderLineItem1 = createOrderLineItem(1L, menu.getId());
-        orderLineItem2 = createOrderLineItem(1L, menu.getId());
+        orderLineItem1 = createOrderLineItem(null, menu.getId());
+        orderLineItem2 = createOrderLineItem(null, menu2.getId());
         orderLineItem1.setQuantity(1);
         orderLineItem2.setQuantity(2);
 
-        orderTable = createOrderTable(false);
-        orderTable.setId(1L);
+        orderTable = orderTableDao.save(createOrderTable(false));
+        // orderTable.setId(1L);
     }
 
     @Test
     void create() {
-        Order order = createOrder(OrderStatus.MEAL, 1L);
-        order.setId(1L);
+        Order order = createOrder(OrderStatus.MEAL, orderTable.getId());
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.ofNullable(orderTable));
-        given(orderDao.save(order)).willReturn(order);
 
         Order savedOrder = orderService.create(order);
 
         assertAll(
-            () -> assertThat(savedOrder.getId()).isEqualTo(order.getId()),
+            () -> assertThat(savedOrder.getId()).isNotNull(),
             () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(order.getOrderStatus()),
-            () -> assertThat(savedOrder.getOrderLineItems()).isEqualTo(order.getOrderLineItems()),
-            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(order.getOrderTableId())
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderLineItems().size()).isEqualTo(2),
+            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(orderTable.getId())
         );
     }
 
@@ -96,12 +97,10 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문하려는 테이블은 empty 상태가 아니어야 한다.")
     void createFailWhenTableIsEmpty() {
-        Order order = createOrder(OrderStatus.COMPLETION, 1L);
+        Order order = createOrder(OrderStatus.COMPLETION, orderTable.getId());
         orderTable.setEmpty(true);
+        orderTableDao.save(orderTable);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-
-        given(menuDao.countByIdIn(anyList())).willReturn(2L);
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.ofNullable(orderTable));
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class)
@@ -111,15 +110,12 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문의 목록을 불러올 수 있어야 한다.")
     void list() {
-        Order order1 = createOrder(OrderStatus.COOKING, 1L);
-        Order order2 = createOrder(OrderStatus.COOKING, 1L);
-        order1.setId(1L);
-        order2.setId(2L);
+        Order order1 = createOrder(OrderStatus.COOKING, orderTable.getId());
+        Order order2 = createOrder(OrderStatus.COOKING, orderTable.getId());
         order2.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
         List<Order> orders = Arrays.asList(order1, order2);
-
-        given(orderDao.findAll()).willReturn(orders);
-        given(orderLineItemDao.findAllByOrderId(any())).willReturn(Arrays.asList(orderLineItem1, orderLineItem2));
+        orderDao.save(order1);
+        orderDao.save(order2);
 
         List<Order> expectedOrders = orderService.list();
 
@@ -129,16 +125,11 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문상태 변경이 가능하다.")
     void changeOrderStatus() {
-        Order order = createOrder(OrderStatus.MEAL, orderTable.getId());
-        order.setId(1L);
+        Order order = orderDao.save(createOrder(OrderStatus.MEAL, orderTable.getId()));
         Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
 
-        given(orderDao.findById(1L)).willReturn(java.util.Optional.of(order));
-        given(orderDao.save(any())).willReturn(any());
-        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(anyList());
-
         String orderStatus = order.getOrderStatus();
-        Order expectedOrder = orderService.changeOrderStatus(1L, orderToChange);
+        Order expectedOrder = orderService.changeOrderStatus(order.getId(), orderToChange);
 
         assertThat(expectedOrder.getOrderStatus()).isNotEqualTo(orderStatus);
         assertThat(expectedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
@@ -147,11 +138,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 상태가 결제 완료인 경우, 주문 상태를 변경할 수 없다.")
     void changeOrderStatusFail() {
-        Order order = createOrder(OrderStatus.COMPLETION, orderTable.getId());
-        order.setId(1L);
+        Order order = orderDao.save(createOrder(OrderStatus.COMPLETION, orderTable.getId()));
         Order orderToChange = createOrder(OrderStatus.COMPLETION, null);
-
-        given(orderDao.findById(order.getId())).willReturn(java.util.Optional.of(order));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderToChange))
             .isInstanceOf(IllegalArgumentException.class)

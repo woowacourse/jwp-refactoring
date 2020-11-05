@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -12,19 +11,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
+@Sql("classpath:delete.sql")
 class ProductServiceTest {
     @Autowired
     private ProductService productService;
-    @Mock
+    @Autowired
     private ProductDao productDao;
 
     @BeforeEach
@@ -36,16 +37,14 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있어야 한다.")
     void create() {
         Product product = createProduct("product", BigDecimal.valueOf(1000));
-        product.setId(1L);
-
-        given(productDao.save(any())).willReturn(product);
+        productDao.save(product);
 
         Product createdProduct = productService.create(product);
 
         assertAll(
-            () -> assertThat(createdProduct.getId()).isEqualTo(product.getId()),
+            () -> assertThat(createdProduct.getId()).isNotNull(),
             () -> assertThat(createdProduct.getName()).isEqualTo(product.getName()),
-            () -> assertThat(createdProduct.getPrice()).isEqualTo(product.getPrice())
+            () -> assertThat(createdProduct.getPrice().toBigInteger()).isEqualTo(product.getPrice().toBigInteger())
         );
     }
 
@@ -62,9 +61,9 @@ class ProductServiceTest {
     void list() {
         Product product1 = createProduct("product1", BigDecimal.valueOf(1000));
         Product product2 = createProduct("product2", BigDecimal.valueOf(1000));
+        productDao.save(product1);
+        productDao.save(product2);
         List<Product> products = Arrays.asList(product1, product2);
-
-        given(productDao.findAll()).willReturn(products);
 
         List<Product> savedProducts = productService.list();
 

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -10,19 +9,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
+@Sql("classpath:delete.sql")
 class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
-    @Mock
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @BeforeEach
@@ -34,8 +35,6 @@ class MenuGroupServiceTest {
     void create() {
         MenuGroup menuGroup = createMenuGroup("menuGroup");
 
-        given(menuGroupDao.save(any())).willReturn(menuGroup);
-
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName());
     }
@@ -45,9 +44,10 @@ class MenuGroupServiceTest {
     void list() {
         MenuGroup menuGroup1 = createMenuGroup("menuGroup1");
         MenuGroup menuGroup2 = createMenuGroup("menuGroup2");
-        List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
+        menuGroupService.create(menuGroup1);
+        menuGroupService.create(menuGroup2);
 
-        given(menuGroupDao.findAll()).willReturn(menuGroups);
+        List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
 
         List<MenuGroup> expectedMenuGroups = menuGroupService.list();
         assertThat(expectedMenuGroups.size()).isEqualTo(menuGroups.size());

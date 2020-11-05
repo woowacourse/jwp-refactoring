@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,29 +12,32 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
+@Sql("classpath:delete.sql")
 class TableGroupServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
-    @Mock
+    @Autowired
     private OrderDao orderDao;
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
-    @Mock
+    @Autowired
     private TableGroupDao tableGroupDao;
 
     private OrderTable orderTable1;
@@ -45,10 +47,11 @@ class TableGroupServiceTest {
     void setUp() {
         tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
-        orderTable1 = createOrderTable(true);
-        orderTable2 = createOrderTable(true);
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
+        orderTable1 = orderTableDao.save(createOrderTable(true));
+        orderTable2 = orderTableDao.save(createOrderTable(true));
+
+        orderTableDao.save(orderTable1);
+        orderTableDao.save(orderTable2);
     }
 
     private static Stream<Arguments> generateData() {
@@ -63,16 +66,11 @@ class TableGroupServiceTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         TableGroup tableGroup = createTableGroup(orderTables);
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
-        given(tableGroupDao.save(tableGroup)).willReturn(tableGroup);
-        given(orderTableDao.save(orderTables.get(0))).willReturn(orderTables.get(0));
-        given(orderTableDao.save(orderTables.get(1))).willReturn(orderTables.get(1));
-
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         List<OrderTable> savedOrderTables = savedTableGroup.getOrderTables();
 
         assertAll(
-            () -> assertThat(savedTableGroup.getId()).isEqualTo(tableGroup.getId()),
+            () -> assertThat(savedTableGroup.getId()).isNotNull(),
             () -> assertThat(savedTableGroup.getCreatedDate()).isNotNull(),
             () -> assertThat(savedOrderTables.size()).isEqualTo(orderTables.size())
         );
@@ -91,12 +89,10 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("그룹으로 묶을 테이블의 상태는 empty 여야 한다.")
     void createErrorWhenTableIsNotEmpty() {
-        OrderTable emptyTable = createOrderTable(true);
-        OrderTable nonEmptyTable = createOrderTable(false);
+        OrderTable emptyTable = orderTableDao.save(createOrderTable(true));
+        OrderTable nonEmptyTable = orderTableDao.save(createOrderTable(false));
         List<OrderTable> tables = Arrays.asList(emptyTable, nonEmptyTable);
         TableGroup tableGroup = createTableGroup(tables);
-
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(tables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class)
@@ -106,16 +102,16 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("그룹으로 묶을 테이블은 다른 테이블 그룹이 아니어야 한다.")
     void createErrorWhenTableGroupIsInOtherTableGroup() {
-        OrderTable notGroupedTable = createOrderTable(true);
-        OrderTable alreadyGroupedTable = createOrderTable(true);
-        alreadyGroupedTable.setTableGroupId(1L);
+        OrderTable notGroupedTable = orderTableDao.save(createOrderTable(true));
+        OrderTable alreadyGroupedTable1 = orderTableDao.save(createOrderTable(true));
+        OrderTable alreadyGroupedTable2 = orderTableDao.save(createOrderTable(true));
 
-        List<OrderTable> tables = Arrays.asList(notGroupedTable, alreadyGroupedTable);
-        TableGroup tableGroup = createTableGroup(tables);
+        tableGroupService.create(createTableGroup(Arrays.asList(alreadyGroupedTable1, alreadyGroupedTable2)));
 
-        given(orderTableDao.findAllByIdIn(anyList())).willReturn(tables);
+        List<OrderTable> tables = Arrays.asList(notGroupedTable, alreadyGroupedTable1);
+        TableGroup tableGroup2 = createTableGroup(tables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup2))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("create Error: 테이블을 그룹으로 묶을 수 없습니다. (테이블이 비어있지 않거나, 이미 그룹이 되어있는 테이블)");
     }
@@ -124,20 +120,13 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 해체할 수 있어야 한다.")
     void ungroup() {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        TableGroup tableGroup = createTableGroup(orderTables);
-        tableGroup.setId(1L);
-        orderTable1.setTableGroupId(tableGroup.getId());
-        orderTable2.setTableGroupId(tableGroup.getId());
-
-        given(orderTableDao.findAllByTableGroupId(tableGroup.getId())).willReturn(orderTables);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
-        given(orderTableDao.save(any())).willReturn(any());
+        TableGroup tableGroup = tableGroupService.create(createTableGroup(orderTables));
 
         tableGroupService.ungroup(tableGroup.getId());
+        List<OrderTable> ungroupedOrderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
 
         assertAll(
-            () -> assertThat(orderTables.get(0).isEmpty()).isEqualTo(false),
-            () -> assertThat(orderTables.get(1).isEmpty()).isEqualTo(false),
+            () -> assertThat(ungroupedOrderTables.size()).isZero(),
             () -> assertThat(orderTables.get(0).getTableGroupId()).isNull(),
             () -> assertThat(orderTables.get(1).getTableGroupId()).isNull()
         );
@@ -146,14 +135,10 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("해체할 테이블 그룹의 모든 테이블의 주문 상태는 결제 완료여야 한다.")
     void ungroupFail() {
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        TableGroup tableGroup = createTableGroup(orderTables);
-        tableGroup.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable2.setTableGroupId(1L);
+        orderDao.save(createOrder(OrderStatus.MEAL, orderTable1.getId()));
 
-        given(orderTableDao.findAllByTableGroupId(tableGroup.getId())).willReturn(orderTables);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        TableGroup tableGroup = tableGroupService.create(createTableGroup(orderTables));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class)

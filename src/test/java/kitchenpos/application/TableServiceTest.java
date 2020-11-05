@@ -3,31 +3,31 @@ package kitchenpos.application;
 import static kitchenpos.domain.DomainCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Transactional
+@Sql("classpath:delete.sql")
 class TableServiceTest {
     @Autowired
     private TableService tableService;
-    @Mock
+    @Autowired
     private OrderDao orderDao;
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
 
     @BeforeEach
@@ -38,16 +38,13 @@ class TableServiceTest {
     @Test
     void create() {
         OrderTable orderTable = createOrderTable(false);
-        orderTable.setId(1L);
         orderTable.setNumberOfGuests(1);
-
-        given(orderTableDao.save(any())).willReturn(orderTable);
 
         OrderTable savedOrderTable = tableService.create(orderTable);
 
         assertAll(
-            () -> assertThat(savedOrderTable.getId()).isEqualTo(orderTable.getId()),
-            () -> assertThat(savedOrderTable.getTableGroupId()).isEqualTo(orderTable.getTableGroupId()),
+            () -> assertThat(savedOrderTable.getId()).isNotNull(),
+            () -> assertThat(savedOrderTable.getTableGroupId()).isNull(),
             () -> assertThat(savedOrderTable.isEmpty()).isEqualTo(orderTable.isEmpty())
         );
     }
@@ -55,30 +52,18 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블의 목록을 불러올 수 있어야 한다.")
     void list() {
-        OrderTable orderTable1 = createOrderTable(false);
-        OrderTable orderTable2 = createOrderTable(false);
-        orderTable1.setId(1L);
-        orderTable2.setId(1L);
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-
-        given(orderTableDao.findAll()).willReturn(orderTables);
+        tableService.create(createOrderTable(false));
+        tableService.create(createOrderTable(false));
 
         List<OrderTable> foundOrderTables = tableService.list();
 
-        assertThat(foundOrderTables.size()).isEqualTo(orderTables.size());
+        assertThat(foundOrderTables.size()).isEqualTo(2);
     }
 
     @Test
     void changeEmpty() {
-        OrderTable notEmptyOrderTable = createOrderTable(false);
+        OrderTable notEmptyOrderTable = tableService.create(createOrderTable(false));
         OrderTable emptyOrderTable = createOrderTable(true);
-        notEmptyOrderTable.setId(1L);
-
-        given(orderTableDao.findById(notEmptyOrderTable.getId())).willReturn(java.util.Optional.of(notEmptyOrderTable));
-        //결제 완료
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            notEmptyOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
-        given(orderTableDao.save(notEmptyOrderTable)).willReturn(notEmptyOrderTable);
 
         OrderTable savedOrderTable = tableService.changeEmpty(notEmptyOrderTable.getId(), emptyOrderTable);
 
@@ -88,13 +73,12 @@ class TableServiceTest {
     @Test
     @DisplayName("empty 상태를 변경하기 위해서는 테이블 그룹에 포함되어있지 않아야 한다.")
     void changeEmptyFailWhenInGroup() {
-        OrderTable orderTable = createOrderTable(true);
-        orderTable.setId(1L);
+        OrderTable orderTable = tableService.create(createOrderTable(true));
         orderTable.setTableGroupId(1L);
+        orderTableDao.save(orderTable);
+        OrderTable emptyOrderTable = createOrderTable(true);
 
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.of(orderTable));
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), any()))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), emptyOrderTable))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("changeEmpty Error: 테이블 그룹에 포함되어있지 않아야 합니다.");
     }
@@ -102,14 +86,11 @@ class TableServiceTest {
     @Test
     @DisplayName("empty 상태를 변경하기 위해서는 주문 상태가 결제 완료여야 한다.")
     void changeEmptyFailWhenOrderStatusNotComplete() {
-        OrderTable orderTable = createOrderTable(true);
+        OrderTable orderTable = tableService.create(createOrderTable(true));
+        OrderTable emptyOrderTable = createOrderTable(true);
+        orderDao.save(createOrder(OrderStatus.COOKING, orderTable.getId()));
 
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.of(orderTable));
-        //결제 미완료
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), emptyOrderTable))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("changeEmpty Error: 주문 상태가 결제 완료여야 합니다.");
     }
@@ -117,19 +98,12 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블 손님의 수를 변경할 수 있어야 한다.")
     void changeNumberOfGuests() {
-        OrderTable orderTable = createOrderTable(false);
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(1);
+        OrderTable orderTable = tableService.create(createOrderTable(false));
         OrderTable orderTableToChange = createOrderTable(false);
         orderTableToChange.setNumberOfGuests(4);
 
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.of(orderTable));
-        given(orderTableDao.save(orderTable)).willReturn(orderTable);
-
-        int guests = orderTable.getNumberOfGuests();
         OrderTable savedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), orderTableToChange);
 
-        assertThat(guests).isEqualTo(1);
         assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTableToChange.getNumberOfGuests());
 
     }
@@ -137,11 +111,11 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블의 손님 수는 0명 이상이어야 한다")
     void changeNumberOfGuestFailWhenUnderZero() {
-        OrderTable orderTable = createOrderTable(false);
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(-1);
+        OrderTable orderTable = tableService.create(createOrderTable(false));
+        OrderTable orderTableToChange = createOrderTable(false);
+        orderTableToChange.setNumberOfGuests(-1);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableToChange))
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("changeNumberOfGuest Error: 손님은 0명 이상이어야 합니다.");
     }
@@ -149,13 +123,9 @@ class TableServiceTest {
     @Test
     @DisplayName("테이블의 상태는 empty가 아니어야 한다.")
     void changeNumberOfGuestFailWhenEmpty() {
-        OrderTable orderTable = createOrderTable(true);
+        OrderTable orderTable = tableService.create(createOrderTable(true));
         OrderTable orderTableToChange = createOrderTable(false);
-        orderTable.setId(1L);
-        orderTable.setNumberOfGuests(1);
         orderTableToChange.setNumberOfGuests(3);
-
-        given(orderTableDao.findById(orderTable.getId())).willReturn(java.util.Optional.of(orderTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableToChange))
             .isInstanceOf(IllegalArgumentException.class)
