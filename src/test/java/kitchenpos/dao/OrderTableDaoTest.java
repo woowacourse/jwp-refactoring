@@ -42,7 +42,7 @@ class OrderTableDaoTest {
     void save() {
         OrderTable saved = orderTableDao.save(orderTable);
 
-        assertThat(saved).isEqualToComparingOnlyGivenFields(orderTable, "id");
+        assertThat(saved).isEqualToIgnoringGivenFields(orderTable, "id");
         assertThat(saved).extracting(OrderTable::getId).isEqualTo(1L);
     }
 

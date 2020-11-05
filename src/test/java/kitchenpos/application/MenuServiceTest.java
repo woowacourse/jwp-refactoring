@@ -57,8 +57,8 @@ class MenuServiceTest {
         product1 = ProductFixture.createWithId(ProductFixture.ID1, 9000L);
         product2 = ProductFixture.createWithId(ProductFixture.ID2, 1000L);
 
-        MenuProduct menuProduct1 = MenuProductFixture.create(1L, 2);
-        MenuProduct menuProduct2 = MenuProductFixture.create(2L, 2);
+        MenuProduct menuProduct1 = MenuProductFixture.create(1L,1L, 2);
+        MenuProduct menuProduct2 = MenuProductFixture.create(1L, 2L, 2);
 
         menu1 = MenuFixture.createWithoutId(1L, Arrays.asList(menuProduct1, menuProduct2), 18000L);
         menu2 = MenuFixture.createWithId(1L, 1L, Arrays.asList(menuProduct1, menuProduct2), 22000L);

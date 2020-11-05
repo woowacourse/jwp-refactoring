@@ -3,7 +3,9 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import javax.sql.DataSource;
 
@@ -43,8 +45,10 @@ class ProductDaoTest {
     void save() {
         Product savedProduct = productDao.save(product1);
 
-        assertThat(savedProduct).isEqualToIgnoringGivenFields(product1, "id");
-        assertThat(savedProduct).extracting(Product::getId).isEqualTo(1L);
+        assertThat(savedProduct)
+            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue), BigDecimal.class)
+            .isEqualToIgnoringGivenFields(product1, "id");
+        assertThat(savedProduct).extracting(Product::getId).isEqualTo(savedProduct.getId());
     }
 
     @DisplayName("Select a product by id")
@@ -53,6 +57,7 @@ class ProductDaoTest {
         Product savedProduct = productDao.save(product1);
 
         assertThat(productDao.findById(savedProduct.getId()).get())
+            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue), BigDecimal.class)
             .isEqualToComparingFieldByField(savedProduct);
     }
 
