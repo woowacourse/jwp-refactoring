@@ -35,7 +35,7 @@ class JdbcTemplateMenuDaoTest {
     }
 
     @Test
-    @DisplayName("id가 없는 메뉴 엔티티를 저장하면 id가 부여되고, 엔티티의 필드인 메뉴 상품 리스트는 저장되지 않는다")
+    @DisplayName("메뉴 엔티티를 저장하면 id가 부여되고, 엔티티의 필드인 메뉴 상품 리스트는 저장되지 않는다")
     void insert() {
         Menu menu = createMenu(
                 null,
