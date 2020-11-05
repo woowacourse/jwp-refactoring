@@ -15,8 +15,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
+import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.application.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -50,11 +52,8 @@ class TableGroupRestControllerTest {
     void create() throws Exception {
         TableGroup request = createTableGroupRequest(Arrays.asList(1L, 2L));
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(tableGroupService.create(any(TableGroup.class))).willAnswer(i -> {
-            TableGroup saved = i.getArgument(0);
-            saved.setId(2L);
-            return saved;
-        });
+        given(tableGroupService.create(any(TableGroup.class)))
+                .willReturn(createTableGroup(2L, LocalDateTime.now(), Arrays.asList(1L, 2L)));
 
         mockMvc.perform(post("/api/table-groups")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,6 +61,7 @@ class TableGroupRestControllerTest {
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(2))
+                .andExpect(jsonPath("$.createdDate").isNotEmpty())
                 .andExpect(jsonPath("$.orderTables[0].id").value(1))
                 .andExpect(jsonPath("$.orderTables[1].id").value(2));
     }

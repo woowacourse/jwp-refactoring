@@ -3,6 +3,7 @@ package kitchenpos.application.fixture;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +19,10 @@ public class TableGroupFixture {
         return tableGroup;
     }
 
-    public static TableGroup createTableGroup(List<Long> orderTableIds) {
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDateTime, List<Long> orderTableIds) {
         TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(createdDateTime);
         List<OrderTable> orderTables = orderTableIds.stream()
                 .map(it -> new OrderTable() {{
                     setId(it);

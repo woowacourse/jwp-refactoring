@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static kitchenpos.application.fixture.MenuFixture.*;
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -63,11 +62,8 @@ class MenuRestControllerTest {
                         createMenuProductRequest(2L, 2)
                 )
         );
-        given(menuService.create(any(Menu.class))).willAnswer(i -> {
-            Menu saved = i.getArgument(0, Menu.class);
-            saved.setId(1L);
-            return saved;
-        });
+        List<MenuProduct> menuProducts = Arrays.asList(createMenuProduct(3L, 1L, 3, 1L), createMenuProduct(4L, 2L, 2, 1L));
+        given(menuService.create(any(Menu.class))).willReturn(createMenu(1L, "후라이드+후라이드", BigDecimal.valueOf(19000), 4L, menuProducts));
         byte[] content = objectMapper.writeValueAsBytes(request);
 
         mockMvc.perform(post("/api/menus")

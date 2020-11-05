@@ -51,12 +51,8 @@ class MenuGroupRestControllerTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
     void create() throws Exception {
-        given(menuGroupService.create(any(MenuGroup.class))).willAnswer(i -> {
-            MenuGroup saved = i.getArgument(0, MenuGroup.class);
-            saved.setId(1L);
-            return saved;
-        });
-
+        given(menuGroupService.create(any(MenuGroup.class)))
+                .willReturn(createMenuGroup(1L, "추천메뉴"));
         byte[] content = objectMapper.writeValueAsBytes(createMenuGroupRequest("추천메뉴"));
 
         mockMvc.perform(post("/api/menu-groups")

@@ -52,11 +52,8 @@ class TableRestControllerTest {
     void create() throws Exception {
         OrderTable request = createOrderTableRequest(2, true);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(tableService.create(any(OrderTable.class))).willAnswer(i -> {
-            OrderTable saved = i.getArgument(0);
-            saved.setId(7L);
-            return saved;
-        });
+        given(tableService.create(any(OrderTable.class)))
+                .willReturn(createOrderTable(7L, request.isEmpty(), null, request.getNumberOfGuests()));
 
         mockMvc.perform(post("/api/tables")
                 .contentType(MediaType.APPLICATION_JSON)

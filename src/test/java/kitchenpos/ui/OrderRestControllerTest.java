@@ -18,12 +18,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import static kitchenpos.application.fixture.OrderFixture.*;
 import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,11 +61,13 @@ class OrderRestControllerTest {
                 Arrays.asList(createOrderLineItem(1L, 2L), createOrderLineItem(2L, 1L));
         Order request = createOrderRequest(orderLineItems, 10L);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(orderService.create(any(Order.class))).willAnswer(i -> {
-            Order saved = i.getArgument(0);
-            saved.setId(5L);
-            return saved;
-        });
+        Order order = createOrder(5L, COOKING, 10L);
+        order.setOrderLineItems(Arrays.asList(
+                createOrderLineItem(20L, 5L, 1L, 2L),
+                createOrderLineItem(21L, 5L, 2L, 1L))
+        );
+        order.setOrderedTime(LocalDateTime.now());
+        given(orderService.create(any(Order.class))).willReturn(order);
 
         mockMvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -110,12 +114,13 @@ class OrderRestControllerTest {
     void update() throws Exception {
         Order request = updateOrderRequest(OrderStatus.COMPLETION);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(orderService.changeOrderStatus(eq(5L), any(Order.class))).willAnswer(i -> {
-            Order saved = i.getArgument(1);
-            saved.setId(5L);
-            saved.setOrderStatus(request.getOrderStatus());
-            return saved;
-        });
+        Order order = createOrder(5L, COMPLETION, 10L);
+        order.setOrderLineItems(Arrays.asList(
+                createOrderLineItem(20L, 5L, 1L, 2L),
+                createOrderLineItem(21L, 5L, 2L, 1L))
+        );
+        order.setOrderedTime(LocalDateTime.now());
+        given(orderService.changeOrderStatus(eq(5L), any(Order.class))).willReturn(order);
 
         mockMvc.perform(put("/api/orders/{id}/order-status", 5L)
                 .contentType(MediaType.APPLICATION_JSON)

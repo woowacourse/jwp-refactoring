@@ -54,11 +54,8 @@ class ProductRestControllerTest {
     void create() throws Exception {
         Product request = createProductRequest("강정치킨", BigDecimal.valueOf(17000));
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(productService.create(any(Product.class))).willAnswer(i -> {
-            Product saved = i.getArgument(0);
-            saved.setId(3L);
-            return saved;
-        });
+        given(productService.create(any(Product.class)))
+                .willReturn(createProduct(3L, "강정치킨", BigDecimal.valueOf(17000)));
 
         mockMvc.perform(post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON)
