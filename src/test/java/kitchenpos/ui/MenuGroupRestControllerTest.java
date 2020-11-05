@@ -26,6 +26,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest {
@@ -50,7 +52,7 @@ class MenuGroupRestControllerTest {
     void createTest() throws Exception {
         final String name = "메뉴";
         final MenuGroup savedMenuGroup = createMenuGroup(1L, name);
-        final MenuGroup menuGroupWithoutId = createMenuGroup(null, name);
+        final MenuGroupCreateRequest menuGroupWithoutId = new MenuGroupCreateRequest(name);
 
         given(menuGroupService.create(anyString())).willReturn(savedMenuGroup);
 
@@ -59,7 +61,7 @@ class MenuGroupRestControllerTest {
             .content(objectMapper.writeValueAsBytes(menuGroupWithoutId))
         )
             .andExpect(status().isCreated())
-            .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedMenuGroup)))
+            .andExpect(content().bytes(objectMapper.writeValueAsBytes(MenuGroupResponse.from(savedMenuGroup))))
             .andExpect(header().exists("Location"));
     }
 
