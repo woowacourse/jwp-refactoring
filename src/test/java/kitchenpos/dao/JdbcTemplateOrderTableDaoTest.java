@@ -9,12 +9,11 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -27,12 +26,14 @@ class JdbcTemplateOrderTableDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test
@@ -83,12 +84,11 @@ class JdbcTemplateOrderTableDaoTest {
     @Test
     @DisplayName("주어진 id리스트에 orderTable의 아이디가 포함되어 있는 모든 orderTable 반환")
     void findAllByIdIn() {
-        orderTableDao.save(createOrderTable(true));
-        orderTableDao.save(createOrderTable(true));
-        orderTableDao.save(createOrderTable(true));
-        orderTableDao.save(createOrderTable(true));
+        OrderTable orderTable1 = orderTableDao.save(createOrderTable(true));
+        OrderTable orderTable2 = orderTableDao.save(createOrderTable(true));
+        OrderTable orderTable3 = orderTableDao.save(createOrderTable(true));
 
-        List<Long> ids = Arrays.asList(1L, 2L, 3L);
+        List<Long> ids = Arrays.asList(orderTable1.getId(), orderTable2.getId(), orderTable3.getId());
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(ids);
 
         assertThat(orderTables.size()).isEqualTo(3);
@@ -97,12 +97,11 @@ class JdbcTemplateOrderTableDaoTest {
     @Test
     @DisplayName("주어진 table Group의 아이디가 동일한 orderTable 리스트 반환")
     void findAllByTableGroupId() {
-        orderTableDao.save(createOrderTable(false));
-        orderTableDao.save(createOrderTable(false));
-        orderTableDao.save(createOrderTable(false));
+        Long orderTable1Id = orderTableDao.save(createOrderTable(false)).getId();
+        Long orderTable2Id = orderTableDao.save(createOrderTable(false)).getId();
 
-        OrderTable orderTable1 = orderTableDao.findById(1L).get();
-        OrderTable orderTable2 = orderTableDao.findById(2L).get();
+        OrderTable orderTable1 = orderTableDao.findById(orderTable1Id).get();
+        OrderTable orderTable2 = orderTableDao.findById(orderTable2Id).get();
 
         TableGroup tableGroup = tableGroupDao.save(createTableGroup(Arrays.asList(orderTable1, orderTable2)));
 

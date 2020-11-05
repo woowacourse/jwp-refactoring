@@ -8,11 +8,10 @@ import java.math.BigDecimal;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -32,10 +31,7 @@ class JdbcTemplateOrderLineItemDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
         orderDao = new JdbcTemplateOrderDao(dataSource);
         menuDao = new JdbcTemplateMenuDao(dataSource);
@@ -53,6 +49,11 @@ class JdbcTemplateOrderLineItemDaoTest {
 
         Menu menu = createMenu("menu", 1L, BigDecimal.valueOf(1000));
         menuDao.save(menu); //1L
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test

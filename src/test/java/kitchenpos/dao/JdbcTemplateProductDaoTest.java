@@ -9,11 +9,10 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.Product;
 
@@ -24,11 +23,13 @@ class JdbcTemplateProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         productDao = new JdbcTemplateProductDao(dataSource);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test

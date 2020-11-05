@@ -8,12 +8,11 @@ import java.util.Arrays;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -27,15 +26,17 @@ class JdbcTemplateOrderDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         orderDao = new JdbcTemplateOrderDao(dataSource);
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
 
         OrderTable orderTable = createOrderTable(true);
         orderTableDao.save(orderTable); //1L
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test

@@ -9,11 +9,10 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,10 +28,7 @@ class JdbcTemplateMenuProductDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
         menuDao = new JdbcTemplateMenuDao(dataSource);
         productDao = new JdbcTemplateProductDao(dataSource);
@@ -46,6 +42,11 @@ class JdbcTemplateMenuProductDaoTest {
 
         menuDao.save(createMenu("menu1", savedMenuGroupId, BigDecimal.valueOf(2000))); //1L
         menuDao.save(createMenu("menu2", savedMenuGroupId, BigDecimal.valueOf(2000))); //2L
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test
@@ -69,7 +70,7 @@ class JdbcTemplateMenuProductDaoTest {
         MenuProduct expectedMenuProduct = menuProductDao.findById(savedMenuProduct.getSeq()).get();
 
         assertAll(
-            () -> assertThat(expectedMenuProduct.getSeq()).isEqualTo(1L),
+            () -> assertThat(expectedMenuProduct.getSeq()).isNotNull(),
             () -> assertThat(expectedMenuProduct.getMenuId()).isEqualTo(1L),
             () -> assertThat(expectedMenuProduct.getProductId()).isEqualTo(1L),
             () -> assertThat(expectedMenuProduct.getQuantity()).isEqualTo(1L)

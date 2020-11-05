@@ -7,12 +7,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.MenuGroup;
 
@@ -23,11 +23,13 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test
@@ -62,12 +64,12 @@ class JdbcTemplateMenuGroupDaoTest {
 
     @Test
     @DisplayName("해당 id의 메뉴 그룹이 있는지 확인")
+    @Transactional
     void existsById() {
         MenuGroup menuGroup = createMenuGroup("menuGroup");
 
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
 
         assertThat(menuGroupDao.existsById(savedMenuGroup.getId())).isTrue();
-        assertThat(menuGroupDao.existsById(2L)).isFalse();
     }
 }

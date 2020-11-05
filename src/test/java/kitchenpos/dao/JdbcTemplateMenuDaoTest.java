@@ -10,33 +10,36 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 
 @JdbcTest
-class JdbcTemplateMenuDaoTest {
+@Transactional
+public class JdbcTemplateMenuDaoTest {
     private DataSource dataSource;
     private JdbcTemplateMenuDao menuDao;
     private JdbcTemplateMenuGroupDao menuGroupDao;
 
     @BeforeEach
     void setUp() {
-        dataSource = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2)
-            .addScript("classpath:delete.sql")
-            .addScript("classpath:initialize.sql")
-            .build();
+        dataSource = DataSourceBuilder.initializeDataSource();
         menuDao = new JdbcTemplateMenuDao(dataSource);
         menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
 
         MenuGroup menuGroup = createMenuGroup("Menu Group1");
         menuGroupDao.save(menuGroup);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        dataSource = DataSourceBuilder.deleteDataSource();
     }
 
     @Test
@@ -86,10 +89,12 @@ class JdbcTemplateMenuDaoTest {
         Menu menu1 = createMenu("menu1", 1L, BigDecimal.valueOf(2000));
         Menu menu2 = createMenu("menu2", 1L, BigDecimal.valueOf(2000));
 
-        menuDao.save(menu1); //1L
-        menuDao.save(menu2); //2L
+        Menu savedMenu1 = menuDao.save(menu1);
+        Menu savedMenu2 = menuDao.save(menu2);
 
-        List<Long> ids = Arrays.asList(1L, 2L, 3L);
+        System.out.println(menuDao.findAll().size());
+
+        List<Long> ids = Arrays.asList(savedMenu1.getId(), savedMenu2.getId(), 0L);
         Long count = menuDao.countByIdIn(ids);
 
         assertThat(count).isEqualTo(2);
