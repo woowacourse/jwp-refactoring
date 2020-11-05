@@ -4,9 +4,16 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderFixture {
+    public static Order createOrder(Long id, OrderStatus status, Long orderTableId, LocalDateTime orderedTime) {
+        Order order = createOrder(id, status, orderTableId);
+        order.setOrderedTime(orderedTime);
+        return order;
+    }
+
     public static Order createOrder(Long id, OrderStatus status, Long orderTableId) {
         Order order = new Order();
         order.setOrderStatus(status.name());
