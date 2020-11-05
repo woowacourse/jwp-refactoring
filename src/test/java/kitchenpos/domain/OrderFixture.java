@@ -11,4 +11,8 @@ public class OrderFixture {
         order.setOrderStatus(status);
         return order;
     }
+
+    public static Order createEmptyOrderLines() {
+        return new Order();
+    }
 }
