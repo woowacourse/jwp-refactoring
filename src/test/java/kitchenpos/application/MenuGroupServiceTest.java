@@ -28,11 +28,12 @@ class MenuGroupServiceTest {
     @DisplayName("id가 없는 메뉴 그룹으로 id가 있는 메뉴 그룹을 정상적으로 생성한다.")
     @Test
     void createTest() {
-        final MenuGroup expectedMenuGroup = createMenuGroup(1L, "메뉴");
+        final String name = "메뉴";
+        final MenuGroup expectedMenuGroup = createMenuGroup(1L, name);
 
         given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(expectedMenuGroup);
 
-        final MenuGroup persistMenuGroup = menuGroupService.create(createMenuGroup(null, "메뉴"));
+        final MenuGroup persistMenuGroup = menuGroupService.create(name);
         assertThat(persistMenuGroup).isEqualToComparingFieldByField(expectedMenuGroup);
     }
 

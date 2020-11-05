@@ -15,7 +15,10 @@ public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;
 
     @Transactional
-    public MenuGroup create(final MenuGroup menuGroup) {
+    public MenuGroup create(final String name) {
+        final MenuGroup menuGroup = MenuGroup.builder()
+            .name(name)
+            .build();
         return menuGroupRepository.save(menuGroup);
     }
 

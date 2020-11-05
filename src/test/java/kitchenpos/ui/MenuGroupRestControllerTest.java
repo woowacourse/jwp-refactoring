@@ -23,6 +23,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 
@@ -47,9 +48,11 @@ class MenuGroupRestControllerTest {
     @DisplayName("정상적인 메뉴그룹 생성 요청에 created 상태로 응답하는지 확인한다.")
     @Test
     void createTest() throws Exception {
-        final MenuGroup savedMenuGroup = createMenuGroup(1L, "메뉴");
-        final MenuGroup menuGroupWithoutId = createMenuGroup(null, "메뉴");
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(savedMenuGroup);
+        final String name = "메뉴";
+        final MenuGroup savedMenuGroup = createMenuGroup(1L, name);
+        final MenuGroup menuGroupWithoutId = createMenuGroup(null, name);
+
+        given(menuGroupService.create(anyString())).willReturn(savedMenuGroup);
 
         mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
@@ -69,6 +72,7 @@ class MenuGroupRestControllerTest {
         final MenuGroup fourth = createMenuGroup(4L, "신메뉴");
         final MenuGroup fifth = createMenuGroup(5L, "메뉴");
         final List<MenuGroup> menuGroups = Arrays.asList(first, second, third, fourth, fifth);
+
         given(menuGroupService.list()).willReturn(menuGroups);
 
         mockMvc.perform(get("/api/menu-groups"))
