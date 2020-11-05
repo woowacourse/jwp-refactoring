@@ -62,11 +62,7 @@ public class MenuService {
     }
 
     private void addMenuProductToMenu(MenuRequest menuRequest, Menu menu) {
-        List<Long> productIds = menuRequest.getMenuProducts().stream()
-                .mapToLong(MenuProductDto::getProductId)
-                .boxed()
-                .collect(Collectors.toList());
-        List<Product> products = productRepository.findAllById(productIds);
+        List<Product> products = findAllProductInMenuRequest(menuRequest);
 
         for (Product product : products) {
             long quantity = menuRequest.getMenuProducts().stream()
@@ -77,6 +73,19 @@ public class MenuService {
             MenuProduct menuProductToSave = new MenuProduct(menu, product, quantity);
             menu.addMenuProduct(menuProductRepository.save(menuProductToSave));
         }
+    }
+
+    private List<Product> findAllProductInMenuRequest(MenuRequest menuRequest) {
+        List<Long> productIds = menuRequest.getMenuProducts().stream()
+                .mapToLong(MenuProductDto::getProductId)
+                .boxed()
+                .collect(Collectors.toList());
+        List<Product> products = productRepository.findAllById(productIds);
+
+        if (products.size() != productIds.size()) {
+            throw new IllegalArgumentException();
+        }
+        return products;
     }
 
     public List<MenuResponse> list() {
