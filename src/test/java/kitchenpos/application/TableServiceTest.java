@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 @ExtendWith(MockitoExtension.class)

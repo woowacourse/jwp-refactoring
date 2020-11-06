@@ -72,7 +72,8 @@ class OrderDaoTest {
     void existsByOrderTableIdAndOrderStatusIn() {
         orderDao.save(order1);
         assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            order1.getOrderTableId(), Collections.singletonList(OrderStatus.COMPLETION.name()))).isTrue();
+            order1.getOrderTableId(),
+            Collections.singletonList(OrderStatus.COMPLETION.name()))).isTrue();
     }
 
     @DisplayName("Order Table Id와 Status를 기준으로 포함되는 Order가 존재하는 지 확인한다.")

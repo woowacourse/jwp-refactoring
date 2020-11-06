@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,10 +51,10 @@ class ProductServiceTest {
     @DisplayName("가격이 null이거나 음수인 Product를 생성요청하면 예외를 반환한다.")
     @Test
     void createIllegalPriceProduct() {
-        assertThatThrownBy(()->productService.create(nullPriceProduct))
+        assertThatThrownBy(() -> productService.create(nullPriceProduct))
             .isInstanceOf(IllegalArgumentException.class);
 
-        assertThatThrownBy(()->productService.create(negativePriceProduct))
+        assertThatThrownBy(() -> productService.create(negativePriceProduct))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

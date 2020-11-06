@@ -71,9 +71,12 @@ class OrderServiceTest {
         notEmptyTable = OrderTableFixture.createNotEmptyWithId(1L);
         emptyTable = OrderTableFixture.createEmptyWithId(1L);
 
-        order1 = OrderFixture.createWithoutId(OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
-        order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
-        order3 = OrderFixture.createWithId(OrderFixture.ID2, OrderStatus.COMPLETION.name(), OrderTableFixture.ID2, lineItems);
+        order1 = OrderFixture.createWithoutId(OrderStatus.MEAL.name(), OrderTableFixture.ID1,
+            lineItems);
+        order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderStatus.MEAL.name(),
+            OrderTableFixture.ID1, lineItems);
+        order3 = OrderFixture.createWithId(OrderFixture.ID2, OrderStatus.COMPLETION.name(),
+            OrderTableFixture.ID2, lineItems);
     }
 
     @DisplayName("정상적으로 Order를 생성한다")
@@ -111,7 +114,8 @@ class OrderServiceTest {
     @DisplayName("저장되어있지 않은 Table Id를 갖는 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithNotExistTable() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(Long.valueOf(order1.getOrderLineItems().size()));
+        when(menuDao.countByIdIn(anyList())).thenReturn(
+            Long.valueOf(order1.getOrderLineItems().size()));
         when(orderTableDao.findById(order1.getOrderTableId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(order1))
@@ -121,7 +125,8 @@ class OrderServiceTest {
     @DisplayName("비어있는 테이블에서 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithEmptyTable() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(Long.valueOf(order1.getOrderLineItems().size()));
+        when(menuDao.countByIdIn(anyList())).thenReturn(
+            Long.valueOf(order1.getOrderLineItems().size()));
         when(orderTableDao.findById(order1.getOrderTableId())).thenReturn(Optional.of(emptyTable));
 
         assertThatThrownBy(() -> orderService.create(order1))

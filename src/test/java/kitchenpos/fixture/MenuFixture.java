@@ -20,7 +20,8 @@ public class MenuFixture {
         return menu;
     }
 
-    public static Menu createWithId(Long id, Long menuGroupId, List<MenuProduct> products, Long price) {
+    public static Menu createWithId(Long id, Long menuGroupId, List<MenuProduct> products,
+        Long price) {
         Menu menu = new Menu();
         menu.setId(id);
         menu.setMenuGroupId(menuGroupId);

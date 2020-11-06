@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
@@ -15,11 +14,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.Product;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
-import kitchenpos.fixture.ProductFixture;
 
 @JdbcTest
 @Sql("classpath:/truncate.sql")

@@ -23,7 +23,8 @@ public class OrderFixture {
         return order;
     }
 
-    public static Order createWithId(Long id, String status, Long tableId, List<OrderLineItem> items) {
+    public static Order createWithId(Long id, String status, Long tableId,
+        List<OrderLineItem> items) {
         Order order = new Order();
         order.setId(id);
         order.setOrderStatus(status);

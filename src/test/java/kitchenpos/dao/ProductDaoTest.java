@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -16,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.ProductFixture;
 
 @JdbcTest
@@ -46,7 +42,8 @@ class ProductDaoTest {
         Product savedProduct = productDao.save(product1);
 
         assertThat(savedProduct)
-            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue), BigDecimal.class)
+            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue),
+                BigDecimal.class)
             .isEqualToIgnoringGivenFields(product1, "id");
         assertThat(savedProduct).extracting(Product::getId).isEqualTo(savedProduct.getId());
     }
@@ -57,7 +54,8 @@ class ProductDaoTest {
         Product savedProduct = productDao.save(product1);
 
         assertThat(productDao.findById(savedProduct.getId()).get())
-            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue), BigDecimal.class)
+            .usingComparatorForType(Comparator.comparingDouble(BigDecimal::longValue),
+                BigDecimal.class)
             .isEqualToComparingFieldByField(savedProduct);
     }
 

@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -17,9 +16,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuGroupFixture;
 
 @JdbcTest
 @Sql("classpath:truncate.sql")
@@ -45,7 +42,8 @@ class MenuDaoTest {
         Menu saved = menuDao.save(menu);
 
         assertThat(saved)
-            .usingComparatorForType(Comparator.comparingLong(BigDecimal::longValue), BigDecimal.class)
+            .usingComparatorForType(Comparator.comparingLong(BigDecimal::longValue),
+                BigDecimal.class)
             .isEqualToIgnoringGivenFields(menu, "id");
         assertThat(saved).extracting(Menu::getId).isEqualTo(1L);
     }

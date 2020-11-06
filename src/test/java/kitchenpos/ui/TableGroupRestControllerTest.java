@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;

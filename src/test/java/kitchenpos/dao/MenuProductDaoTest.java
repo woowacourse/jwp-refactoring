@@ -1,7 +1,6 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
 
@@ -15,11 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
-import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 
 @JdbcTest
 @Sql("classpath:/truncate.sql")
@@ -36,7 +31,7 @@ class MenuProductDaoTest {
     void setUp() {
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
 
-        menuProduct = MenuProductFixture.create(1L,1L, 1);
+        menuProduct = MenuProductFixture.create(1L, 1L, 1);
     }
 
     @DisplayName("Insert a menu product")

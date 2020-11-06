@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
@@ -141,7 +140,8 @@ class TableGroupServiceTest {
     void ungroupWithNotCompleteTable() {
         when(orderTableDao.findAllByTableGroupId(1L))
             .thenReturn(Arrays.asList(orderTable1, orderTable2));
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(true);
+        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(
+            true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))
             .isInstanceOf(IllegalArgumentException.class);
