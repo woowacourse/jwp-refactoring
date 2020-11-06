@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.TestDomainFactory;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,10 +32,10 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private MenuGroup savedMenuGroup;
     private Product savedProduct1;
@@ -52,15 +51,15 @@ class MenuServiceTest {
         this.savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         this.savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
         this.savedProduct3 = createSavedProduct("후라이드치킨", BigDecimal.valueOf(15_000));
-        this.menuProduct1 = TestDomainFactory.createMenuProduct(this.savedProduct1.getId(), 1);
-        this.menuProduct2 = TestDomainFactory.createMenuProduct(this.savedProduct2.getId(), 1);
-        this.menuProduct3 = TestDomainFactory.createMenuProduct(this.savedProduct3.getId(), 1);
+        this.menuProduct1 = new MenuProduct(this.savedProduct1, 1);
+        this.menuProduct2 = new MenuProduct(this.savedProduct2, 1);
+        this.menuProduct3 = new MenuProduct(this.savedProduct3, 1);
     }
 
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
+        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
         List<MenuProduct> menuProducts = Arrays.asList(this.menuProduct1, this.menuProduct2);
         menu.setMenuProducts(menuProducts);
 
@@ -70,7 +69,7 @@ class MenuServiceTest {
                 () -> assertThat(savedMenu).isNotNull(),
                 () -> assertThat(savedMenu.getName()).isEqualTo(menu.getName()),
                 () -> assertThat(savedMenu.getPrice().toBigInteger()).isEqualTo(menu.getPrice().toBigInteger()),
-                () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+                () -> assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroup()),
                 () -> assertThat(savedMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size())
         );
     }
@@ -78,7 +77,7 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createMenuWithNullPriceThenThrowException() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", null, this.savedMenuGroup.getId());
+        Menu menu = new Menu("양념간장두마리메뉴", null, this.savedMenuGroup);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -87,8 +86,7 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createMenuWithInvalidPriceThenThrowException(int invalidPrice) {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice),
-                                                 this.savedMenuGroup.getId());
+        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice), this.savedMenuGroup);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -96,8 +94,10 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 메뉴 그룹을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuGroupThenThrowException() {
+        MenuGroup notExistMenuGroup = new MenuGroup();
         long notExistMenuGroupId = -1L;
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroupId);
+        notExistMenuGroup.setId(notExistMenuGroupId);
+        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroup);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -105,9 +105,11 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuProductThenThrowException() {
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
+        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
+        Product notExistProduct = new Product();
         long notExistProductId = -1L;
-        MenuProduct menuProduct = TestDomainFactory.createMenuProduct(notExistProductId, 1);
+        notExistProduct.setId(notExistProductId);
+        MenuProduct menuProduct = new MenuProduct(notExistProduct, 1);
         menu.setMenuProducts(Collections.singletonList(menuProduct));
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -118,12 +120,12 @@ class MenuServiceTest {
     void createMenuWithInvalidPriceThenThrowException() {
         Product savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         Product savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
-        MenuProduct menuProduct1 = TestDomainFactory.createMenuProduct(savedProduct1.getId(), 1);
-        MenuProduct menuProduct2 = TestDomainFactory.createMenuProduct(savedProduct2.getId(), 1);
+        MenuProduct menuProduct1 = new MenuProduct(savedProduct1, 1);
+        MenuProduct menuProduct2 = new MenuProduct(savedProduct2, 1);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
 
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
-        Menu menu = TestDomainFactory.createMenu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup.getId());
+        Menu menu = new Menu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup);
         menu.setMenuProducts(menuProducts);
 
         assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
@@ -132,12 +134,11 @@ class MenuServiceTest {
     @DisplayName("존재하는 모든 메뉴를 조회")
     @Test
     void listMenuTest() {
-        Menu menu1 = TestDomainFactory.createMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup.getId());
+        Menu menu1 = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
         List<MenuProduct> menuProducts1 = Arrays.asList(this.menuProduct1, this.menuProduct2);
         menu1.setMenuProducts(menuProducts1);
 
-        Menu menu2 = TestDomainFactory.createMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
-                                                  this.savedMenuGroup.getId());
+        Menu menu2 = new Menu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000), this.savedMenuGroup);
         List<MenuProduct> menuProducts2 = Arrays.asList(this.menuProduct1, this.menuProduct3);
         menu2.setMenuProducts(menuProducts2);
 
@@ -154,12 +155,12 @@ class MenuServiceTest {
     }
 
     private MenuGroup createSavedMenuGroup(String menuName) {
-        MenuGroup menuGroup = TestDomainFactory.createMenuGroup(menuName);
-        return this.menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup(menuName);
+        return this.menuGroupRepository.save(menuGroup);
     }
 
     private Product createSavedProduct(String name, BigDecimal price) {
-        Product product = TestDomainFactory.createProduct(name, price);
-        return this.productDao.save(product);
+        Product product = new Product(name, price);
+        return this.productRepository.save(product);
     }
 }

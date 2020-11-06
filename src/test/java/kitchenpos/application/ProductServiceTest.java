@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.TestDomainFactory;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ class ProductServiceTest {
     @DisplayName("새로운 상품 생성")
     @Test
     void createProductTest() {
-        Product product = TestDomainFactory.createProduct("양념치킨", BigDecimal.valueOf(16_000));
+        Product product = new Product("양념치킨", BigDecimal.valueOf(16_000));
 
         Product savedProduct = this.productService.create(product);
 
@@ -42,7 +41,7 @@ class ProductServiceTest {
     @DisplayName("새로운 상품을 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createProductWithNullPriceThenThrowException() {
-        Product product = TestDomainFactory.createProduct("양념치킨", null);
+        Product product = new Product("양념치킨", null);
 
         assertThatThrownBy(() -> this.productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -51,7 +50,7 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createProductWithInvalidPriceThenThrowException(int invalidPrice) {
-        Product product = TestDomainFactory.createProduct("양념치킨", BigDecimal.valueOf(invalidPrice));
+        Product product = new Product("양념치킨", BigDecimal.valueOf(invalidPrice));
 
         assertThatThrownBy(() -> this.productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -59,8 +58,8 @@ class ProductServiceTest {
     @DisplayName("존재하는 모든 상품을 조회")
     @Test
     void listProductTest() {
-        Product product1 = TestDomainFactory.createProduct("양념치킨", BigDecimal.valueOf(16_000));
-        Product product2 = TestDomainFactory.createProduct("간장치킨", BigDecimal.valueOf(16_000));
+        Product product1 = new Product("양념치킨", BigDecimal.valueOf(16_000));
+        Product product2 = new Product("간장치킨", BigDecimal.valueOf(16_000));
 
         List<Product> products = Arrays.asList(product1, product2);
         products.forEach(product -> this.productService.create(product));
