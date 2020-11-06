@@ -63,28 +63,28 @@
 
 ### 미션 요구사항(모든 클래스 테스트 작성하기 - 1단계)
 - Controller
-    - [ ] Table
-    - [ ] TableGroup
-    - [ ] Menu
-    - [ ] MenuGroup
-    - [ ] Order
-    - [ ] Product
+    - [x] Table
+    - [x] TableGroup
+    - [x] Menu
+    - [x] MenuGroup
+    - [x] Order
+    - [x] Product
 - Service
-    - [ ] Table
-    - [ ] TableGroup
-    - [ ] Menu
-    - [ ] MenuGroup
-    - [ ] Order
-    - [ ] Product 
+    - [x] Table
+    - [x] TableGroup
+    - [x] Menu
+    - [x] MenuGroup
+    - [x] Order
+    - [x] Product 
 - Dao
-    - [ ] MenuDao
-    - [ ] MenuGroupDao
-    - [ ] MenuProductDao
-    - [ ] OrderDao
-    - [ ] OrderLineItemDao
-    - [ ] OrderTableDao
-    - [ ] ProductDao
-    - [ ] TableGroupDao
+    - [x] MenuDao
+    - [x] MenuGroupDao
+    - [x] MenuProductDao
+    - [x] OrderDao
+    - [x] OrderLineItemDao
+    - [x] OrderTableDao
+    - [x] ProductDao
+    - [x] TableGroupDao
     
         
 ## 용어 사전
