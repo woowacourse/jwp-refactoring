@@ -20,7 +20,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 생성")
     @Test
     void create() {
-        Long menuId = menuGroupService.create(MENU_GROUP_REQUEST);
+        Long menuId = menuGroupService.create(MENU_GROUP_REQUEST).getId();
 
         assertThat(menuId).isNotNull();
     }

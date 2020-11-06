@@ -22,9 +22,9 @@ class OrderTableServiceTest {
     @DisplayName("테이블 생성")
     @Test
     void create() {
-        Long tableId = orderTableService.create(ORDER_TABLE_REQUEST);
+        OrderTableResponse response = orderTableService.create(ORDER_TABLE_REQUEST);
 
-        assertThat(tableId).isNotNull();
+        assertThat(response.getId()).isNotNull();
     }
 
     @DisplayName("테이블 전체 조회")
@@ -39,10 +39,10 @@ class OrderTableServiceTest {
     @DisplayName("테이블 손님 여부 변경")
     @Test
     void changeEmpty() {
-        Long tableId = orderTableService.create(ORDER_TABLE_REQUEST);
+        OrderTableResponse response = orderTableService.create(ORDER_TABLE_REQUEST);
         boolean empty = !ORDER_TABLE_CHANGE_EMPTY_REQUEST.isEmpty();
 
-        orderTableService.changeEmpty(tableId, new OrderTableChangeEmptyRequest(empty));
+        orderTableService.changeEmpty(response.getId(), new OrderTableChangeEmptyRequest(empty));
         List<OrderTableResponse> list = orderTableService.list();
         OrderTableResponse last = list.get(list.size() - 1);
 
@@ -52,7 +52,7 @@ class OrderTableServiceTest {
     @DisplayName("테이블 손님 수 변경")
     @Test
     void changeNumberOfGuests() {
-        Long tableId = orderTableService.create(ORDER_TABLE_REQUEST);
+        Long tableId = orderTableService.create(ORDER_TABLE_REQUEST).getId();
         int numberOfGuests = ORDER_TABLE_CHANGE_NUMBER_OF_GUESTS.getNumberOfGuests();
 
         orderTableService.changeEmpty(tableId, new OrderTableChangeEmptyRequest(false));

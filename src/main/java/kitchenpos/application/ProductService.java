@@ -19,10 +19,10 @@ public class ProductService {
     }
 
     @Transactional
-    public Long create(final ProductRequest request) {
+    public ProductResponse create(final ProductRequest request) {
         Product product = request.toEntity();
         Product saved = productRepository.save(product);
-        return saved.getId();
+        return ProductResponse.of(saved);
     }
 
     public List<ProductResponse> list() {

@@ -31,10 +31,10 @@ public class MenuGroupRestController {
 
     @PostMapping
     public ResponseEntity<MenuGroupResponse> create(@RequestBody @Valid final MenuGroupRequest request) {
-        Long menuGroupId = menuGroupService.create(request);
-        final URI uri = URI.create(API_MENU_GROUPS + "/" + menuGroupId);
+        MenuGroupResponse response = menuGroupService.create(request);
+        final URI uri = URI.create(API_MENU_GROUPS + "/" + response.getId());
         return ResponseEntity.created(uri)
-                .build()
+                .body(response)
                 ;
     }
 

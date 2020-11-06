@@ -25,10 +25,10 @@ public class OrderTableService {
     }
 
     @Transactional
-    public Long create(final OrderTableCreateRequest request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = request.toEntity();
         OrderTable saved = orderTableRepository.save(orderTable);
-        return saved.getId();
+        return OrderTableResponse.of(saved);
     }
 
     public List<OrderTableResponse> list() {
@@ -36,18 +36,20 @@ public class OrderTableService {
     }
 
     @Transactional
-    public void changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
         final OrderTable saved = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         saved.changeEmpty(request.isEmpty(), orderTableChangeEmptyService);
-        orderTableRepository.save(saved);
+        OrderTable changed = orderTableRepository.save(saved);
+        return OrderTableResponse.of(changed);
     }
 
     @Transactional
-    public void changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuests request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuests request) {
         final OrderTable saved = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
         saved.changeNumberOfGuests(request.getNumberOfGuests());
-        orderTableRepository.save(saved);
+        OrderTable changed = orderTableRepository.save(saved);
+        return OrderTableResponse.of(changed);
     }
 }

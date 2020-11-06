@@ -30,11 +30,11 @@ public class ProductRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final ProductRequest request) {
-        final Long productId = productService.create(request);
-        final URI uri = URI.create(API_PRODUCTS + "/" + productId);
+    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductRequest request) {
+        ProductResponse response = productService.create(request);
+        final URI uri = URI.create(API_PRODUCTS + "/" + response.getId());
         return ResponseEntity.created(uri)
-                .build()
+                .body(response)
                 ;
     }
 

@@ -19,9 +19,9 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public Long create(final MenuGroupRequest request) {
+    public MenuGroupResponse create(final MenuGroupRequest request) {
         MenuGroup saved = menuGroupRepository.save(request.toEntity());
-        return saved.getId();
+        return MenuGroupResponse.of(saved);
     }
 
     public List<MenuGroupResponse> list() {

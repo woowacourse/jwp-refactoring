@@ -30,11 +30,11 @@ public class MenuRestController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody @Valid final MenuRequest request) {
-        Long menuId = menuService.create(request);
-        final URI uri = URI.create(API_MENUS + "/" + menuId);
+    public ResponseEntity<MenuResponse> create(@RequestBody @Valid final MenuRequest request) {
+        MenuResponse response = menuService.create(request);
+        final URI uri = URI.create(API_MENUS + "/" + response.getId());
         return ResponseEntity.created(uri)
-                .build()
+                .body(response)
                 ;
     }
 

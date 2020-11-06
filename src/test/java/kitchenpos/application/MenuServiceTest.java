@@ -20,7 +20,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성")
     @Test
     void create() {
-        Long menuId = menuService.create(MENU_REQUEST);
+        Long menuId = menuService.create(MENU_REQUEST).getId();
 
         assertThat(menuId).isNotNull();
     }

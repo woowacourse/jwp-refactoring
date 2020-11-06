@@ -23,10 +23,10 @@ public class MenuService {
     }
 
     @Transactional
-    public Long create(final MenuRequest request) {
+    public MenuResponse create(final MenuRequest request) {
         Menu menu = request.toEntity();
         Menu saved = menuRepository.save(menu.create(menuCreateService));
-        return saved.getId();
+        return MenuResponse.of(saved);
     }
 
     public List<MenuResponse> list() {

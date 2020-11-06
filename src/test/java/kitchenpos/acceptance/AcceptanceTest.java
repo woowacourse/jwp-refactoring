@@ -23,6 +23,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.TableGroupFactory;
@@ -114,9 +115,9 @@ public class AcceptanceTest {
                 .andExpect(status().isNoContent());
     }
 
-    protected void changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
+    protected OrderTableResponse changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
         OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(empty);
 
-        put(OrderTableChangeEmptyRequest.class, objectMapper.writeValueAsString(request), API_TABLES + "/" + orderTableId + "/empty");
+        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request), API_TABLES + "/" + orderTableId + "/empty");
     }
 }

@@ -20,7 +20,7 @@ class ProductServiceTest {
     @DisplayName("상품 생성")
     @Test
     void create() {
-        Long productId = productService.create(PRODUCT_REQUEST);
+        Long productId = productService.create(PRODUCT_REQUEST).getId();
 
         assertThat(productId).isNotNull();
     }

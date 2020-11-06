@@ -49,24 +49,21 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 }),
                 dynamicTest("테이블 주문 여부 변경", () -> {
                     boolean empty = false;
-                    changeOrderTableEmpty(empty, orderTableId);
+                    OrderTableResponse response = changeOrderTableEmpty(empty, orderTableId);
 
-                    List<OrderTableResponse> tables = getAll(OrderTableResponse.class, API_TABLES);
-                    OrderTableResponse orderTable = getLastItem(tables);
                     assertAll(
-                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
-                            () -> assertThat(orderTable.isEmpty()).isEqualTo(empty)
+                            () -> assertThat(response.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(response.isEmpty()).isEqualTo(empty)
                     );
                 }),
                 dynamicTest("테이블 손님 수 변경", () -> {
                     int numberOfGuests = 3;
-                    changNumberOfGuests(numberOfGuests, orderTableId);
+                    OrderTableResponse response = changeNumberOfGuests(numberOfGuests,
+                            orderTableId);
 
-                    List<OrderTableResponse> tables = getAll(OrderTableResponse.class, API_TABLES);
-                    OrderTableResponse orderTable = getLastItem(tables);
                     assertAll(
-                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
-                            () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(
+                            () -> assertThat(response.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(response.getNumberOfGuests()).isEqualTo(
                                     numberOfGuests)
                     );
                 })
@@ -80,10 +77,10 @@ public class TableAcceptanceTest extends AcceptanceTest {
         return post(request, API_TABLES);
     }
 
-    private void changNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
+    private OrderTableResponse changeNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
         OrderTableChangeNumberOfGuests request = new OrderTableChangeNumberOfGuests(numberOfGuests);
 
-        put(OrderTableChangeNumberOfGuests.class, objectMapper.writeValueAsString(request),
+        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request),
                 API_TABLES + "/" + orderTableId + "/number-of-guests");
     }
 }
