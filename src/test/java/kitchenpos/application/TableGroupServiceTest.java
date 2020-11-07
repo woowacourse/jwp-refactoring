@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,113 +38,112 @@ class TableGroupServiceTest {
     @Mock
     private TableGroupDao tableGroupDao;
 
-    OrderTable orderTable1;
-    OrderTable orderTable2;
-    OrderTable notEmptyTable;
-    OrderTable alreadyGroupTable;
-
-    private TableGroup tableGroup1;
-    private TableGroup tableGroup2;
     private List<OrderTable> tables;
 
     @BeforeEach
     void setUp() {
         tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
 
-        orderTable1 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
-        orderTable2 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2);
-        notEmptyTable = OrderTableFixture.createNotEmptyWithId(OrderTableFixture.ID3);
-        alreadyGroupTable = OrderTableFixture.createGroupTableWithId(OrderTableFixture.ID4);
-
-        tables = Lists.newArrayList(orderTable1, orderTable2);
-
-        tableGroup1 = TableGroupFixture.createWithoutId(tables);
-        tableGroup2 = TableGroupFixture.createWithId(TableGroupFixture.ID1, tables);
+        tables = Lists.newArrayList(OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1),
+            OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2));
     }
 
     @DisplayName("정상적으로 테이블을 그룹화 한다.")
     @Test
     void create() {
+        TableGroup tableWithoutId = TableGroupFixture.createWithoutId(tables);
+        TableGroup tableWithId = TableGroupFixture.createWithId(1L, tables);
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(tables);
-        when(tableGroupDao.save(any(TableGroup.class))).thenReturn(tableGroup2);
+        when(tableGroupDao.save(tableWithoutId)).thenReturn(tableWithId);
 
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup1);
+        TableGroup savedTableGroup = tableGroupService.create(tableWithoutId);
 
-        assertThat(savedTableGroup)
-            .isEqualToComparingFieldByField(tableGroup2);
+        assertThat(savedTableGroup).isEqualToComparingFieldByField(tableWithId);
         assertThat(savedTableGroup.getOrderTables())
             .extracting(OrderTable::getTableGroupId)
-            .allMatch(id -> id.equals(tableGroup2.getId()));
+            .allMatch(id -> id.equals(tableWithId.getId()));
         assertThat(savedTableGroup.getOrderTables())
             .extracting(OrderTable::isEmpty)
             .allMatch(empty -> !empty);
     }
 
-    @DisplayName("그룹 요청 테이블의 개수가 2개 미만인 경우 예외를 반환한다")
+    @DisplayName("그룹 요청 테이블의 개수가 0개인 경우 예외를 반환한다.")
     @Test
-    void createEmptyTable() {
-        TableGroup emptyTableGroup = new TableGroup();
+    void createWithEmptyTable() {
+        TableGroup emptyTableGroup = TableGroupFixture.createWithoutId(Lists.emptyList());
 
         assertThatThrownBy(() -> tableGroupService.create(emptyTableGroup))
             .isInstanceOf(IllegalArgumentException.class);
 
-        emptyTableGroup.setOrderTables(Arrays.asList(orderTable1));
+    }
 
-        assertThatThrownBy(() -> tableGroupService.create(emptyTableGroup))
+    @DisplayName("그룹 요청 테이블의 개수가 1개인 경우 예외를 반환한다.")
+    @Test
+    void createWithOneTable() {
+        TableGroup oneTableGroup = TableGroupFixture
+            .createWithoutId(Collections.singletonList(tables.get(0)));
+
+        assertThatThrownBy(() -> tableGroupService.create(oneTableGroup))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("실제 저장되어 있지 않은 테이블 아이디를 포함하여 그룹하는 경우 예외를 반환한다.")
+    @DisplayName("실제 존재하지 않는 테이블을 그룹화하는 경우 예외를 반환한다.")
     @Test
     void createWithNotExistTable() {
+        TableGroup withoutId = TableGroupFixture.createWithoutId(tables);
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(Lists.emptyList());
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup1))
+        assertThatThrownBy(() -> tableGroupService.create(withoutId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Empty가 아닌 상태의 테이블을 그룹화 하는 경우 예외를 반환한다.")
     @Test
     void createWithNotEmptyTable() {
-        tables.add(notEmptyTable);
+        TableGroup containsEmptyTable = TableGroupFixture.createWithoutId(tables);
+        tables.add(OrderTableFixture.createNotEmptyWithId(OrderTableFixture.ID3));
+
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(tables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup1))
+        assertThatThrownBy(() -> tableGroupService.create(containsEmptyTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("이미 그룹이 있는 테이블을 그룹화 하는 경우 예외를 반환한다.")
+    @DisplayName("이미 다른 그룹이 있는 테이블을 그룹화 하는 경우 예외를 반환한다.")
     @Test
     void createWithNotNullGroupTable() {
-        tables.add(alreadyGroupTable);
+        TableGroup containsAlreadyGroupTable = TableGroupFixture.createWithoutId(tables);
+        tables.add(OrderTableFixture.createGroupTableWithId(3L));
+
         when(orderTableDao.findAllByIdIn(anyList())).thenReturn(tables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup1))
+        assertThatThrownBy(() -> tableGroupService.create(containsAlreadyGroupTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("정상적으로 테이블을 언그룹화 한다.")
     @Test
     void ungroup() {
+        TableGroup withId = TableGroupFixture.createWithId(1L, tables);
         when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(tables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
             .thenReturn(false);
 
-        tableGroupService.ungroup(tableGroup2.getId());
+        tableGroupService.ungroup(withId.getId());
         assertThat(tables)
             .extracting(OrderTable::getTableGroupId)
             .allMatch(Objects::isNull);
     }
 
-    @DisplayName("식사를 마치지 않은 테이블을 언그룹할 때 예외를 반환한다.")
+    @DisplayName("식사를 마치치 않은 상태(Meal, Cooking)인 테이블을 Group 해제할 때 예외를 반환한다.")
     @Test
     void ungroupWithNotCompleteTable() {
+        TableGroup withNotCompleteTable = TableGroupFixture.createWithId(1L, tables);
         when(orderTableDao.findAllByTableGroupId(1L))
-            .thenReturn(Arrays.asList(orderTable1, orderTable2));
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(
-            true);
+            .thenReturn(Arrays.asList(tables.get(0), tables.get(1)));
+        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(true);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+        assertThatThrownBy(() -> tableGroupService.ungroup(withNotCompleteTable.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
