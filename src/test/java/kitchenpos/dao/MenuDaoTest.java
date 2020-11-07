@@ -19,7 +19,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.fixture.MenuFixture;
 
 @JdbcTest
-@Sql("classpath:truncate.sql")
+@Sql("classpath:/truncate.sql")
 class MenuDaoTest {
 
     @Autowired
