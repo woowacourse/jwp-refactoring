@@ -22,15 +22,12 @@ import kitchenpos.fixture.ProductFixture;
 @Sql("classpath:/truncate.sql")
 class ProductDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     ProductDao productDao;
 
     Product product1;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         productDao = new JdbcTemplateProductDao(dataSource);
 
         product1 = ProductFixture.createWithoutId();

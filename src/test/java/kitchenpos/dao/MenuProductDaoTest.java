@@ -20,15 +20,12 @@ import kitchenpos.fixture.MenuProductFixture;
 @Sql("classpath:/truncate.sql")
 class MenuProductDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     MenuProductDao menuProductDao;
 
     MenuProduct menuProduct;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
 
         menuProduct = MenuProductFixture.create(1L, 1L);

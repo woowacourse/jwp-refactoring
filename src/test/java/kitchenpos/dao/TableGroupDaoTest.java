@@ -20,15 +20,12 @@ import kitchenpos.fixture.TableGroupFixture;
 @Sql("classpath:/truncate.sql")
 class TableGroupDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     TableGroupDao tableGroupDao;
 
     TableGroup tableGroup;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
         tableGroup = TableGroupFixture.createWithoutId(null);
     }

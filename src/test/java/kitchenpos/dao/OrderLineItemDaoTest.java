@@ -22,15 +22,12 @@ import kitchenpos.fixture.OrderLineItemFixture;
 @Sql("classpath:/truncate.sql")
 class OrderLineItemDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     OrderLineItemDao orderLineItemDao;
 
     OrderLineItem orderLineItem;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         orderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
 
         orderLineItem = OrderLineItemFixture.createWithoutId(MenuFixture.ID1, OrderFixture.ID1);

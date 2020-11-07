@@ -20,15 +20,12 @@ import kitchenpos.fixture.MenuGroupFixture;
 @Sql("classpath:/truncate.sql")
 class MenuGroupDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     MenuGroupDao menuGroupDao;
 
     MenuGroup menuGroup;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
 
         menuGroup = MenuGroupFixture.createWithoutId();

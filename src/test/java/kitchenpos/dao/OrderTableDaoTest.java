@@ -20,15 +20,12 @@ import kitchenpos.fixture.OrderTableFixture;
 @Sql("classpath:/truncate.sql")
 class OrderTableDaoTest {
 
-    @Autowired
-    DataSource dataSource;
-
     OrderTableDao orderTableDao;
 
     OrderTable orderTable;
 
     @BeforeEach
-    void setUp() {
+    void setUp(@Autowired DataSource dataSource) {
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
 
         orderTable = OrderTableFixture.createEmptyWithoutId();
