@@ -31,6 +31,7 @@
     - 생성
         - Order Menu 없으면 예외를 반환한다.
         - Order Menu 존재하지 않으면 예외를 반환한다.
+        - Order Item을 포함하지 않으면 예외를 반환한다.
         - Order Table이 존재하지 않으면 예외를 반환한다.
         - Order Table이 비어있으면 예외를 반환한다.
         - Order와 Menu를 함께 저장한다.

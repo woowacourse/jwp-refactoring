@@ -42,7 +42,7 @@ class OrderRestControllerTest {
     @BeforeEach
     void setUp() {
         item = OrderLineItemFixture.createWithoutId(1L, OrderFixture.ID1);
-        order = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.STATUS1,
+        order = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.MEAL_STATUS,
             TableFixture.ID1, Collections.singletonList(item));
     }
 
@@ -77,7 +77,7 @@ class OrderRestControllerTest {
     @DisplayName("Order Status 수정")
     @Test
     void changeOrderStatus() throws Exception {
-        Order order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.STATUS2,
+        Order order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
             TableFixture.ID1, Collections.singletonList(item));
         when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(order2);
 

@@ -10,8 +10,9 @@ import kitchenpos.domain.OrderStatus;
 public class OrderFixture {
     public static final Long ID1 = 1L;
     public static final Long ID2 = 2L;
-    public static final String STATUS1 = OrderStatus.MEAL.name();
-    public static final String STATUS2 = OrderStatus.COOKING.name();
+    public static final String MEAL_STATUS = OrderStatus.MEAL.name();
+    public static final String COOKING_STATUS = OrderStatus.COOKING.name();
+    public static final String COMPLETION = OrderStatus.COMPLETION.name();
 
     public static Order createWithoutId(String status, Long tableId, List<OrderLineItem> items) {
         Order order = new Order();
