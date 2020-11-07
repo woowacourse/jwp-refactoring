@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.entity;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -17,7 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.service.OrderTableChangeEmptyService;
 
 @ExtendWith(MockitoExtension.class)

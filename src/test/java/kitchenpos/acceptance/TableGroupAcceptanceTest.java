@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
-import static java.util.Arrays.*;
-import static kitchenpos.ui.TableGroupRestController.*;
+import static kitchenpos.adapter.presentation.web.TableGroupRestController.*;
+import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
@@ -10,9 +10,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.entity.OrderTable;
 
 public class TableGroupAcceptanceTest extends AcceptanceTest {
     /**
@@ -40,11 +37,8 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createTableGroup() throws Exception {
-        OrderTable orderTable1 = new OrderTable(1L, null, 0, false);
-        OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
-        TableGroup tableGroup = tableGroupFactory.create(asList(orderTable1, orderTable2));
+        String request = objectMapper.writeValueAsString(TABLE_GROUP_CREATE_REQUEST);
 
-        String request = objectMapper.writeValueAsString(tableGroup);
         return post(request, API_TABLE_GROUPS);
     }
 }

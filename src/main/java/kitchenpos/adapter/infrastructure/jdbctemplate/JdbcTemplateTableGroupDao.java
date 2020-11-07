@@ -1,6 +1,13 @@
-package kitchenpos.dao;
+package kitchenpos.adapter.infrastructure.jdbctemplate;
 
-import kitchenpos.domain.TableGroup;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import javax.sql.DataSource;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -9,34 +16,45 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.domain.entity.TableGroup;
+import kitchenpos.domain.repository.TableGroupRepository;
 
 @Repository
-public class JdbcTemplateTableGroupDao implements TableGroupDao {
+public class JdbcTemplateTableGroupDao implements TableGroupRepository {
     private static final String TABLE_NAME = "table_group";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
 
-    public JdbcTemplateTableGroupDao(final DataSource dataSource) {
+    public JdbcTemplateTableGroupDao(final DataSource dataSource,
+            JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
                 .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
         ;
+        this.jdbcTemplateOrderTableDao = jdbcTemplateOrderTableDao;
     }
 
     @Override
     public TableGroup save(final TableGroup entity) {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
-        return select(key.longValue());
+        TableGroup saved = select(key.longValue());
+        saveOrderTables(saved);
+        return saved;
+    }
+
+    private void saveOrderTables(TableGroup saved) {
+        List<OrderTable> savedOrderTables = saved.getOrderTables();
+        final Long tableGroupId = saved.getId();
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.makeTableGroup(tableGroupId);
+            jdbcTemplateOrderTableDao.save(savedOrderTable);
+        }
     }
 
     @Override
@@ -58,13 +76,14 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
         final String sql = "SELECT id, created_date FROM table_group WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
-        final TableGroup entity = new TableGroup();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
-        return entity;
+        long tableGroupId = resultSet.getLong(KEY_COLUMN_NAME);
+        List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(
+                tableGroupId);
+        return new TableGroup(resultSet.getLong(KEY_COLUMN_NAME), orderTables, resultSet.getObject("created_date", LocalDateTime.class));
     }
 }

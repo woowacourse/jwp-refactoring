@@ -45,4 +45,9 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public void makeTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        empty = false;
+    }
 }

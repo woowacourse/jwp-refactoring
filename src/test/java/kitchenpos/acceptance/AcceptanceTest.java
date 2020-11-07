@@ -26,7 +26,6 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
-import kitchenpos.factory.TableGroupFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -38,8 +37,6 @@ public class AcceptanceTest {
     protected OrderFactory orderFactory;
     @Autowired
     protected OrderLineItemFactory orderLineItemFactory;
-    @Autowired
-    protected TableGroupFactory tableGroupFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;
