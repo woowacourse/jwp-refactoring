@@ -37,6 +37,16 @@ public class OrderTableFixture {
         return orderTable;
     }
 
+    public static OrderTable createNumOf(Long id, int numOfGuests) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(null);
+        orderTable.setNumberOfGuests(numOfGuests);
+        orderTable.setEmpty(false);
+
+        return orderTable;
+    }
+
     public static OrderTable createGroupTableWithId(Long id) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
