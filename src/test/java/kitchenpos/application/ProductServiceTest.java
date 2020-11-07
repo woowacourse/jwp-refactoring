@@ -24,35 +24,39 @@ class ProductServiceTest {
     @Mock
     private ProductDao productDao;
 
-    private Product product1;
-    private Product product2;
-    private Product nullPriceProduct;
-    private Product negativePriceProduct;
-
     @BeforeEach
     void setUp() {
         productService = new ProductService(productDao);
-
-        product1 = ProductFixture.createWithoutId();
-        product2 = ProductFixture.createWithId(ProductFixture.ID1);
-        nullPriceProduct = ProductFixture.createNullPriceWithId(ProductFixture.ID2);
-        negativePriceProduct = ProductFixture.createNegativePriceWithId(ProductFixture.ID2);
     }
 
     @DisplayName("정상적으로 Product를 생성한다.")
     @Test
     void create() {
-        when(productDao.save(product1)).thenReturn(product2);
+        Product productWithoutId = ProductFixture.createWithoutId();
+        Product productWithId = ProductFixture.createWithId(1L);
 
-        assertThat(productService.create(product1))
-            .isEqualToIgnoringGivenFields(product2, "id");
+        when(productDao.save(productWithoutId)).thenReturn(productWithId);
+
+        Product savedProduct = productService.create(productWithoutId);
+        assertThat(savedProduct)
+            .isEqualToIgnoringGivenFields(productWithoutId, "id");
+        assertThat(savedProduct).extracting(Product::getId)
+            .isEqualTo(productWithId.getId());
     }
 
-    @DisplayName("가격이 null이거나 음수인 Product를 생성요청하면 예외를 반환한다.")
+    @DisplayName("가격이 null인 Product 생성 요청시 예외를 반환한다.")
     @Test
     void createIllegalPriceProduct() {
+        Product nullPriceProduct = ProductFixture.createNullPriceWithId(ProductFixture.ID2);
+
         assertThatThrownBy(() -> productService.create(nullPriceProduct))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("가격이 음수인 Product 생성 요청시 예외를 반환한다.")
+    @Test
+    void createNegativePriceProduct() {
+        Product negativePriceProduct = ProductFixture.createNegativePriceWithId(ProductFixture.ID2);
 
         assertThatThrownBy(() -> productService.create(negativePriceProduct))
             .isInstanceOf(IllegalArgumentException.class);
@@ -61,6 +65,9 @@ class ProductServiceTest {
     @DisplayName("정상적으로 저장된 Product를 불러온다.")
     @Test
     void list() {
+        Product product1 = ProductFixture.createWithId(1L);
+        Product product2 = ProductFixture.createWithId(2L);
+
         when(productDao.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         assertThat(productService.list())

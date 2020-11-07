@@ -5,9 +5,9 @@
 ### 코드 분석(도메인)
 - Product
     - 생성
-        - Product 예외 검증
-            - Price가 음수인 경우
-            - Price가 설정되지 않은 경우(null)
+        - Price 검증
+            - Price가 음수인 경우 예외를 반환한다.
+            - Price가 설정되지 않은 경우(null) 예외를 반환한다.
     - 조회
 
 - Menu
