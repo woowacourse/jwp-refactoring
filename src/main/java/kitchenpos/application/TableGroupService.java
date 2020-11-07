@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("그룹 지정은 테이블의 수가 2보다 커야 합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
