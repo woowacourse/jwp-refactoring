@@ -31,4 +31,13 @@ public class MenuFixture {
 
         return menu;
     }
+
+    public static Menu createNullPrice(Long menuGroupId, List<MenuProduct> products) {
+        Menu menu = new Menu();
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(products);
+        menu.setName(NAME);
+
+        return menu;
+    }
 }

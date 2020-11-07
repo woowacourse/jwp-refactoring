@@ -9,21 +9,31 @@ public class ProductFixture {
     public static final Long ID1 = 1L;
     public static final Long ID2 = 2L;
     public static final String NAME1 = "chicken";
-    public static final Long PRICE1 = 18000L;
+    public static final BigDecimal DEFAULT_PRICE = BigDecimal.valueOf(18000L);
+    public static final BigDecimal NEGATIVE_PRICE = BigDecimal.valueOf(-18000L);
 
-    public static Product createWithoutId(long price) {
+    public static Product createWithoutId() {
         Product product = new Product();
         product.setName(NAME1);
-        product.setPrice(BigDecimal.valueOf(price));
+        product.setPrice(DEFAULT_PRICE);
 
         return product;
     }
 
-    public static Product createWithId(Long id, Long price) {
+    public static Product createWithId(Long id) {
         Product product = new Product();
         product.setId(id);
         product.setName(NAME1);
-        product.setPrice(BigDecimal.valueOf(price));
+        product.setPrice(DEFAULT_PRICE);
+
+        return product;
+    }
+
+    public static Product createNegativePriceWithId(Long id) {
+        Product product = new Product();
+        product.setId(id);
+        product.setName(NAME1);
+        product.setPrice(NEGATIVE_PRICE);
 
         return product;
     }

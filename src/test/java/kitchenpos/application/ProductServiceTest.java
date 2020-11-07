@@ -33,10 +33,10 @@ class ProductServiceTest {
     void setUp() {
         productService = new ProductService(productDao);
 
-        product1 = ProductFixture.createWithoutId(ProductFixture.PRICE1);
-        product2 = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
+        product1 = ProductFixture.createWithoutId();
+        product2 = ProductFixture.createWithId(ProductFixture.ID1);
         nullPriceProduct = ProductFixture.createNullPriceWithId(ProductFixture.ID2);
-        negativePriceProduct = ProductFixture.createWithId(ProductFixture.ID2, -1000L);
+        negativePriceProduct = ProductFixture.createNegativePriceWithId(ProductFixture.ID2);
     }
 
     @DisplayName("정상적으로 Product를 생성한다.")

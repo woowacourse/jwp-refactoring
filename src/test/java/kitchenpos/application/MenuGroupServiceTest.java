@@ -24,31 +24,32 @@ class MenuGroupServiceTest {
     @Mock
     private MenuGroupDao menuGroupDao;
 
-    MenuGroup menuGroup1;
-    MenuGroup menuGroup2;
-
     @BeforeEach
     void setUp() {
         menuGroupService = new MenuGroupService(menuGroupDao);
-
-        menuGroup1 = MenuGroupFixture.createWithoutId();
-        menuGroup2 = MenuGroupFixture.createWithId(1L);
     }
 
-    @DisplayName("정상 Menu Group 생성")
+    @DisplayName("Menu Group 생성")
     @Test
     void create() {
-        when(menuGroupDao.save(menuGroup1)).thenReturn(menuGroup2);
+        MenuGroup menuGroupWithoutId = MenuGroupFixture.createWithoutId();
+        MenuGroup menuGroupWithId = MenuGroupFixture.createWithId(1L);
 
-        assertThat(menuGroupService.create(menuGroup1)).isEqualToComparingFieldByField(menuGroup2);
+        when(menuGroupDao.save(menuGroupWithoutId)).thenReturn(menuGroupWithId);
+
+        assertThat(menuGroupService.create(menuGroupWithoutId))
+            .isEqualToComparingFieldByField(menuGroupWithId);
     }
 
-    @DisplayName("정상 find all")
+    @DisplayName("Menu Group 조회")
     @Test
     void list() {
-        when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroup1, menuGroup2));
+        MenuGroup menuGroupWithId1 = MenuGroupFixture.createWithId(1L);
+        MenuGroup menuGroupWithId2 = MenuGroupFixture.createWithId(2L);
+        when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
 
-        assertThat(menuGroupService.list()).usingRecursiveComparison()
-            .isEqualTo(Arrays.asList(menuGroup1, menuGroup2));
+        assertThat(menuGroupService.list())
+            .usingRecursiveComparison()
+            .isEqualTo(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
     }
 }

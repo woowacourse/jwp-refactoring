@@ -31,7 +31,7 @@ class MenuProductDaoTest {
     void setUp() {
         menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
 
-        menuProduct = MenuProductFixture.create(1L, 1L, 1);
+        menuProduct = MenuProductFixture.create(1L, 1L);
     }
 
     @DisplayName("Insert a menu product")

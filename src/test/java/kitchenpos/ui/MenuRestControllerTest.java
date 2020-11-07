@@ -40,7 +40,7 @@ class MenuRestControllerTest {
     @BeforeEach
     void setUp() {
         menu = MenuFixture.createWithId(MenuFixture.ID1, 1L,
-            Collections.singletonList(MenuProductFixture.create(1L, 1L, 2)), 18000L);
+            Collections.singletonList(MenuProductFixture.create(1L, 1L)), 18000L);
     }
 
     @DisplayName("정상 Menu 생성")

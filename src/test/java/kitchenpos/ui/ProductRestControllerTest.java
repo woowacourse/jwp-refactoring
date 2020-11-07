@@ -35,7 +35,7 @@ class ProductRestControllerTest {
     @DisplayName("Product 생성")
     @Test
     void create() throws Exception {
-        Product product = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
+        Product product = ProductFixture.createWithId(ProductFixture.ID1);
         when(productService.create(any())).thenReturn(product);
 
         mockMvc.perform(post("/api/products")
@@ -52,8 +52,8 @@ class ProductRestControllerTest {
     @DisplayName("Find all products")
     @Test
     void list() throws Exception {
-        Product product1 = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
-        Product product2 = ProductFixture.createWithId(ProductFixture.ID2, ProductFixture.PRICE1);
+        Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
+        Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
         when(productService.list()).thenReturn(Arrays.asList(product1, product2));
 
         mockMvc.perform(get("/api/products")

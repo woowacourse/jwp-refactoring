@@ -33,7 +33,7 @@ class ProductDaoTest {
     void setUp() {
         productDao = new JdbcTemplateProductDao(dataSource);
 
-        product1 = ProductFixture.createWithoutId(18000L);
+        product1 = ProductFixture.createWithoutId();
     }
 
     @DisplayName("Insert a product")
