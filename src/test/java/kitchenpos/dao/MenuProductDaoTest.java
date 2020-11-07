@@ -20,9 +20,9 @@ import kitchenpos.fixture.MenuProductFixture;
 @Sql("classpath:/truncate.sql")
 class MenuProductDaoTest {
 
-    MenuProductDao menuProductDao;
+    private MenuProductDao menuProductDao;
 
-    MenuProduct menuProduct;
+    private MenuProduct menuProduct;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -31,7 +31,7 @@ class MenuProductDaoTest {
         menuProduct = MenuProductFixture.create(1L, 1L);
     }
 
-    @DisplayName("Insert a menu product")
+    @DisplayName("Menu Product를 저장한다.")
     @Test
     void save() {
         MenuProduct saved = menuProductDao.save(menuProduct);
@@ -40,7 +40,7 @@ class MenuProductDaoTest {
         assertThat(saved).extracting(MenuProduct::getSeq).isEqualTo(1L);
     }
 
-    @DisplayName("Select a menu product")
+    @DisplayName("Seq에 해당하는 Menu Product를 조회한다.")
     @Test
     void findById() {
         MenuProduct saved = menuProductDao.save(menuProduct);
@@ -49,7 +49,7 @@ class MenuProductDaoTest {
             .isEqualToComparingFieldByField(saved);
     }
 
-    @DisplayName("Select all menu products")
+    @DisplayName("모든 Menu Product를 조회한다.")
     @Test
     void findAll() {
         MenuProduct saved1 = menuProductDao.save(menuProduct);
@@ -60,7 +60,7 @@ class MenuProductDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("Select all menu products by menu id")
+    @DisplayName("Menu Id에 해당하는 Menu Product를 모두 조회한다.")
     @Test
     void findAllByMenuId() {
         MenuProduct saved1 = menuProductDao.save(menuProduct);

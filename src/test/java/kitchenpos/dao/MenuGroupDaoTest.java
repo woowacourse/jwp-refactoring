@@ -20,9 +20,9 @@ import kitchenpos.fixture.MenuGroupFixture;
 @Sql("classpath:/truncate.sql")
 class MenuGroupDaoTest {
 
-    MenuGroupDao menuGroupDao;
+    private MenuGroupDao menuGroupDao;
 
-    MenuGroup menuGroup;
+    private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -31,7 +31,7 @@ class MenuGroupDaoTest {
         menuGroup = MenuGroupFixture.createWithoutId();
     }
 
-    @DisplayName("Insert a menu group")
+    @DisplayName("Menu Group을 저장한다.")
     @Test
     void save() {
         MenuGroup saved = menuGroupDao.save(menuGroup);
@@ -40,7 +40,7 @@ class MenuGroupDaoTest {
         assertThat(saved).extracting(MenuGroup::getId).isEqualTo(1L);
     }
 
-    @DisplayName("Select a menu group")
+    @DisplayName("Id에 해당하는 Menu Group을 조회한다.")
     @Test
     void findById() {
         MenuGroup saved = menuGroupDao.save(menuGroup);
@@ -49,7 +49,7 @@ class MenuGroupDaoTest {
             .isEqualToComparingFieldByField(saved);
     }
 
-    @DisplayName("Select all menu group")
+    @DisplayName("모든 Menu Group을 조회한다.")
     @Test
     void findAll() {
         MenuGroup saved1 = menuGroupDao.save(menuGroup);
@@ -60,7 +60,7 @@ class MenuGroupDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("id로 menu group이 존재하는 지 확인")
+    @DisplayName("id에 해당하는 Menu Group이 존재하는 지 확인")
     @Test
     void existsById() {
         MenuGroup saved1 = menuGroupDao.save(menuGroup);

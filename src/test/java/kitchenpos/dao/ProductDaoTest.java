@@ -22,9 +22,9 @@ import kitchenpos.fixture.ProductFixture;
 @Sql("classpath:/truncate.sql")
 class ProductDaoTest {
 
-    ProductDao productDao;
+    private ProductDao productDao;
 
-    Product product1;
+    private Product product1;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -33,7 +33,7 @@ class ProductDaoTest {
         product1 = ProductFixture.createWithoutId();
     }
 
-    @DisplayName("Insert a product")
+    @DisplayName("Product를 저장한다.")
     @Test
     void save() {
         Product savedProduct = productDao.save(product1);
@@ -45,7 +45,7 @@ class ProductDaoTest {
         assertThat(savedProduct).extracting(Product::getId).isEqualTo(savedProduct.getId());
     }
 
-    @DisplayName("Select a product by id")
+    @DisplayName("Id에 해당하는 Product를 조회한다.")
     @Test
     void findById() {
         Product savedProduct = productDao.save(product1);
@@ -56,7 +56,7 @@ class ProductDaoTest {
             .isEqualToComparingFieldByField(savedProduct);
     }
 
-    @DisplayName("Select all products")
+    @DisplayName("모든 Product를 조회한다.")
     @Test
     void findAll() {
         Product savedProduct1 = productDao.save(product1);

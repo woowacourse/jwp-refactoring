@@ -20,9 +20,9 @@ import kitchenpos.fixture.OrderTableFixture;
 @Sql("classpath:/truncate.sql")
 class OrderTableDaoTest {
 
-    OrderTableDao orderTableDao;
+    private OrderTableDao orderTableDao;
 
-    OrderTable orderTable;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -31,7 +31,7 @@ class OrderTableDaoTest {
         orderTable = OrderTableFixture.createEmptyWithoutId();
     }
 
-    @DisplayName("Insert a order table")
+    @DisplayName("Order Table을 저장한다.")
     @Test
     void save() {
         OrderTable saved = orderTableDao.save(orderTable);
@@ -40,7 +40,7 @@ class OrderTableDaoTest {
         assertThat(saved).extracting(OrderTable::getId).isEqualTo(1L);
     }
 
-    @DisplayName("Select a order table")
+    @DisplayName("Id에 해당하는 Order Table을 조회한다.")
     @Test
     void findById() {
         OrderTable saved = orderTableDao.save(orderTable);
@@ -49,7 +49,7 @@ class OrderTableDaoTest {
             .isEqualToComparingFieldByField(saved);
     }
 
-    @DisplayName("Select all order tables")
+    @DisplayName("모든 Order Table을 조회한다.")
     @Test
     void findAll() {
         OrderTable saved1 = orderTableDao.save(orderTable);
@@ -60,7 +60,7 @@ class OrderTableDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("Select all order tables in ids")
+    @DisplayName("id range에 해당하는 모든 Order Table을 조회한다.")
     @Test
     void findAllByIdIn() {
         OrderTable saved1 = orderTableDao.save(orderTable);
@@ -71,7 +71,7 @@ class OrderTableDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("Select all order tables in table group ids")
+    @DisplayName("Table Group ID에 해당하는 모든 Order Table을 조회한다.")
     @Test
     void findAllByTableGroupId() {
         OrderTable saved1 = orderTableDao.save(OrderTableFixture.createGroupTableWithId(null));

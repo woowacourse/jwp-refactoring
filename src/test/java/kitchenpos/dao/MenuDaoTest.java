@@ -22,9 +22,9 @@ import kitchenpos.fixture.MenuFixture;
 @Sql("classpath:/truncate.sql")
 class MenuDaoTest {
 
-    MenuDao menuDao;
+    private MenuDao menuDao;
 
-    Menu menu;
+    private Menu menu;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -33,7 +33,7 @@ class MenuDaoTest {
         menu = MenuFixture.createWithoutId(1L, null, 16000L);
     }
 
-    @DisplayName("Insert a menu")
+    @DisplayName("Menu를 저장한다.")
     @Test
     void save() {
         Menu saved = menuDao.save(menu);
@@ -45,7 +45,7 @@ class MenuDaoTest {
         assertThat(saved).extracting(Menu::getId).isEqualTo(1L);
     }
 
-    @DisplayName("Select a menu")
+    @DisplayName("아이디에 해당하는 Menu를 조회한다.")
     @Test
     void findById() {
         Menu saved = menuDao.save(menu);
@@ -54,7 +54,7 @@ class MenuDaoTest {
             .isEqualToComparingFieldByField(saved);
     }
 
-    @DisplayName("Select all menus")
+    @DisplayName("모든 Menu를 조회한다.")
     @Test
     void findAll() {
         Menu saved1 = menuDao.save(menu);
@@ -65,7 +65,7 @@ class MenuDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("Select count by ids")
+    @DisplayName("id들에 포함되는 menu 갯수를 조회한다.")
     @Test
     void countByIdIn() {
         Menu saved1 = menuDao.save(menu);

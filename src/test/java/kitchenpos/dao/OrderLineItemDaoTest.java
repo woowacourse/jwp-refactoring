@@ -22,9 +22,9 @@ import kitchenpos.fixture.OrderLineItemFixture;
 @Sql("classpath:/truncate.sql")
 class OrderLineItemDaoTest {
 
-    OrderLineItemDao orderLineItemDao;
+    private OrderLineItemDao orderLineItemDao;
 
-    OrderLineItem orderLineItem;
+    private OrderLineItem orderLineItem;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -33,7 +33,7 @@ class OrderLineItemDaoTest {
         orderLineItem = OrderLineItemFixture.createWithoutId(MenuFixture.ID1, OrderFixture.ID1);
     }
 
-    @DisplayName("Insert a order line item")
+    @DisplayName("Order Line Item을 저장한다.")
     @Test
     void save() {
         OrderLineItem saved = orderLineItemDao.save(orderLineItem);
@@ -42,7 +42,7 @@ class OrderLineItemDaoTest {
         assertThat(saved).extracting(OrderLineItem::getSeq).isEqualTo(1L);
     }
 
-    @DisplayName("Select a order line item")
+    @DisplayName("Id에 해당하는 Order Line Item을 조회한다.")
     @Test
     void findById() {
         OrderLineItem saved = orderLineItemDao.save(orderLineItem);
@@ -51,7 +51,7 @@ class OrderLineItemDaoTest {
             .isEqualToComparingFieldByField(saved);
     }
 
-    @DisplayName("Select all order line items")
+    @DisplayName("모든 Order Line Item을 조회한다.")
     @Test
     void findAll() {
         OrderLineItem saved1 = orderLineItemDao.save(orderLineItem);
@@ -62,7 +62,7 @@ class OrderLineItemDaoTest {
             .isEqualTo(Arrays.asList(saved1, saved2));
     }
 
-    @DisplayName("Select all order line items by order id")
+    @DisplayName("Order id에 해당하는 모든 Order Line Item을 조회한다.")
     @Test
     void findAllByOrderId() {
         OrderLineItem saved1 = orderLineItemDao.save(orderLineItem);

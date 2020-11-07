@@ -22,10 +22,10 @@ import kitchenpos.fixture.OrderFixture;
 @Sql("classpath:/truncate.sql")
 class OrderDaoTest {
 
-    OrderDao orderDao;
+    private OrderDao orderDao;
 
-    Order order1;
-    Order order2;
+    private Order order1;
+    private Order order2;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -35,7 +35,7 @@ class OrderDaoTest {
         order2 = OrderFixture.createWithoutId(OrderStatus.COOKING.name(), 1L, null);
     }
 
-    @DisplayName("Save Order")
+    @DisplayName("Order를 저장한다.")
     @Test
     void save() {
         Order savedOrder = orderDao.save(order1);
@@ -44,7 +44,7 @@ class OrderDaoTest {
         assertThat(savedOrder).extracting(Order::getId).isEqualTo(1L);
     }
 
-    @DisplayName("Select Order")
+    @DisplayName("Id에 해당하는 Order를 조회한다.")
     @Test
     void findById() {
         Order savedOrder = orderDao.save(order1);
@@ -53,7 +53,7 @@ class OrderDaoTest {
             .isEqualToComparingFieldByField(savedOrder);
     }
 
-    @DisplayName("Select All")
+    @DisplayName("모든 Order를 조회한다.")
     @Test
     void findAll() {
         Order savedOrder1 = orderDao.save(order1);

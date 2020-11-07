@@ -20,9 +20,9 @@ import kitchenpos.fixture.TableGroupFixture;
 @Sql("classpath:/truncate.sql")
 class TableGroupDaoTest {
 
-    TableGroupDao tableGroupDao;
+    private TableGroupDao tableGroupDao;
 
-    TableGroup tableGroup;
+    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
@@ -30,7 +30,7 @@ class TableGroupDaoTest {
         tableGroup = TableGroupFixture.createWithoutId(null);
     }
 
-    @DisplayName("Save Table Group")
+    @DisplayName("Table Group을 저장한다.")
     @Test
     void save() {
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
@@ -39,7 +39,7 @@ class TableGroupDaoTest {
         assertThat(savedTableGroup).extracting(TableGroup::getId).isEqualTo(1L);
     }
 
-    @DisplayName("Select table group by id")
+    @DisplayName("Id에 해당하는 Table Group을 조회한다.")
     @Test
     void findById() {
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
@@ -48,7 +48,7 @@ class TableGroupDaoTest {
             .isEqualToComparingFieldByField(savedTableGroup);
     }
 
-    @DisplayName("Select all table group")
+    @DisplayName("모든 Table Group을 조회한다.")
     @Test
     void findAll() {
         TableGroup saved1 = tableGroupDao.save(tableGroup);
