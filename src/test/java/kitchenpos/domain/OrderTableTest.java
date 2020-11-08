@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import kitchenpos.domain.exceptions.InvalidForChangingNumberOfGuestsException;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +27,7 @@ class OrderTableTest {
     public void changeFailTableGroupIdNull() {
         OrderTable orderTable = new OrderTable(null, 4, true);
         OrderTable orderTable2 = new OrderTable(null, 5, true);
-        orderTable.setTableGroup(new TableGroup(LocalDateTime.now(), Lists.newArrayList(orderTable, orderTable2)));
+        orderTable.setTableGroup(new TableGroup(LocalDateTime.now()));
 
         assertThatThrownBy(() -> orderTable.changeEmptyState(false))
                 .isInstanceOf(IllegalArgumentException.class);

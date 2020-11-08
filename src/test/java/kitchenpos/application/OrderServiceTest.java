@@ -49,7 +49,7 @@ class OrderServiceTest extends IsolatedTest {
     @Test
     public void createFailItemMenuCount() {
         orderTableRepository.save(new OrderTable(1L, null, 3, false));
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(
@@ -65,7 +65,7 @@ class OrderServiceTest extends IsolatedTest {
     @DisplayName("주문 생성 실패 - 주문 테이블이 존재하지 않을 때")
     @Test
     public void createFailNotExistedOrderTable() {
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
@@ -78,7 +78,7 @@ class OrderServiceTest extends IsolatedTest {
     @Test
     public void createFailOrderTableEmpty() {
         orderTableRepository.save(new OrderTable(1L, null, 3, true));
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
@@ -91,7 +91,7 @@ class OrderServiceTest extends IsolatedTest {
     @Test
     public void createOrder() {
         orderTableRepository.save(new OrderTable(1L, null, 3, false));
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
@@ -107,7 +107,7 @@ class OrderServiceTest extends IsolatedTest {
     @Test
     public void readOrders() {
         orderTableRepository.save(new OrderTable(1L, null, 3, false));
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));
@@ -132,7 +132,7 @@ class OrderServiceTest extends IsolatedTest {
     @Test
     public void changeOrderStatus() {
         orderTableRepository.save(new OrderTable(1L, null, 3, false));
-        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null, null));
+        menuRepository.save(new Menu(1L, "파스타", BigDecimal.valueOf(8_000L), null));
 
         OrderRequest request = new OrderRequest(1L, OrderStatus.COOKING, LocalDateTime.now(),
                 Lists.newArrayList(new OrderLineItemRequest(1L, null, 1L, 1)));

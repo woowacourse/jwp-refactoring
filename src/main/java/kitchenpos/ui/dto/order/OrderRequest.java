@@ -38,7 +38,7 @@ public class OrderRequest {
     }
 
     public Order toEntity(OrderTable orderTable) {
-        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now(), Lists.newArrayList());
+        return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public Long getOrderTableId() {

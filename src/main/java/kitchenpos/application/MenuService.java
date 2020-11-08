@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.application.exceptions.NotExistedMenuGroupException;
+import kitchenpos.application.exceptions.NotExistedProductException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -8,8 +10,6 @@ import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.ProductRepository;
-import kitchenpos.application.exceptions.NotExistedMenuGroupException;
-import kitchenpos.application.exceptions.NotExistedProductException;
 import kitchenpos.ui.dto.menu.MenuProductRequest;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
@@ -50,18 +50,16 @@ public class MenuService {
         final BigDecimal sum = calculateProductsPrice(menuProductsRequest);
         final Menu savedMenu = menuRepository.save(request.toEntity(sum, menuGroup));
 
-        saveMenuProducts(menuProductsRequest, savedMenu);
-        return MenuResponse.from(savedMenu);
+        return MenuResponse.of(savedMenu, findMenuProducts(menuProductsRequest, savedMenu));
     }
 
-    private void saveMenuProducts(final List<MenuProductRequest> menuProductsRequest, final Menu savedMenu) {
-        List<MenuProduct> menuProducts = menuProductsRequest.stream()
+    private List<MenuProduct> findMenuProducts(final List<MenuProductRequest> menuProductsRequest, final Menu savedMenu) {
+        return menuProductsRequest.stream()
                 .map(m -> {
                     Product product = productRepository.findById(m.getProductId()).orElseThrow(NotExistedProductException::new);
                     return menuProductRepository.save(new MenuProduct(m.getSeq(), savedMenu, product, m.getQuantity()));
                 })
                 .collect(Collectors.toList());
-        savedMenu.setMenuProducts(menuProducts);
     }
 
     private BigDecimal calculateProductsPrice(List<MenuProductRequest> menuProducts) {
@@ -76,6 +74,10 @@ public class MenuService {
 
     public MenuResponses list() {
         final List<Menu> menus = menuRepository.findAll();
-        return MenuResponses.from(menus);
+        final List<MenuResponse> menuResponses = menus.stream()
+                .map(m -> MenuResponse.of(m, menuProductRepository.findAllBy(m.getId())))
+                .collect(Collectors.toList());
+
+        return MenuResponses.from(menuResponses);
     }
 }

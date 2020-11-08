@@ -1,13 +1,10 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.exceptions.InvalidOrderTableSizesException;
-import kitchenpos.domain.exceptions.TableAlreadyHasGroupException;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -18,26 +15,15 @@ public class TableGroup {
 
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables = new ArrayList<>();
-
     protected TableGroup() { }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-    private void validateOrderTables(final List<OrderTable> orderTables) {
-        if (orderTables.isEmpty() || orderTables.size() < 2) {
-            throw new InvalidOrderTableSizesException();
-        }
+    public TableGroup(LocalDateTime createdDate) {
+        this(null, createdDate);
     }
 
     public Long getId() {
@@ -46,21 +32,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void addOrderTables(final List<OrderTable> orderTables) {
-        validateOrderTables(orderTables);
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new TableAlreadyHasGroupException();
-            }
-            savedOrderTable.changeEmptyState(false);
-            savedOrderTable.setTableGroup(this);
-        }
-        this.orderTables = orderTables;
     }
 }
