@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.entity.Order;
 import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderLineItemDao;
 import kitchenpos.domain.repository.OrderTableRepository;
 
 @Service

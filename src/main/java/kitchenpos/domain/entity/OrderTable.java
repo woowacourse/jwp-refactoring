@@ -3,13 +3,10 @@ package kitchenpos.domain.entity;
 import kitchenpos.domain.service.OrderTableChangeEmptyService;
 
 public class OrderTable {
-    private Long id;
+    private final Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
-
-    private OrderTable() {
-    }
 
     public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
@@ -30,6 +27,16 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void makeTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+        empty = false;
+    }
+
+    public void resetTableGroup() {
+        this.tableGroupId = null;
+        empty = false;
+    }
+
     public Long getId() {
         return id;
     }
@@ -44,10 +51,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void makeTableGroup(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-        empty = false;
     }
 }

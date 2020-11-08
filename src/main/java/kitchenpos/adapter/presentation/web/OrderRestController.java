@@ -1,6 +1,6 @@
-package kitchenpos.ui;
+package kitchenpos.adapter.presentation.web;
 
-import static kitchenpos.ui.OrderRestController.*;
+import static kitchenpos.adapter.presentation.web.OrderRestController.*;
 
 import java.net.URI;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.entity.Order;
 
 @RequestMapping(API_ORDERS)
 @RestController

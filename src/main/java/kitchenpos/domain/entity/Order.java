@@ -1,7 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
+import kitchenpos.domain.OrderLineItem;
 
 public class Order {
     private Long id;

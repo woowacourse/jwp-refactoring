@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
 import static java.util.Collections.*;
-import static kitchenpos.ui.OrderRestController.*;
+import static kitchenpos.adapter.presentation.web.OrderRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.entity.Order;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
     /**

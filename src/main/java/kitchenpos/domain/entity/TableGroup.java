@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import kitchenpos.domain.service.TableGroupCreateService;
+import kitchenpos.domain.service.TableGroupUngroupService;
 
 public class TableGroup {
     private final Long id;
@@ -22,6 +23,10 @@ public class TableGroup {
         tableGroupCreateService.validate(orderTableIds());
         this.createdDate = LocalDateTime.now();
         return this;
+    }
+
+    public void ungroup(TableGroupUngroupService tableGroupUngroupService) {
+        tableGroupUngroupService.resetOrderTables(orderTables, orderTableIds());
     }
 
     public List<Long> orderTableIds() {

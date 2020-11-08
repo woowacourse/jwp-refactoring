@@ -16,8 +16,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.repository.OrderDao;
 import kitchenpos.domain.service.OrderTableChangeEmptyService;
 
 @ExtendWith(MockitoExtension.class)

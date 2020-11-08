@@ -5,8 +5,8 @@ import static java.util.Objects.*;
 
 import org.springframework.stereotype.Service;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.repository.OrderDao;
 
 @Service
 public class OrderTableChangeEmptyService {

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,12 @@ class TableGroupServiceTest {
         assertThat(response.getId()).isNotNull();
     }
 
+    @DisplayName("단체 지정 해제")
     @Test
     void ungroup() {
+        TableGroupResponse response = tableGroupService.create(
+                TABLE_GROUP_CREATE_REQUEST);
+
+        assertDoesNotThrow(() -> tableGroupService.ungroup(response.getId()));
     }
 }

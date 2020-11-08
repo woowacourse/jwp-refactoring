@@ -4,9 +4,11 @@ import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -17,16 +19,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.repository.OrderDao;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.service.TableGroupCreateService;
+import kitchenpos.domain.service.TableGroupUngroupService;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupTest {
     @Mock
     private OrderTableRepository orderTableRepository;
+    @Mock
+    private OrderDao orderDao;
 
     @InjectMocks
     private TableGroupCreateService tableGroupCreateService;
+    @InjectMocks
+    private TableGroupUngroupService tableGroupUngroupService;
 
     @DisplayName("단체 지정 생성")
     @TestFactory
@@ -81,5 +90,44 @@ class TableGroupTest {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tableGroup.create(tableGroupCreateService));
+    }
+
+    @DisplayName("단체 지정 해제")
+    @TestFactory
+    Stream<DynamicTest> ungroup() {
+        return Stream.of(
+                dynamicTest("단체 지정을 해제한다.", this::ungroupSuccess),
+                dynamicTest("테이블에 모든 주문은 완료 상태이어야 한다.", this::invalidOrderStatus)
+        );
+    }
+
+    private void ungroupSuccess() {
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
+        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2), LocalDateTime.now());
+
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(), asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                .willReturn(false);
+        given(orderTableRepository.save(orderTable1)).willReturn(orderTable1);
+        given(orderTableRepository.save(orderTable2)).willReturn(orderTable2);
+
+        tableGroup.ungroup(tableGroupUngroupService);
+
+        assertAll(
+                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
+                () -> assertThat(orderTable2.getTableGroupId()).isNull()
+        );
+    }
+
+    private void invalidOrderStatus() {
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
+        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2), LocalDateTime.now());
+
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(), asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                .willReturn(true);
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> tableGroup.ungroup(tableGroupUngroupService));
     }
 }
