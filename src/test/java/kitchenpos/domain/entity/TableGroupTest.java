@@ -19,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.core.AggregateReference;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.OrderDao;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -104,9 +105,15 @@ class TableGroupTest {
     private void ungroupSuccess() {
         OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
-        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2), LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(1L,
+                asList(new AggregateReference<>(orderTable1.getId()),
+                        new AggregateReference<>(orderTable2.getId())), LocalDateTime.now());
 
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(), asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+
+        given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
+                .willReturn(asList(orderTable1, orderTable2));
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
+                asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
         given(orderTableRepository.save(orderTable1)).willReturn(orderTable1);
         given(orderTableRepository.save(orderTable2)).willReturn(orderTable2);
@@ -122,9 +129,12 @@ class TableGroupTest {
     private void invalidOrderStatus() {
         OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
-        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2), LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(1L,
+                asList(new AggregateReference<>(orderTable1.getId()),
+                        new AggregateReference<>(orderTable2.getId())), LocalDateTime.now());
 
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(), asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
+                asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 
         assertThatIllegalArgumentException()

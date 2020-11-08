@@ -1,5 +1,7 @@
 package kitchenpos.adapter.infrastructure.jdbctemplate;
 
+import static java.util.stream.Collectors.*;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -16,6 +18,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.core.AggregateReference;
 import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.domain.entity.TableGroup;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -49,7 +52,7 @@ public class JdbcTemplateTableGroupDao implements TableGroupRepository {
     }
 
     private void saveOrderTables(TableGroup saved) {
-        List<OrderTable> savedOrderTables = saved.getOrderTables();
+        List<OrderTable> savedOrderTables = jdbcTemplateOrderTableDao.findAllByIdIn(saved.orderTableIds());
         final Long tableGroupId = saved.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.makeTableGroup(tableGroupId);
@@ -82,8 +85,11 @@ public class JdbcTemplateTableGroupDao implements TableGroupRepository {
 
     private TableGroup toEntity(final ResultSet resultSet) throws SQLException {
         long tableGroupId = resultSet.getLong(KEY_COLUMN_NAME);
-        List<OrderTable> orderTables = jdbcTemplateOrderTableDao.findAllByTableGroupId(
-                tableGroupId);
-        return new TableGroup(resultSet.getLong(KEY_COLUMN_NAME), orderTables, resultSet.getObject("created_date", LocalDateTime.class));
+        List<AggregateReference<OrderTable>> orderTableIds = jdbcTemplateOrderTableDao.findAllByTableGroupId(
+                tableGroupId).stream()
+                .map(OrderTable::getId)
+                .map(AggregateReference<OrderTable>::new)
+                .collect(toList());
+        return new TableGroup(resultSet.getLong(KEY_COLUMN_NAME), orderTableIds, resultSet.getObject("created_date", LocalDateTime.class));
     }
 }

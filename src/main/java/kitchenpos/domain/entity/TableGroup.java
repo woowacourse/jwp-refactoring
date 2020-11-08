@@ -5,15 +5,16 @@ import static java.util.stream.Collectors.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import kitchenpos.core.AggregateReference;
 import kitchenpos.domain.service.TableGroupCreateService;
 import kitchenpos.domain.service.TableGroupUngroupService;
 
 public class TableGroup {
     private final Long id;
-    private final List<OrderTable> orderTables;
+    private final List<AggregateReference<OrderTable>> orderTables;
     private LocalDateTime createdDate;
 
-    public TableGroup(Long id, List<OrderTable> orderTables, LocalDateTime createdDate) {
+    public TableGroup(Long id, List<AggregateReference<OrderTable>> orderTables, LocalDateTime createdDate) {
         this.id = id;
         this.orderTables = orderTables;
         this.createdDate = createdDate;
@@ -26,12 +27,12 @@ public class TableGroup {
     }
 
     public void ungroup(TableGroupUngroupService tableGroupUngroupService) {
-        tableGroupUngroupService.resetOrderTables(orderTables, orderTableIds());
+        tableGroupUngroupService.resetOrderTables(orderTableIds());
     }
 
     public List<Long> orderTableIds() {
         return orderTables.stream()
-                .map(OrderTable::getId)
+                .map(AggregateReference::getId)
                 .collect(toList());
     }
 
@@ -39,7 +40,7 @@ public class TableGroup {
         return id;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public List<AggregateReference<OrderTable>> getOrderTables() {
         return orderTables;
     }
 

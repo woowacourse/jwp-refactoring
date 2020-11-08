@@ -21,7 +21,9 @@ public class TableGroupUngroupService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    public void resetOrderTables(List<OrderTable> orderTables, List<Long> orderTableIds) {
+    public void resetOrderTables(List<Long> orderTableIds) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();

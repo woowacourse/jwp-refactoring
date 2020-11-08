@@ -3,26 +3,28 @@ package kitchenpos.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import kitchenpos.core.AggregateReference;
+import kitchenpos.domain.entity.OrderTable;
 import kitchenpos.domain.entity.TableGroup;
 
 public class TableGroupResponse {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTableResponses;
+    private List<AggregateReference<OrderTable>> orderTables;
 
     private TableGroupResponse() {
     }
 
     public TableGroupResponse(Long id, LocalDateTime createdDate,
-            List<OrderTableResponse> orderTableResponses) {
+            List<AggregateReference<OrderTable>> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTableResponses = orderTableResponses;
+        this.orderTables = orderTables;
     }
 
     public static TableGroupResponse of(TableGroup tableGroup) {
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
-                OrderTableResponse.listOf(tableGroup.getOrderTables()));
+                tableGroup.getOrderTables());
     }
 
     public Long getId() {
@@ -33,7 +35,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTableResponses() {
-        return orderTableResponses;
+    public List<AggregateReference<OrderTable>> getOrderTables() {
+        return orderTables;
     }
 }

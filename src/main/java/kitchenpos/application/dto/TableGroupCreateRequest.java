@@ -1,7 +1,5 @@
 package kitchenpos.application.dto;
 
-import static java.util.stream.Collectors.*;
-
 import java.util.HashSet;
 import java.util.List;
 
@@ -36,10 +34,7 @@ public class TableGroupCreateRequest {
     }
 
     public TableGroup toEntity() {
-        return new TableGroup(null, orderTables.stream()
-                .map(AggregateReference::getId)
-                .map(id -> new OrderTable(id, null, 0, false))
-                .collect(toList()), null);
+        return new TableGroup(null, orderTables, null);
     }
 
     public List<AggregateReference<OrderTable>> getOrderTables() {
