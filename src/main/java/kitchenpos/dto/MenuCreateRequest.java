@@ -2,7 +2,6 @@ package kitchenpos.dto;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -21,16 +20,17 @@ public class MenuCreateRequest {
     private Long menuGroupId;
 
     @NotEmpty
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductCreateRequest> menuProductCreateRequests;
 
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
+                             List<MenuProductCreateRequest> menuProductCreateRequests) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProductCreateRequests = menuProductCreateRequests;
     }
 
     public Menu toMenu(MenuGroup menuGroup) {
@@ -49,7 +49,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<MenuProductCreateRequest> getMenuProductCreateRequests() {
+        return menuProductCreateRequests;
     }
 }

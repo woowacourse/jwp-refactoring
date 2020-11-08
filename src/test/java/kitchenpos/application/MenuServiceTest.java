@@ -1,9 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductCreateRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,9 +42,9 @@ class MenuServiceTest {
     private Product savedProduct1;
     private Product savedProduct2;
     private Product savedProduct3;
-    private MenuProduct menuProduct1;
-    private MenuProduct menuProduct2;
-    private MenuProduct menuProduct3;
+    private MenuProductCreateRequest menuProductCreateRequest1;
+    private MenuProductCreateRequest menuProductCreateRequest2;
+    private MenuProductCreateRequest menuProductCreateRequest3;
 
     @BeforeEach
     void setUp() {
@@ -51,68 +52,78 @@ class MenuServiceTest {
         this.savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         this.savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
         this.savedProduct3 = createSavedProduct("후라이드치킨", BigDecimal.valueOf(15_000));
-        this.menuProduct1 = new MenuProduct(this.savedProduct1, 1);
-        this.menuProduct2 = new MenuProduct(this.savedProduct2, 1);
-        this.menuProduct3 = new MenuProduct(this.savedProduct3, 1);
+        this.menuProductCreateRequest1 = new MenuProductCreateRequest(this.savedProduct1.getId(), 1);
+        this.menuProductCreateRequest2 = new MenuProductCreateRequest(this.savedProduct2.getId(), 1);
+        this.menuProductCreateRequest3 = new MenuProductCreateRequest(this.savedProduct3.getId(), 1);
     }
 
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
-        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
-        List<MenuProduct> menuProducts = Arrays.asList(this.menuProduct1, this.menuProduct2);
-        menu.setMenuProducts(menuProducts);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                 this.menuProductCreateRequest2);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
+                                                                    this.savedMenuGroup.getId(),
+                                                                    menuProductCreateRequests);
 
-        Menu savedMenu = this.menuService.create(menu);
+        MenuResponse menuResponse = this.menuService.create(menuCreateRequest);
 
         assertAll(
-                () -> assertThat(savedMenu).isNotNull(),
-                () -> assertThat(savedMenu.getName()).isEqualTo(menu.getName()),
-                () -> assertThat(savedMenu.getPrice().toBigInteger()).isEqualTo(menu.getPrice().toBigInteger()),
-                () -> assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroup()),
-                () -> assertThat(savedMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size())
+                () -> assertThat(menuResponse).isNotNull(),
+                () -> assertThat(menuResponse.getName()).isEqualTo(menuCreateRequest.getName()),
+                () -> assertThat(menuResponse.getPrice()).isEqualTo(menuCreateRequest.getPrice()),
+                () -> assertThat(menuResponse.getMenuGroupId()).isEqualTo(menuCreateRequest.getMenuGroupId()),
+                () -> assertThat(menuResponse.getMenuProducts()).hasSize(menuCreateRequest.getMenuProductCreateRequests().size())
         );
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createMenuWithNullPriceThenThrowException() {
-        Menu menu = new Menu("양념간장두마리메뉴", null, this.savedMenuGroup);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                 this.menuProductCreateRequest2);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", null, this.savedMenuGroup.getId(),
+                                                                    menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 0 미만이면 예외 발생")
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createMenuWithInvalidPriceThenThrowException(int invalidPrice) {
-        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice), this.savedMenuGroup);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                 this.menuProductCreateRequest2);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice),
+                                                                    this.savedMenuGroup.getId(),
+                                                                    menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 메뉴 그룹을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuGroupThenThrowException() {
-        MenuGroup notExistMenuGroup = new MenuGroup();
         long notExistMenuGroupId = -1L;
-        notExistMenuGroup.setId(notExistMenuGroupId);
-        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), notExistMenuGroup);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                 this.menuProductCreateRequest2);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
+                                                                    notExistMenuGroupId, menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
     @Test
     void createMenuWithNotExistMenuProductThenThrowException() {
-        Menu menu = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
-        Product notExistProduct = new Product();
         long notExistProductId = -1L;
-        notExistProduct.setId(notExistProductId);
-        MenuProduct menuProduct = new MenuProduct(notExistProduct, 1);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(notExistProductId, 1);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Collections.singletonList(menuProductCreateRequest);
 
-        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
+                                                                    this.savedMenuGroup.getId(), menuProductCreateRequests);
+
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 메뉴의 가격이 지정한 상품 가격의 총합을 초과하면 예외 발생")
@@ -120,38 +131,39 @@ class MenuServiceTest {
     void createMenuWithInvalidPriceThenThrowException() {
         Product savedProduct1 = createSavedProduct("양념치킨", BigDecimal.valueOf(16_000));
         Product savedProduct2 = createSavedProduct("간장치킨", BigDecimal.valueOf(16_000));
-        MenuProduct menuProduct1 = new MenuProduct(savedProduct1, 1);
-        MenuProduct menuProduct2 = new MenuProduct(savedProduct2, 1);
-        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(savedProduct1.getId(), 1);
+        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(savedProduct2.getId(), 1);
+        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(menuProductCreateRequest1,
+                                                                                 menuProductCreateRequest2);
 
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
-        Menu menu = new Menu("양념간장두마리메뉴", invalidPrice, this.savedMenuGroup);
-        menu.setMenuProducts(menuProducts);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", invalidPrice,
+                                                                    this.savedMenuGroup.getId(),
+                                                                    menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("존재하는 모든 메뉴를 조회")
     @Test
     void listMenuTest() {
-        Menu menu1 = new Menu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), this.savedMenuGroup);
-        List<MenuProduct> menuProducts1 = Arrays.asList(this.menuProduct1, this.menuProduct2);
-        menu1.setMenuProducts(menuProducts1);
+        List<MenuProductCreateRequest> menuProductCreateRequests1 = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                  this.menuProductCreateRequest2);
+        MenuCreateRequest menuCreateRequest1 = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
+                                                                     this.savedMenuGroup.getId(),
+                                                                     menuProductCreateRequests1);
+        List<MenuProductCreateRequest> menuProductCreateRequests2 = Arrays.asList(this.menuProductCreateRequest1,
+                                                                                  this.menuProductCreateRequest3);
+        MenuCreateRequest menuCreateRequest2 = new MenuCreateRequest("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
+                                                                     this.savedMenuGroup.getId(),
+                                                                     menuProductCreateRequests2);
 
-        Menu menu2 = new Menu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000), this.savedMenuGroup);
-        List<MenuProduct> menuProducts2 = Arrays.asList(this.menuProduct1, this.menuProduct3);
-        menu2.setMenuProducts(menuProducts2);
+        List<MenuCreateRequest> menuCreateRequests = Arrays.asList(menuCreateRequest1, menuCreateRequest2);
+        menuCreateRequests.forEach(menuCreateRequest -> this.menuService.create(menuCreateRequest));
 
-        List<Menu> menus = Arrays.asList(menu1, menu2);
-        menus.forEach(menu -> this.menuService.create(menu));
+        List<MenuResponse> menuResponses = this.menuService.list();
 
-        List<Menu> savedMenus = this.menuService.list();
-
-        assertAll(
-                () -> assertThat(savedMenus.size()).isEqualTo(menus.size()),
-                () -> assertThat(savedMenus.contains(menu1)),
-                () -> assertThat(savedMenus.contains(menu2))
-        );
+        assertThat(menuResponses).hasSize(menuCreateRequests.size());
     }
 
     private MenuGroup createSavedMenuGroup(String menuName) {
