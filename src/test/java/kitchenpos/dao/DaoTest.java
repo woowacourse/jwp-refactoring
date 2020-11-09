@@ -1,15 +1,14 @@
 package kitchenpos.dao;
 
-import javax.sql.DataSource;
-
+import kitchenpos.domain.Order;
+import kitchenpos.domain.Table;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.Table;
-import kitchenpos.fixture.TestFixture;
+import javax.sql.DataSource;
 
 //TODO: 현재 모든 조회 쿼리에 연관 테이블 join이 빠져있다
 @JdbcTest
@@ -76,7 +75,6 @@ public abstract class DaoTest extends TestFixture {
         output.setTableId(order.getTableId());
         output.setOrderStatus(order.getOrderStatus());
         output.setOrderedTime(order.getOrderedTime());
-        output.setOrderMenus(order.getOrderMenus());
 
         return output;
     }
