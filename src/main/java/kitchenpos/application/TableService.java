@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.table.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.table.OrderTableRequest;
 import kitchenpos.dto.table.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -44,18 +44,12 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         final OrderTable savedOrderTable = findById(orderTableId);
 
-        validateGroupingTable(savedOrderTable);
+        savedOrderTable.validateGroupingTable();
         validateIsCompletionOrder(orderTableId);
 
         savedOrderTable.updateEmpty(orderTableChangeEmptyRequest.isEmpty());
 
         return OrderTableResponse.of(savedOrderTable);
-    }
-
-    private void validateGroupingTable(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateIsCompletionOrder(Long orderTableId) {
@@ -73,17 +67,11 @@ public class TableService {
 
         final OrderTable savedOrderTable = findById(orderTableId);
 
-        validateNotEmptyTable(savedOrderTable);
+        savedOrderTable.validateNotEmptyTable();
 
         savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.of(savedOrderTable);
-    }
-
-    private void validateNotEmptyTable(final OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public OrderTable findById(final Long orderTableId) {

@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,6 +37,12 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public void validateIsNotCompletionOrder() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

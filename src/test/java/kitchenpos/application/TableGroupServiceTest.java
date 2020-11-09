@@ -40,13 +40,10 @@ class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable orderTable2;
 
-    private OrderTable notEmptyOrderTable;
-
     @BeforeEach
     void setUp() {
         orderTable1 = orderTableRepository.save(new OrderTable(0, true));
         orderTable2 = orderTableRepository.save(new OrderTable(0, true));
-        notEmptyOrderTable = orderTableRepository.save(new OrderTable(2, false));
     }
 
     @DisplayName("create: 테이블 그룹 생성")
@@ -73,6 +70,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("create: 주문 테이블이 비어 있을 때(empty=true) 예외 처리")
     @Test
     void create_IfOrderTableIsEmpty_Exception() {
+        final OrderTable notEmptyOrderTable = orderTableRepository.save(new OrderTable(2, false));
         final TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(notEmptyOrderTable.getId(), orderTable2.getId()));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))

@@ -33,6 +33,25 @@ public class OrderTable {
     public OrderTable(final int numberOfGuests, final boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.tableGroup = null;
+    }
+
+    public void validateGroupingTable() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotEmptyTable() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateEmptyTable() {
+        if (!empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
