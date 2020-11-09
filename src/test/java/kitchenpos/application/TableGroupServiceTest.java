@@ -75,13 +75,13 @@ class TableGroupServiceTest {
         TableGroup expected = tableGroupService.create(tableGroup);
 
         assertAll(
-            () -> verify(tableGroupDao).save(tableGroup),
-            () -> Assertions.assertThat(expected).extracting(TableGroup::getCreatedDate).isNotNull(),
-            () -> Assertions.assertThat(expected).extracting(TableGroup::getOrderTables,
+            () -> assertThat(expected).extracting(TableGroup::getId).isEqualTo(savedTableGroup.getId()),
+            () -> assertThat(expected).extracting(TableGroup::getCreatedDate).isNotNull(),
+            () -> assertThat(expected).extracting(TableGroup::getOrderTables,
                 InstanceOfAssertFactories.list(OrderTable.class))
                 .extracting(OrderTable::getTableGroupId)
                 .containsOnly(savedTableGroup.getId()),
-            () -> Assertions.assertThat(expected).extracting(TableGroup::getOrderTables,
+            () -> assertThat(expected).extracting(TableGroup::getOrderTables,
                 InstanceOfAssertFactories.list(OrderTable.class))
                 .extracting(OrderTable::isEmpty)
                 .containsOnly(false)

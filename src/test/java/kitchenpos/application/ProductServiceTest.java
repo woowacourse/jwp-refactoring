@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +40,13 @@ class ProductServiceTest {
 
         given(productDao.save(any(Product.class))).willReturn(saved);
 
-        productService.create(product);
+        Product expected = productService.create(product);
 
-        verify(productDao).save(product);
+        assertAll(
+            () -> assertThat(expected).extracting(Product::getId).isEqualTo(saved.getId()),
+            () -> assertThat(expected).extracting(Product::getName).isEqualTo(saved.getName()),
+            () -> assertThat(expected).extracting(Product::getPrice).isEqualTo(saved.getPrice())
+        );
     }
 
     @DisplayName("상품을 추가할 시 가격이 null일 경우 예외 처리한다.")
@@ -67,8 +74,14 @@ class ProductServiceTest {
     @DisplayName("상품 전체 목록을 조회한다.")
     @Test
     void list() {
-        productService.list();
+        Product product = new Product();
+        product.setName("상품1");
+        product.setPrice(BigDecimal.valueOf(1_000L));
 
-        verify(productDao).findAll();
+        given(productService.list()).willReturn(Collections.singletonList(product));
+
+        List<Product> expected = productService.list();
+
+        assertThat(expected).hasSize(1);
     }
 }

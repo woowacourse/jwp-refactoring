@@ -98,7 +98,7 @@ class OrderServiceTest {
         Order expected = orderService.create(order);
 
         assertAll(
-            () -> verify(orderDao).save(any(Order.class)),
+            () -> assertThat(expected).extracting(Order::getId).isEqualTo(savedOrder.getId()),
             () -> assertThat(expected.getOrderLineItems()).extracting(OrderLineItem::getOrderId)
                 .containsOnly(savedOrder.getId()),
             () -> assertThat(expected).extracting(Order::getOrderStatus).isEqualTo(OrderStatus.COOKING.name()),
@@ -112,8 +112,7 @@ class OrderServiceTest {
         Order order = new Order();
         order.setOrderLineItems(null);
 
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 추가할 시 주문 상품이 비어있으면 예외 처리한다.")
@@ -122,8 +121,7 @@ class OrderServiceTest {
         Order order = new Order();
         order.setOrderLineItems(Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 추가할 시 존재하지 않는 MenuId일 경우 예외 처리한다.")
@@ -147,11 +145,7 @@ class OrderServiceTest {
 
         given(menuDao.countByIdIn(menuIds)).willReturn((long)(orderLineItems.size() - 1));
 
-        assertAll(
-            () -> assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class),
-            () -> verify(menuDao).countByIdIn(menuIds)
-        );
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 추가할 시 존재하지 않는 테이블일 경우 예외 처리한다.")
@@ -177,11 +171,7 @@ class OrderServiceTest {
         given(menuDao.countByIdIn(menuIds)).willReturn((long)(orderLineItems.size()));
         given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertAll(
-            () -> assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class),
-            () -> verify(orderTableDao).findById(anyLong())
-        );
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문을 추가할 시 테이블이 비어있다면 예외 처리한다.")
@@ -211,8 +201,7 @@ class OrderServiceTest {
         given(menuDao.countByIdIn(menuIds)).willReturn((long)(orderLineItems.size()));
         given(orderTableDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 전체 목록을 조회한다.")
@@ -233,7 +222,6 @@ class OrderServiceTest {
         List<Order> expected = orderService.list();
 
         assertAll(
-            () -> verify(orderDao).findAll(),
             () -> assertThat(expected).element(0).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem1),
             () -> assertThat(expected).element(1).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem2)
         );
@@ -264,12 +252,7 @@ class OrderServiceTest {
     void changeOrderStatusWithNotExistingOrderId() {
         given(orderDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertAll(
-            () -> assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
-                .isInstanceOf(IllegalArgumentException.class),
-            () -> verify(orderDao).findById(anyLong())
-        );
-
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order())).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 상태를 수정할 시 현재 주문이 Completion 상태이면 예외 처리한다.")

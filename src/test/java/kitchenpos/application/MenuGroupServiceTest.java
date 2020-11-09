@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,16 +37,24 @@ class MenuGroupServiceTest {
 
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(savedMenuGroup);
 
-        menuGroupService.create(menuGroup);
+        MenuGroup expected = menuGroupService.create(menuGroup);
 
-        verify(menuGroupDao).save(menuGroup);
+        assertAll(
+            () -> assertThat(expected).extracting(MenuGroup::getId).isEqualTo(savedMenuGroup.getId()),
+            () -> assertThat(expected).extracting(MenuGroup::getName).isEqualTo(savedMenuGroup.getName())
+        );
     }
 
     @DisplayName("메뉴 그룹 전체 목록을 조회한다.")
     @Test
     void list() {
-        menuGroupService.list();
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(1L);
+        menuGroup.setName("Test");
 
-        verify(menuGroupDao).findAll();
+        given(menuGroupDao.findAll()).willReturn(Collections.singletonList(menuGroup));
+        List<MenuGroup> expected = menuGroupService.list();
+
+        assertThat(expected).hasSize(1);
     }
 }

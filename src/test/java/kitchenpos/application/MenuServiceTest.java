@@ -121,7 +121,9 @@ class MenuServiceTest {
         Menu expected = menuService.create(menu);
 
         assertAll(
-            () -> verify(menuDao).save(menu),
+            () -> assertThat(expected).extracting(Menu::getId).isEqualTo(savedMenu.getId()),
+            () -> assertThat(expected).extracting(Menu::getName).isEqualTo(savedMenu.getName()),
+            () -> assertThat(expected).extracting(Menu::getPrice).isEqualTo(savedMenu.getPrice()),
             () -> assertThat(expected.getMenuProducts()).extracting(MenuProduct::getMenuId)
                 .containsOnly(savedMenu.getId())
         );
@@ -156,10 +158,7 @@ class MenuServiceTest {
 
         given(menuGroupDao.existsById(anyLong())).willReturn(false);
 
-        assertAll(
-            () -> assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class),
-            () -> verify(menuGroupDao).existsById(anyLong())
-        );
+        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 추가할 시 존재하지 않는 ProductId일 경우 예외 처리한다.")
@@ -177,10 +176,7 @@ class MenuServiceTest {
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
         given(productDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertAll(
-            () -> assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class),
-            () -> verify(productDao).findById(anyLong())
-        );
+        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 추가할 시 메뉴 상품 가격의 총합이 메뉴의 가격보다 작을 경우 예외 처리한다.")
@@ -250,9 +246,9 @@ class MenuServiceTest {
         List<Menu> expected = menuService.list();
 
         assertAll(
+            () -> assertThat(expected).hasSize(2),
             () -> assertThat(expected).element(0).extracting(Menu::getMenuProducts, LIST).contains(menuProduct1),
-            () -> assertThat(expected).element(1).extracting(Menu::getMenuProducts, LIST).contains(menuProduct2),
-            () -> verify(menuDao).findAll()
+            () -> assertThat(expected).element(1).extracting(Menu::getMenuProducts, LIST).contains(menuProduct2)
         );
     }
 }

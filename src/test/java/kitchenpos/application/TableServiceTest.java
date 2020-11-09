@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
@@ -43,17 +46,27 @@ class TableServiceTest {
 
         given(tableService.create(orderTable)).willReturn(savedTable);
 
-        tableService.create(orderTable);
+        OrderTable expected = tableService.create(orderTable);
 
-        verify(orderTableDao).save(orderTable);
+        assertAll(
+            () -> assertThat(expected).extracting(OrderTable::getId).isEqualTo(savedTable.getId()),
+            () -> assertThat(expected).extracting(OrderTable::getNumberOfGuests).isEqualTo(
+                savedTable.getNumberOfGuests()),
+            () -> assertThat(expected).extracting(OrderTable::isEmpty).isEqualTo(true)
+        );
     }
 
     @DisplayName("전체 테이블 목록을 조회한다.")
     @Test
     void list() {
-        tableService.list();
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(1);
+        orderTable.setEmpty(true);
 
-        verify(orderTableDao).findAll();
+        given(tableService.list()).willReturn(Collections.singletonList(orderTable));
+        List<OrderTable> expected = tableService.list();
+
+        assertThat(expected).hasSize(1);
     }
 
     @DisplayName("테이블을 비우거나 채울 수 있다.")
