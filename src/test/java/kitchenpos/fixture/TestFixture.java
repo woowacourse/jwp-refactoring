@@ -43,8 +43,8 @@ public abstract class TestFixture {
     public static final String PRODUCT_NAME_2 = "제품이름2";
     public static final BigDecimal PRODUCT_PRICE_1 = BigDecimal.valueOf(1L, 2);
     public static final BigDecimal PRODUCT_PRICE_2 = BigDecimal.valueOf(2L, 2);
-    public static final Product PRODUCT_1 = new Product();
-    public static final Product PRODUCT_2 = new Product();
+    public static final Product PRODUCT_1 = new Product(PRODUCT_ID_1, PRODUCT_NAME_1, PRODUCT_PRICE_1);
+    public static final Product PRODUCT_2 = new Product(PRODUCT_ID_2, PRODUCT_NAME_2, PRODUCT_PRICE_2);
 
     public static final long ORDER_MENU_SEQ_1 = 1L;
     public static final long ORDER_MENU_SEQ_2 = 2L;
@@ -91,13 +91,6 @@ public abstract class TestFixture {
         MENU_PRODUCT_2.setMenuId(MENU_ID_2);
         MENU_PRODUCT_2.setProductId(MENU_PRODUCT_PRODUCT_ID_2);
         MENU_PRODUCT_2.setQuantity(MENU_PRODUCT_QUANTITY_2);
-
-        PRODUCT_1.setId(PRODUCT_ID_1);
-        PRODUCT_1.setName(PRODUCT_NAME_1);
-        PRODUCT_1.setPrice(PRODUCT_PRICE_1);
-        PRODUCT_2.setId(PRODUCT_ID_2);
-        PRODUCT_2.setName(PRODUCT_NAME_2);
-        PRODUCT_2.setPrice(PRODUCT_PRICE_2);
 
         ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
         ORDER_MENU_1.setOrderId(ORDER_ID_1);

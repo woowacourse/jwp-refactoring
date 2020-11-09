@@ -1,13 +1,9 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,9 +11,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.fixture.TestFixture;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest extends TestFixture {
@@ -35,21 +36,22 @@ class ProductServiceTest extends TestFixture {
     @DisplayName("상품 생성 예외 테스트: 가격이 음수일때")
     @Test
     void createFailByNegativePriceTest() {
-        Product negativePriceProduct = new Product();
-        negativePriceProduct.setId(PRODUCT_ID_1);
-        negativePriceProduct.setName(PRODUCT_NAME_1);
-        negativePriceProduct.setPrice(new BigDecimal(-1));
+        ProductCreateRequest negativeProductCreateRequest =
+            new ProductCreateRequest(PRODUCT_NAME_1, -1L);
 
-        assertThatThrownBy(() -> productService.create(negativePriceProduct))
+        assertThatThrownBy(() -> productService.create(negativeProductCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 생성 성공 테스트")
     @Test
     void createTest() {
+        ProductCreateRequest productCreateRequest =
+            new ProductCreateRequest(PRODUCT_NAME_1, PRODUCT_PRICE_1.longValue());
+
         given(productDao.save(any())).willReturn(PRODUCT_1);
 
-        Product persistedProduct = productService.create(PRODUCT_1);
+        Product persistedProduct = productService.create(productCreateRequest);
 
         assertThat(persistedProduct).usingRecursiveComparison().isEqualTo(PRODUCT_1);
     }
