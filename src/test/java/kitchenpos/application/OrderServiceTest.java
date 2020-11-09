@@ -1,14 +1,14 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderMenuDao;
+import kitchenpos.dao.TableDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.Table;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderMenuRequest;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,13 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderMenuDao;
-import kitchenpos.dao.TableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.Table;
-import kitchenpos.fixture.TestFixture;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest extends TestFixture {
@@ -49,68 +51,70 @@ class OrderServiceTest extends TestFixture {
     @DisplayName("주문 생성 예외 테스트: 주문이 비었을 때")
     @Test
     void createFailByEmptyOrderMenu() {
-        Order emptyLineItemOrder = new Order();
-        emptyLineItemOrder.setId(ORDER_ID_1);
-        emptyLineItemOrder.setTableId(TABLE_ID_1);
-        emptyLineItemOrder.setOrderStatus(ORDER_STATUS_1);
-        emptyLineItemOrder.setOrderedTime(ORDERED_TIME_1);
-        emptyLineItemOrder.setOrderMenus(new ArrayList<>());
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(new ArrayList<>(), TABLE_ID_1);
 
-        assertThatThrownBy(() -> orderService.create(emptyLineItemOrder))
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 중복 메뉴가 있을 때")
     @Test
     void createFailByDuplicatedMenu() {
-        Order duplicatedMenusOrder = new Order();
-        duplicatedMenusOrder.setId(ORDER_ID_1);
-        duplicatedMenusOrder.setTableId(TABLE_ID_1);
-        duplicatedMenusOrder.setOrderStatus(ORDER_STATUS_1);
-        duplicatedMenusOrder.setOrderedTime(ORDERED_TIME_1);
-        duplicatedMenusOrder.setOrderMenus(Arrays.asList(ORDER_MENU_1, ORDER_MENU_1));
+        OrderMenuRequest orderMenuRequest1 = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderMenuRequest orderMenuRequest2 = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_2);
+        OrderCreateRequest duplicatedMenusOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest1, orderMenuRequest2), TABLE_ID_1);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
 
-        assertThatThrownBy(() -> orderService.create(duplicatedMenusOrder))
+        assertThatThrownBy(() -> orderService.create(duplicatedMenusOrderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 생성 예외 테스트: 존재하지 않는 테이블 테이블에서 주문 할 때")
+    @DisplayName("주문 생성 예외 테스트: 존재하지 않는 테이블에서 주문 할 때")
     @Test
     void createFailByNotExistTable() {
-        Order notExistTableOrder = ORDER_1;
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+
+        OrderCreateRequest notExistTableOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), -1L);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(tableDao.findById(notExistTableOrder.getId())).willReturn(Optional.empty());
+        given(tableDao.findById(notExistTableOrderRequest.getTableId())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.create(notExistTableOrder))
+        assertThatThrownBy(() -> orderService.create(notExistTableOrderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 빈 테이블에서 주문 할 때")
     @Test
     void createFailByEmptyTable() {
-        Order emptyTableOrder = ORDER_1;
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderCreateRequest emptyTableOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), TABLE_ID_1);
 
         Table emptyTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, true);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(tableDao.findById(emptyTableOrder.getId())).willReturn(Optional.of(emptyTable));
+        given(tableDao.findById(TABLE_ID_1)).willReturn(Optional.of(emptyTable));
 
-        assertThatThrownBy(() -> orderService.create(emptyTableOrder))
+        assertThatThrownBy(() -> orderService.create(emptyTableOrderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성 성공 테스트")
     @Test
     void createTest() {
-        given(menuDao.countByIdIn(any())).willReturn((long) ORDER_1.getOrderMenus().size());
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderCreateRequest orderCreateRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), TABLE_ID_1);
+
+        given(menuDao.countByIdIn(any())).willReturn(1L);
         given(tableDao.findById(any())).willReturn(Optional.of(TABLE_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderMenuDao.save(ORDER_MENU_1)).willReturn(ORDER_MENU_1);
+        given(orderMenuDao.save(any())).willReturn(ORDER_MENU_1);
 
-        assertThat(orderService.create(ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
+        assertThat(orderService.create(orderCreateRequest)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
 
     @DisplayName("주문 상태 변경 예외 테스트: 존재하지 않는 주문 id")
@@ -130,7 +134,6 @@ class OrderServiceTest extends TestFixture {
         completedOrder.setTableId(TABLE_ID_1);
         completedOrder.setOrderStatus("COMPLETION");
         completedOrder.setOrderedTime(ORDERED_TIME_1);
-        completedOrder.setOrderMenus(ORDER_MENUS_1);
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(completedOrder));
 
@@ -143,7 +146,6 @@ class OrderServiceTest extends TestFixture {
     void changeOrderStatus() {
         given(orderDao.findById(anyLong())).willReturn(Optional.of(ORDER_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderMenuDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_MENUS_1);
 
         assertThat(orderService.changeOrderStatus(ORDER_ID_1, ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
@@ -152,8 +154,6 @@ class OrderServiceTest extends TestFixture {
     @Test
     void listTest() {
         given(orderDao.findAll()).willReturn(Arrays.asList(ORDER_1, ORDER_2));
-        given(orderMenuDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_MENUS_1);
-        given(orderMenuDao.findAllByOrderId(ORDER_ID_2)).willReturn(ORDER_MENUS_2);
 
         List<Order> orders = orderService.list();
         assertAll(

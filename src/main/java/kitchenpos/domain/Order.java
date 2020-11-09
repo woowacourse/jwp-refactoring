@@ -1,14 +1,21 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Order {
     private Long id;
     private Long tableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderMenu> orderMenus;
+
+    public Order() {
+    }
+
+    public Order(Long tableId) {
+        this.tableId = tableId;
+        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderedTime = LocalDateTime.now();
+    }
 
     public Long getId() {
         return id;
@@ -40,13 +47,5 @@ public class Order {
 
     public void setOrderedTime(final LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
-    }
-
-    public List<OrderMenu> getOrderMenus() {
-        return orderMenus;
-    }
-
-    public void setOrderMenus(final List<OrderMenu> orderMenus) {
-        this.orderMenus = orderMenus;
     }
 }
