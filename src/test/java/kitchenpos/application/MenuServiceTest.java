@@ -118,13 +118,13 @@ class MenuServiceTest {
         given(menuProductDao.save(menuProduct2)).willReturn(savedMenuProduct2);
         given(menuProductDao.save(menuProduct3)).willReturn(savedMenuProduct3);
 
-        Menu expected = menuService.create(menu);
+        Menu actual = menuService.create(menu);
 
         assertAll(
-            () -> assertThat(expected).extracting(Menu::getId).isEqualTo(savedMenu.getId()),
-            () -> assertThat(expected).extracting(Menu::getName).isEqualTo(savedMenu.getName()),
-            () -> assertThat(expected).extracting(Menu::getPrice).isEqualTo(savedMenu.getPrice()),
-            () -> assertThat(expected.getMenuProducts()).extracting(MenuProduct::getMenuId)
+            () -> assertThat(actual).extracting(Menu::getId).isEqualTo(savedMenu.getId()),
+            () -> assertThat(actual).extracting(Menu::getName).isEqualTo(savedMenu.getName()),
+            () -> assertThat(actual).extracting(Menu::getPrice).isEqualTo(savedMenu.getPrice()),
+            () -> assertThat(actual.getMenuProducts()).extracting(MenuProduct::getMenuId)
                 .containsOnly(savedMenu.getId())
         );
     }
@@ -243,12 +243,12 @@ class MenuServiceTest {
         given(menuProductDao.findAllByMenuId(menu2.getId())).willReturn(Collections.singletonList(menuProduct2));
         given(menuDao.findAll()).willReturn(menus);
 
-        List<Menu> expected = menuService.list();
+        List<Menu> actual = menuService.list();
 
         assertAll(
-            () -> assertThat(expected).hasSize(2),
-            () -> assertThat(expected).element(0).extracting(Menu::getMenuProducts, LIST).contains(menuProduct1),
-            () -> assertThat(expected).element(1).extracting(Menu::getMenuProducts, LIST).contains(menuProduct2)
+            () -> assertThat(actual).hasSize(2),
+            () -> assertThat(actual).element(0).extracting(Menu::getMenuProducts, LIST).contains(menuProduct1),
+            () -> assertThat(actual).element(1).extracting(Menu::getMenuProducts, LIST).contains(menuProduct2)
         );
     }
 }

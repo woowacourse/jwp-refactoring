@@ -95,14 +95,14 @@ class OrderServiceTest {
         given(orderLineItemDao.save(orderLineItem1)).willReturn(savedOrderLineItem1);
         given(orderLineItemDao.save(orderLineItem2)).willReturn(savedOrderLineItem2);
 
-        Order expected = orderService.create(order);
+        Order actual = orderService.create(order);
 
         assertAll(
-            () -> assertThat(expected).extracting(Order::getId).isEqualTo(savedOrder.getId()),
-            () -> assertThat(expected.getOrderLineItems()).extracting(OrderLineItem::getOrderId)
+            () -> assertThat(actual).extracting(Order::getId).isEqualTo(savedOrder.getId()),
+            () -> assertThat(actual.getOrderLineItems()).extracting(OrderLineItem::getOrderId)
                 .containsOnly(savedOrder.getId()),
-            () -> assertThat(expected).extracting(Order::getOrderStatus).isEqualTo(OrderStatus.COOKING.name()),
-            () -> assertThat(expected).extracting(Order::getOrderedTime).isNotNull()
+            () -> assertThat(actual).extracting(Order::getOrderStatus).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(actual).extracting(Order::getOrderedTime).isNotNull()
         );
     }
 
@@ -219,11 +219,11 @@ class OrderServiceTest {
         given(orderLineItemDao.findAllByOrderId(order2.getId())).willReturn(Collections.singletonList(orderLineItem2));
         given(orderDao.findAll()).willReturn(Arrays.asList(order1, order2));
 
-        List<Order> expected = orderService.list();
+        List<Order> actual = orderService.list();
 
         assertAll(
-            () -> assertThat(expected).element(0).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem1),
-            () -> assertThat(expected).element(1).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem2)
+            () -> assertThat(actual).element(0).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem1),
+            () -> assertThat(actual).element(1).extracting(Order::getOrderLineItems, LIST).contains(orderLineItem2)
         );
     }
 
@@ -239,11 +239,11 @@ class OrderServiceTest {
 
         given(orderDao.findById(savedOrder.getId())).willReturn(Optional.of(savedOrder));
 
-        Order expected = orderService.changeOrderStatus(savedOrder.getId(), updateInfo);
+        Order actual = orderService.changeOrderStatus(savedOrder.getId(), updateInfo);
 
         assertAll(
             () -> verify(orderDao).save(savedOrder),
-            () -> assertThat(expected.getOrderStatus()).isEqualTo(updateInfo.getOrderStatus())
+            () -> assertThat(actual.getOrderStatus()).isEqualTo(updateInfo.getOrderStatus())
         );
     }
 

@@ -37,11 +37,11 @@ class MenuGroupServiceTest {
 
         given(menuGroupDao.save(any(MenuGroup.class))).willReturn(savedMenuGroup);
 
-        MenuGroup expected = menuGroupService.create(menuGroup);
+        MenuGroup actual = menuGroupService.create(menuGroup);
 
         assertAll(
-            () -> assertThat(expected).extracting(MenuGroup::getId).isEqualTo(savedMenuGroup.getId()),
-            () -> assertThat(expected).extracting(MenuGroup::getName).isEqualTo(savedMenuGroup.getName())
+            () -> assertThat(actual).extracting(MenuGroup::getId).isEqualTo(savedMenuGroup.getId()),
+            () -> assertThat(actual).extracting(MenuGroup::getName).isEqualTo(savedMenuGroup.getName())
         );
     }
 
@@ -53,8 +53,8 @@ class MenuGroupServiceTest {
         menuGroup.setName("Test");
 
         given(menuGroupDao.findAll()).willReturn(Collections.singletonList(menuGroup));
-        List<MenuGroup> expected = menuGroupService.list();
+        List<MenuGroup> actual = menuGroupService.list();
 
-        assertThat(expected).hasSize(1);
+        assertThat(actual).hasSize(1);
     }
 }

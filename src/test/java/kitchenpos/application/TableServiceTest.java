@@ -46,13 +46,13 @@ class TableServiceTest {
 
         given(tableService.create(orderTable)).willReturn(savedTable);
 
-        OrderTable expected = tableService.create(orderTable);
+        OrderTable actual = tableService.create(orderTable);
 
         assertAll(
-            () -> assertThat(expected).extracting(OrderTable::getId).isEqualTo(savedTable.getId()),
-            () -> assertThat(expected).extracting(OrderTable::getNumberOfGuests).isEqualTo(
+            () -> assertThat(actual).extracting(OrderTable::getId).isEqualTo(savedTable.getId()),
+            () -> assertThat(actual).extracting(OrderTable::getNumberOfGuests).isEqualTo(
                 savedTable.getNumberOfGuests()),
-            () -> assertThat(expected).extracting(OrderTable::isEmpty).isEqualTo(true)
+            () -> assertThat(actual).extracting(OrderTable::isEmpty).isEqualTo(true)
         );
     }
 
@@ -64,9 +64,9 @@ class TableServiceTest {
         orderTable.setEmpty(true);
 
         given(tableService.list()).willReturn(Collections.singletonList(orderTable));
-        List<OrderTable> expected = tableService.list();
+        List<OrderTable> actual = tableService.list();
 
-        assertThat(expected).hasSize(1);
+        assertThat(actual).hasSize(1);
     }
 
     @DisplayName("테이블을 비우거나 채울 수 있다.")
@@ -137,9 +137,9 @@ class TableServiceTest {
         given(orderTableDao.findById(savedTable.getId())).willReturn(Optional.of(savedTable));
         given(orderTableDao.save(savedTable)).willReturn(savedTable);
 
-        OrderTable expected = tableService.changeNumberOfGuests(savedTable.getId(), updateInfo);
+        OrderTable actual = tableService.changeNumberOfGuests(savedTable.getId(), updateInfo);
 
-        assertThat(expected).extracting(OrderTable::getNumberOfGuests).isEqualTo(updateInfo.getNumberOfGuests());
+        assertThat(actual).extracting(OrderTable::getNumberOfGuests).isEqualTo(updateInfo.getNumberOfGuests());
     }
 
     @DisplayName("테이블의 손님 수를 변경할 시 수정될 값이 음수일 경우 예외 처리한다.")

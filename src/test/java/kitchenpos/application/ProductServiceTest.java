@@ -40,12 +40,12 @@ class ProductServiceTest {
 
         given(productDao.save(any(Product.class))).willReturn(saved);
 
-        Product expected = productService.create(product);
+        Product actual = productService.create(product);
 
         assertAll(
-            () -> assertThat(expected).extracting(Product::getId).isEqualTo(saved.getId()),
-            () -> assertThat(expected).extracting(Product::getName).isEqualTo(saved.getName()),
-            () -> assertThat(expected).extracting(Product::getPrice).isEqualTo(saved.getPrice())
+            () -> assertThat(actual).extracting(Product::getId).isEqualTo(saved.getId()),
+            () -> assertThat(actual).extracting(Product::getName).isEqualTo(saved.getName()),
+            () -> assertThat(actual).extracting(Product::getPrice).isEqualTo(saved.getPrice())
         );
     }
 
@@ -80,8 +80,8 @@ class ProductServiceTest {
 
         given(productService.list()).willReturn(Collections.singletonList(product));
 
-        List<Product> expected = productService.list();
+        List<Product> actual = productService.list();
 
-        assertThat(expected).hasSize(1);
+        assertThat(actual).hasSize(1);
     }
 }
