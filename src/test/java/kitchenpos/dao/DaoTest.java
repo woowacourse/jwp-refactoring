@@ -71,11 +71,6 @@ public abstract class DaoTest extends TestFixture {
     }
 
     private Order createNullIdOrder(Order order) {
-        Order output = new Order();
-        output.setTableId(order.getTableId());
-        output.setOrderStatus(order.getOrderStatus());
-        output.setOrderedTime(order.getOrderedTime());
-
-        return output;
+        return new Order(null, order.getTableId(), order.getOrderStatus(), order.getOrderedTime());
     }
 }
