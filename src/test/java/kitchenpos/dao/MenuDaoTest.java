@@ -63,6 +63,6 @@ class MenuDaoTest {
 
         long count = menuDao.countByIdIn(Arrays.asList(menu1Id, menu2Id));
 
-        assertThat(count).isGreaterThanOrEqualTo(count);
+        assertThat(count).isEqualTo(2);
     }
 }
