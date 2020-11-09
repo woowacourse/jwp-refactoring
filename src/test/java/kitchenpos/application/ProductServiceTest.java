@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,49 +28,45 @@ class ProductServiceTest {
     @DisplayName("새로운 상품 생성")
     @Test
     void createProductTest() {
-        Product product = new Product("양념치킨", BigDecimal.valueOf(16_000));
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(16_000));
 
-        Product savedProduct = this.productService.create(product);
+        ProductResponse productResponse = this.productService.create(productCreateRequest);
 
         assertAll(
-                () -> assertThat(savedProduct).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
-                () -> assertThat(savedProduct.getPrice().toBigInteger()).isEqualTo(product.getPrice().toBigInteger())
+                () -> assertThat(productResponse).isNotNull(),
+                () -> assertThat(productResponse.getName()).isEqualTo(productCreateRequest.getName()),
+                () -> assertThat(productResponse.getPrice()).isEqualTo(productCreateRequest.getPrice())
         );
     }
 
     @DisplayName("새로운 상품을 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createProductWithNullPriceThenThrowException() {
-        Product product = new Product("양념치킨", null);
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", null);
 
-        assertThatThrownBy(() -> this.productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 상품을 생성할 때 가격이 0 미만이면 예외 발생")
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createProductWithInvalidPriceThenThrowException(int invalidPrice) {
-        Product product = new Product("양념치킨", BigDecimal.valueOf(invalidPrice));
+        ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(invalidPrice));
 
-        assertThatThrownBy(() -> this.productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("존재하는 모든 상품을 조회")
     @Test
     void listProductTest() {
-        Product product1 = new Product("양념치킨", BigDecimal.valueOf(16_000));
-        Product product2 = new Product("간장치킨", BigDecimal.valueOf(16_000));
+        ProductCreateRequest productCreateRequest1 = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(16_000));
+        ProductCreateRequest productCreateRequest2 = new ProductCreateRequest("간장치킨", BigDecimal.valueOf(16_000));
 
-        List<Product> products = Arrays.asList(product1, product2);
-        products.forEach(product -> this.productService.create(product));
+        List<ProductCreateRequest> productCreateRequests = Arrays.asList(productCreateRequest1, productCreateRequest2);
+        productCreateRequests.forEach(product -> this.productService.create(product));
 
-        List<Product> savedProducts = this.productService.list();
+        List<ProductResponse> productResponses = this.productService.list();
 
-        assertAll(
-                () -> assertThat(savedProducts.size()).isEqualTo(products.size()),
-                () -> assertThat(savedProducts.contains(product1)),
-                () -> assertThat(savedProducts.contains(product2))
-        );
+        assertThat(productResponses).hasSize(productCreateRequests.size());
     }
 }
