@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductResponse {
 

@@ -6,7 +6,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 public class ProductRequest {
 

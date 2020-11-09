@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,7 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.springframework.web.bind.annotation.ModelAttribute;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
 
 @Entity
 public class OrderLineItem {

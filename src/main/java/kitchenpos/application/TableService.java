@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.table.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.table.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.table.OrderTableRequest;
