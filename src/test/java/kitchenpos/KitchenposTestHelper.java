@@ -40,6 +40,15 @@ public class KitchenposTestHelper {
         return order;
     }
 
+    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(seq);
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
+
     public static Product createProduct(Long id, String name, BigDecimal price) {
         Product product = new Product();
         product.setId(id);
@@ -55,7 +64,8 @@ public class KitchenposTestHelper {
         return menuGroup;
     }
 
-    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId,
+        List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);
