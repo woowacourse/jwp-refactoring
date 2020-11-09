@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
-import kitchenpos.dto.ProductRequest;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.product.ProductRequest;
+import kitchenpos.dto.product.ProductResponse;
 
 @Import(ProductService.class)
 class ProductServiceTest extends ServiceTest {

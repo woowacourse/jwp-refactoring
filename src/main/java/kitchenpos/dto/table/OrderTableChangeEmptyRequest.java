@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.dto.table;
 
 public class OrderTableChangeEmptyRequest {
 

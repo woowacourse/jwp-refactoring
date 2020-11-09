@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.dto.TableGroupRequest;
-import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.table.OrderTableResponse;
+import kitchenpos.dto.tablegroup.TableGroupRequest;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;

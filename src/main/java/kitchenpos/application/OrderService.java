@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -13,11 +12,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.MenuQuantityRequest;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemResponse;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusRequest;
+import kitchenpos.dto.order.MenuQuantityRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemResponse;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;

@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.dto.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
