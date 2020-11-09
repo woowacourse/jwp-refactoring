@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<Long> tableIds = Optional.ofNullable(request.getTableIds())
             .orElseThrow(IllegalArgumentException::new);
         final List<Table> savedTables = tableDao.findAllByIdIn(tableIds);
@@ -43,9 +44,7 @@ public class TableGroupService {
             savedTable.putInGroup(tableGroupId);
             tableDao.save(savedTable);
         }
-        savedTableGroup.setTables(savedTables);
-
-        return savedTableGroup;
+        return TableGroupResponse.of(savedTableGroup, savedTables);
     }
 
     @Transactional

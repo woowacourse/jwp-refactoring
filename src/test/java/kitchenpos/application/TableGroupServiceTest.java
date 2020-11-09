@@ -12,8 +12,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
@@ -22,6 +20,7 @@ import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.TableChangeRequest;
 import kitchenpos.dto.TableCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,13 +72,13 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableA.getId(), tableB.getId(), tableC.getId()));
 
-        TableGroup result = tableGroupService.create(request);
+        TableGroupResponse result = tableGroupService.create(request);
 
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTables()).hasSize(3);
 
         // group 에 속한 테이블들은 empty 가 false 로 바뀐다.
-        for (Table table : result.getTables()) {
+        for (TableResponse table : result.getTables()) {
             assertThat(table.isEmpty()).isFalse();
         }
     }
@@ -142,7 +141,7 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableA.getId(), tableB.getId(), tableC.getId()));
 
-        TableGroup result = tableGroupService.create(request);
+        TableGroupResponse result = tableGroupService.create(request);
 
         // when
         tableGroupService.ungroup(result.getId());
@@ -176,7 +175,7 @@ class TableGroupServiceTest {
         // given
         MenuResponse menu = createMenu_후라이드세트();
 
-        TableGroup tableGroup = groupTableABC();
+        TableGroupResponse tableGroup = groupTableABC();
 
         orderOneMenu(tableA, menu);
         orderOneMenu(tableB, menu);
@@ -187,7 +186,7 @@ class TableGroupServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private TableGroup groupTableABC() {
+    private TableGroupResponse groupTableABC() {
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableA.getId(), tableB.getId(), tableC.getId()));
         return tableGroupService.create(request);
