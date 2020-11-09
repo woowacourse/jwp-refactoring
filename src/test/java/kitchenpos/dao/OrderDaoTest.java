@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -67,7 +68,7 @@ class OrderDaoTest extends DaoTest {
     @DisplayName("기존에 존재하는 주문 업데이트 테스트")
     @Test
     void updateTest() {
-        Order updatingOrder = new Order(ORDER_ID_1, TABLE_ID_1, "COMPLETION", ORDERED_TIME_1);
+        Order updatingOrder = new Order(ORDER_ID_1, TABLE_ID_1, OrderStatus.COMPLETION, ORDERED_TIME_1);
 
         orderDao.save(updatingOrder);
 
@@ -75,7 +76,7 @@ class OrderDaoTest extends DaoTest {
         assertAll(
             () -> assertThat(updatedOrder.getId()).isEqualTo(ORDER_ID_1),
             () -> assertThat(updatedOrder.getOrderedTime()).isEqualTo(ORDERED_TIME_1),
-            () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo("COMPLETION"),
+            () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION),
             () -> assertThat(updatedOrder.getTableId()).isEqualTo(TABLE_ID_1)
         );
     }

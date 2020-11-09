@@ -1,14 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -16,6 +7,14 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -66,7 +65,7 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         if (orderDao.existsByTableIdInAndOrderStatusIn(
-                tableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                tableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

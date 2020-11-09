@@ -3,6 +3,7 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
@@ -70,7 +71,7 @@ class OrderRestControllerTest extends MvcTest {
     void changeOrderStatusTest() throws Exception {
         given(orderService.changeOrderStatus(anyLong(), any())).willReturn(ORDER_1);
 
-        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("COOKING");
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COOKING);
         String inputJson = objectMapper.writeValueAsString(orderStatusChangeRequest);
         MvcResult mvcResult = putAction(String.format("/api/orders/%d/order-status", ORDER_ID_1), inputJson)
             .andExpect(status().isOk())

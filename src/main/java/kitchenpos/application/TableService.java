@@ -1,16 +1,15 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class TableService {
@@ -41,7 +40,7 @@ public class TableService {
         }
 
         if (orderDao.existsByTableIdAndOrderStatusIn(
-                tableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+                tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

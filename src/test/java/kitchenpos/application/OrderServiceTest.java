@@ -5,6 +5,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
@@ -133,7 +134,7 @@ class OrderServiceTest extends TestFixture {
     @Test
     void changeOrderStatusFailByAlreadyCompletedOrder() {
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest();
-        Order completedOrder = new Order(ORDER_ID_1, TABLE_ID_1, "COMPLETION", ORDERED_TIME_1);
+        Order completedOrder = new Order(ORDER_ID_1, TABLE_ID_1, OrderStatus.COMPLETION, ORDERED_TIME_1);
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(completedOrder));
 
@@ -144,7 +145,7 @@ class OrderServiceTest extends TestFixture {
     @DisplayName("주문 상태 변경 성공 테스트")
     @Test
     void changeOrderStatus() {
-        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("COOKING");
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COOKING);
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(ORDER_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
