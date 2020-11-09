@@ -3,7 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
@@ -14,7 +14,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -31,26 +30,13 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupCreateRequest request) {
-        final List<Long> tableIds = request.getTableIds();
-
-        if (CollectionUtils.isEmpty(tableIds) || tableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        final List<Long> tableIds = Optional.ofNullable(request.getTableIds())
+            .orElseThrow(IllegalArgumentException::new);
         final List<Table> savedTables = tableDao.findAllByIdIn(tableIds);
 
-        if (tableIds.size() != savedTables.size()) {
-            throw new IllegalArgumentException();
-        }
-        for (final Table savedTable : savedTables) {
-            if (!savedTable.isEmpty() || Objects.nonNull(savedTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setTables(savedTables);
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        validSameSize(tableIds, savedTables);
+        validGroupable(savedTables);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedTables));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final Table savedTable : savedTables) {
@@ -82,5 +68,19 @@ public class TableGroupService {
     private boolean isNotMealOver(List<Long> orderTableIds) {
         return orderDao.existsByTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
+    }
+
+    private void validGroupable(List<Table> savedTables) {
+        for (final Table savedTable : savedTables) {
+            if (!savedTable.isEmpty() || savedTable.isGrouped()) {
+                throw new IllegalArgumentException();
+            }
+        }
+    }
+
+    private void validSameSize(List<Long> tableIds, List<Table> savedTables) {
+        if (tableIds.size() != savedTables.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
