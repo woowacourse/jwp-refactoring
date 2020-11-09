@@ -61,18 +61,6 @@ class MenuServiceTest {
         assertThat(persistMenu).usingRecursiveComparison().isEqualTo(expectedMenu);
     }
 
-    @DisplayName("가격이 없거나 0 미만인 메뉴를 생성 시도할 경우 예외를 반환한다.")
-    @NullSource
-    @ValueSource(ints = {-10})
-    @ParameterizedTest
-    void createTest2(final Integer input) {
-        final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
-        final Menu invalidPriceMenu = createMenu(null, "메뉴", input, 1L, Collections.singletonList(menuProduct));
-
-        assertThatThrownBy(() -> menuService.create(invalidPriceMenu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("존재하지 않는 메뉴 그룹 id로 메뉴 생성 시도할 경우 예외를 반환한다.")
     @Test
     void createTest3() {

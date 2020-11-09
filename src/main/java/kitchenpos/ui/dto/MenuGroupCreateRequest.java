@@ -4,6 +4,7 @@ import java.beans.ConstructorProperties;
 
 import javax.validation.constraints.NotBlank;
 
+import kitchenpos.domain.MenuGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,4 +13,10 @@ import lombok.Getter;
 public class MenuGroupCreateRequest {
     @NotBlank
     private final String name;
+
+    public MenuGroup toRequestEntity() {
+        return MenuGroup.builder()
+            .name(name)
+            .build();
+    }
 }

@@ -10,20 +10,17 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class ObjectUtil {
-    public static Menu createMenu(Long id, String name, Integer price, Long menuGroupId,
+    public static Menu createMenu(Long id, String name, int price, Long menuGroupId,
         List<MenuProduct> menuProducts) {
-        BigDecimal value = null;
-        if (price != null) {
-            value = BigDecimal.valueOf(price);
-        }
         return Menu.builder()
             .id(id)
             .name(name)
-            .price(value)
+            .price(new Price(BigDecimal.valueOf(price)))
             .menuGroupId(menuGroupId)
             .menuProducts(menuProducts)
             .build();
@@ -74,15 +71,11 @@ public class ObjectUtil {
             .build();
     }
 
-    public static Product createProduct(Long id, String name, Integer price) {
-        BigDecimal value = null;
-        if (price != null) {
-            value = BigDecimal.valueOf(price);
-        }
+    public static Product createProduct(Long id, String name, int price) {
         return Product.builder()
             .id(id)
             .name(name)
-            .price(value)
+            .price(new Price(BigDecimal.valueOf(price)))
             .build();
     }
 

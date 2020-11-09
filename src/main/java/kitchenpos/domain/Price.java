@@ -7,17 +7,23 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import kitchenpos.ui.dto.jsonparser.PriceDeserializer;
+import kitchenpos.ui.dto.jsonparser.PriceSerializer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor
+@JsonSerialize(using = PriceSerializer.class)
+@JsonDeserialize(using = PriceDeserializer.class)
 @EqualsAndHashCode
 @Getter
 public class Price implements Comparable<Price> {
     @NotNull
-    @Column(name = "price")
+    @Column(name = "price", nullable = false)
     private BigDecimal value;
 
     public Price(final BigDecimal value) {

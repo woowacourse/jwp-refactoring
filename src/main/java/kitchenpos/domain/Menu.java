@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,8 +28,8 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @Column(nullable = false)
     private Long menuGroupId;
@@ -44,17 +45,21 @@ public class Menu {
         return new MenuBuilder(id, name, price, menuGroupId, menuProducts);
     }
 
+    public boolean isExpensive(final Price price) {
+        return this.price.compareTo(price) > 0;
+    }
+
     public static class MenuBuilder {
         private Long id;
         private String name;
-        private BigDecimal price;
+        private Price price;
         private Long menuGroupId;
         private List<MenuProduct> menuProducts;
 
         public MenuBuilder() {
         }
 
-        public MenuBuilder(Long id, String name, BigDecimal price, Long menuGroupId,
+        public MenuBuilder(Long id, String name, Price price, Long menuGroupId,
             List<MenuProduct> menuProducts) {
             this.id = id;
             this.name = name;
@@ -63,27 +68,27 @@ public class Menu {
             this.menuProducts = menuProducts;
         }
 
-        public MenuBuilder id(Long id) {
+        public MenuBuilder id(final Long id) {
             this.id = id;
             return this;
         }
 
-        public MenuBuilder name(String name) {
+        public MenuBuilder name(final String name) {
             this.name = name;
             return this;
         }
 
-        public MenuBuilder price(BigDecimal price) {
+        public MenuBuilder price(final Price price) {
             this.price = price;
             return this;
         }
 
-        public MenuBuilder menuGroupId(Long menuGroupId) {
+        public MenuBuilder menuGroupId(final Long menuGroupId) {
             this.menuGroupId = menuGroupId;
             return this;
         }
 
-        public MenuBuilder menuProducts(List<MenuProduct> menuProducts) {
+        public MenuBuilder menuProducts(final List<MenuProduct> menuProducts) {
             this.menuProducts = menuProducts;
             return this;
         }

@@ -41,17 +41,6 @@ class ProductServiceTest {
             .isEqualToComparingFieldByField(expectedProduct);
     }
 
-    @DisplayName("상품 가격이 null이거나 0미만인  경우 예외를 반환한다.")
-    @NullSource
-    @ValueSource(ints = {-1000})
-    @ParameterizedTest
-    void createTest2(final Integer price) {
-        final Product noPriceProduct = createProduct(1L, "후라이드", price);
-
-        assertThatThrownBy(() -> productService.create(noPriceProduct))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("주문들을 정상적으로 조회한다.")
     @Test
     void listTest() {

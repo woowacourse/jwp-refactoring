@@ -33,7 +33,9 @@ class MenuGroupServiceTest {
 
         given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(expectedMenuGroup);
 
-        final MenuGroup persistMenuGroup = menuGroupService.create(name);
+        final MenuGroup persistMenuGroup = menuGroupService.create(MenuGroup.builder()
+            .name(name)
+            .build());
         assertThat(persistMenuGroup).isEqualToComparingFieldByField(expectedMenuGroup);
     }
 

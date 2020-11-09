@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +24,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.MenuGroupCreateRequest;
@@ -54,7 +54,7 @@ class MenuGroupRestControllerTest {
         final MenuGroup savedMenuGroup = createMenuGroup(1L, name);
         final MenuGroupCreateRequest menuGroupWithoutId = new MenuGroupCreateRequest(name);
 
-        given(menuGroupService.create(anyString())).willReturn(savedMenuGroup);
+        given(menuGroupService.create(any(MenuGroup.class))).willReturn(savedMenuGroup);
 
         mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
@@ -74,11 +74,14 @@ class MenuGroupRestControllerTest {
         final MenuGroup fourth = createMenuGroup(4L, "신메뉴");
         final MenuGroup fifth = createMenuGroup(5L, "메뉴");
         final List<MenuGroup> menuGroups = Arrays.asList(first, second, third, fourth, fifth);
+        final List<MenuGroupResponse> menuGroupResponses = menuGroups.stream()
+            .map(MenuGroupResponse::from)
+            .collect(Collectors.toList());
 
         given(menuGroupService.list()).willReturn(menuGroups);
 
         mockMvc.perform(get("/api/menu-groups"))
             .andExpect(status().isOk())
-            .andExpect(content().bytes(objectMapper.writeValueAsBytes(menuGroups)));
+            .andExpect(content().bytes(objectMapper.writeValueAsBytes(menuGroupResponses)));
     }
 }
