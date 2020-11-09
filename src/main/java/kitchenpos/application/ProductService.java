@@ -20,8 +20,8 @@ public class ProductService {
     @Transactional
     public ProductResponse create(final ProductCreateRequest request) {
         Product product = new Product(request.getName(), request.getPrice());
-        Product save = productDao.save(product);
-        return ProductResponse.of(save);
+        Product savedProduct = productDao.save(product);
+        return ProductResponse.of(savedProduct);
     }
 
     public List<ProductResponse> list() {
