@@ -6,6 +6,7 @@ import java.util.List;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -52,5 +53,24 @@ public class KitchenposTestHelper {
         menuGroup.setId(id);
         menuGroup.setName(name);
         return menuGroup;
+    }
+
+    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu();
+        menu.setId(id);
+        menu.setName(name);
+        menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+        return menu;
+    }
+
+    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setSeq(seq);
+        menuProduct.setMenuId(menuId);
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
     }
 }
