@@ -15,4 +15,9 @@ public class AcceptanceStep {
 
 	public static void assertThatStatusIsCreated(ExtractableResponse<Response> response) {
 		assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-	}}
+	}
+
+	public static void assertThatStatusIsNoContent(ExtractableResponse<Response> response) {
+		assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+	}
+}

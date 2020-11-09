@@ -81,4 +81,15 @@ public class OrderTableAcceptanceStep {
 
 		assertThat(actual.getNumberOfGuests()).isEqualTo(numberOfGuests);
 	}
+
+	public static OrderTable getEmptyPersist() {
+		OrderTable orderTable = new OrderTable();
+		ExtractableResponse<Response> response = requestToCreateOrderTable(orderTable);
+
+		OrderTable persist = response.jsonPath().getObject(".", OrderTable.class);
+		persist.setEmpty(true);
+		ExtractableResponse<Response> emptyResponse = requestToChangeEmpty(persist);
+
+		return emptyResponse.jsonPath().getObject(".", OrderTable.class);
+	}
 }

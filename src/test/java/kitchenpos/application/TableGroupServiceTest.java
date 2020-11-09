@@ -50,6 +50,7 @@ class TableGroupServiceTest implements ServiceTest {
 		);
 	}
 
+	@DisplayName("단체 지정을 중복할 경우 예외가 발생한다")
 	@Test
 	void create_WhenDuplicatedTableGroup_ThrowException() {
 		OrderTable emptyTable1 = tableService.create(new OrderTable());
