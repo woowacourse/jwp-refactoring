@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_고기;
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_국;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_1;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -20,7 +20,7 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = MENU_GROUP_FIXTURE_고기;
+        MenuGroup menuGroup = MENU_GROUP_FIXTURE_1;
 
         MenuGroup persistMenuGroup = menuGroupService.create(menuGroup);
 
@@ -32,14 +32,14 @@ class MenuGroupServiceTest {
 
     @Test
     void list() {
-        menuGroupService.create(MENU_GROUP_FIXTURE_고기);
-        menuGroupService.create(MENU_GROUP_FIXTURE_국);
+        menuGroupService.create(MENU_GROUP_FIXTURE_1);
+        menuGroupService.create(MENU_GROUP_FIXTURE_2);
 
         List<MenuGroup> menuGroups = menuGroupService.list();
         List<String> menuGroupNames = menuGroups.stream()
             .map(MenuGroup::getName)
             .collect(Collectors.toList());
 
-        assertThat(menuGroupNames).contains(MENU_GROUP_FIXTURE_고기.getName(), MENU_GROUP_FIXTURE_국.getName());
+        assertThat(menuGroupNames).contains(MENU_GROUP_FIXTURE_1.getName(), MENU_GROUP_FIXTURE_2.getName());
     }
 }

@@ -10,6 +10,7 @@ public class OrderTableFixture {
     public static final OrderTable ORDER_TABLE_FIXTURE_4 = new OrderTable();
     public static final OrderTable ORDER_TABLE_FIXTURE_5 = new OrderTable();
     public static final OrderTable ORDER_TABLE_FIXTURE_6 = new OrderTable();
+    public static final OrderTable ORDER_TABLE_FIXTURE_7 = new OrderTable();
 
     static {
         ORDER_TABLE_FIXTURE_1.setNumberOfGuests(4);
@@ -24,5 +25,7 @@ public class OrderTableFixture {
         ORDER_TABLE_FIXTURE_5.setEmpty(true);
         ORDER_TABLE_FIXTURE_6.setNumberOfGuests(9);
         ORDER_TABLE_FIXTURE_6.setEmpty(true);
+        ORDER_TABLE_FIXTURE_6.setNumberOfGuests(10);
+        ORDER_TABLE_FIXTURE_6.setEmpty(false);
     }
 }

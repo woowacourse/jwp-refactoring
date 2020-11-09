@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_고기;
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_국;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_1;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -20,7 +20,7 @@ class MenuGroupDaoTest {
 
     @Test
     void save() {
-        MenuGroup menuGroup = MENU_GROUP_FIXTURE_고기;
+        MenuGroup menuGroup = MENU_GROUP_FIXTURE_1;
 
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
@@ -32,7 +32,7 @@ class MenuGroupDaoTest {
 
     @Test
     void findById() {
-        MenuGroup persistMenuGroup = menuGroupDao.save(MENU_GROUP_FIXTURE_고기);
+        MenuGroup persistMenuGroup = menuGroupDao.save(MENU_GROUP_FIXTURE_1);
 
         MenuGroup findGroup = menuGroupDao.findById(persistMenuGroup.getId()).get();
 
@@ -41,8 +41,8 @@ class MenuGroupDaoTest {
 
     @Test
     void findAll() {
-        menuGroupDao.save(MENU_GROUP_FIXTURE_고기);
-        menuGroupDao.save(MENU_GROUP_FIXTURE_국);
+        menuGroupDao.save(MENU_GROUP_FIXTURE_1);
+        menuGroupDao.save(MENU_GROUP_FIXTURE_2);
 
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
         List<String> menuNames = menuGroups.stream()
@@ -54,7 +54,7 @@ class MenuGroupDaoTest {
 
     @Test
     void existsById() {
-        Long menuGroupId = menuGroupDao.save(MENU_GROUP_FIXTURE_고기).getId();
+        Long menuGroupId = menuGroupDao.save(MENU_GROUP_FIXTURE_1).getId();
 
         boolean isExist = menuGroupDao.existsById(menuGroupId);
 
