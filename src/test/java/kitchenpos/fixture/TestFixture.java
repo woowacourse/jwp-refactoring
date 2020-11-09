@@ -69,8 +69,8 @@ public abstract class TestFixture {
 
     public static final long ORDER_ID_1 = 1L;
     public static final long ORDER_ID_2 = 2L;
-    public static final String ORDER_STATUS_1 = "COOKING";
-    public static final String ORDER_STATUS_2 = "COOKING";
+    public static final OrderStatus ORDER_STATUS_1 = OrderStatus.COOKING;
+    public static final OrderStatus ORDER_STATUS_2 = OrderStatus.COOKING;
     public static final LocalDateTime ORDERED_TIME_1 = LocalDateTime.parse("2018-12-15T10:00:00");
     public static final LocalDateTime ORDERED_TIME_2 = LocalDateTime.parse("2018-12-16T10:00:00");
     public static final Order ORDER_1 = new Order(ORDER_ID_1, TABLE_ID_1, ORDER_STATUS_1, ORDERED_TIME_1);

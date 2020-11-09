@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class Order {
     private Long id;
     private Long tableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
     public Order() {
@@ -13,18 +13,18 @@ public class Order {
 
     public Order(Long tableId) {
         this.tableId = tableId;
-        this.orderStatus = OrderStatus.COOKING.name();
+        this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
     }
 
-    public Order(Long id, Long tableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, Long tableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.tableId = tableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public void changeOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -36,7 +36,7 @@ public class Order {
         return tableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
