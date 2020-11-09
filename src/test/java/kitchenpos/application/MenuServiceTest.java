@@ -60,6 +60,14 @@ class MenuServiceTest {
         });
     }
 
+    @DisplayName("Menu 가격이 null인 경우 예외 테스트")
+    @Test
+    void createPriceNull() {
+        Menu menu = createMenuWithPrice(null);
+
+        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("Menu 가격이 0보다 작은 경우 예외 테스트")
     @Test
     void createPriceLessThanZero() {
@@ -95,10 +103,13 @@ class MenuServiceTest {
         MenuProduct menuProduct = createMenuProductWithoutId(savedProduct.getId(), 1L);
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroupWithoutId());
         Menu menu = MenuFixture.createMenuWithoutId(savedMenuGroup.getId(), price, menuProduct);
-        menuDao.save(menu);
+        Menu saved = menuDao.save(menu);
 
         List<Menu> actual = menuService.list();
 
-        assertThat(actual).hasSize(1);
+        assertAll(() -> {
+            assertThat(actual).hasSize(1);
+            assertThat(actual.get(0)).isEqualToIgnoringNullFields(saved);
+        });
     }
 }
