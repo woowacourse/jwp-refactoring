@@ -11,14 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class ProductRestController {
     private final ProductService productService;
-
-    public ProductRestController(final ProductService productService) {
-        this.productService = productService;
-    }
 
     @PostMapping("/api/products")
     public ResponseEntity<Product> create(@RequestBody final Product product) {

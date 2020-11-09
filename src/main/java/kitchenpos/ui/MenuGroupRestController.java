@@ -16,14 +16,12 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class MenuGroupRestController {
     private final MenuGroupService menuGroupService;
-
-    public MenuGroupRestController(final MenuGroupService menuGroupService) {
-        this.menuGroupService = menuGroupService;
-    }
 
     @PostMapping("/api/menu-groups")
     public ResponseEntity<MenuGroupResponse> create(

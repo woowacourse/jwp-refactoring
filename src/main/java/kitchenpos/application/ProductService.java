@@ -8,8 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class ProductService {
     private final ProductRepository productRepository;

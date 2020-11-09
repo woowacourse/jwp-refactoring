@@ -13,14 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class OrderRestController {
     private final OrderService orderService;
-
-    public OrderRestController(final OrderService orderService) {
-        this.orderService = orderService;
-    }
 
     @PostMapping("/api/orders")
     public ResponseEntity<Order> create(@RequestBody final Order order) {

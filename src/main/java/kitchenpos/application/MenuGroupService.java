@@ -8,8 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class MenuGroupService {
     private final MenuGroupRepository menuGroupRepository;

@@ -16,14 +16,12 @@ import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuResponse;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class MenuRestController {
     private final MenuService menuService;
-
-    public MenuRestController(final MenuService menuService) {
-        this.menuService = menuService;
-    }
 
     @PostMapping("/api/menus")
     public ResponseEntity<MenuResponse> create(

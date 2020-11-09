@@ -12,8 +12,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class TableService {
     private final OrderRepository orderRepository;

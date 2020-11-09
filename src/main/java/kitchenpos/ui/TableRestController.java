@@ -13,14 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class TableRestController {
     private final TableService tableService;
-
-    public TableRestController(final TableService tableService) {
-        this.tableService = tableService;
-    }
 
     @PostMapping("/api/tables")
     public ResponseEntity<OrderTable> create(@RequestBody final OrderTable orderTable) {
