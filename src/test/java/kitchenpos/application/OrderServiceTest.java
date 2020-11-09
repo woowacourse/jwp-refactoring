@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemCreateRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import kitchenpos.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,10 +52,10 @@ class OrderServiceTest {
     private Menu savedMenu1;
     private Menu savedMenu2;
     private Menu savedMenu3;
-    private OrderLineItem orderLineItem1;
-    private OrderLineItem orderLineItem2;
-    private OrderLineItem orderLineItem3;
-    private OrderLineItem orderLineItem4;
+    private OrderLineItemCreateRequest orderLineItemCreateRequest1;
+    private OrderLineItemCreateRequest orderLineItemCreateRequest2;
+    private OrderLineItemCreateRequest orderLineItemCreateRequest3;
+    private OrderLineItemCreateRequest orderLineItemCreateRequest4;
 
     @BeforeEach
     void setUp() {
@@ -63,130 +67,147 @@ class OrderServiceTest {
         this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), savedMenuGroup);
         this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup);
         this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup);
-        this.orderLineItem1 = new OrderLineItem(this.savedMenu1, 1);
-        this.orderLineItem2 = new OrderLineItem(this.savedMenu2, 1);
-        this.orderLineItem4 = new OrderLineItem(this.savedMenu3, 1);
-        this.orderLineItem3 = new OrderLineItem(this.savedMenu2, 2);
+        this.orderLineItemCreateRequest1 = new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
+        this.orderLineItemCreateRequest2 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 1);
+        this.orderLineItemCreateRequest4 = new OrderLineItemCreateRequest(this.savedMenu3.getId(), 1);
+        this.orderLineItemCreateRequest3 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 2);
     }
 
     @DisplayName("새로운 주문 생성")
     @Test
     void createOrderTest() {
-        Order order = new Order(this.savedOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                     this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                       orderLineItemCreateRequests);
 
-        Order savedOrder = this.orderService.create(order);
+        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
 
         assertAll(
-                () -> assertThat(savedOrder).isNotNull(),
-                () -> assertThat(savedOrder.getOrderTable()).isEqualTo(order.getOrderTable()),
-                () -> assertThat(savedOrder.getOrderLineItems().size()).isEqualTo(order.getOrderLineItems().size()),
-                () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-                () -> assertThat(savedOrder.getOrderedTime()).isNotNull()
+                () -> assertThat(orderResponse).isNotNull(),
+                () -> assertThat(orderResponse.getOrderTableId()).isEqualTo(orderCreateRequest.getOrderTableId()),
+                () -> assertThat(orderResponse.getOrderLineItemResponses()).hasSize(orderResponse.getOrderLineItemResponses().size()),
+                () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                () -> assertThat(orderResponse.getOrderedTime()).isNotNull()
         );
     }
 
     @DisplayName("새로운 주문을 생성할 때 주문 항목이 없으면 예외 발생")
     @Test
     void createOrderWithEmptyOrderLineItemsThenThrowException() {
-        Order order = new Order(this.savedOrderTable);
-        order.setOrderLineItems(Collections.emptyList());
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                       Collections.emptyList());
 
-        assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 주문 항목 내에서 중복되는 메뉴가 있으면 예외 발생")
     @Test
     void createOrderWithOrderLineItemsCountNotEqualToMenuCountThenThrowException() {
-        Order order = new Order(this.savedOrderTable);
-        OrderLineItem orderLineItem1 = new OrderLineItem(this.savedMenu1, 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(this.savedMenu1, 1);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        OrderLineItemCreateRequest orderLineItemCreateRequest1 =
+                new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
+        OrderLineItemCreateRequest orderLineItemCreateRequest2 =
+                new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(orderLineItemCreateRequest1,
+                                                                                     orderLineItemCreateRequest2);
 
-        assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                       orderLineItemCreateRequests);
+
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 존재하지 않는 테이블을 주문 테이블로 지정하면 예외 발생")
     @Test
     void createOrderWithNotExistOrderTableThenThrowException() {
-        OrderTable notExistOrderTable = new OrderTable();
         long notExistOrderTableId = -1L;
-        notExistOrderTable.setId(notExistOrderTableId);
-        Order order = new Order(notExistOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
 
-        assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                     this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notExistOrderTableId,
+                                                                       orderLineItemCreateRequests);
+
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 빈 테이블을 주문 테이블로 지정하면 예외 발생")
     @Test
     void createOrderWithEmptyOrderTableThenThrowException() {
         OrderTable savedOrderTable = createSavedOrderTable(this.tableGroup, 0, true);
-        Order order = new Order(savedOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                     this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
+                                                                       orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
-
 
     @DisplayName("존재하는 모든 주문을 조회")
     @Test
     void listOrderTest() {
-        Order order1 = new Order(this.savedOrderTable);
-        order1.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
-        Order order2 = new Order(this.savedOrderTable);
-        order2.setOrderLineItems(Arrays.asList(this.orderLineItem3, this.orderLineItem4));
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests1 = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                      this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest1 = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                        orderLineItemCreateRequests1);
 
-        List<Order> orders = Arrays.asList(order1, order2);
-        orders.forEach(order -> this.orderService.create(order));
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests2 = Arrays.asList(this.orderLineItemCreateRequest3,
+                                                                                      this.orderLineItemCreateRequest4);
+        OrderCreateRequest orderCreateRequest2 = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                        orderLineItemCreateRequests2);
 
-        List<Order> savedOrders = this.orderService.list();
+        List<OrderCreateRequest> orderCreateRequests = Arrays.asList(orderCreateRequest1, orderCreateRequest2);
+        orderCreateRequests.forEach(order -> this.orderService.create(order));
 
-        assertAll(
-                () -> assertThat(savedOrders.size()).isEqualTo(orders.size()),
-                () -> assertThat(savedOrders.contains(order1)),
-                () -> assertThat(savedOrders.contains(order2))
-        );
+        List<OrderResponse> orderResponses = this.orderService.list();
+
+        assertThat(orderResponses).hasSize(orderCreateRequests.size());
     }
 
     @DisplayName("특정 주문의 주문 상태를 식사 혹은 계산 완료로 변경")
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatusTest(String orderStatus) {
-        Order order = new Order(this.savedOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                     this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                       orderLineItemCreateRequests);
+        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus);
 
-        Order savedOrder = this.orderService.create(order);
-        order.setOrderStatus(orderStatus);
+        OrderResponse changedOrderResponse = this.orderService.changeOrderStatus(orderResponse.getId(),
+                                                                                 orderStatusChangeRequest);
 
-        Order changedOrder = this.orderService.changeOrderStatus(savedOrder.getId(), order);
-
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(order.getOrderStatus());
+        assertThat(changedOrderResponse.getOrderStatus()).isEqualTo(orderStatusChangeRequest.getOrderStatus());
     }
 
     @DisplayName("존재하지 않는 주문의 주문 상태를 변경하면 예외 발생")
     @Test
     void changeOrderStatusWithNotExistOrderThenThrowException() {
-        Order order = new Order(this.savedOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
-        order.setOrderStatus(OrderStatus.MEAL.name());
-
         Long notExistOrderId = -1L;
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
-        assertThatThrownBy(() -> this.orderService.changeOrderStatus(notExistOrderId, order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.changeOrderStatus(notExistOrderId, orderStatusChangeRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("특정 주문의 주문 상태가 계산 완료일 때 주문 상태를 변경하면 예외 발생")
-    @Test
-    void changeOrderStatusWithOrderStatusIsCompletionThenThrowException() {
-        Order order = new Order(this.savedOrderTable);
-        order.setOrderLineItems(Arrays.asList(this.orderLineItem1, this.orderLineItem2));
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
+    void changeOrderStatusWithOrderStatusIsCompletionThenThrowException(String orderStatus) {
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
+                                                                                     this.orderLineItemCreateRequest2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
+                                                                       orderLineItemCreateRequests);
+        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
 
-        Order savedOrder = this.orderService.create(order);
+        Order savedOrder = orderRepository.findById(orderResponse.getId()).orElseThrow(IllegalArgumentException::new);
         savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
         this.orderRepository.save(savedOrder);
 
-        assertThatThrownBy(() -> this.orderService.changeOrderStatus(savedOrder.getId(), order)).isInstanceOf(IllegalArgumentException.class);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus);
+
+        assertThatThrownBy(() -> this.orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     private TableGroup createSavedTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
