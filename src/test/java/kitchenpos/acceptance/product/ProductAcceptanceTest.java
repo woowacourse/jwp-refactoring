@@ -17,7 +17,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
 	@Test
 	void create() {
 		// given
-		Product product = ProductAcceptanceStep.createProduct("방어회 (소)", 24_000);
+		Product product = ProductAcceptanceStep.create("방어회", 24_000);
 
 		// when
 		ExtractableResponse<Response> response = ProductAcceptanceStep.requestToCreateProduct(product);
@@ -31,8 +31,8 @@ public class ProductAcceptanceTest extends AcceptanceTest {
 	@Test
 	void list() {
 		// given
-		Product product = ProductAcceptanceStep.createProduct("방어회 (소)", 24_000);
-		Product product2 = ProductAcceptanceStep.createProduct("방어회 (중)", 32_000);
+		Product product = ProductAcceptanceStep.create("방어회", 24_000);
+		Product product2 = ProductAcceptanceStep.create("연어회", 20_000);
 
 		ProductAcceptanceStep.requestToCreateProduct(product);
 		ProductAcceptanceStep.requestToCreateProduct(product2);

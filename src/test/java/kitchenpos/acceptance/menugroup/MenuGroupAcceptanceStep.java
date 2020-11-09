@@ -14,7 +14,7 @@ import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupAcceptanceStep {
 
-	public static MenuGroup createMenuGroup(String name) {
+	public static MenuGroup create(String name) {
 		MenuGroup menuGroup = new MenuGroup();
 		menuGroup.setName(name);
 
@@ -52,7 +52,15 @@ public class MenuGroupAcceptanceStep {
 	public static void assertThatFindMenuGroups(ExtractableResponse<Response> response, List<MenuGroup> expected) {
 		List<MenuGroup> actual = response.jsonPath().getList(".", MenuGroup.class);
 
-		assertThat(actual).usingElementComparatorOnFields("id").isNotNull();
-		assertThat(actual).usingElementComparatorOnFields("name").isEqualTo(expected);
+		assertAll(
+			() -> assertThat(actual).usingElementComparatorOnFields("id").isNotNull(),
+			() -> assertThat(actual).usingElementComparatorOnFields("name").isEqualTo(expected)
+		);
+	}
+
+	public static MenuGroup getPersist(String name) {
+		MenuGroup menuGroup = create(name);
+		ExtractableResponse<Response> response = requestToCreateMenuGroup(menuGroup);
+		return response.jsonPath().getObject(".", MenuGroup.class);
 	}
 }

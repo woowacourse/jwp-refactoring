@@ -17,7 +17,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
 	@Test
 	void create() {
 		// given
-		MenuGroup menuGroup = MenuGroupAcceptanceStep.createMenuGroup("겨울 회");
+		MenuGroup menuGroup = MenuGroupAcceptanceStep.create("겨울 회");
 
 		// when
 		ExtractableResponse<Response> response = MenuGroupAcceptanceStep.requestToCreateMenuGroup(menuGroup);
@@ -31,8 +31,8 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
 	@Test
 	void list() {
 		// given
-		MenuGroup menuGroup = MenuGroupAcceptanceStep.createMenuGroup("겨울 회");
-		MenuGroup menuGroup2 = MenuGroupAcceptanceStep.createMenuGroup("해산물");
+		MenuGroup menuGroup = MenuGroupAcceptanceStep.create("겨울 회");
+		MenuGroup menuGroup2 = MenuGroupAcceptanceStep.create("해산물");
 
 		MenuGroupAcceptanceStep.requestToCreateMenuGroup(menuGroup);
 		MenuGroupAcceptanceStep.requestToCreateMenuGroup(menuGroup2);

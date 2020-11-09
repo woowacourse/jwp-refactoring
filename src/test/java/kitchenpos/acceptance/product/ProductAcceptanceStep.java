@@ -15,7 +15,7 @@ import kitchenpos.domain.Product;
 
 public class ProductAcceptanceStep {
 
-	public static Product createProduct(String name, int price) {
+	public static Product create(String name, int price) {
 		Product product = new Product();
 		product.setName(name);
 		product.setPrice(BigDecimal.valueOf(price));
@@ -54,7 +54,15 @@ public class ProductAcceptanceStep {
 	public static void assertThatFindProducts(ExtractableResponse<Response> response, List<Product> expected) {
 		List<Product> actual = response.jsonPath().getList(".", Product.class);
 
-		assertThat(actual).usingElementComparatorOnFields("id").isNotNull();
-		assertThat(actual).usingElementComparatorOnFields("name").isEqualTo(expected);
+		assertAll(
+			() -> assertThat(actual).usingElementComparatorOnFields("id").isNotNull(),
+			() -> assertThat(actual).usingElementComparatorOnFields("name").isEqualTo(expected)
+		);
+	}
+
+	public static Product getPersist(String name, int price) {
+		Product product = create(name, price);
+		ExtractableResponse<Response> response = requestToCreateProduct(product);
+		return response.jsonPath().getObject(".", Product.class);
 	}
 }
