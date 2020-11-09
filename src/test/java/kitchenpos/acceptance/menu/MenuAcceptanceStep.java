@@ -68,4 +68,10 @@ public class MenuAcceptanceStep {
 			() -> assertThat(actual).usingElementComparatorOnFields("name").isEqualTo(expected)
 		);
 	}
+
+	public static Menu getPersist(String name, int price, MenuGroup menuGroup, MenuProduct menuProduct) {
+		Menu menu = create(name, price, menuGroup, menuProduct);
+		ExtractableResponse<Response> response = requestToCreateMenuGroup(menu);
+		return response.jsonPath().getObject(".", Menu.class);
+	}
 }
