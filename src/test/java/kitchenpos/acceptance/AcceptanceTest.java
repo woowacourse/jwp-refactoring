@@ -22,8 +22,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableResponse;
+import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.response.OrderTableResponse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
@@ -106,7 +106,7 @@ public class AcceptanceTest {
     }
 
     protected OrderTableResponse changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
-        OrderTableChangeEmptyRequest request = new OrderTableChangeEmptyRequest(empty);
+        ChangeOrderTableEmptyCommand request = new ChangeOrderTableEmptyCommand(empty);
 
         return put(OrderTableResponse.class, objectMapper.writeValueAsString(request), API_TABLES + "/" + orderTableId + "/empty");
     }

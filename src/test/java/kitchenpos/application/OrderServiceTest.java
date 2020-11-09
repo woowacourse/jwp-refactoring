@@ -16,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.model.order.OrderStatus;
 
 @Transactional
 @SpringBootTest
@@ -32,7 +32,7 @@ class OrderServiceTest {
     @Test
     void create() {
         orderTableService.changeEmpty(ORDER_CREATE_REQUEST.getOrderTableId(),
-                new OrderTableChangeEmptyRequest(false));
+                new ChangeOrderTableEmptyCommand(false));
         OrderResponse response = orderService.create(ORDER_CREATE_REQUEST);
 
         assertAll(
@@ -49,7 +49,7 @@ class OrderServiceTest {
     @Test
     void list() {
         orderTableService.changeEmpty(ORDER_CREATE_REQUEST.getOrderTableId(),
-                new OrderTableChangeEmptyRequest(false));
+                new ChangeOrderTableEmptyCommand(false));
         OrderResponse created = orderService.create(ORDER_CREATE_REQUEST);
         List<OrderResponse> responses = orderService.list();
         OrderResponse last = responses.get(responses.size() - 1);
@@ -74,7 +74,7 @@ class OrderServiceTest {
 
     private void changeOrderStatusSuccess() {
         orderTableService.changeEmpty(ORDER_CREATE_REQUEST.getOrderTableId(),
-                new OrderTableChangeEmptyRequest(false));
+                new ChangeOrderTableEmptyCommand(false));
         OrderResponse created = orderService.create(ORDER_CREATE_REQUEST);
         OrderResponse changed = orderService.changeOrderStatus(created.getId(),
                 ORDER_STATUS_CHANGE_REQUEST2);

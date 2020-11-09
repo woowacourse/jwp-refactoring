@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.application.response.MenuGroupResponse;
 
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
     /**

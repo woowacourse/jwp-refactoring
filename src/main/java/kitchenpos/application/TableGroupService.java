@@ -3,12 +3,12 @@ package kitchenpos.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.domain.entity.TableGroup;
-import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.domain.service.TableGroupCreateService;
-import kitchenpos.domain.service.TableGroupUngroupService;
+import kitchenpos.application.command.CreateTableGroupCommand;
+import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.domain.model.tablegroup.TableGroup;
+import kitchenpos.domain.model.tablegroup.TableGroupCreateService;
+import kitchenpos.domain.model.tablegroup.TableGroupRepository;
+import kitchenpos.domain.model.tablegroup.TableGroupUngroupService;
 
 @Service
 public class TableGroupService {
@@ -25,8 +25,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final TableGroupCreateRequest request) {
-        TableGroup tableGroup = request.toEntity();
+    public TableGroupResponse create(final CreateTableGroupCommand command) {
+        TableGroup tableGroup = command.toEntity();
         TableGroup saved = tableGroupRepository.save(tableGroup.create(tableGroupCreateService));
         return TableGroupResponse.of(saved);
     }

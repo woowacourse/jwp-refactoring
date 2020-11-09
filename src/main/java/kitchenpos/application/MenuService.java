@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.MenuRequest;
-import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.domain.entity.Menu;
-import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.service.MenuCreateService;
+import kitchenpos.application.command.CreateMenuCommand;
+import kitchenpos.application.response.MenuResponse;
+import kitchenpos.domain.model.menu.Menu;
+import kitchenpos.domain.model.menu.MenuCreateService;
+import kitchenpos.domain.model.menu.MenuRepository;
 
 @Service
 public class MenuService {
@@ -23,8 +23,8 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuRequest request) {
-        Menu menu = request.toEntity();
+    public MenuResponse create(final CreateMenuCommand command) {
+        Menu menu = command.toEntity();
         Menu saved = menuRepository.save(menu.create(menuCreateService));
         return MenuResponse.of(saved);
     }

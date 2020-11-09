@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.application.response.MenuGroupResponse;
 
 @Transactional
 @SpringBootTest

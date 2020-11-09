@@ -12,9 +12,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuests;
-import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.entity.OrderTable;
+import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.model.ordertable.OrderTable;
 
 public class TableAcceptanceTest extends AcceptanceTest {
     /**
@@ -78,7 +78,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private OrderTableResponse changeNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
-        OrderTableChangeNumberOfGuests request = new OrderTableChangeNumberOfGuests(numberOfGuests);
+        ChangeNumberOfOrderTableGuestsCommand request = new ChangeNumberOfOrderTableGuestsCommand(
+                numberOfGuests);
 
         return put(OrderTableResponse.class, objectMapper.writeValueAsString(request),
                 API_TABLES + "/" + orderTableId + "/number-of-guests");

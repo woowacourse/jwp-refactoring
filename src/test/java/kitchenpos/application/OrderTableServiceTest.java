@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuests;
-import kitchenpos.application.dto.OrderTableResponse;
+import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
+import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.response.OrderTableResponse;
 
 @Transactional
 @SpringBootTest
@@ -44,7 +44,7 @@ class OrderTableServiceTest {
         OrderTableResponse response = orderTableService.create(ORDER_TABLE_REQUEST);
         boolean empty = !ORDER_TABLE_CHANGE_EMPTY_REQUEST.isEmpty();
 
-        orderTableService.changeEmpty(response.getId(), new OrderTableChangeEmptyRequest(empty));
+        orderTableService.changeEmpty(response.getId(), new ChangeOrderTableEmptyCommand(empty));
         List<OrderTableResponse> list = orderTableService.list();
         OrderTableResponse last = list.get(list.size() - 1);
 
@@ -57,8 +57,9 @@ class OrderTableServiceTest {
         Long tableId = orderTableService.create(ORDER_TABLE_REQUEST).getId();
         int numberOfGuests = ORDER_TABLE_CHANGE_NUMBER_OF_GUESTS.getNumberOfGuests();
 
-        orderTableService.changeEmpty(tableId, new OrderTableChangeEmptyRequest(false));
-        orderTableService.changeNumberOfGuests(tableId, new OrderTableChangeNumberOfGuests(numberOfGuests));
+        orderTableService.changeEmpty(tableId, new ChangeOrderTableEmptyCommand(false));
+        orderTableService.changeNumberOfGuests(tableId,
+                new ChangeNumberOfOrderTableGuestsCommand(numberOfGuests));
         List<OrderTableResponse> list = orderTableService.list();
         OrderTableResponse last = list.get(list.size() - 1);
 

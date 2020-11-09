@@ -5,13 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.application.dto.OrderTableChangeNumberOfGuests;
-import kitchenpos.application.dto.OrderTableCreateRequest;
-import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.domain.entity.OrderTable;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.service.OrderTableChangeEmptyService;
+import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
+import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.command.CreateOrderTableCommand;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.model.ordertable.OrderTable;
+import kitchenpos.domain.model.ordertable.OrderTableChangeEmptyService;
+import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
 @Service
 public class OrderTableService {
@@ -25,8 +25,8 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableCreateRequest request) {
-        OrderTable orderTable = request.toEntity();
+    public OrderTableResponse create(final CreateOrderTableCommand command) {
+        OrderTable orderTable = command.toEntity();
         OrderTable saved = orderTableRepository.save(orderTable);
         return OrderTableResponse.of(saved);
     }
@@ -36,19 +36,21 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+            final ChangeOrderTableEmptyCommand command) {
         final OrderTable saved = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        saved.changeEmpty(request.isEmpty(), orderTableChangeEmptyService);
+        saved.changeEmpty(command.isEmpty(), orderTableChangeEmptyService);
         OrderTable changed = orderTableRepository.save(saved);
         return OrderTableResponse.of(changed);
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableChangeNumberOfGuests request) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+            final ChangeNumberOfOrderTableGuestsCommand command) {
         final OrderTable saved = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-        saved.changeNumberOfGuests(request.getNumberOfGuests());
+        saved.changeNumberOfGuests(command.getNumberOfGuests());
         OrderTable changed = orderTableRepository.save(saved);
         return OrderTableResponse.of(changed);
     }

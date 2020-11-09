@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.domain.entity.Product;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.application.command.CreateProductCommand;
+import kitchenpos.application.response.ProductResponse;
+import kitchenpos.domain.model.product.Product;
+import kitchenpos.domain.model.product.ProductRepository;
 
 @Service
 public class ProductService {
@@ -19,8 +19,8 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(final ProductRequest request) {
-        Product product = request.toEntity();
+    public ProductResponse create(final CreateProductCommand command) {
+        Product product = command.toEntity();
         Product saved = productRepository.save(product);
         return ProductResponse.of(saved);
     }

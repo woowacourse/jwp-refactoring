@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.application.dto.ProductRequest;
-import kitchenpos.application.dto.ProductResponse;
+import kitchenpos.application.command.CreateProductCommand;
+import kitchenpos.application.response.ProductResponse;
 
 @RequestMapping(API_PRODUCTS)
 @RestController
@@ -30,8 +30,9 @@ public class ProductRestController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductRequest request) {
-        ProductResponse response = productService.create(request);
+    public ResponseEntity<ProductResponse> create(
+            @RequestBody @Valid final CreateProductCommand command) {
+        ProductResponse response = productService.create(command);
         final URI uri = URI.create(API_PRODUCTS + "/" + response.getId());
         return ResponseEntity.created(uri)
                 .body(response)
