@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class MenuServiceTest implements ServiceTest {
 		input.setName("후라이드");
 		input.setPrice(BigDecimal.valueOf(16_000));
 		input.setMenuGroupId(1L);
-		input.setMenuProducts(Arrays.asList(menuProduct));
+		input.setMenuProducts(Collections.singletonList(menuProduct));
 
 		Menu output = menuService.create(input);
 		assertAll(
@@ -55,7 +56,7 @@ class MenuServiceTest implements ServiceTest {
 		input.setName("후라이드");
 		input.setPrice(BigDecimal.valueOf(invalidPrice));
 		input.setMenuGroupId(1L);
-		input.setMenuProducts(Arrays.asList(menuProduct));
+		input.setMenuProducts(Collections.singletonList(menuProduct));
 
 		assertThatThrownBy(() -> menuService.create(input)).isInstanceOf(IllegalArgumentException.class);
 
@@ -114,7 +115,7 @@ class MenuServiceTest implements ServiceTest {
 		input.setName("후라이드");
 		input.setPrice(BigDecimal.valueOf(16_000));
 		input.setMenuGroupId(invalidMenuGroupId);
-		input.setMenuProducts(Arrays.asList(menuProduct));
+		input.setMenuProducts(Collections.singletonList(menuProduct));
 
 		assertThatThrownBy(() -> menuService.create(input)).isInstanceOf(IllegalArgumentException.class);
 	}

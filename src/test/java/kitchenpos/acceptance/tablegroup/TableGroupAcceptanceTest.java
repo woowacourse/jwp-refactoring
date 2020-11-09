@@ -30,7 +30,7 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
 
 		// then
 		AcceptanceStep.assertThatStatusIsCreated(response);
-		TableGroupAcceptanceStep.assertThatCreateTableGroup(response, tableGroup);
+		TableGroupAcceptanceStep.assertThatCreateTableGroup(response);
 	}
 
 	@DisplayName("테이블 단체 지정을 해제한다")

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,12 +61,12 @@ class TableGroupServiceTest implements ServiceTest {
 		tableService.changeEmpty(emptyTable1.getId(), emptyTable1);
 		tableService.changeEmpty(emptyTable2.getId(), emptyTable2);
 
-		TableGroup input1 = new TableGroup();
+		TableGroup input = new TableGroup();
 
-		input1.setOrderTables(Arrays.asList(emptyTable1, emptyTable2));
-		tableGroupService.create(input1);
+		input.setOrderTables(Arrays.asList(emptyTable1, emptyTable2));
+		tableGroupService.create(input);
 
-		assertThatThrownBy(() -> tableGroupService.create(input1))
+		assertThatThrownBy(() -> tableGroupService.create(input))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -80,7 +81,6 @@ class TableGroupServiceTest implements ServiceTest {
 		tableService.changeEmpty(emptyTable2.getId(), emptyTable2);
 
 		TableGroup input = new TableGroup();
-
 		input.setOrderTables(Arrays.asList(emptyTable1, emptyTable2));
 		TableGroup output = tableGroupService.create(input);
 
@@ -113,7 +113,7 @@ class TableGroupServiceTest implements ServiceTest {
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
 
-		order.setOrderLineItems(Arrays.asList(orderLineItem));
+		order.setOrderLineItems(Collections.singletonList(orderLineItem));
 		orderService.create(order);
 
 		assertThatThrownBy(() -> tableGroupService.ungroup(output.getId()))

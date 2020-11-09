@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 
-import org.aspectj.weaver.ast.Or;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 class TableServiceTest implements ServiceTest {
@@ -65,7 +63,8 @@ class TableServiceTest implements ServiceTest {
 		order.setOrderLineItems(Arrays.asList(orderLineItem));
 		orderService.create(order);
 
-		assertThatThrownBy(() -> tableService.changeEmpty(output.getId(), output)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> tableService.changeEmpty(output.getId(), output))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("방문한 손님 수를 입력한다")
@@ -86,7 +85,8 @@ class TableServiceTest implements ServiceTest {
 		OrderTable output = tableService.create(new OrderTable());
 		output.setNumberOfGuests(invalidGuestCount);
 
-		assertThatThrownBy(() -> tableService.changeNumberOfGuests(output.getId(), output)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> tableService.changeNumberOfGuests(output.getId(), output))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("빈 테이블에 손님 수를 입력하려는 경우 예외가 발생한다")
@@ -98,6 +98,7 @@ class TableServiceTest implements ServiceTest {
 
 		output.setNumberOfGuests(3);
 
-		assertThatThrownBy(() -> tableService.changeNumberOfGuests(output.getId(), output)).isInstanceOf(IllegalArgumentException.class);
+		assertThatThrownBy(() -> tableService.changeNumberOfGuests(output.getId(), output))
+			.isInstanceOf(IllegalArgumentException.class);
 	}
 }

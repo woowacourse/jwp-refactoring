@@ -25,7 +25,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
 		// then
 		AcceptanceStep.assertThatStatusIsCreated(response);
-		OrderAcceptanceStep.assertThatCreateOrder(response, order);
+		OrderAcceptanceStep.assertThatCreateOrder(response);
 	}
 
 	@DisplayName("모든 주문을 조회한다")

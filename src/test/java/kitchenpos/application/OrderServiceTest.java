@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class OrderServiceTest implements ServiceTest {
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
 
-		input.setOrderLineItems(Arrays.asList(orderLineItem));
+		input.setOrderLineItems(Collections.singletonList(orderLineItem));
 		Order output = orderService.create(input);
 
 		assertThat(output.getId()).isNotNull();
@@ -53,7 +53,7 @@ class OrderServiceTest implements ServiceTest {
 
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
-		input.setOrderLineItems(Arrays.asList(orderLineItem));
+		input.setOrderLineItems(Collections.singletonList(orderLineItem));
 
 		assertThatThrownBy(() -> orderService.create(input)).isInstanceOf(IllegalArgumentException.class);
 	}
@@ -69,7 +69,7 @@ class OrderServiceTest implements ServiceTest {
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
 
-		input.setOrderLineItems(Arrays.asList(orderLineItem));
+		input.setOrderLineItems(Collections.singletonList(orderLineItem));
 		Order output = orderService.create(input);
 
 		List<Order> orders = orderService.list();
@@ -96,7 +96,7 @@ class OrderServiceTest implements ServiceTest {
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
 
-		input.setOrderLineItems(Arrays.asList(orderLineItem));
+		input.setOrderLineItems(Collections.singletonList(orderLineItem));
 		Order output = orderService.create(input);
 		output.setOrderStatus(orderStatusName);
 
@@ -116,7 +116,7 @@ class OrderServiceTest implements ServiceTest {
 		OrderLineItem orderLineItem = new OrderLineItem();
 		orderLineItem.setMenuId(1L);
 
-		input.setOrderLineItems(Arrays.asList(orderLineItem));
+		input.setOrderLineItems(Collections.singletonList(orderLineItem));
 		Order output = orderService.create(input);
 		output.setOrderStatus("COMPLETION");
 

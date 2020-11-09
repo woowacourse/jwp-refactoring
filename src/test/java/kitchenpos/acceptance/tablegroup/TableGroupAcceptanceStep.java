@@ -26,7 +26,7 @@ public class TableGroupAcceptanceStep {
 			.extract();
 	}
 
-	public static void assertThatCreateTableGroup(ExtractableResponse<Response> response, TableGroup expected) {
+	public static void assertThatCreateTableGroup(ExtractableResponse<Response> response) {
 		TableGroup actual = response.jsonPath().getObject(".", TableGroup.class);
 
 		assertAll(

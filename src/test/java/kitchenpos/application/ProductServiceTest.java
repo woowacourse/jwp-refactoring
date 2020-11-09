@@ -35,14 +35,14 @@ class ProductServiceTest implements ServiceTest {
 	}
 
 	@DisplayName("가격이 0원 미만일 경우 예외가 발생한다")
-	@ValueSource(ints = {-10_000_000, -1})
+	@ValueSource(ints = {-10_000, -1})
 	@ParameterizedTest
 	void create_ThrowException_WhenInvalidPrice(int invalidPrice) {
 		Product input = new Product();
 		input.setName("전어회(세꼬시)");
 		input.setPrice(BigDecimal.valueOf(invalidPrice));
 
-		assertThatIllegalArgumentException().isThrownBy(() -> productService.create(input));
+		assertThatThrownBy(() -> productService.create(input)).isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("모든 상품을 조회한다")

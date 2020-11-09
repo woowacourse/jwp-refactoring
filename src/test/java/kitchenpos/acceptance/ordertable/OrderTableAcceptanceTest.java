@@ -44,7 +44,7 @@ public class OrderTableAcceptanceTest extends AcceptanceTest {
 
 		// then
 		AcceptanceStep.assertThatStatusIsOk(response);
-		OrderTableAcceptanceStep.assertThatFindOrderTables(response, Arrays.asList(orderTable, orderTable2));
+		OrderTableAcceptanceStep.assertThatFindOrderTables(response);
 	}
 
 	@DisplayName("주문 테이블을 비우고 채운다")

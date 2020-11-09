@@ -59,7 +59,7 @@ public class OrderAcceptanceStep {
 			.extract();
 	}
 
-	public static void assertThatCreateOrder(ExtractableResponse<Response> response, Order expected) {
+	public static void assertThatCreateOrder(ExtractableResponse<Response> response) {
 		Order actual = response.jsonPath().getObject(".", Order.class);
 
 		assertAll(
@@ -90,7 +90,7 @@ public class OrderAcceptanceStep {
 
 		assertAll(
 			() -> assertThat(actual).usingElementComparatorOnFields("id").isNotNull(),
-			() -> assertThat(actual).usingElementComparatorOnFields("orderedTime").isNotNull(),
+			() -> assertThat(actual).usingElementComparatorOnFields("orderedTime").isEqualTo(expected),
 			() -> assertThat(actual).usingElementComparatorOnFields("orderLineItems").isNotNull()
 		);
 	}

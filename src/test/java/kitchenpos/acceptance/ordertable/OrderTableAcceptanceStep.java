@@ -38,7 +38,7 @@ public class OrderTableAcceptanceStep {
 			.extract();
 	}
 
-	public static void assertThatFindOrderTables(ExtractableResponse<Response> response, List<OrderTable> expected) {
+	public static void assertThatFindOrderTables(ExtractableResponse<Response> response) {
 		List<OrderTable> actual = response.jsonPath().getList(".", OrderTable.class);
 
 		assertThat(actual).usingElementComparatorOnFields("id").isNotNull();
