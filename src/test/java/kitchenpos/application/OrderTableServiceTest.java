@@ -8,16 +8,15 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.model.ordertable.OrderTableChangeEmptyService;
 
-@Transactional
-@SpringBootTest
-class OrderTableServiceTest {
+@Import({OrderTableService.class, OrderTableChangeEmptyService.class})
+class OrderTableServiceTest extends ApplicationServiceTest {
     @Autowired
     private OrderTableService orderTableService;
 

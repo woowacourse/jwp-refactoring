@@ -8,14 +8,13 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.response.MenuResponse;
+import kitchenpos.domain.model.menu.MenuCreateService;
 
-@Transactional
-@SpringBootTest
-class MenuServiceTest {
+@Import({MenuService.class, MenuCreateService.class})
+class MenuServiceTest extends ApplicationServiceTest {
     @Autowired
     private MenuService menuService;
 

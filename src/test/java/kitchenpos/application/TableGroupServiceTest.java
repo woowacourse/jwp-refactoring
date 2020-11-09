@@ -7,14 +7,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.domain.model.tablegroup.TableGroupCreateService;
+import kitchenpos.domain.model.tablegroup.TableGroupUngroupService;
 
-@Transactional
-@SpringBootTest
-class TableGroupServiceTest {
+@Import({TableGroupService.class, TableGroupCreateService.class, TableGroupUngroupService.class})
+class TableGroupServiceTest extends ApplicationServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 

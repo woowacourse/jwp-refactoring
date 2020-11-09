@@ -13,16 +13,17 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.model.order.OrderCreateService;
 import kitchenpos.domain.model.order.OrderStatus;
+import kitchenpos.domain.model.ordertable.OrderTableChangeEmptyService;
 
-@Transactional
-@SpringBootTest
-class OrderServiceTest {
+@Import({OrderService.class, OrderTableService.class, OrderCreateService.class,
+        OrderTableChangeEmptyService.class})
+class OrderServiceTest extends ApplicationServiceTest {
     @Autowired
     private OrderService orderService;
     @Autowired
