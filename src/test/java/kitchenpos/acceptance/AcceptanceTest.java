@@ -24,19 +24,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.factory.OrderFactory;
-import kitchenpos.factory.OrderLineItemFactory;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 public class AcceptanceTest {
     protected static final String LOCATION = "Location";
     private static final String DELIMITER = "/";
-
-    @Autowired
-    protected OrderFactory orderFactory;
-    @Autowired
-    protected OrderLineItemFactory orderLineItemFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;

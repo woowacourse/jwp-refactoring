@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import kitchenpos.domain.entity.Order;
 
-public interface OrderDao {
+public interface OrderRepository {
     Order save(Order entity);
 
     Optional<Order> findById(Long id);

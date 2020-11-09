@@ -17,23 +17,27 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.entity.Order;
-import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderRepository;
 
 @Repository
-public class JdbcTemplateOrderDao implements OrderDao {
+public class JdbcTemplateOrderDao implements OrderRepository {
     private static final String TABLE_NAME = "orders";
     private static final String KEY_COLUMN_NAME = "id";
 
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert jdbcInsert;
+    private final JdbcTemplateOrderLineItemDao jdbcTemplateOrderLineItemDao;
 
-    public JdbcTemplateOrderDao(final DataSource dataSource) {
+    public JdbcTemplateOrderDao(final DataSource dataSource,
+            JdbcTemplateOrderLineItemDao jdbcTemplateOrderLineItemDao) {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(TABLE_NAME)
                 .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
         ;
+        this.jdbcTemplateOrderLineItemDao = jdbcTemplateOrderLineItemDao;
     }
 
     @Override
@@ -41,6 +45,10 @@ public class JdbcTemplateOrderDao implements OrderDao {
         if (Objects.isNull(entity.getId())) {
             final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
             final Number key = jdbcInsert.executeAndReturnKey(parameters);
+            for (OrderLineItem orderLineItem : entity.getOrderLineItems()) {
+                orderLineItem.orderBy(key.longValue());
+                jdbcTemplateOrderLineItemDao.save(orderLineItem);
+            }
             return select(key.longValue());
         }
         update(entity);
@@ -63,7 +71,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdAndOrderStatusIn(final Long orderTableId,
+            final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id = (:orderTableId) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -73,7 +82,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
-    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds, final List<String> orderStatuses) {
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
+            final List<String> orderStatuses) {
         final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
                 " FROM orders WHERE order_table_id IN (:orderTableIds) AND order_status IN (:orderStatuses)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
@@ -86,7 +96,8 @@ public class JdbcTemplateOrderDao implements OrderDao {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("id", id);
-        return jdbcTemplate.queryForObject(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+        return jdbcTemplate.queryForObject(sql, parameters,
+                (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private void update(final Order entity) {
@@ -98,11 +109,10 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        final Order entity = new Order();
-        entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
-        entity.setOrderTableId(resultSet.getLong("order_table_id"));
-        entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
-        return entity;
+        long orderId = resultSet.getLong(KEY_COLUMN_NAME);
+        List<OrderLineItem> orderLineItems = jdbcTemplateOrderLineItemDao.findAllByOrderId(orderId);
+        return new Order(orderId, resultSet.getLong("order_table_id"),
+                resultSet.getString("order_status"),
+                resultSet.getObject("ordered_time", LocalDateTime.class), orderLineItems);
     }
 }

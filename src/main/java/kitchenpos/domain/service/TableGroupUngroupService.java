@@ -8,23 +8,23 @@ import org.springframework.stereotype.Service;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.entity.OrderTable;
-import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 
 @Service
 public class TableGroupUngroupService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableGroupUngroupService(OrderDao orderDao, OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableGroupUngroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     public void resetOrderTables(List<Long> orderTableIds) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

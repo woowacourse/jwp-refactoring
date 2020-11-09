@@ -3,8 +3,10 @@ package kitchenpos.adapter.presentation.web;
 import static kitchenpos.adapter.presentation.web.OrderRestController.*;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,20 +28,20 @@ public class OrderRestController {
     }
 
     @PostMapping
-    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest order) {
-        final OrderResponse created = orderService.create(order);
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest request) {
+        final OrderResponse created = orderService.create(request);
         final URI uri = URI.create(API_ORDERS + "/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created)
                 ;
     }
 
-    // @GetMapping
-    // public ResponseEntity<List<Order>> list() {
-    //     return ResponseEntity.ok()
-    //             .body(orderService.list())
-    //             ;
-    // }
+    @GetMapping
+    public ResponseEntity<List<OrderResponse>> list() {
+        return ResponseEntity.ok()
+                .body(orderService.list())
+                ;
+    }
     //
     // @PutMapping("/{orderId}/order-status")
     // public ResponseEntity<Order> changeOrderStatus(

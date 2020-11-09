@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.application.dto.OrderTableCreateRequest;
@@ -14,6 +15,7 @@ import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.core.AggregateReference;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 
 public class RequestFixture {
     public static final MenuGroupRequest MENU_GROUP_REQUEST = new MenuGroupRequest("추천메뉴");
@@ -29,4 +31,6 @@ public class RequestFixture {
             1);
     public static final TableGroupCreateRequest TABLE_GROUP_CREATE_REQUEST = new TableGroupCreateRequest(
             asList(new AggregateReference<>(1L), new AggregateReference<>(2L)));
+    public static final OrderCreateRequest ORDER_CREATE_REQUEST = new OrderCreateRequest(1L,
+            singletonList(new OrderLineItem(null, null, 1L, 1L)));
 }

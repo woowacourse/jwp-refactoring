@@ -17,13 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.service.OrderTableChangeEmptyService;
 
 @ExtendWith(MockitoExtension.class)
 class OrderTableTest {
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @InjectMocks
     private OrderTableChangeEmptyService orderTableChangeEmptyService;
@@ -48,7 +48,7 @@ class OrderTableTest {
     }
 
     private void changeEmptySuccess() {
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
 
@@ -63,7 +63,7 @@ class OrderTableTest {
     }
 
     private void invalidOrderStatus() {
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 

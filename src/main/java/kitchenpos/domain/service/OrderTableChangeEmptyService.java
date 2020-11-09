@@ -6,14 +6,14 @@ import static java.util.Objects.*;
 import org.springframework.stereotype.Service;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderRepository;
 
 @Service
 public class OrderTableChangeEmptyService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
-    public OrderTableChangeEmptyService(OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public OrderTableChangeEmptyService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     public void validate(Long id, Long tableGroupId) {
@@ -21,7 +21,7 @@ public class OrderTableChangeEmptyService {
             throw new IllegalArgumentException();
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(id,
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(id,
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }

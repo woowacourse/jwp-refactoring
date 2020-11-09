@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.core.AggregateReference;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderDao;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.service.TableGroupCreateService;
 import kitchenpos.domain.service.TableGroupUngroupService;
@@ -31,7 +31,7 @@ class TableGroupTest {
     @Mock
     private OrderTableRepository orderTableRepository;
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @InjectMocks
     private TableGroupCreateService tableGroupCreateService;
@@ -112,7 +112,7 @@ class TableGroupTest {
 
         given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
                 .willReturn(asList(orderTable1, orderTable2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
         given(orderTableRepository.save(orderTable1)).willReturn(orderTable1);
@@ -133,7 +133,7 @@ class TableGroupTest {
                 asList(new AggregateReference<>(orderTable1.getId()),
                         new AggregateReference<>(orderTable2.getId())), LocalDateTime.now());
 
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 
