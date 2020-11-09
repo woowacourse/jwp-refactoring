@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -43,5 +45,12 @@ public class KitchenposTestHelper {
         product.setName(name);
         product.setPrice(price);
         return product;
+    }
+
+    public static MenuGroup createMenuGroup(Long id, String name) {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(id);
+        menuGroup.setName(name);
+        return menuGroup;
     }
 }
