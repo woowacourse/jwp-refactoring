@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import kitchenpos.acceptance.OrderAcceptanceTest.OrderLineItemForTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -186,15 +187,11 @@ public abstract class AcceptanceTest {
     TableGroup groupTables(List<Table> tables) {
         Map<String, Object> body = new HashMap<>();
 
-        List<Map<String, Object>> tablesForGroupingRequest = new ArrayList<>();
+        List<Long> tableIds = tables.stream()
+            .map(Table::getId)
+            .collect(Collectors.toList());
 
-        for (Table table : tables) {
-            Map<String, Object> tableForGroupingRequest = new HashMap<>();
-            tableForGroupingRequest.put("id", table.getId());
-
-            tablesForGroupingRequest.add(tableForGroupingRequest);
-        }
-        body.put("tables", tablesForGroupingRequest);
+        body.put("tableIds", tableIds);
 
         return
             given()
@@ -213,7 +210,7 @@ public abstract class AcceptanceTest {
 
         body.put("orderTableId", table.getId());
 
-        List<Map> orderLineItemsForRequest = new ArrayList<>();
+        List<Map<String, Object>> orderLineItemsForRequest = new ArrayList<>();
 
         orderLineItems.forEach(orderLineItem -> {
             Map<String, Object> orderLineItemForRequest = new HashMap<>();

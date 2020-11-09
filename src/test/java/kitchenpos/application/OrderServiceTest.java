@@ -14,8 +14,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
@@ -23,6 +21,8 @@ import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.TableChangeRequest;
 import kitchenpos.dto.TableCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class OrderServiceTest {
     private OrderService orderService;
 
     private MenuResponse menu;
-    private Table table;
+    private TableResponse table;
 
     @BeforeEach
     void setUp() {
@@ -91,17 +91,17 @@ class OrderServiceTest {
     @DisplayName("create - 그룹에 속한 테이블에서 주문")
     void createWithGroupedTable() {
         // given
-        Table anotherTable = createTable();
+        TableResponse anotherTable = createTable();
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setTables(Arrays.asList(anotherTable, table));
-        tableGroupService.create(tableGroup);
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+            Arrays.asList(anotherTable.getId(), table.getId()));
+        tableGroupService.create(request);
 
         // when
         Order resultOfTable = orderWithEqualAmountOfAllMenus(table,
             Collections.singletonList(menu), 2);
         Order resultOfAnotherTable = orderWithEqualAmountOfAllMenus(anotherTable,
-                Collections.singletonList(menu), 2);
+            Collections.singletonList(menu), 2);
 
         // then
         assertThat(resultOfTable.getId()).isNotNull();
@@ -250,7 +250,7 @@ class OrderServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Table createTable() {
+    private TableResponse createTable() {
         // create table
         TableCreateRequest createRequest = new TableCreateRequest(true, 0);
 
@@ -259,10 +259,10 @@ class OrderServiceTest {
 
     private MenuResponse createMenu_후라이드세트() {
         // create products
-        ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨",BigDecimal.valueOf(10_000));
+        ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨", BigDecimal.valueOf(10_000));
         Product 후라이드치킨 = productService.create(후라이드치킨_request);
 
-        ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이",BigDecimal.valueOf(5_000));
+        ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이", BigDecimal.valueOf(5_000));
         Product 프랜치프라이 = productService.create(프랜치프라이_request);
 
         // create a menu group
@@ -287,7 +287,7 @@ class OrderServiceTest {
         return Collections.unmodifiableList(menuProducts);
     }
 
-    private Order orderWithEqualAmountOfAllMenus(Table table, List<MenuResponse> menus, int quantity) {
+    private Order orderWithEqualAmountOfAllMenus(TableResponse table, List<MenuResponse> menus, int quantity) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (MenuResponse menu : menus) {

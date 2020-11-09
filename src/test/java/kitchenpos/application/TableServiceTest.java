@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.domain.Table;
 import kitchenpos.dto.TableChangeRequest;
 import kitchenpos.dto.TableCreateRequest;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +27,7 @@ class TableServiceTest {
     void create() {
         TableCreateRequest table = new TableCreateRequest(true, 0);
 
-        Table result = tableService.create(table);
+        TableResponse result = tableService.create(table);
 
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTableGroupId()).isNull();
@@ -40,7 +40,7 @@ class TableServiceTest {
     void createNotEmptyTable() {
         TableCreateRequest notEmptyTable = new TableCreateRequest(false, 0);
 
-        Table result = tableService.create(notEmptyTable);
+        TableResponse result = tableService.create(notEmptyTable);
 
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTableGroupId()).isNull();
@@ -53,7 +53,7 @@ class TableServiceTest {
     void createTableWithGuests() {
         TableCreateRequest table = new TableCreateRequest(false, 5);
 
-        Table result = tableService.create(table);
+        TableResponse result = tableService.create(table);
 
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTableGroupId()).isNull();
@@ -66,7 +66,7 @@ class TableServiceTest {
     void createTableWithGhostGuests() {
         TableCreateRequest table = new TableCreateRequest(true, 5);
 
-        Table result = tableService.create(table);
+        TableResponse result = tableService.create(table);
 
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTableGroupId()).isNull();
@@ -79,7 +79,7 @@ class TableServiceTest {
     void createWithoutAnyInitializing() {
         TableCreateRequest table = new TableCreateRequest();
 
-        Table result = tableService.create(table);
+        TableResponse result = tableService.create(table);
 
         // Todo: 나중에 도메인 변경할것. 손님수 0명인데 안비어있는게 기본인게 좀 이상함
         assertThat(result.getId()).isNotNull();
@@ -90,7 +90,7 @@ class TableServiceTest {
 
     @Test
     void list() {
-        List<Table> tables = tableService.list();
+        List<TableResponse> tables = tableService.list();
 
         assertThat(tables).hasSize(0);
 
@@ -115,12 +115,12 @@ class TableServiceTest {
         // given
         TableCreateRequest request = new TableCreateRequest(from, 0);
 
-        Table table = tableService.create(request);
+        TableResponse table = tableService.create(request);
 
         TableChangeRequest changeRequest = new TableChangeRequest(to);
 
         // when
-        Table result = tableService.changeEmpty(table.getId(), changeRequest);
+        TableResponse result = tableService.changeEmpty(table.getId(), changeRequest);
 
         // then
         assertThat(result.getId()).isEqualTo(table.getId());
@@ -135,12 +135,12 @@ class TableServiceTest {
         // given
         TableCreateRequest request = new TableCreateRequest(from, 5);
 
-        Table table = tableService.create(request);
+        TableResponse table = tableService.create(request);
 
         TableChangeRequest changeRequest = new TableChangeRequest(to);
 
         // when
-        Table result = tableService.changeEmpty(table.getId(), changeRequest);
+        TableResponse result = tableService.changeEmpty(table.getId(), changeRequest);
 
         // then
         assertThat(result.getId()).isEqualTo(table.getId());
@@ -152,11 +152,11 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         TableCreateRequest request = new TableCreateRequest(false);
-        Table table = tableService.create(request);
+        TableResponse table = tableService.create(request);
 
         // when
         TableChangeRequest numberChangedTable = new TableChangeRequest(5);
-        Table result = tableService.changeNumberOfGuests(table.getId(), numberChangedTable);
+        TableResponse result = tableService.changeNumberOfGuests(table.getId(), numberChangedTable);
 
         // then
         assertThat(result.getNumberOfGuests()).isEqualTo(5);
