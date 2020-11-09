@@ -1,15 +1,13 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Menu;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,12 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.fixture.TestFixture;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest extends TestFixture {
@@ -49,53 +49,48 @@ class MenuServiceTest extends TestFixture {
     @DisplayName("Menu 생성 예외 테스트: Menu의 가격이 음수일때")
     @Test
     void createFailByNegativePriceTest() {
-        Menu negativePriceMenu = new Menu();
-        negativePriceMenu.setId(MENU_ID_1);
-        negativePriceMenu.setName(MENU_NAME_1);
-        negativePriceMenu.setPrice(new BigDecimal(-1));
-        negativePriceMenu.setMenuGroupId(MENU_GROUP_ID_1);
-        negativePriceMenu.setMenuProducts(MENU_PRODUCTS_1);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(PRODUCT_ID_1, MENU_PRODUCT_QUANTITY_1);
+        MenuCreateRequest negativePriceMenuRequest =
+            new MenuCreateRequest(MENU_NAME_1, -1L, MENU_GROUP_ID_1, Arrays.asList(menuProductRequest));
 
-        assertThatThrownBy(() -> menuService.create(negativePriceMenu))
+        assertThatThrownBy(() -> menuService.create(negativePriceMenuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu 생성 예외 테스트: MenuGroup이 존재하지 않을때")
     @Test
     void createFailByNotExistMenuGroupTest() {
-        Menu notExistMenuGroupMenu = new Menu();
-        notExistMenuGroupMenu.setId(MENU_ID_1);
-        notExistMenuGroupMenu.setName(MENU_NAME_1);
-        notExistMenuGroupMenu.setPrice(MENU_PRICE_1);
-        notExistMenuGroupMenu.setMenuGroupId(-1L);
-        notExistMenuGroupMenu.setMenuProducts(MENU_PRODUCTS_1);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(PRODUCT_ID_1, MENU_PRODUCT_QUANTITY_1);
+        MenuCreateRequest notExistMenuGroupMenuRequest =
+            new MenuCreateRequest(MENU_NAME_1, MENU_PRICE_1.longValue(), -1L, Arrays.asList(menuProductRequest));
 
-        assertThatThrownBy(() -> menuService.create(notExistMenuGroupMenu))
+        assertThatThrownBy(() -> menuService.create(notExistMenuGroupMenuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu 생성 예외 테스트: MenuProduct들의 가격 합보다 Menu의 가격이 클때")
     @Test
     void createFailByOverPriceMenuTest() {
-        Menu overPriceMenu = new Menu();
-        overPriceMenu.setId(MENU_ID_1);
-        overPriceMenu.setName(MENU_NAME_1);
-        overPriceMenu.setPrice(MENU_PRICE_1.plus(MathContext.DECIMAL32));
-        overPriceMenu.setMenuGroupId(MENU_GROUP_ID_1);
-        overPriceMenu.setMenuProducts(MENU_PRODUCTS_1);
+        MenuProductRequest menuProductRequest = new MenuProductRequest(PRODUCT_ID_1, MENU_PRODUCT_QUANTITY_1);
+        MenuCreateRequest overPriceMenuRequest =
+            new MenuCreateRequest(MENU_NAME_1, MENU_PRICE_1.longValue() + 1L, MENU_GROUP_ID_1, Arrays.asList(menuProductRequest));
 
-        assertThatThrownBy(() -> menuService.create(overPriceMenu))
+        assertThatThrownBy(() -> menuService.create(overPriceMenuRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu 생성 성공 테스트")
     @Test
     void createTest() {
+        MenuProductRequest menuProductRequest = new MenuProductRequest(PRODUCT_ID_1, MENU_PRODUCT_QUANTITY_1);
+        MenuCreateRequest menuCreateRequest =
+            new MenuCreateRequest(MENU_NAME_1, MENU_PRICE_1.longValue(), MENU_GROUP_ID_1, Arrays.asList(menuProductRequest));
+
         given(menuGroupDao.existsById(anyLong())).willReturn(true);
         given(productDao.findById(anyLong())).willReturn(Optional.of(PRODUCT_1));
         given(menuDao.save(any())).willReturn(MENU_1);
 
-        Menu savedMenu = menuService.create(MENU_1);
+        Menu savedMenu = menuService.create(menuCreateRequest);
         assertThat(savedMenu).usingRecursiveComparison().isEqualTo(MENU_1);
     }
 
@@ -103,8 +98,6 @@ class MenuServiceTest extends TestFixture {
     @Test
     void listTest() {
         given(menuDao.findAll()).willReturn(Arrays.asList(MENU_1, MENU_2));
-        given(menuProductDao.findAllByMenuId(MENU_ID_1)).willReturn(MENU_PRODUCTS_1);
-        given(menuProductDao.findAllByMenuId(MENU_ID_2)).willReturn(MENU_PRODUCTS_2);
 
         List<Menu> menus = menuService.list();
         assertAll(
