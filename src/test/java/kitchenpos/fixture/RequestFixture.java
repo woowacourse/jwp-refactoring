@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import kitchenpos.application.dto.MenuGroupRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuests;
 import kitchenpos.application.dto.OrderTableCreateRequest;
@@ -33,4 +34,7 @@ public class RequestFixture {
             asList(new AggregateReference<>(1L), new AggregateReference<>(2L)));
     public static final OrderCreateRequest ORDER_CREATE_REQUEST = new OrderCreateRequest(1L,
             singletonList(new OrderLineItem(null, null, 1L, 1L)));
+
+    public static final OrderStatusChangeRequest ORDER_STATUS_CHANGE_REQUEST1 = new OrderStatusChangeRequest("MEAL");
+    public static final OrderStatusChangeRequest ORDER_STATUS_CHANGE_REQUEST2 = new OrderStatusChangeRequest("COMPLETION");
 }

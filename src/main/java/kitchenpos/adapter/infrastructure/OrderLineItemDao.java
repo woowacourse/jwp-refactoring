@@ -1,4 +1,4 @@
-package kitchenpos.domain.repository;
+package kitchenpos.adapter.infrastructure;
 
 import java.util.List;
 import java.util.Optional;

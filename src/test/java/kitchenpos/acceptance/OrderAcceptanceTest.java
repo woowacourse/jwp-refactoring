@@ -3,6 +3,7 @@ package kitchenpos.acceptance;
 import static kitchenpos.adapter.presentation.web.OrderRestController.*;
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.List;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.domain.entity.Order;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
     /**
@@ -42,17 +42,15 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                     OrderResponse lastOrder = getLastItem(orders);
 
                     assertThat(lastOrder.getId()).isEqualTo(orderId);
+                }),
+                dynamicTest("주문 상태 변경", () -> {
+                    OrderResponse response = changeOrderStatus(orderId);
+                    assertAll(
+                            () -> assertThat(response.getId()).isEqualTo(orderId),
+                            () -> assertThat(response.getOrderStatus()).isEqualTo(
+                                    ORDER_STATUS_CHANGE_REQUEST1.getOrderStatus())
+                    );
                 })
-                // dynamicTest("주문 상태 변경", () -> {
-                //     String orderStatus = OrderStatus.MEAL.name();
-                //     Order request = orderFactory.create(orderStatus);
-                //     Order order = changeOrderStatus(request, orderId);
-                //
-                //     assertAll(
-                //             () -> assertThat(order.getId()).isEqualTo(orderId),
-                //             () -> assertThat(order.getOrderStatus()).isEqualTo(orderStatus)
-                //     );
-                // })
         );
     }
 
@@ -63,8 +61,8 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return post(request, API_ORDERS);
     }
 
-    private Order changeOrderStatus(Order order, Long orderId) throws Exception {
-        String request = objectMapper.writeValueAsString(order);
-        return put(Order.class, request, API_ORDERS + "/" + orderId + "/order-status");
+    private OrderResponse changeOrderStatus(Long orderId) throws Exception {
+        String request = objectMapper.writeValueAsString(ORDER_STATUS_CHANGE_REQUEST1);
+        return put(OrderResponse.class, request, API_ORDERS + "/" + orderId + "/order-status");
     }
 }

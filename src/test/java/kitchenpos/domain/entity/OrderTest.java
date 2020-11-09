@@ -1,11 +1,13 @@
 package kitchenpos.domain.entity;
 
+import static java.util.Collections.*;
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -17,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -83,5 +86,31 @@ class OrderTest {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> order.create(orderCreateService));
+    }
+
+    @DisplayName("주문 상태 변경")
+    @TestFactory
+    Stream<DynamicTest> changeOrderStatus() {
+        return Stream.of(
+                dynamicTest("주문 상태를 변경한다.", this::changeOrderStatusSuccess),
+                dynamicTest("주문의 상태가 완료일 수 없다.", this::invalidOrder)
+        );
+    }
+
+    private void changeOrderStatusSuccess() {
+        Order order = new Order(1L, 1L, "MEAL", LocalDateTime.now(),
+                singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
+
+        order.changeOrderStatus(ORDER_STATUS_CHANGE_REQUEST2.getOrderStatus());
+
+        assertThat(order.getOrderStatus()).isEqualTo(ORDER_STATUS_CHANGE_REQUEST2.getOrderStatus());
+    }
+
+    private void invalidOrder() {
+        Order order = new Order(1L, 1L, "COMPLETION", LocalDateTime.now(),
+                singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
+
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> order.changeOrderStatus(ORDER_STATUS_CHANGE_REQUEST1.getOrderStatus()));
     }
 }

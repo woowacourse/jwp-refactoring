@@ -15,8 +15,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import kitchenpos.adapter.infrastructure.OrderLineItemDao;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.repository.OrderLineItemDao;
 
 @Repository
 public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {

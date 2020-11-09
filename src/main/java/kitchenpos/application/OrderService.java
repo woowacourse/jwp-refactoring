@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.application.dto.OrderStatusChangeRequest;
 import kitchenpos.domain.entity.Order;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.service.OrderCreateService;
@@ -32,22 +33,11 @@ public class OrderService {
         return OrderResponse.listOf(orderRepository.findAll());
     }
 
-    // @Transactional
-    // public Order changeOrderStatus(final Long orderId, final Order order) {
-    //     final Order savedOrder = orderRepository.findById(orderId)
-    //             .orElseThrow(IllegalArgumentException::new);
-    //
-    //     if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-    //         throw new IllegalArgumentException();
-    //     }
-    //
-    //     final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-    //     savedOrder.setOrderStatus(orderStatus.name());
-    //
-    //     orderRepository.save(savedOrder);
-    //
-    //     savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-    //
-    //     return savedOrder;
-    // }
+    @Transactional
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusChangeRequest request) {
+        final Order saved = orderRepository.findById(orderId)
+                .orElseThrow(IllegalArgumentException::new);
+        Order changed = saved.changeOrderStatus(request.getOrderStatus());
+        return OrderResponse.of(orderRepository.save(changed));
+    }
 }

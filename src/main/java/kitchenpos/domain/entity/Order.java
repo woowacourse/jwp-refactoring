@@ -2,6 +2,7 @@ package kitchenpos.domain.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -28,6 +29,14 @@ public class Order {
 
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
+        return this;
+    }
+
+    public Order changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
         return this;
     }
 
