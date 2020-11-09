@@ -53,17 +53,6 @@ public abstract class TestFixture {
     public static final OrderMenu ORDER_MENU_1 = new OrderMenu();
     public static final OrderMenu ORDER_MENU_2 = new OrderMenu();
 
-    public static final long ORDER_ID_1 = 1L;
-    public static final long ORDER_ID_2 = 2L;
-    public static final String ORDER_STATUS_1 = "COOKING";
-    public static final String ORDER_STATUS_2 = "COOKING";
-    public static final LocalDateTime ORDERED_TIME_1 = LocalDateTime.parse("2018-12-15T10:00:00");
-    public static final LocalDateTime ORDERED_TIME_2 = LocalDateTime.parse("2018-12-16T10:00:00");
-    public static final List<OrderMenu> ORDER_MENUS_1 = Arrays.asList(ORDER_MENU_1);
-    public static final List<OrderMenu> ORDER_MENUS_2 = Arrays.asList(ORDER_MENU_2);
-    public static final Order ORDER_1 = new Order();
-    public static final Order ORDER_2 = new Order();
-
     public static final long TABLE_GROUP_ID = 1L;
     public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
     public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
@@ -77,6 +66,15 @@ public abstract class TestFixture {
     public static final Table TABLE_1 = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, TABLE_EMPTY_1);
     public static final Table TABLE_2 = new Table(TABLE_ID_2, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_2, TABLE_EMPTY_2);
     public static final List<Table> TABLES = Arrays.asList(TABLE_1, TABLE_2);
+
+    public static final long ORDER_ID_1 = 1L;
+    public static final long ORDER_ID_2 = 2L;
+    public static final String ORDER_STATUS_1 = "COOKING";
+    public static final String ORDER_STATUS_2 = "COOKING";
+    public static final LocalDateTime ORDERED_TIME_1 = LocalDateTime.parse("2018-12-15T10:00:00");
+    public static final LocalDateTime ORDERED_TIME_2 = LocalDateTime.parse("2018-12-16T10:00:00");
+    public static final Order ORDER_1 = new Order(ORDER_ID_1, TABLE_ID_1, ORDER_STATUS_1, ORDERED_TIME_1);
+    public static final Order ORDER_2 = new Order(ORDER_ID_2, TABLE_ID_2, ORDER_STATUS_2, ORDERED_TIME_2);
 
     @BeforeEach
     void setUpFixture() {
@@ -120,34 +118,5 @@ public abstract class TestFixture {
         ORDER_MENU_2.setOrderId(ORDER_ID_2);
         ORDER_MENU_2.setMenuId(MENU_ID_2);
         ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
-
-        ORDER_1.setId(ORDER_ID_1);
-        ORDER_1.setTableId(TABLE_ID_1);
-        ORDER_1.setOrderStatus(ORDER_STATUS_1);
-        ORDER_1.setOrderedTime(ORDERED_TIME_1);
-        ORDER_2.setId(ORDER_ID_2);
-        ORDER_2.setTableId(TABLE_ID_2);
-        ORDER_2.setOrderStatus(ORDER_STATUS_2);
-        ORDER_2.setOrderedTime(ORDERED_TIME_2);
-
-//        ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
-//        ORDER_MENU_1.setOrderId(ORDER_ID_1);
-//        ORDER_MENU_1.setMenuId(MENU_ID_1);
-//        ORDER_MENU_1.setQuantity(ORDER_MENU_QUANTITY_1);
-//        ORDER_MENU_2.setSeq(ORDER_MENU_SEQ_2);
-//        ORDER_MENU_2.setOrderId(ORDER_ID_2);
-//        ORDER_MENU_2.setMenuId(MENU_ID_2);
-//        ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
-//
-//        ORDER_1.setId(ORDER_ID_1);
-//        ORDER_1.setTableId(TABLE_ID_1);
-//        ORDER_1.setOrderStatus(ORDER_STATUS_1);
-//        ORDER_1.setOrderedTime(ORDERED_TIME_1);
-//        ORDER_1.setOrderMenus(ORDER_MENUS_1);
-//        ORDER_2.setId(ORDER_ID_2);
-//        ORDER_2.setTableId(TABLE_ID_2);
-//        ORDER_2.setOrderStatus(ORDER_STATUS_2);
-//        ORDER_2.setOrderedTime(ORDERED_TIME_2);
-//        ORDER_2.setOrderMenus(ORDER_MENUS_2);
     }
 }

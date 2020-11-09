@@ -17,35 +17,30 @@ public class Order {
         this.orderedTime = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    public Order(Long id, Long tableId, String orderStatus, LocalDateTime orderedTime) {
+        this.id = id;
+        this.tableId = tableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void changeOrderStatus(final String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableId() {
         return tableId;
     }
 
-    public void setTableId(final Long tableId) {
-        this.tableId = tableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 }
