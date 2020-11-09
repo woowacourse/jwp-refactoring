@@ -9,4 +9,6 @@ import kitchenpos.domain.Product;
 public interface ProductRepository extends JpaRepository<Product, Long> {
     @Override
     List<Product> findAll();
+
+    List<Product> findAllByIdIn(List<Long> ids);
 }

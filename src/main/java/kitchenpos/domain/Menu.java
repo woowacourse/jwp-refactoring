@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -41,12 +41,14 @@ public class Menu {
         return new MenuBuilder();
     }
 
-    public MenuBuilder toBuilder() {
-        return new MenuBuilder(id, name, price, menuGroupId, menuProducts);
-    }
-
     public boolean isExpensive(final Price price) {
         return this.price.compareTo(price) > 0;
+    }
+
+    public List<Long> extractProductIds() {
+        return menuProducts.stream()
+            .map(MenuProduct::getProductId)
+            .collect(Collectors.toList());
     }
 
     public static class MenuBuilder {

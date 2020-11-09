@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -58,16 +59,18 @@ class MenuRestControllerTest {
         final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
         final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 10L);
         final Menu savedMenu = createMenu(1L, name, 0, 1L, Collections.singletonList(menuProduct));
-        final MenuCreateRequest menuWithoutId = new MenuCreateRequest(name, new Price(BigDecimal.ZERO), 1L, Collections.singletonList(menuProductRequest));
+        final MenuCreateRequest menuWithoutId = new MenuCreateRequest(name, new Price(BigDecimal.ZERO), 1L,
+            Collections.singletonList(menuProductRequest));
+        final MenuResponse menuResponse = MenuResponse.from(savedMenu);
 
         given(menuService.create(any(Menu.class))).willReturn(savedMenu);
 
         mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(menuWithoutId))
+            .content(objectMapper.writeValueAsBytes(menuWithoutId))
         )
             .andExpect(status().isCreated())
-            .andExpect(content().string(objectMapper.writeValueAsString(savedMenu)))
+            .andExpect(content().bytes(objectMapper.writeValueAsBytes(menuResponse)))
             .andExpect(header().exists("Location"));
     }
 

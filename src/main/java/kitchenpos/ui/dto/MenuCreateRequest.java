@@ -1,7 +1,6 @@
 package kitchenpos.ui.dto;
 
 import java.beans.ConstructorProperties;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 

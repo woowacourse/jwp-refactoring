@@ -33,10 +33,6 @@ public class MenuProduct {
         return new MenuProductBuilder();
     }
 
-    public MenuProductBuilder toBuilder() {
-        return new MenuProductBuilder(seq, menuId, productId, quantity);
-    }
-
     public static class MenuProductBuilder {
         private Long seq;
         private Long menuId;
@@ -48,9 +44,9 @@ public class MenuProduct {
 
         public MenuProductBuilder(Long seq, Long menuId, Long productId, long quantity) {
             this.seq = seq;
-            this.menuId = menuId;
             this.productId = productId;
             this.quantity = quantity;
+            this.menuId = menuId;
         }
 
         public MenuProductBuilder seq(Long seq) {

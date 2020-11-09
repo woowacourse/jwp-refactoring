@@ -1,6 +1,5 @@
 package kitchenpos.ui.dto;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,8 +18,9 @@ public class MenuResponse {
     private final List<MenuProductResponse> menuProducts;
 
     public static MenuResponse from(final Menu menu) {
-        final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts().stream()
-            .map(MenuProductResponse::from)
+        final List<MenuProductResponse> menuProductResponses = menu.getMenuProducts()
+            .stream()
+            .map(it -> MenuProductResponse.of(menu.getId(), it))
             .collect(Collectors.toList());
 
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),

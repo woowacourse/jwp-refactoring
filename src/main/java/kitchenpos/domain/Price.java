@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import kitchenpos.ui.dto.jsonparser.PriceDeserializer;
 import kitchenpos.ui.dto.jsonparser.PriceSerializer;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Getter
 public class Price implements Comparable<Price> {
+    public static Price ZERO = new Price(BigDecimal.ZERO);
+
     @NotNull
     @Column(name = "price", nullable = false)
     private BigDecimal value;

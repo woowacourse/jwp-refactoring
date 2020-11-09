@@ -7,14 +7,10 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -22,10 +18,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Products;
 import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -36,10 +31,7 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuProductRepository menuProductRepository;
-
-    @Mock
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @InjectMocks
     private MenuService menuService;
@@ -50,11 +42,11 @@ class MenuServiceTest {
         final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
         final Menu expectedMenu = createMenu(1L, null, 1000, 1L, Collections.singletonList(menuProduct));
         final Product product = createProduct(1L, null, 1000);
+        final Products products = new Products(Collections.singletonList(product));
 
         given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-        given(productRepository.findById(anyLong())).willReturn(Optional.of(product));
+        given(productService.findAllByIdIn(anyList())).willReturn(products);
         given(menuRepository.save(any(Menu.class))).willReturn(expectedMenu);
-        given(menuProductRepository.save(any(MenuProduct.class))).willReturn(menuProduct);
 
         final Menu persistMenu = menuService.create(
             createMenu(null, null, 1000, 1L, Collections.singletonList(menuProduct)));
@@ -74,29 +66,16 @@ class MenuServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("존재하지 않는 상품 id로 메뉴 생성을 시도할 경우 예외를 반환한다.")
-    @Test
-    void createTest4() {
-        final MenuProduct menuProduct = createMenuProduct(null, 1L, Long.MAX_VALUE, 10);
-        final Menu menuNotExistProductId = createMenu(null, "메뉴", 1000, 1L, Collections.singletonList(menuProduct));
-
-        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-        given(productRepository.findById(anyLong())).willReturn(Optional.empty());
-
-        assertThatThrownBy(() -> menuService.create(menuNotExistProductId))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴에 필요한 상품 가격 합이 메뉴 가격 미만일 경우 예외를 반환한다.")
     @Test
     void createTest5() {
         final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
         final Menu menu = createMenu(null, "메뉴", 1000, 1L, Collections.singletonList(menuProduct));
         final Product product = createProduct(1L, "후라이드", 10);
+        final Products products = new Products(Collections.singletonList(product));
 
         given(menuGroupRepository.existsById(anyLong())).willReturn(true);
-        given(productRepository.findById(anyLong())).willReturn(
-            Optional.of(product));
+        given(productService.findAllByIdIn(anyList())).willReturn(products);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -110,7 +89,6 @@ class MenuServiceTest {
             createMenu(1L, null, 1000, 1L, Collections.singletonList(menuProduct)));
 
         given(menuRepository.findAll()).willReturn(expectedMenus);
-        given(menuProductRepository.findAllByMenuId(anyLong())).willReturn(Collections.singletonList(menuProduct));
 
         final List<Menu> persistMenus = menuService.list();
         assertThat(persistMenus).usingRecursiveComparison().isEqualTo(expectedMenus);

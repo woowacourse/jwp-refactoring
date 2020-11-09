@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Products;
 import kitchenpos.repository.ProductRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -18,6 +18,11 @@ public class ProductService {
     @Transactional
     public Product create(final Product product) {
         return productRepository.save(product);
+    }
+
+    public Products findAllByIdIn(List<Long> ids) {
+        List<Product> products = productRepository.findAllByIdIn(ids);
+        return new Products(products);
     }
 
     public List<Product> list() {
