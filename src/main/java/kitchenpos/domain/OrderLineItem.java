@@ -27,8 +27,7 @@ public class OrderLineItem {
     private long quantity;
 
     @Builder
-    public OrderLineItem(final Long seq, final Menu menu, final long quantity) {
-        this.seq = seq;
+    public OrderLineItem(final Menu menu, final long quantity) {
         this.menu = menu;
         this.quantity = quantity;
     }

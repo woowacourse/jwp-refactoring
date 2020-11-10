@@ -29,8 +29,7 @@ public class MenuProduct {
     private long quantity;
 
     @Builder
-    public MenuProduct(final Long seq, final Product product, final long quantity) {
-        this.seq = seq;
+    public MenuProduct(final Product product, final long quantity) {
         setProduct(product);
         this.quantity = quantity;
     }

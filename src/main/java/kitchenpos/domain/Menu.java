@@ -33,7 +33,6 @@ public class Menu {
 
     @Builder
     public Menu(
-        final Long id,
         final String name,
         final BigDecimal price,
         final MenuGroup menuGroup,

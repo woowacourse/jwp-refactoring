@@ -24,8 +24,7 @@ public class MenuGroup {
     private List<Menu> menus = new ArrayList<>();
 
     @Builder
-    public MenuGroup(final Long id, final String name) {
-        this.id = id;
+    public MenuGroup(final String name) {
         this.name = name;
     }
 

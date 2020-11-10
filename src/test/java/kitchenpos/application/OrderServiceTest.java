@@ -96,7 +96,6 @@ class OrderServiceTest {
         MenuProduct menuProduct = createMenuProduct(product, 2);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
         Menu notSavedMenu = Menu.builder()
-            .id(1000L)
             .price(BigDecimal.valueOf(18_000))
             .menuProducts(menuProducts)
             .build();
@@ -113,16 +112,15 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 테이블의 주문 추가")
     @Test
     void create_Fail_With_NotExistTable() {
-        OrderTable notSavedTable = OrderTable.builder()
-            .id(1000L)
-            .build();
-
         Menu savedMenu = saveMenu();
 
         OrderLineItemRequest orderLineItem = createOrderLineItemRequest(savedMenu);
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(orderLineItem);
 
-        OrderRequest request = createOrderRequest(notSavedTable, orderLineItems);
+        OrderRequest request = OrderRequest.builder()
+            .orderTableId(10000L)
+            .orderLineItems(orderLineItems)
+            .build();
 
         assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

@@ -90,9 +90,7 @@ class TableGroupServiceTest {
     @Test
     void create_Fail_With_NotExistTable() {
         OrderTable savedTable = orderTableDao.save(createOrderTable(true));
-        OrderTable notSavedTable = OrderTable.builder()
-            .id(1000L)
-            .build();
+        OrderTable notSavedTable = OrderTable.builder().build();
         OrderTableIdRequest savedTableIdRequest = createOrderTableIdRequest(savedTable.getId());
         OrderTableIdRequest notSavedTableIdRequest = createOrderTableIdRequest(
             notSavedTable.getId());

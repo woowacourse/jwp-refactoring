@@ -26,9 +26,8 @@ public class Product {
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
-    public Product(final Long id, final String name, final BigDecimal price) {
+    public Product(final String name, final BigDecimal price) {
         validatePrice(price);
-        this.id = id;
         this.name = name;
         this.price = price;
     }
