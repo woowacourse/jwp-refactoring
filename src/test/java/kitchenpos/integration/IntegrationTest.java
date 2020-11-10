@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.integration;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 

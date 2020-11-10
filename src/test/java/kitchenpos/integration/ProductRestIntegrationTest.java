@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,21 +22,19 @@ class ProductRestIntegrationTest extends IntegrationTest {
     @Test
     void createTest() throws Exception {
 
-        String createProduct = objectMapper.writeValueAsString(
-                TestObjectUtils.createProduct(null, "참치뱃살", BigDecimal.valueOf(30000)));
+        Product createProduct = TestObjectUtils.createProduct(null, "참치뱃살",
+                BigDecimal.valueOf(30000));
+        String json = objectMapper.writeValueAsString(createProduct);
 
-        MvcResult mvcResult = mockMvc.perform(
+        mockMvc.perform(
                 post("/api/products")
-                        .content(createProduct)
+                        .content(json)
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isCreated())
-                .andReturn();
-
-        Product product = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                Product.class);
-
-        assertThat(product.getId()).isEqualTo(7L);
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("name").value(createProduct.getName()))
+                .andExpect(jsonPath("price").value(createProduct.getPrice().longValue()));
     }
 
     @DisplayName("상품을 조회 할 수 있다.")
@@ -53,6 +51,6 @@ class ProductRestIntegrationTest extends IntegrationTest {
                 mvcResult.getResponse().getContentAsString(),
                 objectMapper.getTypeFactory().constructCollectionType(List.class, Product.class));
 
-        assertThat(products.size()).isEqualTo(6);
+        assertThat(products.size()).isEqualTo(7);
     }
 }
