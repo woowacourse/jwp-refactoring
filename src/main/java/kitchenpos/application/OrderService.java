@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -12,23 +13,23 @@ import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Table;
+import kitchenpos.dto.OrderCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
+
     private final MenuDao menuDao;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final TableDao tableDao;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final TableDao tableDao
+        final MenuDao menuDao,
+        final OrderDao orderDao,
+        final OrderLineItemDao orderLineItemDao,
+        final TableDao tableDao
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
@@ -37,34 +38,12 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderCreateRequest request) {
+        valid(request);
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setId(null);
-
-        final Table table = tableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (table.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTableId(table.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(
+            request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         final Order savedOrder = orderDao.save(order);
 
         final Long orderId = savedOrder.getId();
@@ -76,6 +55,23 @@ public class OrderService {
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
+    }
+
+    private void valid(final OrderCreateRequest request) {
+        final List<OrderLineItem> orderLineItems = Optional.ofNullable(request.getOrderLineItems())
+            .filter(orderItems -> !orderItems.isEmpty())
+            .orElseThrow(IllegalArgumentException::new);
+
+        final List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
+
+        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException();
+        }
+        tableDao.findById(request.getOrderTableId())
+            .filter(table -> !table.isEmpty())
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<Order> list() {
@@ -91,7 +87,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();

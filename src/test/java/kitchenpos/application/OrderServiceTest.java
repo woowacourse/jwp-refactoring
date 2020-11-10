@@ -17,6 +17,7 @@ import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
@@ -75,9 +76,7 @@ class OrderServiceTest {
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);
 
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
 
         Order result = orderService.create(order);
 
@@ -124,9 +123,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
-        Order order = new Order();
-        order.setOrderLineItems(new ArrayList<>());
-        order.setOrderTableId(table.getId());
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -147,9 +144,7 @@ class OrderServiceTest {
         orderLineItem.setMenuId(1_000L);
         orderLineItem.setQuantity(2);
 
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -162,9 +157,7 @@ class OrderServiceTest {
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);
 
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-        order.setOrderTableId(table.getId());
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -298,9 +291,7 @@ class OrderServiceTest {
 
             orderLineItems.add(orderLineItem);
         }
-        Order order = new Order();
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(table.getId());
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), orderLineItems);
 
         return orderService.create(order);
     }

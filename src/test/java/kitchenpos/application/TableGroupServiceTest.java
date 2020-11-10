@@ -15,6 +15,7 @@ import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
@@ -197,11 +198,8 @@ class TableGroupServiceTest {
         orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(2);
 
-        Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-
-        order.setOrderTableId(table.getId());
-        return orderService.create(order);
+        OrderCreateRequest request = new OrderCreateRequest(table.getId(),Collections.singletonList(orderLineItem));
+        return orderService.create(request);
     }
 
     private MenuResponse createMenu_후라이드세트() {
