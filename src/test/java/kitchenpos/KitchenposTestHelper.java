@@ -29,6 +29,14 @@ public class KitchenposTestHelper {
         return tableGroup;
     }
 
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
+        return tableGroup;
+    }
+
     public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
         Order order = new Order();
