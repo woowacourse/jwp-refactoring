@@ -13,4 +13,6 @@ public interface ProductDao {
     List<Product> findAll();
 
     void deleteAll();
+
+    List<Product> findAllByIdIn(List<Long> ids);
 }

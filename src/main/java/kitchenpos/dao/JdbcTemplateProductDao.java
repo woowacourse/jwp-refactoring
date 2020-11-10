@@ -55,6 +55,14 @@ public class JdbcTemplateProductDao implements ProductDao {
     }
 
     @Override
+    public List<Product> findAllByIdIn(List<Long> ids) {
+        String sql = "SELECT id, name, price FROM product WHERE id IN (:ids)";
+        SqlParameterSource parameters = new MapSqlParameterSource()
+                .addValue("ids", ids);
+        return jdbcTemplate.query(sql, parameters, ((resultSet, rowNumber) -> toEntity(resultSet)));
+    }
+
+    @Override
     public void deleteAll() {
         final String sql = "DELETE FROM product";
         jdbcTemplate.update(sql, new HashMap<>());
