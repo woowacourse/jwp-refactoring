@@ -1,6 +1,5 @@
 package kitchenpos.order.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,19 +51,16 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Table table = findTable(request);
+        final Table savedTable = findTable(request.getTableId());
+        Order order = new Order(savedTable, OrderStatus.COOKING);
 
-        Order order = new Order(table, OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 
-        // todo 엔티티관련 옵션있었는데 찾아보기.
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            OrderLineItem orderLineItem = new OrderLineItem(order, orderLineItemDto.getMenuId(),
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, orderLineItemDto.getMenuId(),
                 orderLineItemDto.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            orderLineItemRepository.save(orderLineItem);
         }
-        savedOrder.changeOrderLineItems(savedOrderLineItems);
 
         return savedOrder.getId();
     }
@@ -85,8 +81,8 @@ public class OrderService {
             .orElseThrow(IllegalArgumentException::new);
     }
 
-    private Table findTable(OrderCreateRequest request) {
-        return tableRepository.findById(request.getTableId())
+    private Table findTable(Long tableId) {
+        return tableRepository.findById(tableId)
             .orElseThrow(IllegalArgumentException::new);
     }
 }

@@ -20,7 +20,6 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
@@ -132,8 +131,6 @@ class OrderServiceTest {
         MenuGroup savedMenuGroup = getMenuGroup();
         Product savedProduct = saveProduct();
         Menu savedMenu = saveMenu(savedMenuGroup, savedProduct);
-
-        OrderLineItem 주문된_치킨세트 = createOrderLineItem(null, null, savedMenu.getId(), 3);
 
         Table savedTable = saveOrderTable();
 
