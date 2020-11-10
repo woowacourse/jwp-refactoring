@@ -16,11 +16,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import kitchenpos.common.TestObjectUtils;
 import kitchenpos.domain.Product;
 
-class ProductRestControllerTest extends ControllerTest {
+class ProductRestIntegrationTest extends IntegrationTest {
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
     void createTest() throws Exception {
+
         String createProduct = objectMapper.writeValueAsString(
                 TestObjectUtils.createProduct(null, "참치뱃살", BigDecimal.valueOf(30000)));
 
