@@ -13,12 +13,12 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
 import kitchenpos.dto.TableCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
@@ -260,10 +260,10 @@ class OrderServiceTest {
     private MenuResponse createMenu_후라이드세트() {
         // create products
         ProductRequest 후라이드치킨_request = new ProductRequest("후라이드치킨", BigDecimal.valueOf(10_000));
-        Product 후라이드치킨 = productService.create(후라이드치킨_request);
+        ProductResponse 후라이드치킨 = productService.create(후라이드치킨_request);
 
         ProductRequest 프랜치프라이_request = new ProductRequest("프랜치프라이", BigDecimal.valueOf(5_000));
-        Product 프랜치프라이 = productService.create(프랜치프라이_request);
+        ProductResponse 프랜치프라이 = productService.create(프랜치프라이_request);
 
         // create a menu group
         MenuGroupRequest 세트메뉴_request = new MenuGroupRequest("세트메뉴");
@@ -279,7 +279,7 @@ class OrderServiceTest {
         return menuService.create(menuRequest);
     }
 
-    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
+    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<ProductResponse> products) {
         List<MenuProductRequest> menuProducts = products.stream()
             .map(product -> new MenuProductRequest(product.getId(), 1))
             .collect(Collectors.toList());

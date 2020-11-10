@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,8 +35,8 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
-    private Product 후라이드치킨;
-    private Product 프랜치프라이;
+    private ProductResponse 후라이드치킨;
+    private ProductResponse 프랜치프라이;
     private MenuGroup 세트메뉴;
 
     @BeforeEach
@@ -164,10 +164,10 @@ class MenuServiceTest {
         assertThat(menus.get(0).getId()).isEqualTo(savedMenu.getId());
     }
 
-    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<Product> products) {
+    private List<MenuProductRequest> createMenuProductsWithAllQuantityAsOne(List<ProductResponse> products) {
         List<MenuProductRequest> menuProducts = new ArrayList<>();
 
-        for (Product product : products) {
+        for (ProductResponse product : products) {
             MenuProductRequest menuProduct = new MenuProductRequest(product.getId(), 1);
             menuProducts.add(menuProduct);
         }
