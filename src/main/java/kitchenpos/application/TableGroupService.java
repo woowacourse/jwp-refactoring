@@ -3,6 +3,9 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -30,20 +33,20 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
+        List<OrderTableCreateRequest> orderTableCreateRequests = tableGroupCreateRequest.getOrderTableCreateRequests();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableCreateRequests) || orderTableCreateRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        List<Long> orderTableIds = orderTableCreateRequests.stream()
+                .map(OrderTableCreateRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableCreateRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -53,7 +56,7 @@ public class TableGroupService {
             }
         }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = tableGroupCreateRequest.toTableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
@@ -64,7 +67,7 @@ public class TableGroupService {
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
-        return savedTableGroup;
+        return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional
