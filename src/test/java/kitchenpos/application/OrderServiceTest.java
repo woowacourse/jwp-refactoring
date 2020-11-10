@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
@@ -18,6 +17,7 @@ import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
@@ -72,11 +72,9 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
+        OrderLineItemRequest request = new OrderLineItemRequest(menu.getId(), 2);
 
-        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(request));
 
         Order result = orderService.create(order);
 
@@ -140,9 +138,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // when
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1_000L);
-        orderLineItem.setQuantity(2);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(1_000L, 2);
 
         OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
 
@@ -153,11 +149,9 @@ class OrderServiceTest {
     @Test
     @DisplayName("create - 빈 테이블에서 주문 시도시 예외처리")
     void create_IfTableIsEmpty_ThrowException() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
+        OrderLineItemRequest request = new OrderLineItemRequest(menu.getId(), 2);
 
-        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(request));
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -281,17 +275,13 @@ class OrderServiceTest {
     }
 
     private Order orderWithEqualAmountOfAllMenus(TableResponse table, List<MenuResponse> menus, int quantity) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
 
         for (MenuResponse menu : menus) {
-            OrderLineItem orderLineItem = new OrderLineItem();
-
-            orderLineItem.setMenuId(menu.getId());
-            orderLineItem.setQuantity(quantity);
-
-            orderLineItems.add(orderLineItem);
+            OrderLineItemRequest request = new OrderLineItemRequest(menu.getId(), quantity);
+            orderLineItemRequests.add(request);
         }
-        OrderCreateRequest order = new OrderCreateRequest(table.getId(), orderLineItems);
+        OrderCreateRequest order = new OrderCreateRequest(table.getId(), orderLineItemRequests);
 
         return orderService.create(order);
     }

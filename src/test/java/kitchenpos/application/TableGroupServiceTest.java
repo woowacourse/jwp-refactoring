@@ -9,13 +9,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
@@ -194,11 +194,9 @@ class TableGroupServiceTest {
     }
 
     private Order orderOneMenu(TableResponse table, MenuResponse menu) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menu.getId());
-        orderLineItem.setQuantity(2);
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(menu.getId(), 2);
 
-        OrderCreateRequest request = new OrderCreateRequest(table.getId(),Collections.singletonList(orderLineItem));
+        OrderCreateRequest request = new OrderCreateRequest(table.getId(), Collections.singletonList(orderLineItem));
         return orderService.create(request);
     }
 
