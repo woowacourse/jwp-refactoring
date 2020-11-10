@@ -1,4 +1,4 @@
-###
+### 메뉴를 추가한다.
 POST {{host}}/api/menus
 Content-Type: application/json
 
@@ -14,7 +14,7 @@ Content-Type: application/json
   ]
 }
 
-###
+### 메뉴 목록을 불러온다.
 GET {{host}}/api/menus
 
 ###

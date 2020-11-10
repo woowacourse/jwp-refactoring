@@ -1,4 +1,4 @@
-###
+### 주문을 추가한다.
 POST {{host}}/api/orders
 Content-Type: application/json
 
@@ -12,10 +12,10 @@ Content-Type: application/json
   ]
 }
 
-###
+### 주문 목록을 불러온다.
 GET {{host}}/api/orders
 
-###
+### 주문 상태를 변경한다.
 PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 
@@ -23,7 +23,7 @@ Content-Type: application/json
   "orderStatus": "MEAL"
 }
 
-###
+### 주문 상태를 변경한다.
 PUT {{host}}/api/orders/1/order-status
 Content-Type: application/json
 

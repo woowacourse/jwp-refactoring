@@ -1,4 +1,4 @@
-###
+### 메뉴 그룹을 추가한다.
 POST {{host}}/api/menu-groups
 Content-Type: application/json
 
@@ -6,7 +6,7 @@ Content-Type: application/json
   "name": "추천메뉴"
 }
 
-###
+### 메뉴 그룹 목록을 불러온다.
 GET {{host}}/api/menu-groups
 
 ###

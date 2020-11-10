@@ -1,4 +1,4 @@
-###
+### 테이블 그룹을 추가한다.
 POST {{host}}/api/table-groups
 Content-Type: application/json
 
@@ -13,7 +13,7 @@ Content-Type: application/json
   ]
 }
 
-###
+### 테이블 그룹을 제거한다.
 DELETE {{host}}/api/table-groups/1
 
 ###
