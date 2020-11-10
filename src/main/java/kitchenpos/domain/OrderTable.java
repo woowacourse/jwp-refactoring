@@ -41,18 +41,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public void groupBy(final TableGroup tableGroup) {
         validateAccessGroupByThroughTableGroup(tableGroup);
         validateEmpty();
