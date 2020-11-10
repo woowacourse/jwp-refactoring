@@ -18,6 +18,7 @@ import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import kitchenpos.dto.TableChangeRequest;
@@ -189,12 +190,12 @@ class OrderServiceTest {
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
-        order.setOrderStatus(OrderStatus.MEAL.toString());
-        assertThat(orderService.changeOrderStatus(order.getId(), order).getOrderStatus())
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
+        assertThat(orderService.changeOrderStatus(order.getId(), orderStatusChangeRequest).getOrderStatus())
             .isEqualTo(OrderStatus.MEAL.toString());
 
-        order.setOrderStatus(OrderStatus.COMPLETION.toString());
-        assertThat(orderService.changeOrderStatus(order.getId(), order).getOrderStatus())
+        orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
+        assertThat(orderService.changeOrderStatus(order.getId(), orderStatusChangeRequest).getOrderStatus())
             .isEqualTo(OrderStatus.COMPLETION.toString());
     }
 
@@ -212,8 +213,8 @@ class OrderServiceTest {
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
-        order.setOrderStatus(OrderStatus.COMPLETION.toString());
-        order = orderService.changeOrderStatus(order.getId(), order);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
+        order = orderService.changeOrderStatus(order.getId(), orderStatusChangeRequest);
 
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.toString());
     }
@@ -232,8 +233,8 @@ class OrderServiceTest {
         Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
-        order.setOrderStatus("식사중");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("식사중");
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), orderStatusChangeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
