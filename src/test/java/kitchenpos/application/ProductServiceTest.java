@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.IntegrationTest;
@@ -39,9 +40,9 @@ class ProductServiceTest extends IntegrationTest {
 
     @DisplayName("상품 가격은 음수이거나 null일 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"null", "-1"})
+    @NullAndEmptySource
     void createProductByInvalidInput(String value) {
-        BigDecimal productPrice = value.equals("null") ? null : BigDecimal.valueOf(Long.valueOf(value));
+        BigDecimal productPrice = Objects.isNull(value) ? null : BigDecimal.valueOf(-1L);
         Product productRequest = createProduct(null, "후라이드치킨", productPrice);
 
         assertThatThrownBy(() -> productService.create(productRequest))

@@ -7,17 +7,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.IntegrationTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 class MenuServiceTest extends IntegrationTest {
@@ -35,17 +35,11 @@ class MenuServiceTest extends IntegrationTest {
     @Test
     void createMenuByValidInput() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
-
-        Product productRequest = createProduct(null, "후라이드 치킨", price);
-        Product product = productService.create(productRequest);
-
-        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-
+        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
+        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
         Menu menuRequest = createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
-            Collections.singletonList(menuProduct));
+            Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
+
         Menu menu = menuService.create(menuRequest);
 
         assertAll(
@@ -59,21 +53,15 @@ class MenuServiceTest extends IntegrationTest {
 
     @DisplayName("메뉴 생성시 잘못된 가격을 입력한 경우 예외 발생")
     @ParameterizedTest
-    @ValueSource(strings = {"null", "-1"})
+    @NullAndEmptySource
     void createMenuByInvalidInputWithNegativePrice(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
+        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
+        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
 
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
-
-        Product productRequest = createProduct(null, "후라이드 치킨", price);
-        Product product = productService.create(productRequest);
-
-        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-
-        BigDecimal menuPrice = "null".equals(value) ? null : BigDecimal.valueOf(Long.valueOf(value));
+        BigDecimal menuPrice = Objects.isNull(value) ? null : BigDecimal.valueOf(-1L);
         Menu menuRequest = createMenu(null, "후라이드 치킨", menuPrice, menuGroup.getId(),
-            Collections.singletonList(menuProduct));
+            Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -81,17 +69,13 @@ class MenuServiceTest extends IntegrationTest {
 
     @DisplayName("존재하지 않는 메뉴 그룹")
     @ParameterizedTest
-    @ValueSource(strings = {"null", "1"})
+    @NullAndEmptySource
     void createMenuByInvalidInputNotExistingMenuGroup(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
-
-        Product productRequest = createProduct(null, "후라이드 치킨", price);
-        Product product = productService.create(productRequest);
-
-        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-
-        Long menuGroupId = "null".equals(value) ? null : Long.valueOf(value);
-        Menu menuRequest = createMenu(null, "후라이드 치킨", price, menuGroupId, Collections.singletonList(menuProduct));
+        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        Long menuGroupId = Objects.isNull(value) ? null : 1L;
+        Menu menuRequest = createMenu(null, "후라이드 치킨", price, menuGroupId,
+            Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -102,17 +86,11 @@ class MenuServiceTest extends IntegrationTest {
     void createMenuByInvalidInputExceedingSumOfPrices() {
         BigDecimal price = BigDecimal.valueOf(10000L);
 
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
-
-        Product productRequest = createProduct(null, "후라이드 치킨", price);
-        Product product = productService.create(productRequest);
-
-        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-
+        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
+        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
         BigDecimal menuPrice = BigDecimal.valueOf(price.longValue() + 1);
         Menu menuRequest = createMenu(null, "후라이드 치킨", menuPrice, menuGroup.getId(),
-            Collections.singletonList(menuProduct));
+            Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -121,23 +99,13 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴를 조회한다.")
     @Test
     void findAll() {
-        BigDecimal price = BigDecimal.valueOf(10000L);
-
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
-
-        Product productRequest1 = createProduct(null, "후라이드 치킨", BigDecimal.valueOf(10000L));
-        Product productRequest2 = createProduct(null, "양념 치킨", BigDecimal.valueOf(11000L));
-        Product friedChicken = productService.create(productRequest1);
-        Product seasoningChicken = productService.create(productRequest2);
-
-        MenuProduct menuProduct1 = createMenuProduct(null, null, friedChicken.getId(), 1);
-        MenuProduct menuProduct2 = createMenuProduct(null, null, seasoningChicken.getId(), 1);
-
+        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
+        Product friedChicken = productService.create(createProduct(null, "후라이드 치킨", BigDecimal.valueOf(10000L)));
+        Product seasoningChicken = productService.create(createProduct(null, "양념 치킨", BigDecimal.valueOf(11000L)));
         Menu menuRequest1 = createMenu(null, friedChicken.getName(), friedChicken.getPrice(), menuGroup.getId(),
-            Collections.singletonList(menuProduct1));
+            Collections.singletonList(createMenuProduct(null, null, friedChicken.getId(), 1)));
         Menu menuRequest2 = createMenu(null, seasoningChicken.getName(), seasoningChicken.getPrice(), menuGroup.getId(),
-            Collections.singletonList(menuProduct2));
+            Collections.singletonList(createMenuProduct(null, null, seasoningChicken.getId(), 1)));
 
         menuService.create(menuRequest1);
         menuService.create(menuRequest2);

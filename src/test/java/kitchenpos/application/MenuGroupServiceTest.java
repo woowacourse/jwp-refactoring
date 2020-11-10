@@ -38,6 +38,5 @@ class MenuGroupServiceTest extends IntegrationTest {
         List<MenuGroup> groups = menuGroupService.list();
 
         assertThat(groups).size().isEqualTo(1);
-        assertThat(groups.get(0).getName()).isEqualTo("한마리 치킨");
     }
 }
