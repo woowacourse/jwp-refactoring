@@ -8,10 +8,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -214,7 +214,7 @@ class TableGroupServiceTest {
 
         // create a menu group
         MenuGroupRequest 세트메뉴_request = new MenuGroupRequest("세트메뉴");
-        MenuGroup 세트메뉴 = menuGroupService.create(세트메뉴_request);
+        MenuGroupResponse 세트메뉴 = menuGroupService.create(세트메뉴_request);
 
         // create menu
         List<MenuProductRequest> menuProducts = createMenuProductsWithAllQuantityAsOne(

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -37,7 +37,7 @@ class MenuServiceTest {
 
     private ProductResponse 후라이드치킨;
     private ProductResponse 프랜치프라이;
-    private MenuGroup 세트메뉴;
+    private MenuGroupResponse 세트메뉴;
 
     @BeforeEach
     void setUp() {

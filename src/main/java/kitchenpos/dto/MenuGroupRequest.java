@@ -6,7 +6,7 @@ public class MenuGroupRequest {
 
     private String name;
 
-    public MenuGroupRequest() {//TODO : private
+    private MenuGroupRequest() {
     }
 
     public MenuGroupRequest(String name) {
