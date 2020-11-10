@@ -4,12 +4,14 @@ import kitchenpos.application.common.TestFixtureFactory;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.order.OrderLineItemDto;
 import kitchenpos.dto.order.OrderRequest;
 import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.exception.NotFoundMenuException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,11 +70,23 @@ class OrderServiceTest extends TestFixtureFactory {
     @DisplayName("주문 생성 - 주문 요청 시 orderLineItems의 menuId가 존재하지 않는 menu의 아이디일 경우 예외처리")
     @Test
     void createWhenIllegalMenuId() {
-        OrderTable savedOrderTable = makeSavedOrderTable(0, true);
-        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, new ArrayList<>());
+        OrderTable savedOrderTable = makeSavedOrderTable(0, false);
+        Menu savedMenu = makeSavedMenu(
+                "양념2마리",
+                20000,
+                "추천메뉴",
+                "양념",
+                11000,
+                2
+        );
+        List<OrderLineItemDto> orderLineItemDtos = new ArrayList<>();
+        orderLineItemDtos.add(new OrderLineItemDto(savedMenu.getId(), 3));
+        orderLineItemDtos.add(new OrderLineItemDto(savedMenu.getId() + 1, 3));
+
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), null, orderLineItemDtos);
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NotFoundMenuException.class);
     }
 
     @DisplayName("주문 목록 조회 메서드 테스트")

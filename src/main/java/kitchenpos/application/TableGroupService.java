@@ -34,8 +34,7 @@ public class TableGroupService {
                 .map(orderTableDto -> orderTableRepository.findById(orderTableDto.getId()).orElseThrow(IllegalArgumentException::new))
                 .collect(Collectors.toList());
 
-        TableGroup TableGroupToSave = TableGroup.of(savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroupToSave);
+        final TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.of(savedOrderTables));
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.tableGrouping(savedTableGroup);

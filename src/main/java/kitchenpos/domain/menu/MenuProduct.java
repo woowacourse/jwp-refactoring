@@ -1,7 +1,6 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.config.BaseEntity;
-import kitchenpos.domain.product.Product;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -18,31 +17,29 @@ public class MenuProduct extends BaseEntity {
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "FK_MENU_PRODUCT_MENU"))
     private Menu menu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "FK_MENU_PRODUCT_PRODUCT"))
-    private Product product;
+    private Long productId;
     private long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long id, Menu menu, Product product, long quantity) {
+    public MenuProduct(Long id, Menu menu, Long productId, long quantity) {
         this.id = id;
         this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this(null, menu, product, quantity);
+    public MenuProduct(Menu menu, Long productId, long quantity) {
+        this(null, menu, productId, quantity);
     }
 
     public Menu getMenu() {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

@@ -9,4 +9,6 @@ import java.util.List;
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("select DISTINCT m from Menu m join fetch m.menuGroup g join fetch m.menuProducts")
     List<Menu> findAllFetch();
+
+    int countAllByIdIn(List<Long> ids);
 }

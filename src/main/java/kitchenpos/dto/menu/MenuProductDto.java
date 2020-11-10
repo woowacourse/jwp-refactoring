@@ -30,7 +30,7 @@ public class MenuProductDto {
         return new MenuProductDto(
                 menuProduct.getId(),
                 menuProduct.getMenu().getId(),
-                menuProduct.getProduct().getId(),
+                menuProduct.getProductId(),
                 menuProduct.getQuantity()
         );
     }

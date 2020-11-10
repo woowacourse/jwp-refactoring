@@ -68,11 +68,6 @@ alter table menu_product
    references menu;
 
 alter table order_line_item
-   add constraint FK_ORDER_LINE_ITEM_MENU
-   foreign key (menu_id)
-   references menu;
-
-alter table order_line_item
    add constraint FK_ORDER_LINE_ITEM_ORDER
    foreign key (order_id)
    references orders;
