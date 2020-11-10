@@ -1,4 +1,4 @@
-### 치킨 종류를 추가한다.
+### 상품을 등록한다.
 POST {{host}}/api/products
 Content-Type: application/json
 
@@ -7,7 +7,7 @@ Content-Type: application/json
   "price": 17000
 }
 
-### 치킨 종류를 불러온다.
+### 상품의 목록을 조회한다.
 GET {{host}}/api/products
 
 ###

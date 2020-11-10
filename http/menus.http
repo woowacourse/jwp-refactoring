@@ -1,4 +1,4 @@
-### 메뉴를 추가한다.
+### 메뉴를 등록한다 (메뉴 그룹 id, 메뉴 상품 정보로 상품 id와 양이 필요).
 POST {{host}}/api/menus
 Content-Type: application/json
 
@@ -14,7 +14,7 @@ Content-Type: application/json
   ]
 }
 
-### 메뉴 목록을 불러온다.
+### 메뉴의 목록을 조회한다.
 GET {{host}}/api/menus
 
 ###

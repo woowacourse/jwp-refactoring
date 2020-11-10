@@ -1,4 +1,4 @@
-### 테이블을 추가한다.
+### 주문 테이블을 등록한다.
 POST {{host}}/api/tables
 Content-Type: application/json
 
@@ -7,10 +7,10 @@ Content-Type: application/json
   "empty": true
 }
 
-### 테이블 목록을 가져온다.
+### 주문 테이블의 목록을 조회한다.
 GET {{host}}/api/tables
 
-### 테이블이 비어있는지 유무를 설정한다.
+### 지정한 주문 테이블이 비어있는지 유무를 설정한다 (설정할 테이블 id를 path로 지정).
 PUT {{host}}/api/tables/1/empty
 Content-Type: application/json
 
@@ -18,7 +18,7 @@ Content-Type: application/json
   "empty": false
 }
 
-### 테이블의 손님 숫자를 설정한다.
+### 지정한 주문 테이블의 방문한 손님 수를 설정한다 (설정할 테이블 id를 path로 지정).
 PUT {{host}}/api/tables/1/number-of-guests
 Content-Type: application/json
 
@@ -26,7 +26,7 @@ Content-Type: application/json
   "numberOfGuests": 4
 }
 
-### 테이블이 비어있는지 유무를 설정한다.
+### 지정한 주문 테이블이 비어있는지 유무를 설정한다 (설정할 테이블 id를 path로 지정).
 PUT {{host}}/api/tables/1/empty
 Content-Type: application/json
 
@@ -34,7 +34,7 @@ Content-Type: application/json
   "empty": true
 }
 
-### 테이블이 비어있는지 유무를 설정한다.
+### 지정한 주문 테이블이 비어있는지 유무를 설정한다 (설정할 테이블 id를 path로 지정).
 PUT {{host}}/api/tables/2/empty
 Content-Type: application/json
 
