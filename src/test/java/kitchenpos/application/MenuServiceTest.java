@@ -11,8 +11,6 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -65,38 +63,6 @@ class MenuServiceTest {
 
         assertThat(savedMenu.getId()).isNotNull();
         assertThat(savedMenu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(60000L));
-    }
-
-    @DisplayName("메뉴의 가격은 0 원 이상이어야 한다.")
-    @Test
-    void createException1() {
-        Product savedChicken1 = productDao.save(new Product("간장치킨", 10000L));
-        Product savedChicken2 = productDao.save(new Product("허니콤보치킨", 15000L));
-
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-
-        MenuProduct menuProduct1 = new MenuProduct(savedChicken1.getId(), 2);
-        MenuProduct menuProduct2 = new MenuProduct(savedChicken2.getId(), 3);
-
-        Long price = -10000L;
-        Menu menu = new Menu("빈 메뉴", price, savedMenuGroup.getId(), Arrays.asList(menuProduct1, menuProduct2));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("가격은 0원 이상이어야 합니다.");
-    }
-
-    @DisplayName("1개 미만의 상품으로 메뉴를 등록할 수 없다.")
-    @ParameterizedTest
-    @MethodSource("noMenuProducts")
-    void createException2(List<MenuProduct> menuProducts) {
-        MenuGroup savedMenuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-
-        Menu menu = new Menu("빈 메뉴", 10000L, savedMenuGroup.getId(), menuProducts);
-
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("메뉴에 등록한 상품이 없습니다.");
     }
 
     @DisplayName("메뉴에 속한 상품 금액의 합은 메뉴의 가격보다 크거나 같아야 한다.")

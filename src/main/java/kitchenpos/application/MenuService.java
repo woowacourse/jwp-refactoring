@@ -9,12 +9,10 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -39,20 +37,11 @@ public class MenuService {
     public Menu create(final Menu menu) {
         final BigDecimal price = menu.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(String.format("%f : 가격은 0원 이상이어야 합니다.", price));
-        }
-
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴 그룹을 선택해주세요.");
         }
 
-        if (ObjectUtils.isEmpty(menu.getMenuProducts())) {
-            throw new IllegalArgumentException("메뉴에 등록한 상품이 없습니다.");
-        }
-
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
-
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
