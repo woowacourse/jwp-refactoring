@@ -5,23 +5,23 @@ import java.beans.ConstructorProperties;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(onConstructor_ = @ConstructorProperties({"productId", "quantity"}))
+@AllArgsConstructor(onConstructor_ = @ConstructorProperties({"menuId, quantity"}))
 @Getter
-public class MenuProductRequest {
+public class OrderLineItemRequest {
     @NotNull
-    private final Long productId;
+    private final Long menuId;
 
-    @Positive
     @NotNull
+    @Positive
     private final Long quantity;
 
-    public MenuProduct toRequestEntity() {
-        return MenuProduct.builder()
-            .productId(productId)
+    public OrderLineItem toRequestEntity() {
+        return OrderLineItem.builder()
+            .menuId(menuId)
             .quantity(quantity)
             .build();
     }

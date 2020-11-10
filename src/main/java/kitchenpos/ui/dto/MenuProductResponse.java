@@ -12,8 +12,8 @@ public class MenuProductResponse {
     private final Long productId;
     private final long quantity;
 
-    public static MenuProductResponse of(final Long menuId, final MenuProduct menuProduct) {
-        return new MenuProductResponse(menuProduct.getSeq(), menuId, menuProduct.getProductId(),
+    public static MenuProductResponse from(final MenuProduct menuProduct) {
+        return new MenuProductResponse(menuProduct.getSeq(), menuProduct.getMenuId(), menuProduct.getProductId(),
             menuProduct.getQuantity());
     }
 }

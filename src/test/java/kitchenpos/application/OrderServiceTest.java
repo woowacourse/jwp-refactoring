@@ -24,7 +24,6 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
@@ -35,9 +34,6 @@ class OrderServiceTest {
 
     @Mock
     private OrderRepository orderRepository;
-
-    @Mock
-    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -59,21 +55,11 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(expectedOrder.getOrderLineItems().size()));
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class))).willReturn(expectedOrder);
-        given(orderLineItemRepository.save(any(OrderLineItem.class))).willReturn(orderLineItem);
         final Order persistOrder = orderService.create(orderWithoutId);
 
         assertThat(persistOrder).usingRecursiveComparison()
             .ignoringFields("orderedTime")
             .isEqualTo(expectedOrder);
-    }
-
-    @DisplayName("주문 항목이 null이거나 없는 주문을 생성 시도할 경우 예외를 반환한다.")
-    @NullAndEmptySource
-    @ParameterizedTest
-    void createTest2(final List<OrderLineItem> input) {
-        final Order order = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), input);
-        assertThatThrownBy(() -> orderService.create(order))
-           .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 항목과 존재하는 메뉴의 크기가 다를 경우 예외를 반환한다.")
@@ -129,7 +115,6 @@ class OrderServiceTest {
         final List<Order> expectedOrders = Collections.singletonList(expectedOrder);
 
         given(orderRepository.findAll()).willReturn(expectedOrders);
-        given(orderLineItemRepository.findAllByOrderId(1L)).willReturn(orderLineItems);
 
         final List<Order> persistOrders = orderService.list();
 
@@ -149,7 +134,6 @@ class OrderServiceTest {
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));
         given(orderRepository.save(any(Order.class))).willReturn(requestOrder);
-        given(orderLineItemRepository.findAllByOrderId(anyLong())).willReturn(orderLineItems);
 
         assertThat(orderService.changeOrderStatus(1L, requestOrder))
             .usingRecursiveComparison()

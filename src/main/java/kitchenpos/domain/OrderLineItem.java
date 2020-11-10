@@ -20,7 +20,7 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @Column(nullable = false)
+    @Column(name = "order_id")
     private Long orderId;
 
     @Column(nullable = false)

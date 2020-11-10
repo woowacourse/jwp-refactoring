@@ -15,10 +15,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,70 +24,29 @@ import lombok.RequiredArgsConstructor;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     @Transactional
     public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        final List<Long> menuIds = order.extractMenuIds();
+        if (menuIds.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItem::getMenuId)
-            .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        Order newOrder = order.toBuilder()
-            .id(null)
-            .build();
-
-        final OrderTable orderTable = orderTableRepository.findById(newOrder.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        newOrder = newOrder.toBuilder()
-            .orderTableId(orderTable.getId())
+        return orderRepository.save(order.toBuilder()
             .orderStatus(OrderStatus.COOKING.name())
             .orderedTime(LocalDateTime.now())
-            .build();
-
-        final Order savedOrder = orderRepository.save(newOrder);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            final OrderLineItem newOrderLineItem = orderLineItem.toBuilder()
-                .orderId(orderId)
-                .build();
-            savedOrderLineItems.add(orderLineItemRepository.save(newOrderLineItem));
-        }
-
-        return savedOrder.toBuilder()
-            .orderLineItems(savedOrderLineItems)
-            .build();
+            .build());
     }
 
     public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-        final List<Order> result = new ArrayList<>();
-
-        for (final Order order : orders) {
-            Order newOrder = order.toBuilder()
-                .orderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()))
-                .build();
-            result.add(newOrder);
-        }
-
-        return result;
+        return orderRepository.findAll();
     }
 
     @Transactional
@@ -101,15 +58,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-
         final Order newOrder = savedOrder.toBuilder()
-            .orderStatus(orderStatus.name())
+            .orderStatus(order.getOrderStatus())
             .build();
-        orderRepository.save(newOrder);
-
-        return newOrder.toBuilder()
-            .orderLineItems(orderLineItemRepository.findAllByOrderId(orderId))
-            .build();
+        return orderRepository.save(newOrder);
     }
 }

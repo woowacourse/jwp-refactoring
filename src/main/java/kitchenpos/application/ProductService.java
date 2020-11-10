@@ -22,6 +22,9 @@ public class ProductService {
 
     public Products findAllByIdIn(List<Long> ids) {
         List<Product> products = productRepository.findAllByIdIn(ids);
+        if (products.size() != ids.size()) {
+            throw new IllegalArgumentException();
+        }
         return new Products(products);
     }
 
