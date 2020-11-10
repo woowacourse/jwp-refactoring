@@ -1,0 +1,45 @@
+package kitchenpos.application;
+
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_1;
+import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_2;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class MenuGroupServiceTest {
+
+    @Autowired
+    private MenuGroupService menuGroupService;
+
+    @Test
+    void create() {
+        MenuGroup menuGroup = MENU_GROUP_FIXTURE_1;
+
+        MenuGroup persistMenuGroup = menuGroupService.create(menuGroup);
+
+        assertAll(
+            () -> assertThat(persistMenuGroup.getId()).isNotNull(),
+            () -> assertThat(persistMenuGroup.getName()).isEqualTo(menuGroup.getName())
+        );
+    }
+
+    @Test
+    void list() {
+        menuGroupService.create(MENU_GROUP_FIXTURE_1);
+        menuGroupService.create(MENU_GROUP_FIXTURE_2);
+
+        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<String> menuGroupNames = menuGroups.stream()
+            .map(MenuGroup::getName)
+            .collect(Collectors.toList());
+
+        assertThat(menuGroupNames).contains(MENU_GROUP_FIXTURE_1.getName(), MENU_GROUP_FIXTURE_2.getName());
+    }
+}
