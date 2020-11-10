@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import java.util.Map;
 
 public class Products {
     private final List<Product> products;
@@ -16,9 +17,9 @@ public class Products {
         }
     }
 
-    public Price sum() {
+    public Price calculateTotalPrice(final Map<Long, Long> menuProductQuantity) {
         return products.stream()
-            .map(Product::getPrice)
+            .map(it -> it.calculatePrice(menuProductQuantity.get(it.getId())))
             .reduce(Price.ZERO, Price::add);
     }
 }

@@ -1,14 +1,18 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 import lombok.AccessLevel;
@@ -34,7 +38,8 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
-    @OneToMany(mappedBy = "menuId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "menu_id")
     private List<MenuProduct> menuProducts;
 
     public static MenuBuilder builder() {
@@ -49,6 +54,11 @@ public class Menu {
         return menuProducts.stream()
             .map(MenuProduct::getProductId)
             .collect(Collectors.toList());
+    }
+
+    public Map<Long, Long> extractProductQuantity() {
+        return menuProducts.stream()
+            .collect(Collectors.toMap(MenuProduct::getProductId, MenuProduct::getQuantity));
     }
 
     public static class MenuBuilder {
