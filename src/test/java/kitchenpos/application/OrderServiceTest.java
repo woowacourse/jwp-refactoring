@@ -128,7 +128,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
         Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
         OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
-        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
         saveOrderLineItem(orderLineItemRepository, savedOrder.getId(), savedMenu.getId(), 1L);
 
         List<OrderResponse> orderResponses = orderService.list();
@@ -145,7 +145,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup savedMenuGroup = saveMenuGroup(menuGroupRepository, "한마리메뉴");
         Menu savedMenu = saveMenu(menuRepository, savedMenuGroup.getId(), "후라이드치킨", BigDecimal.valueOf(16_000));
         OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 4, false);
-        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
         saveOrderLineItem(orderLineItemRepository, savedOrder.getId(), savedMenu.getId(), 1L);
 
         OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.COMPLETION.name());
@@ -175,7 +175,7 @@ class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatusWithCompletionOrderTest() {
         OrderTable savedOrderTable = saveOrderTable(orderTableRepository, 0, false);
-        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        Order savedOrder = saveOrder(orderRepository, savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now());
 
         OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.COOKING.name());
 

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -58,42 +59,69 @@ public class MenuService {
 
     private void validateMenuGroup(final MenuRequest menuRequest) {
         final Long menuGroupId = menuRequest.getMenuGroupId();
-        if (!menuGroupRepository.existsById(menuGroupId)) {
+        if (isNotExistMenuGroup(menuGroupId)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private boolean isNotExistMenuGroup(Long menuGroupId) {
+        return !menuGroupRepository.existsById(menuGroupId);
     }
 
     private void validatePriceSum(final Price price, final List<MenuProductRequest> menuProductRequests) {
         Price sum = Price.zero();
+        List<Long> productsIds = menuProductRequests.stream()
+                .map(MenuProductRequest::getProductId)
+                .collect(Collectors.toList());
+        List<Product> products = productRepository.findAllById(productsIds);
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.addWithProductQuantity(product.getPrice(), menuProductRequest.getQuantity());
+            Product product = getProductInRequestsProducts(products, menuProductRequest);
+            sum = sum.addTotalPrice(product.getPrice(), menuProductRequest.getQuantity());
         }
 
-        if (price.biggerThan(sum)) {
+        if (isInvalidPrice(price, sum)) {
             throw new IllegalArgumentException();
         }
     }
 
+    private Product getProductInRequestsProducts(List<Product> products, MenuProductRequest menuProductRequest) {
+        return products.stream()
+                .filter(p -> menuProductRequest.getProductId().equals(p.getId()))
+                .findFirst()
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
+    private boolean isInvalidPrice(Price price, Price sum) {
+        return price.biggerThan(sum);
+    }
+
     private List<MenuProductResponse> saveMenuProducts(final List<MenuProductRequest> menuProductRequests,
                                                        final Long menuId) {
-        final List<MenuProductResponse> savedMenuProducts = new ArrayList<>();
+        final List<MenuProduct> menuProducts = new ArrayList<>(menuProductRequests.size());
         for (final MenuProductRequest menuProductRequest : menuProductRequests) {
             MenuProduct menuProduct = menuProductRequest.to(menuId);
-            MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
-            savedMenuProducts.add(MenuProductResponse.of(savedMenuProduct));
+            menuProducts.add(menuProduct);
         }
-        return savedMenuProducts;
+        final List<MenuProduct> savedMenuProducts = menuProductRepository.saveAll(menuProducts);
+
+        return savedMenuProducts.stream()
+                .map(MenuProductResponse::of)
+                .collect(Collectors.toList());
     }
 
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
+        final List<Long> menuIds = menus.stream()
+                .map(Menu::getId)
+                .collect(Collectors.toList());
+        final List<MenuProduct> menuProducts2 = menuProductRepository.findAllByMenuIds(menuIds);
 
-        final List<MenuResponse> menuResponses = new ArrayList<>();
+        final List<MenuResponse> menuResponses = new ArrayList<>(menus.size());
         for (final Menu menu : menus) {
-            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-            List<MenuProductResponse> menuProductResponses = MenuProductResponse.of(menuProducts);
+            List<MenuProduct> menuProductsInMenu = menuProducts2.stream()
+                    .filter(menuProduct -> menuProduct.isSameMenuId(menu))
+                    .collect(Collectors.toList());
+            List<MenuProductResponse> menuProductResponses = MenuProductResponse.of(menuProductsInMenu);
             MenuResponse menuResponse = MenuResponse.of(menu, menuProductResponses);
             menuResponses.add(menuResponse);
         }

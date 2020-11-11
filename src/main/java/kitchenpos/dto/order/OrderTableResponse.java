@@ -29,7 +29,7 @@ public class OrderTableResponse {
             return new OrderTableResponse(orderTable.getId(), null,
                     orderTable.getNumberOfGuestsCount(), orderTable.isEmptyTable());
         }
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
+        return new OrderTableResponse(orderTable.getId(), orderTable.getContainTableGroupId(),
                 orderTable.getNumberOfGuestsCount(), orderTable.isEmptyTable());
     }
 

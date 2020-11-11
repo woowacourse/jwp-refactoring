@@ -35,6 +35,6 @@ public class OrderRequest {
     }
 
     public Order toOrder() {
-        return new Order(new OrderTable(orderTableId), OrderStatus.COOKING.name());
+        return new Order(new OrderTable(orderTableId), OrderStatus.COOKING);
     }
 }

@@ -4,10 +4,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuProduct;
 import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.*;
 import kitchenpos.repository.*;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -49,7 +46,7 @@ public class ServiceTest {
         return orderTableRepository.save(orderTable);
     }
 
-    protected Order saveOrder(OrderRepository orderRepository, Long orderTableId, String orderStatus,
+    protected Order saveOrder(OrderRepository orderRepository, Long orderTableId, OrderStatus orderStatus,
                               LocalDateTime orderedTime) {
         Order order = createOrder(orderTableId, orderStatus, orderedTime);
         return orderRepository.save(order);

@@ -109,7 +109,7 @@ class TableServiceTest extends ServiceTest {
         TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
         OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
-        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
 
         assertThatThrownBy(() -> {
             tableService.changeEmpty(unPairedOrderTable.getId(), orderTableRequest);

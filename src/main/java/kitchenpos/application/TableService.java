@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,37 +55,32 @@ public class TableService {
     }
 
     private void validateOrderTableInGroup(final OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+        if (savedOrderTable.isGroupTable()) {
             throw new IllegalArgumentException();
         }
     }
 
     private void validateOrderStatus(final Long orderTableId) {
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (isInvalidOrderStatusInOrderTable(orderTableId)) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private boolean isInvalidOrderStatusInOrderTable(Long orderTableId) {
+        return orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
     }
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final NumberOfGuests numberOfGuests = NumberOfGuests.of(orderTableRequest.getNumberOfGuests());
 
-        final OrderTable savedOrderTable = validateOrderTableEmpty(orderTableId);
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
         OrderTable changeGuestsOrderTable = orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.of(changeGuestsOrderTable);
-    }
-
-    private OrderTable validateOrderTableEmpty(final Long orderTableId) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmptyTable()) {
-            throw new IllegalArgumentException();
-        }
-        return savedOrderTable;
     }
 }

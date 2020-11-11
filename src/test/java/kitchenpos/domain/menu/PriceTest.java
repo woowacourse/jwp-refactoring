@@ -52,7 +52,7 @@ class PriceTest {
         Price input = Price.of(BigDecimal.valueOf(1_000));
         long quantity = 2L;
 
-        Price result = zero.addWithProductQuantity(input, quantity);
+        Price result = zero.addTotalPrice(input, quantity);
 
         assertThat(result.getPrice()).isEqualTo(BigDecimal.valueOf(2_000));
     }

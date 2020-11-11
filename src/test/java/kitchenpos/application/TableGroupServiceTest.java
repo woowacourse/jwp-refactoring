@@ -125,7 +125,7 @@ class TableGroupServiceTest extends ServiceTest {
         TableGroup savedTableGroup = saveTableGroup(tableGroupRepository);
         OrderTable unPairedOrderTable = saveOrderTable(orderTableRepository, 1, true, savedTableGroup.getId());
         saveOrderTable(orderTableRepository, 2, true, savedTableGroup.getId());
-        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now());
+        saveOrder(orderRepository, unPairedOrderTable.getId(), OrderStatus.MEAL, LocalDateTime.now());
 
         assertThatThrownBy(() -> {
             tableGroupService.ungroup(savedTableGroup.getId());

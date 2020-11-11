@@ -4,11 +4,12 @@ import org.springframework.util.CollectionUtils;
 
 import javax.persistence.Embeddable;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Embeddable
 public class OrderTables {
+    private static final int MIN_ORDER_TABLE_SIZE = 2;
+
     private List<OrderTable> orderTables;
 
     protected OrderTables() {
@@ -24,7 +25,7 @@ public class OrderTables {
     }
 
     private void validateOrderTables(List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_ORDER_TABLE_SIZE) {
             throw new IllegalArgumentException();
         }
     }
@@ -37,7 +38,7 @@ public class OrderTables {
 
     private boolean isNonEmptyOrGroupTable() {
         return orderTables.stream()
-                .anyMatch(orderTable -> !orderTable.isEmptyTable() || Objects.nonNull(orderTable.getTableGroup()));
+                .anyMatch(orderTable -> !orderTable.isEmptyTable() || orderTable.isGroupTable());
     }
 
     public void isInvalidOrderTables(OrderTables orderTables) {

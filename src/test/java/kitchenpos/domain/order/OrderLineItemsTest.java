@@ -51,6 +51,6 @@ class OrderLineItemsTest {
         );
         int input = 2;
 
-        assertThat(orderLineItems.validateOrderLineItemSize(input)).isFalse();
+        assertThat(orderLineItems.isSameMenuCount(input)).isFalse();
     }
 }

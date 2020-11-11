@@ -35,7 +35,7 @@ public class DomainFactory {
         return new OrderLineItem(new Order(orderId), new Menu(menuId), quantity);
     }
 
-    public static Order createOrder(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public static Order createOrder(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         return new Order(new OrderTable(orderTableId), orderStatus, orderedTime);
     }
 

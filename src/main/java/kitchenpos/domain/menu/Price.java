@@ -24,15 +24,15 @@ public class Price {
         return new Price(BigDecimal.ZERO);
     }
 
-    private void validatePrice(BigDecimal price) {
+    public static void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public Price addWithProductQuantity(Price price, long quantity) {
-        Price productPrice = price.multiply(quantity);
-        return new Price(this.price.add(productPrice.getPrice()));
+    public Price addTotalPrice(Price price, long quantity) {
+        Price totalPrice = price.multiply(quantity);
+        return new Price(this.price.add(totalPrice.getPrice()));
     }
 
     private Price multiply(long quantity) {
@@ -45,5 +45,22 @@ public class Price {
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Price price = (Price) o;
+        return Objects.equals(this.price, price.price);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(price);
     }
 }

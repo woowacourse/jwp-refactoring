@@ -13,7 +13,6 @@ import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,14 +61,10 @@ public class TableGroupService {
     }
 
     private List<OrderTable> saveOrderTableWithGroup(final List<Long> orderTableIds, final TableGroup savedTableGroup) {
-        final List<OrderTable> groupOrderTables = new ArrayList<>();
-        for (final Long orderTableId : orderTableIds) {
-            OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                    .orElseThrow(IllegalArgumentException::new);
-            orderTable.groupIn(savedTableGroup);
-            groupOrderTables.add(orderTableRepository.save(orderTable));
-        }
-        return groupOrderTables;
+        final List<OrderTable> orderTableByIdIn = orderTableRepository.findAllByIdIn(orderTableIds);
+        orderTableByIdIn.forEach(orderTable -> orderTable.groupIn(savedTableGroup));
+
+        return orderTableRepository.saveAll(orderTableByIdIn);
     }
 
     @Transactional
@@ -86,16 +81,18 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (isInvalidOrderStatusInOrderTables(orderTableIds)) {
             throw new IllegalArgumentException();
         }
     }
 
+    private boolean isInvalidOrderStatusInOrderTables(List<Long> orderTableIds) {
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
+    }
+
     private void ungroupOrderTables(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
-            orderTableRepository.save(orderTable);
-        }
+        orderTables.forEach(OrderTable::ungroup);
+        orderTableRepository.saveAll(orderTables);
     }
 }

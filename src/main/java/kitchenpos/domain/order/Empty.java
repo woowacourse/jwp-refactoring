@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Embeddable
 public class Empty {
@@ -26,5 +27,22 @@ public class Empty {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Empty empty = (Empty) o;
+        return this.empty == empty.empty;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(empty);
     }
 }

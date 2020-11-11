@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import kitchenpos.domain.BaseEntity;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @AttributeOverride(name = "id", column = @Column(name = "id"))
 @Table(name = "order_table")
@@ -43,15 +44,18 @@ public class OrderTable extends BaseEntity {
     }
 
     public void changeNumberOfGuests(final NumberOfGuests numberOfGuests) {
+        if (isEmptyTable()) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = this.numberOfGuests.compare(numberOfGuests);
-    }
-
-    public int getNumberOfGuestsCount() {
-        return numberOfGuests.getNumberOfGuests();
     }
 
     public boolean isEmptyTable() {
         return this.empty.isEmpty();
+    }
+
+    public int getNumberOfGuestsCount() {
+        return numberOfGuests.getNumberOfGuests();
     }
 
     public void groupIn(TableGroup tableGroup) {
@@ -61,6 +65,14 @@ public class OrderTable extends BaseEntity {
     public void ungroup() {
         this.tableGroup = null;
         this.empty = Empty.of(false);
+    }
+
+    public boolean isGroupTable() {
+        return Objects.nonNull(tableGroup);
+    }
+
+    public Long getContainTableGroupId() {
+        return tableGroup.getId();
     }
 
     public TableGroup getTableGroup() {

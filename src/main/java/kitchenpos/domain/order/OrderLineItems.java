@@ -29,7 +29,7 @@ public class OrderLineItems {
                 .collect(Collectors.toList());
     }
 
-    public boolean validateOrderLineItemSize(int requestMenuCount) {
+    public boolean isSameMenuCount(int requestMenuCount) {
         return orderLineItems.size() != requestMenuCount;
     }
 }

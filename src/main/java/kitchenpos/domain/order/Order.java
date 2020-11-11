@@ -17,7 +17,8 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
 
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @CreatedDate
     private LocalDateTime orderedTime;
@@ -29,12 +30,12 @@ public class Order extends BaseEntity {
         this.id = id;
     }
 
-    public Order(OrderTable orderTable, String orderStatus) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
@@ -45,7 +46,14 @@ public class Order extends BaseEntity {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus.name();
+        if (isCompleteOrder()) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    private boolean isCompleteOrder() {
+        return Objects.equals(OrderStatus.COMPLETION, orderStatus);
     }
 
     public OrderTable getOrderTable() {
@@ -56,15 +64,11 @@ public class Order extends BaseEntity {
         return id;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public boolean isCompleteOrder() {
-        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
     }
 }

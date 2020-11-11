@@ -36,6 +36,10 @@ public class MenuProduct {
         return product.getId();
     }
 
+    public boolean isSameMenuId(Menu menu) {
+        return this.menu.getId().equals(menu.getId());
+    }
+
     public Menu getMenu() {
         return menu;
     }

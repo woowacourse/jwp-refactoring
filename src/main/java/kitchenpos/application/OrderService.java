@@ -55,7 +55,7 @@ public class OrderService {
     private void validateRequestOrderLineItem(final OrderLineItems orderLineItems) {
         final List<Long> menuIds = orderLineItems.getMenuIds();
         final int requestMenuCount = menuRepository.countByIdIn(menuIds);
-        if (orderLineItems.validateOrderLineItemSize(requestMenuCount)) {
+        if (orderLineItems.isSameMenuCount(requestMenuCount)) {
             throw new IllegalArgumentException();
         }
     }
@@ -70,13 +70,16 @@ public class OrderService {
 
     private List<OrderLineItemResponse> saveOrderLineItem(final List<OrderLineItem> requestOrderLineItems,
                                                           final Order savedOrder) {
-        final List<OrderLineItemResponse> orderLineItemResponses = new ArrayList<>();
+        final List<OrderLineItem> orderLineItems = new ArrayList<>(requestOrderLineItems.size());
         for (final OrderLineItem orderLineItem : requestOrderLineItems) {
             orderLineItem.addOrder(savedOrder);
-            OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
-            orderLineItemResponses.add(OrderLineItemResponse.of(savedOrderLineItem));
+            orderLineItems.add(orderLineItem);
         }
-        return orderLineItemResponses;
+        final List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.saveAll(orderLineItems);
+
+        return savedOrderLineItems.stream()
+                .map(OrderLineItemResponse::of)
+                .collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {
@@ -104,10 +107,6 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrder.isCompleteOrder()) {
-            throw new IllegalArgumentException();
-        }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
         savedOrder.changeOrderStatus(orderStatus);
