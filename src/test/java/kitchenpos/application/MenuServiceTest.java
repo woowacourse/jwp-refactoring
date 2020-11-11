@@ -16,6 +16,8 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.IntegrationTest;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -26,17 +28,17 @@ class MenuServiceTest extends IntegrationTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     @DisplayName("메뉴를 생성한다.")
     @Test
     void createMenuByValidInput() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         Menu menuRequest = createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
 
@@ -56,8 +58,8 @@ class MenuServiceTest extends IntegrationTest {
     @NullAndEmptySource
     void createMenuByInvalidInputWithNegativePrice(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
 
         BigDecimal menuPrice = Objects.isNull(value) ? null : BigDecimal.valueOf(-1L);
         Menu menuRequest = createMenu(null, "후라이드 치킨", menuPrice, menuGroup.getId(),
@@ -72,7 +74,7 @@ class MenuServiceTest extends IntegrationTest {
     @NullAndEmptySource
     void createMenuByInvalidInputNotExistingMenuGroup(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         Long menuGroupId = Objects.isNull(value) ? null : 1L;
         Menu menuRequest = createMenu(null, "후라이드 치킨", price, menuGroupId,
             Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
@@ -86,8 +88,8 @@ class MenuServiceTest extends IntegrationTest {
     void createMenuByInvalidInputExceedingSumOfPrices() {
         BigDecimal price = BigDecimal.valueOf(10000L);
 
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         BigDecimal menuPrice = BigDecimal.valueOf(price.longValue() + 1);
         Menu menuRequest = createMenu(null, "후라이드 치킨", menuPrice, menuGroup.getId(),
             Collections.singletonList(createMenuProduct(null, null, product.getId(), 1)));
@@ -99,9 +101,9 @@ class MenuServiceTest extends IntegrationTest {
     @DisplayName("메뉴를 조회한다.")
     @Test
     void findAll() {
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product friedChicken = productService.create(createProduct(null, "후라이드 치킨", BigDecimal.valueOf(10000L)));
-        Product seasoningChicken = productService.create(createProduct(null, "양념 치킨", BigDecimal.valueOf(11000L)));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product friedChicken = productDao.save(createProduct(null, "후라이드 치킨", BigDecimal.valueOf(10000L)));
+        Product seasoningChicken = productDao.save(createProduct(null, "양념 치킨", BigDecimal.valueOf(11000L)));
         Menu menuRequest1 = createMenu(null, friedChicken.getName(), friedChicken.getPrice(), menuGroup.getId(),
             Collections.singletonList(createMenuProduct(null, null, friedChicken.getId(), 1)));
         Menu menuRequest2 = createMenu(null, seasoningChicken.getName(), seasoningChicken.getPrice(), menuGroup.getId(),

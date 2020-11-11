@@ -18,7 +18,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.IntegrationTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -33,16 +37,16 @@ class OrderServiceTest extends IntegrationTest {
     private OrderService orderService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
 
     @Autowired
-    private TableService tableService;
+    private OrderTableDao orderTableDao;
 
     @Autowired
     private OrderDao orderDao;
@@ -51,12 +55,12 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void createOrderByValidInput() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
         Order order = orderService.create(
             createOrder(null, orderTable.getId(), null, null, Arrays.asList(orderLineItem1)));
@@ -72,7 +76,7 @@ class OrderServiceTest extends IntegrationTest {
     @DisplayName("선택된 메뉴 없이 주문은 생성 불가능하다.")
     @Test
     void createOrderByInvalidInputWithEmptyMenu() {
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
 
         assertThatThrownBy(
             () -> orderService.create(createOrder(null, orderTable.getId(), null, null, Collections.EMPTY_LIST)))
@@ -83,7 +87,7 @@ class OrderServiceTest extends IntegrationTest {
     @ParameterizedTest
     @NullAndEmptySource
     void createOrderByInvalidInputWithNotExistingMenu(String value) {
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, Objects.isNull(value) ? null : 1L, 1);
 
         assertThatThrownBy(
@@ -96,10 +100,10 @@ class OrderServiceTest extends IntegrationTest {
     @NullAndEmptySource
     void createOrderByInvalidInputWithNotExistingTable(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
 
@@ -112,12 +116,12 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void createOrderByInvalidInputWithEmptyTable() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, true));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, true));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
 
         assertThatThrownBy(
@@ -129,12 +133,12 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void findAll() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
         orderService.create(createOrder(null, orderTable.getId(), null, null, Arrays.asList(orderLineItem1)));
 
@@ -148,12 +152,12 @@ class OrderServiceTest extends IntegrationTest {
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatusByValidInput(String value) {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
         Order savedOrder = orderService.create(
             createOrder(null, orderTable.getId(), null, null, Arrays.asList(orderLineItem1)));
@@ -171,12 +175,12 @@ class OrderServiceTest extends IntegrationTest {
     @Test
     void changeOrderStatusByInValidInputWithOrderStatus() {
         BigDecimal price = BigDecimal.valueOf(10000L);
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
+        Menu menu = menuDao.save(createMenu(null, "후라이드 치킨", price, menuGroup.getId(),
             Collections.singletonList(menuProduct)));
-        OrderTable orderTable = tableService.create(createOrderTable(null, null, 0, false));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem1 = createOrderLineItem(null, null, menu.getId(), 1);
         Order savedOrder = orderService.create(
             createOrder(null, orderTable.getId(), null, null, Arrays.asList(orderLineItem1)));

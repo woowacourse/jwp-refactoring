@@ -5,7 +5,9 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.IntegrationTest;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -24,6 +32,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 class TableServiceTest extends IntegrationTest {
 
@@ -31,19 +40,22 @@ class TableServiceTest extends IntegrationTest {
     private TableService tableService;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private TableGroupDao tableGroupDao;
 
     @Autowired
-    private OrderService orderService;
+    private OrderDao orderDao;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductService productService;
+    private ProductDao productDao;
 
     @Autowired
-    private MenuService menuService;
+    private MenuDao menuDao;
+
+    @Autowired
+    private OrderTableDao orderTableDao;
 
     @DisplayName("주문 테이블 생성")
     @Test
@@ -90,13 +102,12 @@ class TableServiceTest extends IntegrationTest {
     @DisplayName("그룹화 된 테이블의 빈 테이블 설정 요청시 예외 발생")
     @Test
     void changeEmptyTableGroupException() {
-        OrderTable savedOrderTable1 = tableService.create(createOrderTable(null, null, 0, true));
-        OrderTable savedOrderTable2 = tableService.create(createOrderTable(null, null, 0, true));
-
-        tableGroupService.create(createTableGroup(null, null, Arrays.asList(savedOrderTable1, savedOrderTable2)));
+        TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.EMPTY_LIST));
+        OrderTable savedOrderTable1 = orderTableDao.save(createOrderTable(null, tableGroup.getId(), 0, false));
+        OrderTable savedOrderTable2 = orderTableDao.save(createOrderTable(null, tableGroup.getId(), 0, false));
 
         OrderTable emptyRequest = new OrderTable();
-        emptyRequest.setEmpty(false);
+        emptyRequest.setEmpty(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), emptyRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -108,17 +119,15 @@ class TableServiceTest extends IntegrationTest {
     void changeEmptyOrderStatusException(String status) {
         BigDecimal price = BigDecimal.valueOf(10000);
         OrderTable savedOrderTable = tableService.create(createOrderTable(null, null, 0, true));
-        MenuGroup menuGroup = menuGroupService.create(createMenuGroup(null, "한마리 치킨"));
-        Product product = productService.create(createProduct(null, "후라이드 치킨", price));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리 치킨"));
+        Product product = productDao.save(createProduct(null, "후라이드 치킨", price));
         MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuService.create(
+        Menu menu = menuDao.save(
             createMenu(null, "후라이드 치킨", price, menuGroup.getId(), Arrays.asList(menuProduct)));
         tableService.changeEmpty(savedOrderTable.getId(), createOrderTable(null, null, 0, false));
         OrderLineItem orderLineItem = createOrderLineItem(null, null, menu.getId(), 1);
-        Order order = orderService.create(
-            createOrder(null, savedOrderTable.getId(), null, null, Arrays.asList(orderLineItem)));
-
-        orderService.changeOrderStatus(order.getId(), createOrder(null, null, status, null, null));
+        Order order = orderDao.save(
+            createOrder(null, savedOrderTable.getId(), status, LocalDateTime.now(), Arrays.asList(orderLineItem)));
 
         OrderTable emptyRequest = new OrderTable();
         emptyRequest.setEmpty(true);
