@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
@@ -18,6 +17,7 @@ import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
@@ -77,7 +77,7 @@ class OrderServiceTest {
 
         OrderCreateRequest order = new OrderCreateRequest(table.getId(), Collections.singletonList(request));
 
-        Order result = orderService.create(order);
+        OrderResponse result = orderService.create(order);
 
         // then
         assertThat(result.getId()).isNotNull();
@@ -96,9 +96,9 @@ class OrderServiceTest {
         tableGroupService.create(request);
 
         // when
-        Order resultOfTable = orderWithEqualAmountOfAllMenus(table,
+        OrderResponse resultOfTable = orderWithEqualAmountOfAllMenus(table,
             Collections.singletonList(menu), 2);
-        Order resultOfAnotherTable = orderWithEqualAmountOfAllMenus(anotherTable,
+        OrderResponse resultOfAnotherTable = orderWithEqualAmountOfAllMenus(anotherTable,
             Collections.singletonList(menu), 2);
 
         // then
@@ -187,7 +187,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
-        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
+        OrderResponse order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
@@ -210,7 +210,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
-        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
+        OrderResponse order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
@@ -230,7 +230,7 @@ class OrderServiceTest {
         table = tableService.changeNumberOfGuests(table.getId(), changeRequest);
 
         // given (create order)
-        Order order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
+        OrderResponse order = orderWithEqualAmountOfAllMenus(table, Collections.singletonList(menu), 2);
 
         // when & then
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest("식사중");
@@ -275,7 +275,7 @@ class OrderServiceTest {
         return Collections.unmodifiableList(menuProducts);
     }
 
-    private Order orderWithEqualAmountOfAllMenus(TableResponse table, List<MenuResponse> menus, int quantity) {
+    private OrderResponse orderWithEqualAmountOfAllMenus(TableResponse table, List<MenuResponse> menus, int quantity) {
         List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
 
         for (MenuResponse menu : menus) {
