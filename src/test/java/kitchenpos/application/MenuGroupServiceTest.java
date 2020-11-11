@@ -1,55 +1,53 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql("/truncate.sql")
 class MenuGroupServiceTest {
-	@Mock
-	private MenuGroupDao menuGroupDao;
-
+	@Autowired
 	private MenuGroupService menuGroupService;
-
-	private MenuGroup menuGroup;
-
-	private List<MenuGroup> menuGroups;
-
-	@BeforeEach
-	void setUp() {
-		menuGroupService = new MenuGroupService(menuGroupDao);
-
-		menuGroup = new MenuGroup();
-		menuGroup.setId(1L);
-		menuGroup.setName("메뉴그룹");
-	}
 
 	@Test
 	void create() {
-		when(menuGroupDao.save(any())).thenReturn(menuGroup);
+		MenuGroup menuGroup = new MenuGroup();
+		menuGroup.setId(1L);
+		menuGroup.setName("메뉴그룹");
 
-		MenuGroup actual = menuGroupService.create(this.menuGroup);
+		MenuGroup actual = menuGroupService.create(menuGroup);
 
-		assertThat(actual).isEqualTo(this.menuGroup);
+		assertThat(actual.getId()).isNotNull();
+		assertThat(actual.getName()).isEqualTo(menuGroup.getName());
 	}
 
 	@Test
 	void list() {
-		when(menuGroupDao.findAll()).thenReturn(menuGroups);
+		MenuGroup menuGroup = new MenuGroup();
+		menuGroup.setId(1L);
+		menuGroup.setName("메뉴그룹");
+
+		menuGroupService.create(menuGroup);
 
 		List<MenuGroup> actual = menuGroupService.list();
+		MenuGroup actualItem = actual.get(0);
 
-		assertThat(actual).isEqualTo(menuGroups);
+		assertAll(
+			() -> assertThat(actual).hasSize(1),
+			() -> assertThat(actualItem.getId()).isNotNull(),
+			() -> assertThat(actualItem.getName()).isEqualTo(menuGroup.getName())
+		);
 	}
 }
