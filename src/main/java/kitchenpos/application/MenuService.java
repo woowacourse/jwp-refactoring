@@ -1,84 +1,74 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.*;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.ProductQuantityRequests;
+import kitchenpos.dto.ProductResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MenuService {
-    private final MenuDao menuDao;
-    private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final MenuRepository menuRepository;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
+    private final MenuProductService menuProductService;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuGroupDao menuGroupDao,
-            final MenuProductDao menuProductDao,
-            final ProductDao productDao
-    ) {
-        this.menuDao = menuDao;
-        this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+    // TODO: 2020/11/11 DTO에 대한 도메인 테스투, 1급콜렉션 잘 되는쥐!!
+    // TODO: 2020/11/12 MenuProductServic테스트!!
+    @Transactional
+    public MenuResponse create(final MenuCreateRequest request) {
+        ProductQuantityRequests productQuantityRequests = new ProductQuantityRequests(request.getMenuProducts());
+        final List<Long> productIds = productQuantityRequests.getProductIds();
+        final List<Product> products = productRepository.findAllById(productIds);
+        if (productIds.size() != products.size()) {
+            throw new IllegalArgumentException("상품 정보가 올바르지 않습니다.");
+        }
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 그룹을 찾을 수 없습니다."));
+
+        validatePrice(request, products);
+
+        final Menu savedMenu = menuRepository.save(request.toMenu(menuGroup));
+        menuProductService.createMenuProducts(savedMenu, productQuantityRequests);
+
+        final List<ProductResponse> productResponses = products.stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
+        return new MenuResponse(savedMenu, productResponses);
     }
 
-    @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+    private void validatePrice(MenuCreateRequest request, List<Product> products) {
+        final ProductQuantityRequests productQuantityRequests = new ProductQuantityRequests(request.getMenuProducts());
+        final Map<Long, Long> productQuantityMatcher = productQuantityRequests.getProductQuantityMatcher();
 
         BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        for (final Product product : products) {
+            Long quantity = productQuantityMatcher.get(product.getId());
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+        final BigDecimal price = request.getPrice();
+        Objects.requireNonNull(price);
+        if (price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("잘못된 메뉴 가격이 입력되었습니다.");
         }
-
-        final Menu savedMenu = menuDao.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
+    public List<MenuResponse> list() {
+        final List<Menu> menus = menuRepository.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menus.stream()
+                .map(menu -> new MenuResponse(menu, menuProductService.findProductsByMenu(menu)))
+                .collect(Collectors.toList());
     }
 }
