@@ -15,17 +15,13 @@ import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql("/truncate.sql")
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest{
 	@Autowired
 	private MenuGroupService menuGroupService;
 
 	@Test
 	void create() {
-		MenuGroup menuGroup = new MenuGroup();
-		menuGroup.setId(1L);
-		menuGroup.setName("메뉴그룹");
+		MenuGroup menuGroup = createMenuGroup(1L, "메뉴그룹");
 
 		MenuGroup actual = menuGroupService.create(menuGroup);
 
@@ -35,9 +31,7 @@ class MenuGroupServiceTest {
 
 	@Test
 	void list() {
-		MenuGroup menuGroup = new MenuGroup();
-		menuGroup.setId(1L);
-		menuGroup.setName("메뉴그룹");
+		MenuGroup menuGroup = createMenuGroup(1L, "메뉴그룹");
 
 		menuGroupService.create(menuGroup);
 
