@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static kitchenpos.application.fixture.OrderFixture.*;
-import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixture.OrderFixture.*;
+import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;

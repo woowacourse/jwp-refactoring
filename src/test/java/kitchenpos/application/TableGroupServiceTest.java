@@ -18,10 +18,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroupRequest;
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

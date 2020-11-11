@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;

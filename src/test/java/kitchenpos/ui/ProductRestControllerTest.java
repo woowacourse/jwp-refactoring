@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.fixture.ProductFixture.createProduct;
-import static kitchenpos.application.fixture.ProductFixture.createProductRequest;
+import static kitchenpos.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.ProductFixture.createProductRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

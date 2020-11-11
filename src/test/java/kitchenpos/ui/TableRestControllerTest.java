@@ -19,7 +19,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.OrderTableFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

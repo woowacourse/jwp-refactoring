@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -19,8 +19,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroupRequest;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

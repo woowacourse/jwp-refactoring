@@ -17,9 +17,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderTableFixture.*;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;

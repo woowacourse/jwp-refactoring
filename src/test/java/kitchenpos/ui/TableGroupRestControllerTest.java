@@ -18,8 +18,8 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroupRequest;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

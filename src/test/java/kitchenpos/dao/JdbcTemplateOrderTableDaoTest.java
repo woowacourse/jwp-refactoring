@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Optional;
 
-import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
-import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

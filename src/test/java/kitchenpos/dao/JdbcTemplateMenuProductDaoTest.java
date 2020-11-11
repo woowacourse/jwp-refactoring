@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.application.fixture.MenuFixture.createMenu;
-import static kitchenpos.application.fixture.MenuFixture.createMenuProduct;
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.application.fixture.ProductFixture.createProduct;
+import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuFixture.createMenuProduct;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Optional;
 
-import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
