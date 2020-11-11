@@ -153,21 +153,11 @@ class TableGroupServiceTest {
         }
     }
 
-    // todo: 이거 예외처리 하도록 바꾸자
     @Test
     @DisplayName("ungroup - 존재하지 않는 테이블 그룹에 대한 ungroup 요청시")
     void ungroup_IfTryWithNotExistTableGroupId_ThrowException() {
-        List<TableResponse> beforeTables = tableService.list();
-
-        // when
-        tableGroupService.ungroup(100L);
-
-        // then 아무런 변화 없음
-        assertThat(tableService.list()).hasSize(beforeTables.size());
-
-        for (TableResponse response : beforeTables) {
-            assertThat(response.getTableGroupId()).isNull();
-        }
+        assertThatThrownBy(() -> tableGroupService.ungroup(100L))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

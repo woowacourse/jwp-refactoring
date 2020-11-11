@@ -52,12 +52,18 @@ public class Table {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (empty) {
+            this.numberOfGuests = 0;
+        }
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
+        }
+        if (numberOfGuests == 0) {
+            this.empty = true;
         }
         this.numberOfGuests = numberOfGuests;
     }

@@ -87,8 +87,6 @@ class TableAcceptanceTest extends AcceptanceTest{
         assertThat(tableB.getNumberOfGuests()).isEqualTo(0);
 
         // change empty to true
-        // Todo : 손님 수 0명 아닐때 empty로 바꿀 수 있는데, empty 로 바꾸고나면 사람수를 0명으로 못바꿈 ㅋㅋㅋㅋㅋㅋㅋ
-        // 이거 수정할것...
         tableB = changeEmptyToTrue(tableB);
         assertThat(tableB.isEmpty()).isTrue();
     }

@@ -8,7 +8,7 @@ public class TableCreateRequest {
     private boolean empty;
 
     public TableCreateRequest() {
-        this(false, 0);
+        this(true, 0);
     }
 
     public TableCreateRequest(boolean empty) {

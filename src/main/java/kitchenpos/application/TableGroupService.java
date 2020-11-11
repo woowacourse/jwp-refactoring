@@ -49,7 +49,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = tableDao.findAllByTableGroupId(tableGroupId);
+        final List<Table> tables = Optional.ofNullable(tableDao.findAllByTableGroupId(tableGroupId))
+            .filter(list -> !list.isEmpty())
+            .orElseThrow(IllegalArgumentException::new);
 
         final List<Long> orderTableIds = tables.stream()
             .map(Table::getId)

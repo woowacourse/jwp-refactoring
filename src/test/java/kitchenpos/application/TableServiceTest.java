@@ -81,11 +81,10 @@ class TableServiceTest {
 
         TableResponse result = tableService.create(table);
 
-        // Todo: 나중에 도메인 변경할것. 손님수 0명인데 안비어있는게 기본인게 좀 이상함
         assertThat(result.getId()).isNotNull();
         assertThat(result.getTableGroupId()).isNull();
         assertThat(result.getNumberOfGuests()).isEqualTo(0);
-        assertThat(result.isEmpty()).isFalse();
+        assertThat(result.isEmpty()).isTrue();
     }
 
     @Test
@@ -127,7 +126,6 @@ class TableServiceTest {
         assertThat(result.isEmpty()).isEqualTo(to);
     }
 
-    // Todo: 손님수가 0보다클때 empty 를 true 로 바꿀 수 있는데, empty 가 true 이면 손님수를 0으로 못바꿈
     @ParameterizedTest
     @CsvSource({"true,true", "true,false", "false,true", "false,false"})
     @DisplayName("change empty - 손님 수가 0보다 클 때")
