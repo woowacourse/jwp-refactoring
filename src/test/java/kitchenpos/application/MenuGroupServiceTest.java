@@ -1,61 +1,77 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.utils.KitchenPosClassCreator;
-import org.junit.jupiter.api.Assertions;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-@Transactional
-@Sql("/truncate.sql")
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class MenuGroupServiceTest {
-    private static final String 두마리_세트 = "두마리 세트";
-    private static final String 세마리_세트 = "세마리 세트";
+    private static final String 그룹_이름_두마리_세트 = "두마리 세트";
+    private static final String 그룹_이름_세마리_세트 = "세마리 세트";
 
-    @Autowired
-    private MenuGroupDao menuGroupDao;
+    @Mock
+    private MenuGroupRepository menuGroupRepository;
 
-    @Autowired
     private MenuGroupService menuGroupService;
-
-    private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
-        menuGroup = KitchenPosClassCreator.createMenuGroup(두마리_세트);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("MenuGroup 생성이 올바르게 수행된다.")
     @Test
     void createTest() {
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroup menuGroup = new MenuGroup(그룹_이름_두마리_세트);
+        when(menuGroupRepository.save(any(MenuGroup.class))).thenReturn(menuGroup);
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest(그룹_이름_두마리_세트);
 
-        Assertions.assertEquals(savedMenuGroup.getName(), menuGroup.getName());
+        MenuGroupResponse response = menuGroupService.create(request);
+
+        assertThat(response.getName()).isEqualTo(menuGroup.getName());
+    }
+
+    @DisplayName("예외 테스트 : MenuGroup 생성 중 이름이 유효하지 않은 경우, 예외가 발생한다.")
+    @NullAndEmptySource
+    @ParameterizedTest
+    void createNullOrEmptyNameExceptionTest(String invalidName) {
+        MenuGroupCreateRequest request = new MenuGroupCreateRequest(invalidName);
+        Assertions.assertThatThrownBy(() -> menuGroupService.create(request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("잘못된 MenuGroup 이름이 입력되었습니다.");
     }
 
     @DisplayName("MenuGroup 전체 목록을 요청 시 올바른 값이 반환된다.")
     @Test
     void listTest() {
-        MenuGroup secondMenuGroup = KitchenPosClassCreator.createMenuGroup(세마리_세트);
-        MenuGroup savedMenuGroup1 = menuGroupDao.save(menuGroup);
-        MenuGroup savedMenuGroup2 = menuGroupDao.save(secondMenuGroup);
+        List<MenuGroup> menuGroups = Arrays.asList(
+                new MenuGroup(그룹_이름_두마리_세트),
+                new MenuGroup(그룹_이름_세마리_세트)
+        );
+        when(menuGroupRepository.findAll()).thenReturn(menuGroups);
 
-        List<MenuGroup> foundMenuGroup = menuGroupService.list();
+        List<MenuGroupResponse> menuGroupResponses = menuGroupService.list();
 
-        assertThat(foundMenuGroup)
+        assertThat(menuGroupResponses)
                 .hasSize(2)
-                .extracting("id")
-                .containsOnly(savedMenuGroup1.getId(), savedMenuGroup2.getId());
+                .extracting("name")
+                .containsOnly(그룹_이름_두마리_세트, 그룹_이름_세마리_세트);
     }
 }

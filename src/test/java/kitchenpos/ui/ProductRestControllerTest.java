@@ -38,8 +38,8 @@ public class ProductRestControllerTest {
     private static final String API = "/api";
     private static final String 상품_이름_치킨 = "후라이드 치킨";
     private static final BigDecimal 상품_가격_16000원 = new BigDecimal("16000.0");
+    private static final Long 상품_ID_1 = 1L;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    public static final long 상품_ID_1 = 1L;
 
     @MockBean
     private ProductService productService;
@@ -137,6 +137,5 @@ public class ProductRestControllerTest {
                 andExpect(jsonPath("$[0].id").value(상품_ID_1)).
                 andExpect(jsonPath("$[0].name").value(상품_이름_치킨)).
                 andExpect(jsonPath("$[0].price").value(상품_가격_16000원));
-
     }
 }
