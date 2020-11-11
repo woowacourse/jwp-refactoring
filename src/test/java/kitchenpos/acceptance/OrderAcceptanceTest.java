@@ -17,7 +17,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-// Todo 여기 할 차례
 class OrderAcceptanceTest extends AcceptanceTest {
 
     private TableResponse tableA;

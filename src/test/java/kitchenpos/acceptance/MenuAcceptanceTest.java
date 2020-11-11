@@ -86,7 +86,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 가격 정보가 누락된 채로 메뉴 등록을 시도한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴의 가격 정보가 누락된 경우 예외처리")
@@ -100,7 +100,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 가격을 음수로 하여 메뉴 등록을 시도한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴의 가격 정보가 음수인 경우 예외처리")
@@ -114,7 +114,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 메뉴 그룹을 지정하지 않고 메뉴 생성을 요청한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴 그룹을 지정하지 않은 경우 예외처리")
@@ -188,6 +188,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
         .when()
             .post("/api/menus")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }

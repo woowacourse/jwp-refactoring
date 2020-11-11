@@ -159,7 +159,7 @@ class TableAcceptanceTest extends AcceptanceTest{
      *
      * Given 주문이 들어간 테이블이 있다.
      * When 요리중인 테이블의 empty 를 true 로 전환하길 시도한다.
-     * Then 500 에러 응답이 온다.    // Todo: 나중에 401같은거 오도록 바꿔야할듯!!
+     * Then 500 에러 응답이 온다.
      *
      * Given 주문이 들어간 뒤 음식이 제공되어 식사중인 테이블이 있다.
      * When 식사중인 테이블의 empty 를 true 로 전환하길 시도한다.
@@ -263,7 +263,7 @@ class TableAcceptanceTest extends AcceptanceTest{
         .when()
             .put("/api/tables/" + table.getId() + "/empty")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     private TableResponse createTableWithTableId(Long tableId, Long tableGroupId, int numberOfGuests,
@@ -289,6 +289,6 @@ class TableAcceptanceTest extends AcceptanceTest{
         .when()
             .put("/api/tables/" + table.getId() + "/number-of-guests")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }
