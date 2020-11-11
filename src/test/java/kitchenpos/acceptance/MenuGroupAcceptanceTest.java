@@ -3,7 +3,7 @@ package kitchenpos.acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -19,16 +19,16 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     @DisplayName("메뉴 그룹을 관리한다.")
     void manageMenuGroup() {
-        MenuGroup menuGroup = createMenuGroup("세트 메뉴");
+        MenuGroupResponse menuGroup = createMenuGroup("세트 메뉴");
 
         assertThat(menuGroup.getId()).isNotNull();
         assertThat(menuGroup.getName()).isEqualTo("세트 메뉴");
 
-        List<MenuGroup> menuGroups = findMenuGroups();
+        List<MenuGroupResponse> menuGroups = findMenuGroups();
         assertThat(doesMenuExistInMenus("세트 메뉴", menuGroups)).isTrue();
     }
 
-    private List<MenuGroup> findMenuGroups() {
+    private List<MenuGroupResponse> findMenuGroups() {
         return given()
             .when()
                 .get("/api/menu-groups")
@@ -37,10 +37,10 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                 .log().all()
                 .extract()
                 .jsonPath()
-                .getList("", MenuGroup.class);
+                .getList("", MenuGroupResponse.class);
     }
 
-    private boolean doesMenuExistInMenus(String menuGroupName, List<MenuGroup> menuGroups) {
+    private boolean doesMenuExistInMenus(String menuGroupName, List<MenuGroupResponse> menuGroups) {
         return menuGroups.stream()
             .anyMatch(product -> product
                 .getName()

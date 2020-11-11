@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Table;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +19,9 @@ import org.springframework.http.MediaType;
 
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    private Table tableA;
-    private Table tableB;
-    private Table tableC;
+    private TableResponse tableA;
+    private TableResponse tableB;
+    private TableResponse tableC;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +44,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블 그룹 관리")
     void manageTableGroup() {
         // 테이블 그룹짓기
-        TableGroup tableGroup = groupTables(Arrays.asList(tableA, tableB, tableC));
+        TableGroupResponse tableGroup = groupTables(Arrays.asList(tableA, tableB, tableC));
 
         assertThat(tableGroup.getId()).isNotNull();
         assertThatOrderTableBelongsTableGroup(tableA, tableGroup);
@@ -101,7 +101,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         assertThatFailToGroupTables(Arrays.asList(tableC, tableA));
     }
 
-    private void ungroup(TableGroup tableGroup) {
+    private void ungroup(TableGroupResponse tableGroup) {
         given()
             .accept(MediaType.APPLICATION_JSON_VALUE)
         .when()
@@ -110,20 +110,20 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private void assertThatOrderTableBelongsTableGroup(Table table, TableGroup tableGroup) {
+    private void assertThatOrderTableBelongsTableGroup(TableResponse table, TableGroupResponse tableGroup) {
         List<Long> tableIds = tableGroup.getTables()
             .stream()
-            .map(Table::getId)
+            .map(TableResponse::getId)
             .collect(Collectors.toList());
         assertThat(tableIds).contains(table.getId());
     }
 
-    private void assertThatFailToGroupTables(List<Table> tables) {
+    private void assertThatFailToGroupTables(List<TableResponse> tables) {
         Map<String, Object> body = new HashMap<>();
 
         List<Map> tablesForGroupingRequest = new ArrayList<>();
 
-        for (Table table : tables) {
+        for (TableResponse table : tables) {
             Map<String, Object> tableForGroupingRequest = new HashMap<>();
             tableForGroupingRequest.put("id", table.getId());
 

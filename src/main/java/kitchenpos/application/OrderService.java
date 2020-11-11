@@ -14,6 +14,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
 import org.springframework.stereotype.Service;
@@ -56,9 +57,10 @@ public class OrderService {
                 orderLineItemRequest.getMenuId(),
                 orderLineItemRequest.getQuantity()
             );
+
             orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        return OrderResponse.of(savedOrder, orderLineItems);
+        return OrderResponse.of(savedOrder, OrderLineItemResponse.of(orderLineItems));
     }
 
     private void validOrderCreateRequest(final OrderCreateRequest request) {
@@ -80,7 +82,8 @@ public class OrderService {
 
     public List<OrderResponse> list() {
         return orderDao.findAll().stream()
-            .map(order -> OrderResponse.of(order, orderLineItemDao.findAllByOrderId(order.getId())))
+            .map(order -> OrderResponse.of(order, OrderLineItemResponse.of(
+                orderLineItemDao.findAllByOrderId(order.getId()))))
             .collect(Collectors.toList());
     }
 
@@ -94,6 +97,7 @@ public class OrderService {
         savedOrder.changeOrderStatus(orderStatus);
 
         orderDao.save(savedOrder);
-        return OrderResponse.of(savedOrder, orderLineItemDao.findAllByOrderId(orderId));
+        return OrderResponse.of(savedOrder, OrderLineItemResponse.of(
+            orderLineItemDao.findAllByOrderId(orderId)));
     }
 }
