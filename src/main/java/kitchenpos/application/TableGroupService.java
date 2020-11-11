@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
@@ -34,19 +33,15 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
-        List<OrderTableCreateRequest> orderTableCreateRequests = tableGroupCreateRequest.getOrderTableCreateRequests();
+        List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
 
-        if (CollectionUtils.isEmpty(orderTableCreateRequests) || orderTableCreateRequests.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        List<Long> orderTableIds = orderTableCreateRequests.stream()
-                .map(OrderTableCreateRequest::getId)
-                .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTableCreateRequests.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -56,7 +51,7 @@ public class TableGroupService {
             }
         }
 
-        TableGroup tableGroup = tableGroupCreateRequest.toTableGroup(LocalDateTime.now());
+        TableGroup tableGroup = tableGroupCreateRequest.toTableGroup(LocalDateTime.now(), savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 

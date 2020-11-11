@@ -4,7 +4,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.repository.OrderRepository;
@@ -54,15 +53,8 @@ class TableGroupServiceTest {
     @DisplayName("새로운 단체 지정 생성")
     @Test
     void createTableGroupTest() {
-        OrderTableCreateRequest orderTableCreateRequest1 =
-                new OrderTableCreateRequest(this.orderTable1.getId(), this.orderTable1.getNumberOfGuests(),
-                                            this.orderTable1.isEmpty());
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(this.orderTable2.getId(), this.orderTable2.getNumberOfGuests(),
-                                            this.orderTable2.isEmpty());
-        List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1,
-                                                                               orderTableCreateRequest2);
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableCreateRequests);
+        List<Long> orderTableIds = Arrays.asList(this.orderTable1.getId(), this.orderTable2.getId());
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
         TableGroupResponse tableGroupResponse = this.tableGroupService.create(tableGroupCreateRequest);
 
@@ -70,7 +62,7 @@ class TableGroupServiceTest {
                 () -> assertThat(tableGroupResponse).isNotNull(),
                 () -> assertThat(tableGroupResponse.getCreatedDate()).isNotNull()
                         .isInstanceOf(LocalDateTime.class),
-                () -> assertThat(tableGroupResponse.getOrderTableResponses()).hasSize(orderTableCreateRequests.size())
+                () -> assertThat(tableGroupResponse.getOrderTableResponses()).hasSize(orderTableIds.size())
         );
     }
 
@@ -85,11 +77,8 @@ class TableGroupServiceTest {
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블이 1개면 예외 발생")
     @Test
     void createTableGroupWithZeroOrOneOrderTableThenThrowException() {
-        OrderTableCreateRequest orderTableCreateRequest =
-                new OrderTableCreateRequest(this.orderTable1.getId(), this.orderTable1.getNumberOfGuests(),
-                                            this.orderTable1.isEmpty());
         TableGroupCreateRequest tableGroupCreateRequest =
-                new TableGroupCreateRequest(Collections.singletonList(orderTableCreateRequest));
+                new TableGroupCreateRequest(Collections.singletonList(this.orderTable1.getId()));
 
         assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -98,15 +87,10 @@ class TableGroupServiceTest {
     @Test
     void createTableGroupWithNotExistOrderTableThenThrowException() {
         long notExistOrderTableId = -1L;
-        OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(notExistOrderTableId, 0, true);
-
         OrderTable savedOrderTable = createSavedOrderTable(0, true);
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(savedOrderTable.getId(), savedOrderTable.getNumberOfGuests(),
-                                            savedOrderTable.isEmpty());
 
         TableGroupCreateRequest tableGroupCreateRequest =
-                new TableGroupCreateRequest(Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2));
+                new TableGroupCreateRequest(Arrays.asList(notExistOrderTableId, savedOrderTable.getId()));
 
         assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -117,16 +101,9 @@ class TableGroupServiceTest {
         boolean isEmpty = false;
         OrderTable orderTable1 = createSavedOrderTable(0, isEmpty);
         OrderTable orderTable2 = createSavedOrderTable(0, !isEmpty);
-        OrderTableCreateRequest orderTableCreateRequest1 =
-                new OrderTableCreateRequest(orderTable1.getId(), orderTable1.getNumberOfGuests(),
-                                            orderTable1.isEmpty());
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(orderTable2.getId(), orderTable2.getNumberOfGuests(),
-                                            orderTable2.isEmpty());
-        List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1,
-                                                                               orderTableCreateRequest2);
+        List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
 
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableCreateRequests);
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
         assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -139,16 +116,9 @@ class TableGroupServiceTest {
         orderTable.setTableGroup(savedTableGroup);
         OrderTable orderTable1 = this.orderTableRepository.save(orderTable);
         OrderTable orderTable2 = createSavedOrderTable(0, true);
+        List<Long> orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
 
-        OrderTableCreateRequest orderTableCreateRequest1 =
-                new OrderTableCreateRequest(orderTable1.getId(), orderTable1.getNumberOfGuests(),
-                                            orderTable1.isEmpty());
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(orderTable2.getId(), orderTable2.getNumberOfGuests(), orderTable2.isEmpty());
-        List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1,
-                                                                               orderTableCreateRequest2);
-
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableCreateRequests);
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
         assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -156,15 +126,8 @@ class TableGroupServiceTest {
     @DisplayName("특정 단체 지정을 제거하면 소속되었던 테이블에는 존재하는 단체 지정이 없어야 하며 동시에 주문을 등록할 수 있어야(빈 테이블이 아니어야) 한다")
     @Test
     void ungroupTest() {
-        OrderTableCreateRequest orderTableCreateRequest1 =
-                new OrderTableCreateRequest(this.orderTable1.getId(), this.orderTable1.getNumberOfGuests(),
-                                            this.orderTable1.isEmpty());
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(this.orderTable2.getId(), this.orderTable2.getNumberOfGuests(),
-                                            this.orderTable2.isEmpty());
-        List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1,
-                                                                               orderTableCreateRequest2);
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableCreateRequests);
+        List<Long> orderTableIds = Arrays.asList(this.orderTable1.getId(), this.orderTable2.getId());
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
         TableGroupResponse tableGroupResponse = this.tableGroupService.create(tableGroupCreateRequest);
         this.tableGroupService.ungroup(tableGroupResponse.getId());
@@ -187,13 +150,8 @@ class TableGroupServiceTest {
     void ungroupWithOrderTableOfCookingOrMealThenThrowException() {
         createSavedOrder(this.orderTable1, OrderStatus.COOKING.name());
         createSavedOrder(this.orderTable2, OrderStatus.MEAL.name());
-
-        OrderTableCreateRequest orderTableCreateRequest1 =
-                new OrderTableCreateRequest(this.orderTable1.getId(), this.orderTable1.getNumberOfGuests(), this.orderTable1.isEmpty());
-        OrderTableCreateRequest orderTableCreateRequest2 =
-                new OrderTableCreateRequest(this.orderTable2.getId(), this.orderTable2.getNumberOfGuests(), this.orderTable2.isEmpty());
-        List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2);
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableCreateRequests);
+        List<Long> orderTableIds = Arrays.asList(this.orderTable1.getId(), this.orderTable2.getId());
+        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
         TableGroupResponse tableGroupResponse = this.tableGroupService.create(tableGroupCreateRequest);
 
