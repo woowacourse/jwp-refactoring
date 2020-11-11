@@ -25,35 +25,25 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
-    public void setSeq(Long seq) {
-        this.seq = seq;
+    public Long getSeq() {
+        return seq;
     }
 
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public Product getProduct() {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
     }
 }
