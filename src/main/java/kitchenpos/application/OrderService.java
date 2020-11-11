@@ -65,7 +65,7 @@ public class OrderService {
 
         order.setOrderTableId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        order.setCreatedDate(LocalDateTime.now());
 
         final Order savedOrder = orderDao.save(order);
 

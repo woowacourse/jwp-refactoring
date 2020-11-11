@@ -57,7 +57,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
     @Override
     public List<Order> findAll() {
-        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders";
+        final String sql = "SELECT id, order_table_id, order_status, created_date FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
@@ -84,7 +84,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order select(final Long id) {
-        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
+        final String sql = "SELECT id, order_table_id, order_status, created_date FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("id", id);
         return jdbcTemplate.queryForObject(sql, parameters,
@@ -104,7 +104,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         entity.setId(resultSet.getLong(KEY_COLUMN_NAME));
         entity.setOrderTableId(resultSet.getLong("order_table_id"));
         entity.setOrderStatus(resultSet.getString("order_status"));
-        entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
+        entity.setCreatedDate(resultSet.getObject("created_date", LocalDateTime.class));
         return entity;
     }
 }

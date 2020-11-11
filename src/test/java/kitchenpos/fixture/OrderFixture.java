@@ -19,7 +19,7 @@ public class OrderFixture {
         order.setOrderStatus(status);
         order.setOrderTableId(tableId);
         order.setOrderLineItems(items);
-        order.setOrderedTime(LocalDateTime.now());
+        order.setCreatedDate(LocalDateTime.now());
 
         return order;
     }
@@ -31,7 +31,7 @@ public class OrderFixture {
         order.setOrderStatus(status);
         order.setOrderTableId(tableId);
         order.setOrderLineItems(items);
-        order.setOrderedTime(LocalDateTime.now());
+        order.setCreatedDate(LocalDateTime.now());
 
         return order;
     }

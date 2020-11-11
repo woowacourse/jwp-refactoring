@@ -3,11 +3,29 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
+@Entity
 public class Menu {
+
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
+
+    @Column(name = "menu_group_id")
     private Long menuGroupId;
+
+    @OneToMany
+    @JoinColumn(name = "seq")
     private List<MenuProduct> menuProducts;
 
     public Long getId() {
