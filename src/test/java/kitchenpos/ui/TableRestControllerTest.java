@@ -62,7 +62,7 @@ class TableRestControllerTest {
     void findAll() throws Exception {
         OrderTable table1 = OrderTableFixture.createEmptyWithId(1L);
         OrderTable table2 = OrderTableFixture.createEmptyWithId(2L);
-        when(tableService.list()).thenReturn(Arrays.asList(table1, table2));
+        when(tableService.list()).thenReturn(OrderTableResponse.listOf(Arrays.asList(table1, table2)));
 
         mockMvc.perform(get("/api/tables")
             .accept(MediaType.APPLICATION_JSON)

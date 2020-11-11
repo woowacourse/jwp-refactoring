@@ -58,7 +58,7 @@ class TableServiceTest {
         List<OrderTable> tables = Lists.newArrayList(table1, table2);
         when(orderTableDao.findAll()).thenReturn(tables);
 
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
         assertThat(actual).usingRecursiveComparison().isEqualTo(tables);
     }
 

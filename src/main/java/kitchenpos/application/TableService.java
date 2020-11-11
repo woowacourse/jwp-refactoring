@@ -30,8 +30,8 @@ public class TableService {
         return orderTableDao.save(orderTableCreateRequest.toEntity());
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.listOf(orderTableDao.findAll());
     }
 
     @Transactional
