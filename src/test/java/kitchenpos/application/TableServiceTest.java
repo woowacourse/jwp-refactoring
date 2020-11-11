@@ -18,7 +18,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IntegrationTest;
+import kitchenpos.IsolatedTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -34,7 +34,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
-class TableServiceTest extends IntegrationTest {
+class TableServiceTest extends IsolatedTest {
 
     @Autowired
     private TableService tableService;

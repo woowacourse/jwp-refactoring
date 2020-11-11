@@ -15,14 +15,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IntegrationTest;
+import kitchenpos.IsolatedTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-class TableGroupServiceTest extends IntegrationTest {
+class TableGroupServiceTest extends IsolatedTest {
 
     @Autowired
     private TableGroupService tableGroupService;

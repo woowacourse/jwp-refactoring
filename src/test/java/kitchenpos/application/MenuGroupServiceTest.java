@@ -9,10 +9,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IntegrationTest;
+import kitchenpos.IsolatedTest;
 import kitchenpos.domain.MenuGroup;
 
-class MenuGroupServiceTest extends IntegrationTest {
+class MenuGroupServiceTest extends IsolatedTest {
 
     @Autowired
     private MenuGroupService menuGroupService;

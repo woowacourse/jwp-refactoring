@@ -15,14 +15,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IntegrationTest;
+import kitchenpos.IsolatedTest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 
-class MenuServiceTest extends IntegrationTest {
+class MenuServiceTest extends IsolatedTest {
 
     @Autowired
     private MenuService menuService;

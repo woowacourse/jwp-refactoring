@@ -15,10 +15,10 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IntegrationTest;
+import kitchenpos.IsolatedTest;
 import kitchenpos.domain.Product;
 
-class ProductServiceTest extends IntegrationTest {
+class ProductServiceTest extends IsolatedTest {
 
     @Autowired
     private ProductService productService;
