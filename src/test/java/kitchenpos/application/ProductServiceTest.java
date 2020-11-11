@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -20,16 +21,14 @@ import static kitchenpos.application.fixture.ProductFixture.createProductRequest
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceIntegrationTest
 @DisplayName("상품 서비스")
 class ProductServiceTest {
-    @InjectMocks
+    @Autowired
     private ProductService productService;
 
-    @Mock
+    @Autowired
     private ProductDao productDao;
 
     @Nested
@@ -52,16 +51,13 @@ class ProductServiceTest {
             @Test
             @DisplayName("상품을 생성한다")
             void createProduct() {
-                given(productDao.save(any(Product.class))).willAnswer(i -> {
-                    Product saved = i.getArgument(0, Product.class);
-                    saved.setId(7L);
-                    return saved;
-                });
                 Product result = subject();
 
                 assertAll(
                         () -> assertThat(result.getId()).isNotNull(),
-                        () -> assertThat(result).isEqualToIgnoringGivenFields(request, "id")
+                        () -> assertThat(result)
+                                .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                                .isEqualToIgnoringGivenFields(request, "id")
                 );
             }
         }
@@ -112,11 +108,14 @@ class ProductServiceTest {
             @BeforeEach
             void setUp() {
                 products = Arrays.asList(
-                        createProduct(1L, "치킨", BigDecimal.ONE),
-                        createProduct(2L, "마요", BigDecimal.TEN),
-                        createProduct(3L, "돈가", BigDecimal.valueOf(10000))
+                        createProduct(null, "치킨", BigDecimal.ONE),
+                        createProduct(null, "마요", BigDecimal.TEN),
+                        createProduct(null, "돈가", BigDecimal.valueOf(10000))
                 );
-                given(productDao.findAll()).willReturn(products);
+                for (Product product : products) {
+                    Product persisted = productDao.save(product);
+                    product.setId(persisted.getId());
+                }
             }
 
             @Test
@@ -124,7 +123,10 @@ class ProductServiceTest {
             void findAll() {
                 List<Product> result = subject();
 
-                assertThat(result).usingRecursiveComparison().isEqualTo(products);
+                assertThat(result)
+                        .usingFieldByFieldElementComparator()
+                        .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+                        .containsAll(products);
             }
         }
     }

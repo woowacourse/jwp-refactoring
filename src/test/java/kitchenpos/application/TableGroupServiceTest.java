@@ -3,44 +3,42 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static kitchenpos.application.fixture.OrderFixture.createOrder;
 import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.application.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceIntegrationTest
 @DisplayName("단체 지정 서비스")
 class TableGroupServiceTest {
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
-    @Mock
+    @Autowired
     private OrderDao orderDao;
 
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
 
-    @Mock
+    @Autowired
     private TableGroupDao tableGroupDao;
 
     @Nested
@@ -57,30 +55,27 @@ class TableGroupServiceTest {
         class WithOrderTableIds {
             @BeforeEach
             void setUp() {
-                request = createTableGroupRequest(Arrays.asList(1L, 2L));
                 List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(1L, true, null, 1),
-                        createOrderTable(2L, true, null, 3)
+                        createOrderTable(null, true, null, 1),
+                        createOrderTable(null, true, null, 3)
                 );
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
+                for (OrderTable orderTable : orderTables) {
+                    OrderTable persisted = orderTableDao.save(orderTable);
+                    orderTable.setId(persisted.getId());
+                }
+                List<Long> orderTableIds = orderTables.stream().map(OrderTable::getId).collect(Collectors.toList());
+                request = createTableGroupRequest(orderTableIds);
             }
 
             @Test
             @DisplayName("단체 지정을 생성하고, 해당하는 주문 테이블들의 단체 id와 빈 테이블 여부를 업데이트한다")
             void createTableGroups() {
-                given(tableGroupDao.save(any(TableGroup.class))).willAnswer(i -> {
-                    TableGroup tableGroup = i.getArgument(0, TableGroup.class);
-                    tableGroup.setId(5L);
-                    return tableGroup;
-                });
-
                 TableGroup result = subject();
 
-                verify(orderTableDao, times(2)).save(any(OrderTable.class));
                 assertAll(
                         () -> assertThat(result.getId()).isNotNull(),
                         () -> assertThat(result.getCreatedDate()).isNotNull(),
-                        () -> assertThat(result.getOrderTables()).extracting(OrderTable::getTableGroupId).containsOnly(5L),
+                        () -> assertThat(result.getOrderTables()).extracting(OrderTable::getTableGroupId).containsOnly(result.getId()),
                         () -> assertThat(result.getOrderTables()).extracting(OrderTable::isEmpty).containsOnly(false)
                 );
             }
@@ -91,9 +86,9 @@ class TableGroupServiceTest {
         class WhenOrderTableNotExist {
             @BeforeEach
             void setUp() {
-                request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                List<OrderTable> orderTables = Collections.singletonList(createOrderTable(1L, true, null, 1));
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
+                OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, null, 1));
+
+                request = createTableGroupRequest(Arrays.asList(orderTable.getId(), 0L));
             }
 
             @Test
@@ -108,12 +103,10 @@ class TableGroupServiceTest {
         class WhenNotAllOrderTableEmpty {
             @BeforeEach
             void setUp() {
-                request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(1L, true, null, 1),
-                        createOrderTable(2L, false, null, 3)
-                );
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
+                OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, true, null, 1));
+                OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, false, null, 1));
+
+                request = createTableGroupRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
             }
 
             @Test
@@ -128,12 +121,11 @@ class TableGroupServiceTest {
         class WhenTableGroupIdAlreadyExist {
             @BeforeEach
             void setUp() {
-                request = createTableGroupRequest(Arrays.asList(1L, 2L));
-                List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(1L, true, null, 1),
-                        createOrderTable(2L, true, 4L, 3)
-                );
-                given(orderTableDao.findAllByIdIn(anyList())).willReturn(orderTables);
+                TableGroup tablegroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, true, null, 1));
+                OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, true, tablegroup.getId(), 1));
+
+                request = createTableGroupRequest(Arrays.asList(orderTable1.getId(), orderTable2.getId()));
             }
 
             @Test
@@ -148,24 +140,26 @@ class TableGroupServiceTest {
     @DisplayName("Ungroup 메서드는")
     class UngroupTableGroup {
         private Long tableGroupId;
+        private List<Long> orderTableIds;
 
         private void subject() {
             tableGroupService.ungroup(tableGroupId);
         }
 
         @Nested
-        @DisplayName("Ungroup할 단체의 id가 주어지고, 해당하는 주문 테이블들의 상태가 모두 '조리' 또는 '식사 중'이 아닐 경우")
+        @DisplayName("Ungroup할 단체의 id가 주어지고, 해당하는 주문 테이블들의 상태가 모두 '완료'일 경우")
         class WithGroupId {
             @BeforeEach
             void setUp() {
-                tableGroupId = 5L;
-                List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(1L, true, null, 1),
-                        createOrderTable(2L, true, null, 3)
-                );
-                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
-                        .willReturn(false);
+                TableGroup tablegroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                tableGroupId = tablegroup.getId();
+                OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, true, tableGroupId, 1));
+                OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, true, tableGroupId, 3));
+
+                orderDao.save(createOrder(null, OrderStatus.COMPLETION, orderTable1.getId(), LocalDateTime.now()));
+                orderDao.save(createOrder(null, OrderStatus.COMPLETION, orderTable2.getId(), LocalDateTime.now()));
+
+                orderTableIds = Arrays.asList(orderTable1.getId(), orderTable2.getId());
             }
 
             @Test
@@ -173,11 +167,10 @@ class TableGroupServiceTest {
             void ungroupTableGroup() {
                 subject();
 
-                ArgumentCaptor<OrderTable> orderTable = ArgumentCaptor.forClass(OrderTable.class);
-                verify(orderTableDao, times(2)).save(orderTable.capture());
+                List<OrderTable> expected = orderTableDao.findAllByIdIn(orderTableIds);
                 assertAll(
-                        () -> assertThat(orderTable.getAllValues()).extracting(OrderTable::getTableGroupId).containsOnlyNulls(),
-                        () -> assertThat(orderTable.getAllValues()).extracting(OrderTable::isEmpty).containsOnly(false)
+                        () -> assertThat(expected).extracting(OrderTable::getTableGroupId).containsOnlyNulls(),
+                        () -> assertThat(expected).extracting(OrderTable::isEmpty).containsOnly(false)
                 );
             }
         }
@@ -187,14 +180,13 @@ class TableGroupServiceTest {
         class WhenOrderTableInCookingOrMeal {
             @BeforeEach
             void setUp() {
-                tableGroupId = 5L;
-                List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(1L, true, null, 1),
-                        createOrderTable(2L, true, null, 3)
-                );
-                given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-                given(orderDao.existsByOrderTableIdInAndOrderStatusIn(eq(Arrays.asList(1L, 2L)), anyList()))
-                        .willReturn(true);
+                TableGroup tablegroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                tableGroupId = tablegroup.getId();
+                OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, true, tableGroupId, 1));
+                OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, true, tableGroupId, 3));
+
+                orderDao.save(createOrder(null, OrderStatus.COOKING, orderTable1.getId(), LocalDateTime.now()));
+                orderDao.save(createOrder(null, OrderStatus.COMPLETION, orderTable2.getId(), LocalDateTime.now()));
             }
 
             @Test

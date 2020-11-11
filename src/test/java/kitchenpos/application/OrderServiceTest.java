@@ -1,53 +1,53 @@
 package kitchenpos.application;
 
-import kitchenpos.application.fixture.OrderFixture;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dao.*;
+import kitchenpos.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static kitchenpos.application.fixture.OrderFixture.createOrder;
-import static kitchenpos.application.fixture.OrderFixture.createOrderRequest;
+import static kitchenpos.application.fixture.MenuFixture.createMenu;
+import static kitchenpos.application.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.application.fixture.OrderFixture.*;
 import static kitchenpos.application.fixture.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.application.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.application.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceIntegrationTest
 @DisplayName("주문 서비스")
 class OrderServiceTest {
-    @InjectMocks
+    @Autowired
     private OrderService orderService;
 
-    @Mock
+    @Autowired
     private MenuDao menuDao;
 
-    @Mock
+    @Autowired
     private OrderDao orderDao;
 
-    @Mock
+    @Autowired
     private OrderLineItemDao orderLineItemDao;
 
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
+
+    @Autowired
+    private MenuGroupDao menuGroupDao;
+
+    @Autowired
+    private TableGroupDao tableGroupDao;
 
     @Nested
     @DisplayName("생성 메서드는")
@@ -63,23 +63,20 @@ class OrderServiceTest {
         class WithOrderTableIdAndOrderLineItems {
             @BeforeEach
             void setUp() {
+                TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 1));
+
+                Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
                 List<OrderLineItem> orderLineItems =
-                        Arrays.asList(createOrderLineItem(1L, 2L), createOrderLineItem(2L, 1L));
-                request = createOrderRequest(orderLineItems, 10L);
-                given(menuDao.countByIdIn(anyList())).willReturn((long) request.getOrderLineItems().size());
-                given(orderTableDao.findById(10L)).willReturn(Optional.of(createOrderTable(10L, false, 5L, 1)));
+                        Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
+                request = createOrderRequest(orderLineItems, orderTable.getId());
             }
 
             @Test
             @DisplayName("초기상태가 조리 중인 주문을 생성한다")
             void createOrder() {
-                given(orderDao.save(any(Order.class))).willAnswer(i -> {
-                    Order savedOrder = i.getArgument(0, Order.class);
-                    savedOrder.setId(1L);
-                    return savedOrder;
-                });
-                given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(mock(OrderLineItem.class));
-
                 Order result = subject();
 
                 assertAll(
@@ -112,9 +109,13 @@ class OrderServiceTest {
         class WhenNotExistIOrderTable {
             @BeforeEach
             void setUp() {
-                request = createOrderRequest(Arrays.asList(new OrderLineItem(), new OrderLineItem()), 5L);
-                given(menuDao.countByIdIn(anyList())).willReturn(2L);
-                given(orderTableDao.findById(5L)).willReturn(Optional.empty());
+                Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
+
+                List<OrderLineItem> orderLineItems =
+                        Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
+                request = createOrderRequest(orderLineItems, 0L);
             }
 
             @Test
@@ -136,23 +137,40 @@ class OrderServiceTest {
         @DisplayName("주문과 주문 항목들이 저장되어 있으면")
         class WhenOrderAndOrderLineItemsSaved {
             private List<Order> orders;
-            private Map<Long, List<OrderLineItem>> orderLineItems;
+            private List<OrderLineItem> orderLineItems;
 
             @BeforeEach
             void setUp() {
+                TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 1));
+                OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 2));
+                OrderTable orderTable3 = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 3));
+
+                Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
+
                 orders = Arrays.asList(
-                        createOrder(1L, COOKING, 5L),
-                        createOrder(2L, COOKING, 5L),
-                        createOrder(3L, COOKING, 6L)
+                        createOrder(null, COOKING, orderTable1.getId(), LocalDateTime.now()),
+                        createOrder(null, MEAL, orderTable2.getId(), LocalDateTime.now()),
+                        createOrder(null, COOKING, orderTable3.getId(), LocalDateTime.now())
                 );
-                orderLineItems = new HashMap<Long, List<OrderLineItem>>() {{
-                    put(1L, Arrays.asList(createOrderLineItem(1L, 1L, 1L)));
-                    put(2L, Arrays.asList(createOrderLineItem(2L, 1L, 2L), createOrderLineItem(2L, 2L, 1L)));
-                    put(3L, Arrays.asList(createOrderLineItem(3L, 1L, 1L), createOrderLineItem(3L, 2L, 2L)));
-                }};
-                given(orderDao.findAll()).willReturn(orders);
-                given(orderLineItemDao.findAllByOrderId(anyLong()))
-                        .willAnswer(i -> orderLineItems.get(i.getArgument(0, Long.class)));
+                for (Order order : orders) {
+                    Order persisted = orderDao.save(order);
+                    order.setId(persisted.getId());
+                }
+
+                orderLineItems = Arrays.asList(
+                        createOrderLineItem(orders.get(0).getId(), menu1.getId(), 1L),
+                        createOrderLineItem(orders.get(1).getId(), menu1.getId(), 2L),
+                        createOrderLineItem(orders.get(1).getId(), menu2.getId(), 1L),
+                        createOrderLineItem(orders.get(2).getId(), menu1.getId(), 1L),
+                        createOrderLineItem(orders.get(2).getId(), menu2.getId(), 2L)
+                );
+                for (OrderLineItem orderLineItem : orderLineItems) {
+                    OrderLineItem persisted = orderLineItemDao.save(orderLineItem);
+                    orderLineItem.setSeq(persisted.getSeq());
+                }
             }
 
             @Test
@@ -160,8 +178,12 @@ class OrderServiceTest {
             void findOrderAndOrderLineItems() {
                 List<Order> result = subject();
 
-                assertThat(result).usingElementComparatorIgnoringFields("orderLineItems").isEqualTo(orders);
-                assertThat(result).extracting(Order::getOrderLineItems).isEqualTo(new ArrayList<>(orderLineItems.values()));
+                assertThat(result)
+                        .usingElementComparatorIgnoringFields("orderLineItems")
+                        .containsAll(orders);
+                assertThat(result).flatExtracting(Order::getOrderLineItems)
+                        .usingFieldByFieldElementComparator()
+                        .isEqualTo(orderLineItems);
             }
         }
     }
@@ -181,10 +203,11 @@ class OrderServiceTest {
         class WhenOrderSavedAndWithOrderIdAndOrderStatus {
             @BeforeEach
             void setUp() {
-                orderId = 1L;
-                request = OrderFixture.updateOrderRequest(MEAL);
-                given(orderDao.findById(orderId))
-                        .willReturn(Optional.of(createOrder(orderId, COOKING, 5L)));
+                TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 1));
+                orderId = orderDao.save(createOrder(null, COOKING, orderTable.getId(), LocalDateTime.now())).getId();
+
+                request = updateOrderRequest(MEAL);
             }
 
             @Test
@@ -192,7 +215,7 @@ class OrderServiceTest {
             void findOrderAndOrderLineItems() {
                 Order result = subject();
 
-                verify(orderDao).save(refEq(createOrder(orderId, MEAL, 5L), "orderedTime", "orderLineItems"));
+                assertThat(result).isEqualToIgnoringGivenFields(orderDao.findById(orderId).get(), "orderStatus", "orderLineItems");
                 assertThat(result.getOrderStatus()).isEqualTo(MEAL.name());
             }
         }
@@ -202,9 +225,8 @@ class OrderServiceTest {
         class WhenNotExistOrder {
             @BeforeEach
             void setUp() {
-                orderId = 1L;
-                request = OrderFixture.updateOrderRequest(MEAL);
-                given(orderDao.findById(orderId)).willReturn(Optional.empty());
+                orderId = 0L;
+                request = updateOrderRequest(MEAL);
             }
 
             @Test
@@ -219,10 +241,11 @@ class OrderServiceTest {
         class WhenCompletedOrder {
             @BeforeEach
             void setUp() {
-                orderId = 1L;
-                request = OrderFixture.updateOrderRequest(COOKING);
-                given(orderDao.findById(orderId))
-                        .willReturn(Optional.of(createOrder(orderId, COMPLETION, 5L)));
+                TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
+                OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 1));
+                orderId = orderDao.save(createOrder(null, COMPLETION, orderTable.getId(), LocalDateTime.now())).getId();
+
+                request = updateOrderRequest(COOKING);
             }
 
             @Test
