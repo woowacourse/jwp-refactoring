@@ -22,7 +22,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -33,7 +32,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-@Sql("/truncate.sql")
 class OrderServiceTest {
 
     @Autowired
@@ -134,7 +132,9 @@ class OrderServiceTest {
     void createException4() {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        Menu menu = new Menu("간장 치킨 두마리", 19000L, 1L, new ArrayList<>());
+        Product product = productDao.save(new Product("간장치킨", 10000L));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
+        Menu menu = new Menu("간장 치킨 두마리", 19000L, 1L, Collections.singletonList(menuProduct));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
