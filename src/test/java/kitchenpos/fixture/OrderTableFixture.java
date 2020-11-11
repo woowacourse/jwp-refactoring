@@ -1,12 +1,15 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableDto;
 
 public class OrderTableFixture {
     public static final Long ID1 = 1L;
     public static final Long ID2 = 2L;
     public static final Long ID3 = 3L;
     public static final Long ID4 = 4L;
+    public static final int DEFAULT_NUMBER_OF_GUESTS = 0;
+    public static final boolean DEFAULT_EMPTY = true;
 
     public static OrderTable createEmptyWithId(Long id) {
         OrderTable orderTable = new OrderTable();
@@ -55,5 +58,9 @@ public class OrderTableFixture {
         orderTable.setEmpty(false);
 
         return orderTable;
+    }
+
+    public static OrderTableDto createDto() {
+        return new OrderTableDto(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
     }
 }

@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableDto;
 import kitchenpos.fixture.OrderTableFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,11 +40,12 @@ class TableServiceTest {
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void create() {
+        OrderTableDto createDto = OrderTableFixture.createDto();
         OrderTable withoutId = OrderTableFixture.createEmptyWithoutId();
         OrderTable withId = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
 
         when(orderTableDao.save(withoutId)).thenReturn(withId);
-        OrderTable saved = tableService.create(withoutId);
+        OrderTable saved = tableService.create(createDto);
 
         assertThat(saved).isEqualToComparingFieldByField(withId);
     }

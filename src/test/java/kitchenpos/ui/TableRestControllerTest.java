@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableDto;
 import kitchenpos.fixture.OrderTableFixture;
 
 @WebMvcTest(controllers = TableRestController.class)
@@ -50,7 +51,7 @@ class TableRestControllerTest {
     void createTable() throws Exception {
         OrderTable orderTable = OrderTableFixture.createEmptyWithoutId();
 
-        when(tableService.create(any(OrderTable.class))).thenReturn(tables.get(0));
+        when(tableService.create(any(OrderTableDto.class))).thenReturn(tables.get(0));
 
         mockMvc.perform(post("/api/tables")
             .accept(MediaType.APPLICATION_JSON)
