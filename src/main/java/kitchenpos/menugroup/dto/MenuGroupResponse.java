@@ -1,6 +1,6 @@
-package kitchenpos.application.dto;
+package kitchenpos.menugroup.dto;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;
