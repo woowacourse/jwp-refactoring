@@ -118,7 +118,7 @@ class MenuServiceTest {
         Menu 생성할_메뉴_2 = createMenu("프라이드+프라이드_2", BigDecimal.valueOf(30_000L), 메뉴_그룹.getId(),
                 Collections.singletonList(메뉴_상품));
         Menu 메뉴_1 = menuService.create(생성할_메뉴_1);
-        Menu 메뉴_2 = menuService.create(생성할_메뉴_1);
+        Menu 메뉴_2 = menuService.create(생성할_메뉴_2);
 
         // when
         List<Menu> 메뉴_목록 = menuService.list();
