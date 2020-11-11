@@ -14,7 +14,8 @@ import javax.persistence.OneToMany;
 @Entity
 public class Menu {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
