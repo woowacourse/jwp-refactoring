@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.math.BigDecimal;
 
 @Entity
 @AttributeOverride(name = "id", column = @Column(name = "MENU_PRODUCT_ID"))
@@ -34,6 +35,10 @@ public class MenuProduct extends BaseEntity {
 
     public Product getProduct() {
         return product;
+    }
+
+    public BigDecimal getProductPrice() {
+        return product.getPrice();
     }
 
     public long getQuantity() {

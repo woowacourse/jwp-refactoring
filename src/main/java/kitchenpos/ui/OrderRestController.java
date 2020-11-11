@@ -34,7 +34,7 @@ public class OrderRestController {
     @GetMapping("/api/orders")
     public ResponseEntity<List<Order>> list() {
         return ResponseEntity.ok()
-                .body(orderService.list())
+                .body(orderService.findAllFetch())
                 ;
     }
 

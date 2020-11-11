@@ -114,7 +114,7 @@ class OrderServiceTest {
         orderService.create(orderTable.getId(), orderLineItems);
 
         // when
-        List<Order> list = orderService.list();
+        List<Order> list = orderService.findAllFetch();
 
         // when
         assertThat(list).hasSize(orderRepository.findAll().size());

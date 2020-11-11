@@ -43,23 +43,21 @@ class TableServiceTest {
     @DisplayName("empty 여부를 변경한다.")
     @Test
     void changeEmptyTest() {
-        final boolean EXPECTED = false;
-
         // given
-        OrderTable orderTable = new OrderTable(10, !EXPECTED);
+        OrderTable orderTable = new OrderTable(10, false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         Order order = new Order(savedOrderTable, Collections.emptyList());
         order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 
-        savedOrderTable.updateEmpty(EXPECTED);
+        savedOrderTable.updateEmpty(true);
 
         // when
         OrderTable result = tableService.changeEmpty(savedOrderTable.getId(), savedOrderTable);
 
         // then
-        assertThat(result.isEmpty()).isEqualTo(EXPECTED);
+        assertThat(result.isEmpty()).isEqualTo(true);
     }
 
     @DisplayName("numberOfGuests 변경한다.")

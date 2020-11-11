@@ -42,13 +42,13 @@ public class OrderService {
         }
 
         Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
-        OrderLineItems orderLineItems_ = new OrderLineItems(orderLineItems, savedOrder);
-        orderLineItemRepository.saveAll(orderLineItems_.getOrderLineItems());
+        OrderLineItems fetchedOrderLineItems = new OrderLineItems(orderLineItems, savedOrder);
+        orderLineItemRepository.saveAll(fetchedOrderLineItems.getOrderLineItems());
 
         return savedOrder;
     }
 
-    public List<Order> list() {
+    public List<Order> findAllFetch() {
         final List<Order> orders = orderRepository.findAll();
 
         for (final Order order : orders) {

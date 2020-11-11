@@ -55,10 +55,6 @@ public class OrderTable extends BaseEntity {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
     }

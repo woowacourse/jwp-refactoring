@@ -47,7 +47,7 @@ public class MenuService {
         }
 
         BigDecimal sum = menuProducts.getSum();
-        if (isGraterThan(menu.getPrice(), sum)) {
+        if (isGreaterThan(menu.getPrice(), sum)) {
             throw new IllegalArgumentException();
         }
 
@@ -57,11 +57,11 @@ public class MenuService {
         return savedMenu;
     }
 
-    private boolean isGraterThan(BigDecimal number1, BigDecimal number2) {
+    private boolean isGreaterThan(BigDecimal number1, BigDecimal number2) {
         return number1.compareTo(number2) > 0;
     }
 
-    public List<Menu> list() {
+    public List<Menu> findAll() {
         return menuRepository.findAll();
     }
 }
