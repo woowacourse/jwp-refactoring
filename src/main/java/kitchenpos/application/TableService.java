@@ -11,9 +11,11 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 
 @Service
+@Transactional(readOnly = true)
 public class TableService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -24,8 +26,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableDto orderTableDto) {
-        return orderTableDao.save(orderTableDto.toEntity());
+    public OrderTable create(final OrderTableCreateRequest orderTableCreateRequest) {
+        return orderTableDao.save(orderTableCreateRequest.toEntity());
     }
 
     public List<OrderTable> list() {
@@ -33,7 +35,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
@@ -48,7 +50,7 @@ public class TableService {
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional

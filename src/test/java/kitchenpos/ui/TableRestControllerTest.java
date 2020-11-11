@@ -20,7 +20,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 
 @WebMvcTest(controllers = TableRestController.class)
@@ -35,23 +37,12 @@ class TableRestControllerTest {
     @MockBean
     private TableService tableService;
 
-    private List<OrderTable> tables;
-
-    @BeforeEach
-    void setUp() {
-        OrderTable orderTable1 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
-        OrderTable orderTable2 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2);
-        OrderTable orderTable3 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID3);
-
-        tables = Arrays.asList(orderTable1, orderTable2, orderTable3);
-    }
-
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void createTable() throws Exception {
-        OrderTable orderTable = OrderTableFixture.createEmptyWithoutId();
+        OrderTable orderTable = OrderTableFixture.createEmptyWithId(1L);
 
-        when(tableService.create(any(OrderTableDto.class))).thenReturn(tables.get(0));
+        when(tableService.create(any(OrderTableCreateRequest.class))).thenReturn(orderTable);
 
         mockMvc.perform(post("/api/tables")
             .accept(MediaType.APPLICATION_JSON)
@@ -69,7 +60,9 @@ class TableRestControllerTest {
     @DisplayName("테이블을 모두 조회한다.")
     @Test
     void findAll() throws Exception {
-        when(tableService.list()).thenReturn(tables);
+        OrderTable table1 = OrderTableFixture.createEmptyWithId(1L);
+        OrderTable table2 = OrderTableFixture.createEmptyWithId(2L);
+        when(tableService.list()).thenReturn(Arrays.asList(table1, table2));
 
         mockMvc.perform(get("/api/tables")
             .accept(MediaType.APPLICATION_JSON)
@@ -77,21 +70,19 @@ class TableRestControllerTest {
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("[0].id").value(1L))
-            .andExpect(jsonPath("[1].id").value(2L))
-            .andExpect(jsonPath("[2].id").value(3L));
+            .andExpect(jsonPath("[1].id").value(2L));
     }
 
     @DisplayName("Empty상태를 변경한다.")
     @Test
     void changeEmpty() throws Exception {
-        OrderTable table = tables.get(0);
-        table.setEmpty(false);
-        when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(table);
+        OrderTableResponse response = OrderTableFixture.createResponse(1L);
+        when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(response);
 
-        mockMvc.perform(put("/api/tables/{id}/empty", table.getId())
+        mockMvc.perform(put("/api/tables/{id}/empty", response.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(table))
+            .content(objectMapper.writeValueAsBytes(response))
         )
             .andDo(print())
             .andExpect(status().isOk())
@@ -101,7 +92,7 @@ class TableRestControllerTest {
     @DisplayName("손님의 수를 수정한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable table = tables.get(0);
+        OrderTable table = OrderTableFixture.createNotEmptyWithId(1L);
         table.setNumberOfGuests(18);
         when(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).thenReturn(table);
 

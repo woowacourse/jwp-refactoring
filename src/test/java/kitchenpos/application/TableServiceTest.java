@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,11 +40,10 @@ class TableServiceTest {
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void create() {
-        OrderTableDto createDto = OrderTableFixture.createDto();
-        OrderTable withoutId = OrderTableFixture.createEmptyWithoutId();
+        OrderTableCreateRequest createDto = OrderTableFixture.createRequest();
         OrderTable withId = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
 
-        when(orderTableDao.save(withoutId)).thenReturn(withId);
+        when(orderTableDao.save(any(OrderTable.class))).thenReturn(withId);
         OrderTable saved = tableService.create(createDto);
 
         assertThat(saved).isEqualToComparingFieldByField(withId);
@@ -71,9 +70,10 @@ class TableServiceTest {
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(emptyTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(false);
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(emptyTable);
-        OrderTable changedTable = tableService.changeEmpty(emptyTable.getId(), emptyTable);
+        OrderTableResponse response = tableService.changeEmpty(emptyTable.getId(),
+            emptyTable);
 
-        assertThat(changedTable.isEmpty()).isTrue();
+        assertThat(response.isEmpty()).isTrue();
     }
 
     @DisplayName("Order Table이 존재하지 않는 경우 Empty 변경 요청 시 예외를 반환한다.")

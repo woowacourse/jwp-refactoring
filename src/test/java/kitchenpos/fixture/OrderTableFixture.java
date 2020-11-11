@@ -1,7 +1,8 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableDto;
+import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.response.OrderTableResponse;
 
 public class OrderTableFixture {
     public static final Long ID1 = 1L;
@@ -60,7 +61,11 @@ public class OrderTableFixture {
         return orderTable;
     }
 
-    public static OrderTableDto createDto() {
-        return new OrderTableDto(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
+    public static OrderTableCreateRequest createRequest() {
+        return new OrderTableCreateRequest(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
+    }
+
+    public static OrderTableResponse createResponse(Long id) {
+        return OrderTableResponse.of(createNotEmptyWithId(id));
     }
 }
