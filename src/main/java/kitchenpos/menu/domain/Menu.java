@@ -1,36 +1,44 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
-import org.springframework.util.ObjectUtils;
+import kitchenpos.menugroup.domain.MenuGroup;
 
+import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Menu {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "MENU_GROUP_ID", foreignKey = @ForeignKey(name = "FK_MENU_MENU_GROUP"))
+    private MenuGroup menuGroup;
 
     public Menu() {
     }
 
-    public Menu(String name, Long price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(String name, Long price, MenuGroup menuGroup) {
         this.name = name;
         this.price = BigDecimal.valueOf(price);
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuGroup = menuGroup;
         validate();
     }
 
     private void validate() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException(String.format("%f : 가격은 0원 이상이어야 합니다.", price));
-        }
-        if (ObjectUtils.isEmpty(this.menuProducts)) {
-            throw new IllegalArgumentException("메뉴에 등록한 상품이 없습니다.");
         }
     }
 
@@ -58,19 +66,12 @@ public class Menu {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(final MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
 }
