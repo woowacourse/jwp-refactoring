@@ -1,9 +1,9 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +23,7 @@ public class OrderRestController {
     public ResponseEntity<OrderResponse> create(@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
         final OrderResponse created = orderService.create(orderCreateRequest);
         final URI uri = URI.create("/api/orders/" + created.getId());
+
         return ResponseEntity.created(uri)
                 .body(created);
     }

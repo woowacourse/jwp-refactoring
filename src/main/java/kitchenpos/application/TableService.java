@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableChangeRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.dto.ordertable.OrderTableChangeRequest;
+import kitchenpos.dto.ordertable.OrderTableCreateRequest;
+import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;

@@ -1,7 +1,8 @@
-package kitchenpos.dto;
+package kitchenpos.dto.order;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

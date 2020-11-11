@@ -4,10 +4,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuProductCreateRequest;
-import kitchenpos.dto.MenuProductResponse;
-import kitchenpos.dto.MenuResponse;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
+import kitchenpos.dto.menuproduct.MenuProductResponse;
+import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -77,7 +77,7 @@ public class MenuService {
             menuProductResponses.add(MenuProductResponse.from(menuProduct));
         }
 
-        return MenuResponse.from(savedMenu, menuProductResponses);
+        return MenuResponse.of(savedMenu, menuProductResponses);
     }
 
     public List<MenuResponse> list() {
@@ -91,7 +91,7 @@ public class MenuService {
             for (final MenuProduct menuProduct : menu.getMenuProducts()) {
                 menuProductResponses.add(MenuProductResponse.from(menuProduct));
             }
-            MenuResponse menuResponse = MenuResponse.from(menu, menuProductResponses);
+            MenuResponse menuResponse = MenuResponse.of(menu, menuProductResponses);
             menuResponses.add(menuResponse);
         }
 

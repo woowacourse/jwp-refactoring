@@ -1,7 +1,8 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menu;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;

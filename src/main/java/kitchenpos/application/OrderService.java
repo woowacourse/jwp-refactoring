@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusChangeRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -76,7 +76,7 @@ public class OrderService {
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.from(savedOrder);
     }
 
     public List<OrderResponse> list() {
@@ -85,7 +85,7 @@ public class OrderService {
         List<OrderResponse> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-            orderResponses.add(OrderResponse.of(order));
+            orderResponses.add(OrderResponse.from(order));
         }
 
         return orderResponses;
@@ -108,6 +108,6 @@ public class OrderService {
 
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.from(savedOrder);
     }
 }

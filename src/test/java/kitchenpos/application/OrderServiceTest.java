@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusChangeRequest;
 import kitchenpos.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

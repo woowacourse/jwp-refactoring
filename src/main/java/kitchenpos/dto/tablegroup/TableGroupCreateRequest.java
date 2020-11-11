@@ -1,7 +1,8 @@
-package kitchenpos.dto;
+package kitchenpos.dto.tablegroup;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;

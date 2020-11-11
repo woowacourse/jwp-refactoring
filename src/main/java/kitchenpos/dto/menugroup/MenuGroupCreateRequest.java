@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menugroup;
 
 import kitchenpos.domain.MenuGroup;
 
@@ -15,11 +15,11 @@ public class MenuGroupCreateRequest {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public MenuGroup toMenuGroup() {
         return new MenuGroup(this.name);
+    }
+
+    public String getName() {
+        return name;
     }
 }
