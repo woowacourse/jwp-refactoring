@@ -12,7 +12,6 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -49,7 +48,8 @@ public class ServiceTest {
 		return menuProduct;
 	}
 
-	public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+	public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,
+		List<OrderLineItem> orderLineItems) {
 		Order order = new Order();
 		order.setId(id);
 		order.setOrderStatus(status);
