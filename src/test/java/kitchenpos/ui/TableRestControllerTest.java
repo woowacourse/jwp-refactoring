@@ -6,9 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Arrays;
-import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 
 @WebMvcTest(controllers = TableRestController.class)
@@ -42,7 +39,7 @@ class TableRestControllerTest {
     void createTable() throws Exception {
         OrderTable orderTable = OrderTableFixture.createEmptyWithId(1L);
 
-        when(tableService.create(any(OrderTableCreateRequest.class))).thenReturn(orderTable);
+        when(tableService.create(any(OrderTableRequest.class))).thenReturn(orderTable);
 
         mockMvc.perform(post("/api/tables")
             .accept(MediaType.APPLICATION_JSON)
@@ -77,7 +74,7 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception {
         OrderTableResponse response = OrderTableFixture.createResponse(1L);
-        when(tableService.changeEmpty(anyLong(), any(OrderTable.class))).thenReturn(response);
+        when(tableService.changeEmpty(anyLong(), any(OrderTableRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/tables/{id}/empty", response.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -93,7 +90,7 @@ class TableRestControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception {
         OrderTableResponse response = OrderTableResponse.of(OrderTableFixture.createNumOf(1L, 18));
-        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableCreateRequest.class))).thenReturn(response);
+        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/tables/{id}/number-of-guests", response.getId())
             .contentType(MediaType.APPLICATION_JSON)

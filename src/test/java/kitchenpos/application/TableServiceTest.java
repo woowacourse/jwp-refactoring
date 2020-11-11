@@ -17,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
 
@@ -40,7 +40,7 @@ class TableServiceTest {
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void create() {
-        OrderTableCreateRequest createDto = OrderTableFixture.createRequest();
+        OrderTableRequest createDto = OrderTableFixture.createRequest();
         OrderTable withId = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
 
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(withId);
@@ -66,12 +66,13 @@ class TableServiceTest {
     @Test
     void changeEmpty() {
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
+        OrderTableRequest changeEmptyRequest = OrderTableFixture.createRequestEmptyOf(true);
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(emptyTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(false);
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(emptyTable);
         OrderTableResponse response = tableService.changeEmpty(emptyTable.getId(),
-            emptyTable);
+            changeEmptyRequest);
 
         assertThat(response.isEmpty()).isTrue();
     }
@@ -80,9 +81,10 @@ class TableServiceTest {
     @Test
     void changeEmptyNotFound() {
         OrderTable orderTable = OrderTableFixture.createEmptyWithId(1L);
+        OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(orderTable.getId())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,9 +92,10 @@ class TableServiceTest {
     @Test
     void changeEmptyGroupIdNull() {
         OrderTable orderTable = OrderTableFixture.createGroupTableWithId(1L);
+        OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), orderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -100,11 +103,12 @@ class TableServiceTest {
     @Test
     void changeEmptyAlreadyDoingSomething() {
         OrderTable mealOrCookingTable = OrderTableFixture.createNotEmptyWithId(1L);
+        OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(mealOrCookingTable));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(true);
 
         assertThatThrownBy(
-            () -> tableService.changeEmpty(mealOrCookingTable.getId(), mealOrCookingTable))
+            () -> tableService.changeEmpty(mealOrCookingTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -113,20 +117,21 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         OrderTable oneGuestTable = OrderTableFixture.createNotEmptyWithId(1L);
         OrderTable tenGuestTable = OrderTableFixture.createNumOf(1L, 10);
-        OrderTableCreateRequest tenGuestRequest = OrderTableFixture.createRequestNumOf(10);
+        OrderTableRequest tenGuestRequest = OrderTableFixture.createRequestNumOf(10);
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(oneGuestTable));
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(tenGuestTable);
         OrderTableResponse response = tableService.changeNumberOfGuests(
             tenGuestTable.getId(), tenGuestRequest);
 
-        assertThat(response).usingRecursiveComparison().isEqualTo(OrderTableResponse.of(tenGuestTable));
+        assertThat(response).usingRecursiveComparison()
+            .isEqualTo(OrderTableResponse.of(tenGuestTable));
     }
 
     @DisplayName("손님의 수가 음수인 경우 예외를 반환한다.")
     @Test
     void changeNumberOfGuestsNegativeGuestNumber() {
-        OrderTableCreateRequest negativeRequest = OrderTableFixture.createRequestNumOf(-10);
+        OrderTableRequest negativeRequest = OrderTableFixture.createRequestNumOf(-10);
 
         assertThatThrownBy(
             () -> tableService.changeNumberOfGuests(1L, negativeRequest))
@@ -136,7 +141,7 @@ class TableServiceTest {
     @DisplayName("해당하는 OrderTable이 없으면 예외를 반환한다.")
     @Test
     void changeNumberOfGuestsNoOrderTable() {
-        OrderTableCreateRequest request = OrderTableFixture.createRequest();
+        OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
@@ -147,7 +152,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsEmptyNumber() {
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
-        OrderTableCreateRequest request = OrderTableFixture.createRequest();
+        OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(emptyTable.getId())).thenReturn(Optional.of(emptyTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), request))

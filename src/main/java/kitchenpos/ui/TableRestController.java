@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 
 @RestController
@@ -25,8 +25,9 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest orderTableCreateRequest) {
-        final OrderTable created = tableService.create(orderTableCreateRequest);
+    public ResponseEntity<OrderTable> create(
+        @RequestBody final OrderTableRequest orderTableRequest) {
+        final OrderTable created = tableService.create(orderTableRequest);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created)
@@ -43,20 +44,20 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponse> changeEmpty(
         @PathVariable final Long orderTableId,
-        @RequestBody final OrderTable orderTable
+        @RequestBody final OrderTableRequest orderTableRequest
     ) {
         return ResponseEntity.ok()
-            .body(tableService.changeEmpty(orderTableId, orderTable))
+            .body(tableService.changeEmpty(orderTableId, orderTableRequest))
             ;
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
     public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
         @PathVariable final Long orderTableId,
-        @RequestBody final OrderTableCreateRequest orderTable
+        @RequestBody final OrderTableRequest orderTableRequest
     ) {
         return ResponseEntity.ok()
-            .body(tableService.changeNumberOfGuests(orderTableId, orderTable))
+            .body(tableService.changeNumberOfGuests(orderTableId, orderTableRequest))
             ;
     }
 }

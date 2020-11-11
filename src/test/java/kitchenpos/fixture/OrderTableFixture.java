@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 
 public class OrderTableFixture {
@@ -61,12 +61,16 @@ public class OrderTableFixture {
         return orderTable;
     }
 
-    public static OrderTableCreateRequest createRequest() {
-        return new OrderTableCreateRequest(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
+    public static OrderTableRequest createRequest() {
+        return new OrderTableRequest(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
     }
 
-    public static OrderTableCreateRequest createRequestNumOf(int numberOfGuests) {
-        return new OrderTableCreateRequest(numberOfGuests, DEFAULT_EMPTY);
+    public static OrderTableRequest createRequestNumOf(int numberOfGuests) {
+        return new OrderTableRequest(numberOfGuests, DEFAULT_EMPTY);
+    }
+
+    public static OrderTableRequest createRequestEmptyOf(boolean isEmpty) {
+        return new OrderTableRequest(DEFAULT_NUMBER_OF_GUESTS, isEmpty);
     }
 
     public static OrderTableResponse createResponse(Long id) {
