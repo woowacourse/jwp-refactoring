@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,16 +38,16 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -63,10 +63,10 @@ class OrderServiceTest {
     void create() {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
+        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
@@ -97,10 +97,10 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 테이블에 주문을 할 수 없다.")
     @Test
     void createException2() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
+        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order order = new Order(null, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
@@ -114,10 +114,10 @@ class OrderServiceTest {
     @Test
     void createException3() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
+        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
@@ -132,11 +132,13 @@ class OrderServiceTest {
     void createException4() {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = new Menu("간장 치킨 두마리", 19000L, 1L, Collections.singletonList(menuProduct));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
+        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
+
+        OrderLineItem orderLineItem = new OrderLineItem(null, -1L, 3);
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
 
         //when
@@ -150,10 +152,10 @@ class OrderServiceTest {
     void list() {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
@@ -174,10 +176,10 @@ class OrderServiceTest {
     void changeOrderStatus(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
@@ -198,10 +200,10 @@ class OrderServiceTest {
     void changeOrderStatusException1(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup("한마리 메뉴"));
-        Product product = productDao.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2);
-        Menu menu = menuDao.save(new Menu("간장 치킨 두마리", 19000L, menuGroup.getId(), Collections.singletonList(menuProduct)));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
+        Product product = productRepository.save(new Product("간장치킨", 10000L));
+        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
+        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
         Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
@@ -232,9 +234,9 @@ class OrderServiceTest {
         orderLineItemDao.deleteAll();
         orderDao.deleteAll();
         orderTableDao.deleteAll();
-        menuDao.deleteAll();
-        menuGroupDao.deleteAll();
-        menuProductDao.deleteAll();
-        productDao.deleteAll();
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
+        productRepository.deleteAll();
     }
 }
