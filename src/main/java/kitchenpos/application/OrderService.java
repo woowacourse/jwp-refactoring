@@ -60,8 +60,6 @@ public class OrderService {
 
             orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        savedOrder.setOrderLineItems(orderLineItems);
-
         return OrderResponse.of(savedOrder, orderLineItems);
     }
 
