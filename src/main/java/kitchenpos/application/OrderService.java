@@ -48,16 +48,14 @@ public class OrderService {
             request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
         final Order savedOrder = orderDao.save(order);
 
-        final Long orderId = savedOrder.getId();
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem();
-
-            orderLineItem.setMenuId(orderLineItemRequest.getMenuId());
-            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
-            orderLineItem.setOrderId(orderId);
-
+            OrderLineItem orderLineItem = new OrderLineItem(
+                savedOrder.getId(),
+                orderLineItemRequest.getMenuId(),
+                orderLineItemRequest.getQuantity()
+            );
             orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         return OrderResponse.of(savedOrder, orderLineItems);
