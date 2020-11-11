@@ -2,6 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableChangeRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -22,16 +26,22 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableRepository.save(orderTable);
+    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+        OrderTable orderTable = orderTableCreateRequest.toOrderTable();
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+
+        return OrderTableResponse.from(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll().stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+                                          final OrderTableChangeRequest orderTableChangeRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -44,14 +54,16 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(orderTableChangeRequest.isEmpty());
+        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
+                                                   final OrderTableChangeRequest orderTableCreateRequest) {
+        final int numberOfGuests = orderTableCreateRequest.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -65,7 +77,8 @@ public class TableService {
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
+        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
 
-        return orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.from(orderTable);
     }
 }
