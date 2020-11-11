@@ -1,55 +1,40 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
-@ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
-	@Mock
-	private MenuDao menuDao;
+class MenuServiceTest extends ServiceTest {
 
-	@Mock
-	private MenuGroupDao menuGroupDao;
-
-	@Mock
-	private MenuProductDao menuProductDao;
-
-	@Mock
-	private ProductDao productDao;
-
+	@Autowired
 	private MenuService menuService;
 
-	@BeforeEach
-	void setUp() {
-		menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-	}
+	@Autowired
+	private MenuGroupDao menuGroupDao;
+
+	@Autowired
+	private ProductDao productDao;
 
 	@DisplayName("menu price 가 null 일 때 IllegalArgumentException 발생")
 	@Test
 	void create1() {
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
+		Menu menu = createMenu(1L, "메뉴", null, 1L, Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -58,10 +43,8 @@ class MenuServiceTest {
 	@DisplayName("menu price 가 음수일 때 IllegalArgumentException 발생")
 	@Test
 	void create2() {
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(-1L));
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(-1L), 1L,
+			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -70,13 +53,8 @@ class MenuServiceTest {
 	@DisplayName("메뉴와 연관관계가 있는 메뉴 그룹의 아이디가 존재하지 않을 때 IllegalArgumentException 발생")
 	@Test
 	void create3() {
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(1000L));
-		menu.setMenuGroupId(1L);
-
-		when(menuGroupDao.existsById(anyLong())).thenReturn(false);
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), 1L,
+			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -85,21 +63,9 @@ class MenuServiceTest {
 	@DisplayName("productDao에 등록되지 않은 product를 menu가 소유할 때 IllegalArgumentException 발생")
 	@Test
 	void create5() {
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(1000L));
-		menu.setMenuGroupId(1L);
-
-		MenuProduct menuProduct = new MenuProduct();
-		menuProduct.setMenuId(1L);
-		menuProduct.setProductId(1L);
-		menuProduct.setQuantity(1L);
-		menuProduct.setSeq(1L);
-		menu.setMenuProducts(Collections.singletonList(menuProduct));
-
-		when(menuGroupDao.existsById(anyLong())).thenReturn(true);
-		when(productDao.findById(anyLong())).thenThrow(IllegalArgumentException.class);
+		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
+			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -111,26 +77,11 @@ class MenuServiceTest {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
 
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(menuPrice));
-		menu.setMenuGroupId(1L);
-
-		MenuProduct menuProduct = new MenuProduct();
-		menuProduct.setMenuId(1L);
-		menuProduct.setProductId(1L);
-		menuProduct.setQuantity(1L);
-		menuProduct.setSeq(1L);
-		menu.setMenuProducts(Collections.singletonList(menuProduct));
-
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(BigDecimal.valueOf(productPrice));
-
-		when(menuGroupDao.existsById(anyLong())).thenReturn(true);
-		when(productDao.findById(anyLong())).thenReturn(Optional.of(product));
+		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 1L, 3L);
+		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+			Collections.singletonList(menuProduct));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -139,59 +90,43 @@ class MenuServiceTest {
 	@DisplayName("메뉴 저장 성공")
 	@Test
 	void create7() {
-		long menuPrice = 500L;
-		long productPrice = 1000L;
+		long menuPrice = 1000L;
+		long productPrice = 500L;
 
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(menuPrice));
-		menu.setMenuGroupId(1L);
-
-		MenuProduct menuProduct = new MenuProduct();
-		menuProduct.setMenuId(1L);
-		menuProduct.setProductId(1L);
-		menuProduct.setQuantity(1L);
-		menuProduct.setSeq(1L);
-		menu.setMenuProducts(Collections.singletonList(menuProduct));
-
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(BigDecimal.valueOf(productPrice));
-
-		when(menuGroupDao.existsById(anyLong())).thenReturn(true);
-		when(productDao.findById(anyLong())).thenReturn(Optional.of(product));
-		when(menuDao.save(any(Menu.class))).thenReturn(menu);
+		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+			Collections.singletonList(menuProduct));
 
 		Menu actual = menuService.create(menu);
 
-		assertThat(actual).usingRecursiveComparison().isEqualTo(menu);
+		assertAll(
+			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.getName()).isEqualTo(menu.getName()),
+			() -> assertThat(actual.getPrice().longValue()).isEqualTo(menu.getPrice().longValue()),
+			() -> assertThat(actual.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+			() -> assertThat(actual.getMenuProducts().get(0).getQuantity()).isEqualTo(2L)
+		);
 	}
 
 	@Test
 	void list() {
-		Menu menu = new Menu();
-		menu.setId(1L);
-		menu.setPrice(BigDecimal.valueOf(1000L));
-		menu.setName("김말이");
-		menu.setMenuGroupId(1L);
+		long menuPrice = 1000L;
+		long productPrice = 500L;
 
-		MenuProduct menuProduct = new MenuProduct();
-		menuProduct.setMenuId(1L);
-		menuProduct.setProductId(1L);
-		menuProduct.setSeq(1L);
-		menuProduct.setQuantity(1L);
+		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+			Collections.singletonList(menuProduct));
 
-		List<Menu> expected = Collections.singletonList(menu);
-
-		when(menuDao.findAll()).thenReturn(expected);
-		when(menuProductDao.findAllByMenuId(anyLong())).thenReturn(Collections.singletonList(menuProduct));
+		Menu expect = menuService.create(menu);
 
 		List<Menu> actual = menuService.list();
 
 		assertThat(actual).hasSize(1);
 		assertThat(actual.get(0)).usingRecursiveComparison()
-			.isEqualTo(expected.get(0));
+			.isEqualTo(expect);
 	}
 }
