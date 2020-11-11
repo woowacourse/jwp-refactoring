@@ -43,12 +43,15 @@ class OrderDaoTest {
     @Autowired
     private MenuDao menuDao;
 
+    @Autowired
+    private ProductDao productDao;
+
     @BeforeEach
     void setUp() {
         OrderTable orderTable = OrderTable.builder()
             .empty(false)
             .build();
-        Product product = createProduct(10_000);
+        Product product = productDao.save(createProduct(10_000));
         MenuProduct menuProduct = createMenuProduct(product, 2);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
         Menu menu = createMenu(menuProducts,18_000);

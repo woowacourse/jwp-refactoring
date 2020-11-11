@@ -14,6 +14,7 @@ import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -47,6 +48,9 @@ class OrderServiceTest {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private ProductDao productDao;
 
     private MenuGroup savedMenuGroup;
 
@@ -170,7 +174,7 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu() {
-        Product product = createProduct(10_000);
+        Product product = productDao.save(createProduct(10_000));
         MenuProduct menuProduct = createMenuProduct(product, 2);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
