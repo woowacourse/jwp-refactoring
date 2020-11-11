@@ -48,8 +48,7 @@ class TableServiceTest {
         OrderTable findOrderTable = orderTableDao.findById(savedOrderTable.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(findOrderTable.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests());
-        assertThat(findOrderTable.isEmpty()).isEqualTo(orderTable.isEmpty());
+        assertThat(findOrderTable).usingRecursiveComparison().isEqualTo(savedOrderTable);
     }
 
     @DisplayName("1명 이상의 손님과 함께 빈 테이블로 등록할 수 없다.")
