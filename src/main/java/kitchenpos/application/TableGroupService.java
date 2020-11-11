@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -85,5 +86,10 @@ public class TableGroupService {
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<TableGroup> findById(long id) {
+        return tableGroupDao.findById(id);
     }
 }
