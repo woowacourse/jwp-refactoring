@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
-import kitchenpos.application.dto.ProductCreateRequest;
-import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.dto.ProductCreateRequest;
+import kitchenpos.product.dto.ProductResponse;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 생성한다.")
     @Test
@@ -30,7 +30,7 @@ class ProductServiceTest {
 
         ProductResponse response = productService.create(request);
 
-        Product findProduct = productDao.findById(response.getId())
+        Product findProduct = productRepository.findById(response.getId())
                 .orElseThrow(RuntimeException::new);
 
         assertThat(findProduct.getName()).isEqualTo(request.getName());
@@ -44,9 +44,9 @@ class ProductServiceTest {
         Product product2 = new Product("상품2", 15000L);
         Product product3 = new Product("상품3", 20000L);
 
-        productDao.save(product1);
-        productDao.save(product2);
-        productDao.save(product3);
+        productRepository.save(product1);
+        productRepository.save(product2);
+        productRepository.save(product3);
 
         List<ProductResponse> products = productService.list();
 
@@ -55,6 +55,6 @@ class ProductServiceTest {
 
     @AfterEach
     void tearDown() {
-        productDao.deleteAll();
+        productRepository.deleteAll();
     }
 }
