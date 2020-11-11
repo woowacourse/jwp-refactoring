@@ -65,6 +65,10 @@ public class OrderTableFixture {
         return new OrderTableCreateRequest(DEFAULT_NUMBER_OF_GUESTS, DEFAULT_EMPTY);
     }
 
+    public static OrderTableCreateRequest createRequestNumOf(int numberOfGuests) {
+        return new OrderTableCreateRequest(numberOfGuests, DEFAULT_EMPTY);
+    }
+
     public static OrderTableResponse createResponse(Long id) {
         return OrderTableResponse.of(createNotEmptyWithId(id));
     }

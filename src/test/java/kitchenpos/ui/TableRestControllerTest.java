@@ -92,14 +92,13 @@ class TableRestControllerTest {
     @DisplayName("손님의 수를 수정한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        OrderTable table = OrderTableFixture.createNotEmptyWithId(1L);
-        table.setNumberOfGuests(18);
-        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).thenReturn(table);
+        OrderTableResponse response = OrderTableResponse.of(OrderTableFixture.createNumOf(1L, 18));
+        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableCreateRequest.class))).thenReturn(response);
 
-        mockMvc.perform(put("/api/tables/{id}/number-of-guests", table.getId())
+        mockMvc.perform(put("/api/tables/{id}/number-of-guests", response.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(table))
+            .content(objectMapper.writeValueAsBytes(response))
         )
             .andDo(print())
             .andExpect(status().isOk())

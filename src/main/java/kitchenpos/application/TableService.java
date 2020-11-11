@@ -54,7 +54,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableCreateRequest orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -70,6 +70,6 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
     }
 }

@@ -113,31 +113,33 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         OrderTable oneGuestTable = OrderTableFixture.createNotEmptyWithId(1L);
         OrderTable tenGuestTable = OrderTableFixture.createNumOf(1L, 10);
+        OrderTableCreateRequest tenGuestRequest = OrderTableFixture.createRequestNumOf(10);
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(oneGuestTable));
         when(orderTableDao.save(any(OrderTable.class))).thenReturn(tenGuestTable);
-        OrderTable saved = tableService.changeNumberOfGuests(tenGuestTable.getId(), tenGuestTable);
+        OrderTableResponse response = tableService.changeNumberOfGuests(
+            tenGuestTable.getId(), tenGuestRequest);
 
-        assertThat(saved).usingRecursiveComparison().isEqualTo(tenGuestTable);
+        assertThat(response).usingRecursiveComparison().isEqualTo(OrderTableResponse.of(tenGuestTable));
     }
 
     @DisplayName("손님의 수가 음수인 경우 예외를 반환한다.")
     @Test
     void changeNumberOfGuestsNegativeGuestNumber() {
-        OrderTable negativeGuestTable = OrderTableFixture.createNumOf(1L, -10);
+        OrderTableCreateRequest negativeRequest = OrderTableFixture.createRequestNumOf(-10);
 
         assertThatThrownBy(
-            () -> tableService.changeNumberOfGuests(negativeGuestTable.getId(), negativeGuestTable))
+            () -> tableService.changeNumberOfGuests(1L, negativeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("해당하는 OrderTable이 없으면 예외를 반환한다.")
     @Test
     void changeNumberOfGuestsNoOrderTable() {
-        OrderTable oneGuestTable = OrderTableFixture.createNotEmptyWithId(1L);
-        when(orderTableDao.findById(oneGuestTable.getId())).thenReturn(Optional.empty());
+        OrderTableCreateRequest request = OrderTableFixture.createRequest();
+        when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(oneGuestTable.getId(), oneGuestTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -145,9 +147,10 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsEmptyNumber() {
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
+        OrderTableCreateRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(emptyTable.getId())).thenReturn(Optional.of(emptyTable));
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), emptyTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
