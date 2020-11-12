@@ -13,9 +13,17 @@ public class OrderFixture {
         order.setId(id);
         order.setOrderedTime(orderedTime);
         order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus.name());
+        order.setOrderStatus(orderStatus != null ? orderStatus.name() : null);
         order.setOrderTableId(orderTableId);
 
         return order;
+    }
+
+    public static Order createOrderRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        return createOrder(null, null, orderLineItems, null, orderTableId);
+    }
+
+    public static Order createOrderRequestChangeOrderStatus(OrderStatus orderStatus) {
+        return createOrder(null, null, null, orderStatus, null);
     }
 }

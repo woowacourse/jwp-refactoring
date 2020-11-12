@@ -13,4 +13,8 @@ public class OrderLineItemFixture {
 
         return orderLineItem;
     }
+
+    public static OrderLineItem createOrderLineItemRequest(Long menuId, long quantity) {
+        return createOrderLineItem(null, null, menuId, quantity);
+    }
 }
