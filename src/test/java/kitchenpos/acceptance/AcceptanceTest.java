@@ -33,7 +33,8 @@ abstract class AcceptanceTest {
         RestAssured.port = port;
     }
 
-    protected <T> T create(String uri, T data, Class<T> cls) throws JsonProcessingException {
+    protected <T> T create(final String uri, final T data, final Class<T> cls)
+            throws JsonProcessingException {
         final String request = objectMapper.writeValueAsString(data);
 
         // @formatter:off
@@ -51,7 +52,7 @@ abstract class AcceptanceTest {
         // @formatter:on
     }
 
-    protected <T> List<T> list(String uri, Class<T> cls) {
+    protected <T> List<T> list(final String uri, final Class<T> cls) {
         // @formatter:off
         return
                 given()
@@ -66,7 +67,8 @@ abstract class AcceptanceTest {
         // @formatter:on
     }
 
-    protected Product createProduct(String name, String price) throws JsonProcessingException {
+    protected Product createProduct(final String name, final String price)
+            throws JsonProcessingException {
         final Product product = new Product();
         product.setName(name);
         product.setPrice(new BigDecimal(price));
@@ -74,7 +76,7 @@ abstract class AcceptanceTest {
         return create(PRODUCT_REST_API_URI, product, Product.class);
     }
 
-    protected MenuGroup createMenuGroup(String name) throws JsonProcessingException {
+    protected MenuGroup createMenuGroup(final String name) throws JsonProcessingException {
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
