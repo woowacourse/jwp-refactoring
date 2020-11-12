@@ -19,29 +19,32 @@ import org.springframework.http.MediaType;
 import kitchenpos.domain.Product;
 
 class ProductAcceptanceTest extends AcceptanceTest {
-    /**
+    /*
      * Feature: 상품 관리
-     * <p>
+     *
      * Scenario: 상품을 관리한다.
-     * <p>
+     *
      * When: 상품을 등록한다.
      * Then: 상품이 등록된다.
-     * <p>
+     *
+     * Given: 상품이 등록되어 있다.
      * When: 상품의 목록을 조회한다.
      * Then: 저장되어 있는 상품의 목록이 반환된다.
      */
     @DisplayName("상품을 관리한다")
     @TestFactory
     Stream<DynamicTest> manageProduct() {
-        final Product product = new Product();
-        product.setName("마늘치킨");
-        product.setPrice(BigDecimal.valueOf(18000));
-
         return Stream.of(
                 dynamicTest(
                         "상품을 등록한다",
                         () -> {
+                            // When
+                            final Product product = new Product();
+                            product.setName("마늘치킨");
+                            product.setPrice(BigDecimal.valueOf(18000));
                             final Product createdProduct = createProduct(product);
+
+                            // Then
                             assertAll(
                                     () -> assertThat(createdProduct)
                                             .extracting(Product::getName)
@@ -57,16 +60,22 @@ class ProductAcceptanceTest extends AcceptanceTest {
                 dynamicTest(
                         "상품의 목록을 조회한다",
                         () -> {
+                            // Given
+                            final Product product = new Product();
+                            product.setName("파닭치킨");
+                            product.setPrice(BigDecimal.valueOf(18000));
+                            final Product createdProduct = createProduct(product);
+
+                            // When
                             final List<Product> products = listProduct();
+
+                            // Then
                             assertAll(
                                     assertThat(products)::isNotEmpty
                                     ,
                                     () -> assertThat(products)
-                                            .usingComparatorForElementFieldsWithNames(
-                                                    BigDecimal::compareTo,
-                                                    "price")
-                                            .usingElementComparatorOnFields("name", "price")
-                                            .contains(product)
+                                            .extracting(Product::getId)
+                                            .contains(createdProduct.getId())
                             );
                         }
                 )
