@@ -47,7 +47,6 @@ public class MenuDaoTest {
                 .isEqualTo(menu.getPrice().longValue()),
             () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menuGroup.getId())
         );
-
     }
 
     @DisplayName("메뉴 아이디로 메뉴를 조회할 수 있다.")
