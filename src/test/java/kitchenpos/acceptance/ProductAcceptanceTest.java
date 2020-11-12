@@ -78,7 +78,7 @@ class ProductAcceptanceTest {
                         () -> {
                             final List<Product> products = listProduct();
                             assertAll(
-                                    () -> assertThat(products).isNotEmpty()
+                                    assertThat(products)::isNotEmpty
                                     ,
                                     () -> assertThat(products)
                                             .usingComparatorForElementFieldsWithNames(
