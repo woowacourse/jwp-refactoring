@@ -50,8 +50,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                                     () -> assertThat(createdMenuGroup)
                                             .extracting(MenuGroup::getName)
                                             .isEqualTo(menuGroup.getName())
-                            )
-                            ;
+                            );
                         }
                 ),
                 dynamicTest(

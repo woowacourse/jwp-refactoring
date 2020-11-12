@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +64,28 @@ class TableAcceptanceTest extends AcceptanceTest {
                                             .extracting(OrderTable::isEmpty)
                                             .isEqualTo(orderTable.isEmpty())
                             );
+                        }
+                ),
+                dynamicTest(
+                        "주문 테이블의 목록을 조회한다",
+                        () -> {
+                            // Given
+                            final OrderTable orderTable = new OrderTable();
+                            orderTable.setNumberOfGuests(0);
+                            orderTable.setEmpty(true);
+
+                            final OrderTable createdOrderTable = create(TABLE_REST_API_URI,
+                                    orderTable, OrderTable.class);
+
+                            // When
+                            final List<OrderTable> orderTables = list(TABLE_REST_API_URI,
+                                    OrderTable.class);
+
+                            // Then
+                            assertThat(orderTables)
+                                    .extracting(OrderTable::getId)
+                                    .contains(createdOrderTable.getId())
+                            ;
                         }
                 )
         );
