@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -72,6 +73,19 @@ class MenuAcceptanceTest extends AcceptanceTest {
                                             .isEqualTo(menu.getMenuGroupId())
                             );
                         }
+                ),
+                dynamicTest(
+                        "메뉴의 목록을 조회한다",
+                        () -> {
+                            final List<Menu> menus = listMenu();
+                            assertThat(menus)
+                                    .usingElementComparatorOnFields("name", "menuGroupId")
+                                    .usingComparatorForElementFieldsWithNames(
+                                            BigDecimal::compareTo,
+                                            "price"
+                                    )
+                                    .contains(menu);
+                        }
                 )
         );
     }
@@ -91,6 +105,20 @@ class MenuAcceptanceTest extends AcceptanceTest {
                         .statusCode(HttpStatus.CREATED.value())
                         .extract().as(Menu.class)
                 ;
+        // @formatter:on
+    }
+
+    private List<Menu> listMenu() {
+        // @formatter:off
+        return
+                given()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                        .get(MENU_REST_API_URI)
+                .then()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .jsonPath().getList(".", Menu.class);
         // @formatter:on
     }
 }
