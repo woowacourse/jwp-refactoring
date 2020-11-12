@@ -39,17 +39,17 @@ class ProductAcceptanceTest {
     }
 
     /**
-     * Feature: 제품 관리
+     * Feature: 상품 관리
      * <p>
-     * Scenario: 제품을 관리한다.
+     * Scenario: 상품을 관리한다.
      * <p>
-     * When: 제품을 생성한다.
-     * Then: 제품이 생성된다.
+     * When: 상품을 등록한다.
+     * Then: 상품이 등록된다.
      * <p>
-     * When: 제품의 목록을 조회한다.
-     * Then: 생성된 제품의 목록이 반환된다.
+     * When: 상품의 목록을 조회한다.
+     * Then: 저장되어 있는 상품의 목록이 반환된다.
      */
-    @DisplayName("제품을 관리한다")
+    @DisplayName("상품을 관리한다")
     @TestFactory
     Stream<DynamicTest> manageProduct() {
         final Product product = new Product();
@@ -58,9 +58,9 @@ class ProductAcceptanceTest {
 
         return Stream.of(
                 dynamicTest(
-                        "제품을 생성한다",
+                        "상품을 등록한다",
                         () -> {
-                            Product createdProduct = createProduct(product);
+                            final Product createdProduct = createProduct(product);
                             assertAll(
                                     () -> assertThat(createdProduct)
                                             .extracting(Product::getName)
@@ -74,9 +74,9 @@ class ProductAcceptanceTest {
                         }
                 ),
                 dynamicTest(
-                        "제품의 목록을 조회한다",
+                        "상품의 목록을 조회한다",
                         () -> {
-                            List<Product> products = listProduct();
+                            final List<Product> products = listProduct();
                             assertAll(
                                     () -> assertThat(products).isNotEmpty()
                                     ,
