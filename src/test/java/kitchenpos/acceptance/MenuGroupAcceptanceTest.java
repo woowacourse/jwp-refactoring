@@ -1,6 +1,5 @@
 package kitchenpos.acceptance;
 
-import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.MenuGroupRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,8 +11,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import kitchenpos.domain.MenuGroup;
 
@@ -41,7 +38,8 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                             final MenuGroup menuGroup = new MenuGroup();
                             menuGroup.setName("세마리 메뉴");
 
-                            final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
+                            final MenuGroup createdMenuGroup = create(MENU_GROUP_REST_API_URI,
+                                    menuGroup, MenuGroup.class);
 
                             // Then
                             assertThat(createdMenuGroup)
@@ -57,10 +55,12 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                             final MenuGroup menuGroup = new MenuGroup();
                             menuGroup.setName("사이드 메뉴");
 
-                            final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
+                            final MenuGroup createdMenuGroup = create(MENU_GROUP_REST_API_URI,
+                                    menuGroup, MenuGroup.class);
 
                             // When
-                            final List<MenuGroup> menuGroups = listMenuGroup();
+                            final List<MenuGroup> menuGroups = list(MENU_GROUP_REST_API_URI,
+                                    MenuGroup.class);
 
                             // Then
                             assertAll(
@@ -73,21 +73,5 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                         }
                 )
         );
-    }
-
-    private List<MenuGroup> listMenuGroup() {
-        // @formatter:off
-        return
-                given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                        .get(MENU_GROUP_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.OK.value())
-                        .extract()
-                        .jsonPath().getList(".", MenuGroup.class)
-                ;
-        // @formatter:on
     }
 }

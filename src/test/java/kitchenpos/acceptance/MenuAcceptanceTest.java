@@ -1,6 +1,5 @@
 package kitchenpos.acceptance;
 
-import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.MenuRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.util.Lists.*;
@@ -14,8 +13,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kitchenpos.domain.Menu;
@@ -43,9 +40,9 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @TestFactory
     Stream<DynamicTest> manageMenu() throws JsonProcessingException {
         // Given
-        final Product product1 = createSetupProduct("마늘치킨", "18000");
-        final Product product2 = createSetupProduct("파닭치킨", "18000");
-        final MenuGroup menuGroup = createSetupMenuGroup("세마리 메뉴");
+        final Product product1 = createProduct("마늘치킨", "18000");
+        final Product product2 = createProduct("파닭치킨", "18000");
+        final MenuGroup menuGroup = createMenuGroup("세마리 메뉴");
 
         return Stream.of(
                 dynamicTest(
@@ -62,7 +59,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
                             menu.setMenuGroupId(menuGroup.getId());
                             menu.setMenuProducts(newArrayList(menuProduct));
 
-                            final Menu createdMenu = createMenu(menu);
+                            final Menu createdMenu = create(MENU_REST_API_URI, menu, Menu.class);
 
                             // Then
                             assertAll(
@@ -95,10 +92,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
                             menu.setMenuGroupId(menuGroup.getId());
                             menu.setMenuProducts(newArrayList(menuProduct));
 
-                            final Menu createdMenu = createMenu(menu);
+                            final Menu createdMenu = create(MENU_REST_API_URI, menu, Menu.class);
 
                             // When
-                            final List<Menu> menus = listMenu();
+                            final List<Menu> menus = list(MENU_REST_API_URI, Menu.class);
 
                             // Then
                             assertThat(menus)
@@ -107,37 +104,5 @@ class MenuAcceptanceTest extends AcceptanceTest {
                         }
                 )
         );
-    }
-
-    private Menu createMenu(Menu menu) throws JsonProcessingException {
-        final String request = objectMapper.writeValueAsString(menu);
-
-        // @formatter:off
-        return
-                given()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .body(request)
-                .when()
-                        .post(MENU_REST_API_URI)
-                .then()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(Menu.class)
-                ;
-        // @formatter:on
-    }
-
-    private List<Menu> listMenu() {
-        // @formatter:off
-        return
-                given()
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                        .get(MENU_REST_API_URI)
-                .then()
-                        .statusCode(HttpStatus.OK.value())
-                        .extract()
-                        .jsonPath().getList(".", Menu.class);
-        // @formatter:on
     }
 }

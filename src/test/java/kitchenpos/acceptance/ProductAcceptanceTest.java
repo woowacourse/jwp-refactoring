@@ -1,6 +1,5 @@
 package kitchenpos.acceptance;
 
-import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.ProductRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,8 +12,6 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import kitchenpos.domain.Product;
 
@@ -43,7 +40,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
                             product.setName("마늘치킨");
                             product.setPrice(BigDecimal.valueOf(18000));
 
-                            final Product createdProduct = createProduct(product);
+                            final Product createdProduct = create(PRODUCT_REST_API_URI, product,
+                                    Product.class);
 
                             // Then
                             assertAll(
@@ -66,10 +64,12 @@ class ProductAcceptanceTest extends AcceptanceTest {
                             product.setName("파닭치킨");
                             product.setPrice(BigDecimal.valueOf(18000));
 
-                            final Product createdProduct = createProduct(product);
+                            final Product createdProduct = create(PRODUCT_REST_API_URI, product,
+                                    Product.class);
 
                             // When
-                            final List<Product> products = listProduct();
+                            final List<Product> products = list(PRODUCT_REST_API_URI,
+                                    Product.class);
 
                             // Then
                             assertAll(
@@ -82,21 +82,5 @@ class ProductAcceptanceTest extends AcceptanceTest {
                         }
                 )
         );
-    }
-
-    private List<Product> listProduct() {
-        // @formatter:off
-        return
-                given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                        .get(PRODUCT_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.OK.value())
-                        .extract()
-                        .jsonPath().getList(".", Product.class)
-                ;
-        // @formatter:on
     }
 }

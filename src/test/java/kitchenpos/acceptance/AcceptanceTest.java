@@ -33,7 +33,7 @@ abstract class AcceptanceTest {
         RestAssured.port = port;
     }
 
-    protected <T> T create(String uri, T data, Class<T> clazz) throws JsonProcessingException {
+    protected <T> T create(String uri, T data, Class<T> cls) throws JsonProcessingException {
         final String request = objectMapper.writeValueAsString(data);
 
         // @formatter:off
@@ -47,11 +47,11 @@ abstract class AcceptanceTest {
                 .then()
                         .log().all()
                         .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(clazz);
+                        .extract().as(cls);
         // @formatter:on
     }
 
-    protected <T> List<T> list(String uri, Class<T> clazz) {
+    protected <T> List<T> list(String uri, Class<T> cls) {
         // @formatter:off
         return
                 given()
@@ -62,60 +62,22 @@ abstract class AcceptanceTest {
                         .log().all()
                         .statusCode(HttpStatus.OK.value())
                         .extract()
-                        .jsonPath().getList(".", clazz);
+                        .jsonPath().getList(".", cls);
         // @formatter:on
     }
 
-    protected MenuGroup createMenuGroup(MenuGroup menuGroup) throws JsonProcessingException {
-        final String request = objectMapper.writeValueAsString(menuGroup);
+    protected Product createProduct(String name, String price) throws JsonProcessingException {
+        final Product product = new Product();
+        product.setName(name);
+        product.setPrice(new BigDecimal(price));
 
-        // @formatter:off
-        return
-                given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(request)
-                .when()
-                        .post(MENU_GROUP_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(MenuGroup.class)
-                ;
-        // @formatter:on
+        return create(PRODUCT_REST_API_URI, product, Product.class);
     }
 
-    protected Product createProduct(Product product) throws JsonProcessingException {
-        final String request = objectMapper.writeValueAsString(product);
+    protected MenuGroup createMenuGroup(String name) throws JsonProcessingException {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(name);
 
-        // @formatter:off
-        return
-                given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(request)
-                .when()
-                        .post(PRODUCT_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(Product.class)
-                ;
-        // @formatter:on
-    }
-
-    protected Product createSetupProduct(String name, String price) throws JsonProcessingException {
-        final Product setUpProduct = new Product();
-        setUpProduct.setName(name);
-        setUpProduct.setPrice(new BigDecimal(price));
-
-        return createProduct(setUpProduct);
-    }
-
-    protected MenuGroup createSetupMenuGroup(String name) throws JsonProcessingException {
-        final MenuGroup setUpMenuGroup = new MenuGroup();
-        setUpMenuGroup.setName(name);
-
-        return createMenuGroup(setUpMenuGroup);
+        return create(MENU_GROUP_REST_API_URI, menuGroup, MenuGroup.class);
     }
 }
