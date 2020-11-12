@@ -1,14 +1,11 @@
 package kitchenpos.domain;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup extends BaseEntity {
@@ -17,23 +14,15 @@ public class TableGroup extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany
-    @JoinColumn(name = "table_group_id")
-    private List<OrderTable> orderTables;
-
-    public Long getId() {
-        return id;
+    public TableGroup() {
     }
 
-    public void setId(final Long id) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
+        super(createdDate);
         this.id = id;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public Long getId() {
+        return id;
     }
 }

@@ -2,9 +2,6 @@ package kitchenpos.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.ArrayList;
-
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +20,6 @@ class TableGroupRepositoryTest {
     @Test
     void save() {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(new ArrayList<>());
         TableGroup saved = tableGroupRepository.save(tableGroup);
 
         assertThat(saved).extracting(TableGroup::getId)

@@ -27,7 +27,7 @@ class TableGroupDaoTest {
     @BeforeEach
     void setUp(@Autowired DataSource dataSource) {
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        tableGroup = TableGroupFixture.createWithoutId(null);
+        tableGroup = TableGroupFixture.createWithoutId();
     }
 
     @DisplayName("Table Group을 저장한다.")

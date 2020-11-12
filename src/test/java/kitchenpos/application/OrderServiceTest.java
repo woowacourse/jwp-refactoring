@@ -165,7 +165,8 @@ class OrderServiceTest {
 
         when(orderDao.findById(completeOrder.getId())).thenReturn(Optional.of(completeOrder));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(completeOrder.getId(), cookingOrder))
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(completeOrder.getId(), cookingOrder))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

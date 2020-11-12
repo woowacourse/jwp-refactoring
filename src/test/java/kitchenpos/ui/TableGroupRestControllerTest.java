@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
 
@@ -49,20 +50,20 @@ class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성")
     @Test
     void create() throws Exception {
-        TableGroup tableGroup = TableGroupFixture.createWithId(TableGroupFixture.ID1, tables);
+        TableGroup tableGroup = TableGroupFixture.createWithId(TableGroupFixture.ID1);
+        TableGroupCreateRequest request = TableGroupFixture.createRequest();
         when(tableGroupService.create(any())).thenReturn(tableGroup);
 
         mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(tableGroup))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(
                 header().stringValues("location", "/api/table-groups/" + tableGroup.getId()))
-            .andExpect(jsonPath("id").value(tableGroup.getId()))
-            .andExpect(jsonPath("orderTables").exists());
+            .andExpect(jsonPath("id").value(tableGroup.getId()));
     }
 
     @DisplayName("테이블 그룹 해제")

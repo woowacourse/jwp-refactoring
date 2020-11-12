@@ -17,6 +17,13 @@ public abstract class BaseEntity {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
+    public BaseEntity() {
+    }
+
+    public BaseEntity(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }

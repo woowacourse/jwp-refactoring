@@ -15,7 +15,6 @@ public class OrderTableFixture {
     public static OrderTable createEmptyWithId(Long id) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
-        orderTable.setTableGroupId(null);
         orderTable.setNumberOfGuests(0);
         orderTable.setEmpty(true);
 
@@ -24,7 +23,6 @@ public class OrderTableFixture {
 
     public static OrderTable createEmptyWithoutId() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setTableGroupId(null);
         orderTable.setNumberOfGuests(0);
         orderTable.setEmpty(true);
 
@@ -34,7 +32,6 @@ public class OrderTableFixture {
     public static OrderTable createNotEmptyWithId(Long id) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
-        orderTable.setTableGroupId(null);
         orderTable.setNumberOfGuests(1);
         orderTable.setEmpty(false);
 
@@ -44,17 +41,16 @@ public class OrderTableFixture {
     public static OrderTable createNumOf(Long id, int numOfGuests) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
-        orderTable.setTableGroupId(null);
         orderTable.setNumberOfGuests(numOfGuests);
         orderTable.setEmpty(false);
 
         return orderTable;
     }
 
-    public static OrderTable createGroupTableWithId(Long id) {
+    public static OrderTable createGroupTableWithId(Long id, Long tableGroupId) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
-        orderTable.setTableGroupId(1L);
+        orderTable.addToTableGroup(tableGroupId);
         orderTable.setNumberOfGuests(1);
         orderTable.setEmpty(false);
 

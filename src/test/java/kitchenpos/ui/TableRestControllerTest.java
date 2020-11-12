@@ -59,7 +59,8 @@ class TableRestControllerTest {
     void findAll() throws Exception {
         OrderTable table1 = OrderTableFixture.createEmptyWithId(1L);
         OrderTable table2 = OrderTableFixture.createEmptyWithId(2L);
-        when(tableService.list()).thenReturn(OrderTableResponse.listOf(Arrays.asList(table1, table2)));
+        when(tableService.list()).thenReturn(
+            OrderTableResponse.listOf(Arrays.asList(table1, table2)));
 
         mockMvc.perform(get("/api/tables")
             .accept(MediaType.APPLICATION_JSON)
@@ -74,7 +75,8 @@ class TableRestControllerTest {
     @Test
     void changeEmpty() throws Exception {
         OrderTableResponse response = OrderTableFixture.createResponse(1L);
-        when(tableService.changeEmpty(anyLong(), any(OrderTableRequest.class))).thenReturn(response);
+        when(tableService.changeEmpty(anyLong(), any(OrderTableRequest.class))).thenReturn(
+            response);
 
         mockMvc.perform(put("/api/tables/{id}/empty", response.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +92,8 @@ class TableRestControllerTest {
     @Test
     void changeNumberOfGuests() throws Exception {
         OrderTableResponse response = OrderTableResponse.of(OrderTableFixture.createNumOf(1L, 18));
-        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableRequest.class))).thenReturn(response);
+        when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableRequest.class))).thenReturn(
+            response);
 
         mockMvc.perform(put("/api/tables/{id}/number-of-guests", response.getId())
             .contentType(MediaType.APPLICATION_JSON)

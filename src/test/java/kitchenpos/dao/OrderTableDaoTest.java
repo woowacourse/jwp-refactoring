@@ -74,8 +74,8 @@ class OrderTableDaoTest {
     @DisplayName("Table Group ID에 해당하는 모든 Order Table을 조회한다.")
     @Test
     void findAllByTableGroupId() {
-        OrderTable saved1 = orderTableDao.save(OrderTableFixture.createGroupTableWithId(null));
-        OrderTable saved2 = orderTableDao.save(OrderTableFixture.createGroupTableWithId(null));
+        OrderTable saved1 = orderTableDao.save(OrderTableFixture.createGroupTableWithId(null, 1L));
+        OrderTable saved2 = orderTableDao.save(OrderTableFixture.createGroupTableWithId(null, 1L));
 
         assertThat(orderTableDao.findAllByTableGroupId(saved1.getTableGroupId()))
             .usingRecursiveComparison()

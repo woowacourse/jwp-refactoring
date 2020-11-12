@@ -91,7 +91,7 @@ class TableServiceTest {
     @DisplayName("Order Table이 Table Group에 속해있다면 예외를 반환한다.")
     @Test
     void changeEmptyGroupIdNull() {
-        OrderTable orderTable = OrderTableFixture.createGroupTableWithId(1L);
+        OrderTable orderTable = OrderTableFixture.createGroupTableWithId(1L, 1L);
         OrderTableRequest request = OrderTableFixture.createRequest();
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable));
 
