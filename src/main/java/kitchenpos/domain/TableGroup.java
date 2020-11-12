@@ -2,15 +2,17 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-
-import org.springframework.data.annotation.CreatedDate;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -27,18 +29,25 @@ public class TableGroup {
     private Long id;
 
     @Column(nullable = false)
-    @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroupId")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "table_group_id")
     private List<OrderTable> orderTables;
 
     public static TableGroupBuilder builder() {
         return new TableGroupBuilder();
     }
 
-    public TableGroupBuilder toBuilder() {
-        return new TableGroupBuilder(id, createdDate, orderTables);
+    public List<Long> extractOrderTableIds() {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+    }
+
+    public void modifyOrderTables(final OrderTables orderTables) {
+        this.createdDate = LocalDateTime.now();
+        this.orderTables = orderTables.getOrderTables();
     }
 
     public static class TableGroupBuilder {

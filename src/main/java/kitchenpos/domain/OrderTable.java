@@ -20,7 +20,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name = "table_group_id")
     private Long tableGroupId;
 
     @Column(nullable = false)
@@ -35,6 +35,14 @@ public class OrderTable {
 
     public OrderTableBuilder toBuilder() {
         return new OrderTableBuilder(id, tableGroupId, numberOfGuests, empty);
+    }
+
+    public void changeStatus(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void ungroup() {
+        this.tableGroupId = null;
     }
 
     public static class OrderTableBuilder {

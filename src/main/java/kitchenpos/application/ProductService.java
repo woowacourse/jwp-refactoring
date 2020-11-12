@@ -20,7 +20,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Products findAllByIdIn(List<Long> ids) {
+    public Products findAllByIdIn(final List<Long> ids) {
         List<Product> products = productRepository.findAllByIdIn(ids);
         if (products.size() != ids.size()) {
             throw new IllegalArgumentException();

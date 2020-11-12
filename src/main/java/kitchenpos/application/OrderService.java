@@ -1,19 +1,15 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -39,10 +35,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        return orderRepository.save(order.toBuilder()
-            .orderStatus(OrderStatus.COOKING.name())
-            .orderedTime(LocalDateTime.now())
-            .build());
+        order.changeStatus(OrderStatus.COOKING.name());
+
+        return orderRepository.save(order);
     }
 
     public List<Order> list() {
@@ -58,9 +53,31 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final Order newOrder = savedOrder.toBuilder()
-            .orderStatus(order.getOrderStatus())
-            .build();
-        return orderRepository.save(newOrder);
+        order.changeStatus(order.getOrderStatus());
+
+        return orderRepository.save(order);
+    }
+
+    public OrderTables findAllByIdIn(final List<Long> orderTableIds) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTables.size() != orderTableIds.size()) {
+            throw new IllegalArgumentException();
+        }
+        return new OrderTables(orderTables);
+    }
+
+    public OrderTables findAllByTableGroupId(final Long tableGroupId) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        return new OrderTables(orderTables);
+    }
+
+    public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
+        final List<String> orderStatuses) {
+        return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
+    }
+
+    public void ungroupTables(final OrderTables orderTables) {
+        orderTables.ungroup();
+        orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 }

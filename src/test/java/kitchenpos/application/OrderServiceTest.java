@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -13,8 +14,6 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -166,6 +165,19 @@ class OrderServiceTest {
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, savedOrder))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("그룹내의 주문 테이블과 등록된 주문 테이블에서 조회한 것이 다르면 예외를 반환한다.")
+    @Test
+    void findAllByIdInTest() {
+        final OrderTable firstTable = createOrderTable(1L, 3L, 0, true);
+        final OrderTable secondTable = createOrderTable(2L, 3L, 0, true);
+        final List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
+
+        given(orderTableRepository.findAllByIdIn(anyList())).willReturn(Collections.singletonList(firstTable));
+
+        assertThatThrownBy(() -> orderService.findAllByIdIn(Arrays.asList(1L, 2L)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

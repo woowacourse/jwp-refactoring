@@ -14,8 +14,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
-import org.springframework.data.annotation.CreatedDate;
-
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,14 +45,17 @@ public class Order {
         return new OrderBuilder();
     }
 
-    public OrderBuilder toBuilder() {
-        return new OrderBuilder(id, orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
     public List<Long> extractMenuIds() {
         return orderLineItems.stream()
             .map(OrderLineItem::getMenuId)
             .collect(Collectors.toList());
+    }
+
+    public void changeStatus(final String orderStatus) {
+        this.orderStatus = orderStatus;
+        if (OrderStatus.COOKING.name().equals(orderStatus)) {
+            orderedTime = LocalDateTime.now();
+        }
     }
 
     public static class OrderBuilder {
