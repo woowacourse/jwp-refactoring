@@ -42,9 +42,15 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                                     menuGroup, MenuGroup.class);
 
                             // Then
-                            assertThat(createdMenuGroup)
-                                    .extracting(MenuGroup::getName)
-                                    .isEqualTo(menuGroup.getName())
+                            assertAll(
+                                    () -> assertThat(createdMenuGroup)
+                                            .extracting(MenuGroup::getId)
+                                            .isNotNull()
+                                    ,
+                                    () -> assertThat(createdMenuGroup)
+                                            .extracting(MenuGroup::getName)
+                                            .isEqualTo(menuGroup.getName())
+                            )
                             ;
                         }
                 ),

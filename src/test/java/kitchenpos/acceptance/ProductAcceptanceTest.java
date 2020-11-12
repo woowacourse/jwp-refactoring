@@ -46,6 +46,10 @@ class ProductAcceptanceTest extends AcceptanceTest {
                             // Then
                             assertAll(
                                     () -> assertThat(createdProduct)
+                                            .extracting(Product::getId)
+                                            .isNotNull()
+                                    ,
+                                    () -> assertThat(createdProduct)
                                             .extracting(Product::getName)
                                             .isEqualTo(product.getName())
                                     ,

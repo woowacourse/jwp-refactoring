@@ -64,6 +64,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
                             // Then
                             assertAll(
                                     () -> assertThat(createdMenu)
+                                            .extracting(Menu::getId)
+                                            .isNotNull()
+                                    ,
+                                    () -> assertThat(createdMenu)
                                             .extracting(Menu::getName)
                                             .isEqualTo(menu.getName())
                                     ,
