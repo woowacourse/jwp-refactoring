@@ -13,36 +13,18 @@ public class ProductFixture {
     public static final BigDecimal NEGATIVE_PRICE = BigDecimal.valueOf(-18000L);
 
     public static Product createWithoutId() {
-        Product product = new Product();
-        product.setName(NAME1);
-        product.setPrice(DEFAULT_PRICE);
-
-        return product;
+        return Product.of(NAME1, DEFAULT_PRICE);
     }
 
     public static Product createWithId(Long id) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(NAME1);
-        product.setPrice(DEFAULT_PRICE);
-
-        return product;
+        return new Product(id, NAME1, DEFAULT_PRICE);
     }
 
     public static Product createNegativePriceWithId(Long id) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(NAME1);
-        product.setPrice(NEGATIVE_PRICE);
-
-        return product;
+        return new Product(id, NAME1, NEGATIVE_PRICE);
     }
 
     public static Product createNullPriceWithId(Long id) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(NAME1);
-
-        return product;
+        return new Product(id, NAME1, null);
     }
 }
