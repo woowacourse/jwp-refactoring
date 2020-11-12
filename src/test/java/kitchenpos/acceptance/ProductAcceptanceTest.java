@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ class ProductAcceptanceTest {
     @TestFactory
     Stream<DynamicTest> manageProduct() {
         final Product product = new Product();
-        product.setName("치킨");
+        product.setName("마늘치킨");
         product.setPrice(BigDecimal.valueOf(18000));
 
         return Stream.of(
@@ -61,12 +62,33 @@ class ProductAcceptanceTest {
                         () -> {
                             Product createdProduct = createProduct(product);
                             assertAll(
-                                    () -> assertThat(product.getName())
-                                            .isEqualTo(createdProduct.getName()),
-                                    () -> assertThat(product.getPrice().doubleValue())
-                                            .isEqualTo(createdProduct.getPrice().doubleValue())
+                                    () -> assertThat(createdProduct)
+                                            .extracting(Product::getName)
+                                            .isEqualTo(product.getName())
+                                    ,
+                                    () -> assertThat(createdProduct)
+                                            .extracting(Product::getPrice)
+                                            .usingComparator(BigDecimal::compareTo)
+                                            .isEqualTo(product.getPrice())
                             );
-                        })
+                        }
+                ),
+                dynamicTest(
+                        "제품의 목록을 조회한다",
+                        () -> {
+                            List<Product> products = listProduct();
+                            assertAll(
+                                    () -> assertThat(products).isNotEmpty()
+                                    ,
+                                    () -> assertThat(products)
+                                            .usingComparatorForElementFieldsWithNames(
+                                                    BigDecimal::compareTo,
+                                                    "price")
+                                            .usingElementComparatorOnFields("name", "price")
+                                            .contains(product)
+                            );
+                        }
+                )
         );
     }
 
@@ -84,7 +106,24 @@ class ProductAcceptanceTest {
                 .then()
                         .log().all()
                         .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(Product.class);
+                        .extract().as(Product.class)
+                ;
+        // @formatter:on
+    }
+
+    private List<Product> listProduct() {
+        // @formatter:off
+        return
+                given()
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                        .get(PRODUCT_REST_API)
+                .then()
+                        .log().all()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .jsonPath().getList(".", Product.class)
+                ;
         // @formatter:on
     }
 }
