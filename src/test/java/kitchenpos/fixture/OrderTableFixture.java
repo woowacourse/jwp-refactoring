@@ -13,4 +13,8 @@ public class OrderTableFixture {
 
         return orderTable;
     }
+
+    public static OrderTable createOrderTableRequest(boolean empty, int numberOfGuests) {
+        return createOrderTable(null, empty, numberOfGuests, null);
+    }
 }
