@@ -42,13 +42,10 @@ class OrderServiceTest extends ServiceTest {
 	@Autowired
 	private OrderTableDao orderTableDao;
 
-	@Autowired
-	private OrderDao orderDao;
-
 	@DisplayName("주문의 orderLineItems가 빈 배열일 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderLineItemsIsEmpty_thenThrowIllegalArgumentException() {
-		Order order = createOrder(1L, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(), Collections.emptyList());
+		Order order = createOrder(null, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(), Collections.emptyList());
 
 		assertThatThrownBy(() -> orderService.create(order))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -57,9 +54,9 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("존재하지 않는 menu를 가지고 있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenMenuIsNotExist_thenThrowIllegalArgumentException() {
-		OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 1L);
+		OrderLineItem orderLineItem = createOrderLineItem(null, 1L, 1L, 1L);
 
-		Order order = createOrder(1L, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(),
+		Order order = createOrder(null, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
 
 		assertThatThrownBy(() -> orderService.create(order))
@@ -69,17 +66,17 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("존재하지 않는 테이블을 orderTable로 갖고 있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuDao.save(menu);
 
-		OrderLineItem orderLineItem = createOrderLineItem(1L, savedMenu.getId(), 1L, 1L);
+		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		Order order = createOrder(1L, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(),
+		Order order = createOrder(null, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
 
 		assertThatThrownBy(() -> orderService.create(order))
@@ -89,10 +86,10 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuDao.save(menu);
@@ -111,10 +108,10 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("Order 저장 성공")
 	@Test
 	void create() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuDao.save(menu);
@@ -123,7 +120,7 @@ class OrderServiceTest extends ServiceTest {
 
 		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
 
-		Order order = createOrder(1L, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
+		Order order = createOrder(null, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
 
 		Order actual = orderService.create(order);
@@ -139,8 +136,8 @@ class OrderServiceTest extends ServiceTest {
 
 	@Test
 	void list() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
@@ -152,7 +149,7 @@ class OrderServiceTest extends ServiceTest {
 		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
 
 		Order savedOrder = orderService.create(
-			createOrder(1L, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
+			createOrder(null, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 				Collections.singletonList(orderLineItem)));
 
 		List<Order> actual = orderService.list();

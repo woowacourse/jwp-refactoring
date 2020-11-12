@@ -32,7 +32,7 @@ class MenuServiceTest extends ServiceTest {
 	@DisplayName("menu price 가 null 일 때 IllegalArgumentException 발생")
 	@Test
 	void create_whenMenuPriceIsNull_thenThrowIllegalArgumentException() {
-		Menu menu = createMenu(1L, "메뉴", null, 1L, Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
+		Menu menu = createMenu(null, "메뉴", null, 1L, Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -41,8 +41,8 @@ class MenuServiceTest extends ServiceTest {
 	@DisplayName("menu price 가 음수일 때 IllegalArgumentException 발생")
 	@Test
 	void create_whenMenuPriceIsMinus_thenThrowIllegalArgumentException() {
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(-1L), 1L,
-			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(-1L), 1L,
+			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -51,8 +51,8 @@ class MenuServiceTest extends ServiceTest {
 	@DisplayName("메뉴와 연관관계가 있는 메뉴 그룹의 아이디가 존재하지 않을 때 IllegalArgumentException 발생")
 	@Test
 	void create_whenNotExistMenuGroup_thenThrowIllegalArgumentException() {
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), 1L,
-			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(100L), 1L,
+			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -62,8 +62,8 @@ class MenuServiceTest extends ServiceTest {
 	@Test
 	void create_whenNotExistProduct_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
-			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
+		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
+			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -74,9 +74,10 @@ class MenuServiceTest extends ServiceTest {
 	void create_whenSumIsLowerThanPrice_thenThrowIllegalArgumentException() {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
+		long quantity = 1L;
 
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 1L, 3L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, 3L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
@@ -90,9 +91,10 @@ class MenuServiceTest extends ServiceTest {
 	void create() {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
+		long quantity = 2L;
 
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
@@ -113,8 +115,8 @@ class MenuServiceTest extends ServiceTest {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
 
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(productPrice)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
+		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));

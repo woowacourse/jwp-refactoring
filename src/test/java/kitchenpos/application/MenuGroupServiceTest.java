@@ -16,7 +16,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
 	@Test
 	void create() {
-		MenuGroup menuGroup = createMenuGroup(1L, "메뉴그룹");
+		MenuGroup menuGroup = createMenuGroup(null, "메뉴그룹");
 
 		MenuGroup actual = menuGroupService.create(menuGroup);
 
@@ -26,7 +26,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
 	@Test
 	void list() {
-		MenuGroup menuGroup = createMenuGroup(1L, "메뉴그룹");
+		MenuGroup menuGroup = createMenuGroup(null, "메뉴그룹");
 
 		menuGroupService.create(menuGroup);
 
