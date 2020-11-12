@@ -2,27 +2,23 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceTest
 class MenuGroupServiceTest {
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
-    @Mock
+    @Autowired
     private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 추가한다.")
@@ -31,17 +27,13 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("test_group");
 
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setId(1L);
-        savedMenuGroup.setName(menuGroup.getName());
-
-        given(menuGroupDao.save(any(MenuGroup.class))).willReturn(savedMenuGroup);
+        menuGroupDao.save(menuGroup);
 
         MenuGroup actual = menuGroupService.create(menuGroup);
 
         assertAll(
-            () -> assertThat(actual).extracting(MenuGroup::getId).isEqualTo(savedMenuGroup.getId()),
-            () -> assertThat(actual).extracting(MenuGroup::getName).isEqualTo(savedMenuGroup.getName())
+            () -> assertThat(actual).extracting(MenuGroup::getId).isNotNull(),
+            () -> assertThat(actual).extracting(MenuGroup::getName).isEqualTo(menuGroup.getName())
         );
     }
 
@@ -49,10 +41,10 @@ class MenuGroupServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
         menuGroup.setName("Test");
 
-        given(menuGroupDao.findAll()).willReturn(Collections.singletonList(menuGroup));
+        menuGroupDao.save(menuGroup);
+
         List<MenuGroup> actual = menuGroupService.list();
 
         assertThat(actual).hasSize(1);

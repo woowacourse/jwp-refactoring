@@ -2,28 +2,24 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceTest
 class ProductServiceTest {
-    @Mock
+    @Autowired
     private ProductDao productDao;
 
-    @InjectMocks
+    @Autowired
     private ProductService productService;
 
     @DisplayName("상품을 추가한다.")
@@ -31,21 +27,14 @@ class ProductServiceTest {
     void create() {
         Product product = new Product();
         product.setName("상품1");
-        product.setPrice(BigDecimal.valueOf(1000L));
-
-        Product saved = new Product();
-        saved.setId(1L);
-        saved.setName(product.getName());
-        saved.setPrice(product.getPrice());
-
-        given(productDao.save(any(Product.class))).willReturn(saved);
+        product.setPrice(BigDecimal.valueOf(1_000));
 
         Product actual = productService.create(product);
 
         assertAll(
-            () -> assertThat(actual).extracting(Product::getId).isEqualTo(saved.getId()),
-            () -> assertThat(actual).extracting(Product::getName).isEqualTo(saved.getName()),
-            () -> assertThat(actual).extracting(Product::getPrice).isEqualTo(saved.getPrice())
+            () -> assertThat(actual).extracting(Product::getId).isNotNull(),
+            () -> assertThat(actual).extracting(Product::getName).isEqualTo(product.getName()),
+            () -> assertThat(actual).extracting(Product::getPrice, BIG_DECIMAL).isEqualByComparingTo(product.getPrice())
         );
     }
 
@@ -78,7 +67,7 @@ class ProductServiceTest {
         product.setName("상품1");
         product.setPrice(BigDecimal.valueOf(1_000L));
 
-        given(productService.list()).willReturn(Collections.singletonList(product));
+        productDao.save(product);
 
         List<Product> actual = productService.list();
 

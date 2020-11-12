@@ -2,85 +2,67 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.common.ServiceTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
-@ExtendWith(MockitoExtension.class)
+@ServiceTest
 class TableGroupServiceTest {
-    @Mock
+    @Autowired
     private OrderDao orderDao;
 
-    @Mock
+    @Autowired
     private OrderTableDao orderTableDao;
 
-    @Mock
+    @Autowired
     private TableGroupDao tableGroupDao;
 
-    @InjectMocks
+    @Autowired
     private TableGroupService tableGroupService;
 
     @DisplayName("테이블 그룹을 설정한다.")
     @Test
     void create() {
         TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
 
         OrderTable orderTable1 = new OrderTable();
+        orderTable1.setEmpty(true);
+
         OrderTable orderTable2 = new OrderTable();
+        orderTable2.setEmpty(true);
 
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
+        OrderTable savedTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedTable2 = orderTableDao.save(orderTable2);
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
-
-        savedTable1.setId(1L);
-        savedTable1.setEmpty(true);
-
-        savedTable2.setId(2L);
-        savedTable2.setEmpty(true);
-
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-
-        TableGroup savedTableGroup = new TableGroup();
-        savedTableGroup.setId(1L);
-        savedTableGroup.setCreatedDate(LocalDateTime.now());
-
-        given(orderTableDao.findAllByIdIn(
-            Stream.of(savedTable1, savedTable2).map(OrderTable::getId).collect(Collectors.toList()))).willReturn(
-            Arrays.asList(savedTable1, savedTable2));
-        given(tableGroupDao.save(tableGroup)).willReturn(savedTableGroup);
+        tableGroup.setOrderTables(Arrays.asList(savedTable1, savedTable2));
 
         TableGroup actual = tableGroupService.create(tableGroup);
 
         assertAll(
-            () -> assertThat(actual).extracting(TableGroup::getId).isEqualTo(savedTableGroup.getId()),
+            () -> assertThat(actual).extracting(TableGroup::getId).isNotNull(),
             () -> assertThat(actual).extracting(TableGroup::getCreatedDate).isNotNull(),
             () -> assertThat(actual).extracting(TableGroup::getOrderTables,
                 InstanceOfAssertFactories.list(OrderTable.class))
                 .extracting(OrderTable::getTableGroupId)
-                .containsOnly(savedTableGroup.getId()),
+                .containsOnly(actual.getId()),
             () -> assertThat(actual).extracting(TableGroup::getOrderTables,
                 InstanceOfAssertFactories.list(OrderTable.class))
                 .extracting(OrderTable::isEmpty)
@@ -108,26 +90,13 @@ class TableGroupServiceTest {
     void createWithNotExistingTableId() {
         TableGroup tableGroup = new TableGroup();
 
-        OrderTable orderTable1 = new OrderTable();
-        OrderTable orderTable2 = new OrderTable();
+        OrderTable table1 = new OrderTable();
+        OrderTable table2 = new OrderTable();
 
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
+        table1.setId(1L);
+        table2.setId(2L);
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
-
-        savedTable1.setId(1L);
-        savedTable1.setEmpty(true);
-
-        savedTable2.setId(2L);
-        savedTable2.setEmpty(true);
-
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-
-        given(orderTableDao.findAllByIdIn(
-            Stream.of(savedTable1, savedTable2).map(OrderTable::getId).collect(Collectors.toList()))).willReturn(
-            Collections.singletonList(savedTable1));
+        tableGroup.setOrderTables(Arrays.asList(table1, table2));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -137,29 +106,23 @@ class TableGroupServiceTest {
     @Test
     void createWithExistingTableGroup() {
         TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
 
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
+        orderTable1.setEmpty(true);
+        orderTable1.setTableGroupId(savedTableGroup.getId());
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
+        orderTable2.setEmpty(true);
+        orderTable2.setTableGroupId(savedTableGroup.getId());
 
-        savedTable1.setId(1L);
-        savedTable1.setTableGroupId(1L);
-        savedTable1.setEmpty(true);
+        OrderTable savedTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedTable2 = orderTableDao.save(orderTable2);
 
-        savedTable2.setId(2L);
-        savedTable2.setTableGroupId(1L);
-        savedTable2.setEmpty(true);
-
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-
-        given(orderTableDao.findAllByIdIn(
-            Stream.of(savedTable1, savedTable2).map(OrderTable::getId).collect(Collectors.toList()))).willReturn(
-            Arrays.asList(savedTable1, savedTable2));
+        tableGroup.setOrderTables(Arrays.asList(savedTable1, savedTable2));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
             .isInstanceOf(IllegalArgumentException.class);
@@ -173,87 +136,73 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
 
-        orderTable1.setId(1L);
-        orderTable2.setId(2L);
+        orderTable1.setEmpty(true);
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
+        orderTable2.setEmpty(false);
 
-        savedTable1.setId(1L);
-        savedTable1.setEmpty(false);
+        OrderTable savedTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedTable2 = orderTableDao.save(orderTable2);
 
-        savedTable2.setId(2L);
-        savedTable2.setEmpty(false);
+        tableGroup.setOrderTables(Arrays.asList(savedTable1, savedTable2));
 
-        tableGroup.setOrderTables(Arrays.asList(orderTable1, orderTable2));
-
-        given(orderTableDao.findAllByIdIn(
-            Stream.of(savedTable1, savedTable2).map(OrderTable::getId).collect(Collectors.toList()))).willReturn(
-            Arrays.asList(savedTable1, savedTable2));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("테이블 그룹을 해제한다.")
     @Test
     void ungroup() {
-        Long tableGroupId = 1L;
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
+        OrderTable orderTable1 = new OrderTable();
+        orderTable1.setEmpty(true);
 
-        savedTable1.setId(1L);
-        savedTable1.setTableGroupId(tableGroupId);
-        savedTable1.setEmpty(false);
+        OrderTable orderTable2 = new OrderTable();
+        orderTable2.setEmpty(true);
 
-        savedTable2.setId(2L);
-        savedTable2.setTableGroupId(tableGroupId);
-        savedTable2.setEmpty(false);
-
+        OrderTable savedTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedTable2 = orderTableDao.save(orderTable2);
         List<OrderTable> savedTables = Arrays.asList(savedTable1, savedTable2);
-        List<Long> ids = savedTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
 
-        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(savedTables);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            ids, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
+        tableGroup.setOrderTables(savedTables);
 
-        tableGroupService.ungroup(tableGroupId);
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
-        assertAll(
-            () -> verify(orderTableDao, times(ids.size())).save(any(OrderTable.class)),
-            () -> assertThat(savedTables).extracting(OrderTable::getTableGroupId).containsOnlyNulls()
-        );
+        tableGroupService.ungroup(savedTableGroup.getId());
+
+        assertThat(
+            orderTableDao.findAllByIdIn(savedTables.stream().map(OrderTable::getId).collect(Collectors.toList())))
+            .extracting(OrderTable::getTableGroupId).containsOnlyNulls();
     }
 
     @DisplayName("테이블 그룹 해제 시 완료되지 않은 주문이 있을 경우 예외 처리한다.")
     @Test
     void ungroupWithNotCompletedOrder() {
-        Long tableGroupId = 1L;
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
 
-        OrderTable savedTable1 = new OrderTable();
-        OrderTable savedTable2 = new OrderTable();
+        OrderTable orderTable1 = new OrderTable();
+        orderTable1.setEmpty(true);
 
-        savedTable1.setId(1L);
-        savedTable1.setTableGroupId(tableGroupId);
-        savedTable1.setEmpty(false);
+        OrderTable orderTable2 = new OrderTable();
+        orderTable2.setEmpty(true);
 
-        savedTable2.setId(2L);
-        savedTable2.setTableGroupId(tableGroupId);
-        savedTable2.setEmpty(false);
-
+        OrderTable savedTable1 = orderTableDao.save(orderTable1);
+        OrderTable savedTable2 = orderTableDao.save(orderTable2);
         List<OrderTable> savedTables = Arrays.asList(savedTable1, savedTable2);
-        List<Long> ids = savedTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
 
-        given(orderTableDao.findAllByTableGroupId(anyLong())).willReturn(savedTables);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            ids, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        tableGroup.setOrderTables(savedTables);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+
+        Order order = new Order();
+        order.setOrderTableId(savedTable1.getId());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderedTime(LocalDateTime.now());
+
+        orderDao.save(order);
+
+        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
