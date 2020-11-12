@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.config.DataSourceConfig;
+import kitchenpos.dao.JdbcTemplateMenuDao;
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dao.JdbcTemplateMenuProductDao;
+import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
@@ -22,10 +27,20 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
 @Sql("/truncate.sql")
+@Import(DataSourceConfig.class)
+@SpringBootTest(classes = {
+    MenuGroupService.class,
+    ProductService.class,
+    MenuService.class,
+    JdbcTemplateProductDao.class,
+    JdbcTemplateMenuGroupDao.class,
+    JdbcTemplateMenuProductDao.class,
+    JdbcTemplateMenuDao.class
+})
 class MenuServiceTest {
 
     @Autowired

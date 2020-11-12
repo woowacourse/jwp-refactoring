@@ -3,15 +3,22 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
+import kitchenpos.config.DataSourceConfig;
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dto.menugroup.MenuGroupRequest;
 import kitchenpos.dto.menugroup.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
 @Sql("/truncate.sql")
+@Import(DataSourceConfig.class)
+@SpringBootTest(classes = {
+    MenuGroupService.class,
+    JdbcTemplateMenuGroupDao.class
+})
 class MenuGroupServiceTest {
 
     @Autowired

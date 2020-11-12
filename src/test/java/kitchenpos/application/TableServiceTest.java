@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
+import kitchenpos.config.DataSourceConfig;
+import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.JdbcTemplateTableDao;
 import kitchenpos.dto.table.TableChangeRequest;
 import kitchenpos.dto.table.TableCreateRequest;
 import kitchenpos.dto.table.TableResponse;
@@ -13,10 +16,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
 @Sql("/truncate.sql")
+@Import(DataSourceConfig.class)
+@SpringBootTest(classes = {
+    TableService.class,
+    JdbcTemplateTableDao.class,
+    JdbcTemplateOrderDao.class
+})
 class TableServiceTest {
 
     @Autowired
