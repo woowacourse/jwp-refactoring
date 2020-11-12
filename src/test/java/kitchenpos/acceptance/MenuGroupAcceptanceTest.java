@@ -18,28 +18,31 @@ import org.springframework.http.MediaType;
 import kitchenpos.domain.MenuGroup;
 
 class MenuGroupAcceptanceTest extends AcceptanceTest {
-    /**
+    /*
      * Feature: 메뉴 그룹 관리
-     * <p>
+     *
      * Scenario: 메뉴 그룹을 관리한다.
-     * <p>
+     *
      * When: 메뉴 그룹을 등록한다.
      * Then: 메뉴 그룹이 등록된다.
-     * <p>
+     *
+     * Given: 메뉴 그룹이 등록되어 있다.
      * When: 메뉴 그룹의 목록을 조회한다.
      * Then: 저장되어 있는 메뉴 그룹의 목록이 반환된다.
      */
     @DisplayName("메뉴 그룹을 관리한다")
     @TestFactory
     Stream<DynamicTest> manageMenuGroup() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세마리 메뉴");
-
         return Stream.of(
                 dynamicTest(
                         "메뉴 그룹을 등록한다",
                         () -> {
+                            // When
+                            final MenuGroup menuGroup = new MenuGroup();
+                            menuGroup.setName("세마리 메뉴");
                             final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
+
+                            // Then
                             assertThat(createdMenuGroup)
                                     .extracting(MenuGroup::getName)
                                     .isEqualTo(menuGroup.getName())
@@ -49,13 +52,21 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                 dynamicTest(
                         "메뉴 그룹의 목록을 조회한다",
                         () -> {
+                            // Given
+                            final MenuGroup menuGroup = new MenuGroup();
+                            menuGroup.setName("사이드 메뉴");
+                            final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
+
+                            // When
                             final List<MenuGroup> menuGroups = listMenuGroup();
+
+                            // Then
                             assertAll(
                                     assertThat(menuGroups)::isNotEmpty
                                     ,
                                     () -> assertThat(menuGroups)
-                                            .usingElementComparatorOnFields("name")
-                                            .contains(menuGroup)
+                                            .extracting(MenuGroup::getId)
+                                            .contains(createdMenuGroup.getId())
                             );
                         }
                 )
@@ -63,7 +74,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     }
 
     private List<MenuGroup> listMenuGroup() {
-
         // @formatter:off
         return
                 given()
