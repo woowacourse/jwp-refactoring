@@ -17,7 +17,7 @@ public class MenuGroupRepositoryTest {
     private static final String 그룹_이름_세마리_세트 = "세마리 세트";
 
     @Autowired
-    MenuGroupRepository menuGroupRepository;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("MenuGroup을 DB에 저장할 경우, 올바르게 수행된다.")
     @Test

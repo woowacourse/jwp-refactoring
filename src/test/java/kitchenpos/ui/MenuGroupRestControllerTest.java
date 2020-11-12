@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class MenuGroupRestControllerTest {
     private static final String API = "/api";
-    private static final String 메뉴_그룹_이름_1 = "그룹1";
+    private static final String 메뉴_그룹_이름_후라이드_세트 = "후라이드 세트";
     private static final Long 메뉴_그룹_ID_1 = 1L;
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -43,7 +43,6 @@ public class MenuGroupRestControllerTest {
 
     private MockMvc mockMvc;
 
-
     @BeforeEach
     void setUp(WebApplicationContext context) {
         this.mockMvc = MockMvcBuilders
@@ -51,11 +50,11 @@ public class MenuGroupRestControllerTest {
                 .build();
     }
 
-    @DisplayName("'menu-groups/'로 POST 요청 시, 메뉴 그룹을 생성한다")
+    @DisplayName("'/menu-groups'로 POST 요청 시, 메뉴 그룹을 생성한다")
     @Test
     void createTest() throws Exception {
-        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(메뉴_그룹_이름_1);
-        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(메뉴_그룹_ID_1, 메뉴_그룹_이름_1);
+        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest(메뉴_그룹_이름_후라이드_세트);
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(메뉴_그룹_ID_1, 메뉴_그룹_이름_후라이드_세트);
         when(menuGroupService.create(any(MenuGroupCreateRequest.class))).thenReturn(menuGroupResponse);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(menuGroupCreateRequest);
 
@@ -87,7 +86,7 @@ public class MenuGroupRestControllerTest {
     @DisplayName("'/menu-groups'로 GET 요청 시, 상품의 목록을 반환한다.")
     @Test
     void listTest() throws Exception {
-        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(메뉴_그룹_ID_1, 메뉴_그룹_이름_1);
+        MenuGroupResponse menuGroupResponse = new MenuGroupResponse(메뉴_그룹_ID_1, 메뉴_그룹_이름_후라이드_세트);
         List<MenuGroupResponse> menuGroupResponses = Arrays.asList(menuGroupResponse);
 
         when(menuGroupService.list()).thenReturn(menuGroupResponses);
@@ -96,6 +95,6 @@ public class MenuGroupRestControllerTest {
                 accept(MediaType.APPLICATION_JSON_VALUE)).
                 andExpect(jsonPath("$", hasSize(1))).
                 andExpect(jsonPath("$[0].id").value(메뉴_그룹_ID_1)).
-                andExpect(jsonPath("$[0].name").value(메뉴_그룹_이름_1));
+                andExpect(jsonPath("$[0].name").value(메뉴_그룹_이름_후라이드_세트));
     }
 }

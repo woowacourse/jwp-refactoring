@@ -87,11 +87,11 @@ public class ProductRestControllerTest {
                 andDo(print());
     }
 
-    @DisplayName("예외 테스트: 만약 Product 생성 요청의 가격이 유효하지 않으면, 예외를 반환한다.")
+    @DisplayName("예외 테스트: 만약 Product 생성 요청의 가격이 양수가 아니면, 예외를 반환한다.")
     @ValueSource(longs = {-1000, 0})
     @ParameterizedTest
-    void createWithCreateRequestInvalidPriceExceptionTest(long invalidPriceText) throws Exception {
-        BigDecimal invalidPrice = new BigDecimal(invalidPriceText);
+    void createWithCreateRequestInvalidPriceExceptionTest(long invalidPriceParam) throws Exception {
+        BigDecimal invalidPrice = new BigDecimal(invalidPriceParam);
         ProductCreateRequest invalidRequest = new ProductCreateRequest(상품_이름_치킨, invalidPrice);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(invalidRequest);
 

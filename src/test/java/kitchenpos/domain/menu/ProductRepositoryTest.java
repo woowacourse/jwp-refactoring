@@ -20,7 +20,7 @@ public class ProductRepositoryTest {
     private static final BigDecimal 상품_가격_1000원 = new BigDecimal("1000.00");
 
     @Autowired
-    ProductRepository productRepository;
+    private ProductRepository productRepository;
 
     @DisplayName("Product를 DB에 저장할 경우, 올바르게 수행된다.")
     @Test
