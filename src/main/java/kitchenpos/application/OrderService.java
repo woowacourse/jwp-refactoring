@@ -12,11 +12,11 @@ import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderLineItemResponse;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderLineItemResponse;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

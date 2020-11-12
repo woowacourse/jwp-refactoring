@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dto.TableChangeRequest;
-import kitchenpos.dto.TableCreateRequest;
-import kitchenpos.dto.TableResponse;
+import kitchenpos.dto.table.TableChangeRequest;
+import kitchenpos.dto.table.TableCreateRequest;
+import kitchenpos.dto.table.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
