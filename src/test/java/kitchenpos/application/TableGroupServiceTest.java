@@ -59,7 +59,7 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         );
     }
 
-    @DisplayName("2개 이상의 빈 테이블이 아닌 경우 단체 지정할 수 없다.")
+    @DisplayName("빈 테이블이 아닌 경우 단체 지정할 수 없다.")
     @Test
     void create_throws_exception() {
         List<OrderTable> orderTables = Arrays.asList(
@@ -67,6 +67,38 @@ public class TableGroupServiceTest extends AbstractServiceTest {
             orderTableDao.save(createOrderTable(null, false, 0, null))
         );
         TableGroup tableGroup = createTableGroupRequest(orderTables);
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    @DisplayName("주문 테이블이 없는 경우 단체 지정할 수 없다.")
+    @Test
+    void create_throws_exception2() {
+        TableGroup tableGroup = createTableGroupRequest(emptyList());
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    @DisplayName("주문 테이블이 2개 미만인 경우 단체 지정할 수 없다.")
+    @Test
+    void create_throws_exception3() {
+        TableGroup tableGroup = createTableGroupRequest(
+            Arrays.asList(orderTableDao.save(createOrderTable(null, false, 0, null))));
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> tableGroupService.create(tableGroup));
+    }
+
+    @DisplayName("실제 주문 테이블 수보다 많은 테이블을 선택한 경우 단체 지정할 수 없다.")
+    @Test
+    void create_throws_exception4() {
+        TableGroup tableGroup = createTableGroupRequest(
+            Arrays.asList(
+                createOrderTable(null, false, 0, null),
+                orderTableDao.save(createOrderTable(null, false, 0, null)))
+        );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> tableGroupService.create(tableGroup));
