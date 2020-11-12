@@ -2,7 +2,6 @@ package kitchenpos.integration;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
@@ -14,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import kitchenpos.common.TestObjectUtils;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
 
 class ProductRestIntegrationTest extends IntegrationTest {
@@ -22,19 +22,19 @@ class ProductRestIntegrationTest extends IntegrationTest {
     @Test
     void createTest() throws Exception {
 
-        Product createProduct = TestObjectUtils.createProduct(null, "참치뱃살",
+        Product createdProduct = TestObjectUtils.createProduct(null, "참치뱃살",
                 BigDecimal.valueOf(30000));
-        String json = objectMapper.writeValueAsString(createProduct);
+        String createdProductJson = objectMapper.writeValueAsString(createdProduct);
 
         mockMvc.perform(
                 post("/api/products")
-                        .content(json)
+                        .content(createdProductJson)
                         .contentType(MediaType.APPLICATION_JSON)
         )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
-                .andExpect(jsonPath("name").value(createProduct.getName()))
-                .andExpect(jsonPath("price").value(createProduct.getPrice().longValue()));
+                .andExpect(jsonPath("name").value(createdProduct.getName()))
+                .andExpect(jsonPath("price").value(createdProduct.getPrice().longValue()));
     }
 
     @DisplayName("상품을 조회 할 수 있다.")
@@ -44,13 +44,13 @@ class ProductRestIntegrationTest extends IntegrationTest {
                 get("/api/products")
         )
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andReturn();
 
-        List<Product> products = objectMapper.readValue(
+        List<OrderLineItem> orderLineItems = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, Product.class));
+                objectMapper.getTypeFactory()
+                        .constructCollectionType(List.class, OrderLineItem.class));
 
-        assertThat(products.size()).isEqualTo(7);
+        assertThat(orderLineItems.size()).isEqualTo(6);
     }
 }
