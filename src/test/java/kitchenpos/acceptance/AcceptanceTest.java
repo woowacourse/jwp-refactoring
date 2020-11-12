@@ -5,6 +5,7 @@ import static kitchenpos.ui.MenuGroupRestController.*;
 import static kitchenpos.ui.ProductRestController.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,39 @@ abstract class AcceptanceTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+    }
+
+    protected <T> T create(String uri, T data, Class<T> clazz) throws JsonProcessingException {
+        final String request = objectMapper.writeValueAsString(data);
+
+        // @formatter:off
+        return
+                given()
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(request)
+                .when()
+                        .post(uri)
+                .then()
+                        .log().all()
+                        .statusCode(HttpStatus.CREATED.value())
+                        .extract().as(clazz);
+        // @formatter:on
+    }
+
+    protected <T> List<T> list(String uri, Class<T> clazz) {
+        // @formatter:off
+        return
+                given()
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                        .get(uri)
+                .then()
+                        .log().all()
+                        .statusCode(HttpStatus.OK.value())
+                        .extract()
+                        .jsonPath().getList(".", clazz);
+        // @formatter:on
     }
 
     protected MenuGroup createMenuGroup(MenuGroup menuGroup) throws JsonProcessingException {
