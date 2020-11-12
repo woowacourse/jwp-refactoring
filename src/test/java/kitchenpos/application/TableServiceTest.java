@@ -35,10 +35,10 @@ class TableServiceTest {
     @Test
     void createTable() {
         OrderTable createOrderTable =
-                TestObjectUtils.createOrderTable(null, 1L, 3, true);
+                TestObjectUtils.createOrderTable(null, 1L, 0, true);
         when(orderTableDao.save(any())).thenReturn(ORDER_TABLE1);
 
-        assertThat(tableService.create(createOrderTable).getNumberOfGuests()).isEqualTo(3);
+        assertThat(tableService.create(createOrderTable).getNumberOfGuests()).isEqualTo(0);
     }
 
     @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
