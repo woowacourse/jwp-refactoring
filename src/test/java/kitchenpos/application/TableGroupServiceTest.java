@@ -1,23 +1,22 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_1;
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_2;
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_3;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dao.TableDao;
+import kitchenpos.domain.Table;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("/truncate.sql")
 @SpringBootTest
 class TableGroupServiceTest {
 
@@ -25,34 +24,27 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
-    private TableGroup tableGroup;
-
-    @BeforeEach
-    void setupTableGroup() {
-
-    }
+    private TableGroupCreateRequest tableGroup;
 
     @Test
     void create() {
-        OrderTable table1 = orderTableDao.save(ORDER_TABLE_FIXTURE_1);
-        OrderTable table2 = orderTableDao.save(ORDER_TABLE_FIXTURE_2);
-        OrderTable table3 = orderTableDao.save(ORDER_TABLE_FIXTURE_3);
+        Table table1 = tableDao.save(new Table(4, true));
+        Table table2 = tableDao.save(new Table(5, true));
+        Table table3 = tableDao.save(new Table(6, true));
 
-        tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Arrays.asList(table1, table2, table3));
+        tableGroup = new TableGroupCreateRequest(Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
 
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        TableGroupResponse createdTableGroup = tableGroupService.create(tableGroup);
 
-        List<Long> orderTablesGroupIds = createdTableGroup.getOrderTables()
+        List<Long> orderTablesGroupIds = createdTableGroup.getTables()
             .stream()
-            .map(OrderTable::getTableGroupId)
+            .map(TableResponse::getTableGroupId)
             .collect(Collectors.toList());
-        List<Boolean> orderTablesIsEmpty = createdTableGroup.getOrderTables()
+        List<Boolean> orderTablesIsEmpty = createdTableGroup.getTables()
             .stream()
-            .map(OrderTable::isEmpty)
+            .map(TableResponse::isEmpty)
             .collect(Collectors.toList());
         Long expected = createdTableGroup.getId();
 
@@ -64,26 +56,24 @@ class TableGroupServiceTest {
 
     @Test
     void ungroup() {
-        OrderTable table1 = orderTableDao.save(ORDER_TABLE_FIXTURE_1);
-        OrderTable table2 = orderTableDao.save(ORDER_TABLE_FIXTURE_2);
-        OrderTable table3 = orderTableDao.save(ORDER_TABLE_FIXTURE_3);
+        Table table1 = tableDao.save(new Table(4, true));
+        Table table2 = tableDao.save(new Table(5, true));
+        Table table3 = tableDao.save(new Table(6, true));
 
-        tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Arrays.asList(table1, table2, table3));
-        TableGroup createdTableGroup = tableGroupService.create(tableGroup);
+        tableGroup = new TableGroupCreateRequest(Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
+        TableGroupResponse createdTableGroup = tableGroupService.create(tableGroup);
 
         tableGroupService.ungroup(createdTableGroup.getId());
 
-        List<OrderTable> orderTables = orderTableDao
+        List<Table> tables = tableDao
             .findAllByIdIn(Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
 
-        List<Long> orderTablesGroupId = orderTables.stream()
-            .map(OrderTable::getTableGroupId)
+        List<Long> orderTablesGroupId = tables.stream()
+            .map(Table::getTableGroupId)
             .collect(Collectors.toList());
 
-        List<Boolean> orderTablesIsEmpty = orderTables.stream()
-            .map(OrderTable::isEmpty)
+        List<Boolean> orderTablesIsEmpty = tables.stream()
+            .map(Table::isEmpty)
             .collect(Collectors.toList());
 
         assertAll(

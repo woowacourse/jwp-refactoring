@@ -11,13 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
+import kitchenpos.application.MenuService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,28 +43,20 @@ class MenuRestControllerTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuService menuService;
 
     @Test
     void create() throws Exception {
-        Product product = new Product();
-        product.setName("product1");
-        product.setPrice(BigDecimal.ONE);
+        Product product = new Product("product1", BigDecimal.ONE);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(persistProduct.getId());
-        menuProduct.setQuantity(10);
+        MenuProductRequest menuProduct = new MenuProductRequest(persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu request = new Menu();
-        request.setPrice(BigDecimal.TEN);
-        request.setName("menu1");
-        request.setMenuGroupId(persistMenuGroup.getId());
-        request.setMenuProducts(Arrays.asList(menuProduct));
+        MenuRequest request = new MenuRequest("menu1", BigDecimal.TEN, persistMenuGroup.getId(),
+            Arrays.asList(menuProduct));
 
         String response = mockMvc.perform(post("/api/menus")
             .content(mapper.writeValueAsString(request))
@@ -75,7 +68,7 @@ class MenuRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        Menu menuResponse = mapper.readValue(response, Menu.class);
+        MenuResponse menuResponse = mapper.readValue(response, MenuResponse.class);
 
         assertAll(
             () -> assertThat(menuResponse.getPrice().longValue()).isEqualTo(request.getPrice().longValue()),
@@ -87,25 +80,17 @@ class MenuRestControllerTest {
 
     @Test
     void list() throws Exception {
-        Product product = new Product();
-        product.setName("product1");
-        product.setPrice(BigDecimal.ONE);
+        Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(persistProduct.getId());
-        menuProduct.setQuantity(10);
+        MenuProductRequest menuProduct = new MenuProductRequest(persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.TEN);
-        menu.setName("menu1");
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
-        Menu persistMenu = menuDao.save(menu);
+        MenuRequest menu = new MenuRequest("menu1", BigDecimal.TEN, persistMenuGroup.getId(),
+            Arrays.asList(menuProduct));
+        MenuResponse persistMenu = menuService.create(menu);
 
         String response = mockMvc.perform(get("/api/menus")
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -116,8 +101,8 @@ class MenuRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        List<Menu> menusResponse = mapper.readValue(response, mapper.getTypeFactory()
-            .constructCollectionType(List.class, Menu.class));
+        List<MenuResponse> menusResponse = mapper.readValue(response, mapper.getTypeFactory()
+            .constructCollectionType(List.class, MenuResponse.class));
 
         assertThat(menusResponse).usingElementComparatorIgnoringFields("menuProducts").contains(persistMenu);
     }

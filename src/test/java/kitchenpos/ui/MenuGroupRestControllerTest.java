@@ -1,7 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_1;
-import static kitchenpos.fixture.MenuGroupFixture.MENU_GROUP_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,8 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,12 +32,11 @@ class MenuGroupRestControllerTest {
     private ObjectMapper mapper;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupService menuGroupService;
 
     @Test
     void create() throws Exception {
-        MenuGroup request = new MenuGroup();
-        request.setName("menuGroupName");
+        MenuGroup request = new MenuGroup("menuGroupName");
 
         String response = mockMvc.perform(post("/api/menu-groups")
             .content(mapper.writeValueAsString(request))
@@ -49,7 +48,7 @@ class MenuGroupRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        MenuGroup responseMenuGroup = mapper.readValue(response, MenuGroup.class);
+        MenuGroupResponse responseMenuGroup = mapper.readValue(response, MenuGroupResponse.class);
 
         assertAll(
             () -> assertThat(responseMenuGroup.getId()).isNotNull(),
@@ -59,8 +58,8 @@ class MenuGroupRestControllerTest {
 
     @Test
     void list() throws Exception {
-        MenuGroup menuGroup1 = menuGroupDao.save(MENU_GROUP_FIXTURE_1);
-        MenuGroup menuGroup2 = menuGroupDao.save(MENU_GROUP_FIXTURE_2);
+        MenuGroupResponse menuGroup1 = menuGroupService.create(new MenuGroupRequest("고기"));
+        MenuGroupResponse menuGroup2 = menuGroupService.create(new MenuGroupRequest("국"));
 
         String response = mockMvc.perform(get("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -71,8 +70,8 @@ class MenuGroupRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        List<MenuGroup> responseTables = mapper.readValue(response, mapper.getTypeFactory()
-            .constructCollectionType(List.class, MenuGroup.class));
+        List<MenuGroupResponse> responseTables = mapper.readValue(response, mapper.getTypeFactory()
+            .constructCollectionType(List.class, MenuGroupResponse.class));
 
         assertThat(responseTables).usingElementComparatorIgnoringFields("id")
             .containsAll(Arrays.asList(menuGroup1, menuGroup2));

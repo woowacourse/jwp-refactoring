@@ -7,7 +7,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.TableChangeRequest;
+import kitchenpos.dto.TableCreateRequest;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,25 +22,25 @@ class TableServiceTest {
 
     @Test
     void create() {
-        OrderTable orderTable = ORDER_TABLE_FIXTURE_1;
+        TableCreateRequest table = new TableCreateRequest(true, 4);
 
-        OrderTable persistOrderTable = tableService.create(orderTable);
+        TableResponse persistTable = tableService.create(table);
 
         assertAll(
-            () -> assertThat(persistOrderTable.getId()).isNotNull(),
-            () -> assertThat(persistOrderTable.getTableGroupId()).isNull(),
-            () -> assertThat(persistOrderTable).isEqualToIgnoringGivenFields(orderTable, "id", "tableGroupId")
+            () -> assertThat(persistTable.getId()).isNotNull(),
+            () -> assertThat(persistTable.getTableGroupId()).isNull(),
+            () -> assertThat(persistTable).isEqualToIgnoringGivenFields(table, "id", "tableGroupId")
         );
     }
 
     @Test
     void list() {
-        tableService.create(ORDER_TABLE_FIXTURE_1);
-        tableService.create(ORDER_TABLE_FIXTURE_2);
+        tableService.create(new TableCreateRequest(true, 4));
+        tableService.create(new TableCreateRequest(true, 5));
 
-        List<OrderTable> orderTables = tableService.list();
-        List<Integer> numberOfGuestsInOrderTables = orderTables.stream()
-            .map(OrderTable::getNumberOfGuests)
+        List<TableResponse> tables = tableService.list();
+        List<Integer> numberOfGuestsInOrderTables = tables.stream()
+            .map(TableResponse::getNumberOfGuests)
             .collect(Collectors.toList());
 
         assertThat(numberOfGuestsInOrderTables)
@@ -47,26 +49,23 @@ class TableServiceTest {
 
     @Test
     void changeEmpty() {
-        OrderTable persistOrderTable = tableService.create(ORDER_TABLE_FIXTURE_1);
-        OrderTable requestOrderTable = new OrderTable();
-        requestOrderTable.setEmpty(true);
+        TableResponse persistTable = tableService.create(new TableCreateRequest(true, 4));
+        TableChangeRequest requestTable = new TableChangeRequest(true);
 
-        OrderTable changedOrderTable = tableService.changeEmpty(persistOrderTable.getId(), requestOrderTable);
+        TableResponse changedTable = tableService.changeEmpty(persistTable.getId(), requestTable);
 
-        assertThat(changedOrderTable.isEmpty()).isTrue();
+        assertThat(changedTable.isEmpty()).isTrue();
     }
 
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(4);
+        TableCreateRequest table = new TableCreateRequest(false, 4);
 
-        OrderTable persistOrderTable = tableService.create(orderTable);
-        OrderTable requestOrderTable = new OrderTable();
-        requestOrderTable.setNumberOfGuests(100);
+        TableResponse persistTable = tableService.create(table);
+        TableChangeRequest requestTable = new TableChangeRequest(100);
 
-        OrderTable changedOrderTable = tableService.changeNumberOfGuests(persistOrderTable.getId(), requestOrderTable);
+        TableResponse changedTable = tableService.changeNumberOfGuests(persistTable.getId(), requestTable);
 
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(100);
+        assertThat(changedTable.getNumberOfGuests()).isEqualTo(100);
     }
 }

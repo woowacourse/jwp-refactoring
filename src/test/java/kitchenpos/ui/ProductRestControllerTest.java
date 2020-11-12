@@ -1,7 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.ProductFixture.PRODUCT_FIXTURE_1;
-import static kitchenpos.fixture.ProductFixture.PRODUCT_FIXTURE_2;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -13,8 +11,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.ProductService;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,13 +32,11 @@ class ProductRestControllerTest {
     private ObjectMapper mapper;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @Test
     void create() throws Exception {
-        Product request = new Product();
-        request.setName("product");
-        request.setPrice(BigDecimal.TEN);
+        ProductRequest request = new ProductRequest("product", BigDecimal.TEN);
 
         String response = mockMvc.perform(post("/api/products")
             .content(mapper.writeValueAsString(request))
@@ -51,7 +48,7 @@ class ProductRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        Product responseProduct = mapper.readValue(response, Product.class);
+        ProductResponse responseProduct = mapper.readValue(response, ProductResponse.class);
 
         assertAll(
             () -> assertThat(responseProduct.getId()).isNotNull(),
@@ -62,8 +59,8 @@ class ProductRestControllerTest {
 
     @Test
     void list() throws Exception {
-        productDao.save(PRODUCT_FIXTURE_1);
-        productDao.save(PRODUCT_FIXTURE_2);
+        ProductResponse savedProduct = productService.create(new ProductRequest("1", BigDecimal.TEN));
+        ProductResponse savedProduct2 = productService.create(new ProductRequest("2", BigDecimal.TEN));
 
         String response = mockMvc.perform(get("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
@@ -74,10 +71,10 @@ class ProductRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        List<Product> responseProducts = mapper.readValue(response, mapper.getTypeFactory()
-            .constructCollectionType(List.class, Product.class));
+        List<ProductResponse> responseProducts = mapper.readValue(response, mapper.getTypeFactory()
+            .constructCollectionType(List.class, ProductResponse.class));
 
         assertThat(responseProducts).usingElementComparatorOnFields("name")
-            .containsAll(Arrays.asList(PRODUCT_FIXTURE_1, PRODUCT_FIXTURE_2));
+            .containsAll(Arrays.asList(savedProduct, savedProduct2));
     }
 }

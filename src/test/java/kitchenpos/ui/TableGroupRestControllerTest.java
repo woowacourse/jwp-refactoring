@@ -1,8 +1,5 @@
 package kitchenpos.ui;
 
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_1;
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_2;
-import static kitchenpos.fixture.OrderTableFixture.ORDER_TABLE_FIXTURE_3;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,10 +11,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderTableDao;
+import java.util.stream.Collectors;
+import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.dto.TableResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,20 +37,19 @@ class TableGroupRestControllerTest {
     private ObjectMapper mapper;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @Autowired
     private TableGroupDao tableGroupDao;
 
     @Test
     void create() throws Exception {
-        OrderTable table1 = orderTableDao.save(ORDER_TABLE_FIXTURE_1);
-        OrderTable table2 = orderTableDao.save(ORDER_TABLE_FIXTURE_2);
-        OrderTable table3 = orderTableDao.save(ORDER_TABLE_FIXTURE_3);
+        Table table1 = tableDao.save(new Table(4, true));
+        Table table2 = tableDao.save(new Table(5, true));
+        Table table3 = tableDao.save(new Table(6, true));
 
-        TableGroup request = new TableGroup();
-        request.setCreatedDate(LocalDateTime.of(2020, 1, 1, 1, 1));
-        request.setOrderTables(Arrays.asList(table1, table2, table3));
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+            Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
 
         String response = mockMvc.perform(post("/api/table-groups")
             .content(mapper.writeValueAsString(request))
@@ -61,27 +61,35 @@ class TableGroupRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        TableGroup responseTableGroup = mapper.readValue(response, TableGroup.class);
+        TableGroupResponse responseTableGroup = mapper.readValue(response, TableGroupResponse.class);
+        List<Long> responseTableIds = responseTableGroup.getTables()
+            .stream()
+            .map(TableResponse::getId)
+            .collect(Collectors.toList());
 
         assertAll(
-            () -> assertThat(responseTableGroup.getOrderTables()).usingElementComparatorOnFields("numberOfGuests")
-                .isEqualTo(request.getOrderTables()),
-            () -> assertThat(responseTableGroup.getOrderTables())
+            () -> assertThat(responseTableIds).isEqualTo(request.getTableIds()),
+            () -> assertThat(responseTableGroup.getTables())
                 .allSatisfy(orderTable -> assertThat(orderTable.isEmpty()).isFalse())
         );
     }
 
     @Test
     void ungroup() throws Exception {
-        OrderTable table1 = orderTableDao.save(ORDER_TABLE_FIXTURE_1);
-        OrderTable table2 = orderTableDao.save(ORDER_TABLE_FIXTURE_2);
-        OrderTable table3 = orderTableDao.save(ORDER_TABLE_FIXTURE_3);
+        Table table1 = tableDao.save(new Table(4, true));
+        Table table2 = tableDao.save(new Table(5, true));
+        Table table3 = tableDao.save(new Table(6, true));
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.of(2020, 1, 1, 1, 1));
-        tableGroup.setOrderTables(Arrays.asList(table1, table2, table3));
-
+        TableGroup tableGroup = new TableGroup(LocalDateTime.of(2020, 1, 1, 1, 1),
+            Arrays.asList(table1, table2, table3));
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+
+        table1.putInGroup(savedTableGroup.getId());
+        table2.putInGroup(savedTableGroup.getId());
+        table3.putInGroup(savedTableGroup.getId());
+        tableDao.save(table1);
+        tableDao.save(table2);
+        tableDao.save(table3);
 
         String url = String.format("/api/table-groups/%d", savedTableGroup.getId());
 
@@ -92,9 +100,9 @@ class TableGroupRestControllerTest {
             .andExpect(status().isNoContent())
             .andReturn();
 
-        List<OrderTable> orderTables = orderTableDao
+        List<Table> tables = tableDao
             .findAllByIdIn(Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
 
-        assertThat(orderTables).allSatisfy(orderTable -> assertThat(orderTable.getTableGroupId()).isNull());
+        assertThat(tables).allSatisfy(orderTable -> assertThat(orderTable.getTableGroupId()).isNull());
     }
 }
