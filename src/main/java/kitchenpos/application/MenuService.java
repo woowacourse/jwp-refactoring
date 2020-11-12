@@ -13,6 +13,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -52,13 +53,14 @@ public class MenuService {
         final Menu savedMenu = menuDao.save(menu);
         return menuProducts.stream()
             .map(menuProductRequest -> menuProductDao.save(menuProductRequest.toEntity(savedMenu.getId())))
-            .collect(collectingAndThen(toList(), products -> MenuResponse.of(savedMenu, products)));
+            .collect(
+                collectingAndThen(toList(), products -> MenuResponse.of(savedMenu, MenuProductResponse.of(products))));
     }
 
     public List<MenuResponse> list() {
         return menuDao.findAll()
             .stream()
-            .map(menu -> MenuResponse.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
+            .map(menu -> MenuResponse.of(menu, MenuProductResponse.of(menuProductDao.findAllByMenuId(menu.getId()))))
             .collect(toList());
     }
 
