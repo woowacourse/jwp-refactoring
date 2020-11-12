@@ -47,7 +47,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("주문의 orderLineItems가 빈 배열일 경우 IllegalArgumentException 발생")
 	@Test
-	void create1() {
+	void create_whenOrderLineItemsIsEmpty_thenThrowIllegalArgumentException() {
 		Order order = createOrder(1L, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(), Collections.emptyList());
 
 		assertThatThrownBy(() -> orderService.create(order))
@@ -56,7 +56,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 menu를 가지고 있을 경우 IllegalArgumentException 발생")
 	@Test
-	void create2() {
+	void create_whenMenuIsNotExist_thenThrowIllegalArgumentException() {
 		OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 1L);
 
 		Order order = createOrder(1L, OrderStatus.COOKING.name(), 1L, LocalDateTime.now(),
@@ -68,7 +68,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 테이블을 orderTable로 갖고 있을 경우 IllegalArgumentException 발생")
 	@Test
-	void create3() {
+	void create_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
 		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
@@ -88,7 +88,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
-	void create4() {
+	void create_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
 		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
@@ -110,7 +110,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("Order 저장 성공")
 	@Test
-	void create5() {
+	void create() {
 		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
@@ -164,7 +164,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 order를 수정할 경우 IllegalArgumentException 발생")
 	@Test
-	void changeOrderStatus1() {
+	void changeOrderStatus_whenOrderIsNotExist_thenThrowIllegalArgumentException() {
 		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
@@ -186,7 +186,7 @@ class OrderServiceTest extends ServiceTest {
 
 	@DisplayName("orderStatus 변경 성공")
 	@Test
-	void changeOrderStatus3() {
+	void changeOrderStatus() {
 		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));

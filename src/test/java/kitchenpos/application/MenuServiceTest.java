@@ -31,7 +31,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("menu price 가 null 일 때 IllegalArgumentException 발생")
 	@Test
-	void create1() {
+	void create_whenMenuPriceIsNull_thenThrowIllegalArgumentException() {
 		Menu menu = createMenu(1L, "메뉴", null, 1L, Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
@@ -40,7 +40,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("menu price 가 음수일 때 IllegalArgumentException 발생")
 	@Test
-	void create2() {
+	void create_whenMenuPriceIsMinus_thenThrowIllegalArgumentException() {
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(-1L), 1L,
 			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
@@ -50,7 +50,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("메뉴와 연관관계가 있는 메뉴 그룹의 아이디가 존재하지 않을 때 IllegalArgumentException 발생")
 	@Test
-	void create3() {
+	void create_whenNotExistMenuGroup_thenThrowIllegalArgumentException() {
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), 1L,
 			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
 
@@ -60,7 +60,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("productDao에 등록되지 않은 product를 menu가 소유할 때 IllegalArgumentException 발생")
 	@Test
-	void create5() {
+	void create_whenNotExistProduct_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
 			Collections.singletonList(createMenuProduct(1L, 1L, 2L, 3L)));
@@ -71,7 +71,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("메뉴에 속한 상품 금액의 합(=sum)이 메뉴의 가격(=price) 보다 작을 때 IllegalArgumentException 발생")
 	@Test
-	void create6() {
+	void create_whenSumIsLowerThanPrice_thenThrowIllegalArgumentException() {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
 
@@ -87,7 +87,7 @@ class MenuServiceTest extends ServiceTest {
 
 	@DisplayName("메뉴 저장 성공")
 	@Test
-	void create7() {
+	void create() {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
 

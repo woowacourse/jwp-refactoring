@@ -18,7 +18,7 @@ class ProductServiceTest extends ServiceTest {
 
 	@DisplayName("price가 null일 경우 - IllegalArgumentException 발생")
 	@Test
-	void create1() {
+	void create_whenPriceIsNull_thenThrowIllegalArgumentException() {
 		Product product = createProduct(null, "김", null);
 
 		assertThatThrownBy(() -> productService.create(product))
@@ -27,7 +27,7 @@ class ProductServiceTest extends ServiceTest {
 
 	@DisplayName("price가 음수일 경우 - IllegalArgumentException 발생")
 	@Test
-	void create2() {
+	void create_whenPriceIsMinus_thenThrowIllegalArgumentException() {
 		Product product = createProduct(null, "김", BigDecimal.valueOf(-1));
 
 		assertThatThrownBy(() -> productService.create(product))
@@ -36,7 +36,7 @@ class ProductServiceTest extends ServiceTest {
 
 	@DisplayName("product 저장 성공")
 	@Test
-	void create3() {
+	void create() {
 		Product product = createProduct(null, "김", BigDecimal.valueOf(1000));
 
 		Product actual = productService.create(product);

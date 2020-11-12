@@ -56,14 +56,14 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 OrderTable의 empty 상태를 수정할 때 IllegalArgumentException이 발생한다.")
 	@Test
-	void changeEmpty1() {
+	void changeEmpty_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
 		assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable()))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("단체 지정된 주문 테이블 수정할 때 IllegalArgumentException이 발생한다.")
 	@Test
-	void changeEmpty2() {
+	void changeEmpty_whenOrderTableIsSetTableGroup_thenThrowIllegalArgumentException() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
@@ -81,7 +81,7 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("empty 상태 변경 성공")
 	@Test
-	void changeEmpty4() {
+	void changeEmpty() {
 		OrderTable orderTable = createOrderTable(null, false, null, 1);
 
 		OrderTable savedOrderTable = tableService.create(orderTable);
@@ -94,7 +94,7 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("손님의 수가 음수일 때 IllegalArgumentException 발생")
 	@Test
-	void changeNumberOfGuests1() {
+	void changeNumberOfGuests_whenNumberOfGuestIsMinus_thenThrowIllegalArgumentException() {
 		OrderTable orderTable = createOrderTable(null, false, null, 1);
 
 		OrderTable savedOrderTable = tableService.create(orderTable);
@@ -106,7 +106,7 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 OrderTable의 numberOfGusets를 수정할 때 IllegalArgumentException 발생")
 	@Test
-	void changeNumberOfGuests2() {
+	void changeNumberOfGuests_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
 		OrderTable orderTable = createOrderTable(null, false, null, 1);
 
 		assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -115,7 +115,7 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("비어있는 OrderTable을 수정할 때 IllegalArgumentException 발생")
 	@Test
-	void changeNumberOfGuests3() {
+	void changeNumberOfGuests_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
 		OrderTable orderTable = createOrderTable(null, true, null, 0);
 
 		OrderTable savedOrderTable = tableService.create(orderTable);
@@ -127,7 +127,7 @@ class TableServiceTest extends ServiceTest {
 
 	@DisplayName("OrderTable numberOfGuest 상태 변경 성공")
 	@Test
-	void changeNumberOfGuests4() {
+	void changeNumberOfGuests() {
 		OrderTable orderTable = createOrderTable(null, false, null, 2);
 
 		OrderTable savedOrderTable = tableService.create(orderTable);

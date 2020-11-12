@@ -31,7 +31,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
-	void create1() {
+	void create_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
 		TableGroup tableGroup = createTableGroup(1L, LocalDateTime.of(2020, 10, 28, 17, 1), Collections.emptyList());
 
 		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -40,7 +40,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("orderTable이 2개 미만일 경우 IllegalArgumentException 발생")
 	@Test
-	void create2() {
+	void create_whenOrderTableCountIsLowerThenTwo_thenThrowIllegalArgumentException() {
 		OrderTable orderTable = createOrderTable(null, true, null, 2);
 
 		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1),
@@ -52,7 +52,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("존재하지 않는 orderTable을 가질 경우 IllegalArgumentException 발생")
 	@Test
-	void create3() {
+	void create_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
@@ -65,7 +65,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("비어있지 않은 orderTable을 가질 경우 IllegalArgumentException 발생")
 	@Test
-	void create4() {
+	void create_whenOrderTableIsNotEmpty_thenThrowIllegalArgumentException() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, false, null, 3);
 
@@ -81,7 +81,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("Table Group 저장 성공")
 	@Test
-	void create5() {
+	void create() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
@@ -102,7 +102,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 IllegalArgumentException 발생")
 	@Test
-	void ungroup1() {
+	void ungroup_whenTableStatusIsCookingOrMeal_thenThrowIllegalArgumentException() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
@@ -126,7 +126,7 @@ class TableGroupServiceTest extends ServiceTest {
 
 	@DisplayName("Table Group 지정 해제 성공")
 	@Test
-	void ungroup2() {
+	void ungroup() {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
