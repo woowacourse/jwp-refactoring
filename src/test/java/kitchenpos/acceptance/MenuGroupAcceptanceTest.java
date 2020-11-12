@@ -9,34 +9,27 @@ import static org.junit.jupiter.api.DynamicTest.*;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.restassured.RestAssured;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MenuGroupAcceptanceTest {
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @BeforeEach
-    void setUp() {
-        RestAssured.port = port;
-    }
-
+class MenuGroupAcceptanceTest extends AcceptanceTest {
+    /**
+     * Feature: 메뉴 그룹 관리
+     * <p>
+     * Scenario: 메뉴 그룹을 관리한다.
+     * <p>
+     * When: 메뉴 그룹을 등록한다.
+     * Then: 메뉴 그룹이 등록된다.
+     * <p>
+     * When: 메뉴 그룹의 목록을 조회한다.
+     * Then: 저장되어 있는 메뉴 그룹의 목록이 반환된다.
+     */
     @DisplayName("메뉴 그룹 관리")
     @TestFactory
     Stream<DynamicTest> manageMenuGroup() {
