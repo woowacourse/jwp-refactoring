@@ -57,9 +57,9 @@ abstract class AcceptanceTest {
         // @formatter:off
         return
                 given()
-                        .body(request)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(request)
                 .when()
                         .post(PRODUCT_REST_API_URI)
                 .then()
@@ -70,18 +70,18 @@ abstract class AcceptanceTest {
         // @formatter:on
     }
 
-    protected Product createSetupProduct() throws JsonProcessingException {
-        final Product product = new Product();
-        product.setName("마늘치킨");
-        product.setPrice(BigDecimal.valueOf(18000));
+    protected Product createSetupProduct(String name, String price) throws JsonProcessingException {
+        final Product setUpProduct = new Product();
+        setUpProduct.setName(name);
+        setUpProduct.setPrice(new BigDecimal(price));
 
-        return createProduct(product);
+        return createProduct(setUpProduct);
     }
 
-    protected MenuGroup createSetupMenuGroup() throws JsonProcessingException {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세마리 메뉴");
+    protected MenuGroup createSetupMenuGroup(String name) throws JsonProcessingException {
+        final MenuGroup setUpMenuGroup = new MenuGroup();
+        setUpMenuGroup.setName(name);
 
-        return createMenuGroup(menuGroup);
+        return createMenuGroup(setUpMenuGroup);
     }
 }

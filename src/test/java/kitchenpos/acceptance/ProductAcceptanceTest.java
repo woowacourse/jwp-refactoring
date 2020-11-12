@@ -42,6 +42,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
                             final Product product = new Product();
                             product.setName("마늘치킨");
                             product.setPrice(BigDecimal.valueOf(18000));
+
                             final Product createdProduct = createProduct(product);
 
                             // Then
@@ -64,6 +65,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
                             final Product product = new Product();
                             product.setName("파닭치킨");
                             product.setPrice(BigDecimal.valueOf(18000));
+
                             final Product createdProduct = createProduct(product);
 
                             // When

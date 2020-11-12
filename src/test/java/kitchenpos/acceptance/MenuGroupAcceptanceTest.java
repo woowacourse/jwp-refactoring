@@ -40,6 +40,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                             // When
                             final MenuGroup menuGroup = new MenuGroup();
                             menuGroup.setName("세마리 메뉴");
+
                             final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
 
                             // Then
@@ -55,6 +56,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                             // Given
                             final MenuGroup menuGroup = new MenuGroup();
                             menuGroup.setName("사이드 메뉴");
+
                             final MenuGroup createdMenuGroup = createMenuGroup(menuGroup);
 
                             // When

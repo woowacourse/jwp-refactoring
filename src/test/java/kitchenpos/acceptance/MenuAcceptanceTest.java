@@ -24,40 +24,47 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 class MenuAcceptanceTest extends AcceptanceTest {
-    /**
+    /*
      * Feature: 메뉴 관리
-     * <p>
+     *
      * Scenario: 메뉴를 관리한다.
-     * <p>
+     *
      * Given: 메뉴 그룹이 등록되어 있다.
      *        상품이 등록되어 있다.
+     *
      * When: 메뉴를 등록한다.
      * Then: 메뉴가 등록된다.
-     * <p>
+     *
+     * Given: 메뉴가 등록되어 있다.
      * When: 메뉴의 목록을 조회한다.
      * Then: 저장되어 있는 메뉴의 목록이 반환된다.
      */
     @DisplayName("메뉴를 관리한다")
     @TestFactory
     Stream<DynamicTest> manageMenu() throws JsonProcessingException {
-        final Product setupProduct = createSetupProduct();
-        final MenuGroup setupMenuGroup = createSetupMenuGroup();
-
-        final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(setupProduct.getId());
-        menuProduct.setQuantity(2L);
-
-        final Menu menu = new Menu();
-        menu.setName("마늘치킨");
-        menu.setPrice(BigDecimal.valueOf(18000));
-        menu.setMenuGroupId(setupMenuGroup.getId());
-        menu.setMenuProducts(newArrayList(menuProduct));
+        // Given
+        final Product product1 = createSetupProduct("마늘치킨", "18000");
+        final Product product2 = createSetupProduct("파닭치킨", "18000");
+        final MenuGroup menuGroup = createSetupMenuGroup("세마리 메뉴");
 
         return Stream.of(
                 dynamicTest(
                         "메뉴를 등록한다",
                         () -> {
+                            // When
+                            final MenuProduct menuProduct = new MenuProduct();
+                            menuProduct.setProductId(product1.getId());
+                            menuProduct.setQuantity(2L);
+
+                            final Menu menu = new Menu();
+                            menu.setName("마늘치킨");
+                            menu.setPrice(BigDecimal.valueOf(18000));
+                            menu.setMenuGroupId(menuGroup.getId());
+                            menu.setMenuProducts(newArrayList(menuProduct));
+
                             final Menu createdMenu = createMenu(menu);
+
+                            // Then
                             assertAll(
                                     () -> assertThat(createdMenu)
                                             .extracting(Menu::getName)
@@ -77,14 +84,26 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 dynamicTest(
                         "메뉴의 목록을 조회한다",
                         () -> {
+                            // Given
+                            final MenuProduct menuProduct = new MenuProduct();
+                            menuProduct.setProductId(product2.getId());
+                            menuProduct.setQuantity(1L);
+
+                            final Menu menu = new Menu();
+                            menu.setName("파닭치킨");
+                            menu.setPrice(BigDecimal.valueOf(18000));
+                            menu.setMenuGroupId(menuGroup.getId());
+                            menu.setMenuProducts(newArrayList(menuProduct));
+
+                            final Menu createdMenu = createMenu(menu);
+
+                            // When
                             final List<Menu> menus = listMenu();
+
+                            // Then
                             assertThat(menus)
-                                    .usingElementComparatorOnFields("name", "menuGroupId")
-                                    .usingComparatorForElementFieldsWithNames(
-                                            BigDecimal::compareTo,
-                                            "price"
-                                    )
-                                    .contains(menu);
+                                    .extracting(Menu::getId)
+                                    .contains(createdMenu.getId());
                         }
                 )
         );
