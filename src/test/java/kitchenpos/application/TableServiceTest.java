@@ -120,7 +120,6 @@ class TableServiceTest {
         OrderTableRequest tenGuestRequest = OrderTableFixture.createRequestNumOf(10);
 
         when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(oneGuestTable));
-        when(orderTableDao.save(any(OrderTable.class))).thenReturn(tenGuestTable);
         OrderTableResponse response = tableService.changeNumberOfGuests(
             tenGuestTable.getId(), tenGuestRequest);
 

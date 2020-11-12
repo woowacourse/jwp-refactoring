@@ -13,48 +13,23 @@ public class OrderTableFixture {
     public static final boolean DEFAULT_EMPTY = true;
 
     public static OrderTable createEmptyWithId(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-
-        return orderTable;
+        return new OrderTable(id, null, 0, true);
     }
 
     public static OrderTable createEmptyWithoutId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(0);
-        orderTable.setEmpty(true);
-
-        return orderTable;
+        return new OrderTable(null, null, 0, true);
     }
 
     public static OrderTable createNotEmptyWithId(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
-
-        return orderTable;
+        return new OrderTable(id, null, 1, false);
     }
 
     public static OrderTable createNumOf(Long id, int numOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setNumberOfGuests(numOfGuests);
-        orderTable.setEmpty(false);
-
-        return orderTable;
+        return new OrderTable(id, null, numOfGuests, false);
     }
 
     public static OrderTable createGroupTableWithId(Long id, Long tableGroupId) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.addToTableGroup(tableGroupId);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setEmpty(false);
-
-        return orderTable;
+        return new OrderTable(id, tableGroupId, 1, false);
     }
 
     public static OrderTableRequest createRequest() {

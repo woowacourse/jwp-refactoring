@@ -38,10 +38,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         return tableGroupId;
     }
@@ -50,16 +46,8 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public void addToTableGroup(Long tableGroupId) {
@@ -70,5 +58,17 @@ public class OrderTable {
     public void ungroup() {
         this.tableGroupId = null;
         this.empty = false;
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+
+        this.numberOfGuests = numberOfGuests;
     }
 }

@@ -49,7 +49,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(request.isEmpty());
+        savedOrderTable.changeEmpty(request.isEmpty());
 
         return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
     }
@@ -66,12 +66,8 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.of(savedOrderTable);
     }
 }
