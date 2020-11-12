@@ -24,7 +24,7 @@ public class TableGroup {
 
     public TableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
         if (CollectionUtils.isEmpty(tables) || tables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("그룹지을 테이블을 2개 이상 지정해주세요.");
         }
         this.id = id;
         this.createdDate = createdDate;

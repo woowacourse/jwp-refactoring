@@ -44,10 +44,11 @@ public class MenuService {
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
 
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴는 반드시 하나의 메뉴그룹에 속해야합니다.");
         }
         if (menu.isPriceBiggerThen(sumProductPrices(menuProducts))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                "메뉴의 가격은 해당 메뉴를 구성하는 상품들의 가격보다 작거나 같아야 합니다.");
         }
         final Menu savedMenu = menuDao.save(menu);
         return menuProducts.stream()

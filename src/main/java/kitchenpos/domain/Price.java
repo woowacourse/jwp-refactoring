@@ -12,7 +12,7 @@ public class Price {
 
     public Price(BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("가격은 0 이상의 정수여야 합니다.");
         }
         this.value = value;
     }

@@ -41,9 +41,13 @@ public class TableService {
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableChangeRequest request) {
         final Table savedTable = tableDao.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
-        if (savedTable.isGrouped() || isNotMealOver(orderTableId)) {
+        if (savedTable.isGrouped() && request.isEmpty()) {
+            throw new IllegalArgumentException("그룹에 속한 테이블을 빈 테이블로 바꿀 수 없습니다."
+                + "해당 테이블은 그룹이 해제되면 자동으로 비워집니다.");
+        }
+        if (isNotMealOver(orderTableId)) {
             throw new IllegalArgumentException();
         }
         savedTable.changeEmpty(request.isEmpty());
@@ -57,7 +61,7 @@ public class TableService {
             .orElseThrow(IllegalArgumentException::new);
 
         if (savedTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("비어있는 테이블의 손님 수를 바꿀 수 없습니다.");
         }
         savedTable.changeNumberOfGuests(request.getNumberOfGuests());
 

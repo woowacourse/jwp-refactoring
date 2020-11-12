@@ -32,7 +32,7 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<Long> tableIds = Optional.ofNullable(request.getTableIds())
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("그룹지을 테이블들을 지정해주지 않으셨습니다."));
         final List<Table> savedTables = tableDao.findAllByIdIn(tableIds);
 
         validSameSize(tableIds, savedTables);
@@ -58,7 +58,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
 
         if (isNotMealOver(orderTableIds)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("식사가 끝나지 않은 테이블들의 그룹을 해제할 수 없습니다.");
         }
         for (final Table table : tables) {
             table.excludeFromGroup();
@@ -73,15 +73,18 @@ public class TableGroupService {
 
     private void validGroupable(List<Table> savedTables) {
         for (final Table savedTable : savedTables) {
-            if (!savedTable.isEmpty() || savedTable.isGrouped()) {
-                throw new IllegalArgumentException();
+            if (!savedTable.isEmpty()) {
+                throw new IllegalArgumentException("비어있지 않은 테이블을 새로운 그룹에 포함시킬 수 없습니다.");
+            }
+            if (savedTable.isGrouped()) {
+                throw new IllegalArgumentException("이미 그룹이 지어진 테이블이 존재합니다.");
             }
         }
     }
 
     private void validSameSize(List<Long> tableIds, List<Table> savedTables) {
         if (tableIds.size() != savedTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("존재하지 않는 테이블을 포함하여 그룹지을 수 없습니다.");
         }
     }
 }

@@ -31,7 +31,7 @@ public class Table {
     @JsonIgnore
     public boolean isGrouped() {
         if (Objects.nonNull(tableGroupId) && empty) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("소속 그룹이 있는데 테이블이 비어있는 이상한 상황입니다.");
         }
         return Objects.nonNull(tableGroupId);
     }
@@ -60,7 +60,7 @@ public class Table {
 
     public void changeNumberOfGuests(final int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블에 착석한 손님 수가 0보다 작을 수 없습니다.");
         }
         if (numberOfGuests == 0) {
             this.empty = true;

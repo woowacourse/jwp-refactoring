@@ -25,7 +25,7 @@ public class Product {
 
     private void validateName(String name) {
         if (Objects.isNull(name)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("상품의 이름이 누락되었습니다.");
         }
     }
 
