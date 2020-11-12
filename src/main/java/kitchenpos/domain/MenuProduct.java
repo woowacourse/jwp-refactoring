@@ -5,7 +5,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.math.BigDecimal;
 
 @Entity
 public class MenuProduct {
@@ -14,6 +16,7 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,6 +32,14 @@ public class MenuProduct {
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateAmount() {
+        return this.product.calculateAmount(quantity);
+    }
+
+    public boolean equalsByMenuId(Long menuId) {
+        return this.menu.equalsById(menuId);
     }
 
     public Long getSeq() {

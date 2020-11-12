@@ -90,7 +90,7 @@ class TableRestControllerTest {
         String content = new ObjectMapper().writeValueAsString(orderTable);
         given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(createOrderTableWithNumberOfGuest(77));
 
-        mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", "1")
+        mockMvc.perform(put("/api/tables/{orderTableId}/number-from-guests", "1")
                 .content(content)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())

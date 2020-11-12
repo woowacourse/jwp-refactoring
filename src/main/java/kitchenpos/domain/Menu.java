@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -20,14 +21,29 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+        validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("price가 null이거나 0보다 작을 수 없습니다.");
+        }
+    }
+
+    public boolean isSmaller(BigDecimal totalPrice) {
+        return totalPrice.compareTo(this.price) <= 0;
+    }
+
+    public boolean equalsById(Long id) {
+        return this.id.equals(id);
     }
 
     public Long getId() {
