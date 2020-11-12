@@ -14,7 +14,7 @@ import kitchenpos.domain.Product;
 
 @RestController
 public class ProductRestController {
-    public static final String PRODUCT_REST_API = "/api/products";
+    public static final String PRODUCT_REST_API_URI = "/api/products";
 
     private final ProductService productService;
 
@@ -22,7 +22,7 @@ public class ProductRestController {
         this.productService = productService;
     }
 
-    @PostMapping(PRODUCT_REST_API)
+    @PostMapping(PRODUCT_REST_API_URI)
     public ResponseEntity<Product> create(@RequestBody final Product product) {
         final Product created = productService.create(product);
         final URI uri = URI.create("/api/products/" + created.getId());
