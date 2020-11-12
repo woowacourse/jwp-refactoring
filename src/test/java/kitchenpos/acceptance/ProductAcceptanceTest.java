@@ -16,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import kitchenpos.domain.Product;
 
 class ProductAcceptanceTest extends AcceptanceTest {
@@ -72,25 +71,6 @@ class ProductAcceptanceTest extends AcceptanceTest {
                         }
                 )
         );
-    }
-
-    private Product createProduct(Product product) throws JsonProcessingException {
-        final String request = objectMapper.writeValueAsString(product);
-
-        // @formatter:off
-        return
-                given()
-                        .body(request)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                .when()
-                        .post(PRODUCT_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(Product.class)
-                ;
-        // @formatter:on
     }
 
     private List<Product> listProduct() {

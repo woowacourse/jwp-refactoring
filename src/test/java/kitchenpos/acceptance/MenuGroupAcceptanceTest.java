@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import kitchenpos.domain.MenuGroup;
 
 class MenuGroupAcceptanceTest extends AcceptanceTest {
@@ -60,25 +59,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
                         }
                 )
         );
-    }
-
-    private MenuGroup createMenuGroup(MenuGroup menuGroup) throws JsonProcessingException {
-        final String request = objectMapper.writeValueAsString(menuGroup);
-
-        // @formatter:off
-        return
-                given()
-                        .accept(MediaType.APPLICATION_JSON_VALUE)
-                        .contentType(MediaType.APPLICATION_JSON_VALUE)
-                        .body(request)
-                .when()
-                        .post(MENU_GROUP_REST_API_URI)
-                .then()
-                        .log().all()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .extract().as(MenuGroup.class)
-                ;
-        // @formatter:on
     }
 
     private List<MenuGroup> listMenuGroup() {
