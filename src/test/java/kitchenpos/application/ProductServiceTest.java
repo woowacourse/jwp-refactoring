@@ -1,41 +1,25 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-@ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
-	@Mock
-	private ProductDao productDao;
-
+class ProductServiceTest extends ServiceTest {
+	@Autowired
 	private ProductService productService;
-
-	@BeforeEach
-	void setUp() {
-		productService = new ProductService(productDao);
-	}
 
 	@DisplayName("price가 null일 경우 - IllegalArgumentException 발생")
 	@Test
-	void create1() {
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(null);
+	void create_whenPriceIsNull_thenThrowIllegalArgumentException() {
+		Product product = createProduct(null, "김", null);
 
 		assertThatThrownBy(() -> productService.create(product))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -43,11 +27,8 @@ class ProductServiceTest {
 
 	@DisplayName("price가 음수일 경우 - IllegalArgumentException 발생")
 	@Test
-	void create2() {
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(BigDecimal.valueOf(-1));
+	void create_whenPriceIsMinus_thenThrowIllegalArgumentException() {
+		Product product = createProduct(null, "김", BigDecimal.valueOf(-1));
 
 		assertThatThrownBy(() -> productService.create(product))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -55,29 +36,25 @@ class ProductServiceTest {
 
 	@DisplayName("product 저장 성공")
 	@Test
-	void create3() {
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(BigDecimal.valueOf(1000));
-
-		when(productDao.save(any(Product.class))).thenReturn(product);
+	void create() {
+		Product product = createProduct(null, "김", BigDecimal.valueOf(1000));
 
 		Product actual = productService.create(product);
-		assertThat(actual).usingRecursiveComparison().isEqualTo(product);
+		assertAll(
+			() -> assertThat(actual.getId()).isNotNull(),
+			() -> assertThat(actual.getName()).isEqualTo(product.getName()),
+			() -> assertThat(actual.getPrice().longValue()).isEqualTo(product.getPrice().longValue())
+		);
 	}
 
 	@Test
 	void list() {
-		Product product = new Product();
-		product.setId(1L);
-		product.setName("김");
-		product.setPrice(BigDecimal.valueOf(1000));
+		Product product = createProduct(null, "김", BigDecimal.valueOf(1000));
 
-		when(productDao.findAll()).thenReturn(Collections.singletonList(product));
+		Product expect = productService.create(product);
 
 		List<Product> actual = productService.list();
 		assertThat(actual).hasSize(1);
-		assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(product);
+		assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expect);
 	}
 }
