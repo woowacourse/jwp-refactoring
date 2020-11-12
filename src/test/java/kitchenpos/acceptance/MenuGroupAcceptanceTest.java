@@ -29,7 +29,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
      * When: 메뉴 그룹의 목록을 조회한다.
      * Then: 저장되어 있는 메뉴 그룹의 목록이 반환된다.
      */
-    @DisplayName("메뉴 그룹 관리")
+    @DisplayName("메뉴 그룹을 관리한다")
     @TestFactory
     Stream<DynamicTest> manageMenuGroup() {
         final MenuGroup menuGroup = new MenuGroup();

@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.MenuGroupRestController.*;
 import static kitchenpos.ui.ProductRestController.*;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,5 +68,20 @@ abstract class AcceptanceTest {
                         .extract().as(Product.class)
                 ;
         // @formatter:on
+    }
+
+    protected Product createSetupProduct() throws JsonProcessingException {
+        final Product product = new Product();
+        product.setName("마늘치킨");
+        product.setPrice(BigDecimal.valueOf(18000));
+
+        return createProduct(product);
+    }
+
+    protected MenuGroup createSetupMenuGroup() throws JsonProcessingException {
+        final MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName("세마리 메뉴");
+
+        return createMenuGroup(menuGroup);
     }
 }
