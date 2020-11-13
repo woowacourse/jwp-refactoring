@@ -42,8 +42,8 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
-        List<Menu> menus = findMenus(orderLineItemRequests);
-        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests, menus);
+        validateSavedMenus(orderLineItemRequests);
+        List<OrderLineItem> orderLineItems = convertOrderLineItems(orderLineItemRequests);
 
         Order order = Order.builder()
             .orderTable(orderTable)
@@ -60,46 +60,28 @@ public class OrderService {
         }
     }
 
-    private List<Menu> findMenus(final List<OrderLineItemRequest> orderLineItems) {
+    private void validateSavedMenus(final List<OrderLineItemRequest> orderLineItems) {
         List<Long> menuIds = orderLineItems.stream()
             .map(OrderLineItemRequest::getMenuId)
             .collect(Collectors.toList());
         List<Menu> menus = menuRepository.findAllById(menuIds);
-        validateSavedMenu(menuIds, menus);
 
-        return menus;
-    }
-
-    private void validateSavedMenu(final List<Long> menuIds, final List<Menu> menus) {
         if (menuIds.size() != menus.size()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private List<OrderLineItem> convertOrderLineItems(
-        final List<OrderLineItemRequest> requests,
-        final List<Menu> menus
-    ) {
+    private List<OrderLineItem> convertOrderLineItems(final List<OrderLineItemRequest> requests) {
         return requests.stream()
-            .map(request -> convertOrderLineItem(request, menus))
+            .map(this::convertOrderLineItem)
             .collect(Collectors.toList());
     }
 
-    private OrderLineItem convertOrderLineItem(
-        final OrderLineItemRequest request,
-        final List<Menu> menus
-    ) {
-        Menu menu = findMenu(request, menus);
+    private OrderLineItem convertOrderLineItem(final OrderLineItemRequest request) {
         return OrderLineItem.builder()
-            .menu(menu)
+            .menuId(request.getMenuId())
+            .quantity(request.getQuantity())
             .build();
-    }
-
-    private Menu findMenu(final OrderLineItemRequest request, final List<Menu> menus) {
-        return menus.stream()
-            .filter(menu -> menu.isSameId(request.getMenuId()))
-            .findFirst()
-            .orElseThrow(IllegalArgumentException::new);
     }
 
     @Transactional

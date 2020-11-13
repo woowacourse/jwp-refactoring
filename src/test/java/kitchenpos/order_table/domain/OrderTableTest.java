@@ -9,7 +9,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
@@ -100,7 +99,7 @@ class OrderTableTest {
     @Test
     void isInProgress_True() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem = createOrderLineItem(new Menu());
+        OrderLineItem orderLineItem = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         createOrder(orderTable, orderLineItems);
 
@@ -111,7 +110,7 @@ class OrderTableTest {
     @Test
     void isInProgress_False() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem = createOrderLineItem(new Menu());
+        OrderLineItem orderLineItem = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
         order.changeOrderStatus(OrderStatus.COMPLETION);

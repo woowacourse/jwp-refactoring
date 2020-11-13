@@ -2,7 +2,6 @@ package kitchenpos.order.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.OrderLineItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,11 +25,9 @@ public class OrderLineItemResponse {
     }
 
     public static OrderLineItemResponse from(final OrderLineItem orderLineItem) {
-        Menu menu = orderLineItem.getMenu();
-
         return OrderLineItemResponse.builder()
             .seq(orderLineItem.getSeq())
-            .menuId(menu.getId())
+            .menuId(orderLineItem.getMenuId())
             .quantity(orderLineItem.getQuantity())
             .build();
     }

@@ -6,7 +6,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.menu.domain.Menu;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,14 +21,12 @@ public class OrderLineItem {
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    private Long menuId;
     private long quantity;
 
     @Builder
-    public OrderLineItem(final Menu menu, final long quantity) {
-        this.menu = menu;
+    public OrderLineItem(final Long menuId, final long quantity) {
+        this.menuId = menuId;
         this.quantity = quantity;
     }
 

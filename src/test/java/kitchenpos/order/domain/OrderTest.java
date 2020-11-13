@@ -9,20 +9,17 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order_table.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
 
-    private Menu menu = new Menu();
-
     @DisplayName("주문 등록 시 주문테이블 등록 여부 확인")
     @Test
     void setOrderTable() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderLineItem orderLineItem = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
 
@@ -36,8 +33,8 @@ class OrderTest {
     @Test
     void setOrderLineItemsTest() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem1 = createOrderLineItem(menu);
-        OrderLineItem orderLineItem2 = createOrderLineItem(menu);
+        OrderLineItem orderLineItem1 = createOrderLineItem();
+        OrderLineItem orderLineItem2 = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem1, orderLineItem2);
         Order order = createOrder(orderTable, orderLineItems);
 
@@ -75,7 +72,7 @@ class OrderTest {
     @Test
     void changeOrderStatus() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderLineItem orderLineItem = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
 
@@ -88,7 +85,7 @@ class OrderTest {
     @Test
     void changeOrderStatus_With_CompletedOrder() {
         OrderTable orderTable = createOrderTable(false);
-        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        OrderLineItem orderLineItem = createOrderLineItem();
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(orderTable, orderLineItems);
         order.changeOrderStatus(OrderStatus.COMPLETION);

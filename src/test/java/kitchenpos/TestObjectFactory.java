@@ -48,8 +48,12 @@ public class TestObjectFactory {
 
     public static OrderLineItem createOrderLineItem(Menu menu) {
         return OrderLineItem.builder()
-            .menu(menu)
+            .menuId(menu.getId())
             .build();
+    }
+
+    public static OrderLineItem createOrderLineItem() {
+        return createOrderLineItem(new Menu());
     }
 
     public static Order createOrder(OrderTable table, List<OrderLineItem> orderLineItems) {
