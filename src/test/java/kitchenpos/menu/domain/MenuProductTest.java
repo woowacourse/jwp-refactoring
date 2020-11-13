@@ -4,7 +4,6 @@ import static kitchenpos.TestObjectFactory.createMenuProduct;
 import static kitchenpos.TestObjectFactory.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import kitchenpos.product.domain.Product;
@@ -24,10 +23,7 @@ class MenuProductTest {
             .product(product)
             .build();
 
-        assertAll(
-            () -> assertThat(menuProduct.getProduct()).isEqualTo(product),
-            () -> assertThat(menuProduct.getProduct().getMenuProducts()).containsOnly(menuProduct)
-        );
+        assertThat(menuProduct.getProduct()).isEqualTo(product);
     }
 
     @DisplayName("[예외] Menu.addMenuProduct를 통하지 않은 setMenu 접근")

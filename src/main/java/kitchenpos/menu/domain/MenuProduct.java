@@ -31,15 +31,8 @@ public class MenuProduct {
 
     @Builder
     public MenuProduct(final Product product, final long quantity) {
-        setProduct(product);
+        this.product = product;
         this.quantity = quantity;
-    }
-
-    private void setProduct(final Product product) {
-        if (Objects.isNull(this.product) && Objects.nonNull(product)) {
-            this.product = product;
-            this.product.addMenuProduct(this);
-        }
     }
 
     public void setMenu(final Menu menu) {
