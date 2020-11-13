@@ -51,6 +51,22 @@ class TableGroupTest {
         );
     }
 
+    @DisplayName("[예외] 다른 테이블 그룹에 포함된 테이블에 대한 그룹화")
+    @Test
+    void setOrderTables_Fail_With_OtherGroupsTable() {
+        OrderTable orderTable1 = createOrderTable(true);
+        OrderTable orderTable2 = createOrderTable(true);
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+
+        createTableGroup(orderTables);
+
+        assertThatThrownBy(
+            () -> TableGroup.builder()
+            .orderTables(orderTables)
+            .build()
+        ).isInstanceOf(IllegalStateException.class);
+    }
+
     @DisplayName("그룹 해제 시 모든 테이블의 그룹 등록 해제 여부 확인")
     @Test
     void ungroup() {
