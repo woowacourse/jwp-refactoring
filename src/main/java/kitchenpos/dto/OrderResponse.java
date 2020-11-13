@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class OrderResponse {
 
     private Long id;
-    private OrderTableResponse orderTable;
+    private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
@@ -27,13 +28,13 @@ public class OrderResponse {
     }
 
     public static OrderResponse from(final Order order) {
-        OrderTableResponse table = OrderTableResponse.from(order.getOrderTable());
+        OrderTable orderTable = order.getOrderTable();
         List<OrderLineItemResponse> orderLineItems = OrderLineItemResponse
             .listFrom(order.getOrderLineItems());
 
         return OrderResponse.builder()
             .id(order.getId())
-            .orderTable(table)
+            .orderTableId(orderTable.getId())
             .orderStatus(order.getOrderStatus())
             .orderedTime(order.getOrderedTime())
             .orderLineItems(orderLineItems)
@@ -48,8 +49,8 @@ public class OrderResponse {
         return id;
     }
 
-    public OrderTableResponse getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public LocalDateTime getOrderedTime() {
