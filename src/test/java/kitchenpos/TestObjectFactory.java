@@ -2,18 +2,18 @@ package kitchenpos;
 
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.dto.OrderTableIdRequest;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.menu_group.domain.MenuGroup;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table_group.domain.TableGroup;
+import kitchenpos.menu.dto.MenuProductRequest;
+import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.order_table.dto.OrderTableIdRequest;
+import kitchenpos.table_group.dto.TableGroupRequest;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 
 public class TestObjectFactory {
 
