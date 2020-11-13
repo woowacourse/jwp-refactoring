@@ -13,18 +13,18 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.menu.repository.MenuDao;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menu_group.domain.MenuGroup;
-import kitchenpos.menu_group.repository.MenuGroupDao;
+import kitchenpos.menu_group.repository.MenuGroupRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
 import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.repository.OrderTableDao;
+import kitchenpos.order_table.repository.OrderTableRepository;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductDao;
+import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,28 +41,28 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private MenuGroup savedMenuGroup;
 
     @BeforeEach
     void setUp() {
-        savedMenuGroup = menuGroupDao.save(createMenuGroup("강정메뉴"));
+        savedMenuGroup = menuGroupRepository.save(createMenuGroup("강정메뉴"));
     }
 
     @DisplayName("주문 추가")
     @Test
     void create() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
+        OrderTable savedTable = orderTableRepository.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -83,7 +83,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 주문 항목이 없는 주문 추가")
     @Test
     void create_Fail_With_NoOrderLineItem() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
+        OrderTable savedTable = orderTableRepository.save(createOrderTable(false));
 
         OrderRequest request = createOrderRequest(savedTable, null);
 
@@ -94,7 +94,7 @@ class OrderServiceTest {
     @DisplayName("[예외] 존재하지 않는 메뉴가 포함된 주문 추가")
     @Test
     void create_Fail_With_NotExistMenu() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
+        OrderTable savedTable = orderTableRepository.save(createOrderTable(false));
 
         Product product = createProduct(10_000);
         MenuProduct menuProduct = createMenuProduct(product, 2);
@@ -133,7 +133,7 @@ class OrderServiceTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
+        OrderTable savedTable = orderTableRepository.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -153,7 +153,7 @@ class OrderServiceTest {
     @DisplayName("주문 상태 변경")
     @Test
     void changeOrderStatus() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(false));
+        OrderTable savedTable = orderTableRepository.save(createOrderTable(false));
 
         Menu savedMenu = saveMenu();
 
@@ -174,7 +174,7 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu() {
-        Product product = productDao.save(createProduct(10_000));
+        Product product = productRepository.save(createProduct(10_000));
         MenuProduct menuProduct = createMenuProduct(product, 2);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
 
@@ -184,7 +184,7 @@ class OrderServiceTest {
             .menuGroup(savedMenuGroup)
             .menuProducts(menuProducts)
             .build();
-        return menuDao.save(menu);
+        return menuRepository.save(menu);
     }
 
     private OrderLineItemRequest createOrderLineItemRequest(Menu savedMenu) {

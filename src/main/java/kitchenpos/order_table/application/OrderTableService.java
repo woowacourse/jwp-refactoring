@@ -1,8 +1,8 @@
 package kitchenpos.order_table.application;
 
 import java.util.List;
-import kitchenpos.order.repository.OrderDao;
-import kitchenpos.order_table.repository.OrderTableDao;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order_table.repository.OrderTableRepository;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.dto.OrderTableRequest;
 import kitchenpos.order_table.dto.OrderTableResponse;
@@ -12,12 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderTableService {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderRepository orderRepository;
+    private final OrderTableRepository orderTableRepository;
 
-    public OrderTableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+        this.orderRepository = orderRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -26,12 +26,12 @@ public class OrderTableService {
             .empty(request.getEmpty())
             .numberOfGuests(request.getNumberOfGuests())
             .build();
-        OrderTable savedTable = orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableRepository.save(orderTable);
         return OrderTableResponse.from(savedTable);
     }
 
     public List<OrderTableResponse> list() {
-        List<OrderTable> tables = orderTableDao.findAll();
+        List<OrderTable> tables = orderTableRepository.findAll();
         return OrderTableResponse.listFrom(tables);
     }
 
@@ -40,13 +40,13 @@ public class OrderTableService {
         final Long orderTableId,
         final OrderTableRequest request
     ) {
-        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
         validateOrderStatus(savedOrderTable);
 
         savedOrderTable.changeEmpty(request.getEmpty());
 
-        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        OrderTable changedTable = orderTableRepository.save(savedOrderTable);
         return OrderTableResponse.from(changedTable);
     }
 
@@ -61,12 +61,12 @@ public class OrderTableService {
         final Long orderTableId,
         final OrderTableRequest request
     ) {
-        OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        OrderTable changedTable = orderTableRepository.save(savedOrderTable);
         return OrderTableResponse.from(changedTable);
     }
 }

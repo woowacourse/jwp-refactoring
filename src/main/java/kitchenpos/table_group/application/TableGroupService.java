@@ -2,8 +2,8 @@ package kitchenpos.table_group.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order_table.repository.OrderTableDao;
-import kitchenpos.table_group.repository.TableGroupDao;
+import kitchenpos.order_table.repository.OrderTableRepository;
+import kitchenpos.table_group.repository.TableGroupRepository;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.table_group.domain.TableGroup;
 import kitchenpos.order_table.dto.OrderTableIdRequest;
@@ -16,15 +16,15 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderTableDao orderTableDao;
-    private final TableGroupDao tableGroupDao;
+    private final OrderTableRepository orderTableRepository;
+    private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-        final OrderTableDao orderTableDao,
-        final TableGroupDao tableGroupDao
+        final OrderTableRepository orderTableRepository,
+        final TableGroupRepository tableGroupRepository
     ) {
-        this.orderTableDao = orderTableDao;
-        this.tableGroupDao = tableGroupDao;
+        this.orderTableRepository = orderTableRepository;
+        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -35,15 +35,15 @@ public class TableGroupService {
             .collect(Collectors.toList());
         validateOrderTablesCount(orderTableIds);
 
-        List<OrderTable> savedOrderTables = orderTableDao.findAllById(orderTableIds);
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
         validateSavedTable(orderTableIds, savedOrderTables);
 
         TableGroup tableGroup = TableGroup.builder()
             .orderTables(savedOrderTables)
             .build();
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
-        orderTableDao.saveAll(savedOrderTables);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        orderTableRepository.saveAll(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
     }
@@ -62,14 +62,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupDao.findById(tableGroupId)
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
             .orElseThrow(IllegalArgumentException::new);
         validateOrderStatus(tableGroup.getOrderTables());
 
         tableGroup.ungroup();
 
-        orderTableDao.saveAll(tableGroup.getOrderTables());
-        tableGroupDao.save(tableGroup);
+        orderTableRepository.saveAll(tableGroup.getOrderTables());
+        tableGroupRepository.save(tableGroup);
     }
 
     private void validateOrderStatus(final List<OrderTable> orderTables) {

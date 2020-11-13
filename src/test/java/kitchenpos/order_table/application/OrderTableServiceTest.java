@@ -14,11 +14,11 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.repository.OrderDao;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order_table.dto.OrderTableRequest;
 import kitchenpos.order_table.dto.OrderTableResponse;
-import kitchenpos.order_table.repository.OrderTableDao;
+import kitchenpos.order_table.repository.OrderTableRepository;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +36,10 @@ class OrderTableServiceTest {
     private OrderTableService orderTableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블 추가")
     @Test
@@ -92,7 +92,7 @@ class OrderTableServiceTest {
         OrderTableRequest table = createTableRequest(0, false);
         OrderTableResponse orderTableResponse = orderTableService.create(table);
 
-        OrderTable savedTable = orderTableDao.findById(orderTableResponse.getId()).get();
+        OrderTable savedTable = orderTableRepository.findById(orderTableResponse.getId()).get();
 
         Product product = createProduct(10_000);
         MenuProduct menuProduct = createMenuProduct(product, 2);
@@ -101,7 +101,7 @@ class OrderTableServiceTest {
         OrderLineItem orderLineItem = createOrderLineItem(menu);
         List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
         Order order = createOrder(savedTable, orderLineItems);
-        orderDao.save(order);
+        orderRepository.save(order);
 
         OrderTableRequest request = createTableRequest(true);
 

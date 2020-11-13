@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.order_table.domain.OrderTable;
-import kitchenpos.order_table.repository.OrderTableDao;
+import kitchenpos.order_table.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,10 +16,10 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 
 @SpringBootTest
 @Sql(value = "/deleteAll.sql", executionPhase = ExecutionPhase.AFTER_TEST_METHOD)
-class OrderTableDaoTest {
+class OrderTableRepositoryTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private OrderTable orderTable;
 
@@ -33,9 +33,9 @@ class OrderTableDaoTest {
     @DisplayName("empty 변경 시 버전 증가")
     @Test
     void version_Empty() {
-        OrderTable savedTable = orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableRepository.save(orderTable);
         savedTable.changeEmpty(true);
-        OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
+        OrderTable changedTable = orderTableRepository.saveAndFlush(savedTable);
 
         int actual = changedTable.getVersion() - savedTable.getVersion();
         assertThat(actual).isEqualTo(1);
@@ -44,9 +44,9 @@ class OrderTableDaoTest {
     @DisplayName("numberOfGuests 변경 시 버전 증가")
     @Test
     void version_NumberOfGuests() {
-        OrderTable savedTable = orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableRepository.save(orderTable);
         savedTable.changeNumberOfGuests(10);
-        OrderTable changedTable = orderTableDao.saveAndFlush(savedTable);
+        OrderTable changedTable = orderTableRepository.saveAndFlush(savedTable);
 
         int actual = changedTable.getVersion() - savedTable.getVersion();
         assertThat(actual).isEqualTo(1);
@@ -55,14 +55,14 @@ class OrderTableDaoTest {
     @DisplayName("[예외] 동시에 같은 테이블을 수정")
     @Test
     void objectOptimisticLockingFailureException() {
-        OrderTable savedTable = orderTableDao.save(orderTable);
+        OrderTable savedTable = orderTableRepository.save(orderTable);
         savedTable.changeEmpty(true);
-        orderTableDao.saveAndFlush(savedTable);
+        orderTableRepository.saveAndFlush(savedTable);
 
         assertThatThrownBy(
             () -> {
                 savedTable.changeEmpty(false);
-                orderTableDao.save(savedTable);
+                orderTableRepository.save(savedTable);
             }
         ).isInstanceOf(ObjectOptimisticLockingFailureException.class);
     }
