@@ -41,9 +41,6 @@ class OrderRepositoryTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
     private MenuRepository menuRepository;
 
     @Autowired
@@ -51,19 +48,20 @@ class OrderRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = OrderTable.builder()
+        OrderTable orderTable = orderTableRepository.save(OrderTable.builder()
             .empty(false)
-            .build();
+            .build());
+
         Product product = productRepository.save(createProduct(10_000));
         MenuProduct menuProduct = createMenuProduct(product, 2);
         List<MenuProduct> menuProducts = Arrays.asList(menuProduct);
-        Menu menu = createMenu(menuProducts,18_000);
-        OrderLineItem orderLineItem = createOrderLineItem(menuRepository.save(menu));
-        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
-        List<OrderLineItem> orderLineItems = Arrays.asList(savedOrderLineItem);
+        Menu menu = menuRepository.save(createMenu(menuProducts, 18_000));
+
+        OrderLineItem orderLineItem = createOrderLineItem(menu);
+        List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem);
 
         order = Order.builder()
-            .orderTable(orderTableRepository.save(orderTable))
+            .orderTable(orderTable)
             .orderLineItems(orderLineItems)
             .build();
     }

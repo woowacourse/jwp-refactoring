@@ -2,18 +2,17 @@ package kitchenpos.order.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderLineItemRepository;
-import kitchenpos.order_table.repository.OrderTableRepository;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order_table.domain.OrderTable;
 import kitchenpos.order.dto.OrderLineItemRequest;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderStatusChangeRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order_table.domain.OrderTable;
+import kitchenpos.order_table.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -23,18 +22,15 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuRepository menuRepository,
         final OrderRepository orderRepository,
-        final OrderLineItemRepository orderLineItemRepository,
         final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -55,8 +51,6 @@ public class OrderService {
             .build();
 
         Order savedOrder = orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
-
         return OrderResponse.from(savedOrder);
     }
 

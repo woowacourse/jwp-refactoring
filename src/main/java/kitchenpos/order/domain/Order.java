@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
@@ -41,7 +42,7 @@ public class Order {
     private OrderStatus orderStatus = OrderStatus.COOKING;
     @CreatedDate
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade= CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
     @Version
     private int version;
