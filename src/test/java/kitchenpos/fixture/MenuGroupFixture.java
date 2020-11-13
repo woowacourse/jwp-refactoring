@@ -7,17 +7,10 @@ public class MenuGroupFixture {
     public static final String NAME = "DD";
 
     public static MenuGroup createWithoutId() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(NAME);
-
-        return menuGroup;
+        return new MenuGroup(null, NAME);
     }
 
     public static MenuGroup createWithId(Long id) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(NAME);
-
-        return menuGroup;
+        return new MenuGroup(id, NAME);
     }
 }
