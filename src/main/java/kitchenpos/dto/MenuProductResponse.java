@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 public class MenuProductResponse {
 
     private Long seq;
-    private ProductResponse product;
+    private Long productId;
     private long quantity;
 
     public static List<MenuProductResponse> listFrom(final List<MenuProduct> menuProducts) {
@@ -26,7 +26,7 @@ public class MenuProductResponse {
         ProductResponse product = ProductResponse.from(menuProduct.getProduct());
         return MenuProductResponse.builder()
             .seq(menuProduct.getSeq())
-            .product(product)
+            .productId(product.getId())
             .quantity(menuProduct.getQuantity())
             .build();
     }
@@ -35,8 +35,8 @@ public class MenuProductResponse {
         return seq;
     }
 
-    public ProductResponse getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
