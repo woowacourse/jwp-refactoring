@@ -18,16 +18,19 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -35,23 +38,23 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     private List<MenuProduct> menuProducts;
     private long totalPrice;
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
+        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository, productRepository);
 
         Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
         Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
@@ -67,81 +70,88 @@ class MenuServiceTest {
     @DisplayName("Menu 생성")
     @Test
     void create() {
-        Menu menuWithoutId = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        Menu menuWithId = MenuFixture.createWithId(1L, 1L, menuProducts, totalPrice);
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1), MenuProductFixture.createRequest(2L, 1));
+        Menu menuWithoutId = MenuFixture.createWithoutId(1L, totalPrice);
+        Menu menuWithId = MenuFixture.createWithId(1L, 1L, totalPrice);
         Product product = ProductFixture.createWithId(1L);
 
-        when(menuGroupDao.existsById(menuWithoutId.getMenuGroupId())).thenReturn(true);
-        when(menuDao.save(menuWithoutId)).thenReturn(menuWithId);
-        when(productDao.findById(anyLong())).thenReturn(Optional.of(product));
-        when(menuProductDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        when(menuGroupRepository.existsById(menuWithoutId.getMenuGroupId())).thenReturn(true);
+        when(menuRepository.save(any(Menu.class))).thenReturn(menuWithId);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
 
-        Menu savedMenu = menuService.create(menuWithoutId);
+        MenuResponse savedMenu = menuService.create(request);
         assertThat(savedMenu).isEqualToComparingFieldByField(menuWithId);
-        assertThat(savedMenu.getMenuProducts())
-            .extracting(MenuProduct::getMenuId)
-            .allMatch(id -> id.equals(savedMenu.getId()));
     }
 
     @DisplayName("Price가 null인 Menu 생성 요청 시 예외를 반환한다")
     @Test
     void createNullPriceMenu() {
-        Menu menuWithNegativePrice = MenuFixture.createNullPrice(1L, menuProducts);
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1));
+        Menu menuWithNegativePrice = MenuFixture.createNullPrice(1L);
 
-        assertThatThrownBy(() -> menuService.create(menuWithNegativePrice))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Price가 음수인 Menu 생성 요청 시 예외를 반환한다")
     @Test
     void createNegativePriceMenu() {
-        Menu menuWithNegativePrice = MenuFixture.createWithoutId(1L, menuProducts, -1000L);
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1));
+        Menu menuWithNegativePrice = MenuFixture.createWithoutId(1L, -1000L);
 
-        assertThatThrownBy(() -> menuService.create(menuWithNegativePrice))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Menu Group에 포함되어 있지 않은 Menu 생성 시 예외를 반환한다")
     @Test
     void createNotExistMenuGroup() {
-        Menu menu = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        when(menuGroupDao.existsById(menu.getMenuGroupId())).thenReturn(false);
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1));
+        Menu menu = MenuFixture.createWithoutId(1L, totalPrice);
+        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(false);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("존재하지 않는 Product를 포함하는 Menu 생성 시 예외를 반환한다.")
     @Test
     void createNotExistProduct() {
-        Menu menu = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        when(menuGroupDao.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(anyLong())).thenReturn(Optional.empty());
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1));
+        Menu menu = MenuFixture.createWithoutId(1L, totalPrice);
+        when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
+        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("Product price의 합보다 비싼 Menu 생성 시 예외를 반환한다.")
     @Test
     void createMoreExpensive() {
+        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+            MenuProductFixture.createRequest(1L, 1));
         Menu menuOverTotalPrice =
-            MenuFixture.createWithoutId(1L, menuProducts, totalPrice + 1000L);
-        when(menuGroupDao.existsById(menuOverTotalPrice.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(1L)).thenReturn(Optional.of(ProductFixture.createWithId(1L)));
-        when(productDao.findById(2L)).thenReturn(Optional.of(ProductFixture.createWithId(2L)));
+            MenuFixture.createWithoutId(1L, totalPrice + 1000L);
+        when(menuGroupRepository.existsById(menuOverTotalPrice.getMenuGroupId())).thenReturn(true);
+        when(productRepository.findById(1L)).thenReturn(Optional.of(ProductFixture.createWithId(1L)));
 
-        assertThatThrownBy(() -> menuService.create(menuOverTotalPrice))
+        assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("정상적으로 저장된 Menu를 불러온다")
     @Test
     void list() {
-        Menu menu1 = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        Menu menu2 = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        Menu menu3 = MenuFixture.createWithoutId(1L, menuProducts, totalPrice);
-        when(menuDao.findAll()).thenReturn(Arrays.asList(menu1, menu2, menu3));
+        Menu menu1 = MenuFixture.createWithoutId(1L, totalPrice);
+        Menu menu2 = MenuFixture.createWithoutId(1L, totalPrice);
+        Menu menu3 = MenuFixture.createWithoutId(1L, totalPrice);
+        when(menuRepository.findAll()).thenReturn(Arrays.asList(menu1, menu2, menu3));
 
         assertThat(menuService.list())
             .usingRecursiveComparison()

@@ -20,6 +20,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 
@@ -39,14 +41,13 @@ class MenuRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        menu = MenuFixture.createWithId(MenuFixture.ID1, 1L,
-            Collections.singletonList(MenuProductFixture.create(1L, 1L)), 18000L);
+        menu = MenuFixture.createWithId(MenuFixture.ID1, 1L, 18000L);
     }
 
     @DisplayName("정상 Menu 생성")
     @Test
     void create() throws Exception {
-        when(menuService.create(any(Menu.class))).thenReturn(menu);
+        when(menuService.create(any(MenuCreateRequest.class))).thenReturn(MenuResponse.of(menu));
 
         mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +63,7 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 불러오기")
     @Test
     void list() throws Exception {
-        when(menuService.list()).thenReturn(Collections.singletonList(menu));
+        when(menuService.list()).thenReturn(Collections.singletonList(MenuResponse.of(menu)));
 
         mockMvc.perform(get("/api/menus")
         )

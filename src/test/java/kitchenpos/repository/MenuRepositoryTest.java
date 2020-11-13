@@ -25,9 +25,9 @@ class MenuRepositoryTest {
     @DisplayName("Id range에 포함되는 menu 개수를 반환한다.")
     @Test
     void countByIdIn() {
-        Menu menu1 = MenuFixture.createWithoutId(1L, null, 1000L);
-        Menu menu2 = MenuFixture.createWithoutId(1L, null, 1000L);
-        Menu menu3 = MenuFixture.createWithoutId(1L, null, 1000L);
+        Menu menu1 = MenuFixture.createWithoutId(1L, 1000L);
+        Menu menu2 = MenuFixture.createWithoutId(1L, 1000L);
+        Menu menu3 = MenuFixture.createWithoutId(1L, 1000L);
         menuRepository.saveAll(Arrays.asList(menu1, menu2, menu3));
 
         assertThat(menuRepository.countByIdIn(Arrays.asList(1L, 3L))).isEqualTo(2L);

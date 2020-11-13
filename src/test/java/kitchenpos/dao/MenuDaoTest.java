@@ -30,7 +30,7 @@ class MenuDaoTest {
     void setUp(@Autowired DataSource dataSource) {
         menuDao = new JdbcTemplateMenuDao(dataSource);
 
-        menu = MenuFixture.createWithoutId(1L, null, 16000L);
+        menu = MenuFixture.createWithoutId(1L, 16000L);
     }
 
     @DisplayName("Menu를 저장한다.")
