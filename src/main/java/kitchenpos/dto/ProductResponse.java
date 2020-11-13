@@ -6,11 +6,13 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class ProductResponse {
 
     private Long id;
@@ -29,17 +31,5 @@ public class ProductResponse {
             .name(product.getName())
             .price(product.getPrice())
             .build();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
     }
 }

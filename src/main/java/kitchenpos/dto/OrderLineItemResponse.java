@@ -6,11 +6,13 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class OrderLineItemResponse {
 
     private Long seq;
@@ -31,17 +33,5 @@ public class OrderLineItemResponse {
             .menuId(menu.getId())
             .quantity(orderLineItem.getQuantity())
             .build();
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }

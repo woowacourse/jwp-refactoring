@@ -8,11 +8,13 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class OrderResponse {
 
     private Long id;
@@ -39,25 +41,5 @@ public class OrderResponse {
             .orderedTime(order.getOrderedTime())
             .orderLineItems(orderLineItems)
             .build();
-    }
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public List<OrderLineItemResponse> getOrderLineItems() {
-        return orderLineItems;
     }
 }

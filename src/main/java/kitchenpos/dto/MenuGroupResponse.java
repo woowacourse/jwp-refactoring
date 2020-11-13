@@ -5,11 +5,13 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class MenuGroupResponse {
 
     private Long id;
@@ -26,13 +28,5 @@ public class MenuGroupResponse {
             .id(menuGroup.getId())
             .name(menuGroup.getName())
             .build();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 }

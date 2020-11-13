@@ -5,11 +5,13 @@ import java.util.Objects;
 import kitchenpos.domain.TableGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class TableGroupResponse {
 
     private Long id;
@@ -23,13 +25,5 @@ public class TableGroupResponse {
             .id(tableGroup.getId())
             .createdDate(tableGroup.getCreatedDate())
             .build();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
     }
 }

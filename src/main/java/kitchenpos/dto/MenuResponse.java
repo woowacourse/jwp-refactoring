@@ -7,11 +7,13 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class MenuResponse {
 
     private Long id;
@@ -38,25 +40,5 @@ public class MenuResponse {
             .menuGroupId(menuGroup.getId())
             .menuProducts(menuProducts)
             .build();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public List<MenuProductResponse> getMenuProducts() {
-        return menuProducts;
     }
 }

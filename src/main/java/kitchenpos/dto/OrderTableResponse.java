@@ -7,11 +7,13 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 public class OrderTableResponse {
 
     private Long id;
@@ -36,21 +38,5 @@ public class OrderTableResponse {
             .numberOfGuests(table.getNumberOfGuests())
             .empty(table.isEmpty())
             .build();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getTableGroupId() {
-        return tableGroupId;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 }
