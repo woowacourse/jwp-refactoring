@@ -3,6 +3,7 @@ package kitchenpos.dto;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,7 @@ public class MenuProductResponse {
     }
 
     public static MenuProductResponse from(final MenuProduct menuProduct) {
-        ProductResponse product = ProductResponse.from(menuProduct.getProduct());
+        Product product = menuProduct.getProduct();
         return MenuProductResponse.builder()
             .seq(menuProduct.getSeq())
             .productId(product.getId())

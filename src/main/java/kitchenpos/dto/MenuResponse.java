@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class MenuResponse {
     }
 
     public static MenuResponse from(final Menu menu) {
-        MenuGroupResponse menuGroup = MenuGroupResponse.from(menu.getMenuGroup());
+        MenuGroup menuGroup = menu.getMenuGroup();
         List<MenuProductResponse> menuProducts = MenuProductResponse
             .listFrom(menu.getMenuProducts());
 
