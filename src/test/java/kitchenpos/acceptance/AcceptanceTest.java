@@ -3,6 +3,7 @@ package kitchenpos.acceptance;
 import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.MenuGroupRestController.*;
 import static kitchenpos.ui.ProductRestController.*;
+import static kitchenpos.ui.TableRestController.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -81,5 +83,14 @@ abstract class AcceptanceTest {
         menuGroup.setName(name);
 
         return create(MENU_GROUP_REST_API_URI, menuGroup, MenuGroup.class);
+    }
+
+    protected OrderTable createOrderTable(final int numberOfGuests, final boolean empty)
+            throws JsonProcessingException {
+        final OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(empty);
+
+        return create(TABLE_REST_API_URI, orderTable, OrderTable.class);
     }
 }
