@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.domain.*;
 import kitchenpos.dto.order.OrderCreateRequest;
-import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
+import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 import kitchenpos.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,9 +64,9 @@ class OrderServiceTest {
         this.savedOrderTable = createSavedOrderTable(this.tableGroup, 0, false);
 
         MenuGroup savedMenuGroup = createSavedMenuGroup("두마리메뉴");
-        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", BigDecimal.valueOf(28_000), savedMenuGroup);
-        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup);
-        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", BigDecimal.valueOf(27_000), savedMenuGroup);
+        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", new MenuPrice(BigDecimal.valueOf(28_000)), savedMenuGroup);
+        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", new MenuPrice(BigDecimal.valueOf(27_000)), savedMenuGroup);
+        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", new MenuPrice(BigDecimal.valueOf(27_000)), savedMenuGroup);
         this.orderLineItemCreateRequest1 = new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
         this.orderLineItemCreateRequest2 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 1);
         this.orderLineItemCreateRequest4 = new OrderLineItemCreateRequest(this.savedMenu3.getId(), 1);
@@ -226,8 +226,8 @@ class OrderServiceTest {
         return this.menuGroupRepository.save(menuGroup);
     }
 
-    private Menu createSavedMenu(String name, BigDecimal price, MenuGroup menuGroup) {
-        Menu menu = new Menu(name, price, menuGroup);
+    private Menu createSavedMenu(String name, MenuPrice menuPrice, MenuGroup menuGroup) {
+        Menu menu = new Menu(name, menuPrice, menuGroup);
         return this.menuRepository.save(menu);
     }
 }

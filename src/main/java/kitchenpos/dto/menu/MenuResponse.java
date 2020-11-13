@@ -25,7 +25,7 @@ public class MenuResponse {
     public static MenuResponse of(Menu menu, List<MenuProductResponse> menuProducts) {
         Long id = menu.getId();
         String name = menu.getName();
-        BigDecimal price = menu.getPrice();
+        BigDecimal price = menu.getMenuPrice().getValue();
         Long menuGroupId = menu.getMenuGroup().getId();
 
         return new MenuResponse(id, name, price, menuGroupId, menuProducts);

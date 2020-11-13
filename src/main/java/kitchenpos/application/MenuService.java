@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
 import kitchenpos.dto.menuproduct.MenuProductResponse;
+import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -37,15 +37,15 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCreateRequest menuCreateRequest) {
-        validateMenuPrice(menuCreateRequest.getPrice());
+        MenuPrice menuPrice = new MenuPrice(menuCreateRequest.getPrice());
 
         List<MenuProductCreateRequest> menuProductCreateRequests = menuCreateRequest.getMenuProductCreateRequests();
-        validateMenuPriceSum(menuCreateRequest.getPrice(), menuProductCreateRequests);
+        validateMenuPrice(menuPrice, menuProductCreateRequests);
 
+        Long menuGroupId = menuCreateRequest.getMenuGroupId();
         MenuGroup menuGroup =
-                menuGroupRepository.findById(menuCreateRequest.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
-        Menu menu = menuCreateRequest.toMenu(menuGroup);
-        Menu savedMenu = menuRepository.save(menu);
+                menuGroupRepository.findById(menuGroupId).orElseThrow(() -> new MenuGroupNotFoundException(menuGroupId));
+        Menu savedMenu = menuRepository.save(new Menu(menuCreateRequest.getName(), menuPrice, menuGroup));
 
         List<MenuProductResponse> menuProductResponses = createMenuProductResponses(savedMenu,
                                                                                     menuProductCreateRequests);
@@ -53,25 +53,20 @@ public class MenuService {
         return MenuResponse.of(savedMenu, menuProductResponses);
     }
 
-    private void validateMenuPrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenuPriceSum(BigDecimal price, List<MenuProductCreateRequest> menuProductCreateRequests) {
-        BigDecimal sum = BigDecimal.ZERO;
+    private void validateMenuPrice(MenuPrice menuPrice, List<MenuProductCreateRequest> menuProductCreateRequests) {
+        BigDecimal menuProductPriceSum = BigDecimal.ZERO;
 
         for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
+            Long productId = menuProductCreateRequest.getProductId();
             Product product =
-                    productRepository.findById(menuProductCreateRequest.getProductId()).orElseThrow(IllegalArgumentException::new);
+                    productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
             BigDecimal productPrice = product.getPrice();
             BigDecimal productQuantity = BigDecimal.valueOf(menuProductCreateRequest.getQuantity());
-            sum = sum.add(productPrice.multiply(productQuantity));
+            menuProductPriceSum = menuProductPriceSum.add(productPrice.multiply(productQuantity));
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+        if (menuPrice.isBiggerThan(menuProductPriceSum)) {
+            throw new InvalidMenuPriceException("메뉴 가격은 구성된 상품 가격의 총합을 초과할 수 없습니다!");
         }
     }
 
@@ -79,18 +74,16 @@ public class MenuService {
                                                                  List<MenuProductCreateRequest> menuProductCreateRequests) {
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
+            Long productId = menuProductCreateRequest.getProductId();
             Product product =
-                    productRepository.findById(menuProductCreateRequest.getProductId()).orElseThrow(IllegalArgumentException::new);
+                    productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
             MenuProduct menuProduct = new MenuProduct(menu, product, menuProductCreateRequest.getQuantity());
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
 
-        List<MenuProductResponse> menuProductResponses = new ArrayList<>();
-        for (MenuProduct menuProduct : savedMenuProducts) {
-            menuProductResponses.add(MenuProductResponse.from(menuProduct));
-        }
-
-        return menuProductResponses;
+        return savedMenuProducts.stream()
+                .map(MenuProductResponse::from)
+                .collect(Collectors.toList());
     }
 
     public List<MenuResponse> list() {
@@ -98,9 +91,10 @@ public class MenuService {
 
         List<MenuResponse> menuResponses = new ArrayList<>();
         for (Menu menu : menus) {
-            List<MenuProductResponse> menuProductResponses = new ArrayList<>();
-            menuProductRepository.findAllByMenuId(menu.getId())
-                    .forEach(menuProduct -> menuProductResponses.add(MenuProductResponse.from(menuProduct)));
+            List<MenuProductResponse> menuProductResponses =
+                    menuProductRepository.findAllByMenuId(menu.getId()).stream()
+                            .map(MenuProductResponse::from)
+                            .collect(Collectors.toList());
             MenuResponse menuResponse = MenuResponse.of(menu, menuProductResponses);
             menuResponses.add(menuResponse);
         }

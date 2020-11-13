@@ -3,8 +3,11 @@ package kitchenpos.application;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.menu.MenuCreateRequest;
-import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
+import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +88,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", null, this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 0 미만이면 예외 발생")
@@ -98,7 +101,7 @@ class MenuServiceTest {
                                                                     this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 메뉴 그룹을 지정하면 예외 발생")
@@ -110,7 +113,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
                                                                     notExistMenuGroupId, menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
@@ -123,7 +126,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
                                                                     this.savedMenuGroup.getId(), menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(ProductNotFoundException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 메뉴의 가격이 지정한 상품 가격의 총합을 초과하면 예외 발생")
@@ -141,7 +144,7 @@ class MenuServiceTest {
                                                                     this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("존재하는 모든 메뉴를 조회")
