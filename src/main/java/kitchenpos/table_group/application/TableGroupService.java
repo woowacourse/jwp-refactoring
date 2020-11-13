@@ -43,8 +43,6 @@ public class TableGroupService {
             .build();
 
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        orderTableRepository.saveAll(savedOrderTables);
-
         return TableGroupResponse.from(savedTableGroup);
     }
 
@@ -68,7 +66,6 @@ public class TableGroupService {
 
         tableGroup.ungroup();
 
-        orderTableRepository.saveAll(tableGroup.getOrderTables());
         tableGroupRepository.save(tableGroup);
     }
 
