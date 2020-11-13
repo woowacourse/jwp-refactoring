@@ -24,39 +24,28 @@ public class Order extends BaseEntity {
 
     private String orderStatus;
 
-    @OneToMany
-    @JoinColumn(name = "seq")
-    private List<OrderLineItem> orderLineItems;
+    public Order() {
+    }
+
+    public Order(Long id, Long orderTableId, String orderStatus) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void changeOrderStatus(String orderStatus) {
         this.orderStatus = orderStatus;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

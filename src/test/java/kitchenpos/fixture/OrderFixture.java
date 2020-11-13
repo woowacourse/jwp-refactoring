@@ -1,11 +1,14 @@
 package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
 
 public class OrderFixture {
     public static final Long ID1 = 1L;
@@ -14,25 +17,15 @@ public class OrderFixture {
     public static final String COOKING_STATUS = OrderStatus.COOKING.name();
     public static final String COMPLETION = OrderStatus.COMPLETION.name();
 
-    public static Order createWithoutId(String status, Long tableId, List<OrderLineItem> items) {
-        Order order = new Order();
-        order.setOrderStatus(status);
-        order.setOrderTableId(tableId);
-        order.setOrderLineItems(items);
-        order.setCreatedDate(LocalDateTime.now());
-
-        return order;
+    public static OrderCreateRequest createRequest(Long orderTableId, OrderLineItemCreateRequest... requests) {
+        return new OrderCreateRequest(orderTableId, Arrays.asList(requests));
     }
 
-    public static Order createWithId(Long id, String status, Long tableId,
-        List<OrderLineItem> items) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderStatus(status);
-        order.setOrderTableId(tableId);
-        order.setOrderLineItems(items);
-        order.setCreatedDate(LocalDateTime.now());
+    public static Order createWithoutId(String status, Long tableId) {
+        return new Order(null, tableId, status);
+    }
 
-        return order;
+    public static Order createWithId(Long id, String status, Long tableId) {
+        return new Order(id, tableId, status);
     }
 }

@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.TableFixture;
@@ -36,20 +38,19 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
-    private OrderLineItem item;
     private Order order;
 
     @BeforeEach
     void setUp() {
-        item = OrderLineItemFixture.createWithoutId(1L, OrderFixture.ID1);
         order = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.MEAL_STATUS,
-            TableFixture.ID1, Collections.singletonList(item));
+            TableFixture.ID1);
     }
 
     @DisplayName("Order 생성")
     @Test
     void create() throws Exception {
-        when(orderService.create(any(Order.class))).thenReturn(order);
+        when(orderService.create(any(OrderCreateRequest.class))).thenReturn(
+            OrderResponse.of(order));
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +66,7 @@ class OrderRestControllerTest {
     @DisplayName("Find all order")
     @Test
     void list() throws Exception {
-        when(orderService.list()).thenReturn(Collections.singletonList(order));
+        when(orderService.list()).thenReturn(Collections.singletonList(OrderResponse.of(order)));
 
         mockMvc.perform(get("/api/orders")
         )
@@ -78,7 +79,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         Order order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
-            TableFixture.ID1, Collections.singletonList(item));
+            TableFixture.ID1);
         when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(order2);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
