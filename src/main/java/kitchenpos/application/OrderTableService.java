@@ -6,7 +6,6 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,16 +46,12 @@ public class OrderTableService {
 
         savedOrderTable.changeEmpty(request.getEmpty());
 
-        try {
-            OrderTable changedTable = orderTableDao.save(savedOrderTable);
-            return OrderTableResponse.from(changedTable);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            return changeEmpty(orderTableId, request);
-        }
+        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(changedTable);
     }
 
     private void validateOrderStatus(final OrderTable orderTable) {
-        if (orderTable.isInProgress()){
+        if (orderTable.isInProgress()) {
             throw new IllegalArgumentException();
         }
     }
@@ -71,11 +66,7 @@ public class OrderTableService {
 
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
-        try {
-            OrderTable changedTable = orderTableDao.save(savedOrderTable);
-            return OrderTableResponse.from(changedTable);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            return changeNumberOfGuests(orderTableId, request);
-        }
+        OrderTable changedTable = orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.from(changedTable);
     }
 }
