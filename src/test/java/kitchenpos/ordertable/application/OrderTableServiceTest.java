@@ -1,8 +1,8 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.repository.OrderTableRepository;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +31,7 @@ class OrderTableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -111,8 +110,8 @@ class OrderTableServiceTest {
         OrderTable orderTable = new OrderTable(0, true);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order(savedOrderTable.getId(), orderStatus.name(), LocalDateTime.now(), new ArrayList<>());
-        orderDao.save(order);
+        Order order = new Order(savedOrderTable, orderStatus);
+        orderRepository.save(order);
 
         OrderTable changedOrderTable = new OrderTable(0, isEmpty);
 
@@ -156,7 +155,7 @@ class OrderTableServiceTest {
 
     @AfterEach
     void tearDown() {
-        orderDao.deleteAll();
+        orderRepository.deleteAll();
         orderTableRepository.deleteAll();
     }
 }
