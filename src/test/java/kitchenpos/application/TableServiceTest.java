@@ -38,7 +38,8 @@ class TableServiceTest {
 
         given(orderTableRepository.save(any(OrderTable.class))).willReturn(expectedTable);
 
-        assertThat(tableService.create(createOrderTable(null, null, 0, false))).isEqualToComparingFieldByField(expectedTable);
+        assertThat(tableService.create(createOrderTable(null, null, 0, false))).isEqualToComparingFieldByField(
+            expectedTable);
     }
 
     @DisplayName("테이블들을 정상적으로 조회한다.")
@@ -58,7 +59,7 @@ class TableServiceTest {
     @Test
     void changeEmptyTest() {
         final OrderTable persistOrderTable = createOrderTable(1L, null, 0, true);
-        final OrderTable orderTable = createOrderTable(1L, 2L, 3, false);
+        final OrderTable orderTable = createOrderTable(1L, 2L, 3, true);
 
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(persistOrderTable));
         given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);

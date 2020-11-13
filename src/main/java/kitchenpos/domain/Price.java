@@ -6,6 +6,7 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -26,6 +27,7 @@ public class Price implements Comparable<Price> {
     public static Price ZERO = new Price(BigDecimal.ZERO);
 
     @NotNull
+    @Positive
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 

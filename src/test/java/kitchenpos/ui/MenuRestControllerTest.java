@@ -58,8 +58,8 @@ class MenuRestControllerTest {
         final String name = "메뉴";
         final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
         final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 10L);
-        final Menu savedMenu = createMenu(1L, name, 0, 1L, Collections.singletonList(menuProduct));
-        final MenuCreateRequest menuWithoutId = new MenuCreateRequest(name, new Price(BigDecimal.ZERO), 1L,
+        final Menu savedMenu = createMenu(1L, name, 1000, 1L, Collections.singletonList(menuProduct));
+        final MenuCreateRequest menuWithoutId = new MenuCreateRequest(name, new Price(BigDecimal.valueOf(1000)), 1L,
             Collections.singletonList(menuProductRequest));
         final MenuResponse menuResponse = MenuResponse.from(savedMenu);
 
