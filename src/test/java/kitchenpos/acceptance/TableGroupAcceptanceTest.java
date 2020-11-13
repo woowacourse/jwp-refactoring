@@ -20,6 +20,7 @@ import org.springframework.http.MediaType;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@DisplayName("단체 지정 인수 테스트")
 class TableGroupAcceptanceTest extends AcceptanceTest {
     /*
      * Feature: 단체 지정 관리

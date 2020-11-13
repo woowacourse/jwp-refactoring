@@ -20,6 +20,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
+@DisplayName("메뉴 인수 테스트")
 class MenuAcceptanceTest extends AcceptanceTest {
     /*
      * Feature: 메뉴 관리

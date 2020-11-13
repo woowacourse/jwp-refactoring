@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestFactory;
 
 import kitchenpos.domain.Product;
 
+@DisplayName("상품 관리 인수 테스트")
 class ProductAcceptanceTest extends AcceptanceTest {
     /*
      * Feature: 상품 관리

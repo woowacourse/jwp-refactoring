@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kitchenpos.domain.OrderTable;
 
+@DisplayName("주문 테이블 인수 테스트")
 class TableAcceptanceTest extends AcceptanceTest {
     /*
      * Feature: 주문 테이블 관리

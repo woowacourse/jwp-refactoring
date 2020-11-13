@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestFactory;
 
 import kitchenpos.domain.MenuGroup;
 
+@DisplayName("메뉴 그룹 인수 테스트")
 class MenuGroupAcceptanceTest extends AcceptanceTest {
     /*
      * Feature: 메뉴 그룹 관리
