@@ -1,16 +1,20 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.dto.OrderCreateRequest;
+import kitchenpos.order.dto.OrderLineItemCreateRequest;
+import kitchenpos.order.dto.OrderResponse;
+import kitchenpos.order.dto.OrderStatusChangeRequest;
+import kitchenpos.order.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.product.domain.Product;
@@ -23,7 +27,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -50,10 +53,10 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -68,18 +71,16 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
         menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
-
         //when
-        Order savedOrder = orderService.create(order);
+        OrderResponse orderResponse = orderService.create(new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId()))));
 
         //then
-        Order findOrder = orderDao.findById(savedOrder.getId())
+        Order findOrder = orderRepository.findById(orderResponse.getOrderId())
                 .orElseThrow(RuntimeException::new);
-        List<OrderLineItem> findOrderLineItems = orderLineItemDao.findAllByOrderId(findOrder.getId());
+        List<OrderLineItem> findOrderLineItems = orderLineItemRepository.findAllByOrderId(findOrder.getId());
 
-        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(findOrderLineItems).hasSize(1);
     }
 
@@ -87,9 +88,8 @@ class OrderServiceTest {
     @Test
     void createException1() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
 
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), new ArrayList<>())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 항목 없이 주문을 할 수 없습니다.");
     }
@@ -97,15 +97,14 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 테이블에 주문을 할 수 없다.")
     @Test
     void createException2() {
+        Long notExistOrderTableId = -1L;
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
         menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order order = new Order(-1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(notExistOrderTableId,
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId())))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 테이블에 주문을 할 수 없습니다.");
     }
@@ -119,10 +118,8 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
         menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId())))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("빈 테이블에는 주문을 등록할 수 없습니다.");
     }
@@ -132,17 +129,10 @@ class OrderServiceTest {
     void createException4() {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        Product product = productRepository.save(new Product("간장치킨", 10000L));
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
-
-        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
-
-        OrderLineItem orderLineItem = new OrderLineItem(null, -1L, 3);
-        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
 
         //when
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(),
+                Collections.singletonList(new OrderLineItemCreateRequest(1L, -1L)))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 메뉴로 주문을 할 수 없습니다.");
     }
@@ -153,21 +143,16 @@ class OrderServiceTest {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
-        Product product = productRepository.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItemDao.save(orderLineItem);
+        Order order = orderRepository.save(new Order(orderTable));
+        orderLineItemRepository.save(new OrderLineItem(1L, order, menu));
 
         //when
         List<Order> orders = orderService.list();
 
         //then
         assertThat(orders).hasSize(1);
-        assertThat(orders.get(0).getOrderLineItems()).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")
@@ -176,22 +161,13 @@ class OrderServiceTest {
     void changeOrderStatus(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
-        Product product = productRepository.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
-        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItemDao.save(orderLineItem);
+        Order order = orderRepository.save(new Order(orderTable));
 
         //when
-        Order order = new Order(savedOrder.getOrderTableId(), orderStatus.name(), LocalDateTime.now(), new ArrayList<>());
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), order);
+        Order changedOrder = orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name()));
 
         //then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderStatus.name());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     @DisplayName("주문 상태가 계산 완료인 경우 변경할 수 없다.")
@@ -200,21 +176,10 @@ class OrderServiceTest {
     void changeOrderStatusException1(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
-        Product product = productRepository.save(new Product("간장치킨", 10000L));
-        MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
-        Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-
-        OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order savedOrder = orderDao.save(new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem)));
-        orderLineItem.setOrderId(savedOrder.getId());
-        orderLineItemDao.save(orderLineItem);
-
-        //when
-        Order order = new Order(savedOrder.getOrderTableId(), orderStatus.name(), LocalDateTime.now(), new ArrayList<>());
+        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION));
 
         //then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 계산 완료인 경우 변경할 수 없습니다.");
     }
@@ -222,17 +187,15 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 주문을 변경할 수 없다.")
     @Test
     void changeOrderStatusException2() {
-        Order order = new Order(null, OrderStatus.MEAL.name(), LocalDateTime.now(), new ArrayList<>());
-
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(-1L, new OrderStatusChangeRequest(OrderStatus.COMPLETION.name())))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 주문을 변경할 수 없습니다.");
     }
 
     @AfterEach
     void tearDown() {
-        orderLineItemDao.deleteAll();
-        orderDao.deleteAll();
+        orderLineItemRepository.deleteAll();
+        orderRepository.deleteAll();
         orderTableRepository.deleteAll();
         menuProductRepository.deleteAll();
         menuRepository.deleteAll();

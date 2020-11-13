@@ -1,8 +1,7 @@
 package kitchenpos.ordertable.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.TableGroupCreateRequest;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +28,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -118,7 +116,7 @@ class TableGroupServiceTest {
         orderTable2.setTableGroup(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
 
-        orderDao.save(new Order(orderTable1.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>()));
+        orderRepository.save(new Order(orderTable1));
 
         //then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
@@ -129,7 +127,7 @@ class TableGroupServiceTest {
 
     @AfterEach
     void tearDown() {
-        orderDao.deleteAll();
+        orderRepository.deleteAll();
         orderTableRepository.deleteAll();
         tableGroupRepository.deleteAll();
     }
