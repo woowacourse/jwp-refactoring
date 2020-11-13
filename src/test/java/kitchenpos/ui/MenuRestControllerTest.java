@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class MenuRestControllerTest {
     @Test
     @DisplayName("메뉴를 생성한다")
     void create() throws Exception {
-        Menu request = createMenuRequest(
+        MenuCreateRequest request = createMenuRequest(
                 "후라이드+후라이드",
                 BigDecimal.valueOf(19000),
                 4L,
@@ -63,7 +64,7 @@ class MenuRestControllerTest {
                 )
         );
         List<MenuProduct> menuProducts = Arrays.asList(createMenuProduct(3L, 1L, 3, 1L), createMenuProduct(4L, 2L, 2, 1L));
-        given(menuService.create(any(Menu.class))).willReturn(createMenu(1L, "후라이드+후라이드", BigDecimal.valueOf(19000), 4L, menuProducts));
+        given(menuService.create(any(MenuCreateRequest.class))).willReturn(createMenu(1L, "후라이드+후라이드", BigDecimal.valueOf(19000), 4L, menuProducts));
         byte[] content = objectMapper.writeValueAsBytes(request);
 
         mockMvc.perform(post("/api/menus")

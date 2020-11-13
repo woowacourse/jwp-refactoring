@@ -6,6 +6,8 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,7 +48,7 @@ class MenuServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateMenu {
-        private Menu request;
+        private MenuCreateRequest request;
 
         private Menu subject() {
             return menuService.create(request);
@@ -61,7 +63,7 @@ class MenuServiceTest {
                 Long productId = productDao.save(createProduct(null, "강정치킨", BigDecimal.valueOf(10000))).getId();
                 Long productId2 = productDao.save(createProduct(null, "불꽃치킨", BigDecimal.valueOf(10000))).getId();
 
-                List<MenuProduct> menuProductRequests = Arrays.asList(
+                List<MenuProductCreateRequest> menuProductRequests = Arrays.asList(
                         createMenuProductRequest(productId, 3),
                         createMenuProductRequest(productId2, 2)
                 );
@@ -80,11 +82,12 @@ class MenuServiceTest {
 
                 assertAll(
                         () -> assertThat(result).usingRecursiveComparison()
-                                .ignoringFields("id", "menuProducts.seq")
+                                .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
                                 .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                                .isEqualTo(request),
+                                .isEqualTo(request.toEntity()),
                         () -> assertThat(result.getId()).isNotNull(),
-                        () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getSeq).doesNotContainNull()
+                        () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getSeq).doesNotContainNull(),
+                        () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getMenuId).doesNotContainNull()
                 );
             }
         }
@@ -94,7 +97,7 @@ class MenuServiceTest {
         class WithPriceNotExist {
             @BeforeEach
             void setUp() {
-                List<MenuProduct> menuProducts = Arrays.asList(
+                List<MenuProductCreateRequest> menuProducts = Arrays.asList(
                         createMenuProductRequest(1L, 3),
                         createMenuProductRequest(2L, 2)
                 );
@@ -118,7 +121,7 @@ class MenuServiceTest {
         class WithNegativePrice {
             @BeforeEach
             void setUp() {
-                List<MenuProduct> menuProducts = Arrays.asList(
+                List<MenuProductCreateRequest> menuProducts = Arrays.asList(
                         createMenuProductRequest(1L, 3),
                         createMenuProductRequest(2L, 2)
                 );
@@ -145,7 +148,7 @@ class MenuServiceTest {
                 Long productId = productDao.save(createProduct(null, "강정치킨", BigDecimal.valueOf(10000))).getId();
                 Long productId2 = productDao.save(createProduct(null, "불꽃치킨", BigDecimal.valueOf(10000))).getId();
 
-                List<MenuProduct> menuProducts = Arrays.asList(
+                List<MenuProductCreateRequest> menuProducts = Arrays.asList(
                         createMenuProductRequest(productId, 3),
                         createMenuProductRequest(productId2, 2)
                 );
@@ -172,7 +175,7 @@ class MenuServiceTest {
                 Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
                 Long productId = productDao.save(createProduct(null, "강정치킨", BigDecimal.valueOf(10000))).getId();
                 Long productId2 = productDao.save(createProduct(null, "불꽃치킨", BigDecimal.valueOf(10000))).getId();
-                List<MenuProduct> menuProductRequests = Arrays.asList(
+                List<MenuProductCreateRequest> menuProductRequests = Arrays.asList(
                         createMenuProductRequest(productId, 3),
                         createMenuProductRequest(productId2, 2)
                 );
