@@ -33,16 +33,22 @@ public class OrderTable {
         return new OrderTableBuilder();
     }
 
-    public OrderTableBuilder toBuilder() {
-        return new OrderTableBuilder(id, tableGroupId, numberOfGuests, empty);
-    }
-
-    public void changeStatus(boolean empty) {
+    public void changeStatus(final boolean empty) {
         this.empty = empty;
     }
 
     public void ungroup() {
         this.tableGroupId = null;
+    }
+
+    public void validateNumberOfGuests() {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public static class OrderTableBuilder {

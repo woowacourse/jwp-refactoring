@@ -8,15 +8,15 @@ import kitchenpos.domain.OrderTable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(onConstructor_ = @ConstructorProperties({"id"}))
+@AllArgsConstructor(onConstructor_ = @ConstructorProperties("empty"))
 @Getter
-public class OrderTableRequest {
+public class OrderTableStatusChangeRequest {
     @NotNull
-    private final Long id;
+    private final boolean empty;
 
     public OrderTable toRequestEntity() {
         return OrderTable.builder()
-            .id(id)
+            .empty(empty)
             .build();
     }
 }

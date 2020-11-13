@@ -11,7 +11,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,11 +21,7 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        final OrderTable newOrderTable = orderTable.toBuilder()
-            .id(null)
-            .tableGroupId(null)
-            .build();
-        return orderTableRepository.save(newOrderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
@@ -47,20 +42,14 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable newOrderTable = savedOrderTable.toBuilder()
-            .empty(orderTable.isEmpty())
-            .build();
+        savedOrderTable.changeStatus(orderTable.isEmpty());
 
-        return orderTableRepository.save(newOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.validateNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
@@ -69,10 +58,8 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        OrderTable newOrderTable = savedOrderTable.toBuilder()
-            .numberOfGuests(numberOfGuests)
-            .build();
+        savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
-        return orderTableRepository.save(newOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 }

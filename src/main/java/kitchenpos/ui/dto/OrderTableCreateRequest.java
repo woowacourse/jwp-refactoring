@@ -8,15 +8,19 @@ import kitchenpos.domain.OrderTable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor(onConstructor_ = @ConstructorProperties({"id"}))
+@AllArgsConstructor(onConstructor_ = @ConstructorProperties({"numberOfGuests", "empty"}))
 @Getter
-public class OrderTableRequest {
+public class OrderTableCreateRequest {
     @NotNull
-    private final Long id;
+    private final int numberOfGuests;
+
+    @NotNull
+    private final boolean empty;
 
     public OrderTable toRequestEntity() {
         return OrderTable.builder()
-            .id(id)
+            .numberOfGuests(numberOfGuests)
+            .empty(empty)
             .build();
     }
 }
