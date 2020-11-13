@@ -1,8 +1,10 @@
 package kitchenpos.dto;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 public class OrderTableResponse {
 
     private Long id;
-    private TableGroupResponse tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -24,10 +26,13 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse from(final OrderTable table) {
-        TableGroupResponse tableGroup = TableGroupResponse.from(table.getTableGroup());
+        Long tableGroupId = Optional.ofNullable(table.getTableGroup())
+            .map(TableGroup::getId)
+            .orElse(null);
+
         return OrderTableResponse.builder()
             .id(table.getId())
-            .tableGroup(tableGroup)
+            .tableGroupId(tableGroupId)
             .numberOfGuests(table.getNumberOfGuests())
             .empty(table.isEmpty())
             .build();
@@ -37,8 +42,8 @@ public class OrderTableResponse {
         return id;
     }
 
-    public TableGroupResponse getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
