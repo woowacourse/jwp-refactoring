@@ -1,9 +1,9 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,37 +12,37 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
-public class TableService {
+public class OrderTableService {
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
+    public OrderTableService(final OrderDao orderDao, final OrderTableRepository orderTableRepository) {
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        orderTable.setTableGroup(null);
 
         if (orderTable.isEmpty() && orderTable.getNumberOfGuests() > 0) {
             throw new IllegalArgumentException(
                     String.format("%d명 : 1명 이상의 손님과 함께 빈 테이블로 등록할 수 없습니다.", orderTable.getNumberOfGuests()));
         }
-        return orderTableDao.save(orderTable);
+        return orderTableRepository.save(orderTable);
     }
 
     public List<OrderTable> list() {
-        return orderTableDao.findAll();
+        return orderTableRepository.findAll();
     }
 
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
         }
 
@@ -53,7 +53,7 @@ public class TableService {
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 
     @Transactional
@@ -64,7 +64,7 @@ public class TableService {
             throw new IllegalArgumentException(String.format("%d명 : 방문한 손님 수가 0명 미만이면 입력할 수 없습니다.", numberOfGuests));
         }
 
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
@@ -73,6 +73,6 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return orderTableRepository.save(savedOrderTable);
     }
 }

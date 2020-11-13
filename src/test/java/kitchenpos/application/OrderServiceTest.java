@@ -2,17 +2,17 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -56,13 +56,13 @@ class OrderServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("1 개 이상의 등록된 메뉴로 주문을 등록할 수 있다.")
     @Test
     void create() {
         //given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
@@ -86,7 +86,7 @@ class OrderServiceTest {
     @DisplayName("주문 항목 없이 주문을 할 수 없다.")
     @Test
     void createException1() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -103,7 +103,7 @@ class OrderServiceTest {
         menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
 
         OrderLineItem orderLineItem = new OrderLineItem(null, menu.getId(), 3);
-        Order order = new Order(null, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
+        Order order = new Order(-1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -113,7 +113,7 @@ class OrderServiceTest {
     @DisplayName("빈 테이블에는 주문을 등록할 수 없다.")
     @Test
     void createException3() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(0, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(0, true));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
@@ -131,7 +131,7 @@ class OrderServiceTest {
     @Test
     void createException4() {
         //given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("치킨"));
 
@@ -151,7 +151,7 @@ class OrderServiceTest {
     @Test
     void list() {
         //given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
@@ -175,7 +175,7 @@ class OrderServiceTest {
     @CsvSource(value = {"MEAL", "COOKING", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) {
         //given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
@@ -199,7 +199,7 @@ class OrderServiceTest {
     @CsvSource(value = {"MEAL", "COOKING", "COMPLETION"})
     void changeOrderStatusException1(OrderStatus orderStatus) {
         //given
-        OrderTable orderTable = orderTableDao.save(new OrderTable(1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         MenuProduct menuProduct = new MenuProduct(product.getId(), 2L);
@@ -233,7 +233,7 @@ class OrderServiceTest {
     void tearDown() {
         orderLineItemDao.deleteAll();
         orderDao.deleteAll();
-        orderTableDao.deleteAll();
+        orderTableRepository.deleteAll();
         menuProductRepository.deleteAll();
         menuRepository.deleteAll();
         menuGroupRepository.deleteAll();
