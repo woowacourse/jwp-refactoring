@@ -53,7 +53,7 @@ class JdbcTemplateOrderLineItemDaoTest {
         Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
 
         orderId = orderDao.save(createOrder(null, COOKING, orderTableId, LocalDateTime.now())).getId();
-        menuId = menuDao.save(createMenu(null, "후라이드", BigDecimal.valueOf(1000, 2), menuGroupId, null)).getId();
+        menuId = menuDao.save(createMenu(null, "후라이드", BigDecimal.valueOf(1000, 2), menuGroupId)).getId();
     }
 
     @DisplayName("주문 항목 엔티티를 저장하면 seq가 부여되며 저장된다")

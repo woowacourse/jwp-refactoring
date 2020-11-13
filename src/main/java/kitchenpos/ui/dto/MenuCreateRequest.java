@@ -2,6 +2,7 @@ package kitchenpos.ui.dto;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,11 +21,11 @@ public class MenuCreateRequest {
         this.menuProducts = menuProducts;
     }
 
-    public Menu toEntity() {
+    public Menu toEntity(ApplicationEventPublisher publisher) {
         List<MenuProduct> menuProducts = this.menuProducts.stream()
-            .map(MenuProductCreateRequest::toEntity)
+            .map(it -> it.toEntity(null))
             .collect(Collectors.toList());
-        return new Menu(name, price, menuGroupId, menuProducts);
+        return Menu.create(name, price, menuGroupId, menuProducts, publisher);
     }
 
     public String getName() {

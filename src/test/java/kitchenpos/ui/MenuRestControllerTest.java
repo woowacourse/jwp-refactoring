@@ -94,12 +94,14 @@ class MenuRestControllerTest {
             add(3L, createMenuProduct(6L, 4L, 3, 3L));
         }};
         List<Menu> persistedMenus = Arrays.asList(
-                createMenu(1L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L, null),
-                createMenu(2L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L, null),
-                createMenu(3L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L, null)
+                createMenu(1L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L),
+                createMenu(2L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L),
+                createMenu(3L, "후라이드+후라이드", BigDecimal.valueOf(1000L), 3L)
         );
         for (Menu menu : persistedMenus) {
-            menu.setMenuProducts(menuProducts.get(menu.getId()));
+            for (MenuProduct menuProduct : menuProducts.get(menu.getId())) {
+                menu.addMenuProduct(menuProduct);
+            }
         }
         given(menuService.list()).willReturn(persistedMenus);
 

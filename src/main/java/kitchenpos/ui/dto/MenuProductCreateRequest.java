@@ -11,8 +11,8 @@ public class MenuProductCreateRequest {
         this.quantity = quantity;
     }
 
-    public MenuProduct toEntity() {
-        return new MenuProduct(productId, quantity);
+    public MenuProduct toEntity(Long menuId) {
+        return new MenuProduct(menuId, productId, quantity);
     }
 
     public Long getProductId() {

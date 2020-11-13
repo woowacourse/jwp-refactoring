@@ -67,8 +67,8 @@ class OrderServiceTest {
                 OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 1));
 
                 Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
-                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
-                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
                 List<OrderLineItem> orderLineItems =
                         Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
                 request = createOrderRequest(orderLineItems, orderTable.getId());
@@ -110,8 +110,8 @@ class OrderServiceTest {
             @BeforeEach
             void setUp() {
                 Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
-                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
-                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
 
                 List<OrderLineItem> orderLineItems =
                         Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
@@ -147,8 +147,8 @@ class OrderServiceTest {
                 OrderTable orderTable3 = orderTableDao.save(createOrderTable(null, false, tableGroup.getId(), 3));
 
                 Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
-                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null));
-                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null));
+                Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
+                Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
 
                 orders = Arrays.asList(
                         createOrder(null, COOKING, orderTable1.getId(), LocalDateTime.now()),

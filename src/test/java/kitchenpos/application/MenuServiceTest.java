@@ -13,9 +13,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,7 +27,6 @@ import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 
 @ServiceIntegrationTest
 @DisplayName("메뉴 서비스")
@@ -44,6 +45,9 @@ class MenuServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private ApplicationEventPublisher publisher;
 
     @Nested
     @DisplayName("생성 메서드는")
@@ -84,7 +88,7 @@ class MenuServiceTest {
                         () -> assertThat(result).usingRecursiveComparison()
                                 .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
                                 .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                                .isEqualTo(request.toEntity()),
+                                .isEqualTo(request.toEntity(publisher)),
                         () -> assertThat(result.getId()).isNotNull(),
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getSeq).doesNotContainNull(),
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getMenuId).doesNotContainNull()
@@ -214,15 +218,10 @@ class MenuServiceTest {
                 Long productId2 = productDao.save(createProduct(null, "불꽃치킨", BigDecimal.valueOf(10000))).getId();
                 Long productId3 = productDao.save(createProduct(null, "물꽃치킨", BigDecimal.valueOf(10000))).getId();
 
-                menus = Arrays.asList(
-                        createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId, null),
-                        createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null),
-                        createMenu(null, "양념치킨+양념치킨", BigDecimal.valueOf(1000L), menuGroupId, null)
-                );
-                for (Menu menu : menus) {
-                    Menu persisted = menuDao.save(menu);
-                    menu.setId(persisted.getId());
-                }
+                menus = new ArrayList<>();
+                menus.add(menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId)));
+                menus.add(menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId)));
+                menus.add(menuDao.save(createMenu(null, "양념치킨+양념치킨", BigDecimal.valueOf(1000L), menuGroupId)));
 
                 LinkedMultiValueMap<Menu, MenuProduct> menuProducts = new LinkedMultiValueMap<Menu, MenuProduct>() {{
                     add(menus.get(0), createMenuProduct(null, productId1, 2, menus.get(0).getId()));
@@ -234,10 +233,10 @@ class MenuServiceTest {
                 }};
 
                 for (Menu menu : menuProducts.keySet()) {
-                    menu.setMenuProducts(menuProducts.get(menu));
                     for (MenuProduct menuProduct : menuProducts.get(menu)) {
                         MenuProduct persisted = menuProductDao.save(menuProduct);
                         menuProduct.setSeq(persisted.getSeq());
+                        menu.addMenuProduct(persisted);
                     }
                 }
             }

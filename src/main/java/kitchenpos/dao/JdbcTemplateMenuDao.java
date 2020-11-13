@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,11 +70,11 @@ public class JdbcTemplateMenuDao implements MenuDao {
     }
 
     private Menu toEntity(final ResultSet resultSet) throws SQLException {
-        final Menu entity = new Menu();
-        entity.setId(resultSet.getLong("id"));
-        entity.setName(resultSet.getString("name"));
-        entity.setPrice(resultSet.getBigDecimal("price"));
-        entity.setMenuGroupId(resultSet.getLong("menu_group_id"));
-        return entity;
+        return Menu.from(
+                resultSet.getLong("id"),
+                resultSet.getString("name"),
+                resultSet.getBigDecimal("price"),
+                resultSet.getLong("menu_group_id")
+        );
     }
 }
