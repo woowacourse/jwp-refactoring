@@ -42,20 +42,13 @@ public class Menu {
         validatePrice(price);
         this.name = name;
         this.price = price;
-        setMenuGroup(menuGroup);
+        this.menuGroup = menuGroup;
         setMenuProducts(menuProducts);
     }
 
     private void validatePrice(final BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
-        }
-    }
-
-    private void setMenuGroup(final MenuGroup menuGroup) {
-        if (Objects.isNull(this.menuGroup) && Objects.nonNull(menuGroup)) {
-            this.menuGroup = menuGroup;
-            this.menuGroup.addMenu(this);
         }
     }
 

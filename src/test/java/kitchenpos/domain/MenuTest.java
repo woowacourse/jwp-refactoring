@@ -29,10 +29,7 @@ class MenuTest {
             .menuProducts(menuProducts)
             .build();
 
-        assertAll(
-            () -> assertThat(menu.getMenuGroup()).isEqualTo(menuGroup),
-            () -> assertThat(menu.getMenuGroup().getMenus()).containsOnly(menu)
-        );
+        assertThat(menu.getMenuGroup()).isEqualTo(menuGroup);
     }
 
     @DisplayName("메뉴 생성 시 메뉴상품 등록 여부 확인")
@@ -73,9 +70,9 @@ class MenuTest {
 
         assertThatThrownBy(
             () -> Menu.builder()
-            .price(BigDecimal.valueOf(100_000_000))
-            .menuProducts(menuProducts)
-            .build()
+                .price(BigDecimal.valueOf(100_000_000))
+                .menuProducts(menuProducts)
+                .build()
         ).isInstanceOf(IllegalArgumentException.class);
     }
 }
