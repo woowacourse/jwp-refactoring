@@ -60,7 +60,7 @@ public class MenuService {
             Long productId = menuProductCreateRequest.getProductId();
             Product product =
                     productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
-            BigDecimal productPrice = product.getPrice();
+            ProductPrice productPrice = product.getProductPrice();
             BigDecimal productQuantity = BigDecimal.valueOf(menuProductCreateRequest.getQuantity());
             menuProductPriceSum = menuProductPriceSum.add(productPrice.multiply(productQuantity));
         }

@@ -18,7 +18,7 @@ public class ProductResponse {
     public static ProductResponse from(Product product) {
         Long id = product.getId();
         String name = product.getName();
-        BigDecimal price = product.getPrice();
+        BigDecimal price = product.getProductPrice().getValue();
 
         return new ProductResponse(id, name, price);
     }

@@ -1,7 +1,5 @@
 package kitchenpos.dto.product;
 
-import kitchenpos.domain.Product;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
@@ -19,10 +17,6 @@ public class ProductCreateRequest {
     public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;
         this.price = price;
-    }
-
-    public Product toProduct() {
-        return new Product(this.name, this.price);
     }
 
     public String getName() {

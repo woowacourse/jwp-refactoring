@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductResponse;
+import kitchenpos.exception.InvalidProductPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,7 +45,7 @@ class ProductServiceTest {
     void createProductWithNullPriceThenThrowException() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", null);
 
-        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("새로운 상품을 생성할 때 가격이 0 미만이면 예외 발생")
@@ -53,7 +54,7 @@ class ProductServiceTest {
     void createProductWithInvalidPriceThenThrowException(int invalidPrice) {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(invalidPrice));
 
-        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("존재하는 모든 상품을 조회")
