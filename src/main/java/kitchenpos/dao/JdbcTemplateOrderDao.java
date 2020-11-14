@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -100,6 +101,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         entity.setOrderTableId(resultSet.getLong("order_table_id"));
         entity.setOrderStatus(resultSet.getString("order_status"));
         entity.setOrderedTime(resultSet.getObject("ordered_time", LocalDateTime.class));
+        entity.setOrderLineItems(new ArrayList<>());
         return entity;
     }
 }

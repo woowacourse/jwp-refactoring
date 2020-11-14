@@ -6,6 +6,9 @@ import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,17 +60,17 @@ class OrderRestControllerTest {
     @Test
     @DisplayName("주문을 생성한다")
     void create() throws Exception {
-        List<OrderLineItem> orderLineItems =
-                Arrays.asList(createOrderLineItem(1L, 2L), createOrderLineItem(2L, 1L));
-        Order request = createOrderRequest(orderLineItems, 10L);
+        List<OrderLineItemCreateRequest> orderLineItems =
+                Arrays.asList(OrderLineItemFixture.createOrderLineItemRequest(1L, 2), OrderLineItemFixture.createOrderLineItemRequest(2L, 1));
+        OrderCreateRequest request = createOrderRequest(orderLineItems, 10L);
         byte[] content = objectMapper.writeValueAsBytes(request);
         Order order = createOrder(5L, COOKING, 10L);
         order.setOrderLineItems(Arrays.asList(
-                createOrderLineItem(20L, 5L, 1L, 2L),
-                createOrderLineItem(21L, 5L, 2L, 1L))
+                createOrderLineItem(20L, 5L, 1L, 2),
+                createOrderLineItem(21L, 5L, 2L, 1))
         );
         order.setOrderedTime(LocalDateTime.now());
-        given(orderService.create(any(Order.class))).willReturn(order);
+        given(orderService.create(any(OrderCreateRequest.class))).willReturn(order);
 
         mockMvc.perform(post("/api/orders")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -84,9 +87,9 @@ class OrderRestControllerTest {
     @DisplayName("전체 주문을 조회한다")
     void list() throws Exception {
         HashMap<Long, List<OrderLineItem>> orderLineItems = new HashMap<Long, List<OrderLineItem>>() {{
-            put(1L, Arrays.asList(createOrderLineItem(1L, 1L, 1L)));
-            put(2L, Arrays.asList(createOrderLineItem(2L, 1L, 2L), createOrderLineItem(2L, 2L, 1L)));
-            put(3L, Arrays.asList(createOrderLineItem(3L, 1L, 1L), createOrderLineItem(3L, 2L, 2L)));
+            put(1L, Arrays.asList(createOrderLineItem(1L, 1L, 1)));
+            put(2L, Arrays.asList(createOrderLineItem(2L, 1L, 2), createOrderLineItem(2L, 2L, 1)));
+            put(3L, Arrays.asList(createOrderLineItem(3L, 1L, 1), createOrderLineItem(3L, 2L, 2)));
         }};
         List<Order> persistedOrders = Arrays.asList(
                 createOrder(1L, COOKING, 5L),
@@ -116,8 +119,8 @@ class OrderRestControllerTest {
         byte[] content = objectMapper.writeValueAsBytes(request);
         Order order = createOrder(5L, COMPLETION, 10L);
         order.setOrderLineItems(Arrays.asList(
-                createOrderLineItem(20L, 5L, 1L, 2L),
-                createOrderLineItem(21L, 5L, 2L, 1L))
+                createOrderLineItem(20L, 5L, 1L, 2),
+                createOrderLineItem(21L, 5L, 2L, 1))
         );
         order.setOrderedTime(LocalDateTime.now());
         given(orderService.changeOrderStatus(eq(5L), any(Order.class))).willReturn(order);

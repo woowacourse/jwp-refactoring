@@ -2,6 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.dao.*;
 import kitchenpos.domain.*;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -52,7 +55,7 @@ class OrderServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateOrder {
-        private Order request;
+        private OrderCreateRequest request;
 
         private Order subject() {
             return orderService.create(request);
@@ -69,8 +72,8 @@ class OrderServiceTest {
                 Long menuGroupId = menuGroupDao.save(createMenuGroup(null, "추천메뉴")).getId();
                 Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
                 Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
-                List<OrderLineItem> orderLineItems =
-                        Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
+                List<OrderLineItemCreateRequest> orderLineItems =
+                        Arrays.asList(OrderLineItemFixture.createOrderLineItemRequest(menu1.getId(), 2), OrderLineItemFixture.createOrderLineItemRequest(menu2.getId(), 1));
                 request = createOrderRequest(orderLineItems, orderTable.getId());
             }
 
@@ -113,8 +116,8 @@ class OrderServiceTest {
                 Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
                 Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
 
-                List<OrderLineItem> orderLineItems =
-                        Arrays.asList(createOrderLineItem(menu1.getId(), 2L), createOrderLineItem(menu2.getId(), 1L));
+                List<OrderLineItemCreateRequest> orderLineItems =
+                        Arrays.asList(OrderLineItemFixture.createOrderLineItemRequest(menu1.getId(), 2), OrderLineItemFixture.createOrderLineItemRequest(menu2.getId(), 1));
                 request = createOrderRequest(orderLineItems, 0L);
             }
 
@@ -161,11 +164,11 @@ class OrderServiceTest {
                 }
 
                 orderLineItems = Arrays.asList(
-                        createOrderLineItem(orders.get(0).getId(), menu1.getId(), 1L),
-                        createOrderLineItem(orders.get(1).getId(), menu1.getId(), 2L),
-                        createOrderLineItem(orders.get(1).getId(), menu2.getId(), 1L),
-                        createOrderLineItem(orders.get(2).getId(), menu1.getId(), 1L),
-                        createOrderLineItem(orders.get(2).getId(), menu2.getId(), 2L)
+                        createOrderLineItem(orders.get(0).getId(), menu1.getId(), 1),
+                        createOrderLineItem(orders.get(1).getId(), menu1.getId(), 2),
+                        createOrderLineItem(orders.get(1).getId(), menu2.getId(), 1),
+                        createOrderLineItem(orders.get(2).getId(), menu1.getId(), 1),
+                        createOrderLineItem(orders.get(2).getId(), menu2.getId(), 2)
                 );
                 for (OrderLineItem orderLineItem : orderLineItems) {
                     OrderLineItem persisted = orderLineItemDao.save(orderLineItem);
