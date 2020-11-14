@@ -1,10 +1,15 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import kitchenpos.exception.ChangeEmptyWithTableGroupException;
+import kitchenpos.exception.ChangeNumberOfGuestsWithAlreadyEmptyTableException;
+import kitchenpos.exception.NegativeNumberOfGuestsException;
 
 @Entity
 public class OrderTable {
@@ -60,12 +65,20 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(this.tableGroupId)) {
+            throw new ChangeEmptyWithTableGroupException(this.id);
+        }
+
         this.empty = empty;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new NegativeNumberOfGuestsException(this.id);
+        }
+
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new ChangeNumberOfGuestsWithAlreadyEmptyTableException(this.id);
         }
 
         this.numberOfGuests = numberOfGuests;
