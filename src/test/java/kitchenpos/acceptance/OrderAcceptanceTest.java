@@ -6,6 +6,7 @@ import static org.assertj.core.util.Lists.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -75,6 +76,31 @@ class OrderAcceptanceTest extends AcceptanceTest {
                             assertThat(createdOrder)
                                     .extracting(Order::getId)
                                     .isNotNull()
+                            ;
+                        }
+                ),
+                dynamicTest(
+                        "주문의 목록을 조회한다",
+                        () -> {
+                            // Given
+                            final OrderLineItem orderLineItem = new OrderLineItem();
+                            orderLineItem.setMenuId(menu.getId());
+                            orderLineItem.setQuantity(1L);
+
+                            final Order order = new Order();
+                            order.setOrderTableId(orderTable.getId());
+                            order.setOrderLineItems(newArrayList(orderLineItem));
+
+                            final Order createdOrder = create(ORDER_REST_API_URI, order,
+                                    Order.class);
+
+                            // When
+                            final List<Order> orders = list(ORDER_REST_API_URI, Order.class);
+
+                            // Then
+                            assertThat(orders)
+                                    .extracting(Order::getId)
+                                    .contains(createdOrder.getId())
                             ;
                         }
                 )
