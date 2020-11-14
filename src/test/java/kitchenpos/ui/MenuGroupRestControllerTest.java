@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class MenuGroupRestControllerTest {
     @Test
     @DisplayName("메뉴 그룹을 생성한다")
     void create() throws Exception {
-        given(menuGroupService.create(any(MenuGroup.class)))
+        given(menuGroupService.create(any(MenuGroupCreateRequest.class)))
                 .willReturn(createMenuGroup(1L, "추천메뉴"));
         byte[] content = objectMapper.writeValueAsBytes(createMenuGroupRequest("추천메뉴"));
 

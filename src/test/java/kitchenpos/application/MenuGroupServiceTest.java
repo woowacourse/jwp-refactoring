@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -28,7 +29,7 @@ class MenuGroupServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateMenuGroup {
-        private MenuGroup request;
+        private MenuGroupCreateRequest request;
 
         private MenuGroup subject() {
             return menuGroupService.create(request);
