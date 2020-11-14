@@ -7,7 +7,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
-import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -117,7 +117,7 @@ class TableServiceTest {
         OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(false);
 
         assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable.getId(), orderTableChangeRequest))
-                .isInstanceOf(InappropriateOrderTableException.class);
+                .isInstanceOf(InvalidOrderTableException.class);
     }
 
     @DisplayName("특정 주문 테이블의 주문 등록 가능 여부를 변경할 때, 특정 주문 테이블의 주문 상태가 조리 혹은 식사이면 예외 발생")
@@ -131,7 +131,7 @@ class TableServiceTest {
         OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(true);
 
         assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable1.getId(), orderTableChangeRequest))
-                .isInstanceOf(InappropriateOrderTableException.class);
+                .isInstanceOf(InvalidOrderTableException.class);
     }
 
     @DisplayName("특정 주문 테이블의 방문 손님 수를 변경")
@@ -179,7 +179,7 @@ class TableServiceTest {
 
         assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(),
                                                                         orderTableChangeRequest))
-                .isInstanceOf(InappropriateOrderTableException.class);
+                .isInstanceOf(InvalidOrderTableException.class);
     }
 
     private Order createSavedOrder(OrderTable orderTable, OrderStatus orderStatus) {

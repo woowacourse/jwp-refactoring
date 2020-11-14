@@ -5,7 +5,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.InvalidOrderTableIdsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -69,8 +69,8 @@ public class TableGroupService {
 
         for (OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new InappropriateOrderTableException("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 " +
-                                                                   "존재해서는 안됩니다!");
+                throw new InvalidOrderTableException("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 " +
+                                                             "존재해서는 안됩니다!");
             }
         }
     }
@@ -85,7 +85,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new InappropriateOrderTableException("단체 지정 제거 시 소속된 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
+            throw new InvalidOrderTableException("단체 지정 제거 시 소속된 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
         }
 
         for (OrderTable orderTable : orderTables) {

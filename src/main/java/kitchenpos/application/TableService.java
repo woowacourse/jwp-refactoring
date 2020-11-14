@@ -5,8 +5,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
-import kitchenpos.exception.InappropriateOrderTableException;
 import kitchenpos.exception.InvalidNumberOfGuestsException;
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -60,12 +60,12 @@ public class TableService {
 
     private void validateOrderTable(Long orderTableId, OrderTable savedOrderTable) {
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new InappropriateOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블에는 단체 지정이 없어야 합니다!");
+            throw new InvalidOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블에는 단체 지정이 없어야 합니다!");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new InappropriateOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
+            throw new InvalidOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
         }
     }
 
@@ -78,7 +78,7 @@ public class TableService {
                 .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
 
         if (savedOrderTable.isEmpty()) {
-            throw new InappropriateOrderTableException("방문 손님 수를 변경하려는 주문 테이블은 주문을 등록할 수 있어야(빈 테이블이 아니어야) 합니다!");
+            throw new InvalidOrderTableException("방문 손님 수를 변경하려는 주문 테이블은 주문을 등록할 수 있어야(빈 테이블이 아니어야) 합니다!");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);

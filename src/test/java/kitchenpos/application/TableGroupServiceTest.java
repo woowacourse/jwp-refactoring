@@ -6,7 +6,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
-import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.InvalidOrderTableIdsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -107,7 +107,7 @@ class TableGroupServiceTest {
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InappropriateOrderTableException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InvalidOrderTableException.class);
     }
 
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블에 다른 단체 지정이 존재하면 예외 발생")
@@ -122,7 +122,7 @@ class TableGroupServiceTest {
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InappropriateOrderTableException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InvalidOrderTableException.class);
     }
 
     @DisplayName("특정 단체 지정을 제거하면 소속되었던 테이블에는 존재하는 단체 지정이 없어야 하며 동시에 주문을 등록할 수 있어야(빈 테이블이 아니어야) 한다")
@@ -157,7 +157,7 @@ class TableGroupServiceTest {
 
         TableGroupResponse tableGroupResponse = this.tableGroupService.create(tableGroupCreateRequest);
 
-        assertThatThrownBy(() -> this.tableGroupService.ungroup(tableGroupResponse.getId())).isInstanceOf(InappropriateOrderTableException.class);
+        assertThatThrownBy(() -> this.tableGroupService.ungroup(tableGroupResponse.getId())).isInstanceOf(InvalidOrderTableException.class);
     }
 
     private OrderTable createSavedOrderTable(int numberOfGuests, boolean empty) {
