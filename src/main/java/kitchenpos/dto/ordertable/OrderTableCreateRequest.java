@@ -1,7 +1,5 @@
 package kitchenpos.dto.ordertable;
 
-import kitchenpos.domain.OrderTable;
-
 import javax.validation.constraints.NotNull;
 
 public class OrderTableCreateRequest {
@@ -23,16 +21,6 @@ public class OrderTableCreateRequest {
     public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public OrderTableCreateRequest(Long id, int numberOfGuests, boolean empty) {
-        this.id = id;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable toOrderTable() {
-        return new OrderTable(this.numberOfGuests, this.empty);
     }
 
     public Long getId() {

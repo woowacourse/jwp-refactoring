@@ -5,6 +5,9 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
+import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableService {
+    private static final int MIN_NUMBER_OF_GUESTS = 0;
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -26,8 +31,11 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
-        OrderTable orderTable = orderTableCreateRequest.toOrderTable();
+    public OrderTableResponse create(OrderTableCreateRequest orderTableCreateRequest) {
+        int numberOfGuests = orderTableCreateRequest.getNumberOfGuests();
+        validateNumberOfGuests(numberOfGuests);
+
+        OrderTable orderTable = new OrderTable(numberOfGuests, orderTableCreateRequest.isEmpty());
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         return OrderTableResponse.from(savedOrderTable);
@@ -40,45 +48,47 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId,
-                                          final OrderTableChangeRequest orderTableChangeRequest) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeRequest orderTableChangeRequest) {
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
+        validateOrderTable(orderTableId, savedOrderTable);
 
+        savedOrderTable.setEmpty(orderTableChangeRequest.isEmpty());
+
+        return OrderTableResponse.from(savedOrderTable);
+    }
+
+    private void validateOrderTable(Long orderTableId, OrderTable savedOrderTable) {
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+            throw new InappropriateOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블에는 단체 지정이 없어야 합니다!");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new InappropriateOrderTableException("주문 등록 가능 여부를 변경하려는 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
         }
-
-        savedOrderTable.setEmpty(orderTableChangeRequest.isEmpty());
-        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
-
-        return OrderTableResponse.from(orderTable);
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
-                                                   final OrderTableChangeRequest orderTableCreateRequest) {
-        final int numberOfGuests = orderTableCreateRequest.getNumberOfGuests();
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeRequest orderTableChangeRequest) {
+        int numberOfGuests = orderTableChangeRequest.getNumberOfGuests();
+        validateNumberOfGuests(numberOfGuests);
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+        OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new InappropriateOrderTableException("방문 손님 수를 변경하려는 주문 테이블은 주문을 등록할 수 있어야(빈 테이블이 아니어야) 합니다!");
         }
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
-        OrderTable orderTable = orderTableRepository.save(savedOrderTable);
 
-        return OrderTableResponse.from(orderTable);
+        return OrderTableResponse.from(savedOrderTable);
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new InvalidNumberOfGuestsException("방문 손님 수는 " + MIN_NUMBER_OF_GUESTS + "명 이상이어야 합니다!");
+        }
     }
 }

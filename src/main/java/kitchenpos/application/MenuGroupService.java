@@ -19,7 +19,7 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroupResponse create(final MenuGroupCreateRequest menuGroupCreateRequest) {
+    public MenuGroupResponse create(MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = menuGroupCreateRequest.toMenuGroup();
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
@@ -28,6 +28,7 @@ public class MenuGroupService {
 
     public List<MenuGroupResponse> list() {
         List<MenuGroup> allMenuGroups = menuGroupRepository.findAll();
+
         return allMenuGroups.stream()
                 .map(MenuGroupResponse::from)
                 .collect(Collectors.toList());
