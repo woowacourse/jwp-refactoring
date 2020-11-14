@@ -8,6 +8,6 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 
 public interface MenuPriceValidateStrategy {
-    void validate(Map<Long, Product> productMap,
+    void validate(List<Product> products,
         List<MenuProductCreateRequest> menuProductRequests, BigDecimal menuPrice);
 }

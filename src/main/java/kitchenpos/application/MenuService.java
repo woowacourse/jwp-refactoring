@@ -57,7 +57,7 @@ public class MenuService {
         Map<Long, Product> productMap = products.stream()
             .collect(Collectors.toMap(Product::getId, p -> p));
 
-        menuPriceValidateStrategy.validate(productMap, menuProductRequests, price);
+        menuPriceValidateStrategy.validate(products, menuProductRequests, price);
 
         final Menu savedMenu = menuRepository.save(menu);
         final Long menuId = savedMenu.getId();

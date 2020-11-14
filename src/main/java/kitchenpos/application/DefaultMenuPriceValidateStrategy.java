@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,13 @@ import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.ProductNotFoundException;
 
 @Component
-public class DefaultMenuPriceValidateStrategy implements MenuPriceValidateStrategy{
+public class DefaultMenuPriceValidateStrategy implements MenuPriceValidateStrategy {
 
     @Override
-    public void validate(Map<Long, Product> productMap,
-        List<MenuProductCreateRequest> menuProductRequests, BigDecimal menuPrice) {
+    public void validate(List<Product> products, List<MenuProductCreateRequest> menuProductRequests,
+        BigDecimal menuPrice) {
+        Map<Long, Product> productMap = products.stream()
+            .collect(Collectors.toMap(Product::getId, p -> p));
 
         if (Objects.isNull(menuPrice) || menuPrice.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidMenuPriceException();
