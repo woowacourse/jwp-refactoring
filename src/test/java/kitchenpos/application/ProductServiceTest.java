@@ -1,18 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.dto.CreateProductRequest;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class ProductServiceTest {
@@ -20,38 +19,27 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("MenuGroup을 생성하고 DB에 저장한다.")
     @Test
     void createTest() {
-        Product product = new Product();
-        product.setName("새로운_상품");
-        product.setPrice(BigDecimal.valueOf(1000L));
+        final String NAME = "감자";
+        final long PRICE = 1000L;
+        CreateProductRequest productRequest = new CreateProductRequest(NAME, PRICE);
 
-        Product result = productService.create(product);
+        Product result = productService.create(productRequest);
 
-        Product savedProduct = productDao.findById(result.getId())
+        Product savedProduct = productRepository.findById(result.getId())
                 .orElseThrow(() -> new NoSuchElementException("저장되지 않았습니다."));
-        assertThat(savedProduct.getName()).isEqualTo(product.getName());
-        assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isZero();
-    }
-
-    @DisplayName("가격이 0원 미만이면 예외가 발생한다.")
-    @Test
-    void invalidPriceExceptionTest() {
-        Product product = new Product();
-        product.setName("새로운_상품");
-        product.setPrice(BigDecimal.valueOf(-1));
-
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(savedProduct.getName()).isEqualTo(NAME);
+        assertThat(savedProduct.getPrice().longValue()).isEqualTo(PRICE);
     }
 
     @DisplayName("MenuGroup 목록을 조회한다.")
     @Test
     void listTest() {
         List<Product> products = productService.list();
-        assertThat(products).hasSize(productDao.findAll().size());
+        assertThat(products).hasSize(productRepository.findAll().size());
     }
 }
