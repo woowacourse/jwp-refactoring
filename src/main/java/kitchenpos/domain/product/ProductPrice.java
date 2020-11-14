@@ -15,12 +15,16 @@ public class ProductPrice {
     public ProductPrice() {
     }
 
-    public ProductPrice(BigDecimal value) {
-        validateValue(value);
+    private ProductPrice(BigDecimal value) {
         this.value = value;
     }
 
-    private void validateValue(BigDecimal value) {
+    public static ProductPrice from(BigDecimal value) {
+        validateValue(value);
+        return new ProductPrice(value);
+    }
+
+    private static void validateValue(BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidProductPriceException("상품의 가격은 0원 이상이어야 합니다!");
         }

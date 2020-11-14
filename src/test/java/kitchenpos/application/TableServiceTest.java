@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
@@ -107,8 +108,8 @@ class TableServiceTest {
     @DisplayName("특정 주문 테이블의 주문 등록 가능 여부를 변경할 때, 특정 주문 테이블에 단체 지정이 있으면 예외 발생")
     @Test
     void changeEmptyWithOrderTableInTableGroupThenThrowException() {
-        OrderTable orderTable1 = new OrderTable(0, false);
-        OrderTable orderTable2 = new OrderTable(2, true);
+        OrderTable orderTable1 = new OrderTable(NumberOfGuests.from(0), false);
+        OrderTable orderTable2 = new OrderTable(NumberOfGuests.from(2), true);
         TableGroup savedTableGroup = createSavedTableGroup(LocalDateTime.now(), Arrays.asList(orderTable1,
                                                                                               orderTable2));
 
@@ -125,7 +126,7 @@ class TableServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmptyWithOrderTableInCookingOrMealThenThrowException(String orderStatus) {
-        OrderTable orderTable1 = new OrderTable(0, false);
+        OrderTable orderTable1 = new OrderTable(NumberOfGuests.from(0), false);
         OrderTable savedOrderTable1 = this.orderTableRepository.save(orderTable1);
         createSavedOrder(savedOrderTable1, OrderStatus.from(orderStatus));
 

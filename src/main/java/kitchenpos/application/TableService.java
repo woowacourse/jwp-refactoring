@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
-import kitchenpos.exception.InvalidNumberOfGuestsException;
 import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableService {
-    private static final int MIN_NUMBER_OF_GUESTS = 0;
-
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -32,8 +30,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(OrderTableCreateRequest orderTableCreateRequest) {
-        int numberOfGuests = orderTableCreateRequest.getNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
+        NumberOfGuests numberOfGuests = NumberOfGuests.from(orderTableCreateRequest.getNumberOfGuests());
 
         OrderTable orderTable = new OrderTable(numberOfGuests, orderTableCreateRequest.isEmpty());
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
@@ -71,8 +68,7 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeRequest orderTableChangeRequest) {
-        int numberOfGuests = orderTableChangeRequest.getNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
+        NumberOfGuests numberOfGuests = NumberOfGuests.from(orderTableChangeRequest.getNumberOfGuests());
 
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
@@ -84,11 +80,5 @@ public class TableService {
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(savedOrderTable);
-    }
-
-    private void validateNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
-            throw new InvalidNumberOfGuestsException("방문 손님 수는 " + MIN_NUMBER_OF_GUESTS + "명 이상이어야 합니다!");
-        }
     }
 }

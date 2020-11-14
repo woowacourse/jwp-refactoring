@@ -53,9 +53,9 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         this.savedMenuGroup = createSavedMenuGroup("두마리메뉴");
-        this.savedProduct1 = createSavedProduct("양념치킨", new ProductPrice(BigDecimal.valueOf(16_000)));
-        this.savedProduct2 = createSavedProduct("간장치킨", new ProductPrice(BigDecimal.valueOf(16_000)));
-        this.savedProduct3 = createSavedProduct("후라이드치킨", new ProductPrice(BigDecimal.valueOf(15_000)));
+        this.savedProduct1 = createSavedProduct("양념치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
+        this.savedProduct2 = createSavedProduct("간장치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
+        this.savedProduct3 = createSavedProduct("후라이드치킨", ProductPrice.from(BigDecimal.valueOf(15_000)));
         this.menuProductCreateRequest1 = new MenuProductCreateRequest(this.savedProduct1.getId(), 1);
         this.menuProductCreateRequest2 = new MenuProductCreateRequest(this.savedProduct2.getId(), 1);
         this.menuProductCreateRequest3 = new MenuProductCreateRequest(this.savedProduct3.getId(), 1);
@@ -133,8 +133,8 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성할 때 메뉴의 가격이 지정한 상품 가격의 총합을 초과하면 예외 발생")
     @Test
     void createMenuWithInvalidPriceThenThrowException() {
-        Product savedProduct1 = createSavedProduct("양념치킨", new ProductPrice(BigDecimal.valueOf(16_000)));
-        Product savedProduct2 = createSavedProduct("간장치킨", new ProductPrice(BigDecimal.valueOf(16_000)));
+        Product savedProduct1 = createSavedProduct("양념치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
+        Product savedProduct2 = createSavedProduct("간장치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
         MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(savedProduct1.getId(), 1);
         MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(savedProduct2.getId(), 1);
         List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(menuProductCreateRequest1,

@@ -42,7 +42,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuCreateRequest menuCreateRequest) {
-        MenuPrice menuPrice = new MenuPrice(menuCreateRequest.getPrice());
+        MenuPrice menuPrice = MenuPrice.from(menuCreateRequest.getPrice());
 
         List<MenuProductCreateRequest> menuProductCreateRequests = menuCreateRequest.getMenuProductCreateRequests();
         validateMenuPrice(menuPrice, menuProductCreateRequests);

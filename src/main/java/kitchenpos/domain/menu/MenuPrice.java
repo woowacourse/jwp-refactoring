@@ -15,12 +15,16 @@ public class MenuPrice {
     public MenuPrice() {
     }
 
-    public MenuPrice(BigDecimal value) {
-        validateValue(value);
+    private MenuPrice(BigDecimal value) {
         this.value = value;
     }
 
-    private void validateValue(BigDecimal value) {
+    public static MenuPrice from(BigDecimal value) {
+        validateValue(value);
+        return new MenuPrice(value);
+    }
+
+    private static void validateValue(BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidMenuPriceException("메뉴의 가격은 0원 이상이어야 합니다!");
         }

@@ -5,6 +5,7 @@ import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuPrice;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.order.OrderCreateRequest;
@@ -66,14 +67,14 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = new OrderTable(0, false);
+        OrderTable orderTable = new OrderTable(NumberOfGuests.from(0), false);
         this.tableGroup = createSavedTableGroup(LocalDateTime.now(), Collections.singletonList(orderTable));
-        this.savedOrderTable = createSavedOrderTable(this.tableGroup, 0, false);
+        this.savedOrderTable = createSavedOrderTable(this.tableGroup, NumberOfGuests.from(0), false);
 
         MenuGroup savedMenuGroup = createSavedMenuGroup("두마리메뉴");
-        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", new MenuPrice(BigDecimal.valueOf(28_000)), savedMenuGroup);
-        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", new MenuPrice(BigDecimal.valueOf(27_000)), savedMenuGroup);
-        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", new MenuPrice(BigDecimal.valueOf(27_000)), savedMenuGroup);
+        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", MenuPrice.from(BigDecimal.valueOf(28_000)), savedMenuGroup);
+        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", MenuPrice.from(BigDecimal.valueOf(27_000)), savedMenuGroup);
+        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", MenuPrice.from(BigDecimal.valueOf(27_000)), savedMenuGroup);
         this.orderLineItemCreateRequest1 = new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
         this.orderLineItemCreateRequest2 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 1);
         this.orderLineItemCreateRequest4 = new OrderLineItemCreateRequest(this.savedMenu3.getId(), 1);
@@ -141,7 +142,7 @@ class OrderServiceTest {
     @DisplayName("새로운 주문을 생성할 때 빈 테이블을 주문 테이블로 지정하면 예외 발생")
     @Test
     void createOrderWithEmptyOrderTableThenThrowException() {
-        OrderTable savedOrderTable = createSavedOrderTable(this.tableGroup, 0, true);
+        OrderTable savedOrderTable = createSavedOrderTable(this.tableGroup, NumberOfGuests.from(0), true);
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
                                                                                      this.orderLineItemCreateRequest2);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
@@ -216,7 +217,7 @@ class OrderServiceTest {
         return this.tableGroupRepository.save(tableGroup);
     }
 
-    private OrderTable createSavedOrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    private OrderTable createSavedOrderTable(TableGroup tableGroup, NumberOfGuests numberOfGuests, boolean empty) {
         OrderTable orderTable = new OrderTable(numberOfGuests, empty);
         orderTable.setTableGroup(tableGroup);
         return this.orderTableRepository.save(orderTable);

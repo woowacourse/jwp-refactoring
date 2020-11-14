@@ -20,7 +20,7 @@ public class OrderTableResponse {
     public static OrderTableResponse from(OrderTable orderTable) {
         Long id = orderTable.getId();
         Long tableGroupId = Objects.isNull(orderTable.getTableGroup()) ? null : orderTable.getTableGroup().getId();
-        int numberOfGuests = orderTable.getNumberOfGuests();
+        int numberOfGuests = orderTable.getNumberOfGuests().getValue();
         boolean empty = orderTable.isEmpty();
 
         return new OrderTableResponse(id, tableGroupId, numberOfGuests, empty);
