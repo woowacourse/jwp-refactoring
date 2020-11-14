@@ -6,6 +6,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidOrderTableIdsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -71,7 +73,7 @@ class TableGroupServiceTest {
     void createTableGroupWithNoOrderTableThenThrowException() {
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.emptyList());
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InvalidOrderTableIdsException.class);
     }
 
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블이 1개면 예외 발생")
@@ -80,7 +82,7 @@ class TableGroupServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest =
                 new TableGroupCreateRequest(Collections.singletonList(this.orderTable1.getId()));
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InvalidOrderTableIdsException.class);
     }
 
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블이 존재하지 않는 테이블이면 예외 발생")
@@ -92,7 +94,7 @@ class TableGroupServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest =
                 new TableGroupCreateRequest(Arrays.asList(notExistOrderTableId, savedOrderTable.getId()));
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InvalidOrderTableIdsException.class);
     }
 
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블이 주문을 등록할 수 있으면(빈 테이블이 아니면) 예외 발생")
@@ -105,7 +107,7 @@ class TableGroupServiceTest {
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InappropriateOrderTableException.class);
     }
 
     @DisplayName("새로운 단체 지정을 생성할 때 단체 지정될 주문 테이블에 다른 단체 지정이 존재하면 예외 발생")
@@ -120,7 +122,7 @@ class TableGroupServiceTest {
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
-        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.create(tableGroupCreateRequest)).isInstanceOf(InappropriateOrderTableException.class);
     }
 
     @DisplayName("특정 단체 지정을 제거하면 소속되었던 테이블에는 존재하는 단체 지정이 없어야 하며 동시에 주문을 등록할 수 있어야(빈 테이블이 아니어야) 한다")
@@ -155,7 +157,7 @@ class TableGroupServiceTest {
 
         TableGroupResponse tableGroupResponse = this.tableGroupService.create(tableGroupCreateRequest);
 
-        assertThatThrownBy(() -> this.tableGroupService.ungroup(tableGroupResponse.getId())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.tableGroupService.ungroup(tableGroupResponse.getId())).isInstanceOf(InappropriateOrderTableException.class);
     }
 
     private OrderTable createSavedOrderTable(int numberOfGuests, boolean empty) {

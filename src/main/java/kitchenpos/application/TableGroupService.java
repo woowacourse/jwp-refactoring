@@ -5,6 +5,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
+import kitchenpos.exception.InappropriateOrderTableException;
+import kitchenpos.exception.InvalidOrderTableIdsException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
+    private static final int MIN_COUNT_OF_ORDER_TABLE = 2;
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -32,56 +36,61 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
         List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
+        validateOrderTableIds(orderTableIds);
 
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateOrderTables(orderTableIds, savedOrderTables);
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), savedOrderTables);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        TableGroup tableGroup = tableGroupCreateRequest.toTableGroup(LocalDateTime.now(), savedOrderTables);
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(tableGroup);
+        for (OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.setTableGroup(savedTableGroup);
             savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
         }
         savedTableGroup.setOrderTables(savedOrderTables);
 
         return TableGroupResponse.from(savedTableGroup);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+    private void validateOrderTableIds(List<Long> orderTableIds) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < MIN_COUNT_OF_ORDER_TABLE) {
+            throw new InvalidOrderTableIdsException("단체 지정 생성 시 소속된 주문 테이블이 " + MIN_COUNT_OF_ORDER_TABLE + "개 이상이어야 " +
+                                                            "합니다!");
+        }
+    }
 
-        final List<Long> orderTableIds = orderTables.stream()
+    private void validateOrderTables(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new InvalidOrderTableIdsException("단체 지정 생성 시 소속된 주문 테이블은 모두 존재해야 합니다!");
+        }
+
+        for (OrderTable savedOrderTable : savedOrderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+                throw new InappropriateOrderTableException("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 " +
+                                                                   "존재해서는 안됩니다!");
+            }
+        }
+    }
+
+    @Transactional
+    public void ungroup(Long tableGroupId) {
+        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+
+        List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new InappropriateOrderTableException("단체 지정 제거 시 소속된 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
         }
 
-        for (final OrderTable orderTable : orderTables) {
+        for (OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);
             orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
         }
     }
 }

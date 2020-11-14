@@ -26,16 +26,8 @@ public class TableGroup {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 
     public List<OrderTable> getOrderTables() {
