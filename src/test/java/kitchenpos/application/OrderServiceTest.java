@@ -18,6 +18,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.AlreadyCompleteOrderException;
+import kitchenpos.exception.AlreadyEmptyTableException;
+import kitchenpos.exception.EmptyMenuOrderException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -73,7 +78,7 @@ class OrderServiceTest {
         OrderCreateRequest createEmptyItemRequest = OrderFixture.createRequest(1L);
 
         assertThatThrownBy(() -> orderService.create(createEmptyItemRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(EmptyMenuOrderException.class);
     }
 
     @DisplayName("Menu가 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -85,7 +90,7 @@ class OrderServiceTest {
         when(menuRepository.countByIdIn(anyList())).thenReturn(0L);
 
         assertThatThrownBy(() -> orderService.create(requestWithNotExistMenu))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(MenuNotFoundException.class);
     }
 
     @DisplayName("Table이 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -99,7 +104,7 @@ class OrderServiceTest {
             Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(requestWithNotExistTable))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("Order Table이 비어있으면 Order 생성 요청 시 예외를 반환한다.")
@@ -114,7 +119,7 @@ class OrderServiceTest {
             Optional.of(emptyTable));
 
         assertThatThrownBy(() -> orderService.create(requestWithEmptyTable))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(AlreadyEmptyTableException.class);
     }
 
     @DisplayName("정상적으로 저장된 Order를 모두 조회한다.")
@@ -138,7 +143,7 @@ class OrderServiceTest {
         Order cookingOrder = OrderFixture.createWithId(1L, OrderFixture.COOKING_STATUS, 1L);
 
         assertThat(orderService.changeOrderStatus(mealOrder.getId(), cookingOrder))
-            .extracting(Order::getOrderStatus)
+            .extracting(OrderResponse::getOrderStatus)
             .isEqualTo(cookingOrder.getOrderStatus());
     }
 
@@ -153,6 +158,6 @@ class OrderServiceTest {
 
         assertThatThrownBy(
             () -> orderService.changeOrderStatus(completeOrder.getId(), cookingOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(AlreadyCompleteOrderException.class);
     }
 }

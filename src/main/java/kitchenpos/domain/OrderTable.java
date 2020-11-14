@@ -8,8 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import kitchenpos.exception.AlreadyInTableGroupException;
-import kitchenpos.exception.ChangeEmptyWithTableGroupException;
-import kitchenpos.exception.ChangeNumberOfGuestsWithAlreadyEmptyTableException;
+import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
 import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 
@@ -74,7 +73,7 @@ public class OrderTable {
 
     public void changeEmpty(boolean empty) {
         if (Objects.nonNull(this.tableGroupId)) {
-            throw new ChangeEmptyWithTableGroupException(this.id);
+            throw new AlreadyInTableGroupException(this.id, this.tableGroupId);
         }
 
         this.empty = empty;
@@ -86,7 +85,7 @@ public class OrderTable {
         }
 
         if (empty) {
-            throw new ChangeNumberOfGuestsWithAlreadyEmptyTableException(this.id);
+            throw new AlreadyEmptyTableException(this.id);
         }
 
         this.numberOfGuests = numberOfGuests;

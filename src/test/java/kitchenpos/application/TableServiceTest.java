@@ -19,8 +19,8 @@ import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.exception.ChangeEmptyWithTableGroupException;
-import kitchenpos.exception.ChangeNumberOfGuestsWithAlreadyEmptyTableException;
+import kitchenpos.exception.AlreadyInTableGroupException;
+import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
 import kitchenpos.exception.OrderNotCompleteException;
 import kitchenpos.exception.OrderTableNotFoundException;
@@ -106,9 +106,9 @@ class TableServiceTest {
         when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
-            .isInstanceOf(ChangeEmptyWithTableGroupException.class)
-            .hasMessage(String.format("%d table is still in table group! First, ungroup the table.",
-                orderTable.getId()));
+            .isInstanceOf(AlreadyInTableGroupException.class)
+            .hasMessage(String.format("%d table is already in table group %d",
+                orderTable.getId(), orderTable.getTableGroupId()));
     }
 
     @DisplayName("식사중이거나, 조리중인 경우에 빈 테이블로 만들 수 없다.")
@@ -181,7 +181,7 @@ class TableServiceTest {
         when(orderTableRepository.findById(emptyTable.getId())).thenReturn(Optional.of(emptyTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), request))
-            .isInstanceOf(ChangeNumberOfGuestsWithAlreadyEmptyTableException.class)
+            .isInstanceOf(AlreadyEmptyTableException.class)
             .hasMessage(
                 String.format("%d Table can't change number of guests because it is already empty",
                     emptyTable.getId()));

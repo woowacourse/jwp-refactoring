@@ -76,9 +76,10 @@ class OrderRestControllerTest {
     @DisplayName("Order Status 수정")
     @Test
     void changeOrderStatus() throws Exception {
-        Order order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
-            TableFixture.ID1);
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(order2);
+        OrderResponse response = OrderResponse.of(
+            OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
+                TableFixture.ID1));
+        when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON)
@@ -87,6 +88,6 @@ class OrderRestControllerTest {
         )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("orderStatus").value(order2.getOrderStatus()));
+            .andExpect(jsonPath("orderStatus").value(response.getOrderStatus()));
     }
 }

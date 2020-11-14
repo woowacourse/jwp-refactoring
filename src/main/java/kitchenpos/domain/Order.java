@@ -1,10 +1,14 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import kitchenpos.exception.AlreadyCompleteOrderException;
 
 @Entity
 @Table(name = "Orders")
@@ -27,6 +31,10 @@ public class Order extends BaseEntity {
         this.orderStatus = orderStatus;
     }
 
+    public static Order of(Long orderTableId, String orderStatus) {
+        return new Order(null, orderTableId, orderStatus);
+    }
+
     public Long getId() {
         return id;
     }
@@ -40,6 +48,9 @@ public class Order extends BaseEntity {
     }
 
     public void changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new AlreadyCompleteOrderException(this.id);
+        }
         this.orderStatus = orderStatus;
     }
 }
