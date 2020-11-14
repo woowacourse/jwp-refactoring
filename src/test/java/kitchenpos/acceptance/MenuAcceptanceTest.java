@@ -105,7 +105,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
                             // Then
                             assertThat(menus)
                                     .extracting(Menu::getId)
-                                    .contains(createdMenu.getId());
+                                    .contains(createdMenu.getId())
+                            ;
                         }
                 )
         );

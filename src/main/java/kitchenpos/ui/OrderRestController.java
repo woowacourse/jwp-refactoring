@@ -1,16 +1,22 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.net.URI;
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import kitchenpos.application.OrderService;
+import kitchenpos.domain.Order;
+
 @RestController
 public class OrderRestController {
-    private static final String ORDER_REST_API_URI = "/api/orders";
+    public static final String ORDER_REST_API_URI = "/api/orders";
 
     private final OrderService orderService;
 
