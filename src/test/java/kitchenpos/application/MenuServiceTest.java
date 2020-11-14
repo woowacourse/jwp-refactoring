@@ -235,7 +235,6 @@ class MenuServiceTest {
                 for (Menu menu : menuProducts.keySet()) {
                     for (MenuProduct menuProduct : menuProducts.get(menu)) {
                         MenuProduct persisted = menuProductDao.save(menuProduct);
-                        menuProduct.setSeq(persisted.getSeq());
                         menu.addMenuProduct(persisted);
                     }
                 }

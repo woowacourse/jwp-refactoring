@@ -47,11 +47,6 @@ public class MenuFixture {
     }
 
     public static MenuProduct createMenuProduct(Long seq, Long productId, int quantity, Long menuId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        menuProduct.setMenuId(menuId);
-        return menuProduct;
+        return new MenuProduct(seq, menuId, productId, quantity);
     }
 }

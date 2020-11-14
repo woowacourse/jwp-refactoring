@@ -12,7 +12,7 @@ public class MenuProductCreateRequest {
     }
 
     public MenuProduct toEntity(Long menuId) {
-        return new MenuProduct(menuId, productId, quantity);
+        return new MenuProduct(null, menuId, productId, quantity);
     }
 
     public Long getProductId() {
