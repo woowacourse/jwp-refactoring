@@ -14,7 +14,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseEntity {
 
     @CreatedDate
-    @Column(name = "created_date")
     private LocalDateTime createdDate;
 
     public BaseEntity() {
@@ -26,9 +25,5 @@ public abstract class BaseEntity {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
     }
 }

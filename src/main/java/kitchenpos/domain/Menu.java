@@ -19,7 +19,6 @@ public class Menu {
 
     private BigDecimal price;
 
-    @Column(name = "menu_group_id")
     private Long menuGroupId;
 
     public Menu() {

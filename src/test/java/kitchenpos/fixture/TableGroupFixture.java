@@ -22,14 +22,10 @@ public class TableGroupFixture {
     }
 
     public static TableGroup createWithoutId() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        return tableGroup;
+        return new TableGroup(null, LocalDateTime.now());
     }
 
     public static TableGroup createWithId(Long id) {
-
         return new TableGroup(id, LocalDateTime.now());
     }
 }

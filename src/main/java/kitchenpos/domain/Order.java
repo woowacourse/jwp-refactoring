@@ -19,7 +19,6 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "order_table_id")
     private Long orderTableId;
 
     private String orderStatus;
