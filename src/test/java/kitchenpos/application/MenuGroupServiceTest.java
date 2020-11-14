@@ -12,9 +12,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.repository.MenuGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -22,22 +23,22 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
     @DisplayName("Menu Group 생성")
     @Test
     void create() {
-        MenuGroup menuGroupWithoutId = MenuGroupFixture.createWithoutId();
+        MenuGroupCreateRequest request = MenuGroupFixture.createRequest();
         MenuGroup menuGroupWithId = MenuGroupFixture.createWithId(1L);
 
-        when(menuGroupDao.save(menuGroupWithoutId)).thenReturn(menuGroupWithId);
+        when(menuGroupRepository.save(any(MenuGroup.class))).thenReturn(menuGroupWithId);
 
-        assertThat(menuGroupService.create(menuGroupWithoutId))
+        assertThat(menuGroupService.create(request))
             .isEqualToComparingFieldByField(menuGroupWithId);
     }
 
@@ -46,7 +47,7 @@ class MenuGroupServiceTest {
     void list() {
         MenuGroup menuGroupWithId1 = MenuGroupFixture.createWithId(1L);
         MenuGroup menuGroupWithId2 = MenuGroupFixture.createWithId(2L);
-        when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
+        when(menuGroupRepository.findAll()).thenReturn(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
 
         assertThat(menuGroupService.list())
             .usingRecursiveComparison()
