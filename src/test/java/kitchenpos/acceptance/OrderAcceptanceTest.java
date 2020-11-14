@@ -1,8 +1,10 @@
 package kitchenpos.acceptance;
 
+import static io.restassured.RestAssured.*;
 import static kitchenpos.ui.OrderRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.util.Lists.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.HashMap;
@@ -13,12 +15,14 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.springframework.http.MediaType;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
@@ -103,7 +107,58 @@ class OrderAcceptanceTest extends AcceptanceTest {
                                     .contains(createdOrder.getId())
                             ;
                         }
+                ),
+                dynamicTest(
+                        "주문의 상태를 변경한다",
+                        () -> {
+                            // Given
+                            final OrderLineItem orderLineItem = new OrderLineItem();
+                            orderLineItem.setMenuId(menu.getId());
+                            orderLineItem.setQuantity(1L);
+
+                            final Order order = new Order();
+                            order.setOrderTableId(orderTable.getId());
+                            order.setOrderLineItems(newArrayList(orderLineItem));
+
+                            final Order createdOrder = create(ORDER_REST_API_URI, order,
+                                    Order.class);
+
+                            // When
+                            final Order mealOrder = new Order();
+                            mealOrder.setOrderStatus("MEAL");
+                            final Order changedOrder = changeOrderStatus(createdOrder.getId(),
+                                    mealOrder);
+
+                            // Then
+                            assertAll(
+                                    () -> assertThat(changedOrder)
+                                            .extracting(Order::getId)
+                                            .isEqualTo(createdOrder.getId())
+                                    ,
+                                    () -> assertThat(changedOrder)
+                                            .extracting(Order::getOrderStatus)
+                                            .isEqualTo(OrderStatus.MEAL.name())
+                            );
+                        }
                 )
         );
+    }
+
+    private Order changeOrderStatus(final Long orderId, final Order order)
+            throws JsonProcessingException {
+        final String request = objectMapper.writeValueAsString(order);
+
+        // @formatter:off
+        return
+                given()
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .body(request)
+                .when()
+                        .put(ORDER_REST_API_URI + "/{orderId}/order-status", orderId)
+                .then()
+                        .log().all()
+                        .extract().as(Order.class);
+        // @formatter:on
     }
 }
