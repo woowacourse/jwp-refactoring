@@ -7,13 +7,7 @@ public class MenuProductFixture {
     public static int DEFAULT_QUANTITY = 1;
 
     public static MenuProduct create(Long menuId, Long productId) {
-        MenuProduct menuProduct = new MenuProduct();
-
-        menuProduct.setProductId(productId);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setQuantity(DEFAULT_QUANTITY);
-
-        return menuProduct;
+        return new MenuProduct(menuId, productId, DEFAULT_QUANTITY);
     }
 
     public static MenuProductCreateRequest createRequest(Long productId, int quantity) {
