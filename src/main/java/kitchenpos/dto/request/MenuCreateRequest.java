@@ -3,11 +3,6 @@ package kitchenpos.dto.request;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 import kitchenpos.domain.Menu;
 
 public class MenuCreateRequest {
@@ -16,7 +11,8 @@ public class MenuCreateRequest {
     private final Long menuGroupId;
     private final List<MenuProductCreateRequest> menuProducts;
 
-    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductCreateRequest> menuProducts) {
+    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
+        List<MenuProductCreateRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

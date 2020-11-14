@@ -7,9 +7,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.ChangeEmptyWithTableGroupException;
 import kitchenpos.exception.ChangeNumberOfGuestsWithAlreadyEmptyTableException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
+import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 
 @Entity
 public class OrderTable {
@@ -55,6 +57,12 @@ public class OrderTable {
     }
 
     public void addToTableGroup(Long tableGroupId) {
+        if (!this.empty) {
+            throw new TableGroupWithNotEmptyTableException(this.id);
+        }
+        if (Objects.nonNull(this.tableGroupId)) {
+            throw new AlreadyInTableGroupException(this.id, this.tableGroupId);
+        }
         this.tableGroupId = tableGroupId;
         this.empty = false;
     }

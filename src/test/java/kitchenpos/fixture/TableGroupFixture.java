@@ -2,9 +2,7 @@ package kitchenpos.fixture;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.OrderTableId;
 import kitchenpos.dto.request.TableGroupCreateRequest;
@@ -18,7 +16,7 @@ public class TableGroupFixture {
 
     public static TableGroupCreateRequest createRequest() {
         return new TableGroupCreateRequest(Arrays.asList(new OrderTableId(OrderTableFixture.ID1),
-            new OrderTableId(OrderTableFixture.ID1)));
+            new OrderTableId(OrderTableFixture.ID2)));
     }
 
     public static TableGroup createWithoutId() {

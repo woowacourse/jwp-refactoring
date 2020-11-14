@@ -1,11 +1,8 @@
 package kitchenpos.fixture;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
@@ -17,7 +14,8 @@ public class OrderFixture {
     public static final String COOKING_STATUS = OrderStatus.COOKING.name();
     public static final String COMPLETION = OrderStatus.COMPLETION.name();
 
-    public static OrderCreateRequest createRequest(Long orderTableId, OrderLineItemCreateRequest... requests) {
+    public static OrderCreateRequest createRequest(Long orderTableId,
+        OrderLineItemCreateRequest... requests) {
         return new OrderCreateRequest(orderTableId, Arrays.asList(requests));
     }
 

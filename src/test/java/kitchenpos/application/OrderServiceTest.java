@@ -105,7 +105,8 @@ class OrderServiceTest {
     @DisplayName("Order Table이 비어있으면 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithEmptyTable() {
-        OrderCreateRequest requestWithEmptyTable = OrderFixture.createRequest(1L, OrderLineItemFixture.createRequest(1L, 1));
+        OrderCreateRequest requestWithEmptyTable = OrderFixture.createRequest(1L,
+            OrderLineItemFixture.createRequest(1L, 1));
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
 
         when(menuRepository.countByIdIn(anyList())).thenReturn(1L);

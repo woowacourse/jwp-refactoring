@@ -23,7 +23,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuProductFixture;
 
 @WebMvcTest(controllers = MenuRestController.class)
 class MenuRestControllerTest {

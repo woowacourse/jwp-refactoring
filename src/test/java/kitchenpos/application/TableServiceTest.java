@@ -156,8 +156,8 @@ class TableServiceTest {
         assertThatThrownBy(
             () -> tableService.changeNumberOfGuests(1L, negativeRequest))
             .isInstanceOf(NegativeNumberOfGuestsException.class)
-        .hasMessage(String.format("%d Table cannot change number of guests to negative integer",
-            oneGuestTable.getId()));
+            .hasMessage(String.format("%d Table cannot change number of guests to negative integer",
+                oneGuestTable.getId()));
     }
 
     @DisplayName("해당하는 OrderTable이 없으면 예외를 반환한다.")
@@ -182,7 +182,8 @@ class TableServiceTest {
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), request))
             .isInstanceOf(ChangeNumberOfGuestsWithAlreadyEmptyTableException.class)
-        .hasMessage(String.format("%d Table can't change number of guests because it is already empty",
-            emptyTable.getId()));
+            .hasMessage(
+                String.format("%d Table can't change number of guests because it is already empty",
+                    emptyTable.getId()));
     }
 }

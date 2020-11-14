@@ -1,7 +1,6 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 
 public class OrderLineItemFixture {

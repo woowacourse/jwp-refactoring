@@ -18,7 +18,8 @@ public class MenuProductCreateRequest {
         return new MenuProduct(menuId, this.productId, this.quantity);
     }
 
-    public static List<MenuProduct> listOf(List<MenuProductCreateRequest> menuProducts, Long menuId) {
+    public static List<MenuProduct> listOf(List<MenuProductCreateRequest> menuProducts,
+        Long menuId) {
         return menuProducts.stream()
             .map(products -> products.toEntity(menuId))
             .collect(Collectors.toList());

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,7 +21,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
-import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -54,7 +52,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository, productRepository);
+        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository,
+            productRepository);
 
         Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
         Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
@@ -139,7 +138,8 @@ class MenuServiceTest {
         Menu menuOverTotalPrice =
             MenuFixture.createWithoutId(1L, totalPrice + 1000L);
         when(menuGroupRepository.existsById(menuOverTotalPrice.getMenuGroupId())).thenReturn(true);
-        when(productRepository.findById(1L)).thenReturn(Optional.of(ProductFixture.createWithId(1L)));
+        when(productRepository.findById(1L)).thenReturn(
+            Optional.of(ProductFixture.createWithId(1L)));
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

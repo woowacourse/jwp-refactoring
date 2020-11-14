@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -100,6 +99,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     private Order toEntity(final ResultSet resultSet) throws SQLException {
-        return new Order(resultSet.getLong(KEY_COLUMN_NAME), resultSet.getLong("order_table_id"), resultSet.getString("order_status"));
+        return new Order(resultSet.getLong(KEY_COLUMN_NAME), resultSet.getLong("order_table_id"),
+            resultSet.getString("order_status"));
     }
 }

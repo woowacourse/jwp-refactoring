@@ -1,17 +1,12 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -72,7 +67,8 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(menu);
 
         final Long menuId = savedMenu.getId();
-        List<MenuProduct> menuProducts = MenuProductCreateRequest.listOf(menuProductRequests, menuId);
+        List<MenuProduct> menuProducts = MenuProductCreateRequest.listOf(menuProductRequests,
+            menuId);
         menuProductRepository.saveAll(menuProducts);
 
         return MenuResponse.of(savedMenu);

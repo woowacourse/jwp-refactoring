@@ -15,15 +15,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
+import kitchenpos.exception.AlreadyInTableGroupException;
+import kitchenpos.exception.OrderNotCompleteException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupSizeException;
+import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
@@ -31,23 +35,20 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
-    private TableGroupDao tableGroupDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
+
+    @Mock
+    private TableGroupRepository tableGroupRepository;
 
     private List<OrderTable> tables;
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao,
-            orderTableRepository);
+        tableGroupService = new TableGroupService(orderRepository, orderTableRepository,
+            tableGroupRepository);
 
         tables = Lists.newArrayList(OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1),
             OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2));
@@ -59,8 +60,8 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
         TableGroup tableWithId = TableGroupFixture.createWithId(1L);
 
-        when(orderTableRepository.findAllByTableGroupIdIn(anyList())).thenReturn(tables);
-        when(tableGroupDao.save(any())).thenReturn(tableWithId);
+        when(orderTableRepository.findAllByIdIn(anyList())).thenReturn(tables);
+        when(tableGroupRepository.save(any())).thenReturn(tableWithId);
 
         TableGroup savedTableGroup = tableGroupService.create(request);
 
@@ -73,7 +74,8 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderTableNotFoundException.class)
+            .hasMessage("Table of table group request is not exist");
 
     }
 
@@ -83,44 +85,64 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = TableGroupFixture.createOneTableRequest();
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableGroupSizeException.class)
+            .hasMessage(String.format("%d size table group request is invalid",
+                request.getOrderTables().size()));
     }
 
     @DisplayName("실제 존재하지 않는 테이블을 그룹화하는 경우 예외를 반환한다.")
     @Test
     void createWithNotExistTable() {
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
+        tables.remove(0);
+
+        when(orderTableRepository.findAllByIdIn(anyList())).thenReturn(tables);
+
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderTableNotFoundException.class)
+            .hasMessage("Table of table group request is not exist");
     }
 
     @DisplayName("Empty가 아닌 상태의 테이블을 그룹화 하는 경우 예외를 반환한다.")
     @Test
     void createWithNotEmptyTable() {
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
-        TableGroup containsEmptyTable = TableGroupFixture.createWithoutId();
+        TableGroup withId = TableGroupFixture.createWithId(1L);
+        tables.remove(1);
         tables.add(OrderTableFixture.createNotEmptyWithId(OrderTableFixture.ID3));
 
+        when(orderTableRepository.findAllByIdIn(anyList())).thenReturn(tables);
+        when(tableGroupRepository.save(any())).thenReturn(withId);
+
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableGroupWithNotEmptyTableException.class)
+            .hasMessage(
+                String.format("%d table is not empty Table. For group tables, first change empty",
+                    OrderTableFixture.ID3));
     }
 
     @DisplayName("이미 다른 그룹이 있는 테이블을 그룹화 하는 경우 예외를 반환한다.")
     @Test
     void createWithNotNullGroupTable() {
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
+        TableGroup withId = TableGroupFixture.createWithId(1L);
+        tables.remove(1);
         tables.add(OrderTableFixture.createGroupTableWithId(3L, 1L));
 
+        when(orderTableRepository.findAllByIdIn(anyList())).thenReturn(tables);
+        when(tableGroupRepository.save(any())).thenReturn(withId);
+
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(AlreadyInTableGroupException.class)
+            .hasMessage(String.format("%d table is already in table group %d", 3L, 1L));
     }
 
     @DisplayName("정상적으로 테이블을 언그룹화 한다.")
     @Test
     void ungroup() {
         TableGroup withId = TableGroupFixture.createWithId(1L);
-        when(orderTableDao.findAllByTableGroupId(anyLong())).thenReturn(tables);
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+        when(orderTableRepository.findAllByTableGroupId(anyLong())).thenReturn(tables);
+        when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
             .thenReturn(false);
 
         tableGroupService.ungroup(withId.getId());
@@ -133,12 +155,13 @@ class TableGroupServiceTest {
     @Test
     void ungroupWithNotCompleteTable() {
         TableGroup withNotCompleteTable = TableGroupFixture.createWithId(1L);
-        when(orderTableDao.findAllByTableGroupId(1L))
+        when(orderTableRepository.findAllByTableGroupId(1L))
             .thenReturn(Arrays.asList(tables.get(0), tables.get(1)));
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).thenReturn(
-            true);
+        when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+            .thenReturn(true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(withNotCompleteTable.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderNotCompleteException.class)
+            .hasMessage("Order is not completion yet. For ungroup table, first complete order");
     }
 }

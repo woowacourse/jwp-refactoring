@@ -2,10 +2,8 @@ package kitchenpos.fixture;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.List;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 
@@ -18,6 +16,7 @@ public class MenuFixture {
         return new MenuCreateRequest(NAME, BigDecimal.valueOf(price), menuGroupId,
             Arrays.asList(menuProducts));
     }
+
     public static Menu createWithoutId(Long menuGroupId, Long price) {
         return new Menu(NAME, BigDecimal.valueOf(price), menuGroupId);
     }

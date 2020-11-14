@@ -31,7 +31,7 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createGroupTableWithId(Long id, Long tableGroupId) {
-        return new OrderTable(id, tableGroupId, 1, false);
+        return new OrderTable(id, tableGroupId, 1, true);
     }
 
     public static OrderTableRequest createRequest() {
