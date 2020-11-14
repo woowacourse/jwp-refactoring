@@ -38,15 +38,9 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        return save(request);
-    }
-
-    private Menu save(MenuCreateRequest request) {
         final Menu menu = menuDao.save(request.toEntity(publisher));
-
         for (final MenuProductCreateRequest menuProductRequest : request.getMenuProducts()) {
-            MenuProduct menuProduct = menuProductRequest.toEntity(menu.getId());
-            menu.addMenuProduct(menuProductDao.save(menuProduct));
+            menu.add(menuProductDao.save(menuProductRequest.toEntity(menu.getId())));
         }
         return menu;
     }
@@ -56,7 +50,7 @@ public class MenuService {
 
         for (final Menu menu : menus) {
             for (final MenuProduct menuProduct : menuProductDao.findAllByMenuId(menu.getId())) {
-                menu.addMenuProduct(menuProduct);
+                menu.add(menuProduct);
             }
         }
         return menus;

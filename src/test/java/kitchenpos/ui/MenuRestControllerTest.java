@@ -100,7 +100,7 @@ class MenuRestControllerTest {
         );
         for (Menu menu : persistedMenus) {
             for (MenuProduct menuProduct : menuProducts.get(menu.getId())) {
-                menu.addMenuProduct(menuProduct);
+                menu.add(menuProduct);
             }
         }
         given(menuService.list()).willReturn(persistedMenus);

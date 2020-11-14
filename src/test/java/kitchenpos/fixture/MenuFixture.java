@@ -6,7 +6,6 @@ import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuProductCreateRequest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class MenuFixture {
@@ -28,17 +27,12 @@ public class MenuFixture {
     ) {
         Menu menu = Menu.from(id, name, price, menuGroupId);
         for (MenuProduct menuProduct : menuProducts) {
-            menu.addMenuProduct(menuProduct);
+            menu.add(menuProduct);
         }
         return menu;
     }
 
-    public static Menu createMenu(
-            Long id,
-            String name,
-            BigDecimal price,
-            Long menuGroupId
-    ) {
+    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId) {
         return Menu.from(id, name, price, menuGroupId);
     }
 

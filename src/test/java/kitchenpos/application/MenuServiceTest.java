@@ -72,7 +72,7 @@ class MenuServiceTest {
                         createMenuProductRequest(productId2, 2)
                 );
                 request = createMenuRequest(
-                        "후라이드+후라이드",
+                        "강정치킨3+불꽃치킨2",
                         BigDecimal.valueOf(19000),
                         menuGroupId,
                         menuProductRequests
@@ -93,54 +93,6 @@ class MenuServiceTest {
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getSeq).doesNotContainNull(),
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getMenuId).doesNotContainNull()
                 );
-            }
-        }
-
-        @Nested
-        @DisplayName("메뉴 가격이 없는 경우")
-        class WithPriceNotExist {
-            @BeforeEach
-            void setUp() {
-                List<MenuProductCreateRequest> menuProducts = Arrays.asList(
-                        createMenuProductRequest(1L, 3),
-                        createMenuProductRequest(2L, 2)
-                );
-                request = createMenuRequest(
-                        "후라이드+후라이드",
-                        null,
-                        1L,
-                        menuProducts
-                );
-            }
-
-            @Test
-            @DisplayName("예외가 발생한다")
-            void throwException() {
-                assertThatThrownBy(CreateMenu.this::subject).isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("메뉴 가격이 음수인 경우")
-        class WithNegativePrice {
-            @BeforeEach
-            void setUp() {
-                List<MenuProductCreateRequest> menuProducts = Arrays.asList(
-                        createMenuProductRequest(1L, 3),
-                        createMenuProductRequest(2L, 2)
-                );
-                request = createMenuRequest(
-                        "후라이드+후라이드",
-                        BigDecimal.valueOf(-1),
-                        1L,
-                        menuProducts
-                );
-            }
-
-            @Test
-            @DisplayName("예외가 발생한다")
-            void throwException() {
-                assertThatThrownBy(CreateMenu.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
 
@@ -235,7 +187,7 @@ class MenuServiceTest {
                 for (Menu menu : menuProducts.keySet()) {
                     for (MenuProduct menuProduct : menuProducts.get(menu)) {
                         MenuProduct persisted = menuProductDao.save(menuProduct);
-                        menu.addMenuProduct(persisted);
+                        menu.add(persisted);
                     }
                 }
             }

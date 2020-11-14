@@ -50,7 +50,7 @@ class MenuEventListenerTest {
     }
 
     @Test
-    @DisplayName("메뉴 가격이 각 (상품 가격 * 수량)의 합보다 클 경우, 이벤트 발생 시 예외가 발생하지 않는다")
+    @DisplayName("메뉴 가격이 각 (상품 가격 * 수량)의 합보다 클 경우, 이벤트 발생 시 예외가 발생한다")
     void throwExceptionIfInvalid() {
         List<MenuProduct> menuProducts = Arrays.asList(
                 createMenuProduct(1L, productId1, 2, 1L),

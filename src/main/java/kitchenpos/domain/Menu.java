@@ -66,9 +66,8 @@ public class Menu {
 
     private BigDecimal multiply(Map<Long, BigDecimal> productPrice, MenuProduct menuProduct) {
         final BigDecimal price = productPrice.get(menuProduct.getProductId());
-        final BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
 
-        return price.multiply(quantity);
+        return menuProduct.calculateTotal(price);
     }
 
     public List<Long> getProductIds() {
@@ -77,7 +76,7 @@ public class Menu {
                 .collect(Collectors.toList());
     }
 
-    public void addMenuProduct(MenuProduct menuProduct) {
+    public void add(MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
     }
 
