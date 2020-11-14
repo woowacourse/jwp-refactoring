@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.fixture.ProductFixture;
 
 @WebMvcTest(controllers = ProductRestController.class)
@@ -35,13 +37,15 @@ class ProductRestControllerTest {
     @DisplayName("Product 생성")
     @Test
     void create() throws Exception {
-        Product product = ProductFixture.createWithId(ProductFixture.ID1);
+        ProductCreateRequest request = ProductFixture.createRequestPriceOf(100L);
+        ProductResponse product = ProductResponse.of(
+            ProductFixture.createWithId(ProductFixture.ID1));
         when(productService.create(any())).thenReturn(product);
 
         mockMvc.perform(post("/api/products")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(product))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isCreated())

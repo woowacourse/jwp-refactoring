@@ -1,8 +1,10 @@
 package kitchenpos.fixture;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
 
 public class ProductFixture {
 
@@ -18,6 +20,13 @@ public class ProductFixture {
 
     public static Product createWithId(Long id) {
         return new Product(id, NAME1, DEFAULT_PRICE);
+    }
+
+    public static ProductCreateRequest createRequestPriceOf(Long price) {
+        if (Objects.isNull(price)) {
+            return new ProductCreateRequest(NAME1, null);
+        }
+        return new ProductCreateRequest(NAME1, BigDecimal.valueOf(price));
     }
 
     public static Product createNegativePriceWithId(Long id) {
