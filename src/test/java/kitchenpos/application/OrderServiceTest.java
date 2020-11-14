@@ -5,6 +5,7 @@ import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
 import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
+import kitchenpos.exception.*;
 import kitchenpos.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -98,7 +99,8 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        Collections.emptyList());
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest))
+                .isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 주문 항목 내에서 중복되는 메뉴가 있으면 예외 발생")
@@ -114,7 +116,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 존재하지 않는 테이블을 주문 테이블로 지정하면 예외 발생")
@@ -127,7 +129,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notExistOrderTableId,
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 빈 테이블을 주문 테이블로 지정하면 예외 발생")
@@ -139,7 +141,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(EmptyOrderTableException.class);
     }
 
     @DisplayName("존재하는 모든 주문을 조회")
@@ -187,27 +189,20 @@ class OrderServiceTest {
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.MEAL.name());
 
         assertThatThrownBy(() -> this.orderService.changeOrderStatus(notExistOrderId, orderStatusChangeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderNotFoundException.class);
     }
 
     @DisplayName("특정 주문의 주문 상태가 계산 완료일 때 주문 상태를 변경하면 예외 발생")
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatusWithOrderStatusIsCompletionThenThrowException(String orderStatus) {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                     this.orderLineItemCreateRequest2);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
-                                                                       orderLineItemCreateRequests);
-        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
-
-        Order savedOrder = orderRepository.findById(orderResponse.getId()).orElseThrow(IllegalArgumentException::new);
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        this.orderRepository.save(savedOrder);
+        Order order = new Order(this.savedOrderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+        Order savedOrder = this.orderRepository.save(order);
 
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus);
 
         assertThatThrownBy(() -> this.orderService.changeOrderStatus(savedOrder.getId(), orderStatusChangeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(OrderStatusNotChangeableException.class);
     }
 
     private TableGroup createSavedTableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {

@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
@@ -123,7 +124,7 @@ class TableServiceTest {
     void changeEmptyWithOrderTableInCookingOrMealThenThrowException(String orderStatus) {
         OrderTable orderTable1 = new OrderTable(0, false);
         OrderTable savedOrderTable1 = this.orderTableRepository.save(orderTable1);
-        createSavedOrder(savedOrderTable1, orderStatus);
+        createSavedOrder(savedOrderTable1, OrderStatus.from(orderStatus));
 
         OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(true);
 
@@ -174,15 +175,13 @@ class TableServiceTest {
         OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
         OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(2);
 
-        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(),
+                                                                        orderTableChangeRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Order createSavedOrder(OrderTable orderTable, String orderStatus) {
-        Order order = new Order(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(orderStatus);
-
+    private Order createSavedOrder(OrderTable orderTable, OrderStatus orderStatus) {
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
         return this.orderRepository.save(order);
     }
 

@@ -1,7 +1,5 @@
 package kitchenpos.dto.order;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 
 import javax.validation.constraints.NotEmpty;
@@ -21,10 +19,6 @@ public class OrderCreateRequest {
     public OrderCreateRequest(Long orderTableId, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
         this.orderTableId = orderTableId;
         this.orderLineItemCreateRequests = orderLineItemCreateRequests;
-    }
-
-    public Order toOrder(OrderTable orderTable) {
-        return new Order(orderTable);
     }
 
     public Long getOrderTableId() {

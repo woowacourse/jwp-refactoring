@@ -1,8 +1,11 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.OrderStatusNotChangeableException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Table(name = "orders")
 @Entity
@@ -14,7 +17,9 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
-    private String orderStatus;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
@@ -23,40 +28,34 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new OrderStatusNotChangeableException();
+        }
+
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {

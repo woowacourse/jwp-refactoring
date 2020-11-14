@@ -148,8 +148,8 @@ class TableGroupServiceTest {
     @DisplayName("특정 단체 지정을 제거할 때 소속 테이블의 주문 상태가 조리 혹은 식사면 예외 발생")
     @Test
     void ungroupWithOrderTableOfCookingOrMealThenThrowException() {
-        createSavedOrder(this.orderTable1, OrderStatus.COOKING.name());
-        createSavedOrder(this.orderTable2, OrderStatus.MEAL.name());
+        createSavedOrder(this.orderTable1, OrderStatus.COOKING);
+        createSavedOrder(this.orderTable2, OrderStatus.MEAL);
         List<Long> orderTableIds = Arrays.asList(this.orderTable1.getId(), this.orderTable2.getId());
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableIds);
 
@@ -171,10 +171,8 @@ class TableGroupServiceTest {
         return this.tableGroupRepository.save(tableGroup);
     }
 
-    private Order createSavedOrder(OrderTable orderTable, String orderStatus) {
-        Order order = new Order(orderTable);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(orderStatus);
+    private Order createSavedOrder(OrderTable orderTable, OrderStatus orderStatus) {
+        Order order = new Order(orderTable, orderStatus, LocalDateTime.now());
 
         return this.orderRepository.save(order);
     }

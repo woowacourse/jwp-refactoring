@@ -26,7 +26,7 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         Long id = order.getId();
         Long orderTableId = order.getOrderTable().getId();
-        String orderStatus = order.getOrderStatus();
+        String orderStatus = order.getOrderStatus().name();
         LocalDateTime orderedTime = order.getOrderedTime();
         List<OrderLineItemResponse> orderLineItemResponses = order.getOrderLineItems().stream()
                 .map(OrderLineItemResponse::from)
