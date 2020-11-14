@@ -151,7 +151,7 @@ class MenuServiceTest {
             Collections.singletonList(ProductFixture.createWithId(1L)));
 
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("정상적으로 저장된 Menu를 불러온다")

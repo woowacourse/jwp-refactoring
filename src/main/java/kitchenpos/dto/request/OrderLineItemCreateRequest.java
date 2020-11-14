@@ -18,13 +18,6 @@ public class OrderLineItemCreateRequest {
         return new OrderLineItem(null, null, menuId, quantity);
     }
 
-    public static List<OrderLineItem> listOf(List<OrderLineItemCreateRequest> orderLineItems,
-        Long orderId) {
-        return orderLineItems.stream()
-            .map(item -> item.toEntity(orderId))
-            .collect(Collectors.toList());
-    }
-
     public Long getMenuId() {
         return menuId;
     }

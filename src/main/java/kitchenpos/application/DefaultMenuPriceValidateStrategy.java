@@ -34,7 +34,7 @@ public class DefaultMenuPriceValidateStrategy implements MenuPriceValidateStrate
         }
 
         if (menuPrice.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new InvalidMenuPriceException(menuPrice.longValue(), sum.longValue());
         }
     }
 }

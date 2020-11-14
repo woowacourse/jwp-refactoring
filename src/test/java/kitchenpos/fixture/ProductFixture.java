@@ -29,6 +29,10 @@ public class ProductFixture {
         return new ProductCreateRequest(NAME1, BigDecimal.valueOf(price));
     }
 
+    public static Product createWithPrice(Long id, Long price) {
+        return new Product(id, NAME1, BigDecimal.valueOf(price));
+    }
+
     public static Product createNegativePriceWithId(Long id) {
         return new Product(id, NAME1, NEGATIVE_PRICE);
     }

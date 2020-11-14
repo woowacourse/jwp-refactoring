@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,10 +9,8 @@ import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.EmptyMenuOrderException;
@@ -67,8 +65,9 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
-        List<OrderLineItem> orderLineItems = OrderLineItemCreateRequest
-            .listOf(request.getOrderLineItems(), orderId);
+        List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+            .map(item -> item.toEntity(orderId))
+            .collect(Collectors.toList());
         orderLineItemRepository.saveAll(orderLineItems);
 
         return OrderResponse.of(savedOrder);
