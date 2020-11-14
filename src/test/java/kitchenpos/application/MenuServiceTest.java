@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductPrice;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menuproduct.MenuProductCreateRequest;

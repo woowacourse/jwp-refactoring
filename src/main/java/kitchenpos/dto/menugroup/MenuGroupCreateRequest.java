@@ -1,6 +1,6 @@
 package kitchenpos.dto.menugroup;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 import javax.validation.constraints.NotBlank;
 

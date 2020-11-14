@@ -1,4 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
+
+import kitchenpos.domain.MenuProduct;
 
 import javax.persistence.*;
 import java.util.List;

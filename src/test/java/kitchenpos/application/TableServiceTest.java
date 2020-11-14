@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableChangeRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
+import kitchenpos.exception.InvalidNumberOfGuestsException;
 import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
@@ -157,7 +158,7 @@ class TableServiceTest {
         OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(invalidNumberOfGuests);
 
         assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @DisplayName("특정 주문 테이블의 방문 손님 수를 변경할 때, 특정 주문 테이블이 존재하는 주문 테이블이 아니면 예외 발생")

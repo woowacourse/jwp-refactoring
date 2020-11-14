@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.InvalidOrderTableException;
@@ -57,8 +57,7 @@ public class TableGroupService {
 
     private void validateOrderTableIds(List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < MIN_COUNT_OF_ORDER_TABLE) {
-            throw new InvalidOrderTableIdsException("단체 지정 생성 시 소속된 주문 테이블이 " + MIN_COUNT_OF_ORDER_TABLE + "개 이상이어야 " +
-                                                            "합니다!");
+            throw new InvalidOrderTableIdsException("단체 지정 생성 시 소속된 주문 테이블이 " + MIN_COUNT_OF_ORDER_TABLE + "개 이상이어야 합니다!");
         }
     }
 
@@ -69,8 +68,8 @@ public class TableGroupService {
 
         for (OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new InvalidOrderTableException("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 " +
-                                                             "존재해서는 안됩니다!");
+                throw new InvalidOrderTableException
+                        ("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 존재해서는 안됩니다!");
             }
         }
     }

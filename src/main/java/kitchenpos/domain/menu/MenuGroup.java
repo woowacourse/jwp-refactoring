@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -6,19 +6,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Product {
+public class MenuGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private ProductPrice productPrice;
 
-    public Product() {
+    public MenuGroup() {
     }
 
-    public Product(String name, ProductPrice productPrice) {
+    public MenuGroup(String name) {
         this.name = name;
-        this.productPrice = productPrice;
     }
 
     public Long getId() {
@@ -27,9 +25,5 @@ public class Product {
 
     public String getName() {
         return name;
-    }
-
-    public ProductPrice getProductPrice() {
-        return productPrice;
     }
 }

@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.MenuPrice;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
@@ -47,8 +52,7 @@ public class MenuService {
                 menuGroupRepository.findById(menuGroupId).orElseThrow(() -> new MenuGroupNotFoundException(menuGroupId));
         Menu savedMenu = menuRepository.save(new Menu(menuCreateRequest.getName(), menuPrice, menuGroup));
 
-        List<MenuProductResponse> menuProductResponses = createMenuProductResponses(savedMenu,
-                                                                                    menuProductCreateRequests);
+        List<MenuProductResponse> menuProductResponses = createMenuProductResponses(savedMenu, menuProductCreateRequests);
 
         return MenuResponse.of(savedMenu, menuProductResponses);
     }
@@ -70,8 +74,7 @@ public class MenuService {
         }
     }
 
-    private List<MenuProductResponse> createMenuProductResponses(Menu menu,
-                                                                 List<MenuProductCreateRequest> menuProductCreateRequests) {
+    private List<MenuProductResponse> createMenuProductResponses(Menu menu, List<MenuProductCreateRequest> menuProductCreateRequests) {
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
             Long productId = menuProductCreateRequest.getProductId();

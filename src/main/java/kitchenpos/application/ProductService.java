@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductPrice;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductResponse;
 import kitchenpos.repository.ProductRepository;

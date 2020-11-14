@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
@@ -36,8 +40,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests =
-                orderCreateRequest.getOrderLineItemCreateRequests();
+        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
         validateOrderLineItemCreateRequests(orderLineItemCreateRequests);
 
         Long orderTableId = orderCreateRequest.getOrderTableId();
