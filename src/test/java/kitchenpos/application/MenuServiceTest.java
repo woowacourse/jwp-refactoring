@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -22,6 +23,9 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
@@ -47,13 +51,16 @@ class MenuServiceTest {
     @Mock
     private ProductRepository productRepository;
 
+    private MenuPriceValidateStrategy validateStrategy;
+
     private List<MenuProduct> menuProducts;
     private long totalPrice;
 
     @BeforeEach
     void setUp() {
+        validateStrategy = new DefaultMenuPriceValidateStrategy();
         menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository,
-            productRepository);
+            productRepository, validateStrategy);
 
         Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
         Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
@@ -73,11 +80,12 @@ class MenuServiceTest {
             MenuProductFixture.createRequest(1L, 1), MenuProductFixture.createRequest(2L, 1));
         Menu menuWithoutId = MenuFixture.createWithoutId(1L, totalPrice);
         Menu menuWithId = MenuFixture.createWithId(1L, 1L, totalPrice);
-        Product product = ProductFixture.createWithId(1L);
+        Product product1 = ProductFixture.createWithId(1L);
+        Product product2 = ProductFixture.createWithId(2L);
 
         when(menuGroupRepository.existsById(menuWithoutId.getMenuGroupId())).thenReturn(true);
         when(menuRepository.save(any(Menu.class))).thenReturn(menuWithId);
-        when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
+        when(productRepository.findAllById(anyList())).thenReturn(Arrays.asList(product1, product2));
 
         MenuResponse savedMenu = menuService.create(request);
         assertThat(savedMenu).isEqualToComparingFieldByField(menuWithId);
@@ -86,23 +94,25 @@ class MenuServiceTest {
     @DisplayName("Price가 null인 Menu 생성 요청 시 예외를 반환한다")
     @Test
     void createNullPriceMenu() {
-        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+        MenuCreateRequest nullPriceRequest = MenuFixture.createRequest(null, 1L,
             MenuProductFixture.createRequest(1L, 1));
-        Menu menuWithNegativePrice = MenuFixture.createNullPrice(1L);
 
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+        when(menuGroupRepository.existsById(nullPriceRequest.getMenuGroupId())).thenReturn(true);
+
+        assertThatThrownBy(() -> menuService.create(nullPriceRequest))
+            .isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("Price가 음수인 Menu 생성 요청 시 예외를 반환한다")
     @Test
     void createNegativePriceMenu() {
-        MenuCreateRequest request = MenuFixture.createRequest(totalPrice, 1L,
+        MenuCreateRequest negativePriceRequest = MenuFixture.createRequest(-1000L, 1L,
             MenuProductFixture.createRequest(1L, 1));
-        Menu menuWithNegativePrice = MenuFixture.createWithoutId(1L, -1000L);
 
-        assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+        when(menuGroupRepository.existsById(negativePriceRequest.getMenuGroupId())).thenReturn(true);
+
+        assertThatThrownBy(() -> menuService.create(negativePriceRequest))
+            .isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("Menu Group에 포함되어 있지 않은 Menu 생성 시 예외를 반환한다")
@@ -114,7 +124,7 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(false);
 
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @DisplayName("존재하지 않는 Product를 포함하는 Menu 생성 시 예외를 반환한다.")
@@ -124,10 +134,9 @@ class MenuServiceTest {
             MenuProductFixture.createRequest(1L, 1));
         Menu menu = MenuFixture.createWithoutId(1L, totalPrice);
         when(menuGroupRepository.existsById(menu.getMenuGroupId())).thenReturn(true);
-        when(productRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(ProductNotFoundException.class);
     }
 
     @DisplayName("Product price의 합보다 비싼 Menu 생성 시 예외를 반환한다.")
@@ -138,8 +147,8 @@ class MenuServiceTest {
         Menu menuOverTotalPrice =
             MenuFixture.createWithoutId(1L, totalPrice + 1000L);
         when(menuGroupRepository.existsById(menuOverTotalPrice.getMenuGroupId())).thenReturn(true);
-        when(productRepository.findById(1L)).thenReturn(
-            Optional.of(ProductFixture.createWithId(1L)));
+        when(productRepository.findAllById(anyList())).thenReturn(
+            Collections.singletonList(ProductFixture.createWithId(1L)));
 
         assertThatThrownBy(() -> menuService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

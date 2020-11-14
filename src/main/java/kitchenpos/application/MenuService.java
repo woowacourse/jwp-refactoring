@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -24,51 +27,45 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
+    private final MenuPriceValidateStrategy menuPriceValidateStrategy;
 
     public MenuService(
         final MenuRepository menuRepository,
         final MenuGroupRepository menuGroupRepository,
         final MenuProductRepository menuProductRepository,
-        final ProductRepository productRepository
+        final ProductRepository productRepository,
+        final MenuPriceValidateStrategy menuPriceValidateStrategy
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
+        this.menuPriceValidateStrategy = menuPriceValidateStrategy;
     }
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         Menu menu = request.toEntity();
         List<MenuProductCreateRequest> menuProductRequests = request.getMenuProducts();
-
         final BigDecimal price = menu.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new MenuGroupNotFoundException(menu.getMenuGroupId());
         }
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductCreateRequest menuProduct : menuProductRequests) {
-            final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(
-                product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
+        List<Product> products = productRepository.findAllById(request.getProductIds());
+        Map<Long, Product> productMap = products.stream()
+            .collect(Collectors.toMap(Product::getId, p -> p));
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        menuPriceValidateStrategy.validate(productMap, menuProductRequests, price);
 
         final Menu savedMenu = menuRepository.save(menu);
-
         final Long menuId = savedMenu.getId();
-        List<MenuProduct> menuProducts = MenuProductCreateRequest.listOf(menuProductRequests,
-            menuId);
+
+        List<MenuProduct> menuProducts = menuProductRequests.stream()
+            .map(p -> p.toEntity(menuId))
+            .collect(Collectors.toList());
+
         menuProductRepository.saveAll(menuProducts);
 
         return MenuResponse.of(savedMenu);
