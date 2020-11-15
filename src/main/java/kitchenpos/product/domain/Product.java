@@ -37,6 +37,14 @@ public class Product {
         }
     }
 
+    public boolean isSameId(Long id) {
+        return Objects.equals(this.id, id);
+    }
+
+    public BigDecimal calculatePrice(Long quantity) {
+        return this.price.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package kitchenpos.menu.application;
 
+import kitchenpos.generic.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
@@ -38,25 +39,25 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuCreateRequest request) {
-        final BigDecimal price = BigDecimal.valueOf(request.getPrice());
 
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹을 선택해주세요."));
 
-        BigDecimal sum = BigDecimal.ZERO;
+        Price sum = Price.ofZero();
         List<Product> products = productRepository.findAllByIdIn(request.getProductIds());
 
         List<MenuProductCreateRequest> menuProductRequest = request.getMenuProducts();
         for (MenuProductCreateRequest menuProduct : menuProductRequest) {
             for (Product product : products) {
-                if (product.getId().equals(menuProduct.getProductId())) {
-                    sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+                if (product.isSameId(menuProduct.getProductId())) {
+                    sum = sum.add(product.calculatePrice(menuProduct.getQuantity()));
                 }
             }
         }
 
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException(String.format("상품 금액의 합(%d)이 메뉴의 가격(%d)보다 작습니다.", sum.longValue(), price.longValue()));
+        final BigDecimal requestPrice = BigDecimal.valueOf(request.getPrice());
+        if (sum.isLessThan(requestPrice)) {
+            throw new IllegalArgumentException(String.format("상품 금액의 합(%d)이 메뉴의 가격(%d)보다 작습니다.", sum.longValue(), requestPrice.longValue()));
         }
 
         Menu savedMenu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
