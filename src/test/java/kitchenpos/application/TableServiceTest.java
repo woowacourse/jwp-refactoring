@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -88,16 +89,11 @@ class TableServiceTest {
             @BeforeEach
             void setUp() {
                 TableGroup tablegroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now(), Collections.emptyList()));
-                orderTables = Arrays.asList(
-                        createOrderTable(null, false, null, 2),
-                        createOrderTable(null, false, tablegroup.getId(), 2),
-                        createOrderTable(null, true, tablegroup.getId(), 2),
-                        createOrderTable(null, false, null, 2)
-                );
-                for (OrderTable orderTable : orderTables) {
-                    OrderTable persisted = orderTableDao.save(orderTable);
-                    orderTable.setId(persisted.getId());
-                }
+                orderTables = new ArrayList<>();
+                orderTables.add(orderTableDao.save(createOrderTable(null, false, null, 2)));
+                orderTables.add(orderTableDao.save(createOrderTable(null, false, tablegroup.getId(), 2)));
+                orderTables.add(orderTableDao.save(createOrderTable(null, true, tablegroup.getId(), 2)));
+                orderTables.add(orderTableDao.save(createOrderTable(null, false, null, 2)));
             }
 
             @Test

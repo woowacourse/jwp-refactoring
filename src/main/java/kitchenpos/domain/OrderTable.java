@@ -1,5 +1,10 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.event.ValidateTableStatusEvent;
+import org.springframework.context.ApplicationEventPublisher;
+
+import java.util.Objects;
+
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
@@ -13,35 +18,55 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
+    public OrderTable changeOrderStatus(boolean empty, ApplicationEventPublisher publisher) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+        publisher.publishEvent(new ValidateTableStatusEvent(this));
+        this.empty = empty;
+        return this;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public OrderTable changeNumOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+        return this;
+    }
+
+    public OrderTable groupBy(Long tableGroupId) {
+        if (!empty || Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+        return this;
+    }
+
+    public OrderTable ungroup(ApplicationEventPublisher publisher) {
+        publisher.publishEvent(new ValidateTableStatusEvent(this));
+        tableGroupId = null;
+        empty = false;
+        return this;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 }

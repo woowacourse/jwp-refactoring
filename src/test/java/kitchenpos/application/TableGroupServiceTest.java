@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +46,7 @@ class TableGroupServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateTableGroup {
-        private TableGroup request;
+        private TableGroupCreateRequest request;
 
         private TableGroup subject() {
             return tableGroupService.create(request);
@@ -55,14 +57,10 @@ class TableGroupServiceTest {
         class WithOrderTableIds {
             @BeforeEach
             void setUp() {
-                List<OrderTable> orderTables = Arrays.asList(
-                        createOrderTable(null, true, null, 1),
-                        createOrderTable(null, true, null, 3)
-                );
-                for (OrderTable orderTable : orderTables) {
-                    OrderTable persisted = orderTableDao.save(orderTable);
-                    orderTable.setId(persisted.getId());
-                }
+                List<OrderTable> orderTables = new ArrayList<>();
+                orderTables.add(orderTableDao.save(createOrderTable(null, true, null, 1)));
+                orderTables.add(orderTableDao.save(createOrderTable(null, true, null, 3)));
+
                 List<Long> orderTableIds = orderTables.stream().map(OrderTable::getId).collect(Collectors.toList());
                 request = createTableGroupRequest(orderTableIds);
             }
