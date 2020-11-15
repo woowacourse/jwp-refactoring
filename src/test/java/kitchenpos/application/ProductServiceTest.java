@@ -11,9 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.fixture.ProductFixture;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.application.fixture.ProductFixture;
 
 class ProductServiceTest extends AbstractServiceTest {
     private ProductService productService;
