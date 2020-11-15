@@ -12,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.fixture.MenuFixture;
+import kitchenpos.application.fixture.MenuGroupFixture;
+import kitchenpos.application.fixture.ProductFixture;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
@@ -21,12 +24,9 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.application.fixture.MenuFixture;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.application.fixture.MenuGroupFixture;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.application.fixture.ProductFixture;
 
 class MenuServiceTest extends AbstractServiceTest {
     private MenuService menuService;
@@ -91,13 +91,16 @@ class MenuServiceTest extends AbstractServiceTest {
     @DisplayName("메뉴 각각의 가격 * 수량의 결과가 Menu객체의 가격보다 작은 경우 예외를 반환한다.")
     @Test
     void totalPriceUnder0() {
+        MenuGroup menuGroup = MenuGroupFixture.createWithoutId();
+        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+
         List<Product> products = Arrays.asList(
             productDao.save(ProductFixture.createWithOutId(BigDecimal.valueOf(200))),
             productDao.save(ProductFixture.createWithOutId(BigDecimal.valueOf(200))),
             productDao.save(ProductFixture.createWithOutId(BigDecimal.valueOf(200))),
             productDao.save(ProductFixture.createWithOutId(BigDecimal.valueOf(200)))
         );
-        Menu menu = MenuFixture.createWithMenuPriceAndProducts(1000, products);
+        Menu menu = MenuFixture.createWithMenuPriceAndProducts(1000, products, savedMenuGroup.getId());
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -107,8 +110,8 @@ class MenuServiceTest extends AbstractServiceTest {
     @Test
     void create() {
         Menu savedMenu = createValidMenu();
-
         Long menuId = savedMenu.getId();
+
         assertAll(
             () -> assertThat(menuId).isNotNull(),
             () -> assertThat(savedMenu.getMenuProducts())

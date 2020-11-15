@@ -10,9 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.application.fixture.MenuGroupFixture;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.application.fixture.MenuGroupFixture;
 
 class MenuGroupServiceTest extends AbstractServiceTest {
     private MenuGroupService menuGroupService;

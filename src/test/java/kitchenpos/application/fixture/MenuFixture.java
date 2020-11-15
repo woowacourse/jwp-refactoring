@@ -32,10 +32,11 @@ public class MenuFixture {
         return menu;
     }
 
-    public static Menu createWithMenuPriceAndProducts(int menuPrice, List<Product> products) {
+    public static Menu createWithMenuPriceAndProducts(int menuPrice, List<Product> products, Long menuGroupId) {
         Menu menu = new Menu();
         menu.setPrice(BigDecimal.valueOf(menuPrice));
-        menu.setMenuGroupId(1L);
+        menu.setName("후라이드 치킨");
+        menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(MenuProductFixture.create(products));
 
         return menu;
