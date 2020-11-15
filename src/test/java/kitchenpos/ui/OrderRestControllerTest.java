@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemCreateRequest;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -60,16 +61,14 @@ class OrderRestControllerTest {
     @Test
     @DisplayName("주문을 생성한다")
     void create() throws Exception {
-        List<OrderLineItemCreateRequest> orderLineItems =
+        List<OrderLineItemCreateRequest> orderLineItemRequests =
                 Arrays.asList(OrderLineItemFixture.createOrderLineItemRequest(1L, 2), OrderLineItemFixture.createOrderLineItemRequest(2L, 1));
-        OrderCreateRequest request = createOrderRequest(orderLineItems, 10L);
+        OrderCreateRequest request = createOrderRequest(orderLineItemRequests, 10L);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        Order order = createOrder(5L, COOKING, 10L);
-        order.setOrderLineItems(Arrays.asList(
+        List<OrderLineItem> orderLineItems = Arrays.asList(
                 createOrderLineItem(20L, 5L, 1L, 2),
-                createOrderLineItem(21L, 5L, 2L, 1))
-        );
-        order.setOrderedTime(LocalDateTime.now());
+                createOrderLineItem(21L, 5L, 2L, 1));
+        Order order = createOrder(5L, COOKING, 10L, LocalDateTime.now(), orderLineItems);
         given(orderService.create(any(OrderCreateRequest.class))).willReturn(order);
 
         mockMvc.perform(post("/api/orders")
@@ -92,13 +91,10 @@ class OrderRestControllerTest {
             put(3L, Arrays.asList(createOrderLineItem(3L, 1L, 1), createOrderLineItem(3L, 2L, 2)));
         }};
         List<Order> persistedOrders = Arrays.asList(
-                createOrder(1L, COOKING, 5L),
-                createOrder(2L, COOKING, 5L),
-                createOrder(3L, COOKING, 6L)
+                createOrder(1L, COOKING, 5L, LocalDateTime.now(), orderLineItems.get(1L)),
+                createOrder(2L, COOKING, 5L, LocalDateTime.now(), orderLineItems.get(2L)),
+                createOrder(3L, COOKING, 6L, LocalDateTime.now(), orderLineItems.get(3L))
         );
-        for (Order order : persistedOrders) {
-            order.setOrderLineItems(orderLineItems.get(order.getId()));
-        }
         given(orderService.list()).willReturn(persistedOrders);
 
         byte[] responseBody = mockMvc.perform(get("/api/orders"))
@@ -115,15 +111,13 @@ class OrderRestControllerTest {
     @Test
     @DisplayName("주문의 상태를 수정한다")
     void update() throws Exception {
-        Order request = updateOrderRequest(OrderStatus.COMPLETION);
+        OrderUpdateRequest request = updateOrderRequest(COMPLETION);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        Order order = createOrder(5L, COMPLETION, 10L);
-        order.setOrderLineItems(Arrays.asList(
+        List<OrderLineItem> orderLineItems = Arrays.asList(
                 createOrderLineItem(20L, 5L, 1L, 2),
-                createOrderLineItem(21L, 5L, 2L, 1))
-        );
-        order.setOrderedTime(LocalDateTime.now());
-        given(orderService.changeOrderStatus(eq(5L), any(Order.class))).willReturn(order);
+                createOrderLineItem(21L, 5L, 2L, 1));
+        Order order = createOrder(5L, COMPLETION, 10L, LocalDateTime.now(), orderLineItems);
+        given(orderService.changeOrderStatus(eq(5L), any(OrderUpdateRequest.class))).willReturn(order);
 
         mockMvc.perform(put("/api/orders/{id}/order-status", 5L)
                 .contentType(MediaType.APPLICATION_JSON)

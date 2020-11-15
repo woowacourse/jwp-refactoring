@@ -12,7 +12,7 @@ public class OrderLineItemCreateRequest {
     }
 
     public OrderLineItem toEntity(Long orderId) {
-        return new OrderLineItem(orderId, menuId, quantity);
+        return new OrderLineItem(null, orderId, menuId, quantity);
     }
 
     public Long getMenuId() {

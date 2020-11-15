@@ -5,6 +5,7 @@ import kitchenpos.domain.*;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.ui.dto.OrderCreateRequest;
 import kitchenpos.ui.dto.OrderLineItemCreateRequest;
+import kitchenpos.ui.dto.OrderUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -13,17 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static kitchenpos.domain.OrderStatus.*;
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.OrderFixture.*;
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
-import static kitchenpos.domain.OrderStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -153,27 +155,17 @@ class OrderServiceTest {
                 Menu menu1 = menuDao.save(createMenu(null, "후라이드+후라이드", BigDecimal.valueOf(1000L), menuGroupId));
                 Menu menu2 = menuDao.save(createMenu(null, "후라이드+양념치킨", BigDecimal.valueOf(1000L), menuGroupId));
 
-                orders = Arrays.asList(
-                        createOrder(null, COOKING, orderTable1.getId(), LocalDateTime.now()),
-                        createOrder(null, MEAL, orderTable2.getId(), LocalDateTime.now()),
-                        createOrder(null, COOKING, orderTable3.getId(), LocalDateTime.now())
-                );
-                for (Order order : orders) {
-                    Order persisted = orderDao.save(order);
-                    order.setId(persisted.getId());
-                }
+                orders = new ArrayList<>();
+                orders.add(orderDao.save(createOrder(null, COOKING, orderTable1.getId(), LocalDateTime.now())));
+                orders.add(orderDao.save(createOrder(null, MEAL, orderTable2.getId(), LocalDateTime.now())));
+                orders.add(orderDao.save(createOrder(null, COOKING, orderTable3.getId(), LocalDateTime.now())));
 
-                orderLineItems = Arrays.asList(
-                        createOrderLineItem(orders.get(0).getId(), menu1.getId(), 1),
-                        createOrderLineItem(orders.get(1).getId(), menu1.getId(), 2),
-                        createOrderLineItem(orders.get(1).getId(), menu2.getId(), 1),
-                        createOrderLineItem(orders.get(2).getId(), menu1.getId(), 1),
-                        createOrderLineItem(orders.get(2).getId(), menu2.getId(), 2)
-                );
-                for (OrderLineItem orderLineItem : orderLineItems) {
-                    OrderLineItem persisted = orderLineItemDao.save(orderLineItem);
-                    orderLineItem.setSeq(persisted.getSeq());
-                }
+                orderLineItems = new ArrayList<>();
+                orderLineItems.add(orderLineItemDao.save(createOrderLineItem(orders.get(0).getId(), menu1.getId(), 1)));
+                orderLineItems.add(orderLineItemDao.save(createOrderLineItem(orders.get(1).getId(), menu1.getId(), 2)));
+                orderLineItems.add(orderLineItemDao.save(createOrderLineItem(orders.get(1).getId(), menu2.getId(), 1)));
+                orderLineItems.add(orderLineItemDao.save(createOrderLineItem(orders.get(2).getId(), menu1.getId(), 1)));
+                orderLineItems.add(orderLineItemDao.save(createOrderLineItem(orders.get(2).getId(), menu2.getId(), 2)));
             }
 
             @Test
@@ -195,7 +187,7 @@ class OrderServiceTest {
     @DisplayName("수정 메서드는")
     class ChangeOrder {
         private Long orderId;
-        private Order request;
+        private OrderUpdateRequest request;
 
         private Order subject() {
             return orderService.changeOrderStatus(orderId, request);
