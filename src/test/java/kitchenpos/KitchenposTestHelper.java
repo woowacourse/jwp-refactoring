@@ -14,8 +14,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 public class KitchenposTestHelper {
-    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests,
-            boolean empty) {
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
         orderTable.setTableGroupId(tableGroupId);
@@ -30,8 +29,7 @@ public class KitchenposTestHelper {
         return tableGroup;
     }
 
-    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate,
-            List<OrderTable> orderTables) {
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(createdDate);
@@ -39,9 +37,8 @@ public class KitchenposTestHelper {
         return tableGroup;
     }
 
-    public static Order createOrder(Long id, Long orderTableId, String orderStatus,
-            LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems) {
+    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+        List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setId(id);
         order.setOrderTableId(orderTableId);
@@ -51,8 +48,7 @@ public class KitchenposTestHelper {
         return order;
     }
 
-    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId,
-            long quantity) {
+    public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(seq);
         orderLineItem.setOrderId(orderId);
@@ -77,7 +73,7 @@ public class KitchenposTestHelper {
     }
 
     public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId,
-            List<MenuProduct> menuProducts) {
+        List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);
@@ -87,8 +83,7 @@ public class KitchenposTestHelper {
         return menu;
     }
 
-    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId,
-            long quantity) {
+    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setSeq(seq);
         menuProduct.setMenuId(menuId);
