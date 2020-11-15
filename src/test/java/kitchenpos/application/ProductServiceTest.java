@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +32,7 @@ class ProductServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateProduct {
-        private Product request;
+        private ProductCreateRequest request;
 
         private Product subject() {
             return productService.create(request);
@@ -103,15 +105,10 @@ class ProductServiceTest {
 
             @BeforeEach
             void setUp() {
-                products = Arrays.asList(
-                        createProduct(null, "치킨", BigDecimal.ONE),
-                        createProduct(null, "마요", BigDecimal.TEN),
-                        createProduct(null, "돈가", BigDecimal.valueOf(10000))
-                );
-                for (Product product : products) {
-                    Product persisted = productDao.save(product);
-                    product.setId(persisted.getId());
-                }
+                products = new ArrayList<>();
+                products.add(productDao.save(createProduct(null, "치킨", BigDecimal.ONE)));
+                products.add(productDao.save(createProduct(null, "마요", BigDecimal.TEN)));
+                products.add(productDao.save(createProduct(null, "돈가", BigDecimal.valueOf(10000))));
             }
 
             @Test
