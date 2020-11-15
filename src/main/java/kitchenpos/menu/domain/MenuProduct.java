@@ -22,12 +22,6 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    //TODO: 지우기
-    public MenuProduct(Long productId, Long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
-    }
-
     public MenuProduct(Menu menu, Long productId, Long quantity) {
         this.menu = menu;
         this.productId = productId;
