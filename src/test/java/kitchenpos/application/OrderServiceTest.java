@@ -65,18 +65,13 @@ class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("OrderLineItems의 크기와 Menu들의 ID로 조회한 메뉴의 갯수가 다르면 예외를 반환한다.")
     @Test
     void orderLineDifferentMenuCounts() {
-        List<Product> products = ProductFixture.getProducts(2000, 3000, 5000);
-
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.createWithoutId());
-        Menu menu = MenuFixture.createWithMenuPriceAndProducts(10000, products, savedMenuGroup.getId());
-        Menu savedMenu = menuDao.save(menu);
-
+        Menu savedMenu = createMenu();
         OrderTable orderTable = OrderTableFixture.createBeforeSave();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         Order order = OrderFixture.createWithStatus(savedOrderTable.getId(), OrderStatus.COMPLETION);
         List<OrderLineItem> orderLineItems = Arrays.asList(
-            OrderLineFixture.createWithOrderAndMenu(menu, 3),
-            OrderLineFixture.createWithOrderAndMenu(menu, 3)
+            OrderLineFixture.createWithOrderAndMenu(savedMenu, 3),
+            OrderLineFixture.createWithOrderAndMenu(savedMenu, 3)
         );
         order.setOrderLineItems(orderLineItems);
 
@@ -87,16 +82,10 @@ class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("저장하려는 OrderTable이 존재하지 않으면 예외를 반환한다.")
     @Test
     void notExistOrderTable() {
-        List<Product> products = ProductFixture.getProducts(2000, 3000, 5000);
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.createWithoutId());
-        Menu menu = MenuFixture.createWithMenuPriceAndProducts(10000, products, savedMenuGroup.getId());
-        Menu savedMenu = menuDao.save(menu);
-        OrderTable orderTable = OrderTableFixture.createBeforeSave();
-        Order order = OrderFixture.createWithStatus(orderTable.getId(), OrderStatus.COMPLETION);
-        List<OrderLineItem> orderLineItems = Arrays.asList(
-            OrderLineFixture.createWithOrderAndMenu(menu, 3),
-            OrderLineFixture.createWithOrderAndMenu(menu, 3)
-        );
+        Menu savedMenu = createMenu();
+        OrderTable notSavedOrderTable = OrderTableFixture.createBeforeSave();
+        Order order = OrderFixture.createWithStatus(notSavedOrderTable.getId(), OrderStatus.COMPLETION);
+        List<OrderLineItem> orderLineItems = Arrays.asList(OrderLineFixture.createWithOrderAndMenu(savedMenu, 3));
         order.setOrderLineItems(orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
@@ -106,10 +95,7 @@ class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("저장하려는 OrderTable이 비어 있으면 예외를 반환한다.")
     @Test
     void emptyOrderTable() {
-        List<Product> products = ProductFixture.getProducts(2000, 3000, 5000);
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.createWithoutId());
-        Menu menu = MenuFixture.createWithMenuPriceAndProducts(10000, products, savedMenuGroup.getId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = createMenu();
         OrderTable orderTable = OrderTableFixture.createBeforeSave();
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
         Order order = OrderFixture.createWithStatus(savedOrderTable.getId(), OrderStatus.COMPLETION);
@@ -126,10 +112,7 @@ class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("정상적으로 Order가 저장되고, OrderLineItems도 수정된다.")
     @Test
     void create() {
-        List<Product> products = ProductFixture.getProducts(2000, 3000, 5000);
-        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.createWithoutId());
-        Menu menu = MenuFixture.createWithMenuPriceAndProducts(10000, products, savedMenuGroup.getId());
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = createMenu();
         OrderTable orderTable = OrderTableFixture.createBeforeSave();
         orderTable.setEmpty(false);
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
@@ -149,6 +132,66 @@ class OrderServiceTest extends AbstractServiceTest {
                 .extracting(OrderLineItem::getOrderId)
                 .isEqualTo(Arrays.asList(savedOrder.getId()))
         );
+    }
 
+    @DisplayName("저장된 Order를 불러온다.")
+    @Test
+    void list() {
+        Order order = createValidOrder();
+        Order savedOrder = orderService.create(order);
+        Order savedOrder2 = orderService.create(order);
+        List<Order> orders = orderService.list();
+
+        assertThat(orders)
+            .usingRecursiveComparison()
+            .isEqualTo(Arrays.asList(savedOrder, savedOrder2));
+    }
+
+    @DisplayName("해당 Order가 존재하지 않는 경우 예외를 반환한다.")
+    @Test
+    void notFound() {
+        assertThatThrownBy(() -> orderService.changeOrderStatus(null, new Order()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("이미 식사가 완료된 곳은 상태를 변경할 수 없다.")
+    @Test
+    void completion() {
+        Order savedOrder = orderService.create(createValidOrder());
+        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order updatedOrder = orderDao.save(savedOrder);
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(updatedOrder.getId(), updatedOrder))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("이미 식사가 완료된 곳은 상태를 변경할 수 없다.")
+    @Test
+    void changeStatus() {
+        Order savedOrder = orderService.create(createValidOrder());
+        Order mealOrder = OrderFixture.createWithStatus(null, OrderStatus.MEAL);
+        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), mealOrder);
+
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+    }
+
+    private Order createValidOrder() {
+        Menu savedMenu = createMenu();
+        OrderTable orderTable = OrderTableFixture.createBeforeSave();
+        orderTable.setEmpty(false);
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        Order order = OrderFixture.createWithStatus(savedOrderTable.getId(), OrderStatus.COMPLETION);
+        List<OrderLineItem> orderLineItems = Arrays.asList(
+            OrderLineFixture.createWithOrderAndMenu(savedMenu, 3)
+        );
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    private Menu createMenu() {
+        List<Product> products = ProductFixture.getProducts(2000, 3000, 5000);
+        MenuGroup savedMenuGroup = menuGroupDao.save(MenuGroupFixture.createWithoutId());
+        Menu menu = MenuFixture.createWithMenuPriceAndProducts(10000, products, savedMenuGroup.getId());
+        return menuDao.save(menu);
     }
 }
