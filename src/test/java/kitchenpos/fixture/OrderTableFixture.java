@@ -1,33 +1,24 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.OrderTableNumOfGuestRequest;
+import kitchenpos.ui.dto.OrderTableStatusRequest;
 
 public class OrderTableFixture {
     public static OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
-    public static OrderTable createOrderTableRequest(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTableCreateRequest createOrderTableRequest(int numberOfGuests, boolean empty) {
+        return new OrderTableCreateRequest(numberOfGuests, empty);
     }
 
-    public static OrderTable modifyOrderTableEmptyRequest(boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTableStatusRequest modifyOrderTableEmptyRequest(boolean empty) {
+        return new OrderTableStatusRequest(empty);
     }
 
-    public static OrderTable modifyOrderTableNumOfGuestRequest(int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+    public static OrderTableNumOfGuestRequest modifyOrderTableNumOfGuestRequest(int numberOfGuests) {
+        return new OrderTableNumOfGuestRequest(numberOfGuests);
     }
 }

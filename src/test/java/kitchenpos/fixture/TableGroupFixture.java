@@ -11,9 +11,7 @@ public class TableGroupFixture {
     public static TableGroup createTableGroupRequest(List<Long> orderTableIds) {
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = orderTableIds.stream()
-                .map(it -> new OrderTable() {{
-                    setId(it);
-                }})
+                .map(it -> new OrderTable(it, null, 1, false))
                 .collect(Collectors.toList());
         tableGroup.setOrderTables(orderTables);
         return tableGroup;
@@ -24,9 +22,7 @@ public class TableGroupFixture {
         tableGroup.setId(id);
         tableGroup.setCreatedDate(createdDateTime);
         List<OrderTable> orderTables = orderTableIds.stream()
-                .map(it -> new OrderTable() {{
-                    setId(it);
-                }})
+                .map(it -> new OrderTable(it, null, 1, false))
                 .collect(Collectors.toList());
         tableGroup.setOrderTables(orderTables);
         return tableGroup;

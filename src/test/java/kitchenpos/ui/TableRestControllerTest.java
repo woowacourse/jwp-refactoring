@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.OrderTableNumOfGuestRequest;
+import kitchenpos.ui.dto.OrderTableStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,9 +53,9 @@ class TableRestControllerTest {
     @Test
     @DisplayName("테이블을 생성한다")
     void create() throws Exception {
-        OrderTable request = createOrderTableRequest(2, true);
+        OrderTableCreateRequest request = createOrderTableRequest(2, true);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(tableService.create(any(OrderTable.class)))
+        given(tableService.create(any(OrderTableCreateRequest.class)))
                 .willReturn(createOrderTable(7L, request.isEmpty(), null, request.getNumberOfGuests()));
 
         mockMvc.perform(post("/api/tables")
@@ -89,9 +92,9 @@ class TableRestControllerTest {
     @Test
     @DisplayName("주문 테이블의 빈 테이블 여부를 수정한다")
     void updateIsEmpty() throws Exception {
-        OrderTable request = modifyOrderTableEmptyRequest(true);
+        OrderTableStatusRequest request = modifyOrderTableEmptyRequest(true);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(tableService.changeEmpty(eq(7L), any(OrderTable.class)))
+        given(tableService.changeEmpty(eq(7L), any(OrderTableStatusRequest.class)))
                 .willReturn(createOrderTable(7L, request.isEmpty(), 3L, 2));
 
         mockMvc.perform(put("/api/tables/{id}/empty", 7L)
@@ -106,9 +109,9 @@ class TableRestControllerTest {
     @Test
     @DisplayName("주문 테이블의 손님 수를 수정한다")
     void updateNumberOfGuests() throws Exception {
-        OrderTable request = modifyOrderTableNumOfGuestRequest(4);
+        OrderTableNumOfGuestRequest request = modifyOrderTableNumOfGuestRequest(4);
         byte[] content = objectMapper.writeValueAsBytes(request);
-        given(tableService.changeNumberOfGuests(eq(7L), any(OrderTable.class)))
+        given(tableService.changeNumberOfGuests(eq(7L), any(OrderTableNumOfGuestRequest.class)))
                 .willReturn(createOrderTable(7L, false, 3L, request.getNumberOfGuests()));
 
         mockMvc.perform(put("/api/tables/{id}/number-of-guests", 7L)

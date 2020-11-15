@@ -6,6 +6,9 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.OrderTableNumOfGuestRequest;
+import kitchenpos.ui.dto.OrderTableStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -42,7 +45,7 @@ class TableServiceTest {
     @Nested
     @DisplayName("생성 메서드는")
     class CreateTable {
-        private OrderTable request;
+        private OrderTableCreateRequest request;
 
         private OrderTable subject() {
             return tableService.create(request);
@@ -111,7 +114,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 비어있음 여부 수정 메서드는")
     class ChangeEmptyOrderTable {
         private Long orderTableId;
-        private OrderTable request;
+        private OrderTableStatusRequest request;
 
         private OrderTable subject() {
             return tableService.changeEmpty(orderTableId, request);
@@ -202,7 +205,7 @@ class TableServiceTest {
     @DisplayName("주문 테이블 손님 수 수정 메서드는")
     class ChangeNumberOfGuestOrderTable {
         private Long orderTableId;
-        private OrderTable request;
+        private OrderTableNumOfGuestRequest request;
 
         private OrderTable subject() {
             return tableService.changeNumberOfGuests(orderTableId, request);
