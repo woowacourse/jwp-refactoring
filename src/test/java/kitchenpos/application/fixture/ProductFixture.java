@@ -1,6 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import java.math.BigDecimal;
+
+import kitchenpos.domain.Product;
 
 public class ProductFixture {
     public static Product createWithOutId(BigDecimal price) {

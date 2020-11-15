@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupFixture;
+import kitchenpos.application.fixture.MenuGroupFixture;
 
 class MenuGroupServiceTest extends AbstractServiceTest {
     private MenuGroupService menuGroupService;

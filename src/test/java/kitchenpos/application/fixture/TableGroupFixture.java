@@ -1,8 +1,11 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class TableGroupFixture {
 

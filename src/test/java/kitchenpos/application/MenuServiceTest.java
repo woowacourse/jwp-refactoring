@@ -21,12 +21,12 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuFixture;
+import kitchenpos.application.fixture.MenuFixture;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuGroupFixture;
+import kitchenpos.application.fixture.MenuGroupFixture;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductFixture;
+import kitchenpos.application.fixture.ProductFixture;
 
 class MenuServiceTest extends AbstractServiceTest {
     private MenuService menuService;

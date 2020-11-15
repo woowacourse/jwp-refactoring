@@ -1,6 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import java.time.LocalDateTime;
+
+import kitchenpos.domain.Order;
 
 public class OrderFixture {
 

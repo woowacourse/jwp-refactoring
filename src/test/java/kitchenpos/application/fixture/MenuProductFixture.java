@@ -1,7 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductFixture {
 

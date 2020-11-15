@@ -1,8 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
+
+import kitchenpos.domain.OrderTable;
 
 public class OrderTableFixture {
 

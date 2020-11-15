@@ -10,22 +10,19 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderFixture;
+import kitchenpos.application.fixture.OrderFixture;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableFixture;
+import kitchenpos.application.fixture.OrderTableFixture;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupFixture;
+import kitchenpos.application.fixture.TableGroupFixture;
 
 class TableGroupServiceTest extends AbstractServiceTest {
     private TableGroupService tableGroupService;

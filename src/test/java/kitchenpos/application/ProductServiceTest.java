@@ -7,16 +7,13 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductFixture;
+import kitchenpos.application.fixture.ProductFixture;
 
 class ProductServiceTest extends AbstractServiceTest {
     private ProductService productService;

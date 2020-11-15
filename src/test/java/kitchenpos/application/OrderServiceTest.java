@@ -14,9 +14,8 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.MenuFixture;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderFixture;
+import kitchenpos.application.fixture.OrderFixture;
 
 class OrderServiceTest extends AbstractServiceTest {
     private OrderService orderService;

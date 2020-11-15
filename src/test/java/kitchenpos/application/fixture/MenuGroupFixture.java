@@ -1,6 +1,8 @@
-package kitchenpos.domain;
+package kitchenpos.application.fixture;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixture {
 
