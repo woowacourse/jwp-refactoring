@@ -90,10 +90,7 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final OrderUpdateRequest request) {
         final Order order = orderDao.findById(orderId).orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-        final Order updatedOrder = order.withOrderStatus(request.getOrderStatus());
+        final Order updatedOrder = order.changeOrderStatus(request.getOrderStatus());
         orderDao.save(updatedOrder);
 
         for (OrderLineItem orderLineItem : orderLineItemDao.findAllByOrderId(orderId)) {
