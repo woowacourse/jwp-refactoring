@@ -113,9 +113,9 @@ class MenuServiceTest {
         ;
     }
 
-    @DisplayName("메뉴-상품의 Id가 존재하지 않을 경우 예외가 발생한다")
+    @DisplayName("상품이 존재하지 않을 경우 예외가 발생한다")
     @Test
-    void create_MenuProductIdNotExists_ExceptionThrown() {
+    void create_ProductNotExists_ExceptionThrown() {
         // Given
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("뼈있는치킨");
