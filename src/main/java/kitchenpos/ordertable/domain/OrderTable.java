@@ -39,6 +39,18 @@ public class OrderTable {
         }
     }
 
+    public void changeEmpty(boolean empty, boolean isCookingOrMeal) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
+        }
+
+        if (isCookingOrMeal) {
+            throw new IllegalArgumentException("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
+        }
+
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }

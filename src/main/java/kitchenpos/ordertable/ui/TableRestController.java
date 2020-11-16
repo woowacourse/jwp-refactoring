@@ -3,6 +3,7 @@ package kitchenpos.ordertable.ui;
 import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +42,11 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTable> changeEmpty(@PathVariable final Long orderTableId, @RequestBody final OrderTable orderTable) {
+    public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId, @RequestBody final OrderTableEmptyChangeRequest request) {
+        OrderTableResponse response = orderTableService.changeEmpty(orderTableId, request);
+
         return ResponseEntity.ok()
-                .body(orderTableService.changeEmpty(orderTableId, orderTable));
+                .body(response);
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")

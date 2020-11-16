@@ -6,6 +6,7 @@ import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
@@ -79,11 +80,11 @@ class OrderTableServiceTest {
     @CsvSource(value = {"true,false", "false,true"})
     void changeEmpty(boolean input, boolean result) {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, input));
-        OrderTable changedOrderTable = new OrderTable(0, result);
+        OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(result);
 
-        OrderTable emptyTable = orderTableService.changeEmpty(savedOrderTable.getId(), changedOrderTable);
+        OrderTableResponse response = orderTableService.changeEmpty(savedOrderTable.getId(), request);
 
-        assertThat(emptyTable.isEmpty()).isEqualTo(result);
+        assertThat(response.isEmpty()).isEqualTo(result);
     }
 
     @DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
@@ -98,9 +99,10 @@ class OrderTableServiceTest {
         orderTable.setTableGroup(savedTableGroup);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        OrderTable changedOrderTable = new OrderTable(0, isEmpty);
+        OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(isEmpty);
 
-        assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), changedOrderTable))
+
+        assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
     }
@@ -115,9 +117,10 @@ class OrderTableServiceTest {
         Order order = new Order(savedOrderTable, orderStatus);
         orderRepository.save(order);
 
-        OrderTable changedOrderTable = new OrderTable(0, isEmpty);
+        OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(isEmpty);
 
-        assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), changedOrderTable))
+
+        assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
     }
