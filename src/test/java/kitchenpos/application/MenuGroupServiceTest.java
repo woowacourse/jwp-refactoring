@@ -13,11 +13,12 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.inmemorydao.InMemoryMenuGroupDao;
 
 class MenuGroupServiceTest {
+    private MenuGroupDao menuGroupDao;
     private MenuGroupService menuGroupService;
 
     @BeforeEach
     void setUp() {
-        final MenuGroupDao menuGroupDao = new InMemoryMenuGroupDao();
+        this.menuGroupDao = new InMemoryMenuGroupDao();
         this.menuGroupService = new MenuGroupService(menuGroupDao);
     }
 
@@ -28,10 +29,10 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup = new MenuGroup();
 
         // When
-        final MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        final MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
 
         // Then
-        assertThat(createdMenuGroup)
+        assertThat(savedMenuGroup)
                 .extracting(MenuGroup::getId)
                 .isNotNull()
         ;

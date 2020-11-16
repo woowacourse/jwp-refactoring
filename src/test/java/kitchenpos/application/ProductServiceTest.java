@@ -14,11 +14,12 @@ import kitchenpos.domain.Product;
 import kitchenpos.inmemorydao.InMemoryProductDao;
 
 class ProductServiceTest {
+    private ProductDao productDao;
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        final ProductDao productDao = new InMemoryProductDao();
+        this.productDao = new InMemoryProductDao();
         this.productService = new ProductService(productDao);
     }
 
@@ -31,10 +32,10 @@ class ProductServiceTest {
         product.setPrice(BigDecimal.valueOf(18000L));
 
         // When
-        final Product createdProduct = productService.create(product);
+        final Product savedProduct = productService.create(product);
 
         // Then
-        assertThat(createdProduct)
+        assertThat(savedProduct)
                 .extracting(Product::getId)
                 .isNotNull()
         ;
