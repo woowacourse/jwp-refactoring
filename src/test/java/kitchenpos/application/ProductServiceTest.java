@@ -41,7 +41,7 @@ class ProductServiceTest {
         ;
     }
 
-    @DisplayName("금액이 null일 경우 예외가 발생한다")
+    @DisplayName("상품의 가격이 null일 경우 예외가 발생한다")
     @Test
     void create_PriceIsNull() {
         // Given
@@ -53,7 +53,7 @@ class ProductServiceTest {
         ;
     }
 
-    @DisplayName("금액이 음수일 경우 예외가 발생한다")
+    @DisplayName("상품의 가격이 음수일 경우 예외가 발생한다")
     @Test
     void create_PriceIsNegative() {
         // Given
