@@ -25,7 +25,7 @@ import org.springframework.test.context.jdbc.Sql;
 class OrderServiceTest {
 
     @Autowired
-    TableService tableService;
+    private TableService tableService;
 
     @Autowired
     private OrderService orderService;

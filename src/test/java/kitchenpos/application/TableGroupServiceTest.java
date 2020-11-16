@@ -25,16 +25,16 @@ import org.springframework.test.context.jdbc.Sql;
 class TableGroupServiceTest {
 
     @Autowired
-    TableGroupService tableGroupService;
+    private TableGroupService tableGroupService;
 
     @Autowired
-    TableService tableService;
+    private TableService tableService;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     @DisplayName("테이블 그룹을 생성한다.")
     @Test

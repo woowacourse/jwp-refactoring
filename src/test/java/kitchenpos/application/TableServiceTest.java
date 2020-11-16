@@ -24,10 +24,10 @@ import org.springframework.test.context.jdbc.Sql;
 class TableServiceTest {
 
     @Autowired
-    TableService tableService;
+    private TableService tableService;
 
     @Autowired
-    TableGroupService tableGroupService;
+    private TableGroupService tableGroupService;
 
     @Autowired
     private OrderService orderService;

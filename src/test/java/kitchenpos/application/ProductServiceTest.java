@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 class ProductServiceTest {
 
     @Autowired
-    ProductService productService;
+    private ProductService productService;
 
     @DisplayName("새로운 상품을 생성한다.")
     @Test
