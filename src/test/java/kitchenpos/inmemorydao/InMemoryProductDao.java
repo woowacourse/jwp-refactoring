@@ -37,7 +37,7 @@ public class InMemoryProductDao implements ProductDao {
 
     @Override
     public Optional<Product> findById(final Long id) {
-        return Optional.of(products.get(id));
+        return Optional.ofNullable(products.get(id));
     }
 
     @Override

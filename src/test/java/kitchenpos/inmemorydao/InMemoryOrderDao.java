@@ -39,7 +39,7 @@ public class InMemoryOrderDao implements OrderDao {
 
     @Override
     public Optional<Order> findById(final Long id) {
-        return Optional.of(orders.get(id));
+        return Optional.ofNullable(orders.get(id));
     }
 
     @Override

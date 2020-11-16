@@ -39,7 +39,7 @@ public class InMemoryMenuProductDao implements MenuProductDao {
 
     @Override
     public Optional<MenuProduct> findById(final Long id) {
-        return Optional.of(menuProducts.get(id));
+        return Optional.ofNullable(menuProducts.get(id));
     }
 
     @Override

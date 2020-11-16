@@ -36,7 +36,7 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
 
     @Override
     public Optional<MenuGroup> findById(final Long id) {
-        return Optional.of(menuGroups.get(id));
+        return Optional.ofNullable(menuGroups.get(id));
     }
 
     @Override

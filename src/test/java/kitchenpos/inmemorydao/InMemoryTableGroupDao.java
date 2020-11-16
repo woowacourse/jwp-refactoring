@@ -37,7 +37,7 @@ public class InMemoryTableGroupDao implements TableGroupDao {
 
     @Override
     public Optional<TableGroup> findById(final Long id) {
-        return Optional.of(tableGroups.get(id));
+        return Optional.ofNullable(tableGroups.get(id));
     }
 
     @Override
