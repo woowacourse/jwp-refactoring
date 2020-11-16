@@ -43,7 +43,7 @@ class ProductServiceTest {
 
     @DisplayName("상품의 가격이 null일 경우 예외가 발생한다")
     @Test
-    void create_PriceIsNull() {
+    void create_PriceIsNull_ExceptionThrown() {
         // Given
         final Product product = new Product();
 
@@ -55,7 +55,7 @@ class ProductServiceTest {
 
     @DisplayName("상품의 가격이 음수일 경우 예외가 발생한다")
     @Test
-    void create_PriceIsNegative() {
+    void create_PriceIsNegative_ExceptionThrown() {
         // Given
         final Product product = new Product();
         product.setPrice(BigDecimal.valueOf(-1000L));

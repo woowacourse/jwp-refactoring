@@ -74,7 +74,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴의 가격이 null일 경우 예외가 발생한다")
     @Test
-    void create_PriceIsNull() {
+    void create_PriceIsNull_ExceptionThrown() {
         // Given
         final Menu menu = new Menu();
         menu.setName("파닭치킨");
@@ -87,7 +87,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴의 가격이 음수일 경우 예외가 발생한다")
     @Test
-    void create_PriceIsNegative() {
+    void create_PriceIsNegative_ExceptionThrown() {
         // Given
         final Menu menu = new Menu();
         menu.setName("파닭치킨");
@@ -101,7 +101,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴 그룹의 Id가 null일 경우 예외가 발생한다")
     @Test
-    void create_MenuGroupIdIsNull() {
+    void create_MenuGroupIdIsNull_ExceptionThrown() {
         // Given
         final Menu menu = new Menu();
         menu.setName("파닭치킨");
@@ -115,7 +115,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴-상품의 Id가 존재하지 않을 경우 예외가 발생한다")
     @Test
-    void create_MenuProductIdNotExists() {
+    void create_MenuProductIdNotExists_ExceptionThrown() {
         // Given
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("뼈있는치킨");
@@ -139,7 +139,7 @@ class MenuServiceTest {
 
     @DisplayName("메뉴의 가격이 상품 가격의 합보다 클 경우 예외가 발생한다")
     @Test
-    void create_PriceIsHigherThanSumOfProductPrice() {
+    void create_PriceIsHigherThanSumOfProductPrice_ExceptionThrown() {
         // Given
         final MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("뼈있는치킨");
