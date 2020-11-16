@@ -63,16 +63,22 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public Long getId() {
-        return id;
+    public void groupBy(TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup)) {
+            throw new IllegalArgumentException("존재하지 않는 TableGroup입니다.");
+        }
+
+        this.tableGroup = tableGroup;
+        this.empty = false;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public boolean hasTableGroup() {
+        return Objects.nonNull(this.tableGroup);
     }
 
     public Long getIdOfTableGroup() {
@@ -82,8 +88,8 @@ public class OrderTable {
         return this.tableGroup.getId();
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public Long getId() {
+        return id;
     }
 
     public int getNumberOfGuests() {
@@ -94,7 +100,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
+    public boolean isNotEmpty() {
+        return !isEmpty();
     }
 }

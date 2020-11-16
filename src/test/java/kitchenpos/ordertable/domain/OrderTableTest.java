@@ -49,7 +49,7 @@ class OrderTableTest {
     void changeEmptyException1(boolean empty) {
         OrderTable orderTable = new OrderTable(1, false);
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-        orderTable.setTableGroup(tableGroup);
+        orderTable.groupBy(tableGroup);
 
         assertThatThrownBy(() -> orderTable.changeEmpty(empty, false))
                 .isInstanceOf(IllegalArgumentException.class)

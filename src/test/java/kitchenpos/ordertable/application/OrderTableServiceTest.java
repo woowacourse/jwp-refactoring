@@ -97,7 +97,7 @@ class OrderTableServiceTest {
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        orderTable.setTableGroup(savedTableGroup);
+        orderTable.groupBy(savedTableGroup);
 
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(isEmpty);

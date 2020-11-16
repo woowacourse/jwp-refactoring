@@ -5,6 +5,7 @@ import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.dto.TableGroupResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -44,10 +45,10 @@ class TableGroupServiceTest {
         OrderTable table2 = orderTableRepository.save(new OrderTable(0, true));
 
         //when
-        TableGroup tableGroup = tableGroupService.create(new TableGroupCreateRequest(Arrays.asList(table1.getId(), table2.getId())));
+        TableGroupResponse response = tableGroupService.create(new TableGroupCreateRequest(Arrays.asList(table1.getId(), table2.getId())));
 
         //then
-        List<OrderTable> findOrderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
+        List<OrderTable> findOrderTables = orderTableRepository.findAllByTableGroupId(response.getId());
         assertThat(findOrderTables).hasSize(2);
     }
 
@@ -64,7 +65,10 @@ class TableGroupServiceTest {
     @DisplayName("존재하지 않는 테이블을 단체로 지정할 수 없다.")
     @Test
     void createException2() {
-        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(Arrays.asList(-1L, -2L))))
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
+
+        assertThatThrownBy(() -> tableGroupService.create(new TableGroupCreateRequest(Arrays.asList(-1L, orderTable1.getId(), orderTable2.getId()))))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("존재하지 않는 테이블을 단체로 지정할 수 없습니다.");
     }
@@ -76,7 +80,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         OrderTable table1 = orderTableRepository.save(new OrderTable(0, true));
         OrderTable table2 = orderTableRepository.save(new OrderTable(0, true));
-        table1.setTableGroup(tableGroup);
+        table1.groupBy(tableGroup);
 
         orderTableRepository.save(table1);
 
@@ -93,8 +97,8 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         OrderTable orderTable1 = new OrderTable(0, true);
         OrderTable orderTable2 = new OrderTable(0, true);
-        orderTable1.setTableGroup(tableGroup);
-        orderTable2.setTableGroup(tableGroup);
+        orderTable1.groupBy(tableGroup);
+        orderTable2.groupBy(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
 
         //when
@@ -112,8 +116,8 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         OrderTable orderTable1 = new OrderTable(0, true);
         OrderTable orderTable2 = new OrderTable(0, true);
-        orderTable1.setTableGroup(tableGroup);
-        orderTable2.setTableGroup(tableGroup);
+        orderTable1.groupBy(tableGroup);
+        orderTable2.groupBy(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
 
         orderRepository.save(new Order(orderTable1));
