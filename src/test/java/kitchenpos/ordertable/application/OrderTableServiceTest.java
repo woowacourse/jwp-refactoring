@@ -7,6 +7,7 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
+import kitchenpos.ordertable.dto.OrderTableGuestsChangeRequest;
 import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
@@ -129,33 +130,34 @@ class OrderTableServiceTest {
     @Test
     void changeNumberOfGuests() {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        OrderTable tenGuestOrderTable = orderTableRepository.save(new OrderTable(10, false));
+        OrderTableGuestsChangeRequest request = new OrderTableGuestsChangeRequest(10);
 
-        OrderTable changedOrderTable = orderTableService.changeNumberOfGuests(savedOrderTable.getId(), tenGuestOrderTable);
+        OrderTableResponse response = orderTableService.changeNumberOfGuests(savedOrderTable.getId(), request);
 
-        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(tenGuestOrderTable.getNumberOfGuests());
+        assertThat(response.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
     }
 
     @DisplayName("방문한 손님 수가 0명 미만이면 입력할 수 없다.")
     @Test
     void changeNumberOfGuestsException1() {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        OrderTable wrongOrderTable = orderTableRepository.save(new OrderTable(-1, true));
+        OrderTableGuestsChangeRequest request = new OrderTableGuestsChangeRequest(-1);
 
-        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(savedOrderTable.getId(), wrongOrderTable))
+
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("%d명 : 방문한 손님 수가 0명 미만이면 입력할 수 없습니다.", wrongOrderTable.getNumberOfGuests());
+                .hasMessage("%d명 : 방문한 손님 수가 0명 미만이면 입력할 수 없습니다.", request.getNumberOfGuests());
     }
 
-    @DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+    @DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없습니다.")
     @Test
     void changeNumberOfGuestsException2() {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, true));
-        OrderTable wrongOrderTable = orderTableRepository.save(new OrderTable(5, false));
+        OrderTableGuestsChangeRequest request = new OrderTableGuestsChangeRequest(5);
 
-        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(savedOrderTable.getId(), wrongOrderTable))
+        assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블은 방문한 손님 수를 입력할 수 없다.");
+                .hasMessage("빈 테이블은 방문한 손님 수를 입력할 수 없습니다.");
     }
 
     @AfterEach

@@ -32,7 +32,7 @@ class OrderTableTest {
                 .hasMessage(numberOfGuests + "명 : 1명 이상의 손님과 함께 빈 테이블로 등록할 수 없습니다.");
     }
 
-    @DisplayName("단체 지정된 주문 테이블은 빈 테이블 설정 또는 해지할 수 없다.")
+    @DisplayName("주문 테이블의 empty 여부를 변경한다.")
     @ParameterizedTest
     @CsvSource(value = {"true, false", "false, true"})
     void changeEmpty(boolean empty, boolean expect) {
@@ -65,5 +65,35 @@ class OrderTableTest {
         assertThatThrownBy(() -> orderTable.changeEmpty(empty, true))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블 설정 또는 해지할 수 없습니다.");
+    }
+
+    @DisplayName("주문 테이블의 손님 수를 변경한다.")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable orderTable = new OrderTable(1, false);
+
+        orderTable.changeNumberOfGuests(10);
+
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
+    }
+
+    @DisplayName("방문한 손님 수가 0명 미만이면 입력할 수 없다.")
+    @Test
+    void changeNumberOfGuestsException1() {
+        OrderTable orderTable = new OrderTable(1, false);
+
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("방문한 손님 수가 0명 미만이면 입력할 수 없습니다.");
+    }
+
+    @DisplayName("빈 테이블은 방문한 손님 수를 입력할 수 없다.")
+    @Test
+    void changeNumberOfGuestsException2() {
+        OrderTable orderTable = new OrderTable(0, true);
+
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(1))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("빈 테이블은 방문한 손님 수를 입력할 수 없습니다.");
     }
 }

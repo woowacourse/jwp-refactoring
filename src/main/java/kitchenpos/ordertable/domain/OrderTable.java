@@ -51,6 +51,18 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException(String.format("%d명 : 방문한 손님 수가 0명 미만이면 입력할 수 없습니다.", numberOfGuests));
+        }
+
+        if (this.empty) {
+            throw new IllegalArgumentException("빈 테이블은 방문한 손님 수를 입력할 수 없습니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
@@ -76,10 +88,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
