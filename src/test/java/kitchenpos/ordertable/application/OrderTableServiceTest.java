@@ -6,6 +6,7 @@ import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -42,12 +43,12 @@ class OrderTableServiceTest {
     void create() {
         OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
 
-        OrderTable savedOrderTable = orderTableService.create(request);
+        OrderTableResponse response = orderTableService.create(request);
 
-        OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId())
+        OrderTable findOrderTable = orderTableRepository.findById(response.getId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        assertThat(findOrderTable).usingRecursiveComparison().isEqualTo(savedOrderTable);
+        assertThat(findOrderTable.getId()).isEqualTo(response.getId());
     }
 
     @DisplayName("1명 이상의 손님과 함께 빈 테이블로 등록할 수 없다.")
@@ -68,7 +69,7 @@ class OrderTableServiceTest {
         orderTableRepository.save(new OrderTable(0, true));
         orderTableRepository.save(new OrderTable(0, true));
 
-        List<OrderTable> orderTables = orderTableService.list();
+        List<OrderTableResponse> orderTables = orderTableService.list();
 
         assertThat(orderTables).hasSize(3);
     }

@@ -3,6 +3,7 @@ package kitchenpos.ordertable.ui;
 import kitchenpos.ordertable.application.OrderTableService;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,18 +24,20 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest request) {
-        final OrderTable created = orderTableService.create(request);
-        final URI uri = URI.create("/api/tables/" + created.getId());
+    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest request) {
+        OrderTableResponse response = orderTableService.create(request);
+        URI uri = URI.create("/api/tables/" + response.getId());
 
         return ResponseEntity.created(uri)
-                .body(created);
+                .body(response);
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTable>> list() {
+    public ResponseEntity<List<OrderTableResponse>> list() {
+        List<OrderTableResponse> response = orderTableService.list();
+
         return ResponseEntity.ok()
-                .body(orderTableService.list());
+                .body(response);
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")

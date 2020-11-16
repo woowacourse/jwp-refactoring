@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -48,6 +49,13 @@ public class OrderTable {
 
     public TableGroup getTableGroup() {
         return tableGroup;
+    }
+
+    public Long getIdOfTableGroup() {
+        if (Objects.isNull(this.tableGroup)) {
+            return null;
+        }
+        return this.tableGroup.getId();
     }
 
     public void setTableGroup(TableGroup tableGroup) {
