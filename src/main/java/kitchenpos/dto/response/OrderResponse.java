@@ -17,7 +17,7 @@ public class OrderResponse {
     }
 
     public static OrderResponse of(Order order) {
-        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus());
+        return new OrderResponse(order.getId(), order.getOrderTableId(), order.getOrderStatus().name());
     }
 
     public static List<OrderResponse> listOf(List<Order> orders) {

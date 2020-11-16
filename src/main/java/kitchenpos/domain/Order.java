@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,18 +22,23 @@ public class Order extends BaseEntity {
 
     private Long orderTableId;
 
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     public Order() {
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
     }
 
-    public static Order of(Long orderTableId, String orderStatus) {
+    public static Order of(Long id, Long orderTableId, String orderStatus) {
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus));
+    }
+
+    public static Order of(Long orderTableId, OrderStatus orderStatus) {
         return new Order(null, orderTableId, orderStatus);
     }
 
@@ -43,14 +50,14 @@ public class Order extends BaseEntity {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
     public void changeOrderStatus(String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new AlreadyCompleteOrderException(this.id);
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus.toUpperCase());
     }
 }

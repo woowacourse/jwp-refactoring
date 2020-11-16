@@ -19,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
@@ -79,12 +81,14 @@ class OrderRestControllerTest {
         OrderResponse response = OrderResponse.of(
             OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
                 TableFixture.ID1));
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(response);
+        OrderChangeStatusRequest request = OrderFixture.changeStatusRequest(
+            OrderStatus.COOKING);
+        when(orderService.changeOrderStatus(anyLong(), any(OrderChangeStatusRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(order))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isOk())

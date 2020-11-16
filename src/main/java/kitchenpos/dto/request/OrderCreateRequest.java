@@ -18,7 +18,7 @@ public class OrderCreateRequest {
     }
 
     public Order toEntity() {
-        return Order.of(orderTableId, OrderStatus.COOKING.name());
+        return Order.of(orderTableId, OrderStatus.COOKING);
     }
 
     public Long getOrderTableId() {

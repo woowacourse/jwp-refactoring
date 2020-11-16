@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.AlreadyCompleteOrderException;
@@ -69,7 +71,7 @@ class OrderServiceTest {
         when(orderRepository.save(any(Order.class))).thenReturn(orderWithId);
 
         OrderResponse response = orderService.create(request);
-        assertThat(response).isEqualToComparingFieldByField(orderWithId);
+        assertThat(response).isEqualToComparingFieldByField(OrderResponse.of(orderWithId));
     }
 
     @DisplayName("OrderItem을 포함하지 않으면 Order 생성 요청 시 예외를 반환한다")
@@ -131,33 +133,33 @@ class OrderServiceTest {
 
         assertThat(orderService.list())
             .usingRecursiveComparison()
-            .isEqualTo(Arrays.asList(order1, order2));
+            .isEqualTo(OrderResponse.listOf(Arrays.asList(order1, order2)));
     }
 
     @DisplayName("정상적으로 저장된 Order의 Status를 수정한다.")
     @Test
     void changeOrderStatus() {
         Order mealOrder = OrderFixture.createWithId(1L, OrderFixture.MEAL_STATUS, 1L);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
+
         when(orderRepository.findById(mealOrder.getId())).thenReturn(Optional.of(mealOrder));
 
-        Order cookingOrder = OrderFixture.createWithId(1L, OrderFixture.COOKING_STATUS, 1L);
-
-        assertThat(orderService.changeOrderStatus(mealOrder.getId(), cookingOrder))
+        assertThat(orderService.changeOrderStatus(mealOrder.getId(), request))
             .extracting(OrderResponse::getOrderStatus)
-            .isEqualTo(cookingOrder.getOrderStatus());
+            .isEqualTo(request.getOrderStatus());
     }
 
     @DisplayName("이미 완료된 Order의 Status를 수정 요청 시 예외를 반환한다")
     @Test
     void changeCompletionOrderStatus() {
         Order completeOrder = OrderFixture.createWithId(1L, OrderFixture.COMPLETION, 1L);
-        Order cookingOrder = OrderFixture.createWithId(1L, OrderFixture.COOKING_STATUS, 1L);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
         when(orderRepository.findById(completeOrder.getId())).thenReturn(
             Optional.of(completeOrder));
 
         assertThatThrownBy(
-            () -> orderService.changeOrderStatus(completeOrder.getId(), cookingOrder))
+            () -> orderService.changeOrderStatus(completeOrder.getId(), request))
             .isInstanceOf(AlreadyCompleteOrderException.class);
     }
 }
