@@ -36,9 +36,11 @@ class CreateMenuVerifierTest {
     Stream<DynamicTest> toMenu() {
         return Stream.of(
                 dynamicTest("유효성 통과.", this::validateSuccess),
-                dynamicTest("메뉴 상품이 존재해야 한다.", this::noMenuGroup),
-                dynamicTest("상품이 존재해야 한다.", this::noProduct),
-                dynamicTest("메뉴의 가격은 상품의 가격의 총 합보다 작아야 한다.", this::bigMenuPrice)
+                dynamicTest("요청한 메뉴의 메뉴 그룹이 존재하지 않을때 IllegalArgumentException 발생",
+                        this::noMenuGroup),
+                dynamicTest("상품이 존재하지 않을때 IllegalArgumentException 발생", this::noProduct),
+                dynamicTest("메뉴의 가격이 상품의 가격의 총 합보다 클때 IllegalArgumentException 발생",
+                        this::bigMenuPrice)
         );
     }
 

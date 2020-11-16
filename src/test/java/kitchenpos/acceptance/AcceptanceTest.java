@@ -21,7 +21,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderTableResponse;
 
@@ -83,21 +82,16 @@ public class AcceptanceTest {
     }
 
     protected <T> T put(Class<T> clazz, String request, String uri) throws Exception {
-        try {
-            String response = mockMvc.perform(MockMvcRequestBuilders.put(uri)
-                    .content(request)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
+        String response = mockMvc.perform(MockMvcRequestBuilders.put(uri)
+                .content(request)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
 
-            return objectMapper.readValue(response, clazz);
-        } catch (MismatchedInputException e) {
-            // TODO: 2020/11/05 put 제거
-            return null;
-        }
+        return objectMapper.readValue(response, clazz);
     }
 
     protected void delete(String uri, Long id) throws Exception {
@@ -105,9 +99,11 @@ public class AcceptanceTest {
                 .andExpect(status().isNoContent());
     }
 
-    protected OrderTableResponse changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
+    protected OrderTableResponse changeOrderTableEmpty(boolean empty, Long orderTableId) throws
+            Exception {
         ChangeOrderTableEmptyCommand request = new ChangeOrderTableEmptyCommand(empty);
 
-        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request), API_TABLES + "/" + orderTableId + "/empty");
+        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request),
+                API_TABLES + "/" + orderTableId + "/empty");
     }
 }

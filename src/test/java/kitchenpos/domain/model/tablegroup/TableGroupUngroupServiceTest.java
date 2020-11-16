@@ -38,7 +38,8 @@ class TableGroupUngroupServiceTest {
     Stream<DynamicTest> ungroup() {
         return Stream.of(
                 dynamicTest("단체 지정을 해제한다.", this::ungroupSuccess),
-                dynamicTest("테이블에 모든 주문은 완료 상태이어야 한다.", this::invalidOrderStatus)
+                dynamicTest("테이블에 모든 주문이 완료 상태가 아닐때 IllegalArgumentException 발생",
+                        this::invalidOrderStatus)
         );
     }
 

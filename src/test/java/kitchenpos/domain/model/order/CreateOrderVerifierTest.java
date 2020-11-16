@@ -37,9 +37,10 @@ class CreateOrderVerifierTest {
     Stream<DynamicTest> create() {
         return Stream.of(
                 dynamicTest("주문을 생성한다.", this::createSuccess),
-                dynamicTest("주문 항목은 하나의 메뉴를 가진다.", this::orderLineItemsAndMenuMismatch),
-                dynamicTest("테이블이 존재해야 한다.", this::noOrderTable),
-                dynamicTest("테이블은 빈 테이블 일 수 없다.", this::emptyOrderTable)
+                dynamicTest("주문 항목과 메뉴의 크기가 같지 않을때 IllegalArgumentException 발생",
+                        this::orderLineItemsAndMenuMismatch),
+                dynamicTest("요청한 테이블이 존재하지 않을때 IllegalArgumentException 발생", this::noOrderTable),
+                dynamicTest("요청한 테이블이 빈 테이블일때 IllegalArgumentException 발생", this::emptyOrderTable)
         );
     }
 

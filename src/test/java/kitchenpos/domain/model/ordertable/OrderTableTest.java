@@ -44,7 +44,7 @@ class OrderTableTest {
 
                     assertThat(orderTable1.getNumberOfGuests()).isEqualTo(numberOfGuests + 1);
                 }),
-                dynamicTest("빈 테이블은 손님 수를 변경할 수 없다.", () -> {
+                dynamicTest("빈 테이블에 손님 수 변경을 요청할때 IllegalArgumentException 발생", () -> {
                     assertThatIllegalArgumentException()
                             .isThrownBy(() -> orderTable2.changeNumberOfGuests(
                                     orderTable2.getNumberOfGuests() + 1));

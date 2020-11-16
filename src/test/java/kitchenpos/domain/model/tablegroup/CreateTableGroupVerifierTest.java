@@ -34,9 +34,11 @@ class CreateTableGroupVerifierTest {
     Stream<DynamicTest> create() {
         return Stream.of(
                 dynamicTest("단체 지정을 생성한다.", this::createSuccess),
-                dynamicTest("요청한 테이블들이 하나씩 존재해야 한다.", this::orderTableMismatch),
-                dynamicTest("테이블에 손님이 없어야 한다.", this::orderTableNotEmpty),
-                dynamicTest("단체 지정이 되어있지 않아야 한다.", this::orderTableHasTableGroup)
+                dynamicTest("요청한 테이블들이 하나씩 존재하지 않을때 IllegalArgumentException 발생",
+                        this::orderTableMismatch),
+                dynamicTest("테이블에 손님이 있을때 IllegalArgumentException 발생", this::orderTableNotEmpty),
+                dynamicTest("단체 지정이 되어있을때 IllegalArgumentException 발생",
+                        this::orderTableHasTableGroup)
         );
     }
 

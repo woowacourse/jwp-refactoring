@@ -32,7 +32,8 @@ class OrderTest {
     Stream<DynamicTest> changeOrderStatus() {
         return Stream.of(
                 dynamicTest("주문 상태를 변경한다.", this::changeOrderStatusSuccess),
-                dynamicTest("주문의 상태가 완료일 수 없다.", this::invalidOrder)
+                dynamicTest("변경하려는 주문 상태와 현재 상태가 같을때 IllegalArgumentException 발생",
+                        this::invalidOrder)
         );
     }
 

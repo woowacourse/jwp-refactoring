@@ -69,7 +69,7 @@ class OrderServiceTest extends ApplicationServiceTest {
     Stream<DynamicTest> changeOrderStatus() {
         return Stream.of(
                 dynamicTest("주문 상태 변경 성공.", this::changeOrderStatusSuccess),
-                dynamicTest("주문이 존재해야 한다.", this::noOrder)
+                dynamicTest("주문이 존재 하지 않을때 IllegalArgumentException 발생", this::noOrder)
         );
     }
 

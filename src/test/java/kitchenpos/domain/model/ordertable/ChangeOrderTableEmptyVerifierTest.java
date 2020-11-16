@@ -45,8 +45,10 @@ class ChangeOrderTableEmptyVerifierTest {
     Stream<DynamicTest> toOrderTable() {
         return Stream.of(
                 dynamicTest("테이블 주문 여부를 변경한다.", this::changeEmptySuccess),
-                dynamicTest("단체 지정은 존재하지 않아야한다.", this::orderTableHasTableGroupId),
-                dynamicTest("테이블에 모든 주문은 완료 상태이어야 한다.", this::invalidOrderStatus)
+                dynamicTest("단체 지정이 존재할때 IllegalArgumentException 발생",
+                        this::orderTableHasTableGroupId),
+                dynamicTest("테이블에 모든 주문이 완료 상태가 아닐때 IllegalArgumentException 발생",
+                        this::invalidOrderStatus)
         );
     }
 
