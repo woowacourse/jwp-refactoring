@@ -1,32 +1,24 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 
 public class OrderFixture {
 
-    public static Order createOrder(Long id, String orderStatus, Long tableId, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderStatus(orderStatus);
-        order.setOrderTableId(tableId);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(orderLineItems);
-        return order;
+    public static Order createOrder(Long id, OrderTable orderTable, OrderStatus orderStatus) {
+        return new Order(id, orderTable, orderStatus, LocalDateTime.now());
     }
 
+    public static Order createOrderWithoutId(OrderTable orderTable, OrderStatus orderStatus) {
+        return createOrder(null, orderTable, orderStatus);
+    }
+
+    /*
     public static Order createOrderWithId(Long id) {
-        Order order = new Order();
-        order.setId(id);
-        return order;
-    }
-
-    public static Order createOrderWithoutId(Long tableId, OrderLineItem orderLineItem) {
-        return createOrder(null, null, tableId, Arrays.asList(orderLineItem));
+        return createOrder(id, );
     }
 
     public static Order createOrderWithoutId(Long tableId, String orderStatus, OrderLineItem orderLineItem) {
@@ -44,4 +36,6 @@ public class OrderFixture {
     public static Order createOrderEmptyOrderLineItem() {
         return createOrder(null, null, null, null);
     }
+
+     */
 }

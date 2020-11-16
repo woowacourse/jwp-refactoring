@@ -1,17 +1,18 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableFixture {
 
-    public static OrderTable createOrderTable(Long id, int numberOfGuests, Long tableGroupId, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setEmpty(empty);
-        return orderTable;
+    public static OrderTable createOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return new OrderTable(id, tableGroup, numberOfGuests, empty);
     }
+
+    public static OrderTable createOrderTableWithoutId() {
+        return createOrderTable(null, null, 1, true);
+    }
+    /*
 
     public static OrderTable createOrderTableWithEmpty(boolean empty) {
         return createOrderTable(null, 2, null, empty);
@@ -32,4 +33,6 @@ public class OrderTableFixture {
     public static OrderTable createOrderTableWithId(Long id) {
         return createOrderTable(id, 2, null, true);
     }
+
+     */
 }
