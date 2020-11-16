@@ -1,10 +1,15 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.product.domain.Product;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class MenuProduct {
@@ -12,51 +17,56 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
+    private Long quantity;
+
     @ManyToOne
     private Menu menu;
 
-    private Long productId;
-
-    private Long quantity;
+    @OneToOne
+    private Product product;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Long productId, Long quantity) {
-        this.menu = menu;
-        this.productId = productId;
+    public MenuProduct(Menu menu, Product product, Long quantity) {
+        this(product, quantity);
+        placeMenu(menu);
+    }
+
+    public MenuProduct(Product product, Long quantity) {
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public BigDecimal calculateSum() {
+        return product.calculatePrice(quantity);
+    }
+
+    public void placeMenu(Menu menu) {
+        if (Objects.isNull(menu)) {
+            throw new IllegalArgumentException("등록할 메뉴가 없습니다.");
+        }
+        this.menu = menu;
     }
 
     public Long getSeq() {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
-    }
-
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
+    public Product getProduct() {
+        return product;
     }
 
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public Long getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final Long quantity) {
-        this.quantity = quantity;
-    }
 }

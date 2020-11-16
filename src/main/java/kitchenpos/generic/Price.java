@@ -9,16 +9,8 @@ public class Price {
         this.price = price;
     }
 
-    public Price(Long price) {
-        this(BigDecimal.valueOf(price));
-    }
-
-    public static Price ofZero() {
-        return new Price(0L);
-    }
-
-    public Price add(BigDecimal price) {
-        return new Price(this.price.add(price));
+    public boolean isLessThan(Long price) {
+        return this.price.compareTo(BigDecimal.valueOf(price)) < 0;
     }
 
     public boolean isLessThan(BigDecimal price) {

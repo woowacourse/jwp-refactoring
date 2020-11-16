@@ -28,6 +28,11 @@ public class Product {
         validate();
     }
 
+    Product(Long id, String name, Long price) {
+        this(name, price);
+        this.id = id;
+    }
+
     private void validate() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
@@ -49,10 +54,6 @@ public class Product {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -63,9 +64,5 @@ public class Product {
 
     public BigDecimal getPrice() {
         return price;
-    }
-
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
     }
 }

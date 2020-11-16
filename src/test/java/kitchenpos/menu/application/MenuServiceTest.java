@@ -1,7 +1,6 @@
 package kitchenpos.menu.application;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
 import kitchenpos.menu.repository.MenuProductRepository;
@@ -17,10 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -42,10 +39,6 @@ class MenuServiceTest {
 
     @Autowired
     private ProductRepository productRepository;
-
-    private static Stream<List<MenuProduct>> noMenuProducts() {
-        return Stream.of(null, new ArrayList<>());
-    }
 
     @DisplayName("메뉴를 등록한다.")
     @Test
