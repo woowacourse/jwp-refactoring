@@ -14,8 +14,8 @@ public class InMemoryOrderDao implements OrderDao {
     private long index;
 
     public InMemoryOrderDao() {
-        orders = new HashMap<>();
-        index = 0;
+        this.orders = new HashMap<>();
+        this.index = 0;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class InMemoryOrderDao implements OrderDao {
         order.setOrderedTime(entity.getOrderedTime());
         order.setOrderLineItems(entity.getOrderLineItems());
 
-        orders.put(order.getId(), order);
+        orders.put(key, order);
         return order;
     }
 

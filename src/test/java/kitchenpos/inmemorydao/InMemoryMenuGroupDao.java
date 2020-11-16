@@ -14,8 +14,8 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
     private long index;
 
     public InMemoryMenuGroupDao() {
-        menuGroups = new HashMap<>();
-        index = 0;
+        this.menuGroups = new HashMap<>();
+        this.index = 0;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class InMemoryMenuGroupDao implements MenuGroupDao {
         menuGroup.setId(key);
         menuGroup.setName(entity.getName());
 
-        menuGroups.put(menuGroup.getId(), menuGroup);
+        menuGroups.put(key, menuGroup);
         return menuGroup;
     }
 

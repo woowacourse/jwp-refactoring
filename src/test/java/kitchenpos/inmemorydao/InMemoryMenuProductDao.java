@@ -15,8 +15,8 @@ public class InMemoryMenuProductDao implements MenuProductDao {
     private long index;
 
     public InMemoryMenuProductDao() {
-        menuProducts = new HashMap<>();
-        index = 0;
+        this.menuProducts = new HashMap<>();
+        this.index = 0;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class InMemoryMenuProductDao implements MenuProductDao {
         menuProduct.setProductId(entity.getProductId());
         menuProduct.setQuantity(entity.getQuantity());
 
-        menuProducts.put(menuProduct.getSeq(), menuProduct);
+        menuProducts.put(seq, menuProduct);
         return menuProduct;
     }
 

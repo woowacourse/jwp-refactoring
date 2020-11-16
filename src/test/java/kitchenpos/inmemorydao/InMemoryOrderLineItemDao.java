@@ -15,8 +15,8 @@ public class InMemoryOrderLineItemDao implements OrderLineItemDao {
     private long index;
 
     public InMemoryOrderLineItemDao() {
-        orderLineItems = new HashMap<>();
-        index = 0;
+        this.orderLineItems = new HashMap<>();
+        this.index = 0;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class InMemoryOrderLineItemDao implements OrderLineItemDao {
         orderLineItem.setMenuId(entity.getMenuId());
         orderLineItem.setQuantity(entity.getQuantity());
 
-        orderLineItems.put(orderLineItem.getSeq(), orderLineItem);
+        orderLineItems.put(seq, orderLineItem);
         return orderLineItem;
     }
 

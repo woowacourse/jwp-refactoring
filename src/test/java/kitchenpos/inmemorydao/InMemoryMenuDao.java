@@ -34,7 +34,7 @@ public class InMemoryMenuDao implements MenuDao {
         menu.setMenuGroupId(entity.getMenuGroupId());
         menu.setMenuProducts(entity.getMenuProducts());
 
-        menus.put(menu.getId(), menu);
+        menus.put(key, menu);
         return menu;
     }
 
