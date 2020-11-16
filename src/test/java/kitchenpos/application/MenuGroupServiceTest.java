@@ -32,7 +32,6 @@ class MenuGroupServiceTest {
             assertThat(savedMenuGroup.getName()).isNotNull();
             assertThat(savedMenuGroup.getName()).isEqualTo("세마리메뉴");
         });
-
     }
 
     @DisplayName("메뉴 그룹 리스트를 조회한다.")
