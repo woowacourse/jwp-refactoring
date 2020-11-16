@@ -3,18 +3,18 @@ package kitchenpos.ordertable.application;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTables;
 import kitchenpos.ordertable.domain.TableGroup;
 import kitchenpos.ordertable.dto.TableGroupCreateRequest;
+import kitchenpos.ordertable.dto.TableGroupResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,32 +30,17 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupCreateRequest request) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(request.getOrderTableIds());
+    public TableGroupResponse create(final TableGroupCreateRequest request) {
+        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByIdIn(request.getOrderTableIds()));
 
-        if (orderTables.size() != request.getOrderTableIds().size()) {
+        if (!orderTables.isNotSameSizeWith(request.getOrderTableIds().size())) {
             throw new IllegalArgumentException("존재하지 않는 테이블을 단체로 지정할 수 없습니다.");
         }
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException("테이블을 2개 이상 입력해주세요.");
-        }
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        orderTables.groupBy(tableGroup);
 
-        for (final OrderTable savedOrderTable : orderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException(String.format("%d번 테이블 : 단체 지정은 중복될 수 없습니다.", savedOrderTable.getId()));
-            }
-        }
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-
-        for (final OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable); // update
-        }
-
-        return savedTableGroup;
+        return TableGroupResponse.of(tableGroup);
     }
 
     @Transactional
@@ -72,9 +57,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
+            orderTable.ungroup();
         }
     }
 }
