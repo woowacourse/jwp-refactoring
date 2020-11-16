@@ -1,47 +1,53 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.repository.MenuGroupRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWitId;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWithoutId;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 class MenuGroupServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
-    @Mock
-    private MenuGroupDao menuGroupDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
+    @DisplayName("MenuGroup 등록 성공")
     @Test
     void create() {
         MenuGroup menuGroup = createMenuGroupWithoutId();
-        given(menuGroupDao.save(menuGroup)).willReturn(createMenuGroupWitId(1L));
 
         MenuGroup actual = menuGroupService.create(menuGroup);
 
-        assertThat(actual.getId()).isEqualTo(1L);
+        assertThat(actual.getId()).isNotNull();
     }
 
+    @DisplayName("MenuGroup 전체 조회")
     @Test
     void findAll() {
-        List<MenuGroup> menuGroups = Arrays.asList(new MenuGroup(), new MenuGroup(), new MenuGroup());
-        given(menuGroupDao.findAll()).willReturn(menuGroups);
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroupWithoutId());
 
         List<MenuGroup> actual = menuGroupService.list();
 
-        assertThat(actual).hasSize(menuGroups.size());
+        assertAll(() -> {
+            assertThat(actual).hasSize(1);
+            assertThat(actual.get(0)).isEqualToIgnoringNullFields(menuGroup);
+        });
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuGroupRepository.deleteAll();
     }
 }
