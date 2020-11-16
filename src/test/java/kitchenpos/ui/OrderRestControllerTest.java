@@ -19,9 +19,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.TableFixture;
 
 @WebMvcTest(controllers = OrderRestController.class)
@@ -36,20 +38,19 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
-    private OrderLineItem item;
     private Order order;
 
     @BeforeEach
     void setUp() {
-        item = OrderLineItemFixture.createWithoutId(1L, OrderFixture.ID1);
-        order = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.STATUS1,
-            TableFixture.ID1, Collections.singletonList(item));
+        order = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.MEAL_STATUS,
+            TableFixture.ID1);
     }
 
     @DisplayName("Order 생성")
     @Test
     void create() throws Exception {
-        when(orderService.create(any(Order.class))).thenReturn(order);
+        when(orderService.create(any(OrderCreateRequest.class))).thenReturn(
+            OrderResponse.of(order));
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +66,7 @@ class OrderRestControllerTest {
     @DisplayName("Find all order")
     @Test
     void list() throws Exception {
-        when(orderService.list()).thenReturn(Collections.singletonList(order));
+        when(orderService.list()).thenReturn(Collections.singletonList(OrderResponse.of(order)));
 
         mockMvc.perform(get("/api/orders")
         )
@@ -77,17 +78,21 @@ class OrderRestControllerTest {
     @DisplayName("Order Status 수정")
     @Test
     void changeOrderStatus() throws Exception {
-        Order order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.STATUS2,
-            TableFixture.ID1, Collections.singletonList(item));
-        when(orderService.changeOrderStatus(anyLong(), any(Order.class))).thenReturn(order2);
+        OrderResponse response = OrderResponse.of(
+            OrderFixture.createWithId(OrderFixture.ID1, OrderFixture.COOKING_STATUS,
+                TableFixture.ID1));
+        OrderChangeStatusRequest request = OrderFixture.changeStatusRequest(
+            OrderStatus.COOKING);
+        when(orderService.changeOrderStatus(anyLong(),
+            any(OrderChangeStatusRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(order))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("orderStatus").value(order2.getOrderStatus()));
+            .andExpect(jsonPath("orderStatus").value(response.getOrderStatus()));
     }
 }

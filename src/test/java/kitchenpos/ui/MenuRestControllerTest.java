@@ -1,13 +1,11 @@
 package kitchenpos.ui;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -19,15 +17,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
-import kitchenpos.fixture.MenuProductFixture;
 
 @WebMvcTest(controllers = MenuRestController.class)
 class MenuRestControllerTest {
@@ -45,14 +40,13 @@ class MenuRestControllerTest {
 
     @BeforeEach
     void setUp() {
-        menu = MenuFixture.createWithId(MenuFixture.ID1, 1L,
-            Collections.singletonList(MenuProductFixture.create(1L, 1L, 2)), 18000L);
+        menu = MenuFixture.createWithId(MenuFixture.ID1, 1L, 18000L);
     }
 
     @DisplayName("정상 Menu 생성")
     @Test
     void create() throws Exception {
-        when(menuService.create(any(Menu.class))).thenReturn(menu);
+        when(menuService.create(any(MenuCreateRequest.class))).thenReturn(MenuResponse.of(menu));
 
         mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +62,7 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 불러오기")
     @Test
     void list() throws Exception {
-        when(menuService.list()).thenReturn(Collections.singletonList(menu));
+        when(menuService.list()).thenReturn(Collections.singletonList(MenuResponse.of(menu)));
 
         mockMvc.perform(get("/api/menus")
         )

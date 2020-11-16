@@ -4,29 +4,33 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderChangeStatusRequest;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.AlreadyCompleteOrderException;
+import kitchenpos.exception.AlreadyEmptyTableException;
+import kitchenpos.exception.EmptyMenuOrderException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
@@ -34,133 +38,127 @@ class OrderServiceTest {
     private OrderService orderService;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
-
-    private Order order1;
-    private Order order2;
-    private Order order3;
-
-    private OrderLineItem orderLineItem1;
-    private OrderLineItem orderLineItem2;
-    private OrderLineItem orderLineItem3;
-
-    private OrderTable notEmptyTable;
-    private OrderTable emptyTable;
-
-    List<OrderLineItem> lineItems;
+    private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-
-        orderLineItem1 = OrderLineItemFixture.createWithoutId(1L, null);
-        orderLineItem2 = OrderLineItemFixture.createWithoutId(2L, null);
-        orderLineItem3 = OrderLineItemFixture.createWithoutId(3L, null);
-
-        lineItems = Arrays.asList(orderLineItem1, orderLineItem2, orderLineItem3);
-
-        notEmptyTable = OrderTableFixture.createNotEmptyWithId(1L);
-        emptyTable = OrderTableFixture.createEmptyWithId(1L);
-
-        order1 = OrderFixture.createWithoutId(OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
-        order2 = OrderFixture.createWithId(OrderFixture.ID1, OrderStatus.MEAL.name(), OrderTableFixture.ID1, lineItems);
-        order3 = OrderFixture.createWithId(OrderFixture.ID2, OrderStatus.COMPLETION.name(), OrderTableFixture.ID2, lineItems);
+        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository,
+            orderLineItemRepository);
     }
 
     @DisplayName("정상적으로 Order를 생성한다")
     @Test
     void create() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(Long.valueOf(lineItems.size()));
-        when(orderTableDao.findById(1L)).thenReturn(Optional.of(notEmptyTable));
-        when(orderDao.save(order1)).thenReturn(order2);
-        when(orderLineItemDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        OrderCreateRequest request = OrderFixture.createRequest(1L,
+            OrderLineItemFixture.createRequest(1L, 1), OrderLineItemFixture.createRequest(2L, 1),
+            OrderLineItemFixture.createRequest(3L, 1));
+        Order orderWithId = OrderFixture.createWithId(1L, OrderStatus.MEAL.name(), 1L);
+        OrderTable notEmptyTable = OrderTableFixture.createNotEmptyWithId(1L);
 
-        Order savedOrder = orderService.create(order1);
-        assertThat(savedOrder).isEqualToComparingFieldByField(order2);
-        assertThat(savedOrder.getOrderLineItems())
-            .extracting(OrderLineItem::getOrderId)
-            .allMatch(id -> id.equals(order2.getId()));
+        when(menuRepository.countByIdIn(anyList())).thenReturn(
+            Long.valueOf(request.getOrderLineItems().size()));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(notEmptyTable));
+        when(orderRepository.save(any(Order.class))).thenReturn(orderWithId);
+
+        OrderResponse response = orderService.create(request);
+        assertThat(response).isEqualToComparingFieldByField(OrderResponse.of(orderWithId));
     }
 
-    @DisplayName("OrderItem이 없는 Order를 생성 요청 시 예외를 반환한다")
+    @DisplayName("OrderItem을 포함하지 않으면 Order 생성 요청 시 예외를 반환한다")
     @Test
     void createWithoutOrderItem() {
-        order1.setOrderLineItems(Lists.emptyList());
-        assertThatThrownBy(() -> orderService.create(order1))
-            .isInstanceOf(IllegalArgumentException.class);
+        OrderCreateRequest createEmptyItemRequest = OrderFixture.createRequest(1L);
+
+        assertThatThrownBy(() -> orderService.create(createEmptyItemRequest))
+            .isInstanceOf(EmptyMenuOrderException.class);
     }
 
-    @DisplayName("저장되어있지 않은 Menu를 포함한 OrderItem을 포함한 Order를 생성 요청 시 예외를 반환한다.")
+    @DisplayName("Menu가 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithNotExistMenu() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(0L);
+        OrderCreateRequest requestWithNotExistMenu = OrderFixture.createRequest(1L,
+            OrderLineItemFixture.createRequest(1L, 1));
 
-        assertThatThrownBy(() -> orderService.create(order1))
-            .isInstanceOf(IllegalArgumentException.class);
+        when(menuRepository.countByIdIn(anyList())).thenReturn(0L);
+
+        assertThatThrownBy(() -> orderService.create(requestWithNotExistMenu))
+            .isInstanceOf(MenuNotFoundException.class);
     }
 
-    @DisplayName("저장되어있지 않은 Table Id를 갖는 Order 생성 요청 시 예외를 반환한다.")
+    @DisplayName("Table이 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithNotExistTable() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(Long.valueOf(order1.getOrderLineItems().size()));
-        when(orderTableDao.findById(order1.getOrderTableId())).thenReturn(Optional.empty());
+        OrderCreateRequest requestWithNotExistTable = OrderFixture.createRequest(1L,
+            OrderLineItemFixture.createRequest(1L, 1));
 
-        assertThatThrownBy(() -> orderService.create(order1))
-            .isInstanceOf(IllegalArgumentException.class);
+        when(menuRepository.countByIdIn(anyList())).thenReturn(1L);
+        when(orderTableRepository.findById(requestWithNotExistTable.getOrderTableId())).thenReturn(
+            Optional.empty());
+
+        assertThatThrownBy(() -> orderService.create(requestWithNotExistTable))
+            .isInstanceOf(OrderTableNotFoundException.class);
     }
 
-    @DisplayName("비어있는 테이블에서 Order 생성 요청 시 예외를 반환한다.")
+    @DisplayName("Order Table이 비어있으면 Order 생성 요청 시 예외를 반환한다.")
     @Test
     void createWithEmptyTable() {
-        when(menuDao.countByIdIn(anyList())).thenReturn(Long.valueOf(order1.getOrderLineItems().size()));
-        when(orderTableDao.findById(order1.getOrderTableId())).thenReturn(Optional.of(emptyTable));
+        OrderCreateRequest requestWithEmptyTable = OrderFixture.createRequest(1L,
+            OrderLineItemFixture.createRequest(1L, 1));
+        OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
 
-        assertThatThrownBy(() -> orderService.create(order1))
-            .isInstanceOf(IllegalArgumentException.class);
+        when(menuRepository.countByIdIn(anyList())).thenReturn(1L);
+        when(orderTableRepository.findById(requestWithEmptyTable.getOrderTableId())).thenReturn(
+            Optional.of(emptyTable));
+
+        assertThatThrownBy(() -> orderService.create(requestWithEmptyTable))
+            .isInstanceOf(AlreadyEmptyTableException.class);
     }
 
-    @DisplayName("정상적으로 저장된 Order를 모두 가져온다.")
+    @DisplayName("정상적으로 저장된 Order를 모두 조회한다.")
     @Test
     void list() {
-        when(orderDao.findAll()).thenReturn(Arrays.asList(order2, order3));
-        when(orderLineItemDao.findAllByOrderId(anyLong())).thenReturn(lineItems);
+        Order order1 = OrderFixture.createWithId(1L, OrderFixture.MEAL_STATUS, 1L);
+        Order order2 = OrderFixture.createWithId(2L, OrderFixture.MEAL_STATUS, 1L);
+        when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
 
         assertThat(orderService.list())
             .usingRecursiveComparison()
-            .isEqualTo(Arrays.asList(order2, order3));
+            .isEqualTo(OrderResponse.listOf(Arrays.asList(order1, order2)));
     }
 
     @DisplayName("정상적으로 저장된 Order의 Status를 수정한다.")
     @Test
     void changeOrderStatus() {
-        when(orderDao.findById(order2.getId())).thenReturn(Optional.of(order2));
+        Order mealOrder = OrderFixture.createWithId(1L, OrderFixture.MEAL_STATUS, 1L);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
-        Order newOrderStatus = new Order();
-        newOrderStatus.setOrderStatus(OrderStatus.COMPLETION.name());
+        when(orderRepository.findById(mealOrder.getId())).thenReturn(Optional.of(mealOrder));
 
-        assertThat(orderService.changeOrderStatus(order2.getId(), newOrderStatus))
-            .extracting(Order::getOrderStatus)
-            .isEqualTo(newOrderStatus.getOrderStatus());
+        assertThat(orderService.changeOrderStatus(mealOrder.getId(), request))
+            .extracting(OrderResponse::getOrderStatus)
+            .isEqualTo(request.getOrderStatus());
     }
 
     @DisplayName("이미 완료된 Order의 Status를 수정 요청 시 예외를 반환한다")
     @Test
     void changeCompletionOrderStatus() {
-        when(orderDao.findById(order3.getId())).thenReturn(Optional.of(order3));
+        Order completeOrder = OrderFixture.createWithId(1L, OrderFixture.COMPLETION, 1L);
+        OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
-        Order newOrderStatus = new Order();
-        newOrderStatus.setOrderStatus(OrderStatus.COMPLETION.name());
+        when(orderRepository.findById(completeOrder.getId())).thenReturn(
+            Optional.of(completeOrder));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order3.getId(), newOrderStatus))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(completeOrder.getId(), request))
+            .isInstanceOf(AlreadyCompleteOrderException.class);
     }
 }

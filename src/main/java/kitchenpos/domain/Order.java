@@ -1,52 +1,63 @@
 package kitchenpos.domain;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
 
-public class Order {
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import kitchenpos.exception.AlreadyCompleteOrderException;
+
+@Entity
+@Table(name = "Orders")
+public class Order extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
+    public Order() {
+    }
+
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+    }
+
+    public static Order of(Long id, Long orderTableId, String orderStatus) {
+        return new Order(id, orderTableId, OrderStatus.valueOf(orderStatus));
+    }
+
+    public static Order of(Long orderTableId, OrderStatus orderStatus) {
+        return new Order(null, orderTableId, orderStatus);
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public void changeOrderStatus(String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new AlreadyCompleteOrderException(this.id);
+        }
+        this.orderStatus = OrderStatus.valueOf(orderStatus.toUpperCase());
     }
 }

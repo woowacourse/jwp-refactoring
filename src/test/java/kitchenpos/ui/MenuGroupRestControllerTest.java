@@ -8,9 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.fixture.MenuGroupFixture;
 
 @DisplayName("Menu Group controller 클래스")
@@ -40,12 +40,13 @@ class MenuGroupRestControllerTest {
     @DisplayName("Menu group을 DB에 저장하고, 아이디를 포함하여 반환한다.")
     @Test
     void it_returns_with_id() throws Exception {
-        when(menuGroupService.create(any())).thenReturn(menuGroup);
+        MenuGroupCreateRequest request = MenuGroupFixture.createRequest();
+        when(menuGroupService.create(any())).thenReturn(MenuGroupResponse.of(menuGroup));
 
         mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(menuGroup))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isCreated())
@@ -56,7 +57,8 @@ class MenuGroupRestControllerTest {
     @DisplayName("DB에 저장된 모든 Menu Group을 리턴한다")
     @Test
     void it_returns_all_groups() throws Exception {
-        when(menuGroupService.list()).thenReturn(Collections.singletonList(menuGroup));
+        when(menuGroupService.list()).thenReturn(
+            Collections.singletonList(MenuGroupResponse.of(menuGroup)));
 
         mockMvc.perform(get("/api/menu-groups")
         )

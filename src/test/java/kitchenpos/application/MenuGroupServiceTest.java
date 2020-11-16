@@ -1,24 +1,21 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.env.MockEnvironment;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupCreateRequest;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.repository.MenuGroupRepository;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
@@ -26,33 +23,35 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
-
-    MenuGroup menuGroup1;
-    MenuGroup menuGroup2;
+    private MenuGroupRepository menuGroupRepository;
 
     @BeforeEach
     void setUp() {
-        menuGroupService = new MenuGroupService(menuGroupDao);
-
-        menuGroup1 = MenuGroupFixture.createWithoutId();
-        menuGroup2 = MenuGroupFixture.createWithId(1L);
+        menuGroupService = new MenuGroupService(menuGroupRepository);
     }
 
-    @DisplayName("정상 Menu Group 생성")
+    @DisplayName("Menu Group 생성")
     @Test
     void create() {
-        when(menuGroupDao.save(menuGroup1)).thenReturn(menuGroup2);
+        MenuGroupCreateRequest request = MenuGroupFixture.createRequest();
+        MenuGroup menuGroupWithId = MenuGroupFixture.createWithId(1L);
 
-        assertThat(menuGroupService.create(menuGroup1)).isEqualToComparingFieldByField(menuGroup2);
+        when(menuGroupRepository.save(any(MenuGroup.class))).thenReturn(menuGroupWithId);
+
+        assertThat(menuGroupService.create(request))
+            .isEqualToComparingFieldByField(menuGroupWithId);
     }
 
-    @DisplayName("정상 find all")
+    @DisplayName("Menu Group 조회")
     @Test
     void list() {
-        when(menuGroupDao.findAll()).thenReturn(Arrays.asList(menuGroup1, menuGroup2));
+        MenuGroup menuGroupWithId1 = MenuGroupFixture.createWithId(1L);
+        MenuGroup menuGroupWithId2 = MenuGroupFixture.createWithId(2L);
+        when(menuGroupRepository.findAll()).thenReturn(
+            Arrays.asList(menuGroupWithId1, menuGroupWithId2));
 
-        assertThat(menuGroupService.list()).usingRecursiveComparison()
-            .isEqualTo(Arrays.asList(menuGroup1, menuGroup2));
+        assertThat(menuGroupService.list())
+            .usingRecursiveComparison()
+            .isEqualTo(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
     }
 }

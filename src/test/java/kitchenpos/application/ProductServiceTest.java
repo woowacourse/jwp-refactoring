@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,9 +12,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductCreateRequest;
+import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exception.InvalidProductPriceException;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -23,46 +25,54 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
-
-    private Product product1;
-    private Product product2;
-    private Product nullPriceProduct;
-    private Product negativePriceProduct;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
-        productService = new ProductService(productDao);
-
-        product1 = ProductFixture.createWithoutId(ProductFixture.PRICE1);
-        product2 = ProductFixture.createWithId(ProductFixture.ID1, ProductFixture.PRICE1);
-        nullPriceProduct = ProductFixture.createNullPriceWithId(ProductFixture.ID2);
-        negativePriceProduct = ProductFixture.createWithId(ProductFixture.ID2, -1000L);
+        productService = new ProductService(productRepository);
     }
 
     @DisplayName("정상적으로 Product를 생성한다.")
     @Test
     void create() {
-        when(productDao.save(product1)).thenReturn(product2);
+        ProductCreateRequest request = ProductFixture.createRequestPriceOf(100L);
+        Product productWithoutId = ProductFixture.createWithoutId();
+        Product productWithId = ProductFixture.createWithId(1L);
 
-        assertThat(productService.create(product1))
-            .isEqualToIgnoringGivenFields(product2, "id");
+        when(productRepository.save(any(Product.class))).thenReturn(productWithId);
+
+        ProductResponse savedProduct = productService.create(request);
+        assertThat(savedProduct)
+            .isEqualToIgnoringGivenFields(productWithoutId, "id");
+        assertThat(savedProduct).extracting(ProductResponse::getId)
+            .isEqualTo(productWithId.getId());
     }
 
-    @DisplayName("가격이 null이거나 음수인 Product를 생성요청하면 예외를 반환한다.")
+    @DisplayName("가격이 null인 Product 생성 요청시 예외를 반환한다.")
     @Test
     void createIllegalPriceProduct() {
-        assertThatThrownBy(()->productService.create(nullPriceProduct))
-            .isInstanceOf(IllegalArgumentException.class);
+        ProductCreateRequest request = ProductFixture.createRequestPriceOf(null);
 
-        assertThatThrownBy(()->productService.create(negativePriceProduct))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request))
+            .isInstanceOf(InvalidProductPriceException.class);
+    }
+
+    @DisplayName("가격이 음수인 Product 생성 요청시 예외를 반환한다.")
+    @Test
+    void createNegativePriceProduct() {
+        ProductCreateRequest request = ProductFixture.createRequestPriceOf(-100L);
+
+        assertThatThrownBy(() -> productService.create(request))
+            .isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("정상적으로 저장된 Product를 불러온다.")
     @Test
     void list() {
-        when(productDao.findAll()).thenReturn(Arrays.asList(product1, product2));
+        Product product1 = ProductFixture.createWithId(1L);
+        Product product2 = ProductFixture.createWithId(2L);
+
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         assertThat(productService.list())
             .usingRecursiveComparison()
