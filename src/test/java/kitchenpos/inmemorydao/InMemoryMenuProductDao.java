@@ -1,7 +1,6 @@
 package kitchenpos.inmemorydao;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,10 +49,6 @@ public class InMemoryMenuProductDao implements MenuProductDao {
 
     @Override
     public List<MenuProduct> findAllByMenuId(final Long menuId) {
-        if (menuId == null) {
-            return Collections.emptyList();
-        }
-
         return menuProducts.values()
                 .stream()
                 .filter(menuProduct -> menuId.equals(menuProduct.getMenuId()))
