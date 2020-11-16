@@ -21,8 +21,6 @@ import kitchenpos.repository.TableGroupRepository;
 
 @Service
 public class TableGroupService {
-    private static final int TABLE_GROUP_SIZE_LIMIT = 2;
-
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -40,7 +38,7 @@ public class TableGroupService {
         List<Long> orderTableIds = request.getOrderTableIds();
 
         if (CollectionUtils.isEmpty(orderTableIds)
-            || orderTableIds.size() < TABLE_GROUP_SIZE_LIMIT) {
+            || orderTableIds.size() < TableGroup.SIZE_LIMIT) {
             throw new TableGroupSizeException(orderTableIds.size());
         }
 

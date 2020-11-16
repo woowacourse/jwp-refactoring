@@ -1,11 +1,11 @@
 package kitchenpos.dto.request;
 
-import java.beans.ConstructorProperties;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class OrderTableChangeNumberOfGuestsRequest {
     private final int numberOfGuests;
 
-    @ConstructorProperties({"numberOfGuests"})
+    @JsonCreator
     public OrderTableChangeNumberOfGuestsRequest(int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }

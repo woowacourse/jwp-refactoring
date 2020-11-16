@@ -1,13 +1,12 @@
 package kitchenpos.dto.request;
 
-import java.beans.ConstructorProperties;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupCreateRequest {
     private final String name;
 
-    @ConstructorProperties({"name"})
+    @JsonCreator
     public MenuGroupCreateRequest(String name) {
         this.name = name;
     }
