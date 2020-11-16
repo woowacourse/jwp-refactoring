@@ -40,6 +40,10 @@ public class Order {
         this(orderTable, OrderStatus.COOKING);
     }
 
+    public boolean isUngroupable() {
+        return this.orderStatus.cannotUngroup();
+    }
+
     public Long getId() {
         return id;
     }
@@ -56,15 +60,7 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
     }
 }
