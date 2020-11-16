@@ -18,7 +18,10 @@ public class ProductCreateRequest {
     }
 
     public Product toEntity() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(price)) {
+            throw new InvalidProductPriceException();
+        }
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidProductPriceException(price);
         }
 

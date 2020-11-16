@@ -32,8 +32,8 @@ public class DefaultMenuPriceValidateStrategy implements MenuPriceValidateStrate
             if (Objects.isNull(product)) {
                 throw new ProductNotFoundException(menuProduct.getProductId());
             }
-            sum = sum.add(
-                product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            sum = sum.add(product.calculatePrice(menuProduct.getQuantity()));
+
         }
 
         if (menuPrice.compareTo(sum) > 0) {
