@@ -4,6 +4,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.dto.OrderTableCreateRequest;
+import kitchenpos.ordertable.dto.OrderTableResponse;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,14 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableCreateRequest request) {
+    public OrderTableResponse create(final OrderTableCreateRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        return orderTableRepository.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.ofList(orderTableRepository.findAll());
     }
 
     @Transactional
