@@ -26,11 +26,11 @@ public class Order {
         return this;
     }
 
-    public Order changeOrderStatus(String orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+    public Order changeOrderStatus(OrderStatus orderStatus) {
+        if (Objects.equals(orderStatus.name(), this.orderStatus)) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus;
+        this.orderStatus = orderStatus.name();
         return this;
     }
 

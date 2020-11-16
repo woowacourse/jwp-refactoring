@@ -1,7 +1,6 @@
 package kitchenpos.domain.model.order;
 
 import static java.util.Collections.*;
-import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
@@ -41,9 +40,9 @@ class OrderTest {
         Order order = new Order(1L, 1L, "MEAL", LocalDateTime.now(),
                 singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
 
-        order.changeOrderStatus(ORDER_STATUS_CHANGE_REQUEST2.getOrderStatus());
+        order.changeOrderStatus(OrderStatus.COMPLETION);
 
-        assertThat(order.getOrderStatus()).isEqualTo(ORDER_STATUS_CHANGE_REQUEST2.getOrderStatus());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     private void invalidOrder() {
@@ -51,6 +50,6 @@ class OrderTest {
                 singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> order.changeOrderStatus(ORDER_STATUS_CHANGE_REQUEST1.getOrderStatus()));
+                () -> order.changeOrderStatus(OrderStatus.COMPLETION));
     }
 }

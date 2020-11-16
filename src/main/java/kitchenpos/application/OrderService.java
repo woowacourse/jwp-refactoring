@@ -11,6 +11,7 @@ import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.model.order.CreateOrderVerifier;
 import kitchenpos.domain.model.order.Order;
 import kitchenpos.domain.model.order.OrderRepository;
+import kitchenpos.domain.model.order.OrderStatus;
 
 @Service
 public class OrderService {
@@ -39,7 +40,7 @@ public class OrderService {
             final ChangeOrderStatusCommand command) {
         final Order saved = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        Order changed = saved.changeOrderStatus(command.getOrderStatus());
+        Order changed = saved.changeOrderStatus(OrderStatus.valueOf(command.getOrderStatus()));
         return OrderResponse.of(orderRepository.save(changed));
     }
 }
