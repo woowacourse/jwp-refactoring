@@ -188,7 +188,7 @@ class MenuServiceTest {
         menu.setPrice(BigDecimal.valueOf(18000L));
         menu.setMenuGroupId(savedMenuGroup.getId());
         menu.setMenuProducts(newArrayList(menuProduct));
-        menuService.create(menu);
+        menuDao.save(menu);
 
         // When
         final List<Menu> list = menuService.list();

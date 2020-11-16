@@ -43,7 +43,7 @@ class MenuGroupServiceTest {
     void list() {
         // Given
         final MenuGroup menuGroup = new MenuGroup();
-        menuGroupService.create(menuGroup);
+        menuGroupDao.save(menuGroup);
 
         // When
         final List<MenuGroup> list = menuGroupService.list();
