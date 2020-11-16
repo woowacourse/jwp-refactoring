@@ -83,7 +83,8 @@ class OrderRestControllerTest {
                 TableFixture.ID1));
         OrderChangeStatusRequest request = OrderFixture.changeStatusRequest(
             OrderStatus.COOKING);
-        when(orderService.changeOrderStatus(anyLong(), any(OrderChangeStatusRequest.class))).thenReturn(response);
+        when(orderService.changeOrderStatus(anyLong(),
+            any(OrderChangeStatusRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON)

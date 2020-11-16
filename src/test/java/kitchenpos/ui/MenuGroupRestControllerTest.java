@@ -57,7 +57,8 @@ class MenuGroupRestControllerTest {
     @DisplayName("DB에 저장된 모든 Menu Group을 리턴한다")
     @Test
     void it_returns_all_groups() throws Exception {
-        when(menuGroupService.list()).thenReturn(Collections.singletonList(MenuGroupResponse.of(menuGroup)));
+        when(menuGroupService.list()).thenReturn(
+            Collections.singletonList(MenuGroupResponse.of(menuGroup)));
 
         mockMvc.perform(get("/api/menu-groups")
         )

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;

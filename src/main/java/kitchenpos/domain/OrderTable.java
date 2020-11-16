@@ -7,8 +7,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.AlreadyEmptyTableException;
+import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
 import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 

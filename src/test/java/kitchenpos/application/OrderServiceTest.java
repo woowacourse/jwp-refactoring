@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;

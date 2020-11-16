@@ -1,8 +1,5 @@
 package kitchenpos.dto.request;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemCreateRequest {

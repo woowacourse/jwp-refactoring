@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +84,8 @@ class MenuServiceTest {
 
         when(menuGroupRepository.existsById(menuWithoutId.getMenuGroupId())).thenReturn(true);
         when(menuRepository.save(any(Menu.class))).thenReturn(menuWithId);
-        when(productRepository.findAllById(anyList())).thenReturn(Arrays.asList(product1, product2));
+        when(productRepository.findAllById(anyList())).thenReturn(
+            Arrays.asList(product1, product2));
 
         MenuResponse savedMenu = menuService.create(request);
         assertThat(savedMenu).isEqualToComparingFieldByField(menuWithId);
@@ -109,7 +109,8 @@ class MenuServiceTest {
         MenuCreateRequest negativePriceRequest = MenuFixture.createRequest(-1000L, 1L,
             MenuProductFixture.createRequest(1L, 1));
 
-        when(menuGroupRepository.existsById(negativePriceRequest.getMenuGroupId())).thenReturn(true);
+        when(menuGroupRepository.existsById(negativePriceRequest.getMenuGroupId())).thenReturn(
+            true);
 
         assertThatThrownBy(() -> menuService.create(negativePriceRequest))
             .isInstanceOf(InvalidMenuPriceException.class);

@@ -1,11 +1,9 @@
 package kitchenpos.dto.request;
 
-import java.beans.ConstructorProperties;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import org.springframework.lang.NonNull;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.InvalidProductPriceException;
 
@@ -13,7 +11,7 @@ public class ProductCreateRequest {
     private final String name;
     private final BigDecimal price;
 
-    @ConstructorProperties({"name", "price"})
+    @JsonCreator
     public ProductCreateRequest(String name, BigDecimal price) {
         this.name = name;
         this.price = price;

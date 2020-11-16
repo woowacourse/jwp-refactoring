@@ -47,7 +47,8 @@ class MenuGroupServiceTest {
     void list() {
         MenuGroup menuGroupWithId1 = MenuGroupFixture.createWithId(1L);
         MenuGroup menuGroupWithId2 = MenuGroupFixture.createWithId(2L);
-        when(menuGroupRepository.findAll()).thenReturn(Arrays.asList(menuGroupWithId1, menuGroupWithId2));
+        when(menuGroupRepository.findAll()).thenReturn(
+            Arrays.asList(menuGroupWithId1, menuGroupWithId2));
 
         assertThat(menuGroupService.list())
             .usingRecursiveComparison()

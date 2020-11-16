@@ -1,9 +1,6 @@
 package kitchenpos.dto.request;
 
-import java.beans.ConstructorProperties;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import kitchenpos.domain.OrderStatus;
 
 public class OrderChangeStatusRequest {

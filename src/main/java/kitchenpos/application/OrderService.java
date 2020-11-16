@@ -79,7 +79,8 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse changeOrderStatus(final Long orderId, final OrderChangeStatusRequest request) {
+    public OrderResponse changeOrderStatus(final Long orderId,
+        final OrderChangeStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(() -> new OrderNotFoundException(orderId));
 
