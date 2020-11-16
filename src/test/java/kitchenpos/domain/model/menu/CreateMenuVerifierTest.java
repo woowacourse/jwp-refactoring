@@ -23,17 +23,17 @@ import kitchenpos.domain.model.product.Product;
 import kitchenpos.domain.model.product.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
-class MenuTest {
+class CreateMenuVerifierTest {
     @Mock
     private MenuGroupRepository menuGroupRepository;
     @Mock
     private ProductRepository productRepository;
     @InjectMocks
-    private MenuCreateService menuCreateService;
+    private CreateMenuVerifier createMenuVerifier;
 
     @DisplayName("메뉴 생성")
     @TestFactory
-    Stream<DynamicTest> create() {
+    Stream<DynamicTest> toMenu() {
         return Stream.of(
                 dynamicTest("유효성 통과.", this::validateSuccess),
                 dynamicTest("메뉴 상품이 존재해야 한다.", this::noMenuGroup),
@@ -43,44 +43,54 @@ class MenuTest {
     }
 
     private void validateSuccess() {
-        Menu menu = MENU_REQUEST.toEntity();
+        Menu menu = createMenu();
         Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(17_000L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productRepository.findById(menu.getMenuProducts().get(0).getProductId())).willReturn(
                 Optional.of(product));
 
-        assertDoesNotThrow(() -> menu.create(menuCreateService));
+        assertDoesNotThrow(
+                () -> createMenuVerifier.toMenu(MENU_REQUEST.getName(), MENU_REQUEST.getPrice(),
+                        MENU_REQUEST.getMenuGroupId(), MENU_REQUEST.getMenuProducts()));
     }
 
     private void noMenuGroup() {
-        Menu menu = MENU_REQUEST.toEntity();
+        Menu menu = createMenu();
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(false);
 
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> menu.create(menuCreateService));
+        throwIllegalArgumentException();
     }
 
     private void noProduct() {
-        Menu menu = MENU_REQUEST.toEntity();
+        Menu menu = createMenu();
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productRepository.findById(menu.getMenuProducts().get(0).getProductId()))
                 .willReturn(Optional.empty());
 
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> menu.create(menuCreateService));
+        throwIllegalArgumentException();
     }
 
     private void bigMenuPrice() {
-        Menu menu = MENU_REQUEST.toEntity();
+        Menu menu = createMenu();
         Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(8_400L));
 
         given(menuGroupRepository.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productRepository.findById(menu.getMenuProducts().get(0).getProductId()))
                 .willReturn(Optional.of(product));
 
+        throwIllegalArgumentException();
+    }
+
+    private Menu createMenu() {
+        return new Menu(null, MENU_REQUEST.getName(), MENU_REQUEST.getPrice(),
+                MENU_REQUEST.getMenuGroupId(), MENU_REQUEST.getMenuProducts());
+    }
+
+    private void throwIllegalArgumentException() {
         assertThatIllegalArgumentException().isThrownBy(
-                () -> menu.create(menuCreateService));
+                () -> createMenuVerifier.toMenu(MENU_REQUEST.getName(), MENU_REQUEST.getPrice(),
+                        MENU_REQUEST.getMenuGroupId(), MENU_REQUEST.getMenuProducts()));
     }
 }

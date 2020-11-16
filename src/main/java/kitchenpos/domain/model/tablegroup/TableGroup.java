@@ -13,15 +13,15 @@ public class TableGroup {
     private final List<AggregateReference<OrderTable>> orderTables;
     private LocalDateTime createdDate;
 
-    public TableGroup(Long id, List<AggregateReference<OrderTable>> orderTables, LocalDateTime createdDate) {
+    public TableGroup(Long id, List<AggregateReference<OrderTable>> orderTables,
+            LocalDateTime createdDate) {
         this.id = id;
         this.orderTables = orderTables;
         this.createdDate = createdDate;
     }
 
-    public TableGroup create(TableGroupCreateService tableGroupCreateService) {
-        tableGroupCreateService.validate(orderTableIds());
-        this.createdDate = LocalDateTime.now();
+    public TableGroup create() {
+        createdDate = LocalDateTime.now();
         return this;
     }
 

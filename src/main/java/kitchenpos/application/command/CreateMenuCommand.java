@@ -8,7 +8,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import kitchenpos.domain.model.menu.Menu;
 import kitchenpos.domain.model.menu.MenuProduct;
 
 public class CreateMenuCommand {
@@ -30,10 +29,6 @@ public class CreateMenuCommand {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(null, name, price, menuGroupId, menuProducts);
     }
 
     public String getName() {

@@ -17,12 +17,12 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.model.order.OrderCreateService;
+import kitchenpos.domain.model.order.CreateOrderVerifier;
 import kitchenpos.domain.model.order.OrderStatus;
-import kitchenpos.domain.model.ordertable.OrderTableChangeEmptyService;
+import kitchenpos.domain.model.ordertable.ChangeOrderTableEmptyVerifier;
 
-@Import({OrderService.class, OrderTableService.class, OrderCreateService.class,
-        OrderTableChangeEmptyService.class})
+@Import({OrderService.class, OrderTableService.class, CreateOrderVerifier.class,
+        ChangeOrderTableEmptyVerifier.class})
 class OrderServiceTest extends ApplicationServiceTest {
     @Autowired
     private OrderService orderService;

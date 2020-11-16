@@ -10,16 +10,17 @@ import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
 @Service
-public class OrderCreateService {
+public class CreateOrderVerifier {
     private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderCreateService(MenuRepository menuRepository, OrderTableRepository orderTableRepository) {
+    public CreateOrderVerifier(MenuRepository menuRepository,
+            OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
-    public void validate(List<OrderLineItem> orderLineItems, Long orderTableId) {
+    public Order toOrder(List<OrderLineItem> orderLineItems, Long orderTableId) {
         final List<Long> menuIds = orderLineItems.stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
@@ -34,5 +35,7 @@ public class OrderCreateService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+
+        return new Order(null, orderTableId, null, null, orderLineItems);
     }
 }

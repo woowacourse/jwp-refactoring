@@ -8,24 +8,25 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.command.ChangeOrderStatusCommand;
 import kitchenpos.application.command.CreateOrderCommand;
 import kitchenpos.application.response.OrderResponse;
+import kitchenpos.domain.model.order.CreateOrderVerifier;
 import kitchenpos.domain.model.order.Order;
-import kitchenpos.domain.model.order.OrderCreateService;
 import kitchenpos.domain.model.order.OrderRepository;
 
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderCreateService orderCreateService;
+    private final CreateOrderVerifier createOrderVerifier;
 
-    public OrderService(OrderRepository orderRepository, OrderCreateService orderCreateService) {
+    public OrderService(OrderRepository orderRepository, CreateOrderVerifier createOrderVerifier) {
         this.orderRepository = orderRepository;
-        this.orderCreateService = orderCreateService;
+        this.createOrderVerifier = createOrderVerifier;
     }
 
     @Transactional
     public OrderResponse create(final CreateOrderCommand command) {
-        Order order = command.toEntity();
-        Order saved = orderRepository.save(order.create(orderCreateService));
+        Order order = createOrderVerifier.toOrder(command.getOrderLineItems(),
+                command.getOrderTableId());
+        Order saved = orderRepository.save(order.create());
         return OrderResponse.of(saved);
     }
 

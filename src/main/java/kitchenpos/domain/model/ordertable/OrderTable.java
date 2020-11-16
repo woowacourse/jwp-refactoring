@@ -13,8 +13,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void changeEmpty(boolean empty, OrderTableChangeEmptyService orderTableChangeEmptyService) {
-        orderTableChangeEmptyService.validate(id, tableGroupId);
+    public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
 

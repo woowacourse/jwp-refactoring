@@ -22,12 +22,12 @@ public class TableGroupUngroupService {
     }
 
     public void resetOrderTables(List<Long> orderTableIds) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds,
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
+
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.resetTableGroup();

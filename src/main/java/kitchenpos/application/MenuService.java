@@ -7,25 +7,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.command.CreateMenuCommand;
 import kitchenpos.application.response.MenuResponse;
+import kitchenpos.domain.model.menu.CreateMenuVerifier;
 import kitchenpos.domain.model.menu.Menu;
-import kitchenpos.domain.model.menu.MenuCreateService;
 import kitchenpos.domain.model.menu.MenuRepository;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuCreateService menuCreateService;
+    private final CreateMenuVerifier createMenuVerifier;
 
     public MenuService(final MenuRepository menuRepository,
-            final MenuCreateService menuCreateService) {
+            final CreateMenuVerifier createMenuVerifier) {
         this.menuRepository = menuRepository;
-        this.menuCreateService = menuCreateService;
+        this.createMenuVerifier = createMenuVerifier;
     }
 
     @Transactional
     public MenuResponse create(final CreateMenuCommand command) {
-        Menu menu = command.toEntity();
-        Menu saved = menuRepository.save(menu.create(menuCreateService));
+        Menu menu = createMenuVerifier.toMenu(command.getName(), command.getPrice(),
+                command.getMenuGroupId(), command.getMenuProducts());
+        Menu saved = menuRepository.save(menu);
         return MenuResponse.of(saved);
     }
 

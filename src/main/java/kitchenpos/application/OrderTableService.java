@@ -9,19 +9,19 @@ import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.command.CreateOrderTableCommand;
 import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.model.ordertable.ChangeOrderTableEmptyVerifier;
 import kitchenpos.domain.model.ordertable.OrderTable;
-import kitchenpos.domain.model.ordertable.OrderTableChangeEmptyService;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
 @Service
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderTableChangeEmptyService orderTableChangeEmptyService;
+    private final ChangeOrderTableEmptyVerifier changeOrderTableEmptyVerifier;
 
     public OrderTableService(final OrderTableRepository orderTableRepository,
-            OrderTableChangeEmptyService orderTableChangeEmptyService) {
+            ChangeOrderTableEmptyVerifier changeOrderTableEmptyVerifier) {
         this.orderTableRepository = orderTableRepository;
-        this.orderTableChangeEmptyService = orderTableChangeEmptyService;
+        this.changeOrderTableEmptyVerifier = changeOrderTableEmptyVerifier;
     }
 
     @Transactional
@@ -38,10 +38,9 @@ public class OrderTableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId,
             final ChangeOrderTableEmptyCommand command) {
-        final OrderTable saved = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-        saved.changeEmpty(command.isEmpty(), orderTableChangeEmptyService);
-        OrderTable changed = orderTableRepository.save(saved);
+        OrderTable orderTable = changeOrderTableEmptyVerifier.toOrderTable(orderTableId);
+        orderTable.changeEmpty(command.isEmpty());
+        OrderTable changed = orderTableRepository.save(orderTable);
         return OrderTableResponse.of(changed);
     }
 

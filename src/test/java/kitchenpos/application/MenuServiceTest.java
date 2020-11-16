@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.domain.model.menu.MenuCreateService;
+import kitchenpos.domain.model.menu.CreateMenuVerifier;
 
-@Import({MenuService.class, MenuCreateService.class})
+@Import({MenuService.class, CreateMenuVerifier.class})
 class MenuServiceTest extends ApplicationServiceTest {
     @Autowired
     private MenuService menuService;

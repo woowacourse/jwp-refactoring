@@ -20,9 +20,7 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order create(OrderCreateService orderCreateService) {
-        orderCreateService.validate(orderLineItems, orderTableId);
-
+    public Order create() {
         this.orderStatus = OrderStatus.COOKING.name();
         this.orderedTime = LocalDateTime.now();
         return this;

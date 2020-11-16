@@ -1,5 +1,7 @@
 package kitchenpos.application.command;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.HashSet;
 import java.util.List;
 
@@ -7,7 +9,6 @@ import javax.validation.constraints.Size;
 
 import kitchenpos.domain.model.AggregateReference;
 import kitchenpos.domain.model.ordertable.OrderTable;
-import kitchenpos.domain.model.tablegroup.TableGroup;
 
 public class CreateTableGroupCommand {
     @Size(min = 2)
@@ -33,11 +34,13 @@ public class CreateTableGroupCommand {
                 .allMatch(new HashSet<>()::add);
     }
 
-    public TableGroup toEntity() {
-        return new TableGroup(null, orderTables, null);
-    }
-
     public List<AggregateReference<OrderTable>> getOrderTables() {
         return orderTables;
+    }
+
+    public List<Long> orderTableIds() {
+        return orderTables.stream()
+                .map(AggregateReference::getId)
+                .collect(toList());
     }
 }

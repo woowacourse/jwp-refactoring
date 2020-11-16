@@ -5,29 +5,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.command.CreateTableGroupCommand;
 import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.domain.model.tablegroup.CreateTableGroupVerifier;
 import kitchenpos.domain.model.tablegroup.TableGroup;
-import kitchenpos.domain.model.tablegroup.TableGroupCreateService;
 import kitchenpos.domain.model.tablegroup.TableGroupRepository;
 import kitchenpos.domain.model.tablegroup.TableGroupUngroupService;
 
 @Service
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
-    private final TableGroupCreateService tableGroupCreateService;
+    private final CreateTableGroupVerifier createTableGroupVerifier;
     private final TableGroupUngroupService tableGroupUngroupService;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository,
-            TableGroupCreateService tableGroupCreateService,
+            CreateTableGroupVerifier createTableGroupVerifier,
             TableGroupUngroupService tableGroupUngroupService) {
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupCreateService = tableGroupCreateService;
+        this.createTableGroupVerifier = createTableGroupVerifier;
         this.tableGroupUngroupService = tableGroupUngroupService;
     }
 
     @Transactional
     public TableGroupResponse create(final CreateTableGroupCommand command) {
-        TableGroup tableGroup = command.toEntity();
-        TableGroup saved = tableGroupRepository.save(tableGroup.create(tableGroupCreateService));
+        TableGroup tableGroup = createTableGroupVerifier.toTableGroup(command.orderTableIds());
+        TableGroup saved = tableGroupRepository.save(tableGroup.create());
         return TableGroupResponse.of(saved);
     }
 

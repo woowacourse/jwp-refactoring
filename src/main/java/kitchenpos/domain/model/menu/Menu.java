@@ -19,11 +19,6 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public Menu create(MenuCreateService menuCreateService) {
-        menuCreateService.validate(menuGroupId, price, menuProducts);
-        return this;
-    }
-
     public Long getId() {
         return id;
     }
