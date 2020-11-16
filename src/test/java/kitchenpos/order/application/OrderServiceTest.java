@@ -69,7 +69,7 @@ class OrderServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
+        menuProductRepository.save(new MenuProduct(menu, product, 2L));
 
         //when
         OrderResponse orderResponse = orderService.create(new OrderCreateRequest(orderTable.getId(),
@@ -101,7 +101,7 @@ class OrderServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
+        menuProductRepository.save(new MenuProduct(menu, product, 2L));
 
         assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(notExistOrderTableId,
                 Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId())))))
@@ -116,7 +116,7 @@ class OrderServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Product product = productRepository.save(new Product("간장치킨", 10000L));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
-        menuProductRepository.save(new MenuProduct(menu, product.getId(), 2L));
+        menuProductRepository.save(new MenuProduct(menu, product, 2L));
 
         assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId())))))
