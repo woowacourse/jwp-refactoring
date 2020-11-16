@@ -13,7 +13,7 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     public TableGroup() {
     }
@@ -33,9 +33,4 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
 }
