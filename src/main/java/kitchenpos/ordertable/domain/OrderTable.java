@@ -28,6 +28,14 @@ public class OrderTable {
     public OrderTable(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        validate();
+    }
+
+    private void validate() {
+        if (this.empty && this.numberOfGuests > 0) {
+            throw new IllegalArgumentException(
+                    String.format("%d명 : 1명 이상의 손님과 함께 빈 테이블로 등록할 수 없습니다.", this.numberOfGuests));
+        }
     }
 
     public Long getId() {

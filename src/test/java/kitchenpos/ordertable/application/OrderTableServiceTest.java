@@ -5,6 +5,7 @@ import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -39,9 +40,9 @@ class OrderTableServiceTest {
     @DisplayName("주문 테이블을 등록할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(0, true);
 
-        OrderTable savedOrderTable = orderTableService.create(orderTable);
+        OrderTable savedOrderTable = orderTableService.create(request);
 
         OrderTable findOrderTable = orderTableRepository.findById(savedOrderTable.getId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -53,9 +54,9 @@ class OrderTableServiceTest {
     @Test
     void createException1() {
         int numberOfGuests = 1;
-        OrderTable orderTable = new OrderTable(numberOfGuests, true);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(numberOfGuests, true);
 
-        assertThatThrownBy(() -> orderTableService.create(orderTable))
+        assertThatThrownBy(() -> orderTableService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("%d명 : 1명 이상의 손님과 함께 빈 테이블로 등록할 수 없습니다.", numberOfGuests);
     }
@@ -124,7 +125,7 @@ class OrderTableServiceTest {
     @Test
     void changeNumberOfGuests() {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, false));
-        OrderTable tenGuestOrderTable = orderTableRepository.save(new OrderTable(10, true));
+        OrderTable tenGuestOrderTable = orderTableRepository.save(new OrderTable(10, false));
 
         OrderTable changedOrderTable = orderTableService.changeNumberOfGuests(savedOrderTable.getId(), tenGuestOrderTable);
 
@@ -146,7 +147,7 @@ class OrderTableServiceTest {
     @Test
     void changeNumberOfGuestsException2() {
         OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(0, true));
-        OrderTable wrongOrderTable = orderTableRepository.save(new OrderTable(5, true));
+        OrderTable wrongOrderTable = orderTableRepository.save(new OrderTable(5, false));
 
         assertThatThrownBy(() -> orderTableService.changeNumberOfGuests(savedOrderTable.getId(), wrongOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)

@@ -3,6 +3,7 @@ package kitchenpos.ordertable.application;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.dto.OrderTableCreateRequest;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,14 +23,8 @@ public class OrderTableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroup(null);
-
-        if (orderTable.isEmpty() && orderTable.getNumberOfGuests() > 0) {
-            throw new IllegalArgumentException(
-                    String.format("%d명 : 1명 이상의 손님과 함께 빈 테이블로 등록할 수 없습니다.", orderTable.getNumberOfGuests()));
-        }
+    public OrderTable create(final OrderTableCreateRequest request) {
+        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         return orderTableRepository.save(orderTable);
     }
 
