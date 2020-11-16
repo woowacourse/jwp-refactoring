@@ -36,7 +36,7 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableStatusRequest request) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        orderTable.changeOrderStatus(request.isEmpty(), publisher);
+        orderTable.changeEmpty(request.isEmpty(), publisher);
         return orderTableDao.save(orderTable);
     }
 

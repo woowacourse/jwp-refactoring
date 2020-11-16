@@ -4,7 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.event.ValidateTableStatusEvent;
+import kitchenpos.domain.event.ValidateOrderStatusEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,7 +37,7 @@ class TableEventListenerTest {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, null, 4));
         orderDao.save(createOrder(null, orderStatus, orderTable.getId(), LocalDateTime.now()));
 
-        assertThatThrownBy(() -> applicationEventPublisher.publishEvent(new ValidateTableStatusEvent(orderTable)))
+        assertThatThrownBy(() -> applicationEventPublisher.publishEvent(new ValidateOrderStatusEvent(orderTable)))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -48,6 +48,6 @@ class TableEventListenerTest {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, null, 4));
         orderDao.save(createOrder(null, OrderStatus.COMPLETION, orderTable.getId(), LocalDateTime.now()));
 
-        applicationEventPublisher.publishEvent(new ValidateTableStatusEvent(orderTable));
+        applicationEventPublisher.publishEvent(new ValidateOrderStatusEvent(orderTable));
     }
 }

@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.event.ValidateTableStatusEvent;
+import kitchenpos.domain.event.ValidateOrderStatusEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Objects;
@@ -18,11 +18,11 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable changeOrderStatus(boolean empty, ApplicationEventPublisher publisher) {
+    public OrderTable changeEmpty(boolean empty, ApplicationEventPublisher publisher) {
         if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
-        publisher.publishEvent(new ValidateTableStatusEvent(this));
+        publisher.publishEvent(new ValidateOrderStatusEvent(this));
         this.empty = empty;
         return this;
     }
@@ -48,7 +48,7 @@ public class OrderTable {
     }
 
     public OrderTable ungroup(ApplicationEventPublisher publisher) {
-        publisher.publishEvent(new ValidateTableStatusEvent(this));
+        publisher.publishEvent(new ValidateOrderStatusEvent(this));
         tableGroupId = null;
         empty = false;
         return this;

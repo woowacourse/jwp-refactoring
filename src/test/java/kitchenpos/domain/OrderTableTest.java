@@ -17,7 +17,7 @@ class OrderTableTest {
     @DisplayName("empty 여부 변경 메서드는")
     class DESCRIBE_ChangeOrderStatus {
         private OrderTable subject() {
-            return orderTable.changeOrderStatus(empty, publisher);
+            return orderTable.changeEmpty(empty, publisher);
         }
 
         private boolean empty;
