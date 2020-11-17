@@ -17,8 +17,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql("/truncate.sql")
-public class ServiceTest {
+@Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+public abstract class ServiceTest {
 	public Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
 		Menu menu = new Menu();
 		menu.setId(id);
