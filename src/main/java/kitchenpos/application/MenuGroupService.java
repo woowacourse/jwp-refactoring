@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.MenuGroupRepository;
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupResponse;
+import kitchenpos.dto.menu.MenuGroupCreateRequest;
+import kitchenpos.dto.menu.MenuGroupResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

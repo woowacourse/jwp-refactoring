@@ -1,4 +1,4 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menu;
 
 import java.util.List;
 import java.util.Map;

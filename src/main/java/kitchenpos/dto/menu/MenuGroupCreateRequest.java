@@ -1,19 +1,20 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menu;
 
 import kitchenpos.domain.menu.MenuGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MenuGroupResponse {
-    private Long id;
+public class MenuGroupCreateRequest {
+    @NotBlank
     private String name;
 
-    public MenuGroupResponse(MenuGroup menuGroup) {
-        this.id = menuGroup.getId();
-        this.name = menuGroup.getName();
+    public MenuGroup toMenuGroup() {
+        return new MenuGroup(name);
     }
 }

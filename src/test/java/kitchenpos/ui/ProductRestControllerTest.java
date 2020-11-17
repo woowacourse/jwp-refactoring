@@ -2,8 +2,8 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
-import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.menu.ProductCreateRequest;
+import kitchenpos.dto.menu.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

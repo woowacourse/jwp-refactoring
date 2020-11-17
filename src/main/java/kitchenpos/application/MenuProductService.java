@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.*;
-import kitchenpos.dto.ProductQuantityRequests;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.menu.ProductQuantityRequests;
+import kitchenpos.dto.menu.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

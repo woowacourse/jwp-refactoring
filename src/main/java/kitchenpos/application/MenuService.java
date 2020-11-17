@@ -1,10 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.*;
-import kitchenpos.dto.MenuCreateRequest;
-import kitchenpos.dto.MenuResponse;
-import kitchenpos.dto.ProductQuantityRequests;
-import kitchenpos.dto.ProductResponse;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.menu.ProductQuantityRequests;
+import kitchenpos.dto.menu.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +23,6 @@ public class MenuService {
     private final ProductRepository productRepository;
     private final MenuProductService menuProductService;
 
-    // TODO: 2020/11/11 DTO에 대한 도메인 테스투, 1급콜렉션 잘 되는쥐!!
-    // TODO: 2020/11/12 MenuProductServic테스트!!
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
         ProductQuantityRequests productQuantityRequests = new ProductQuantityRequests(request.getMenuProducts());
