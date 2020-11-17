@@ -91,6 +91,6 @@
     - [x] 메뉴 그룹 도메인
     - [x] 메뉴 도메인
     - [x] 주문 테이블 도메인
-    - [ ] 단체 지정 도메인
+    - [x] 단체 지정 도메인
     - [ ] 주문 도메인
 - [x] Spring Data JPA 사용 시 `spring.jpa.hibernate.ddl-auto=validate` 옵션을 필수로 준다.
