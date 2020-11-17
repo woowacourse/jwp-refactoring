@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
 
 @ServiceTest
 class MenuGroupServiceTest {
@@ -19,33 +21,29 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹을 추가한다.")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test_group");
+        MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("test_group");
 
-        menuGroupDao.save(menuGroup);
-
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupResponse actual = menuGroupService.create(menuGroupCreateRequest);
 
         assertAll(
-            () -> assertThat(actual).extracting(MenuGroup::getId).isNotNull(),
-            () -> assertThat(actual).extracting(MenuGroup::getName).isEqualTo(menuGroup.getName())
+            () -> assertThat(actual).extracting(MenuGroupResponse::getId).isNotNull(),
+            () -> assertThat(actual).extracting(MenuGroupResponse::getName).isEqualTo(menuGroupCreateRequest.getName())
         );
     }
 
     @DisplayName("메뉴 그룹 전체 목록을 조회한다.")
     @Test
     void list() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("Test");
+        MenuGroup menuGroup = new MenuGroup("Test");
 
-        menuGroupDao.save(menuGroup);
+        menuGroupRepository.save(menuGroup);
 
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
 
         assertThat(actual).hasSize(1);
     }
