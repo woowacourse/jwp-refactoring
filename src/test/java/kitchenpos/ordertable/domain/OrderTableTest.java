@@ -96,4 +96,47 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("빈 테이블은 방문한 손님 수를 입력할 수 없습니다.");
     }
+
+    @DisplayName("OrderTable을 단체로 지정한다.")
+    @Test
+    void groupBy() {
+        OrderTable orderTable = new OrderTable(1, false);
+        TableGroup tableGroup = new TableGroup(1L);
+
+        orderTable.groupBy(tableGroup);
+
+        assertThat(orderTable.getIdOfTableGroup()).isEqualTo(tableGroup.getId());
+    }
+
+    @DisplayName("OrderTable을 단체로 지정한다.")
+    @Test
+    void groupByException1() {
+        OrderTable orderTable = new OrderTable(1, false);
+
+        assertThatThrownBy(() -> orderTable.groupBy(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("존재하지 않는 TableGroup입니다.");
+    }
+
+    @DisplayName("단체 지정은 중복될 수 없다.")
+    @Test
+    void groupByException2() {
+        OrderTable orderTable = new OrderTable(1, false);
+        orderTable.groupBy(new TableGroup(1L));
+
+        assertThatThrownBy(() -> orderTable.groupBy(new TableGroup(2L)))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("단체 지정은 중복될 수 없습니다.");
+    }
+
+    @Test
+    void ungroup() {
+        OrderTable orderTable = new OrderTable(1, false);
+        orderTable.groupBy(new TableGroup(1L));
+
+        orderTable.ungroup();
+
+        assertThat(orderTable.isEmpty()).isFalse();
+        assertThat(orderTable.getIdOfTableGroup()).isNull();
+    }
 }

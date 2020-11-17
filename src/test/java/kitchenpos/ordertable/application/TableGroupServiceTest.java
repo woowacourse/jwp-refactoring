@@ -1,6 +1,7 @@
 package kitchenpos.ordertable.application;
 
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.domain.TableGroup;
@@ -11,6 +12,8 @@ import kitchenpos.ordertable.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -94,7 +97,7 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         //given
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         OrderTable orderTable1 = new OrderTable(0, true);
         OrderTable orderTable2 = new OrderTable(0, true);
         orderTable1.groupBy(tableGroup);
@@ -110,8 +113,9 @@ class TableGroupServiceTest {
     }
 
     @DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없다.")
-    @Test
-    void ungroupException1() {
+    @ParameterizedTest()
+    @CsvSource(value = {"COOKING", "MEAL"})
+    void ungroupException1(OrderStatus orderStatus) {
         //given
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
         OrderTable orderTable1 = new OrderTable(0, true);
@@ -120,7 +124,7 @@ class TableGroupServiceTest {
         orderTable2.groupBy(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
 
-        orderRepository.save(new Order(orderTable1));
+        orderRepository.save(new Order(orderTable1, orderStatus));
 
         //then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

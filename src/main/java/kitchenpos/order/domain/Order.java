@@ -41,7 +41,7 @@ public class Order {
     }
 
     public boolean isUngroupable() {
-        return this.orderStatus.cannotUngroup();
+        return this.orderStatus.canUngroup();
     }
 
     public Long getId() {

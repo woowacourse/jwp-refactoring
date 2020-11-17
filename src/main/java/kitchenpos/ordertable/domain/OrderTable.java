@@ -67,6 +67,9 @@ public class OrderTable {
         if (Objects.isNull(tableGroup)) {
             throw new IllegalArgumentException("존재하지 않는 TableGroup입니다.");
         }
+        if (this.hasTableGroup()) {
+            throw new IllegalArgumentException(String.format("%d번 테이블 : 단체 지정은 중복될 수 없습니다.", this.id));
+        }
 
         this.tableGroup = tableGroup;
         this.empty = false;

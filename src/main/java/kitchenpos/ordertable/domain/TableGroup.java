@@ -22,6 +22,10 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
+    public TableGroup(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
