@@ -54,7 +54,11 @@ class ProductServiceTest extends ServiceTest {
 		Product expect = productService.create(product);
 
 		List<Product> actual = productService.list();
+		Product actualItem = actual.get(0);
 		assertThat(actual).hasSize(1);
-		assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expect);
+		assertAll(
+			() -> assertThat(actualItem.getName()).isEqualTo(expect.getName()),
+			() -> assertThat(actualItem.getPrice().longValue()).isEqualTo(expect.getPrice().longValue())
+		);
 	}
 }

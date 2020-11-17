@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
 
@@ -43,10 +42,7 @@ class MenuRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(3000));
+		menu = new Menu(1L, "메뉴", BigDecimal.valueOf(3000), null, null);
 
 		menus = Collections.singletonList(menu);
 	}

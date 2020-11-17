@@ -12,7 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -22,7 +22,7 @@ class TableServiceTest extends ServiceTest {
 	private TableService tableService;
 
 	@Autowired
-	private OrderTableDao orderTableDao;
+	private OrderTableRepository orderTableRepository;
 
 	@Autowired
 	private TableGroupService tableGroupService;
@@ -67,8 +67,8 @@ class TableServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
 		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);

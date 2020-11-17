@@ -20,32 +20,15 @@ import kitchenpos.domain.TableGroup;
 @Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public abstract class ServiceTest {
 	public Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-		Menu menu = new Menu();
-		menu.setId(id);
-		menu.setName(name);
-		menu.setPrice(price);
-		menu.setMenuGroupId(menuGroupId);
-		menu.setMenuProducts(menuProducts);
-
-		return menu;
+		return new Menu(id, name, price, menuGroupId, menuProducts);
 	}
 
 	public MenuGroup createMenuGroup(Long id, String name) {
-		MenuGroup menuGroup = new MenuGroup();
-		menuGroup.setId(id);
-		menuGroup.setName(name);
-
-		return menuGroup;
+		return new MenuGroup(id, name);
 	}
 
 	public MenuProduct createMenuProduct(Long menuId, Long productId, Long quantity, Long seq) {
-		MenuProduct menuProduct = new MenuProduct();
-		menuProduct.setMenuId(menuId);
-		menuProduct.setProductId(productId);
-		menuProduct.setQuantity(quantity);
-		menuProduct.setSeq(seq);
-
-		return menuProduct;
+		return new MenuProduct(seq, menuId, productId, quantity);
 	}
 
 	public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,

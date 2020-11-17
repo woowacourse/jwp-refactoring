@@ -12,11 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -31,16 +30,16 @@ class OrderServiceTest extends ServiceTest {
 	private OrderService orderService;
 
 	@Autowired
-	private ProductDao productDao;
+	private ProductRepository productRepository;
 
 	@Autowired
-	private MenuGroupDao menuGroupDao;
+	private MenuGroupRepository menuGroupRepository;
 
 	@Autowired
-	private MenuDao menuDao;
+	private MenuRepository menuRepository;
 
 	@Autowired
-	private OrderTableDao orderTableDao;
+	private OrderTableRepository orderTableRepository;
 
 	@DisplayName("주문의 orderLineItems가 빈 배열일 경우 IllegalArgumentException 발생")
 	@Test
@@ -66,13 +65,13 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("존재하지 않는 테이블을 orderTable로 갖고 있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
-		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
@@ -86,17 +85,17 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
-		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, true, null, 2));
+		OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(null, true, null, 2));
 
 		Order order = createOrder(1L, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
@@ -108,17 +107,17 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("Order 저장 성공")
 	@Test
 	void create() {
-		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
+		OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(null, false, null, 2));
 
 		Order order = createOrder(null, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
@@ -136,43 +135,47 @@ class OrderServiceTest extends ServiceTest {
 
 	@Test
 	void list() {
-		Product product = productDao.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, null);
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
+		OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(null, false, null, 2));
 
 		Order savedOrder = orderService.create(
 			createOrder(null, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 				Collections.singletonList(orderLineItem)));
 
 		List<Order> actual = orderService.list();
+		Order actualItem = actual.get(0);
 
 		assertThat(actual).hasSize(1);
-		assertThat(actual.get(0)).usingRecursiveComparison()
-			.isEqualTo(savedOrder);
+		assertAll(
+			() -> assertThat(actualItem.getOrderStatus()).isEqualTo(savedOrder.getOrderStatus()),
+			() -> assertThat(actualItem.getOrderLineItems().get(0).getQuantity()).isEqualTo(
+				savedOrder.getOrderLineItems().get(0).getQuantity())
+		);
 	}
 
 	@DisplayName("존재하지 않는 order를 수정할 경우 IllegalArgumentException 발생")
 	@Test
 	void changeOrderStatus_whenOrderIsNotExist_thenThrowIllegalArgumentException() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Product product = productRepository.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, null);
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
+		OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(null, false, null, 2));
 
 		Order order = createOrder(1L, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));
@@ -184,17 +187,17 @@ class OrderServiceTest extends ServiceTest {
 	@DisplayName("orderStatus 변경 성공")
 	@Test
 	void changeOrderStatus() {
-		Product product = productDao.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
-		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, 7L);
-		MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
+		Product product = productRepository.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
+		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, null);
+		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
-		Menu savedMenu = menuDao.save(menu);
+		Menu savedMenu = menuRepository.save(menu);
 
 		OrderLineItem orderLineItem = createOrderLineItem(null, savedMenu.getId(), 1L, 1L);
 
-		OrderTable savedOrderTable = orderTableDao.save(createOrderTable(null, false, null, 2));
+		OrderTable savedOrderTable = orderTableRepository.save(createOrderTable(null, false, null, 2));
 
 		Order order = createOrder(null, OrderStatus.COOKING.name(), savedOrderTable.getId(), LocalDateTime.now(),
 			Collections.singletonList(orderLineItem));

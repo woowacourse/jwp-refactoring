@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 
@@ -43,9 +42,7 @@ class MenuGroupRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		menuGroup = new MenuGroup();
-		menuGroup.setId(1L);
-		menuGroup.setName("메뉴그룹");
+		menuGroup = new MenuGroup(1L, "메뉴그룹");
 
 		menuGroups = Collections.singletonList(menuGroup);
 	}

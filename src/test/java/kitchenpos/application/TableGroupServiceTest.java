@@ -13,8 +13,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -24,10 +24,10 @@ class TableGroupServiceTest extends ServiceTest {
 	private TableGroupService tableGroupService;
 
 	@Autowired
-	private OrderTableDao orderTableDao;
+	private OrderTableRepository orderTableRepository;
 
 	@Autowired
-	private OrderDao orderDao;
+	private OrderRepository orderRepository;
 
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
@@ -69,8 +69,8 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, false, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
 		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
@@ -85,8 +85,8 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
 		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
@@ -106,13 +106,14 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		orderDao.save(createOrder(null, OrderStatus.COOKING.name(), savedOrderTable1.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		orderRepository.save(
+			createOrder(null, OrderStatus.COOKING.name(), savedOrderTable1.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
 
-		orderDao.save(createOrder(null, OrderStatus.MEAL.name(), savedOrderTable2.getId(), LocalDateTime.now(),
+		orderRepository.save(createOrder(null, OrderStatus.MEAL.name(), savedOrderTable2.getId(), LocalDateTime.now(),
 			Collections.singletonList(null)));
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
@@ -130,14 +131,16 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		orderDao.save(createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable1.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		orderRepository.save(
+			createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable1.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
 
-		orderDao.save(createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable2.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		orderRepository.save(
+			createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable2.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
 		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
