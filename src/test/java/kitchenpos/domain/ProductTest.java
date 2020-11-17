@@ -14,7 +14,7 @@ class ProductTest {
     @ParameterizedTest
     @NullSource
     void ofWithNull(BigDecimal price) {
-        assertThatThrownBy(() -> Product.of("test", price))
+        assertThatThrownBy(() -> new Product("test", price))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -22,7 +22,7 @@ class ProductTest {
     @ParameterizedTest
     @ValueSource(longs = {-1L, -1_000L})
     void ofWithNegative(Long price) {
-        assertThatThrownBy(() -> Product.of("test", BigDecimal.valueOf(price)))
+        assertThatThrownBy(() -> new Product("test", BigDecimal.valueOf(price)))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
