@@ -58,4 +58,21 @@ public class FixtureFactory {
         product.setPrice(price);
         return product;
     }
+
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuest, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuest);
+        orderTable.setEmpty(empty);
+        return orderTable;
+    }
+
+    public static TableGroup createTableGroup(Long id, List<OrderTable> orderTables, LocalDateTime createdDate) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setOrderTables(orderTables);
+        tableGroup.setCreatedDate(createdDate);
+        return tableGroup;
+    }
 }
