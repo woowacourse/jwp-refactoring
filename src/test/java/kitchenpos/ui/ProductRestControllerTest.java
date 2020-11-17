@@ -8,26 +8,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.Collections;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.ProductService;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
 
-@WebMvcTest(ProductRestController.class)
-class ProductRestControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+class ProductRestControllerTest extends RestControllerTest {
     @MockBean
     private ProductService productService;
-    private ObjectMapper objectMapper = new ObjectMapper();
 
+    @DisplayName("상품 생성 요청을 수행한다.")
     @Test
     void create() throws Exception {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("test", BigDecimal.TEN);
@@ -45,6 +39,7 @@ class ProductRestControllerTest {
             .andDo(print());
     }
 
+    @DisplayName("상품 전체 목록 조회 요청을 수행한다.")
     @Test
     void list() throws Exception {
         ProductResponse productResponse = new ProductResponse(1L, "test", BigDecimal.TEN);
