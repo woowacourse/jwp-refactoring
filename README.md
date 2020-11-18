@@ -6,8 +6,8 @@
 
 - [x] 키친포스의 요구 사항을 `README.md`에 작성한다.
 - [ ] 정리한 키친포스의 요구 사항을 토대로 테스트 코드를 작성한다.
-  - [ ] 모든 Business Object에 대한 테스트 코드를 작성한다.
-  - [ ] `@SpringBootTest`를 이용한 통합 테스트 코드를 작성한다.
+  - [x] 모든 Business Object에 대한 테스트 코드를 작성한다.
+  - [x] `@SpringBootTest`를 이용한 통합 테스트 코드를 작성한다.
   - [ ] `@ExtendWith(MockitoExtension.class)`를 이용한 단위 테스트 코드를 작성한다.
   - [ ] (권장) Controller의 테스트 코드를 작성한다.
 
