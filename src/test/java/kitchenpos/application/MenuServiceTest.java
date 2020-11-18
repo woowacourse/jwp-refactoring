@@ -13,28 +13,27 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductCreateInfo;
+import kitchenpos.domain.MenuRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuResponse;
 
 @ServiceTest
 class MenuServiceTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -42,222 +41,97 @@ class MenuServiceTest {
     @DisplayName("메뉴를 추가한다.")
     @Test
     void create() {
-        Product product1 = new Product();
-        Product product2 = new Product();
-        Product product3 = new Product();
+        Product savedProduct1 = productRepository.save(new Product("후라이드 치킨", BigDecimal.valueOf(10_000L)));
+        Product savedProduct2 = productRepository.save(new Product("양념 치킨", BigDecimal.valueOf(20_000L)));
+        Product savedProduct3 = productRepository.save(new Product("시원한 아이스 아메리카노", BigDecimal.valueOf(5_000L)));
 
-        product1.setPrice(BigDecimal.valueOf(10_000L));
-        product1.setName("후라이드 치킨");
+        MenuProductCreateInfo menuProductCreateInfo1 = new MenuProductCreateInfo(savedProduct1.getId(), 2L);
+        MenuProductCreateInfo menuProductCreateInfo2 = new MenuProductCreateInfo(savedProduct2.getId(), 1L);
+        MenuProductCreateInfo menuProductCreateInfo3 = new MenuProductCreateInfo(savedProduct3.getId(), 1L);
 
-        product2.setPrice(BigDecimal.valueOf(20_000L));
-        product2.setName("양념 치킨");
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test_group"));
 
-        product3.setPrice(BigDecimal.valueOf(5_000L));
-        product3.setName("시원한 아이스 아메리카노");
-
-        Product savedProduct1 = productDao.save(product1);
-        Product savedProduct2 = productDao.save(product2);
-        Product savedProduct3 = productDao.save(product3);
-
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        MenuProduct menuProduct3 = new MenuProduct();
-
-        menuProduct1.setProductId(savedProduct1.getId());
-        menuProduct1.setQuantity(2L);
-
-        menuProduct2.setProductId(savedProduct2.getId());
-        menuProduct2.setQuantity(1L);
-
-        menuProduct3.setProductId(savedProduct3.getId());
-        menuProduct3.setQuantity(1L);
-
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test_group");
-
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Menu menu = new Menu();
-
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(45_000L));
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2, menuProduct3));
-
-        Menu actual = menuService.create(menu);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(45_000L),
+            savedMenuGroup.getId(),
+            Arrays.asList(menuProductCreateInfo1, menuProductCreateInfo2, menuProductCreateInfo3));
+        MenuResponse actual = menuService.create(menuCreateRequest);
 
         assertAll(
-            () -> assertThat(actual).extracting(Menu::getId).isNotNull(),
-            () -> assertThat(actual).extracting(Menu::getName).isEqualTo(menu.getName()),
-            () -> assertThat(actual).extracting(Menu::getPrice, BIG_DECIMAL).isEqualByComparingTo(menu.getPrice()),
-            () -> assertThat(actual.getMenuProducts()).extracting(MenuProduct::getMenuId)
-                .containsOnly(actual.getId())
+            () -> assertThat(actual).extracting(MenuResponse::getId).isNotNull(),
+            () -> assertThat(actual).extracting(MenuResponse::getName).isEqualTo(menuCreateRequest.getName()),
+            () -> assertThat(actual).extracting(MenuResponse::getPrice, BIG_DECIMAL)
+                .isEqualByComparingTo(menuCreateRequest.getPrice())
         );
-    }
-
-    @DisplayName("메뉴를 추가할 시 가격이 null일 경우 예외 처리한다.")
-    @Test
-    void createWithNullPrice() {
-        Menu menu = new Menu();
-        menu.setPrice(null);
-
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 추가할 시 가격이 음수일 경우 예외 처리한다.")
-    @Test
-    void createWithNegativePrice() {
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(-10L));
-
-        assertThatThrownBy(() -> menuService.create(menu))
-            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 추가할 시 존재하지 않는 MenuGroupId일 경우 예외 처리한다.")
     @Test
     void createWithNotExistingMenuGroupId() {
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(1_000L));
-        menu.setMenuGroupId(1L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(1_000L), 1L,
+            Collections.emptyList());
 
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 추가할 시 존재하지 않는 ProductId일 경우 예외 처리한다.")
     @Test
     void createWithNotExistingProductId() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2L);
+        MenuProductCreateInfo menuProductCreateInfo = new MenuProductCreateInfo(1L, 2L);
 
-        Menu menu = new Menu();
-        menu.setPrice(BigDecimal.valueOf(1_000L));
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test"));
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(1_000L),
+            savedMenuGroup.getId(),
+            Collections.singletonList(menuProductCreateInfo));
 
-        menu.setMenuGroupId(savedMenuGroup.getId());
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴를 추가할 시 메뉴 상품 가격의 총합이 메뉴의 가격보다 작을 경우 예외 처리한다.")
     @Test
     void createWithUnderTotalPrice() {
-        Product product1 = new Product();
-        Product product2 = new Product();
-        Product product3 = new Product();
+        Product savedProduct1 = productRepository.save(new Product("후라이드 치킨", BigDecimal.valueOf(10_000L)));
+        Product savedProduct2 = productRepository.save(new Product("양념 치킨", BigDecimal.valueOf(20_000L)));
+        Product savedProduct3 = productRepository.save(new Product("시원한 아이스 아메리카노", BigDecimal.valueOf(5_000L)));
 
-        product1.setPrice(BigDecimal.valueOf(10_000L));
-        product1.setName("후라이드 치킨");
+        MenuProductCreateInfo menuProductCreateInfo1 = new MenuProductCreateInfo(savedProduct1.getId(), 2L);
+        MenuProductCreateInfo menuProductCreateInfo2 = new MenuProductCreateInfo(savedProduct2.getId(), 1L);
+        MenuProductCreateInfo menuProductCreateInfo3 = new MenuProductCreateInfo(savedProduct3.getId(), 1L);
 
-        product2.setPrice(BigDecimal.valueOf(20_000L));
-        product2.setName("양념 치킨");
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test_group"));
 
-        product3.setPrice(BigDecimal.valueOf(5_000L));
-        product3.setName("시원한 아이스 아메리카노");
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(100_000L),
+            savedMenuGroup.getId(),
+            Arrays.asList(menuProductCreateInfo1, menuProductCreateInfo2, menuProductCreateInfo3));
 
-        Product savedProduct1 = productDao.save(product1);
-        Product savedProduct2 = productDao.save(product2);
-        Product savedProduct3 = productDao.save(product3);
-
-        MenuProduct menuProduct1 = new MenuProduct();
-        MenuProduct menuProduct2 = new MenuProduct();
-        MenuProduct menuProduct3 = new MenuProduct();
-
-        menuProduct1.setProductId(savedProduct1.getId());
-        menuProduct1.setQuantity(2L);
-
-        menuProduct2.setProductId(savedProduct2.getId());
-        menuProduct2.setQuantity(1L);
-
-        menuProduct3.setProductId(savedProduct3.getId());
-        menuProduct3.setQuantity(1L);
-
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
-
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-
-        Menu menu = new Menu();
-
-        menu.setMenuGroupId(1L);
-        menu.setName("test");
-        menu.setPrice(BigDecimal.valueOf(100_000L));
-        menu.setMenuGroupId(savedMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2, menuProduct3));
-
-        Menu savedMenu = menuDao.save(menu);
-
-        menuProduct1.setMenuId(savedMenu.getId());
-        menuProduct2.setMenuId(savedMenu.getId());
-        menuProduct3.setMenuId(savedMenu.getId());
-
-        menuProductDao.save(menuProduct1);
-        menuProductDao.save(menuProduct2);
-        menuProductDao.save(menuProduct3);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 전체 목록을 조회한다.")
     @Test
     void list() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("test");
+        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test"));
 
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
+        Product savedProduct1 = productRepository.save(new Product("test1", BigDecimal.valueOf(1_000L)));
+        Product savedProduct2 = productRepository.save(new Product("test2", BigDecimal.valueOf(2_000L)));
 
-        Product product1 = new Product();
-        product1.setName("test1");
-        product1.setPrice(BigDecimal.valueOf(1_000L));
+        MenuProduct menuProduct1 = new MenuProduct(savedProduct1.getId(), 2L);
+        MenuProduct menuProduct2 = new MenuProduct(savedProduct2.getId(), 2L);
 
-        Product product2 = new Product();
-        product2.setName("test2");
-        product2.setPrice(BigDecimal.valueOf(2_000L));
+        Menu menu1 = new Menu("test1", BigDecimal.valueOf(2_000L), savedMenuGroup.getId(),
+            Collections.singletonList(menuProduct1));
+        Menu menu2 = new Menu("test2", BigDecimal.valueOf(4_000L), savedMenuGroup.getId(),
+            Collections.singletonList(menuProduct2));
 
-        Product savedProduct1 = productDao.save(product1);
-        Product savedProduct2 = productDao.save(product2);
+        menuRepository.save(menu1);
+        menuRepository.save(menu2);
 
-        MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setProductId(savedProduct1.getId());
-        menuProduct1.setQuantity(2);
-
-        MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct2.setProductId(savedProduct2.getId());
-        menuProduct2.setQuantity(2);
-
-        Menu menu1 = new Menu();
-        menu1.setName("test1");
-        menu1.setPrice(BigDecimal.valueOf(2_000L));
-        menu1.setMenuProducts(Collections.singletonList(menuProduct1));
-        menu1.setMenuGroupId(savedMenuGroup.getId());
-
-        Menu menu2 = new Menu();
-        menu2.setName("test2");
-        menu2.setPrice(BigDecimal.valueOf(4_000L));
-        menu2.setMenuProducts(Collections.singletonList(menuProduct2));
-        menu2.setMenuGroupId(savedMenuGroup.getId());
-
-        Menu savedMenu1 = menuDao.save(menu1);
-        Menu savedMenu2 = menuDao.save(menu2);
-
-        menuProduct1.setMenuId(savedMenu1.getId());
-        menuProduct2.setMenuId(savedMenu2.getId());
-
-        menuProductDao.save(menuProduct1);
-        menuProductDao.save(menuProduct2);
-
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         assertAll(
             () -> assertThat(actual).hasSize(2),
-            () -> assertThat(actual).element(0).extracting(Menu::getMenuProducts, LIST).isNotEmpty(),
-            () -> assertThat(actual).element(1).extracting(Menu::getMenuProducts, LIST).isNotEmpty()
+            () -> assertThat(actual).element(0).extracting(MenuResponse::getMenuProductResponses, LIST).isNotEmpty(),
+            () -> assertThat(actual).element(1).extracting(MenuResponse::getMenuProductResponses, LIST).isNotEmpty()
         );
     }
 }
