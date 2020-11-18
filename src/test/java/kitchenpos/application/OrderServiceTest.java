@@ -1,18 +1,18 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
-import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
+import javax.validation.ConstraintViolationException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -24,6 +24,7 @@ import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.EmptyMenuOrderException;
 import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -32,28 +33,24 @@ import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql("classpath:truncate.sql")
 class OrderServiceTest {
 
+    @Autowired
     private OrderService orderService;
 
-    @Mock
+    @Autowired
     private MenuRepository menuRepository;
 
-    @Mock
+    @Autowired
     private OrderRepository orderRepository;
 
-    @Mock
+    @Autowired
     private OrderLineItemRepository orderLineItemRepository;
 
-    @Mock
+    @Autowired
     private OrderTableRepository orderTableRepository;
-
-    @BeforeEach
-    void setUp() {
-        orderService = new OrderService(menuRepository, orderRepository, orderTableRepository,
-            orderLineItemRepository);
-    }
 
     @DisplayName("정상적으로 Order를 생성한다")
     @Test
@@ -61,13 +58,14 @@ class OrderServiceTest {
         OrderCreateRequest request = OrderFixture.createRequest(1L,
             OrderLineItemFixture.createRequest(1L, 1), OrderLineItemFixture.createRequest(2L, 1),
             OrderLineItemFixture.createRequest(3L, 1));
-        Order orderWithId = OrderFixture.createWithId(1L, OrderStatus.MEAL.name(), 1L);
+        Order orderWithId = OrderFixture.createWithId(1L, OrderFixture.COOKING_STATUS, 1L);
         OrderTable notEmptyTable = OrderTableFixture.createNotEmptyWithId(1L);
 
-        when(menuRepository.countByIdIn(anyList())).thenReturn(
-            Long.valueOf(request.getOrderLineItems().size()));
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(notEmptyTable));
-        when(orderRepository.save(any(Order.class))).thenReturn(orderWithId);
+        Menu menu1 = MenuFixture.createWithoutId(1L, 15000L);
+        Menu menu2 = MenuFixture.createWithoutId(1L, 15000L);
+        Menu menu3 = MenuFixture.createWithoutId(1L, 15000L);
+        menuRepository.saveAll(Arrays.asList(menu1, menu2, menu3));
+        orderTableRepository.save(notEmptyTable);
 
         OrderResponse response = orderService.create(request);
         assertThat(response).isEqualToComparingFieldByField(OrderResponse.of(orderWithId));
@@ -79,7 +77,7 @@ class OrderServiceTest {
         OrderCreateRequest createEmptyItemRequest = OrderFixture.createRequest(1L);
 
         assertThatThrownBy(() -> orderService.create(createEmptyItemRequest))
-            .isInstanceOf(EmptyMenuOrderException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("Menu가 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -88,10 +86,8 @@ class OrderServiceTest {
         OrderCreateRequest requestWithNotExistMenu = OrderFixture.createRequest(1L,
             OrderLineItemFixture.createRequest(1L, 1));
 
-        when(menuRepository.countByIdIn(anyList())).thenReturn(0L);
-
         assertThatThrownBy(() -> orderService.create(requestWithNotExistMenu))
-            .isInstanceOf(MenuNotFoundException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("Table이 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -100,12 +96,10 @@ class OrderServiceTest {
         OrderCreateRequest requestWithNotExistTable = OrderFixture.createRequest(1L,
             OrderLineItemFixture.createRequest(1L, 1));
 
-        when(menuRepository.countByIdIn(anyList())).thenReturn(1L);
-        when(orderTableRepository.findById(requestWithNotExistTable.getOrderTableId())).thenReturn(
-            Optional.empty());
+        menuRepository.save(MenuFixture.createWithoutId(1L, 15000L));
 
         assertThatThrownBy(() -> orderService.create(requestWithNotExistTable))
-            .isInstanceOf(OrderTableNotFoundException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("Order Table이 비어있으면 Order 생성 요청 시 예외를 반환한다.")
@@ -115,12 +109,11 @@ class OrderServiceTest {
             OrderLineItemFixture.createRequest(1L, 1));
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
 
-        when(menuRepository.countByIdIn(anyList())).thenReturn(1L);
-        when(orderTableRepository.findById(requestWithEmptyTable.getOrderTableId())).thenReturn(
-            Optional.of(emptyTable));
+        menuRepository.save(MenuFixture.createWithoutId(1L, 15000L));
+        orderTableRepository.save(emptyTable);
 
         assertThatThrownBy(() -> orderService.create(requestWithEmptyTable))
-            .isInstanceOf(AlreadyEmptyTableException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("정상적으로 저장된 Order를 모두 조회한다.")
@@ -128,7 +121,7 @@ class OrderServiceTest {
     void list() {
         Order order1 = OrderFixture.createWithId(1L, OrderFixture.MEAL_STATUS, 1L);
         Order order2 = OrderFixture.createWithId(2L, OrderFixture.MEAL_STATUS, 1L);
-        when(orderRepository.findAll()).thenReturn(Arrays.asList(order1, order2));
+        orderRepository.saveAll(Arrays.asList(order1, order2));
 
         assertThat(orderService.list())
             .usingRecursiveComparison()
@@ -141,7 +134,7 @@ class OrderServiceTest {
         Order mealOrder = OrderFixture.createWithId(1L, OrderFixture.MEAL_STATUS, 1L);
         OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
-        when(orderRepository.findById(mealOrder.getId())).thenReturn(Optional.of(mealOrder));
+        orderRepository.save(mealOrder);
 
         assertThat(orderService.changeOrderStatus(mealOrder.getId(), request))
             .extracting(OrderResponse::getOrderStatus)
@@ -154,8 +147,7 @@ class OrderServiceTest {
         Order completeOrder = OrderFixture.createWithId(1L, OrderFixture.COMPLETION, 1L);
         OrderChangeStatusRequest request = new OrderChangeStatusRequest(OrderStatus.COOKING);
 
-        when(orderRepository.findById(completeOrder.getId())).thenReturn(
-            Optional.of(completeOrder));
+        orderRepository.save(completeOrder);
 
         assertThatThrownBy(
             () -> orderService.changeOrderStatus(completeOrder.getId(), request))
