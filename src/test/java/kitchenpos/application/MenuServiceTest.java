@@ -7,6 +7,8 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -51,10 +53,10 @@ class MenuServiceTest {
         );
     }
 
-    @DisplayName("메뉴의 가격이 올바르지 않은 경우 예외 발생")
-    @Test
-    void create_exception1() {
-        BigDecimal invalidPrice = BigDecimal.valueOf(-1L);
+    @DisplayName("메뉴의 가격이 null, 음수일 경우 예외 발생")
+    @ParameterizedTest
+    @MethodSource("kitchenpos.fixture.FixtureMethod#provideNullAndNegativeLongValue")
+    void create_exception1(BigDecimal invalidPrice) {
         Product savedProduct = productDao.save(createProduct(null, "터틀치킨", invalidPrice));
         MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroup(null, "치킨"));
         Menu menuRequest = createMenu(null, savedProduct.getName(), savedProduct.getPrice(), savedMenuGroup.getId(),

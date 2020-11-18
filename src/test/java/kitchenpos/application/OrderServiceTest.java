@@ -114,7 +114,7 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 조회")
+    @DisplayName("주문 목록 조회")
     @Test
     void list() {
         Product savedProduct = productDao.save(createProduct(null, "터틀치킨", BigDecimal.valueOf(16_000L)));
