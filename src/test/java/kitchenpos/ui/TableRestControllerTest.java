@@ -59,7 +59,7 @@ public class TableRestControllerTest {
     @Test
     void createTest() throws Exception {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(테이블_사람_1명, 테이블_비어있음);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있음);
         when(tableService.create(any(OrderTableCreateRequest.class))).thenReturn(orderTableResponse);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(orderTableCreateRequest);
 
@@ -125,7 +125,7 @@ public class TableRestControllerTest {
     @DisplayName("'/tables'로 GET 요청 시, 테이블의 목록을 반환한다.")
     @Test
     void listTest() throws Exception {
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있음);
         List<OrderTableResponse> orderTableResponses = Arrays.asList(orderTableResponse);
 
         when(tableService.list()).thenReturn(orderTableResponses);
@@ -142,7 +142,7 @@ public class TableRestControllerTest {
     @Test
     void changeEmptyTest() throws Exception {
         OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(테이블_비어있지않음);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있지않음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있지않음);
 
         when(tableService.changeEmpty(anyLong(), any(OrderTableChangeEmptyRequest.class))).thenReturn(orderTableResponse);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(orderTableChangeEmptyRequest);
@@ -160,7 +160,7 @@ public class TableRestControllerTest {
     @Test
     void changeEmptyWithNullExceptionTest() throws Exception {
         OrderTableChangeEmptyRequest invalidRequest = new OrderTableChangeEmptyRequest(null);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있지않음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_1명, 테이블_비어있지않음);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(invalidRequest);
 
         this.mockMvc.perform(put(API + "/tables/" + 테이블_ID_1 + "/empty").
@@ -178,7 +178,7 @@ public class TableRestControllerTest {
     @Test
     void changeNumberOfGuestsTest() throws Exception {
         OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(테이블_사람_2명);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음);
         when(tableService.changeNumberOfGuests(anyLong(), any(OrderTableChangeNumberOfGuestsRequest.class))).thenReturn(orderTableResponse);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(orderTableChangeNumberOfGuestsRequest);
 
@@ -195,7 +195,7 @@ public class TableRestControllerTest {
     @Test
     void changeNumberOfGuestsWithNullExceptionTest() throws Exception {
         OrderTableChangeNumberOfGuestsRequest invalidRequest = new OrderTableChangeNumberOfGuestsRequest(null);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(invalidRequest);
 
         this.mockMvc.perform(put(API + "/tables/" + 테이블_ID_1 + "/number-of-guests").
@@ -214,7 +214,7 @@ public class TableRestControllerTest {
     @ParameterizedTest
     void changeNumberOfGuestsWithNegativeExceptionTest(int invalidNumberOfGuests) throws Exception {
         OrderTableChangeNumberOfGuestsRequest invalidRequest = new OrderTableChangeNumberOfGuestsRequest(invalidNumberOfGuests);
-        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음, null);
+        OrderTableResponse orderTableResponse = new OrderTableResponse(테이블_ID_1, 테이블_사람_2명, 테이블_비어있음);
         String requestAsString = OBJECT_MAPPER.writeValueAsString(invalidRequest);
 
         this.mockMvc.perform(put(API + "/tables/" + 테이블_ID_1 + "/number-of-guests").

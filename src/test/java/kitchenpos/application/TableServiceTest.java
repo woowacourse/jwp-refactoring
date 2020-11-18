@@ -33,7 +33,6 @@ public class TableServiceTest {
     private static final Boolean 테이블_비어있지않음 = false;
     private static final Long 테이블_ID_1 = 1L;
     private static final Long 테이블_ID_2 = 2L;
-    private static final Long 테이블_그룹_ID_1 = 1L;
 
     @Mock
     private OrderTableRepository orderTableRepository;

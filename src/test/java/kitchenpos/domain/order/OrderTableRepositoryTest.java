@@ -53,4 +53,20 @@ public class OrderTableRepositoryTest {
         assertThat(orderTables.get(1).getNumberOfGuests()).isEqualTo(테이블_사람_2명);
         assertThat(orderTables.get(1).getEmpty()).isEqualTo(테이블_비어있지않음);
     }
+
+    @DisplayName("OrderTable의 개별 조회를 요청할 경우, 올바르게 수행된다.")
+    @Test
+    void findByIdTest() {
+        OrderTable orderTable1 = new OrderTable(테이블_사람_1명, 테이블_비어있음);
+        OrderTable orderTable2 = new OrderTable(테이블_사람_2명, 테이블_비어있지않음);
+        OrderTable savedTable1 = orderTableRepository.save(orderTable1);
+        OrderTable savedTable2 = orderTableRepository.save(orderTable2);
+
+        OrderTable foundTable = orderTableRepository.findById(savedTable1.getId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        assertThat(foundTable.getId()).isEqualTo(1L);
+        assertThat(foundTable.getNumberOfGuests()).isEqualTo(테이블_사람_1명);
+        assertThat(foundTable.getEmpty()).isEqualTo(테이블_비어있음);
+    }
 }
