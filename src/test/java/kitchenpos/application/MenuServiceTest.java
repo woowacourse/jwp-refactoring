@@ -1,115 +1,109 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.fixture.MenuFixture;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.fixture.ProductFixture;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.fixture.MenuFixture.createMenuWithGroupId;
-import static kitchenpos.fixture.MenuFixture.createMenuWithPrice;
+import static kitchenpos.fixture.MenuFixture.createMenuWithMenuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWitId;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWithoutId;
-import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithoutId;
+import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithMenuAndProduct;
+import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithProduct;
+import static kitchenpos.fixture.ProductFixture.createProductWithId;
 import static kitchenpos.fixture.ProductFixture.createProductWithPrice;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @SpringBootTest
-@Sql(value = "/truncate.sql")
 class MenuServiceTest {
 
+    private static final String MENU_NAME = "후라이드";
     @Autowired
     private MenuService menuService;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @DisplayName("Menu 등록 성공")
     @Test
     void create() {
-        BigDecimal price = new BigDecimal(10000);
-        Product savedProduct = productDao.save(createProductWithPrice(price));
-        MenuProduct menuProduct = createMenuProductWithoutId(savedProduct.getId(), 1L);
-        MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroupWithoutId());
-        Menu menu = MenuFixture.createMenuWithoutId(savedMenuGroup.getId(), price, menuProduct);
+        BigDecimal price = new BigDecimal(19000);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(createMenuGroupWithoutId());
+        Product savedProduct = productRepository.save(createProductWithPrice(price));
+        MenuRequest menuRequest = createMenuRequest(savedMenuGroup, savedProduct);
 
-        Menu actual = menuService.create(menu);
+        MenuResponse actual = menuService.create(menuRequest);
+        Menu foundMenu = findById(menuRepository, actual.getId());
+        Long actualMenuProductId = actual.getMenuProductResponses().get(0).getSeq();
+        MenuProduct foundMenuProduct = findById(menuProductRepository, actualMenuProductId);
+        MenuResponse expected = MenuResponse.of(foundMenu, Arrays.asList(foundMenuProduct));
 
-        assertAll(() -> {
-            assertThat(actual.getId()).isNotNull();
-            assertThat(actual.getMenuProducts()).extracting("menuId")
-                    .containsOnly(actual.getId());
-        });
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
-    @DisplayName("Menu 가격이 null인 경우 예외 테스트")
-    @Test
-    void createPriceNull() {
-        Menu menu = createMenuWithPrice(null);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("Menu 가격이 0보다 작은 경우 예외 테스트")
-    @Test
-    void createPriceLessThanZero() {
-        Menu menu = createMenuWithPrice(BigDecimal.ZERO);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
 
     @DisplayName("Menu GruopId가 DB에 존재하지 않는 경우 예외 테스트")
     @Test
     void createNotExistMenuGroupId() {
-        Menu menu = createMenuWithGroupId(1L);
+        MenuRequest menuRequest = createMenuRequest(createMenuGroupWitId(1L), createProductWithId(2L));
 
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴에 속하는 MenuProducts의 총 금액이 메뉴의 가격보다 작은 경우 예외 테스트")
-    @Test
-    void createMenuProductsAmountLessThanMenuPrice() {
-        Product savedProduct = productDao.save(createProductWithPrice(new BigDecimal(9999)));
-        MenuProduct menuProduct = createMenuProductWithoutId(savedProduct.getId(), 1L);
-        MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroupWithoutId());
-        Menu menu = MenuFixture.createMenuWithoutId(savedMenuGroup.getId(), new BigDecimal(10000), menuProduct);
-
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> menuService.create(menuRequest))
+                .withMessage("존재하지 않는 Menu Group Id 입니다.");
     }
 
     @DisplayName("Menu 전체조회 테스트")
     @Test
     void list() {
-        BigDecimal price = new BigDecimal(10000);
-        Product savedProduct = productDao.save(createProductWithPrice(price));
-        MenuProduct menuProduct = createMenuProductWithoutId(savedProduct.getId(), 1L);
-        MenuGroup savedMenuGroup = menuGroupDao.save(createMenuGroupWithoutId());
-        Menu menu = MenuFixture.createMenuWithoutId(savedMenuGroup.getId(), price, menuProduct);
-        Menu saved = menuDao.save(menu);
+        MenuGroup savedMenuGroup = menuGroupRepository.save(createMenuGroupWithoutId());
+        Menu savedMenu = menuRepository.save(createMenuWithMenuGroup(savedMenuGroup));
+        Product savedProduct = productRepository.save(ProductFixture.createProductWithoutId());
+        MenuProduct menuProduct = createMenuProductWithMenuAndProduct(savedMenu, savedProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
+        MenuResponse expected = MenuResponse.of(savedMenu, Arrays.asList(savedMenuProduct));
 
-        assertAll(() -> {
-            assertThat(actual).hasSize(1);
-            assertThat(actual.get(0)).isEqualToIgnoringNullFields(saved);
-        });
+        assertThat(actual.get(0))
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
+    }
+
+    private <T> T findById(JpaRepository<T, Long> jpaRepository, Long id) {
+        return jpaRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+    }
+
+    private MenuRequest createMenuRequest(MenuGroup menuGroup, Product product) {
+        return new MenuRequest(MENU_NAME, product.getPrice(), menuGroup.getId(),
+                Arrays.asList(MenuProductRequest.from(createMenuProductWithProduct(product))));
     }
 }

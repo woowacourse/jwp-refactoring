@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -7,7 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -16,7 +16,9 @@ public class Menu {
     private Long id;
 
     private String name;
-    private BigDecimal price;
+
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
@@ -24,22 +26,19 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
-        validatePrice(price);
+    public Menu(Long id) {
+        this.id = id;
+    }
+
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("price가 null이거나 0보다 작을 수 없습니다.");
-        }
-    }
-
-    public boolean isSmaller(BigDecimal totalPrice) {
-        return totalPrice.compareTo(this.price) <= 0;
+    public boolean isSmallerPrice(BigDecimal totalPrice) {
+        return price.isSmaller(totalPrice);
     }
 
     public boolean equalsById(Long id) {
@@ -54,7 +53,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

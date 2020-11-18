@@ -3,7 +3,11 @@ package kitchenpos.ui;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 
 import static kitchenpos.fixture.MenuFixture.createMenuWithId;
+import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithId;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,12 +40,20 @@ class MenuRestControllerTest {
     @MockBean
     private MenuService menuService;
 
+    private MenuResponse menuResponse;
+
+    @BeforeEach
+    void setUp() {
+        Menu menu = createMenuWithId(1L);
+        MenuProduct menuProduct = createMenuProductWithId(2L);
+        menuResponse = MenuResponse.of(menu, Arrays.asList(menuProduct));
+    }
+
     @DisplayName("Menu 생성 요청")
     @Test
     void create() throws Exception {
-        Menu menu = createMenuWithId(null);
-        String content = new ObjectMapper().writeValueAsString(menu);
-        given(menuService.create(any())).willReturn(createMenuWithId(1L));
+        String content = new ObjectMapper().writeValueAsString(new MenuRequest());
+        given(menuService.create(any())).willReturn(menuResponse);
 
         mockMvc.perform(post("/api/menus")
                 .content(content)
@@ -54,7 +67,7 @@ class MenuRestControllerTest {
     @Test
     void list() throws Exception {
         given(menuService.list())
-                .willReturn(Arrays.asList(createMenuWithId(1L)));
+                .willReturn(Arrays.asList(menuResponse));
 
         mockMvc.perform(get("/api/menus")
                 .accept(MediaType.APPLICATION_JSON))

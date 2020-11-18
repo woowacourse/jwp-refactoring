@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 public class MenuResponse {
@@ -11,20 +12,20 @@ public class MenuResponse {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductDto> menuProductDtos;
+    private List<MenuProductResponse> menuProductResponses;
 
     private MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId,
-                         List<MenuProductDto> menuProductDtos) {
+                         List<MenuProductResponse> menuProductResponses) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = price.setScale(0, RoundingMode.CEILING);
         this.menuGroupId = menuGroupId;
-        this.menuProductDtos = menuProductDtos;
+        this.menuProductResponses = menuProductResponses;
     }
 
-    public static MenuResponse of(Menu menu, List<MenuProduct> menuProductDtos) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(),
-                MenuProductDto.listOf(menuProductDtos));
+    public static MenuResponse of(Menu menu, List<MenuProduct> menuProducts) {
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().getPrice(), menu.getMenuGroupId(),
+                MenuProductResponse.listOf(menuProducts));
     }
 
     public Long getId() {
@@ -43,7 +44,7 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProductDto> getMenuProductDtos() {
-        return menuProductDtos;
+    public List<MenuProductResponse> getMenuProductResponses() {
+        return menuProductResponses;
     }
 }
