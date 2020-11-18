@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import kitchenpos.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,6 @@ import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
 
 class OrderServiceTest extends ServiceTest {
 	@Autowired
@@ -68,7 +61,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);
@@ -88,7 +81,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);
@@ -110,7 +103,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, 7L);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);
@@ -138,7 +131,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);
@@ -168,7 +161,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);
@@ -190,7 +183,7 @@ class OrderServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(1L, "제품", BigDecimal.valueOf(500L)));
 		MenuProduct menuProduct = createMenuProduct(1L, product.getId(), 2L, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(1000L), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(1000L), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu savedMenu = menuRepository.save(menu);

@@ -1,20 +1,20 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -24,10 +24,10 @@ public class MenuService {
     private final ProductRepository productRepository;
 
     public MenuService(
-        final MenuRepository menuRepository,
-        final MenuGroupRepository menuGroupRepository,
-        final MenuProductRepository menuProductRepository,
-        final ProductRepository productRepository
+            final MenuRepository menuRepository,
+            final MenuGroupRepository menuGroupRepository,
+            final MenuProductRepository menuProductRepository,
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -37,10 +37,11 @@ public class MenuService {
 
     @Transactional
     public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+        // todo: Price를 Money 객체
+        final Money price = menu.getPrice();
 
         validPriceIsNullOrMinus(price);
-        validMenuGroupIsNotExist(menu);
+        validMenuGroupIsNotExist(menu.getMenuGroup());
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
@@ -58,13 +59,14 @@ public class MenuService {
         return savedMenu;
     }
 
-    private void validSumIsLowerThanPrice(BigDecimal price, List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
+    private void validSumIsLowerThanPrice(Money price, List<MenuProduct> menuProducts) {
+        Money sum = Money.ZERO;
 
         for (final MenuProduct menuProduct : menuProducts) {
             final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+                    .orElseThrow(IllegalArgumentException::new);
+            // todo: product Money 객체로 변경 후 리팩토링 필
+            sum = sum.plus(new Money(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())).longValue()));
         }
 
         if (price.compareTo(sum) > 0) {
@@ -72,14 +74,14 @@ public class MenuService {
         }
     }
 
-    private void validMenuGroupIsNotExist(Menu menu) {
-        if (!menuGroupRepository.existsById(menu.getMenuGroup())) {
+    private void validMenuGroupIsNotExist(Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private void validPriceIsNullOrMinus(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+    private void validPriceIsNullOrMinus(Money price) {
+        if (Objects.isNull(price) || price.compareTo(Money.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }

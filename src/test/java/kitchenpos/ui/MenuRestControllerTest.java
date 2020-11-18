@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import kitchenpos.domain.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -42,7 +43,7 @@ class MenuRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		menu = new Menu(1L, "메뉴", BigDecimal.valueOf(3000), null, null);
+		menu = new Menu(1L, "메뉴", new Money(3000L), null, null);
 
 		menus = Collections.singletonList(menu);
 	}

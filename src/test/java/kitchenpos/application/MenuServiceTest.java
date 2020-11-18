@@ -7,16 +7,13 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import kitchenpos.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -44,7 +41,7 @@ class MenuServiceTest extends ServiceTest {
 	@Test
 	void create_whenMenuPriceIsMinus_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(-1L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(-1L), menuGroup.getId(),
 			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
@@ -55,7 +52,7 @@ class MenuServiceTest extends ServiceTest {
 	@Test
 	void create_whenNotExistMenuGroup_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
 			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
@@ -66,7 +63,7 @@ class MenuServiceTest extends ServiceTest {
 	@Test
 	void create_whenNotExistProduct_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(null, "메뉴", BigDecimal.valueOf(100L), menuGroup.getId(),
+		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
 			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
@@ -83,7 +80,7 @@ class MenuServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, 3L);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		assertThatThrownBy(() -> menuService.create(menu))
@@ -100,7 +97,7 @@ class MenuServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu actual = menuService.create(menu);
@@ -108,7 +105,7 @@ class MenuServiceTest extends ServiceTest {
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getName()).isEqualTo(menu.getName()),
-			() -> assertThat(actual.getPrice().longValue()).isEqualTo(menu.getPrice().longValue()),
+			() -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice()),
 			() -> assertThat(actual.getMenuGroup()).isEqualTo(menu.getMenuGroup()),
 			() -> assertThat(actual.getMenuProducts().get(0).getQuantity()).isEqualTo(2L)
 		);
@@ -122,7 +119,7 @@ class MenuServiceTest extends ServiceTest {
 		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
-		Menu menu = createMenu(1L, "메뉴", BigDecimal.valueOf(menuPrice), menuGroup.getId(),
+		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			Collections.singletonList(menuProduct));
 
 		Menu expect = menuService.create(menu);
@@ -133,7 +130,7 @@ class MenuServiceTest extends ServiceTest {
 		assertThat(actual).hasSize(1);
 		assertAll(
 			() -> assertThat(actualItem.getName()).isEqualTo(expect.getName()),
-			() -> assertThat(actualItem.getPrice().longValue()).isEqualTo(expect.getPrice().longValue()),
+			() -> assertThat(actualItem.getPrice()).isEqualTo(expect.getPrice()),
 			() -> assertThat(actualItem.getMenuGroup()).isEqualTo(expect.getMenuGroup()),
 			() -> assertThat(actualItem.getMenuProducts().get(0).getQuantity()).isEqualTo(
 				expect.getMenuProducts().get(0).getQuantity())
