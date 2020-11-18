@@ -74,7 +74,7 @@ class ProductServiceTest {
         final Product product = new Product();
         product.setName("파닭치킨");
         product.setPrice(BigDecimal.valueOf(18000L));
-        productDao.save(product);
+        productService.create(product);
 
         // When
         final List<Product> list = productService.list();
