@@ -153,9 +153,11 @@ class OrderServiceTest {
         Order order = orderRepository.save(new Order(orderTable));
 
         //when
-        Order changedOrder = orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name()));
+        orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name()));
 
         //then
+        Order changedOrder = orderRepository.findById(order.getId())
+                .orElseThrow(RuntimeException::new);
         assertThat(changedOrder.getOrderStatus()).isEqualTo(orderStatus);
     }
 
