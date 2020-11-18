@@ -110,13 +110,16 @@ class TableGroupServiceTest {
     @Test
     void create_OrderTableIsNotEmpty_ExceptionThrown() {
         // Given
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        final OrderTable orderTable1 = new OrderTable();
+        orderTable1.setEmpty(false);
+        final OrderTable orderTable2 = new OrderTable();
+        orderTable2.setEmpty(true);
+        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
+        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
 
         // When
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(newArrayList(savedOrderTable));
+        tableGroup.setOrderTables(newArrayList(savedOrderTable1, savedOrderTable2));
 
         // Then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
