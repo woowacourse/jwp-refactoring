@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.menu.domain.Menu;
 import kitchenpos.ordertable.domain.OrderTable;
 
 import javax.persistence.Entity;
@@ -38,6 +39,13 @@ public class Order {
 
     public Order(OrderTable orderTable) {
         this(orderTable, OrderStatus.COOKING);
+        validate();
+    }
+
+    private void validate() {
+        if (this.orderTable.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
+        }
     }
 
     public boolean isUngroupable() {
@@ -62,5 +70,9 @@ public class Order {
 
     public OrderTable getOrderTable() {
         return orderTable;
+    }
+
+    public OrderLineItem createOrderLineItem(Long quantity, Menu menu) {
+        return new OrderLineItem(quantity, this, menu);
     }
 }

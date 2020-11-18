@@ -31,16 +31,8 @@ public class OrderLineItem {
         this.menu = menu;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
     public Long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(Long quantity) {
-        this.quantity = quantity;
     }
 
     public Order getOrder() {
