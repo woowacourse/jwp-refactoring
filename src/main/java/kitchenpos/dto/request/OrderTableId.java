@@ -1,11 +1,14 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public class OrderTableId {
-    private Long id;
+    @NotNull
+    private final Long id;
 
-    public OrderTableId() {
-    }
-
+    @JsonCreator
     public OrderTableId(Long id) {
         this.id = id;
     }

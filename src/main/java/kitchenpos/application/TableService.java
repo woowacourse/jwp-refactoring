@@ -15,6 +15,7 @@ import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.validator.OrderStatusValidate;
 
 @Service
 @Transactional(readOnly = true)
