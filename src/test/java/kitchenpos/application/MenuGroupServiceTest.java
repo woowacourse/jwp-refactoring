@@ -12,6 +12,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.inmemorydao.InMemoryMenuGroupDao;
 
+@DisplayName("MenuGroupService 테스트")
 class MenuGroupServiceTest {
     private MenuGroupDao menuGroupDao;
     private MenuGroupService menuGroupService;

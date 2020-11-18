@@ -23,6 +23,7 @@ import kitchenpos.inmemorydao.InMemoryMenuGroupDao;
 import kitchenpos.inmemorydao.InMemoryMenuProductDao;
 import kitchenpos.inmemorydao.InMemoryProductDao;
 
+@DisplayName("MenuService 테스트")
 class MenuServiceTest {
     private MenuDao menuDao;
     private MenuGroupDao menuGroupDao;

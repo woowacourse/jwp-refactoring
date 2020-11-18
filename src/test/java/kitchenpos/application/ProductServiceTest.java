@@ -13,6 +13,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.inmemorydao.InMemoryProductDao;
 
+@DisplayName("ProductService 테스트")
 class ProductServiceTest {
     private ProductDao productDao;
     private ProductService productService;

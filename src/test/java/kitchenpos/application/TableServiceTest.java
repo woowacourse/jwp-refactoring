@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.inmemorydao.InMemoryOrderDao;
 import kitchenpos.inmemorydao.InMemoryOrderTableDao;
 
+@DisplayName("TableService 테스트")
 class TableServiceTest {
     private OrderDao orderDao;
     private OrderTableDao orderTableDao;
@@ -111,6 +112,7 @@ class TableServiceTest {
 
         // Then
         final Long orderTableId = savedOrderTable.getId();
+
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
         ;
@@ -133,6 +135,7 @@ class TableServiceTest {
 
         // Then
         final Long orderTableId = savedOrderTable.getId();
+
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
         ;
@@ -155,6 +158,7 @@ class TableServiceTest {
 
         // Then
         final Long orderTableId = savedOrderTable.getId();
+
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
         ;
@@ -201,6 +205,7 @@ class TableServiceTest {
 
         // Then
         final Long orderTableId = savedOrderTable.getId();
+
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(orderTableId, changingOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -233,6 +238,7 @@ class TableServiceTest {
 
         // Then
         final Long orderTableId = savedOrderTable.getId();
+
         assertThatThrownBy(
                 () -> tableService.changeNumberOfGuests(orderTableId, changingOrderTable))
                 .isInstanceOf(IllegalArgumentException.class)
