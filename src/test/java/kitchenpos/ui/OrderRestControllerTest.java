@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -22,9 +23,14 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
+import kitchenpos.fixture.OrderLineItemFixture;
+import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableFixture;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @WebMvcTest(controllers = OrderRestController.class)
 class OrderRestControllerTest {
@@ -38,6 +44,12 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
+    @MockBean
+    private MenuRepository menuRepository;
+
+    @MockBean
+    private OrderTableRepository orderTableRepository;
+
     private Order order;
 
     @BeforeEach
@@ -49,13 +61,18 @@ class OrderRestControllerTest {
     @DisplayName("Order 생성")
     @Test
     void create() throws Exception {
+        OrderCreateRequest request = OrderFixture.createRequest(OrderFixture.ID1,
+            OrderLineItemFixture.createRequest(1L, 1));
         when(orderService.create(any(OrderCreateRequest.class))).thenReturn(
             OrderResponse.of(order));
+        when(orderTableRepository.findById(anyLong()))
+            .thenReturn(Optional.of(OrderTableFixture.createNotEmptyWithId(1L)));
+        when(menuRepository.countByIdIn(anyList())).thenReturn(Long.valueOf(request.getOrderLineItems().size()));
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(order))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isCreated())

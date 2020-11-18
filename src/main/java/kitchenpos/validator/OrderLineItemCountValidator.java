@@ -13,7 +13,6 @@ import kitchenpos.repository.MenuRepository;
 
 public class OrderLineItemCountValidator
     implements ConstraintValidator<OrderLineItemCountValidate, List<OrderLineItemCreateRequest>> {
-
     private final MenuRepository menuRepository;
 
     public OrderLineItemCountValidator(MenuRepository menuRepository) {

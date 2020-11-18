@@ -23,6 +23,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.fixture.MenuFixture;
+import kitchenpos.fixture.MenuProductFixture;
 
 @WebMvcTest(controllers = MenuRestController.class)
 class MenuRestControllerTest {
@@ -46,12 +47,15 @@ class MenuRestControllerTest {
     @DisplayName("정상 Menu 생성")
     @Test
     void create() throws Exception {
+        MenuCreateRequest request = MenuFixture.createRequest(MenuFixture.ID1, 1L,
+            MenuProductFixture.createRequest(1L, 1),
+            MenuProductFixture.createRequest(2L, 1));
         when(menuService.create(any(MenuCreateRequest.class))).thenReturn(MenuResponse.of(menu));
 
         mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(menu))
+            .content(objectMapper.writeValueAsBytes(request))
         )
             .andDo(print())
             .andExpect(status().isCreated())

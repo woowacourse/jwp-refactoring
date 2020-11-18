@@ -11,9 +11,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -24,6 +26,9 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.validator.OrderTableCountValidator;
 
 @WebMvcTest(controllers = TableGroupRestController.class)
 class TableGroupRestControllerTest {
@@ -37,22 +42,18 @@ class TableGroupRestControllerTest {
     @MockBean
     private TableGroupService tableGroupService;
 
-    private List<OrderTable> tables;
-
-    @BeforeEach
-    void setUp() {
-        OrderTable orderTable1 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
-        OrderTable orderTable2 = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID2);
-
-        tables = Arrays.asList(orderTable1, orderTable2);
-    }
+    @MockBean
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("테이블 그룹 생성")
     @Test
     void create() throws Exception {
         TableGroup tableGroup = TableGroupFixture.createWithId(TableGroupFixture.ID1);
         TableGroupCreateRequest request = TableGroupFixture.createRequest();
+
         when(tableGroupService.create(any())).thenReturn(tableGroup);
+        when(orderTableRepository.countByIdIn(anyList()))
+            .thenReturn(Long.valueOf(request.getOrderTables().size()));
 
         mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
