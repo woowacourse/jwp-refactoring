@@ -10,8 +10,10 @@ import kitchenpos.domain.OrderLineItem;
 public class OrderLineItemRequest {
     @NotNull(message = "메뉴가 비어있을 수 없습니다.")
     private final Long menuId;
+
+    @NotNull
     @Min(value = 1, message = "주문수량이 1 미만일수 없습니다.")
-    private final long quantity;
+    private final Long quantity;
 
     public OrderLineItemRequest(final Long menuId, final long quantity) {
         this.menuId = menuId;

@@ -2,8 +2,11 @@ package kitchenpos.dto;
 
 import java.beans.ConstructorProperties;
 
+import javax.validation.constraints.NotNull;
+
 public class TableChangeEmptyRequest {
-    private final boolean empty;
+    @NotNull
+    private final Boolean empty;
 
     @ConstructorProperties({"empty"})
     public TableChangeEmptyRequest(final boolean empty) {
