@@ -52,6 +52,17 @@ public class Order {
         return this.orderStatus.canUngroup();
     }
 
+    public void changeStatus(String orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new IllegalArgumentException("주문 상태가 계산 완료인 경우 변경할 수 없습니다.");
+        }
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
+    public OrderLineItem createOrderLineItem(Long quantity, Menu menu) {
+        return new OrderLineItem(quantity, this, menu);
+    }
+
     public Long getId() {
         return id;
     }
@@ -60,19 +71,11 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public OrderLineItem createOrderLineItem(Long quantity, Menu menu) {
-        return new OrderLineItem(quantity, this, menu);
     }
 }

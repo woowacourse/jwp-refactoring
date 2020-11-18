@@ -6,4 +6,8 @@ public enum OrderStatus {
     public boolean canUngroup() {
         return this != COOKING && this != MEAL;
     }
+
+    public boolean isCompletion() {
+        return this == COMPLETION;
+    }
 }

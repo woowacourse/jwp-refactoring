@@ -5,7 +5,6 @@ import kitchenpos.menu.domain.Menus;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.OrderResponse;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class OrderService {
@@ -66,17 +64,9 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public void changeOrderStatus(Long orderId, OrderStatusChangeRequest request) {
+        Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문을 변경할 수 없습니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("주문 상태가 계산 완료인 경우 변경할 수 없습니다.");
-        }
-
-        OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus);
-
-        return savedOrder;
+        order.changeStatus(request.getOrderStatus());
     }
 }
