@@ -11,7 +11,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Constraint(validatedBy = OrderLineItemCountValidator.class)
-@Target({ METHOD, FIELD, PARAMETER, CONSTRUCTOR, ANNOTATION_TYPE })
+@Target({METHOD, FIELD, PARAMETER, CONSTRUCTOR, ANNOTATION_TYPE})
 @Retention(RUNTIME)
 @Documented
 public @interface OrderLineItemCountValidate {

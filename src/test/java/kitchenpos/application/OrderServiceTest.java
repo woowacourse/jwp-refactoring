@@ -20,16 +20,11 @@ import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.AlreadyCompleteOrderException;
-import kitchenpos.exception.AlreadyEmptyTableException;
-import kitchenpos.exception.EmptyMenuOrderException;
-import kitchenpos.exception.MenuNotFoundException;
-import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 

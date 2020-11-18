@@ -4,13 +4,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.validator.OrderTableCountValidate;
-
 
 public class TableGroupCreateRequest {
 

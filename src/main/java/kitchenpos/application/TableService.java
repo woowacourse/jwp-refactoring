@@ -38,7 +38,8 @@ public class TableService {
 
     @OrderStatusValidate
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableChangeEmptyRequest request) {
+    public OrderTableResponse changeEmpty(final Long orderTableId,
+        final OrderTableChangeEmptyRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
 

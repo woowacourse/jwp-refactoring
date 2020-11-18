@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.ConstraintViolationException;
 
@@ -110,7 +108,8 @@ class TableServiceTest {
         OrderTable mealOrCookingTable = OrderTableFixture.createNotEmptyWithId(1L);
         OrderTableChangeEmptyRequest request = OrderTableFixture.createRequestEmptyOf(true);
         orderTableRepository.save(mealOrCookingTable);
-        orderRepository.save(OrderFixture.createWithoutId(OrderStatus.COOKING.name(), mealOrCookingTable.getId()));
+        orderRepository.save(
+            OrderFixture.createWithoutId(OrderStatus.COOKING.name(), mealOrCookingTable.getId()));
 
         assertThatThrownBy(
             () -> tableService.changeEmpty(mealOrCookingTable.getId(), request))

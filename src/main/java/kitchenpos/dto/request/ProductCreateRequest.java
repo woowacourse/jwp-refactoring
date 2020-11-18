@@ -1,7 +1,6 @@
 package kitchenpos.dto.request;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -9,7 +8,6 @@ import javax.validation.constraints.PositiveOrZero;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidProductPriceException;
 
 public class ProductCreateRequest {
     @NotBlank

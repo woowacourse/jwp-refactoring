@@ -5,8 +5,8 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.validator.OrderTableEmptyValidate;
 import kitchenpos.validator.OrderLineItemCountValidate;
+import kitchenpos.validator.OrderTableEmptyValidate;
 
 public class OrderCreateRequest {
     @OrderTableEmptyValidate

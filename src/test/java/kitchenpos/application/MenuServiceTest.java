@@ -32,6 +32,8 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.validator.DefaultMenuPriceValidateStrategy;
+import kitchenpos.validator.MenuPriceValidateStrategy;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {

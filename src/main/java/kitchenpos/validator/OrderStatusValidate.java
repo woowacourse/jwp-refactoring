@@ -11,7 +11,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 @Constraint(validatedBy = OrderStatusValidator.class)
-@Target({ METHOD, CONSTRUCTOR })
+@Target({METHOD, CONSTRUCTOR})
 @Retention(RUNTIME)
 @Documented
 public @interface OrderStatusValidate {

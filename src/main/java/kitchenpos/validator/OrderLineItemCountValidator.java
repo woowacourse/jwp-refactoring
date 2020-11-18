@@ -8,26 +8,27 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.repository.MenuRepository;
 
-public class OrderLineItemCountValidator implements ConstraintValidator<OrderLineItemCountValidate, List<OrderLineItemCreateRequest>> {
+public class OrderLineItemCountValidator
+    implements ConstraintValidator<OrderLineItemCountValidate, List<OrderLineItemCreateRequest>> {
 
-   private final MenuRepository menuRepository;
+    private final MenuRepository menuRepository;
 
-   public OrderLineItemCountValidator(MenuRepository menuRepository) {
-      this.menuRepository = menuRepository;
-   }
+    public OrderLineItemCountValidator(MenuRepository menuRepository) {
+        this.menuRepository = menuRepository;
+    }
 
-   public boolean isValid(List<OrderLineItemCreateRequest> value, ConstraintValidatorContext context) {
-      if (CollectionUtils.isEmpty(value)) {
-         return false;
-      }
+    public boolean isValid(List<OrderLineItemCreateRequest> value,
+        ConstraintValidatorContext context) {
+        if (CollectionUtils.isEmpty(value)) {
+            return false;
+        }
 
-      List<Long> menuIds = value.stream()
-          .map(OrderLineItemCreateRequest::getMenuId)
-          .collect(Collectors.toList());
-      return menuRepository.countByIdIn(menuIds) == menuIds.size();
-   }
+        List<Long> menuIds = value.stream()
+            .map(OrderLineItemCreateRequest::getMenuId)
+            .collect(Collectors.toList());
+        return menuRepository.countByIdIn(menuIds) == menuIds.size();
+    }
 }

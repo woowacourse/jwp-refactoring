@@ -73,7 +73,8 @@ class ProductServiceTest {
 
         assertThat(productService.list())
             .usingRecursiveFieldByFieldElementComparator()
-            .usingComparatorForType(Comparator.comparingLong(BigDecimal::longValue), BigDecimal.class)
+            .usingComparatorForType(Comparator.comparingLong(BigDecimal::longValue),
+                BigDecimal.class)
             .isEqualTo(Arrays.asList(product1, product2));
     }
 }

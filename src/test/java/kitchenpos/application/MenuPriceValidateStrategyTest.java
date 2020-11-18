@@ -15,6 +15,8 @@ import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.fixture.MenuProductFixture;
 import kitchenpos.fixture.ProductFixture;
+import kitchenpos.validator.DefaultMenuPriceValidateStrategy;
+import kitchenpos.validator.MenuPriceValidateStrategy;
 
 class MenuPriceValidateStrategyTest {
     private MenuPriceValidateStrategy menuPriceValidateStrategy;

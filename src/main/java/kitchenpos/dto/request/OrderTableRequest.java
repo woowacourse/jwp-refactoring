@@ -1,6 +1,5 @@
 package kitchenpos.dto.request;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 
 import kitchenpos.domain.OrderTable;

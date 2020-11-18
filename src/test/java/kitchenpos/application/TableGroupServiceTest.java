@@ -21,7 +21,6 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.AlreadyInTableGroupException;
-import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
