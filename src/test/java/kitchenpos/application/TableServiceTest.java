@@ -3,17 +3,19 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.BeforeEach;
+import javax.validation.ConstraintViolationException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -22,35 +24,30 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
-import kitchenpos.exception.OrderNotCompleteException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql("classpath:truncate.sql")
 class TableServiceTest {
 
+    @Autowired
     private TableService tableService;
 
-    @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
+    @Autowired
     private OrderTableRepository orderTableRepository;
 
-    @BeforeEach
-    void setUp() {
-        tableService = new TableService(orderRepository, orderTableRepository);
-    }
+    @Autowired
+    private OrderRepository orderRepository;
 
     @DisplayName("테이블을 정상적으로 생성한다.")
     @Test
     void create() {
         OrderTableRequest createDto = OrderTableFixture.createRequest();
         OrderTable withId = OrderTableFixture.createEmptyWithId(OrderTableFixture.ID1);
-
-        when(orderTableRepository.save(any(OrderTable.class))).thenReturn(withId);
 
         OrderTableResponse saved = tableService.create(createDto);
 
@@ -60,14 +57,13 @@ class TableServiceTest {
     @DisplayName("모든 테이블을 조회한다.")
     @Test
     void list() {
-        OrderTable table1 = OrderTableFixture.createEmptyWithId(1L);
-        OrderTable table2 = OrderTableFixture.createEmptyWithId(2L);
-
-        List<OrderTable> tables = Lists.newArrayList(table1, table2);
-        when(orderTableRepository.findAll()).thenReturn(tables);
+        List<OrderTable> tables = Arrays.asList(OrderTableFixture.createEmptyWithId(1L),
+            OrderTableFixture.createEmptyWithId(2L));
+        orderTableRepository.saveAll(tables);
 
         List<OrderTableResponse> actual = tableService.list();
-        assertThat(actual).usingRecursiveComparison().isEqualTo(tables);
+        assertThat(actual).usingRecursiveFieldByFieldElementComparator()
+            .isEqualTo(tables);
     }
 
     @DisplayName("Empty상태를 변경한다.")
@@ -77,9 +73,7 @@ class TableServiceTest {
         OrderTableChangeEmptyRequest changeEmptyRequest = OrderTableFixture.createRequestEmptyOf(
             true);
 
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(emptyTable));
-        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(
-            false);
+        orderTableRepository.save(emptyTable);
         OrderTableResponse response = tableService.changeEmpty(emptyTable.getId(),
             changeEmptyRequest);
 
@@ -91,7 +85,6 @@ class TableServiceTest {
     void changeEmptyNotFound() {
         OrderTable orderTable = OrderTableFixture.createEmptyWithId(1L);
         OrderTableChangeEmptyRequest request = OrderTableFixture.createRequestEmptyOf(true);
-        when(orderTableRepository.findById(orderTable.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
             .isInstanceOf(OrderTableNotFoundException.class)
@@ -103,7 +96,7 @@ class TableServiceTest {
     void changeEmptyGroupIdNull() {
         OrderTable orderTable = OrderTableFixture.createGroupTableWithId(1L, 1L);
         OrderTableChangeEmptyRequest request = OrderTableFixture.createRequestEmptyOf(true);
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable));
+        orderTableRepository.save(orderTable);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
             .isInstanceOf(AlreadyInTableGroupException.class)
@@ -116,16 +109,12 @@ class TableServiceTest {
     void changeEmptyAlreadyDoingSomething() {
         OrderTable mealOrCookingTable = OrderTableFixture.createNotEmptyWithId(1L);
         OrderTableChangeEmptyRequest request = OrderTableFixture.createRequestEmptyOf(true);
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(mealOrCookingTable));
-        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).thenReturn(
-            true);
+        orderTableRepository.save(mealOrCookingTable);
+        orderRepository.save(OrderFixture.createWithoutId(OrderStatus.COOKING.name(), mealOrCookingTable.getId()));
 
         assertThatThrownBy(
             () -> tableService.changeEmpty(mealOrCookingTable.getId(), request))
-            .isInstanceOf(OrderNotCompleteException.class)
-            .hasMessage(
-                String.format("Order of %d table is not completion yet. First, complete order.",
-                    mealOrCookingTable.getId()));
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("손님의 수를 수정한다.")
@@ -135,8 +124,8 @@ class TableServiceTest {
         OrderTable tenGuestTable = OrderTableFixture.createNumOf(1L, 10);
         OrderTableChangeNumberOfGuestsRequest request = OrderTableFixture.createRequestNumOf(
             10);
+        orderTableRepository.save(oneGuestTable);
 
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(oneGuestTable));
         OrderTableResponse response = tableService.changeNumberOfGuests(
             tenGuestTable.getId(), request);
 
@@ -150,8 +139,7 @@ class TableServiceTest {
         OrderTableChangeNumberOfGuestsRequest negativeRequest = OrderTableFixture.createRequestNumOf(
             -10);
         OrderTable oneGuestTable = OrderTableFixture.createNotEmptyWithId(1L);
-
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(oneGuestTable));
+        orderTableRepository.save(oneGuestTable);
 
         assertThatThrownBy(
             () -> tableService.changeNumberOfGuests(1L, negativeRequest))
@@ -165,7 +153,6 @@ class TableServiceTest {
     void changeNumberOfGuestsNoOrderTable() {
         OrderTableChangeNumberOfGuestsRequest request = OrderTableFixture.createRequestNumOf(
             10);
-        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, request))
             .isInstanceOf(OrderTableNotFoundException.class)
@@ -178,7 +165,7 @@ class TableServiceTest {
         OrderTableChangeNumberOfGuestsRequest request = OrderTableFixture.createRequestNumOf(
             10);
         OrderTable emptyTable = OrderTableFixture.createEmptyWithId(1L);
-        when(orderTableRepository.findById(emptyTable.getId())).thenReturn(Optional.of(emptyTable));
+        orderTableRepository.save(emptyTable);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(emptyTable.getId(), request))
             .isInstanceOf(AlreadyEmptyTableException.class)

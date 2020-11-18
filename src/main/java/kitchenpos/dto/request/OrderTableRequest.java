@@ -1,9 +1,15 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.PositiveOrZero;
+
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableRequest {
+
+    @PositiveOrZero
     private final int numberOfGuests;
+
     private final boolean empty;
 
     public OrderTableRequest(int numberOfGuests, boolean empty) {

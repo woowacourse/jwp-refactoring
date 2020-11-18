@@ -3,12 +3,20 @@ package kitchenpos.dto.request;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.InvalidProductPriceException;
 
 public class ProductCreateRequest {
+    @NotBlank
     private final String name;
+
+    @NotNull
+    @PositiveOrZero
     private final BigDecimal price;
 
     @JsonCreator
@@ -18,13 +26,6 @@ public class ProductCreateRequest {
     }
 
     public Product toEntity() {
-        if (Objects.isNull(price)) {
-            throw new InvalidProductPriceException();
-        }
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidProductPriceException(price);
-        }
-
         return Product.of(this.name, this.price);
     }
 

@@ -1,45 +1,42 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Comparator;
 
-import org.junit.jupiter.api.BeforeEach;
+import javax.validation.ConstraintViolationException;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
-import kitchenpos.exception.InvalidProductPriceException;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+@Sql("classpath:truncate.sql")
 class ProductServiceTest {
 
+    @Autowired
     private ProductService productService;
 
-    @Mock
+    @Autowired
     private ProductRepository productRepository;
-
-    @BeforeEach
-    void setUp() {
-        productService = new ProductService(productRepository);
-    }
 
     @DisplayName("정상적으로 Product를 생성한다.")
     @Test
     void create() {
-        ProductCreateRequest request = ProductFixture.createRequestPriceOf(100L);
+        ProductCreateRequest request = ProductFixture.createRequestPriceOf(
+            ProductFixture.DEFAULT_PRICE.longValue());
         Product productWithoutId = ProductFixture.createWithoutId();
         Product productWithId = ProductFixture.createWithId(1L);
-
-        when(productRepository.save(any(Product.class))).thenReturn(productWithId);
 
         ProductResponse savedProduct = productService.create(request);
         assertThat(savedProduct)
@@ -54,7 +51,7 @@ class ProductServiceTest {
         ProductCreateRequest request = ProductFixture.createRequestPriceOf(null);
 
         assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(InvalidProductPriceException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("가격이 음수인 Product 생성 요청시 예외를 반환한다.")
@@ -63,7 +60,7 @@ class ProductServiceTest {
         ProductCreateRequest request = ProductFixture.createRequestPriceOf(-100L);
 
         assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(InvalidProductPriceException.class);
+            .isInstanceOf(ConstraintViolationException.class);
     }
 
     @DisplayName("정상적으로 저장된 Product를 불러온다.")
@@ -72,10 +69,11 @@ class ProductServiceTest {
         Product product1 = ProductFixture.createWithId(1L);
         Product product2 = ProductFixture.createWithId(2L);
 
-        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
+        productRepository.saveAll(Arrays.asList(product1, product2));
 
         assertThat(productService.list())
-            .usingRecursiveComparison()
+            .usingRecursiveFieldByFieldElementComparator()
+            .usingComparatorForType(Comparator.comparingLong(BigDecimal::longValue), BigDecimal.class)
             .isEqualTo(Arrays.asList(product1, product2));
     }
 }
