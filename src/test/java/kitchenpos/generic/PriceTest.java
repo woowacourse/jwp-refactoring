@@ -16,7 +16,7 @@ class PriceTest {
     void isLessThan(Long value, boolean expect) {
         Price price = new Price(BigDecimal.valueOf(100L));
 
-        boolean result = price.isLessThan(value);
+        boolean result = price.isLessThan(Price.of(value));
 
         assertThat(result).isEqualTo(expect);
     }

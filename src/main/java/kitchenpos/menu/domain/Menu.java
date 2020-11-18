@@ -1,7 +1,9 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.generic.Price;
 import kitchenpos.menugroup.domain.MenuGroup;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -9,8 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
-import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -20,7 +20,8 @@ public class Menu {
 
     private String name;
 
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "MENU_GROUP_ID", foreignKey = @ForeignKey(name = "FK_MENU_MENU_GROUP"))
@@ -31,15 +32,8 @@ public class Menu {
 
     public Menu(String name, Long price, MenuGroup menuGroup) {
         this.name = name;
-        this.price = BigDecimal.valueOf(price);
+        this.price = Price.of(price);
         this.menuGroup = menuGroup;
-        validate();
-    }
-
-    private void validate() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(String.format("%f : 가격은 0원 이상이어야 합니다.", price));
-        }
     }
 
     public Long getId() {
@@ -50,11 +44,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
-    }
-
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
     }
 }

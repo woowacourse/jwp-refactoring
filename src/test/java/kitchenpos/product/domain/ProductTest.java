@@ -1,12 +1,11 @@
 package kitchenpos.product.domain;
 
+import kitchenpos.generic.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -45,6 +44,6 @@ class ProductTest {
         Product product = new Product("상품이름", 123L);
         Long quantity = 2L;
 
-        assertThat(product.calculatePrice(quantity)).isEqualTo(BigDecimal.valueOf(246L));
+        assertThat(product.calculatePrice(quantity)).isEqualTo(Price.of(246L));
     }
 }
