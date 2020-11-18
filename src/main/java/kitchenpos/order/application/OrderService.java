@@ -1,6 +1,7 @@
 package kitchenpos.order.application;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.Menus;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
@@ -15,12 +16,10 @@ import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.ordertable.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
@@ -43,40 +42,23 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(OrderCreateRequest request) {
-        List<OrderLineItemCreateRequest> orderLineItemsRequest = request.getOrderLineItemCreateRequests();
-
-        if (CollectionUtils.isEmpty(orderLineItemsRequest)) {
-            throw new IllegalArgumentException("주문 항목 없이 주문을 할 수 없습니다.");
-        }
-
-        final List<Long> menuIds = orderLineItemsRequest.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemsRequest.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴로 주문을 할 수 없습니다.");
-        }
-
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+        OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블에 주문을 할 수 없습니다."));
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
+        Order order = new Order(orderTable);
+        Menus menus = new Menus(menuRepository.findAllById(request.getMenuIds()));
+
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        for (OrderLineItemCreateRequest orderLineItemRequest : request.getOrderLineItemCreateRequests()) {
+            Menu menu = menus.findById(orderLineItemRequest.getMenuId());
+            orderLineItems.add(order.createOrderLineItem(orderLineItemRequest.getQuantity(), menu));
         }
 
-        Order savedOrder = orderRepository.save(new Order(orderTable));
+        orderRepository.save(order);
+        orderLineItemRepository.saveAll(orderLineItems);
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (OrderLineItemCreateRequest orderLineItemRequest : orderLineItemsRequest) {
-            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴로 주문을 할 수 없습니다."));
-
-            savedOrderLineItems.add(new OrderLineItem(orderLineItemRequest.getQuantity(), savedOrder, menu));
-        }
-
-        orderLineItemRepository.saveAll(savedOrderLineItems);
-
-        return OrderResponse.of(savedOrder, savedOrderLineItems);
+        return OrderResponse.of(order, orderLineItems);
     }
 
     public List<Order> list() {

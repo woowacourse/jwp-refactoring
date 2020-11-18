@@ -27,7 +27,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,16 +83,6 @@ class OrderServiceTest {
         assertThat(findOrderLineItems).hasSize(1);
     }
 
-    @DisplayName("주문 항목 없이 주문을 할 수 없다.")
-    @Test
-    void createException1() {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-
-        assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(), new ArrayList<>())))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("주문 항목 없이 주문을 할 수 없습니다.");
-    }
-
     @DisplayName("존재하지 않는 테이블에 주문을 할 수 없다.")
     @Test
     void createException2() {
@@ -134,7 +123,7 @@ class OrderServiceTest {
         assertThatThrownBy(() -> orderService.create(new OrderCreateRequest(orderTable.getId(),
                 Collections.singletonList(new OrderLineItemCreateRequest(1L, -1L)))))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("존재하지 않는 메뉴로 주문을 할 수 없습니다.");
+                .hasMessageContaining("존재하지 않는 메뉴입니다.");
     }
 
     @DisplayName("주문의 목록을 조회할 수 있다.")
