@@ -1,5 +1,6 @@
 package kitchenpos.product.application;
 
+import kitchenpos.generic.Price;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.dto.ProductCreateRequest;
 import kitchenpos.product.dto.ProductResponse;
@@ -34,7 +35,7 @@ class ProductServiceTest {
                 .orElseThrow(RuntimeException::new);
 
         assertThat(findProduct.getName()).isEqualTo(request.getName());
-        assertThat(findProduct.getPrice().longValue()).isEqualTo(request.getPrice());
+        assertThat(findProduct.getPrice()).isEqualTo(Price.of(request.getPrice()));
     }
 
     @DisplayName("상품 목록을 조회한다.")

@@ -40,7 +40,6 @@ public class OrderTableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        //TODO: 고치기
         boolean isCookingOrMeal = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
 
         savedOrderTable.changeEmpty(request.isEmpty(), isCookingOrMeal);

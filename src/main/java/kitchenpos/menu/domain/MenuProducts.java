@@ -2,7 +2,6 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.generic.Price;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -15,7 +14,7 @@ public class MenuProducts {
         validate(menu.getPrice());
     }
 
-    private void validate(BigDecimal requestPrice) {
+    private void validate(Price requestPrice) {
         Price sum = calculateSum();
         if (sum.isLessThan(requestPrice)) {
             throw new IllegalArgumentException(String.format("상품 금액의 합(%d)이 메뉴의 가격(%d)보다 작습니다.", sum.longValue(), requestPrice.longValue()));
@@ -23,10 +22,9 @@ public class MenuProducts {
     }
 
     private Price calculateSum() {
-        BigDecimal sum = menuProducts.stream()
+        return menuProducts.stream()
                 .map(MenuProduct::calculateSum)
-                .reduce(BigDecimal.valueOf(0L), BigDecimal::add);
-        return new Price(sum);
+                .reduce(Price.of(0L), Price::add);
     }
 
     private void addMenu(Menu menu) {

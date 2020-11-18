@@ -1,5 +1,6 @@
 package kitchenpos.menu.application;
 
+import kitchenpos.generic.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -56,7 +56,7 @@ class MenuServiceTest {
         Menu savedMenu = menuService.create(request);
 
         assertThat(savedMenu.getId()).isNotNull();
-        assertThat(savedMenu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(60000L));
+        assertThat(savedMenu.getPrice()).isEqualTo(Price.of(60000L));
     }
 
     @DisplayName("메뉴에 속한 상품 금액의 합은 메뉴의 가격보다 크거나 같아야 한다.")

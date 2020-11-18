@@ -1,12 +1,12 @@
 package kitchenpos.product.domain;
 
+import kitchenpos.generic.Price;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
@@ -17,14 +17,14 @@ public class Product {
 
     private String name;
 
-    private BigDecimal price;
+    private Price price;
 
     public Product() {
     }
 
     public Product(String name, Long price) {
         this.name = name;
-        this.price = BigDecimal.valueOf(price);
+        this.price = Price.of(price);
         validate();
     }
 
@@ -34,9 +34,6 @@ public class Product {
     }
 
     private void validate() {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
         if (StringUtils.isEmpty(name)) {
             throw new IllegalArgumentException(String.format("%s : 올바르지 않은 이름입니다.", name));
         }
@@ -46,8 +43,8 @@ public class Product {
         return Objects.equals(this.id, id);
     }
 
-    public BigDecimal calculatePrice(Long quantity) {
-        return this.price.multiply(BigDecimal.valueOf(quantity));
+    public Price calculatePrice(Long quantity) {
+        return this.price.multiply(quantity);
     }
 
     public Long getId() {
@@ -62,7 +59,7 @@ public class Product {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 }

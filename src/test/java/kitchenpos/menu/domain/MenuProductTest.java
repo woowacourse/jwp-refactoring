@@ -1,11 +1,10 @@
 package kitchenpos.menu.domain;
 
+import kitchenpos.generic.Price;
 import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -18,7 +17,7 @@ class MenuProductTest {
         Product product = new Product("상품이름", 123L);
         MenuProduct menuProduct = new MenuProduct(product, 2L);
 
-        assertThat(menuProduct.calculateSum()).isEqualTo(BigDecimal.valueOf(246L));
+        assertThat(menuProduct.calculateSum()).isEqualTo(Price.of(246L));
     }
 
     @DisplayName("MenuProduct에 Menu를 set한다.")
