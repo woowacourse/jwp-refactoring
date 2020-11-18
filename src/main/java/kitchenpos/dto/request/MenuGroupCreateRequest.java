@@ -1,9 +1,12 @@
 package kitchenpos.dto.request;
 
+import javax.validation.constraints.NotBlank;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupCreateRequest {
+    @NotBlank
     private final String name;
 
     @JsonCreator

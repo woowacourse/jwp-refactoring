@@ -47,9 +47,6 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @DisplayName("정상적으로 Order를 생성한다")

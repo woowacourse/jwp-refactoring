@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -21,6 +24,7 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
 @Service
+@Validated
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -43,7 +47,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(final MenuCreateRequest request) {
+    public MenuResponse create(@Valid final MenuCreateRequest request) {
         Menu menu = request.toEntity();
         List<MenuProductCreateRequest> menuProductRequests = request.getMenuProducts();
         final BigDecimal price = menu.getPrice();
@@ -53,8 +57,6 @@ public class MenuService {
         }
 
         List<Product> products = productRepository.findAllById(request.getProductIds());
-        Map<Long, Product> productMap = products.stream()
-            .collect(Collectors.toMap(Product::getId, p -> p));
 
         menuPriceValidateStrategy.validate(products, menuProductRequests, price);
 

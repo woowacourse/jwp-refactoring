@@ -15,7 +15,6 @@ import javax.validation.Payload;
 @Retention(RUNTIME)
 @Documented
 public @interface OrderStatusValidate {
-
     String message() default
         "Order of table is not completion yet. First, complete order.";
 
