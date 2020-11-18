@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ public class InMemoryOrderTableDao implements OrderTableDao {
     public List<OrderTable> findAllByIdIn(final List<Long> ids) {
         return ids.stream()
                 .map(orderTables::get)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList())
                 ;
     }
