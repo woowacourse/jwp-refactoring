@@ -2,6 +2,7 @@ package kitchenpos.repository;
 
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.fixture.OrderFixture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.Arrays;
 
-import static kitchenpos.fixture.OrderFixture.createOrderWithoutId;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithoutId;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -32,7 +32,7 @@ class OrderRepositoryTest {
     @BeforeEach
     void setUp() {
         orderTable = orderTableRepository.save(createOrderTableWithoutId());
-        orderRepository.save(createOrderWithoutId(orderTable, OrderStatus.COOKING));
+        orderRepository.save(OrderFixture.createOrderWithOrderTableAndOrderStatus(orderTable, OrderStatus.COOKING));
     }
 
     @DisplayName("existsByOrderTableIdInAndOrderStatusIn 기능 OrderStatus로 확인")

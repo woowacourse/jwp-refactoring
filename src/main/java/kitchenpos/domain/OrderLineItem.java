@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderLineItem {
@@ -19,16 +20,20 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
-    private long quantity;
+    private Long quantity;
 
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Order order, Menu menu, Long quantity) {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
+    }
+
+    public boolean equalsByOrderId(Long id) {
+        return Objects.equals(order.getId(), id);
     }
 
     public Long getSeq() {

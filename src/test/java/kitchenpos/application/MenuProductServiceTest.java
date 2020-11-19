@@ -71,4 +71,5 @@ public class MenuProductServiceTest {
                 .isThrownBy(() -> menuProductService.createMenuProduct(savedMenu, Arrays.asList(menuProductRequest)))
                 .withMessage("MenuProduct 전부를 합한 금액이 Menu 금액보다 작을 수 없습니다.");
     }
+
 }

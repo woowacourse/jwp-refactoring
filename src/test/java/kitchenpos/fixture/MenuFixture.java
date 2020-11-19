@@ -6,6 +6,8 @@ import kitchenpos.domain.Price;
 
 import java.math.BigDecimal;
 
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupWitId;
+
 public class MenuFixture {
 
     private static final String MENU_NAME = "후라이드 치킨";
@@ -15,7 +17,11 @@ public class MenuFixture {
     }
 
     public static Menu createMenuWithId(Long id) {
-        return createMenu(id, null, null);
+        return createMenu(id, new Price(BigDecimal.ONE), createMenuGroupWitId(1L));
+    }
+
+    public static Menu createMenuWithoutId() {
+        return createMenu(null, null, null);
     }
 
     public static Menu createMenuWithPrice(BigDecimal price) {

@@ -10,14 +10,18 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createOrderTableWithoutId() {
-        return createOrderTable(null, null, 1, true);
+        return createOrderTable(null, null, 1, false);
     }
-    /*
+
+    public static OrderTable createOrderTableWithId(Long id) {
+        return createOrderTable(id, null, 1, true);
+    }
 
     public static OrderTable createOrderTableWithEmpty(boolean empty) {
-        return createOrderTable(null, 2, null, empty);
+        return createOrderTable(null, null, 1, empty);
     }
 
+    /*
     public static OrderTable createOrderTableWithTableGroupId(Long tableGroupId) {
         return createOrderTable(null, 2, tableGroupId, false);
     }
@@ -30,9 +34,6 @@ public class OrderTableFixture {
         return createOrderTable(null, numberOfGuest, null, false);
     }
 
-    public static OrderTable createOrderTableWithId(Long id) {
-        return createOrderTable(id, 2, null, true);
-    }
 
      */
 }

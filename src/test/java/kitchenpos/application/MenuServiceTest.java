@@ -12,11 +12,11 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -29,13 +29,14 @@ import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithMenuAnd
 import static kitchenpos.fixture.MenuProductFixture.createMenuProductWithProduct;
 import static kitchenpos.fixture.ProductFixture.createProductWithId;
 import static kitchenpos.fixture.ProductFixture.createProductWithPrice;
+import static kitchenpos.utils.TestUtils.findById;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
 @SpringBootTest
 class MenuServiceTest {
-
     private static final String MENU_NAME = "후라이드";
+
     @Autowired
     private MenuService menuService;
 
@@ -98,12 +99,16 @@ class MenuServiceTest {
                 .isEqualTo(expected);
     }
 
-    private <T> T findById(JpaRepository<T, Long> jpaRepository, Long id) {
-        return jpaRepository.findById(id).orElseThrow(IllegalArgumentException::new);
-    }
-
     private MenuRequest createMenuRequest(MenuGroup menuGroup, Product product) {
         return new MenuRequest(MENU_NAME, product.getPrice(), menuGroup.getId(),
                 Arrays.asList(MenuProductRequest.from(createMenuProductWithProduct(product))));
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        menuGroupRepository.deleteAll();
+        productRepository.deleteAll();
     }
 }

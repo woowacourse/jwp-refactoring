@@ -8,9 +8,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +27,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
@@ -32,6 +35,13 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public Order changeOrderStatus(String orderStatus) {
+        if (Objects.equals(orderStatus, this.orderStatus.name())) {
+            return this;
+        }
+        return new Order(id, orderTable, OrderStatus.valueOf(orderStatus), orderedTime);
     }
 
     public Long getId() {
@@ -42,8 +52,8 @@ public class Order {
         return orderTable;
     }
 
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
+    public String getOrderStatus() {
+        return orderStatus.name();
     }
 
     public LocalDateTime getOrderedTime() {
