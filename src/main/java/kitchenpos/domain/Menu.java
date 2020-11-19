@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,6 +28,14 @@ public class Menu {
     private List<MenuProduct> menuProducts;
 
     public Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this.id = null;
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+        this.menuProducts = new ArrayList<>();
     }
 
     public Long getId() {

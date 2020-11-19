@@ -7,10 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuResponse;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,29 +40,31 @@ class MenuServiceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupService.create(NEW_MENU_GROUP);
-        List<MenuProduct> new_menu_product =
+        List<MenuProduct> newMenuProduct =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
-        Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, menuGroup, new_menu_product);
+        MenuCreateRequest menuCreateRequest = TestObjectFactory
+            .createMenuCreateReqeust(NEW_MENU_NAME, NEW_MENU_PRICE, menuGroup, newMenuProduct);
 
-        Menu savedMenu = menuService.create(menu);
+        MenuResponse menuResponse = menuService.create(menuCreateRequest);
 
         assertAll(() -> {
-            assertThat(savedMenu).isInstanceOf(Menu.class);
-            assertThat(savedMenu).isNotNull();
-            assertThat(savedMenu.getId()).isNotNull();
-            assertThat(savedMenu.getName()).isNotNull();
-            assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-            assertThat(savedMenu.getPrice()).isNotNull();
-            assertThat(savedMenu.getPrice().toBigInteger())
-                .isEqualTo(menu.getPrice().toBigInteger());
-            assertThat(savedMenu.getMenuGroup()).isNotNull();
-            assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroup());
-            assertThat(savedMenu.getMenuProducts()).isNotEmpty();
-            assertThat(savedMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size());
+            assertThat(menuResponse).isInstanceOf(MenuResponse.class);
+            assertThat(menuResponse).isNotNull();
+            assertThat(menuResponse.getId()).isNotNull();
+            assertThat(menuResponse.getName()).isNotNull();
+            assertThat(menuResponse.getName()).isEqualTo(menuCreateRequest.getName());
+            assertThat(menuResponse.getPrice()).isNotNull();
+            assertThat(menuResponse.getPrice().toBigInteger())
+                .isEqualTo(menuResponse.getPrice().toBigInteger());
+            assertThat(menuResponse.getMenuGroupId()).isNotNull();
+            assertThat(menuResponse.getMenuGroupId())
+                .isEqualTo(menuCreateRequest.getMenuGroupId());
+            assertThat(menuResponse.getMenuProducts()).isNotEmpty();
+            assertThat(menuResponse.getMenuProducts().size())
+                .isEqualTo(menuCreateRequest.getMenuProductRequests().size());
         });
     }
 
@@ -74,10 +77,10 @@ class MenuServiceTest {
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
-        Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, null, menuGroup, new_menu_product);
+        MenuCreateRequest menuCreateRequest = TestObjectFactory
+            .createMenuCreateReqeust(NEW_MENU_NAME, null, menuGroup, new_menu_product);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -90,10 +93,11 @@ class MenuServiceTest {
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
-        Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup, new_menu_product);
+        MenuCreateRequest menuCreateRequest = TestObjectFactory
+            .createMenuCreateReqeust(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup,
+                new_menu_product);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,10 +111,11 @@ class MenuServiceTest {
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         invalidMenuGroup.setId(0L);
-        Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, invalidMenuGroup, new_menu_product);
+        MenuCreateRequest menuCreateRequest = TestObjectFactory
+            .createMenuCreateReqeust(NEW_MENU_NAME, NEW_MENU_PRICE, invalidMenuGroup,
+                new_menu_product);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,21 +128,22 @@ class MenuServiceTest {
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
-        Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, new BigDecimal(50_000L), menuGroup, new_menu_product);
+        MenuCreateRequest menuCreateRequest = TestObjectFactory
+            .createMenuCreateReqeust(NEW_MENU_NAME, new BigDecimal(50_000L), menuGroup,
+                new_menu_product);
 
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("전체 메뉴 리스트를 조회한다.")
     @Test
     void list() {
-        List<Menu> menuList = menuService.list();
+        List<MenuResponse> menuResponses = menuService.list();
 
         assertAll(() -> {
-            assertThat(menuList).isNotEmpty();
-            assertThat(menuList).hasSize(6);
+            assertThat(menuResponses).isNotEmpty();
+            assertThat(menuResponses).hasSize(6);
         });
     }
 }

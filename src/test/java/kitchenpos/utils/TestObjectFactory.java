@@ -2,6 +2,7 @@ package kitchenpos.utils;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -10,6 +11,9 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuProductResponse;
 
 public class TestObjectFactory {
 
@@ -20,15 +24,13 @@ public class TestObjectFactory {
         return menuGroup;
     }
 
-    public static Menu createMenu(String name, BigDecimal price, MenuGroup menuGroup,
-        List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroup(menuGroup);
-        menu.setMenuProducts(menuProducts);
+    public static MenuCreateRequest createMenuCreateReqeust(String name, BigDecimal price,
+        MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        List<MenuProductRequest> menuProductResponses = menuProducts.stream()
+            .map(mp -> MenuProductRequest.of(mp))
+            .collect(Collectors.toList());
 
-        return menu;
+        return new MenuCreateRequest(name, price, menuGroup.getId(), menuProductResponses);
     }
 
     public static MenuProduct createMenuProduct(Product product, long quantity) {

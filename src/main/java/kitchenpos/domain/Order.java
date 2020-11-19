@@ -14,6 +14,7 @@ import javax.persistence.Table;
 @Table(name = "orders")
 @Entity
 public class Order {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

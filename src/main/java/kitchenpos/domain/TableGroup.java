@@ -10,6 +10,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
