@@ -8,7 +8,7 @@ public class ProductRequest {
     private String name;
     private BigDecimal price;
 
-    public ProductRequest() {
+    private ProductRequest() {
     }
 
     public ProductRequest(String name, BigDecimal price) {

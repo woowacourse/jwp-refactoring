@@ -5,7 +5,7 @@ public class TableChangeRequest {
     private int numberOfGuests;
     private boolean empty;
 
-    public TableChangeRequest() {
+    private TableChangeRequest() {
     }
 
     private TableChangeRequest(int numberOfGuests, boolean empty) {
