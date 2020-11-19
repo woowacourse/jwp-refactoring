@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,15 +86,6 @@ public class MenuProductServiceTest {
     @Test
     void createWithNullProductQuantityRequestsExceptionTest() {
         assertThatThrownBy(() -> menuProductService.createMenuProducts(menu, null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 상품이 입력되었습니다.");
-    }
-
-    @DisplayName("예외 테스트: MenuProduct 생성 중 ProductQuantityRequests가 유효하지 않으면, 예외가 발생한다.")
-    @Test
-    void createWithInvalidProductQuantityRequestsExceptionTest() {
-        productQuantityRequests = new ProductQuantityRequests(Collections.emptyList());
-        assertThatThrownBy(() -> menuProductService.createMenuProducts(menu, productQuantityRequests))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("잘못된 상품이 입력되었습니다.");
     }
