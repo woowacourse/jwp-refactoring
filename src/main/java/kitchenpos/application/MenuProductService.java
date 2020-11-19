@@ -36,7 +36,7 @@ public class MenuProductService {
         if (Objects.isNull(menu)) {
             throw new IllegalArgumentException("잘못된 메뉴가 입력되었습니다.");
         }
-        if (Objects.isNull(productQuantityRequests) || productQuantityRequests.getProductIds().isEmpty()) {
+        if (Objects.isNull(productQuantityRequests)) {
             throw new IllegalArgumentException("잘못된 상품이 입력되었습니다.");
         }
     }
