@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 public class PriceValidator {
@@ -34,6 +35,9 @@ public class PriceValidator {
 
     private BigDecimal calculateSubTotal(MenuProductCreateInfo menuProductCreateInfo) {
         Product product = productMapper.get(menuProductCreateInfo.getProductId());
+        if (Objects.isNull(product)) {
+            throw new IllegalArgumentException();
+        }
         return product.calculatePrice(menuProductCreateInfo.getQuantity());
     }
 

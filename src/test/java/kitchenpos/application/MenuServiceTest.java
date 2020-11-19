@@ -64,49 +64,6 @@ class MenuServiceTest {
         );
     }
 
-    @DisplayName("메뉴를 추가할 시 존재하지 않는 MenuGroupId일 경우 예외 처리한다.")
-    @Test
-    void createWithNotExistingMenuGroupId() {
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(1_000L), 1L,
-            Collections.emptyList());
-
-        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 추가할 시 존재하지 않는 ProductId일 경우 예외 처리한다.")
-    @Test
-    void createWithNotExistingProductId() {
-        MenuProductCreateInfo menuProductCreateInfo = new MenuProductCreateInfo(1L, 2L);
-
-        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test"));
-
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(1_000L),
-            savedMenuGroup.getId(),
-            Collections.singletonList(menuProductCreateInfo));
-
-        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 추가할 시 메뉴 상품 가격의 총합이 메뉴의 가격보다 작을 경우 예외 처리한다.")
-    @Test
-    void createWithUnderTotalPrice() {
-        Product savedProduct1 = productRepository.save(new Product("후라이드 치킨", BigDecimal.valueOf(10_000L)));
-        Product savedProduct2 = productRepository.save(new Product("양념 치킨", BigDecimal.valueOf(20_000L)));
-        Product savedProduct3 = productRepository.save(new Product("시원한 아이스 아메리카노", BigDecimal.valueOf(5_000L)));
-
-        MenuProductCreateInfo menuProductCreateInfo1 = new MenuProductCreateInfo(savedProduct1.getId(), 2L);
-        MenuProductCreateInfo menuProductCreateInfo2 = new MenuProductCreateInfo(savedProduct2.getId(), 1L);
-        MenuProductCreateInfo menuProductCreateInfo3 = new MenuProductCreateInfo(savedProduct3.getId(), 1L);
-
-        MenuGroup savedMenuGroup = menuGroupRepository.save(new MenuGroup("test_group"));
-
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("test", BigDecimal.valueOf(100_000L),
-            savedMenuGroup.getId(),
-            Arrays.asList(menuProductCreateInfo1, menuProductCreateInfo2, menuProductCreateInfo3));
-
-        assertThatThrownBy(() -> menuService.create(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("메뉴 전체 목록을 조회한다.")
     @Test
     void list() {
