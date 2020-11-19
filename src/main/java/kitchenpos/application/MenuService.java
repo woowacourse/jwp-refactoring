@@ -11,7 +11,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.MenuProductCreateInfo;
 import kitchenpos.domain.MenuRepository;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.PriceValidator;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuResponse;
@@ -40,25 +40,22 @@ public class MenuService {
 
     private Menu createMenu(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductCreateInfo> menuProductCreateInfos) {
-        BigDecimal sum = BigDecimal.ZERO;
-
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
-        }
-
-        for (MenuProductCreateInfo menuProductCreateInfo : menuProductCreateInfos) {
-            final Product product = productRepository.findById(menuProductCreateInfo.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductCreateInfo.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        validateMenuGroupId(menuGroupId);
+        List<Long> productIds = menuProductCreateInfos.stream()
+            .map(MenuProductCreateInfo::getProductId)
+            .collect(Collectors.toList());
+        PriceValidator priceValidator = PriceValidator.of(productRepository.findAllById(productIds));
+        priceValidator.validate(price, menuProductCreateInfos);
 
         return new Menu(name, price, menuGroupId,
             menuProductCreateInfos.stream().map(MenuProductCreateInfo::toMenuProduct).collect(
                 Collectors.toList()));
+    }
+
+    private void validateMenuGroupId(Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     @Transactional
