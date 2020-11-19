@@ -5,11 +5,18 @@ import static org.assertj.core.api.Assertions.*;
 import java.math.BigDecimal;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class ProductTest {
+    @DisplayName("제품을 생성한다.")
+    @Test
+    void create() {
+        assertThat(new Product("test", BigDecimal.valueOf(1_000L))).isNotNull();
+    }
+
     @DisplayName("잘못된 가격이 입력되었을 시 예외 처리한다.")
     @ParameterizedTest
     @NullSource
@@ -24,5 +31,11 @@ class ProductTest {
     void ofWithNegative(Long price) {
         assertThatThrownBy(() -> new Product("test", BigDecimal.valueOf(price)))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("가격을 계산한다.")
+    @Test
+    void calculatePrice() {
+
     }
 }
