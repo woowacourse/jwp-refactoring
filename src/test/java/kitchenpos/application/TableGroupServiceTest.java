@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -31,10 +33,13 @@ class TableGroupServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     @DisplayName("테이블 그룹을 생성한다.")
     @Test
@@ -103,20 +108,20 @@ class TableGroupServiceTest {
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        Optional<OrderTable> ungroupedOrderTableA = orderTableDao
+        Optional<OrderTable> ungroupedOrderTableA = orderTableRepository
             .findById(savedOrderTableA.getId());
-        Optional<OrderTable> ungroupedOrderTableB = orderTableDao
+        Optional<OrderTable> ungroupedOrderTableB = orderTableRepository
             .findById(savedOrderTableB.getId());
 
         assertAll(() -> {
             assertThat(ungroupedOrderTableA).isNotEqualTo(Optional.empty());
             assertThat(ungroupedOrderTableA.get()
-                .getTableGroupId()).isNull();
+                .getTableGroup()).isNull();
             assertThat(ungroupedOrderTableA.get()
                 .isEmpty()).isFalse();
             assertThat(ungroupedOrderTableB).isNotEqualTo(Optional.empty());
             assertThat(ungroupedOrderTableB.get()
-                .getTableGroupId()).isNull();
+                .getTableGroup()).isNull();
             assertThat(ungroupedOrderTableB.get()
                 .isEmpty()).isFalse();
         });
@@ -135,10 +140,11 @@ class TableGroupServiceTest {
             .createTableGroup(orderTables);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
 
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order
-            = TestObjectFactory.createOrder(savedOrderTableA.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(savedOrderTableA, null, orderLineItems);
         orderService.create(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))

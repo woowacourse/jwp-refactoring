@@ -10,6 +10,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -30,21 +32,25 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(2, false));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order
-            = TestObjectFactory.createOrder(orderedTable.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, null, orderLineItems);
         Order savedOrder = orderService.create(order);
 
         assertAll(() -> {
             assertThat(savedOrder).isInstanceOf(Order.class);
             assertThat(savedOrder.getId()).isNotNull();
-            assertThat(savedOrder.getOrderTableId()).isNotNull();
+            assertThat(savedOrder.getOrderTable()).isNotNull();
             assertThat(savedOrder.getOrderStatus()).isNotNull();
             assertThat(savedOrder.getOrderStatus()).isEqualTo(COOKING.name());
             assertThat(savedOrder.getOrderLineItems()).isNotNull();
@@ -60,7 +66,7 @@ class OrderServiceTest {
         List<OrderLineItem> orderLineItems
             = Collections.emptyList();
         Order order
-            = TestObjectFactory.createOrder(orderedTable.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, null, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -69,8 +75,9 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다. - 주문 테이블이 존재하지 않을 경우")
     @Test
     void create_IfTableNotExist_ThrowException() {
+        Menu menu = menuRepository.getOne(0L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order
             = TestObjectFactory.createOrder(null, null, orderLineItems);
 
@@ -83,10 +90,11 @@ class OrderServiceTest {
     void create_IfTableEmpty_ThrowException() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(1, true));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order
-            = TestObjectFactory.createOrder(orderedTable.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, null, orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
             .isInstanceOf(IllegalArgumentException.class);
@@ -97,10 +105,11 @@ class OrderServiceTest {
     void list() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(1, false));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order
-            = TestObjectFactory.createOrder(orderedTable.getId(), COOKING.name(), orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, COOKING.name(), orderLineItems);
         orderService.create(order);
 
         List<Order> orders = orderService.list();
@@ -116,12 +125,13 @@ class OrderServiceTest {
     void changeOrderStatus() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(1, false));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order oldOrder
-            = TestObjectFactory.createOrder(orderedTable.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, null, orderLineItems);
         Order newOrder
-            = TestObjectFactory.createOrder(orderedTable.getId(), MEAL.name(), orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, MEAL.name(), orderLineItems);
 
         Order savedOldOrder = orderService.create(oldOrder);
         orderService.changeOrderStatus(savedOldOrder.getId(), newOrder);
@@ -136,12 +146,13 @@ class OrderServiceTest {
     void changeOrderStatus_NotExistOrder_ThrowException() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(1, false));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order oldOrder
-            = TestObjectFactory.createOrder(orderedTable.getId(), null, orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, null, orderLineItems);
         Order newOrder
-            = TestObjectFactory.createOrder(orderedTable.getId(), MEAL.name(), orderLineItems);
+            = TestObjectFactory.createOrder(orderedTable, MEAL.name(), orderLineItems);
 
         orderService.create(oldOrder);
 
@@ -154,14 +165,15 @@ class OrderServiceTest {
     void changeOrderStatus_AlreadyPayed_ThrowException() {
         OrderTable orderedTable
             = tableService.create(createOrderTable(1, false));
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order oldOrder
             = TestObjectFactory
-            .createOrder(orderedTable.getId(), null, orderLineItems);
+            .createOrder(orderedTable, null, orderLineItems);
         Order newOrder
             = TestObjectFactory
-            .createOrder(orderedTable.getId(), COMPLETION.name(), orderLineItems);
+            .createOrder(orderedTable, COMPLETION.name(), orderLineItems);
 
         Order savedOldOrder = orderService.create(oldOrder);
         orderService.changeOrderStatus(savedOldOrder.getId(), newOrder);

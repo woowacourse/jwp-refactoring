@@ -5,9 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
+import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -20,20 +22,31 @@ import org.springframework.test.context.jdbc.Sql;
 @Sql({"/truncate.sql", "/init-data.sql"})
 class MenuServiceTest {
 
-    private static final String NEW_MENU_NAME = "후라이드양념두마리메뉴";
-    private static final BigDecimal NEW_MENU_PRICE = new BigDecimal(31_000L);
-    private static final Long NEW_MENU_GROUP_ID = 1L;
-    private static final List<MenuProduct> NEW_MENU_PRODUCT =
-        Collections.singletonList(TestObjectFactory.createMenuProduct(1L, 2L));
+    private static final String NEW_MENU_NAME = "후라이드양념간장메뉴";
+    private static final BigDecimal NEW_MENU_PRICE = new BigDecimal(48_000L);
+    private static final MenuGroup NEW_MENU_GROUP = TestObjectFactory.createMenuGroup("세마리메뉴");
 
     @Autowired
     private MenuService menuService;
 
+    @Autowired
+    private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
     @DisplayName("새로운 메뉴를 생성한다.")
     @Test
     void create() {
+        MenuGroup menuGroup = menuGroupService.create(NEW_MENU_GROUP);
+        List<MenuProduct> new_menu_product =
+            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
+                menuProductRepository.findAllByMenuId(2L).get(0),
+                menuProductRepository.findAllByMenuId(5L).get(0));
+
         Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, NEW_MENU_GROUP_ID, NEW_MENU_PRODUCT);
+            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, menuGroup, new_menu_product);
+
         Menu savedMenu = menuService.create(menu);
 
         assertAll(() -> {
@@ -45,8 +58,8 @@ class MenuServiceTest {
             assertThat(savedMenu.getPrice()).isNotNull();
             assertThat(savedMenu.getPrice().toBigInteger())
                 .isEqualTo(menu.getPrice().toBigInteger());
-            assertThat(savedMenu.getMenuGroupId()).isNotNull();
-            assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
+            assertThat(savedMenu.getMenuGroup()).isNotNull();
+            assertThat(savedMenu.getMenuGroup()).isEqualTo(menu.getMenuGroup());
             assertThat(savedMenu.getMenuProducts()).isNotEmpty();
             assertThat(savedMenu.getMenuProducts().size()).isEqualTo(menu.getMenuProducts().size());
         });
@@ -55,8 +68,14 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 null일 경우")
     @Test
     void create_IfMenuPriceNull_ThrowException() {
+        MenuGroup menuGroup = menuGroupService.create(NEW_MENU_GROUP);
+        List<MenuProduct> new_menu_product =
+            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
+                menuProductRepository.findAllByMenuId(2L).get(0),
+                menuProductRepository.findAllByMenuId(5L).get(0));
+
         Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, null, NEW_MENU_GROUP_ID, NEW_MENU_PRODUCT);
+            .createMenu(NEW_MENU_NAME, null, menuGroup, new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -65,8 +84,14 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 0 이하일 경우")
     @Test
     void create_IfMenuPriceIsNotPositive_ThrowException() {
+        MenuGroup menuGroup = menuGroupService.create(NEW_MENU_GROUP);
+        List<MenuProduct> new_menu_product =
+            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
+                menuProductRepository.findAllByMenuId(2L).get(0),
+                menuProductRepository.findAllByMenuId(5L).get(0));
+
         Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, new BigDecimal(-1L), NEW_MENU_GROUP_ID, NEW_MENU_PRODUCT);
+            .createMenu(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup, new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -75,8 +100,15 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - groupId가 메뉴 그룹에 존재하지 않는 경우")
     @Test
     void create_IfGroupIdNotExist_ThrowException() {
+        MenuGroup invalidMenuGroup = new MenuGroup();
+        List<MenuProduct> new_menu_product =
+            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
+                menuProductRepository.findAllByMenuId(2L).get(0),
+                menuProductRepository.findAllByMenuId(5L).get(0));
+
+        invalidMenuGroup.setId(0L);
         Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, 5L, NEW_MENU_PRODUCT);
+            .createMenu(NEW_MENU_NAME, NEW_MENU_PRICE, invalidMenuGroup, new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);
@@ -85,9 +117,14 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 모든 메뉴 가격 합을 초과할 경우")
     @Test
     void create_IfInvalidMenuPrice_ThrowException() {
+        MenuGroup menuGroup = menuGroupService.create(NEW_MENU_GROUP);
+        List<MenuProduct> new_menu_product =
+            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
+                menuProductRepository.findAllByMenuId(2L).get(0),
+                menuProductRepository.findAllByMenuId(5L).get(0));
+
         Menu menu = TestObjectFactory
-            .createMenu(NEW_MENU_NAME, new BigDecimal(34_000L), NEW_MENU_GROUP_ID,
-                NEW_MENU_PRODUCT);
+            .createMenu(NEW_MENU_NAME, new BigDecimal(50_000L), menuGroup, new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menu))
             .isInstanceOf(IllegalArgumentException.class);

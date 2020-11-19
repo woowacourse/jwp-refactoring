@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -32,6 +34,9 @@ class TableServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
     @DisplayName("테이블을 생성한다.")
     @Test
     void create() {
@@ -44,7 +49,7 @@ class TableServiceTest {
             assertThat(savedTable.getId()).isNotNull();
             assertThat(savedTable.getNumberOfGuests()).isNotNull();
             assertThat(savedTable.getNumberOfGuests()).isEqualTo(1);
-            assertThat(savedTable.getTableGroupId()).isNull();
+            assertThat(savedTable.getTableGroup()).isNull();
             assertThat(savedTable.isEmpty()).isFalse();
         });
     }
@@ -98,10 +103,11 @@ class TableServiceTest {
 
         OrderTable savedTable = tableService.create(oldOrderTable);
 
+        Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
-            = Collections.singletonList(TestObjectFactory.createOrderLineItem(1L, 1L));
+            = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         Order order = TestObjectFactory
-            .createOrder(savedTable.getId(), COOKING.name(), orderLineItems);
+            .createOrder(savedTable, COOKING.name(), orderLineItems);
         orderService.create(order);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), newOrderTable))
@@ -151,7 +157,7 @@ class TableServiceTest {
         OrderTable newOrderTable = TestObjectFactory.createOrderTable(2, true);
 
         assertThatThrownBy(
-            () -> tableService.changeNumberOfGuests(null, newOrderTable))
+            () -> tableService.changeNumberOfGuests(0L, newOrderTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

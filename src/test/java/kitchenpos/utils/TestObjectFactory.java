@@ -20,20 +20,20 @@ public class TestObjectFactory {
         return menuGroup;
     }
 
-    public static Menu createMenu(String name, BigDecimal price, Long menuGroupId,
+    public static Menu createMenu(String name, BigDecimal price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuGroup(menuGroup);
         menu.setMenuProducts(menuProducts);
 
         return menu;
     }
 
-    public static MenuProduct createMenuProduct(Long productId, long quantity) {
+    public static MenuProduct createMenuProduct(Product product, long quantity) {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
+        menuProduct.setProduct(product);
         menuProduct.setQuantity(quantity);
 
         return menuProduct;
@@ -47,18 +47,18 @@ public class TestObjectFactory {
         return product;
     }
 
-    public static Order createOrder(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
+    public static Order createOrder(OrderTable orderTable, String orderStatus, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
-        order.setOrderTableId(orderTableId);
+        order.setOrderTable(orderTable);
         order.setOrderStatus(orderStatus);
         order.setOrderLineItems(orderLineItems);
 
         return order;
     }
 
-    public static OrderLineItem createOrderLineItem(Long menuId, long quantity) {
+    public static OrderLineItem createOrderLineItem(Menu menu, long quantity) {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
+        orderLineItem.setMenu(menu);
         orderLineItem.setQuantity(quantity);
 
         return orderLineItem;
