@@ -30,12 +30,4 @@ public class OrderTableFixture {
     public static OrderTable createOrderTableWithTableGroup(TableGroup tableGroup) {
         return createOrderTable(null, tableGroup, 2, false);
     }
-    /*
-    public static OrderTable createOrderTableWithTableGroupIdAndEmpty(Long tableGroupId, boolean empty) {
-        return createOrderTable(null, 2, tableGroupId, empty);
-    }
-
-
-
-     */
 }

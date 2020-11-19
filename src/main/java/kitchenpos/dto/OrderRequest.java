@@ -11,7 +11,7 @@ public class OrderRequest {
     private Long orderTableId;
     private List<OrderLineItemRequest> orderLineItemRequests;
 
-    public OrderRequest() {
+    protected OrderRequest() {
     }
 
     public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {

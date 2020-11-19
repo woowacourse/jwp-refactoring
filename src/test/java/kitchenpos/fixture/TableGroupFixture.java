@@ -12,7 +12,6 @@ public class TableGroupFixture {
 
     public static TableGroup createTableGroupWithoutId() {
         return createTableGroupWithId(null);
-
     }
 
 }

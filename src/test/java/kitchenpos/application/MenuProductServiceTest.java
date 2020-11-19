@@ -4,8 +4,10 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class MenuProductServiceTest {
 
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
 
     @DisplayName("createMenuProduct 정상 동작")
     @Test
@@ -72,4 +77,10 @@ public class MenuProductServiceTest {
                 .withMessage("MenuProduct 전부를 합한 금액이 Menu 금액보다 작을 수 없습니다.");
     }
 
+    @AfterEach
+    void tearDown() {
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        productRepository.deleteAll();
+    }
 }

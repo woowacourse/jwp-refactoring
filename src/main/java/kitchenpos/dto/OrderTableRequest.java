@@ -4,7 +4,6 @@ public class OrderTableRequest {
     private Long id;
 
     protected OrderTableRequest() {
-
     }
 
     public OrderTableRequest(Long id) {

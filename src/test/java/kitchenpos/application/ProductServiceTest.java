@@ -53,4 +53,5 @@ class ProductServiceTest {
             assertThat(actual.get(0)).isEqualToComparingFieldByField(product);
         });
     }
+
 }

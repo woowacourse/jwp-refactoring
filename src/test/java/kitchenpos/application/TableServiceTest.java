@@ -9,13 +9,13 @@ import kitchenpos.fixture.TableGroupFixture;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
@@ -28,7 +28,6 @@ import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
-@Sql(value = "/truncate.sql")
 class TableServiceTest {
 
     @Autowired
@@ -117,5 +116,12 @@ class TableServiceTest {
         OrderTable changed = tableService.changeNumberOfGuests(savedOrderTable.getId(), expected);
 
         assertThat(changed.getNumberOfGuests()).isEqualTo(expected.getNumberOfGuests());
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        tableGroupRepository.deleteAll();
     }
 }

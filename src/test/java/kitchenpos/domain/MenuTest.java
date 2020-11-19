@@ -13,7 +13,7 @@ class MenuTest {
 
     @DisplayName("isSmallerPrice 기능 테스트")
     @ParameterizedTest
-    @CsvSource(value = {"2999:false", "3001:true"}, delimiter = ':')
+    @CsvSource(value = {"2999:true", "3000:false", "3001:false"}, delimiter = ':')
     void isSmallerPrice(BigDecimal price, boolean expect) {
         Menu menu = MenuFixture.createMenuWithPrice(BigDecimal.valueOf(3000L));
 

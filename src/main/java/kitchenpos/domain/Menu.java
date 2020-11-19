@@ -26,10 +26,6 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id) {
-        this.id = id;
-    }
-
     public Menu(Long id, String name, Price price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
