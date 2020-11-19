@@ -5,10 +5,14 @@ import static org.assertj.core.util.Lists.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -73,12 +77,14 @@ class MenuServiceTest {
         ;
     }
 
-    @DisplayName("메뉴의 가격이 null일 경우 예외가 발생한다")
-    @Test
-    void create_PriceIsNull_ExceptionThrown() {
-        // Given
+    @DisplayName("메뉴의 가격이 올바르지 않은 경우 예외가 발생한다")
+    @ParameterizedTest
+    @MethodSource("generateInvalidPrice")
+    void create_InvalidPrice_ExceptionThrown(final BigDecimal price) {
+        // When
         final Menu menu = new Menu();
         menu.setName("파닭치킨");
+        menu.setPrice(price);
 
         // Then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -86,18 +92,11 @@ class MenuServiceTest {
         ;
     }
 
-    @DisplayName("메뉴의 가격이 음수일 경우 예외가 발생한다")
-    @Test
-    void create_PriceIsNegative_ExceptionThrown() {
-        // Given
-        final Menu menu = new Menu();
-        menu.setName("파닭치킨");
-        menu.setPrice(BigDecimal.valueOf(-1000L));
-
-        // Then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class)
-        ;
+    private static Stream<Arguments> generateInvalidPrice() {
+        return Stream.of(
+                Arguments.arguments((BigDecimal)null),
+                Arguments.arguments(BigDecimal.valueOf(-1000L))
+        );
     }
 
     @DisplayName("메뉴 그룹의 Id가 null일 경우 예외가 발생한다")
