@@ -4,17 +4,20 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.OrderLineItem;
 
 @DisplayName("JdbcTemplateOrderLineItemDao 테스트")
 @JdbcTest
+@Sql("/dao-test.sql")
 @Import(JdbcTemplateOrderLineItemDao.class)
 class JdbcTemplateOrderLineItemDaoTest {
     @Autowired
@@ -73,6 +76,16 @@ class JdbcTemplateOrderLineItemDaoTest {
                         .extracting(OrderLineItem::getQuantity)
                         .isEqualTo(1L)
         );
+    }
+
+    @DisplayName("OrderLineItemDao findById Id가 존재하지 않을 경우")
+    @Test
+    void findById_NotExists() {
+        // When
+        final Optional<OrderLineItem> orderLineItem = jdbcTemplateOrderLineItemDao.findById(3L);
+
+        // Then
+        assertThat(orderLineItem.isPresent()).isFalse();
     }
 
     @DisplayName("OrderLineItemDao findAll 테스트")

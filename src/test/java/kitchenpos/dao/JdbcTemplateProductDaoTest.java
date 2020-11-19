@@ -5,17 +5,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Product;
 
 @DisplayName("JdbcTemplateProductDao 테스트")
 @JdbcTest
+@Sql("/dao-test.sql")
 @Import(JdbcTemplateProductDao.class)
 class JdbcTemplateProductDaoTest {
     @Autowired
@@ -67,6 +70,16 @@ class JdbcTemplateProductDaoTest {
                         .extracting(BigDecimal::longValue)
                         .isEqualTo(16000L)
         );
+    }
+
+    @DisplayName("ProductDao findById Id가 존재하지 않을 경우")
+    @Test
+    void findById_NotExists() {
+        // When
+        final Optional<Product> product = jdbcTemplateProductDao.findById(7L);
+
+        // Then
+        assertThat(product.isPresent()).isFalse();
     }
 
     @DisplayName("ProductDao findAll 테스트")

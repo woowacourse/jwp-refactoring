@@ -4,16 +4,19 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.MenuProduct;
 
 @DisplayName("JdbcTemplateMenuProductDao 테스트")
+@Sql("/dao-test.sql")
 @JdbcTest
 @Import(JdbcTemplateMenuProductDao.class)
 class JdbcTemplateMenuProductDaoTest {
@@ -52,7 +55,7 @@ class JdbcTemplateMenuProductDaoTest {
         );
     }
 
-    @DisplayName("MenuProduct findById 테스트")
+    @DisplayName("MenuProductDao findById 테스트")
     @Test
     void findById() {
         // When
@@ -75,7 +78,18 @@ class JdbcTemplateMenuProductDaoTest {
         );
     }
 
-    @DisplayName("MenuProduct findAll 테스트")
+    @DisplayName("MenuProductDao findById Id가 존재하지 않을 경우")
+    @Test
+    void findById_NotExists() {
+        // When
+        final Optional<MenuProduct> menuProduct = jdbcTemplateMenuProductDao.findById(7L);
+
+        // Then
+        assertThat(menuProduct.isPresent()).isFalse()
+        ;
+    }
+
+    @DisplayName("MenuProductDao findAll 테스트")
     @Test
     void findAll() {
         // When
@@ -85,7 +99,7 @@ class JdbcTemplateMenuProductDaoTest {
         assertThat(menuProducts).hasSize(6);
     }
 
-    @DisplayName("MenuProduct findAllByMenuId 테스트")
+    @DisplayName("MenuProductDao findAllByMenuId 테스트")
     @Test
     void findAllByMenuId() {
         // When

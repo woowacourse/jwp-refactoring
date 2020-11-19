@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +17,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 
 @DisplayName("JdbcTemplateOrderDao 테스트")
+@Sql("/dao-test.sql")
 @JdbcTest
 @Import(JdbcTemplateOrderDao.class)
 class JdbcTemplateOrderDaoTest {
@@ -80,6 +83,16 @@ class JdbcTemplateOrderDaoTest {
                         .extracting(Order::getOrderedTime)
                         .isEqualTo(LocalDateTime.of(2020, 11, 18, 12, 0, 0))
         );
+    }
+
+    @DisplayName("OrderDao findById Id가 존재하지 않을 경우")
+    @Test
+    void findById_NotExists() {
+        // When
+        final Optional<Order> order = jdbcTemplateOrderDao.findById(2L);
+
+        // Then
+        assertThat(order.isPresent()).isFalse();
     }
 
     @DisplayName("OrderDao findAll 테스트")
