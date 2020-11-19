@@ -9,8 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,32 +24,32 @@ public class ProductRestControllerTest extends AbstractControllerTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        Product productRequest = createProductRequest("치킨", 0L);
+        ProductCreateRequest productCreateRequest = createProductRequest("치킨", 0L);
 
         mockMvc.perform(
             post("/api/products")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .content(objectMapper.writeValueAsString(productRequest))
+                .content(objectMapper.writeValueAsString(productCreateRequest))
         )
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").exists())
-            .andExpect(jsonPath("$.name").value(productRequest.getName()))
-            .andExpect(jsonPath("$.price").value(productRequest.getPrice().longValue()));
+            .andExpect(jsonPath("$.name").value(productCreateRequest.getName()))
+            .andExpect(jsonPath("$.price").value(productCreateRequest.getPrice().longValue()));
     }
 
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<Product> products = productDao.findAll();
+        List<ProductResponse> products = ProductResponse.listOf(productDao.findAll());
 
         String json = mockMvc.perform(get("/api/products"))
             .andDo(print())
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<Product> response = objectMapper.readValue(json,
-            objectMapper.getTypeFactory().constructCollectionType(List.class, Product.class));
+        List<ProductResponse> response = objectMapper.readValue(json,
+            objectMapper.getTypeFactory().constructCollectionType(List.class, ProductResponse.class));
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(products);
     }
