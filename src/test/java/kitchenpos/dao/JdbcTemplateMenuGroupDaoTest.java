@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -32,10 +33,15 @@ class JdbcTemplateMenuGroupDaoTest {
         final MenuGroup savedMenuGroup = jdbcTemplateMenuGroupDao.save(menuGroup);
 
         // Then
-        assertThat(savedMenuGroup)
-                .extracting(MenuGroup::getId)
-                .isNotNull()
-        ;
+        assertAll(
+                () -> assertThat(savedMenuGroup)
+                        .extracting(MenuGroup::getId)
+                        .isNotNull()
+                ,
+                () -> assertThat(savedMenuGroup)
+                        .extracting(MenuGroup::getName)
+                        .isEqualTo(menuGroup.getName())
+        );
     }
 
     @DisplayName("MenuGroupDao findById 테스트")

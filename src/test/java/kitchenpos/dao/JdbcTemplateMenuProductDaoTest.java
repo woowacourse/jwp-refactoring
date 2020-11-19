@@ -33,10 +33,23 @@ class JdbcTemplateMenuProductDaoTest {
         final MenuProduct savedMenuProduct = jdbcTemplateMenuProductDao.save(menuProduct);
 
         // Then
-        assertThat(savedMenuProduct)
-                .extracting(MenuProduct::getSeq)
-                .isNotNull()
-        ;
+        assertAll(
+                () -> assertThat(savedMenuProduct)
+                        .extracting(MenuProduct::getSeq)
+                        .isNotNull()
+                ,
+                () -> assertThat(savedMenuProduct)
+                        .extracting(MenuProduct::getMenuId)
+                        .isEqualTo(menuProduct.getMenuId())
+                ,
+                () -> assertThat(savedMenuProduct)
+                        .extracting(MenuProduct::getProductId)
+                        .isEqualTo(menuProduct.getProductId())
+                ,
+                () -> assertThat(savedMenuProduct)
+                        .extracting(MenuProduct::getQuantity)
+                        .isEqualTo(menuProduct.getQuantity())
+        );
     }
 
     @DisplayName("MenuProduct findById 테스트")
