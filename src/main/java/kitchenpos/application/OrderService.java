@@ -49,18 +49,12 @@ public class OrderService {
             request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
         final Order savedOrder = orderDao.save(order);
 
-        final List<OrderLineItem> orderLineItems = new ArrayList<>();
-
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem(
-                savedOrder.getId(),
-                orderLineItemRequest.getMenuId(),
-                orderLineItemRequest.getQuantity()
-            );
-
-            orderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        return OrderResponse.of(savedOrder, OrderLineItemResponse.of(orderLineItems));
+        List<OrderLineItemResponse> orderLineItemResponses = orderLineItemRequests.stream()
+            .map(orderLineItemRequest -> new OrderLineItem(savedOrder.getId(), orderLineItemRequest.getMenuId(),
+                orderLineItemRequest.getQuantity()))
+            .map(orderLineItemDao::save)
+            .collect(Collectors.collectingAndThen(Collectors.toList(), OrderLineItemResponse::of));
+        return OrderResponse.of(savedOrder, orderLineItemResponses);
     }
 
     private void validOrderCreateRequest(final OrderCreateRequest request) {
