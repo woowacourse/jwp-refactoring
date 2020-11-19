@@ -62,3 +62,6 @@ INSERT INTO order_table (id, number_of_guests, empty)
 VALUES (7, 0, true);
 INSERT INTO order_table (id, number_of_guests, empty)
 VALUES (8, 0, true);
+
+INSERT INTO orders (id, order_table_id, order_status, ordered_time)
+VALUES (1, 1, 'MEAL', PARSEDATETIME('2020-11-18 12:00:00', 'yyyy-MM-dd HH:mm:ss'));
