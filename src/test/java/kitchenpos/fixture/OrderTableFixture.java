@@ -27,7 +27,7 @@ public class OrderTableFixture {
         return createOrderTable(null, null, numberOfGuest, false);
     }
 
-    public static OrderTable createOrderTableWithTableGroupId(TableGroup tableGroup) {
+    public static OrderTable createOrderTableWithTableGroup(TableGroup tableGroup) {
         return createOrderTable(null, tableGroup, 2, false);
     }
     /*

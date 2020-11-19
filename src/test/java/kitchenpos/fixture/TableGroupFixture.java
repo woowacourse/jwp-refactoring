@@ -15,11 +15,4 @@ public class TableGroupFixture {
 
     }
 
-    /*
-    public static TableGroup createTableGroupWithOrderTables(List<OrderTable> orderTables) {
-        return createTableGroupWithId(null, orderTables);
-    }
-
-
-     */
 }

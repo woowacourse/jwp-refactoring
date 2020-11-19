@@ -21,7 +21,7 @@ import java.util.List;
 
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithEmpty;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithNumberOfGuest;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroupId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroup;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithoutId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -60,7 +60,7 @@ class TableServiceTest {
     @Test
     void list() {
         TableGroup savedTableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroupWithoutId());
-        OrderTable savedOrderTable = orderTableRepository.save(createOrderTableWithTableGroupId(savedTableGroup));
+        OrderTable savedOrderTable = orderTableRepository.save(createOrderTableWithTableGroup(savedTableGroup));
 
         List<OrderTableResponse> actual = tableService.list();
         OrderTableResponse expected = OrderTableResponse.from(savedOrderTable);
@@ -88,7 +88,7 @@ class TableServiceTest {
     void changeEmptyNonNullTableGroupId() {
         TableGroup savedTableGroup = tableGroupRepository.save(TableGroupFixture.createTableGroupWithoutId());
         OrderTable orderTable = createOrderTableWithEmpty(false);
-        OrderTable savedOrderTable = orderTableRepository.save(createOrderTableWithTableGroupId(savedTableGroup));
+        OrderTable savedOrderTable = orderTableRepository.save(createOrderTableWithTableGroup(savedTableGroup));
 
 
         assertThatIllegalArgumentException()

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithEmpty;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithNumberOfGuest;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroupId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroup;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithId;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -33,7 +33,7 @@ class OrderTableTest {
     @DisplayName("OrderTable TableGroup 변경")
     @Test
     void changeTableGroup() {
-        OrderTable orderTable = createOrderTableWithTableGroupId(createTableGroupWithId(1L));
+        OrderTable orderTable = createOrderTableWithTableGroup(createTableGroupWithId(1L));
         TableGroup expected = createTableGroupWithId(2L);
 
         OrderTable actual = orderTable.changeTableGroup(expected);
