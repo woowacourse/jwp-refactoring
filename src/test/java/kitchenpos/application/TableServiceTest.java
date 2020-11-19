@@ -8,11 +8,12 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.inmemorydao.InMemoryOrderDao;
 import kitchenpos.inmemorydao.InMemoryOrderTableDao;
@@ -118,38 +119,16 @@ class TableServiceTest {
         ;
     }
 
-    @DisplayName("주문 테이블의 주문 상태가 조리 중인 경우 예외가 발생한다")
-    @Test
-    void changeEmpty_OrderStatusIsCooking_ExceptionThrown() {
+    @DisplayName("주문 테이블의 주문 상태가 조리 중 또는 식사 중인 경우 예외가 발생한다")
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void changeEmpty_OrderStatusIsCookingOrMeal_ExceptionThrown(final String orderStatus) {
         // Given
         final OrderTable orderTable = new OrderTable();
         final OrderTable savedOrderTable = orderTableDao.save(orderTable);
 
         final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(savedOrderTable.getId());
-        orderDao.save(order);
-
-        final OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setEmpty(true);
-
-        // Then
-        final Long orderTableId = savedOrderTable.getId();
-
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, emptyOrderTable))
-                .isInstanceOf(IllegalArgumentException.class)
-        ;
-    }
-
-    @DisplayName("주문 테이블의 주문 상태가 식사 중인 경우 예외가 발생한다")
-    @Test
-    void changeEmpty_OrderStatusIsMeal_ExceptionThrown() {
-        // Given
-        final OrderTable orderTable = new OrderTable();
-        final OrderTable savedOrderTable = orderTableDao.save(orderTable);
-
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        order.setOrderStatus(orderStatus);
         order.setOrderTableId(savedOrderTable.getId());
         orderDao.save(order);
 
