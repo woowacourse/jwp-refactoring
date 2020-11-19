@@ -69,8 +69,8 @@
 ### 요구사항
 -[x] JPA를 적용
 -[ ] Service 리팩토링
-    -[ ] MenuService
-    -[ ] OrderService
+    -[x] MenuService
+    -[x] OrderService
     -[ ] ProductService
     -[ ] TableGroupService
     -[ ] TableService

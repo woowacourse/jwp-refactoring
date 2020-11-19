@@ -19,10 +19,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.OrderStatus;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
@@ -55,12 +56,9 @@ class OrderRestControllerTest {
 		orderLineItem.setQuantity(1L);
 		orderLineItem.setSeq(1L);
 
-		order = new Order();
-		order.setId(1L);
-		order.setOrderTableId(1L);
-		order.setOrderStatus("주문중");
-		order.setOrderedTime(LocalDateTime.now());
-		order.setOrderLineItems(Collections.singletonList(orderLineItem));
+		OrderLineItems orderLineItems = new OrderLineItems(Collections.singletonList(orderLineItem));
+
+		order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
 		orders = Collections.singletonList(order);
 	}

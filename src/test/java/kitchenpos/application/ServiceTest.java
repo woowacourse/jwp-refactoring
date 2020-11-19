@@ -13,6 +13,7 @@ import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -35,14 +36,7 @@ public abstract class ServiceTest {
 
 	public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,
 		List<OrderLineItem> orderLineItems) {
-		Order order = new Order();
-		order.setId(id);
-		order.setOrderStatus(status);
-		order.setOrderTableId(orderTableId);
-		order.setOrderedTime(orderedTime);
-		order.setOrderLineItems(orderLineItems);
-
-		return order;
+		return new Order(id, orderTableId, status, orderedTime, new OrderLineItems(orderLineItems));
 	}
 
 	public OrderLineItem createOrderLineItem(Long orderId, Long menuId, Long seq, Long quantity) {
