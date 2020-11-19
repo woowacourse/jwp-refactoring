@@ -11,6 +11,10 @@ public class Price {
     protected Price() {
     }
 
+    public Price(Integer price) {
+        this(BigDecimal.valueOf(price));
+    }
+
     public Price(BigDecimal price) {
         validateGreaterOrSameThanZero(price);
         this.price = price;

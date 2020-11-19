@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 
 import static kitchenpos.fixture.ProductFixture.createProductWithId;
+import static kitchenpos.fixture.ProductFixture.createProductWithoutId;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,9 +38,10 @@ class ProductRestControllerTest {
 
     @DisplayName("Product 생성 요청")
     @Test
-    void create() throws Exception {
-        Product product = createProductWithId(null);
+    void createOrderLineItems() throws Exception {
+        Product product = createProductWithoutId();
         String content = new ObjectMapper().writeValueAsString(product);
+        System.out.println(content);
         given(productService.create(any())).willReturn(createProductWithId(1L));
 
         mockMvc.perform(post("/api/products")
