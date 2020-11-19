@@ -1,8 +1,9 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import java.util.Objects;
 
 @Embeddable
 public class Money {
@@ -26,15 +27,21 @@ public class Money {
         return this.value - targetMoney.value;
     }
 
+    public Money multiply(long quantity) {
+        return new Money(this.value * quantity);
+    }
+
     public Long getValue() {
         return value;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Money money = (Money) o;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Money money = (Money)o;
         return Objects.equals(value, money.value);
     }
 

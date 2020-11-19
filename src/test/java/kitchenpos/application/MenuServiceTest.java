@@ -3,17 +3,21 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
-import kitchenpos.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Money;
+import kitchenpos.domain.Product;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -31,7 +35,7 @@ class MenuServiceTest extends ServiceTest {
 	void create_whenMenuPriceIsNull_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
 		Menu menu = createMenu(null, "메뉴", null, menuGroup.getId(),
-			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
+			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -42,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
 	void create_whenMenuPriceIsMinus_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
 		Menu menu = createMenu(null, "메뉴", new Money(-1L), menuGroup.getId(),
-			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
+			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -53,7 +57,7 @@ class MenuServiceTest extends ServiceTest {
 	void create_whenNotExistMenuGroup_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
 		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
-			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
+			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -64,7 +68,7 @@ class MenuServiceTest extends ServiceTest {
 	void create_whenNotExistProduct_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
-			Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)));
+			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -77,11 +81,11 @@ class MenuServiceTest extends ServiceTest {
 		long productPrice = 500L;
 		long quantity = 1L;
 
-		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		Product product = productRepository.save(createProduct(null, "제품", new Money(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, 3L);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
-			Collections.singletonList(menuProduct));
+			new MenuProducts(Collections.singletonList(menuProduct)));
 
 		assertThatThrownBy(() -> menuService.create(menu))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -94,11 +98,11 @@ class MenuServiceTest extends ServiceTest {
 		long productPrice = 500L;
 		long quantity = 2L;
 
-		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		Product product = productRepository.save(createProduct(null, "제품", new Money(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), quantity, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
-			Collections.singletonList(menuProduct));
+			new MenuProducts(Collections.singletonList(menuProduct)));
 
 		Menu actual = menuService.create(menu);
 
@@ -107,7 +111,7 @@ class MenuServiceTest extends ServiceTest {
 			() -> assertThat(actual.getName()).isEqualTo(menu.getName()),
 			() -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice()),
 			() -> assertThat(actual.getMenuGroup()).isEqualTo(menu.getMenuGroup()),
-			() -> assertThat(actual.getMenuProducts().get(0).getQuantity()).isEqualTo(2L)
+			() -> assertThat(actual.getMenuProducts().getMenuProducts().get(0).getQuantity()).isEqualTo(2L)
 		);
 	}
 
@@ -116,11 +120,11 @@ class MenuServiceTest extends ServiceTest {
 		long menuPrice = 1000L;
 		long productPrice = 500L;
 
-		Product product = productRepository.save(createProduct(null, "제품", BigDecimal.valueOf(productPrice)));
+		Product product = productRepository.save(createProduct(null, "제품", new Money(productPrice)));
 		MenuProduct menuProduct = createMenuProduct(null, product.getId(), 2L, null);
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
-			Collections.singletonList(menuProduct));
+			new MenuProducts(Collections.singletonList(menuProduct)));
 
 		Menu expect = menuService.create(menu);
 
@@ -132,8 +136,8 @@ class MenuServiceTest extends ServiceTest {
 			() -> assertThat(actualItem.getName()).isEqualTo(expect.getName()),
 			() -> assertThat(actualItem.getPrice()).isEqualTo(expect.getPrice()),
 			() -> assertThat(actualItem.getMenuGroup()).isEqualTo(expect.getMenuGroup()),
-			() -> assertThat(actualItem.getMenuProducts().get(0).getQuantity()).isEqualTo(
-				expect.getMenuProducts().get(0).getQuantity())
+			() -> assertThat(actualItem.getMenuProducts().getMenuProducts().get(0).getQuantity()).isEqualTo(
+				expect.getMenuProducts().getMenuProducts().get(0).getQuantity())
 		);
 	}
 }

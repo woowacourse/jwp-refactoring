@@ -1,7 +1,8 @@
 package kitchenpos.domain;
 
-import javax.persistence.Embeddable;
 import java.util.List;
+
+import javax.persistence.Embeddable;
 
 @Embeddable
 public class Products {
@@ -13,7 +14,6 @@ public class Products {
     public Products(List<Product> products) {
         this.products = products;
     }
-
 
     public Product findById(Long id) {
         return products.stream()

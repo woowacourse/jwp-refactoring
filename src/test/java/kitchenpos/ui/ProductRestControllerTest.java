@@ -4,7 +4,6 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +16,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.ProductService;
+import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
 
 @WebMvcTest(ProductRestController.class)
@@ -40,10 +39,7 @@ class ProductRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		product = new Product();
-		product.setId(1L);
-		product.setPrice(BigDecimal.valueOf(1000));
-		product.setName("김");
+		product = new Product(1L, "김", new Money(1000L));
 	}
 
 	@Test

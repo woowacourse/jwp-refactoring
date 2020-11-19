@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import javax.persistence.*;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Menu {
@@ -14,14 +15,14 @@ public class Menu {
 	@Embedded
 	private Money price;
 	private Long menuGroupId;
-	@OneToMany(mappedBy = "menuId", fetch = FetchType.EAGER)
-	private List<MenuProduct> menuProducts;
+	@Embedded
+	private MenuProducts menuProducts;
 
 	protected Menu() {
 	}
 
 	public Menu(Long id, String name, Money price, Long menuGroupId,
-		List<MenuProduct> menuProducts) {
+		MenuProducts menuProducts) {
 		this.id = id;
 		this.name = name;
 		this.price = price;
@@ -45,11 +46,11 @@ public class Menu {
 		return menuGroupId;
 	}
 
-	public List<MenuProduct> getMenuProducts() {
+	public MenuProducts getMenuProducts() {
 		return menuProducts;
 	}
 
-	public void setMenuProducts(List<MenuProduct> savedMenuProducts) {
-		this.menuProducts = savedMenuProducts;
+	public void setMenuProducts(MenuProducts menuProducts) {
+		this.menuProducts = menuProducts;
 	}
 }
