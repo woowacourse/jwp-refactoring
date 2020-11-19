@@ -79,7 +79,6 @@ public class TableGroupRestControllerTest {
                 andExpect(status().isCreated()).
                 andDo(print());
     }
-    // TODO: 2020/11/17 예외 테스트 : 리퀘스트가 빈 경우와 안에 값으로 Null 값!
 
     @DisplayName("예외 테스트: 만약 TableGroup 생성 요청이 비어 있으면, 예외를 반환한다.")
     @Test
