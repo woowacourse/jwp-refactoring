@@ -31,6 +31,10 @@ public class Money {
         return new Money(this.value * quantity);
     }
 
+    public boolean isMinus() {
+        return value < 0;
+    }
+
     public Long getValue() {
         return value;
     }

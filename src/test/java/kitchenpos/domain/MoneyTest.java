@@ -21,4 +21,20 @@ class MoneyTest {
         Money targetMoney = new Money(1000L);
         assertThat(money.compareTo(targetMoney)).isEqualTo(1000L);
     }
+
+    @DisplayName("Money의 값이 0 일 때 - 값이 음수인지 확인")
+    @Test
+    void isMinus_whenMoneyValueIsZero() {
+        Money money = new Money(0L);
+
+        assertThat(money.isMinus()).isEqualTo(false);
+    }
+
+    @DisplayName("Money의 값이 음수일 때 - 값이 음수인지 확인")
+    @Test
+    void isMinus_whenMoneyValueIsMinus() {
+        Money money = new Money(-1L);
+
+        assertThat(money.isMinus()).isEqualTo(true);
+    }
 }

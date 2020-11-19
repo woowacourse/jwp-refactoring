@@ -21,7 +21,7 @@ public class MenuService {
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-        final MenuProductService menuProductService
+            final MenuProductService menuProductService
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -52,7 +52,7 @@ public class MenuService {
     }
 
     private void validPriceIsNullOrMinus(Money price) {
-        if (Objects.isNull(price) || price.compareTo(Money.ZERO) < 0) {
+        if (price == null || price.isMinus()) {
             throw new IllegalArgumentException();
         }
     }

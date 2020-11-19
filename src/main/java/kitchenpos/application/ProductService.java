@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -22,11 +20,15 @@ public class ProductService {
     public Product create(final Product product) {
         final Money price = product.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(Money.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        validPriceIsNullOrPriceIsMinus(price);
 
         return productRepository.save(product);
+    }
+
+    private void validPriceIsNullOrPriceIsMinus(Money price) {
+        if (price == null || price.isMinus()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Product> list() {
