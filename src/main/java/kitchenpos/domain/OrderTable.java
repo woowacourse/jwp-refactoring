@@ -41,7 +41,7 @@ public class OrderTable {
     }
 
     public OrderTable changeNumberOfGuests(int numberOfGuests) {
-        if (this.empty) {
+        if (isEmpty()) {
             throw new IllegalArgumentException("비어있는 테이블은 손님 수를 변경할 수 없습니다.");
         }
         return new OrderTable(this.id, this.tableGroup, numberOfGuests, this.empty);
