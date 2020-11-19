@@ -7,12 +7,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.inmemorydao.InMemoryOrderDao;
@@ -180,9 +181,10 @@ class TableGroupServiceTest {
         );
     }
 
-    @DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 중인 경우 예외가 발생한다")
-    @Test
-    void ungroup_OrderStatusIsCooking_ExceptionThrown() {
+    @DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 중 또는 식사 중인 경우 예외가 발생한다")
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void ungroup_OrderStatusIsCookingOrMeal_ExceptionThrown(final String orderStatus) {
         // Given
         final OrderTable orderTable1 = new OrderTable();
         orderTable1.setEmpty(true);
@@ -193,37 +195,8 @@ class TableGroupServiceTest {
 
         final Order order = new Order();
         order.setOrderTableId(savedOrderTable1.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        final Order savedOrder = orderDao.save(order);
-
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(newArrayList(savedOrderTable1, savedOrderTable2));
-
-        final TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-
-        // Then
-        final Long tableGroupId = savedTableGroup.getId();
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class)
-        ;
-    }
-
-    @DisplayName("단체 지정된 주문 테이블의 주문 상태가 식사 중인 경우 예외가 발생한다")
-    @Test
-    void ungroup_OrderStatusIsMeal_ExceptionThrown() {
-        // Given
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setEmpty(true);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setEmpty(true);
-        final OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-        final OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-
-        final Order order = new Order();
-        order.setOrderTableId(savedOrderTable1.getId());
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        final Order savedOrder = orderDao.save(order);
+        order.setOrderStatus(orderStatus);
+        orderDao.save(order);
 
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(newArrayList(savedOrderTable1, savedOrderTable2));
