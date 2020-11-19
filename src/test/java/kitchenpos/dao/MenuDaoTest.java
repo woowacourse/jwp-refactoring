@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import static java.util.Collections.emptyList;
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +34,7 @@ public class MenuDaoTest {
     @DisplayName("메뉴를 저장할 수 있다.")
     @Test
     void save() {
-        Menu menu = createMenu(null, "메뉴", 0L, menuGroup.getId(), emptyList());
+        Menu menu = createMenu(null, "메뉴", 0L, menuGroup.getId());
 
         Menu savedMenu = menuDao.save(menu);
 
@@ -53,7 +52,7 @@ public class MenuDaoTest {
     @Test
     void findById() {
         Menu menu = menuDao
-            .save(createMenu(null, "메뉴", 0L, menuGroup.getId(), emptyList()));
+            .save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
 
         Optional<Menu> foundMenu = menuDao.findById(menu.getId());
 
@@ -64,11 +63,9 @@ public class MenuDaoTest {
     @Test
     void findAll() {
         List<Menu> savedMenus = Arrays.asList(
-            menuDao
-                .save(createMenu(null, "메뉴1", 0L, menuGroup.getId(), emptyList())),
-            menuDao
-                .save(createMenu(null, "메뉴2", 0L, menuGroup.getId(), emptyList())),
-            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId(), emptyList()))
+            menuDao.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
+            menuDao.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
+            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
         );
 
         List<Menu> allMenus = menuDao.findAll();
@@ -80,11 +77,9 @@ public class MenuDaoTest {
     @Test
     void countByIdIn() {
         List<Menu> savedMenus = Arrays.asList(
-            menuDao
-                .save(createMenu(null, "메뉴1", 0L, menuGroup.getId(), emptyList())),
-            menuDao
-                .save(createMenu(null, "메뉴2", 0L, menuGroup.getId(), emptyList())),
-            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId(), emptyList()))
+            menuDao.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
+            menuDao.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
+            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
         );
 
         Long menuCount = menuDao

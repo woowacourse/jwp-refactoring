@@ -60,7 +60,7 @@ public class OrderServiceTest extends AbstractServiceTest {
         orderTable = orderTableDao
             .save(orderTable = orderTableDao.save(createOrderTable(null, false, 0, null)));
         menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId(), emptyList()));
+        menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
     }
 
     @DisplayName("주문을 생성할 수 있다.")

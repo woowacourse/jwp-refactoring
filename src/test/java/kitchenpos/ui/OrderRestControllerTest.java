@@ -58,7 +58,7 @@ public class OrderRestControllerTest extends AbstractControllerTest {
         OrderTable orderTable = orderTableDao
             .save(orderTable = orderTableDao.save(createOrderTable(null, false, 0, null)));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId(), emptyList()));
+        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
         Order orderRequest = createOrderRequest(orderTable.getId(),
             Arrays.asList(createOrderLineItemRequest(menu.getId(), 1)));
 
@@ -98,7 +98,7 @@ public class OrderRestControllerTest extends AbstractControllerTest {
         OrderTable orderTable = orderTableDao
             .save(orderTable = orderTableDao.save(createOrderTable(null, false, 0, null)));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId(), emptyList()));
+        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
         Order order = orderDao
             .save(createOrder(null, LocalDateTime.now(), emptyList(), OrderStatus.COOKING,
                 orderTable.getId()));
