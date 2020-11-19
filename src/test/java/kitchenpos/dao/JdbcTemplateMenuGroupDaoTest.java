@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.MenuGroup;
 
+@DisplayName("JdbcTemplateMenuGroupDao 테스트")
 @JdbcTest
 @Import(JdbcTemplateMenuGroupDao.class)
 class JdbcTemplateMenuGroupDaoTest {

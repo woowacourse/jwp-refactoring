@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.Product;
 
+@DisplayName("JdbcTemplateProductDao 테스트")
 @JdbcTest
 @Import(JdbcTemplateProductDao.class)
 class JdbcTemplateProductDaoTest {

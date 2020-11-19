@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Import;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 
+@DisplayName("JdbcTemplateOrderDao 테스트")
 @JdbcTest
 @Import(JdbcTemplateOrderDao.class)
 class JdbcTemplateOrderDaoTest {

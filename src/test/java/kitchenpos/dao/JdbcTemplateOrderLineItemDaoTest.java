@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.OrderLineItem;
 
+@DisplayName("JdbcTemplateOrderLineItemDao 테스트")
 @JdbcTest
 @Import(JdbcTemplateOrderLineItemDao.class)
 class JdbcTemplateOrderLineItemDaoTest {

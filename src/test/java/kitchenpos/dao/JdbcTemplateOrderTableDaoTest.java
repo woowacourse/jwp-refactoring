@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.domain.OrderTable;
 
+@DisplayName("JdbcTemplateOrderTableDao 테스트")
 @JdbcTest
 @Import(JdbcTemplateOrderTableDao.class)
 class JdbcTemplateOrderTableDaoTest {
