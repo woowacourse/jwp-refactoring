@@ -4,10 +4,14 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -42,11 +46,13 @@ class ProductServiceTest {
         ;
     }
 
-    @DisplayName("상품의 가격이 null일 경우 예외가 발생한다")
-    @Test
-    void create_PriceIsNull_ExceptionThrown() {
-        // Given
+    @DisplayName("메뉴의 가격이 올바르지 않은 경우 예외가 발생한다")
+    @ParameterizedTest
+    @MethodSource("generateInvalidPrice")
+    void create_InvalidPrice_ExceptionThrown(final BigDecimal price) {
+        // When
         final Product product = new Product();
+        product.setPrice(price);
 
         // Then
         assertThatThrownBy(() -> productService.create(product))
@@ -54,17 +60,11 @@ class ProductServiceTest {
         ;
     }
 
-    @DisplayName("상품의 가격이 음수일 경우 예외가 발생한다")
-    @Test
-    void create_PriceIsNegative_ExceptionThrown() {
-        // Given
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1000L));
-
-        // Then
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class)
-        ;
+    private static Stream<Arguments> generateInvalidPrice() {
+        return Stream.of(
+                Arguments.arguments((BigDecimal)null),
+                Arguments.arguments(BigDecimal.valueOf(-1000L))
+        );
     }
 
     @DisplayName("상품의 목록을 조회한다")
