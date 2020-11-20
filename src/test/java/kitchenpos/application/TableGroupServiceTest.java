@@ -18,6 +18,8 @@ import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Table;
 import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.exception.NotEnoughTableException;
+import kitchenpos.exception.TableNotExistenceException;
 import kitchenpos.fixture.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +48,7 @@ class TableGroupServiceTest extends TestFixture {
             new TableGroupCreateRequest(Arrays.asList(TABLE_ID_1));
 
         assertThatThrownBy(() -> tableGroupService.create(notEnoughTableGroupRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NotEnoughTableException.class);
     }
 
     @DisplayName("테이블 그룹 생성 예외 테스트: 테이블이 중복될 때")
@@ -58,7 +60,7 @@ class TableGroupServiceTest extends TestFixture {
         given(tableDao.findAllByIdIn(any())).willReturn(Arrays.asList(TABLE_1));
 
         assertThatThrownBy(() -> tableGroupService.create(duplicatedTableGroupRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableNotExistenceException.class);
     }
 
     @DisplayName("테이블 그룹 생성 성공 테스트")
