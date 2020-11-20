@@ -26,7 +26,7 @@ class JdbcTemplateMenuGroupDaoTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
-    @DisplayName("Menu entity 를 save하면, db에 저장 후 반환하는 entity는 해당 레코드의 id를 가져온다.")
+    @DisplayName("MenuGroup entity 를 save하면, db에 저장 후 반환하는 entity는 해당 레코드의 id를 가져온다.")
     @Test
     void save() {
         MenuGroup 없어진메뉴 = menuGroupDao.save(createMenuGroup("없어진메뉴"));
