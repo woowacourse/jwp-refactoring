@@ -16,9 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.exception.InvalidPriceException;
 import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.exception.InvalidRequestException;
+import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.exception.NullRequestException;
 import kitchenpos.fixture.TestFixture;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,8 +41,8 @@ class ProductServiceTest extends TestFixture {
             new ProductCreateRequest(null, 1L);
 
         assertThatThrownBy(() -> productService.create(negativeProductCreateRequest))
-            .isInstanceOf(InvalidRequestException.class)
-            .hasMessage("Product 요청 값이 비어있습니다");
+            .isInstanceOf(NullRequestException.class)
+            .hasMessage("값이 비어있는 요청입니다");
     }
 
     @DisplayName("상품 생성 예외 테스트: 가격이 음수일때")

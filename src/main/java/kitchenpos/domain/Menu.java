@@ -1,6 +1,9 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
+
+import kitchenpos.exception.InvalidPriceException;
 
 public class Menu {
     private Long id;
@@ -12,16 +15,22 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        validatePrice(price);
+
+        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidPriceException();
+        }
     }
 
     public Long getId() {

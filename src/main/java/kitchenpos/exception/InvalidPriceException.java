@@ -1,4 +1,4 @@
-package kitchenpos.domain.exception;
+package kitchenpos.exception;
 
 public class InvalidPriceException extends RuntimeException {
     public InvalidPriceException() {
