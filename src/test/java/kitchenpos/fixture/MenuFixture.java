@@ -17,6 +17,11 @@ public class MenuFixture {
         Long menuGroupId,
         List<MenuProductCreateRequest> menuProducts
     ) {
-        return new MenuCreateRequest(name, price != null ? BigDecimal.valueOf(price) : null, menuGroupId, menuProducts);
+        return new MenuCreateRequest(
+            name,
+            price != null ? BigDecimal.valueOf(price) : null,
+            menuGroupId,
+            menuProducts
+        );
     }
 }

@@ -52,9 +52,11 @@ public class TableRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<OrderTableResponse> response = objectMapper.readValue(json,
+        List<OrderTableResponse> response = objectMapper.readValue(
+            json,
             objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, OrderTableResponse.class));
+                .constructCollectionType(List.class, OrderTableResponse.class)
+        );
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(orderTables);
     }
@@ -91,8 +93,8 @@ public class TableRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(orderTable.getId()))
             .andExpect(jsonPath(("$.tableGroupId")).value(orderTable.getTableGroupId()))
-            .andExpect(
-                jsonPath("$.numberOfGuests").value(orderTableCreateRequest.getNumberOfGuests()))
+            .andExpect(jsonPath("$.numberOfGuests")
+                .value(orderTableCreateRequest.getNumberOfGuests()))
             .andExpect(jsonPath("$.empty").value(orderTable.isEmpty()));
     }
 }

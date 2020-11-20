@@ -48,8 +48,11 @@ public class ProductRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<ProductResponse> response = objectMapper.readValue(json,
-            objectMapper.getTypeFactory().constructCollectionType(List.class, ProductResponse.class));
+        List<ProductResponse> response = objectMapper.readValue(
+            json,
+            objectMapper.getTypeFactory()
+                .constructCollectionType(List.class, ProductResponse.class)
+        );
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(products);
     }

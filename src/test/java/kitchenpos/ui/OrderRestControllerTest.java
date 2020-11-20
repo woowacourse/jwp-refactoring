@@ -71,7 +71,8 @@ public class OrderRestControllerTest extends AbstractControllerTest {
             .andExpect(jsonPath("$.orderStatus").value(OrderStatus.COOKING.name()))
             .andExpect(jsonPath("$.orderedTime").exists())
             .andExpect(
-                jsonPath("$.orderLineItems", hasSize(orderRequest.getOrderLineItems().size())));
+                jsonPath("$.orderLineItems", hasSize(orderRequest.getOrderLineItems().size()))
+            );
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")
@@ -84,8 +85,11 @@ public class OrderRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<Order> response = objectMapper.readValue(json,
-            objectMapper.getTypeFactory().constructCollectionType(List.class, Order.class));
+        List<Order> response = objectMapper.readValue(
+            json,
+            objectMapper.getTypeFactory()
+                .constructCollectionType(List.class, Order.class)
+        );
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(orders);
     }
@@ -96,11 +100,13 @@ public class OrderRestControllerTest extends AbstractControllerTest {
         OrderTable orderTable = orderTableDao
             .save(orderTableDao.save(createOrderTable(null, false, 0, null)));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
         Order order = orderDao
             .save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
+
         OrderChangeOrderStatusRequest orderRequest = createOrderRequestChangeOrderStatus(
-            OrderStatus.MEAL);
+            OrderStatus.MEAL
+        );
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON_VALUE)

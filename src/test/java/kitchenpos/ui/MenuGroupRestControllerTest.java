@@ -47,9 +47,11 @@ public class MenuGroupRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<MenuGroupResponse> response = objectMapper.readValue(json,
+        List<MenuGroupResponse> response = objectMapper.readValue(
+            json,
             objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, MenuGroupResponse.class));
+                .constructCollectionType(List.class, MenuGroupResponse.class)
+        );
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(menuGroups);
     }

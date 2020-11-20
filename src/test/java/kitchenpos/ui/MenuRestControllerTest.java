@@ -50,8 +50,12 @@ public class MenuRestControllerTest extends AbstractControllerTest {
             createMenuProductRequest(product2.getId(), 10),
             createMenuProductRequest(product3.getId(), 10)
         );
-        MenuCreateRequest menuCreateRequest = createMenuRequest("메뉴1", 0L, menuGroup.getId(),
-            menuProductCreateRequests);
+        MenuCreateRequest menuCreateRequest = createMenuRequest(
+            "메뉴1",
+            0L,
+            menuGroup.getId(),
+            menuProductCreateRequests
+        );
 
         mockMvc.perform(
             post("/api/menus")
@@ -80,8 +84,11 @@ public class MenuRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<MenuResponse> response = objectMapper.readValue(json,
-            objectMapper.getTypeFactory().constructCollectionType(List.class, MenuResponse.class));
+        List<MenuResponse> response = objectMapper.readValue(
+            json,
+            objectMapper.getTypeFactory()
+                .constructCollectionType(List.class, MenuResponse.class)
+        );
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(menus);
     }
