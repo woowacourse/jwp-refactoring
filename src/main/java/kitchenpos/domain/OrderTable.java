@@ -41,14 +41,18 @@ public class OrderTable {
         this.tableGroupId = null;
     }
 
-    public void validateNumberOfGuests() {
+    public void changeNumberOfGuests(final int numberOfGuests) {
+        validateCondition(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateCondition(int numberOfGuests) {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
-    }
-
-    public void changeNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public static class OrderTableBuilder {

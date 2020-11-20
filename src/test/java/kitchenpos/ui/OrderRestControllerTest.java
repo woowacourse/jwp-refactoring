@@ -25,6 +25,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -54,8 +55,8 @@ class OrderRestControllerTest {
         final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
         final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
         final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
-        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
-        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
 
         given(orderService.create(any(Order.class))).willReturn(savedOrder);
 
@@ -74,7 +75,7 @@ class OrderRestControllerTest {
         final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
         final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
         final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
-        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
         final List<Order> orders = Collections.singletonList(savedOrder);
 
         given(orderService.list()).willReturn(orders);
@@ -90,8 +91,8 @@ class OrderRestControllerTest {
         final OrderLineItem first = createOrderLineItem(1L, 1L, 1L, 2);
         final OrderLineItem second = createOrderLineItem(2L, 1L, 2L, 2);
         final List<OrderLineItem> orderLineItems = Arrays.asList(first, second);
-        final Order savedOrder = createOrder(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
-        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), orderLineItems);
+        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.MEAL, LocalDateTime.now(), orderLineItems);
 
         given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(savedOrder);
 

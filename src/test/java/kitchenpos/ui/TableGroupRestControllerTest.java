@@ -24,6 +24,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -49,7 +50,7 @@ class TableGroupRestControllerTest {
     @DisplayName("정상적인 단체 지정 생성 요청에 created 상태로 응답하는지 확인한다.")
     @Test
     void createTest() throws Exception {
-        final List<OrderTable> requestOrdrTables = Arrays.asList(createOrderTable(1L, null, 0, true),
+        final List<OrderTable> requestOrderTables = Arrays.asList(createOrderTable(1L, null, 0, true),
             createOrderTable(2L, null, 0, true));
         final OrderTable firstTable = createOrderTable(1L, 1L, 0, true);
         final OrderTable secondTable = createOrderTable(2L, 1L, 0, true);
@@ -60,7 +61,7 @@ class TableGroupRestControllerTest {
 
         mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsBytes(createTableGroup(null, null, requestOrdrTables)))
+            .content(objectMapper.writeValueAsBytes(createTableGroup(null, null, requestOrderTables)))
         )
             .andExpect(status().isCreated())
             .andExpect(content().bytes(objectMapper.writeValueAsBytes(savedTableGroup)))

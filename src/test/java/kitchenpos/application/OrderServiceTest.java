@@ -45,9 +45,9 @@ class OrderServiceTest {
     void createTest() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 2);
         final List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
-        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order orderWithoutId = createOrder(null, 1L, OrderStatus.COOKING, LocalDateTime.now(),
             orderLineItems);
-        final Order expectedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order expectedOrder = createOrder(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
             orderLineItems);
         final OrderTable orderTable = createOrderTable(1L, 1L, 2, false);
 
@@ -65,7 +65,7 @@ class OrderServiceTest {
     @Test
     void createTest3() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 2L, 0);
-        final Order invalidOrder = createOrder(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(),
+        final Order invalidOrder = createOrder(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(),
             Collections.singletonList(orderLineItem));
 
         given(menuRepository.countByIdIn(anyList())).willReturn(
@@ -79,7 +79,7 @@ class OrderServiceTest {
     @Test
     void createTest4() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 2L, 0);
-        final Order invalidOrder = createOrder(1L, Long.MAX_VALUE, OrderStatus.MEAL.name(), LocalDateTime.now(),
+        final Order invalidOrder = createOrder(1L, Long.MAX_VALUE, OrderStatus.MEAL, LocalDateTime.now(),
             Collections.singletonList(orderLineItem));
 
         given(menuRepository.countByIdIn(anyList())).willReturn(Long.valueOf(invalidOrder.getOrderLineItems().size()));
@@ -93,7 +93,7 @@ class OrderServiceTest {
     @Test
     void createTest5() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 2L, 0);
-        final Order invalidOrder = createOrder(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(),
+        final Order invalidOrder = createOrder(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(),
             Collections.singletonList(orderLineItem));
         final OrderTable emptyOrderTable = createOrderTable(1L, 1L, 0, true);
 
@@ -109,7 +109,7 @@ class OrderServiceTest {
     void listTest() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 2);
         final List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
-        final Order expectedOrder = createOrder(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+        final Order expectedOrder = createOrder(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(),
             orderLineItems);
         final List<Order> expectedOrders = Collections.singletonList(expectedOrder);
 
@@ -127,9 +127,9 @@ class OrderServiceTest {
     void changeOrderStatusTest() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 2);
         final List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
-        final Order requestOrder = createOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Order requestOrder = createOrder(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
             orderLineItems);
-        final Order savedOrder = createOrder(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.MEAL, LocalDateTime.now(), orderLineItems);
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));
         given(orderRepository.save(any(Order.class))).willReturn(requestOrder);
@@ -145,7 +145,7 @@ class OrderServiceTest {
     void changeOrderStatusTest2() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, Long.MAX_VALUE, 1L, 2);
         final List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
-        final Order requestOrder = createOrder(Long.MAX_VALUE, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Order requestOrder = createOrder(Long.MAX_VALUE, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
             orderLineItems);
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.empty());
@@ -159,7 +159,7 @@ class OrderServiceTest {
     void changeOrderStatusTest3() {
         final OrderLineItem orderLineItem = createOrderLineItem(1L, 1L, 1L, 2);
         final List<OrderLineItem> orderLineItems = Collections.singletonList(orderLineItem);
-        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(),
+        final Order savedOrder = createOrder(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now(),
             orderLineItems);
 
         given(orderRepository.findById(anyLong())).willReturn(Optional.of(savedOrder));

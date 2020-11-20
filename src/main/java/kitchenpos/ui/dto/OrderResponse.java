@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -13,7 +14,7 @@ import lombok.Getter;
 public class OrderResponse {
     private final Long id;
     private final Long orderTableId;
-    private final String orderStatus;
+    private final OrderStatus orderStatus;
     private final LocalDateTime orderedTime;
     private final List<OrderLineItemResponse> orderLineItems;
 

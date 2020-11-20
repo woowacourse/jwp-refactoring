@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,7 +34,8 @@ public class Order {
     private Long orderTableId;
 
     @Column(nullable = false)
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @Column(nullable = false)
     private LocalDateTime orderedTime;
@@ -51,24 +54,31 @@ public class Order {
             .collect(Collectors.toList());
     }
 
-    public void changeStatus(final String orderStatus) {
+    public void changeStatus(final OrderStatus orderStatus) {
+        validatePossibleOrderStatus();
         this.orderStatus = orderStatus;
-        if (OrderStatus.COOKING.name().equals(orderStatus)) {
+        if (OrderStatus.COOKING.equals(orderStatus)) {
             orderedTime = LocalDateTime.now();
+        }
+    }
+
+    private void validatePossibleOrderStatus() {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
+            throw new IllegalArgumentException();
         }
     }
 
     public static class OrderBuilder {
         private Long id;
         private Long orderTableId;
-        private String orderStatus;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
 
         public OrderBuilder() {
         }
 
-        public OrderBuilder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+        public OrderBuilder(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
             List<OrderLineItem> orderLineItems) {
             this.id = id;
             this.orderTableId = orderTableId;
@@ -87,7 +97,7 @@ public class Order {
             return this;
         }
 
-        public OrderBuilder orderStatus(String orderStatus) {
+        public OrderBuilder orderStatus(OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }

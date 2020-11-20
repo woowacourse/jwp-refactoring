@@ -26,7 +26,7 @@ public class TableGroupService {
             .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))) {
             throw new IllegalArgumentException();
         }
-        orderTables.changeStatus();
+        orderTables.changeEmptyStatus();
         tableGroup.modifyOrderTables(orderTables);
 
         return tableGroupRepository.save(tableGroup);
@@ -34,13 +34,14 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final OrderTables orderTables = orderService.findAllByTableGroupId(tableGroupId);
-        final List<Long> orderTableIds = orderTables.extractIds();
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(IllegalArgumentException::new);
+        final List<Long> orderTableIds = tableGroup.extractOrderTableIds();
         if (orderService.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
-        orderService.ungroupTables(orderTables);
+        tableGroup.ungroupTables();
     }
 }

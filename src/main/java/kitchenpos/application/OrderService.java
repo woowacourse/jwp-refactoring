@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.changeStatus(OrderStatus.COOKING.name());
+        order.changeStatus(OrderStatus.COOKING);
 
         return orderRepository.save(order);
     }
@@ -49,13 +48,13 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (OrderStatus.COMPLETION.equals(savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        order.changeStatus(order.getOrderStatus());
+        savedOrder.changeStatus(order.getOrderStatus());
 
-        return orderRepository.save(order);
+        return orderRepository.save(savedOrder);
     }
 
     public OrderTables findAllByIdIn(final List<Long> orderTableIds) {
@@ -74,10 +73,5 @@ public class OrderService {
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
         final List<String> orderStatuses) {
         return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
-    }
-
-    public void ungroupTables(final OrderTables orderTables) {
-        orderTables.ungroup();
-        orderTableRepository.saveAll(orderTables.getOrderTables());
     }
 }

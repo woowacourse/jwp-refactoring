@@ -9,6 +9,7 @@ import static org.mockito.BDDMockito.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
         final TableGroup expectedTableGroup = createTableGroup(3L, LocalDateTime.now(), orderTables);
 
-        given(orderService.findAllByIdIn(anyList())).willReturn(new OrderTables(expectedTableGroup.getOrderTables()));
+        given(orderService.findAllByIdIn(anyList())).willReturn(expectedTableGroup.getOrderTables());
         given(tableGroupRepository.save(any(TableGroup.class))).willReturn(expectedTableGroup);
 
         assertThat(tableGroupService.create(createTableGroup(null, null, orderTables)))
@@ -88,8 +89,7 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
         final TableGroup expectedTableGroup = createTableGroup(3L, LocalDateTime.now(), orderTables);
 
-        given(orderService.findAllByTableGroupId(anyLong())).willReturn(
-            new OrderTables(expectedTableGroup.getOrderTables()));
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(expectedTableGroup));
         given(orderService.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(false);
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
@@ -103,8 +103,7 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = Arrays.asList(firstTable, secondTable);
         final TableGroup expectedTableGroup = createTableGroup(3L, LocalDateTime.now(), orderTables);
 
-        given(orderService.findAllByTableGroupId(anyLong())).willReturn(
-            new OrderTables(expectedTableGroup.getOrderTables()));
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(expectedTableGroup));
         given(orderService.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList())).willReturn(true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(1L))

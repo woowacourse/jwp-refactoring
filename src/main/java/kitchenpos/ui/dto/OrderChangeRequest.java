@@ -17,7 +17,7 @@ public class OrderChangeRequest {
 
     public Order toRequestEntity() {
         return Order.builder()
-            .orderStatus(orderStatus.name())
+            .orderStatus(orderStatus)
             .build();
     }
 }

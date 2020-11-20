@@ -49,14 +49,8 @@ public class TableService {
 
     @Transactional
     public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        orderTable.validateNumberOfGuests();
-
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 

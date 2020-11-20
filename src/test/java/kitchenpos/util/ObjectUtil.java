@@ -9,7 +9,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
@@ -42,7 +44,7 @@ public class ObjectUtil {
             .build();
     }
 
-    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    public static Order createOrder(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
         return Order.builder()
             .id(id)
@@ -83,7 +85,7 @@ public class ObjectUtil {
         return TableGroup.builder()
             .id(id)
             .createdDate(createdDateTime)
-            .orderTables(orderTables)
+            .orderTables(new OrderTables(orderTables))
             .build();
     }
 }

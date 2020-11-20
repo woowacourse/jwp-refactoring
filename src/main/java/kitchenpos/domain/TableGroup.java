@@ -2,17 +2,13 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,34 +27,35 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "table_group_id")
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     public static TableGroupBuilder builder() {
         return new TableGroupBuilder();
     }
 
     public List<Long> extractOrderTableIds() {
-        return orderTables.stream()
-            .map(OrderTable::getId)
-            .collect(Collectors.toList());
+        return orderTables.extractIds();
     }
 
     public void modifyOrderTables(final OrderTables orderTables) {
         this.createdDate = LocalDateTime.now();
-        this.orderTables = orderTables.getOrderTables();
+        this.orderTables = orderTables;
+    }
+
+    public void ungroupTables() {
+        orderTables.ungroup();
     }
 
     public static class TableGroupBuilder {
         private Long id;
         private LocalDateTime createdDate;
-        private List<OrderTable> orderTables;
+        private OrderTables orderTables;
 
         public TableGroupBuilder() {
         }
 
-        public TableGroupBuilder(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        public TableGroupBuilder(Long id, LocalDateTime createdDate, OrderTables orderTables) {
             this.id = id;
             this.createdDate = createdDate;
             this.orderTables = orderTables;
@@ -74,7 +71,7 @@ public class TableGroup {
             return this;
         }
 
-        public TableGroupBuilder orderTables(List<OrderTable> orderTables) {
+        public TableGroupBuilder orderTables(OrderTables orderTables) {
             this.orderTables = orderTables;
             return this;
         }
