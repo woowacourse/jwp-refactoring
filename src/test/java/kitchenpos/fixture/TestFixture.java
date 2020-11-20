@@ -1,7 +1,6 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.*;
-import org.junit.jupiter.api.BeforeEach;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -44,13 +43,6 @@ public abstract class TestFixture {
     public static final Product PRODUCT_1 = new Product(PRODUCT_ID_1, PRODUCT_NAME_1, PRODUCT_PRICE_1);
     public static final Product PRODUCT_2 = new Product(PRODUCT_ID_2, PRODUCT_NAME_2, PRODUCT_PRICE_2);
 
-    public static final long ORDER_MENU_SEQ_1 = 1L;
-    public static final long ORDER_MENU_SEQ_2 = 2L;
-    public static final long ORDER_MENU_QUANTITY_1 = 1L;
-    public static final long ORDER_MENU_QUANTITY_2 = 2L;
-    public static final OrderMenu ORDER_MENU_1 = new OrderMenu();
-    public static final OrderMenu ORDER_MENU_2 = new OrderMenu();
-
     public static final long TABLE_GROUP_ID = 1L;
     public static final LocalDateTime TABLE_GROUP_CREATED_DATE = LocalDateTime.parse("2018-11-15T10:00:00");
     public static final TableGroup TABLE_GROUP = new TableGroup(TABLE_GROUP_ID, TABLE_GROUP_CREATED_DATE);
@@ -74,15 +66,10 @@ public abstract class TestFixture {
     public static final Order ORDER_1 = new Order(ORDER_ID_1, TABLE_ID_1, ORDER_STATUS_1, ORDERED_TIME_1);
     public static final Order ORDER_2 = new Order(ORDER_ID_2, TABLE_ID_2, ORDER_STATUS_2, ORDERED_TIME_2);
 
-    @BeforeEach
-    void setUpFixture() {
-        ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
-        ORDER_MENU_1.setOrderId(ORDER_ID_1);
-        ORDER_MENU_1.setMenuId(MENU_ID_1);
-        ORDER_MENU_1.setQuantity(ORDER_MENU_QUANTITY_1);
-        ORDER_MENU_2.setSeq(ORDER_MENU_SEQ_2);
-        ORDER_MENU_2.setOrderId(ORDER_ID_2);
-        ORDER_MENU_2.setMenuId(MENU_ID_2);
-        ORDER_MENU_2.setQuantity(ORDER_MENU_QUANTITY_2);
-    }
+    public static final long ORDER_MENU_SEQ_1 = 1L;
+    public static final long ORDER_MENU_SEQ_2 = 2L;
+    public static final long ORDER_MENU_QUANTITY_1 = 1L;
+    public static final long ORDER_MENU_QUANTITY_2 = 2L;
+    public static final OrderMenu ORDER_MENU_1 = new OrderMenu(ORDER_MENU_SEQ_1, ORDER_ID_1, MENU_ID_1, ORDER_MENU_QUANTITY_1);
+    public static final OrderMenu ORDER_MENU_2 = new OrderMenu(ORDER_MENU_SEQ_2, ORDER_ID_2, MENU_ID_2, ORDER_MENU_QUANTITY_2);
 }
