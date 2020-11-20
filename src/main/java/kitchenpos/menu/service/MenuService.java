@@ -81,7 +81,7 @@ public class MenuService {
     }
 
     public MenuResponses list() {
-        List<Menu> menus = menuRepository.findAll();
+        List<Menu> menus = menuRepository.findAllWithMenuGroup();
         return MenuResponses.from(menus);
     }
 }

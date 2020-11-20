@@ -36,6 +36,7 @@ public class TableRestController {
 
     @GetMapping("/api/tables")
     public ResponseEntity<TableResponses> list() {
+        // todo 테이블 그룹이나 오더가 없을떄 조회쿼리가 동적으로 가야할듯.
         return ResponseEntity.ok()
             .body(tableService.list());
     }

@@ -12,12 +12,12 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.dto.OrderResponses;
 import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableRepository;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,7 +67,7 @@ public class OrderService {
     }
 
     public OrderResponses list() {
-        List<Order> orders = orderRepository.findAllWithOrderLineItems();
+        List<Order> orders = orderRepository.findAllWithOrderLineItemsAndTable();
         return OrderResponses.from(orders);
     }
 

@@ -13,6 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findAllByTableIdIn(List<Long> tableIds);
 
-    @Query("select o from Order o join fetch o.orderLineItems")
-    List<Order> findAllWithOrderLineItems();
+    @Query("SELECT o FROM Order o JOIN FETCH o.orderLineItems JOIN FETCH o.table")
+    List<Order> findAllWithOrderLineItemsAndTable();
 }
