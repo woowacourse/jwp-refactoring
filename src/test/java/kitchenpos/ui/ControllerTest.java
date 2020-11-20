@@ -10,7 +10,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import static kitchenpos.ui.OrderRestController.ORDER_API;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,23 +35,24 @@ class ControllerTest {
     protected ResultActions requestWithPost(String uri, String body) throws Exception {
         return mockMvc.perform(post(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andExpect(status().isCreated());
     }
 
     protected ResultActions requestWithGet(String uri) throws Exception {
-        return mockMvc.perform(get(uri)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+        return mockMvc.perform(get(uri))
                 .andExpect(status().isOk());
     }
 
     protected ResultActions requestWithPut(String uri, String body) throws Exception {
         return mockMvc.perform(put(uri)
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
                 .content(body))
                 .andExpect(status().isOk());
+    }
+
+    protected ResultActions requestWithDelete(String uri) throws Exception {
+        return mockMvc.perform(delete(uri))
+                .andExpect(status().isNoContent());
     }
 }
