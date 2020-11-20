@@ -117,7 +117,7 @@ public class TableServiceTest extends AbstractServiceTest {
     void changeEmpty_throws_exception2(OrderStatus orderStatus) {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
         Order order = orderDao
-            .save(createOrder(null, LocalDateTime.now(), null, orderStatus, orderTable.getId()));
+            .save(createOrder(null, LocalDateTime.now(), orderStatus, orderTable.getId()));
         OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tableService

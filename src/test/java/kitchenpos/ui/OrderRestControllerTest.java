@@ -1,6 +1,5 @@
 package kitchenpos.ui;
 
-import static java.util.Collections.emptyList;
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.OrderFixture.createOrder;
@@ -18,9 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
+import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
@@ -55,12 +56,13 @@ public class OrderRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = orderTableDao
-            .save(orderTable = orderTableDao.save(createOrderTable(null, false, 0, null)));
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
         Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
-        Order orderRequest = createOrderRequest(orderTable.getId(),
-            Arrays.asList(createOrderLineItemRequest(menu.getId(), 1)));
+        OrderCreateRequest orderRequest = createOrderRequest(
+            orderTable.getId(),
+            Collections.singletonList(createOrderLineItemRequest(menu.getId(), 1))
+        );
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -96,13 +98,13 @@ public class OrderRestControllerTest extends AbstractControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         OrderTable orderTable = orderTableDao
-            .save(orderTable = orderTableDao.save(createOrderTable(null, false, 0, null)));
+            .save(orderTableDao.save(createOrderTable(null, false, 0, null)));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
         Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
         Order order = orderDao
-            .save(createOrder(null, LocalDateTime.now(), emptyList(), OrderStatus.COOKING,
-                orderTable.getId()));
-        Order orderRequest = createOrderRequestChangeOrderStatus(OrderStatus.MEAL);
+            .save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
+        OrderChangeOrderStatusRequest orderRequest = createOrderRequestChangeOrderStatus(
+            OrderStatus.MEAL);
 
         mockMvc.perform(put("/api/orders/{orderId}/order-status", order.getId())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -112,7 +114,7 @@ public class OrderRestControllerTest extends AbstractControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(order.getId()))
             .andExpect(jsonPath("$.orderTableId").value(order.getOrderTableId()))
-            .andExpect(jsonPath("$.orderStatus").value(orderRequest.getOrderStatus()))
+            .andExpect(jsonPath("$.orderStatus").value(orderRequest.getOrderStatus().name()))
             .andExpect(jsonPath("$.orderedTime").value(order.getOrderedTime().toString()))
             .andExpect(jsonPath("$.orderLineItems").isEmpty());
     }

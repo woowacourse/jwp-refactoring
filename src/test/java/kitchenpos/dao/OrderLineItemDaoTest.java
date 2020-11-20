@@ -52,7 +52,7 @@ public class OrderLineItemDaoTest {
     void setup() {
         orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
         order = orderDao.save(
-            createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING, orderTable.getId()));
+            createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
         menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
         menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
     }
@@ -75,7 +75,7 @@ public class OrderLineItemDaoTest {
     void findById() {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
         Order order = orderDao
-            .save(createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING,
+            .save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId()));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
         Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));

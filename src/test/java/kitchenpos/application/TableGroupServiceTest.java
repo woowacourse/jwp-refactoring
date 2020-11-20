@@ -140,7 +140,6 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         Order order = orderDao.save(createOrder(
             null,
             LocalDateTime.now(),
-            emptyList(),
             orderStatus,
             orderTables.get(0).getId()
         ));
