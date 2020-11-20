@@ -36,6 +36,10 @@ public class TestObjects {
         return orderTable;
     }
 
+    public static Menu createMenu(String name, BigDecimal price, Long menuGroupId) {
+        return createMenu(name, price, menuGroupId, null);
+    }
+
     public static Menu createMenu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         final Menu menu = new Menu();
         menu.setName(name);
