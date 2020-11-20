@@ -2,14 +2,16 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.Table;
+import kitchenpos.exception.TableCannotChangeEmptyException;
+import kitchenpos.exception.TableGroupExistenceException;
+import kitchenpos.exception.TableNotExistenceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TableService {
@@ -33,34 +35,31 @@ public class TableService {
     @Transactional
     public Table changeEmpty(final Long tableId, final boolean empty) {
         final Table savedTable = tableDao.findById(tableId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(TableNotExistenceException::new);
 
-        if (Objects.nonNull(savedTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderDao.existsByTableIdAndOrderStatusIn(
-                tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        validateChangeableTable(savedTable);
 
         savedTable.changeEmpty(empty);
-
         return tableDao.save(savedTable);
+    }
+
+    private void validateChangeableTable(Table savedTable) {
+        if (savedTable.hasGroup()) {
+            throw new TableGroupExistenceException();
+        }
+
+        List<Order> foundOrders = orderDao.findByTableIds(Arrays.asList(savedTable.getId()));
+        for (Order foundOrder : foundOrders) {
+            if (foundOrder.hasInProgressStatus()) {
+                throw new TableCannotChangeEmptyException();
+            }
+        }
     }
 
     @Transactional
     public Table changeNumberOfGuests(final Long tableId, final int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final Table savedTable = tableDao.findById(tableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (savedTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+                .orElseThrow(TableNotExistenceException::new);
 
         savedTable.changeNumberOfGuests(numberOfGuests);
 

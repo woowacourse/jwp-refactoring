@@ -1,12 +1,5 @@
 package kitchenpos.application;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -14,12 +7,13 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
-import kitchenpos.exception.NotEnoughTableException;
-import kitchenpos.exception.NullRequestException;
-import kitchenpos.exception.TableGroupCannotChangeException;
-import kitchenpos.exception.TableGroupExistenceException;
-import kitchenpos.exception.TableNotEmptyException;
-import kitchenpos.exception.TableNotExistenceException;
+import kitchenpos.exception.*;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class TableGroupService {
@@ -81,7 +75,7 @@ public class TableGroupService {
                 throw new TableNotEmptyException();
             }
 
-            if (Objects.nonNull(savedTable.getTableGroupId())) {
+            if (savedTable.hasGroup()) {
                 throw new TableGroupExistenceException();
             }
         }
