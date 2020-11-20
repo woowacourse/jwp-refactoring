@@ -16,6 +16,7 @@ import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.ProductCreateRequest;
 
 public class TestObjectFactory {
 
@@ -40,12 +41,10 @@ public class TestObjectFactory {
         return menuProduct;
     }
 
-    public static Product createProduct(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
+    public static ProductCreateRequest createProductCreateRequest(String name, BigDecimal price) {
+        Product product = new Product(name, price);
 
-        return product;
+        return ProductCreateRequest.of(product);
     }
 
     public static OrderCreateRequest createOrderCreateRequest(OrderTable orderTable,
