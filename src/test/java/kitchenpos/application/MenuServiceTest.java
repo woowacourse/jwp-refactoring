@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.verifier.DefaultMenuGroupVerifier;
+import kitchenpos.domain.verifier.DefaultProductVerifier;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.InvalidMenuPriceException;
@@ -32,8 +34,6 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import kitchenpos.validator.DefaultMenuPriceValidateStrategy;
-import kitchenpos.validator.MenuPriceValidateStrategy;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -52,16 +52,13 @@ class MenuServiceTest {
     @Mock
     private ProductRepository productRepository;
 
-    private MenuPriceValidateStrategy validateStrategy;
-
-    private List<MenuProduct> menuProducts;
     private long totalPrice;
 
     @BeforeEach
     void setUp() {
-        validateStrategy = new DefaultMenuPriceValidateStrategy();
-        menuService = new MenuService(menuRepository, menuGroupRepository, menuProductRepository,
-            productRepository, validateStrategy);
+        menuService = new MenuService(menuRepository, menuProductRepository,
+            new DefaultMenuGroupVerifier(menuGroupRepository),
+            new DefaultProductVerifier(productRepository));
 
         Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
         Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
@@ -70,7 +67,7 @@ class MenuServiceTest {
         MenuProduct menuProduct2 = MenuProductFixture.create(1L, product2.getId());
 
         List<Product> products = Arrays.asList(product1, product2);
-        menuProducts = Arrays.asList(menuProduct1, menuProduct2);
+        List<MenuProduct> menuProducts = Arrays.asList(menuProduct1, menuProduct2);
         totalPrice = getTotalPrice(products, menuProducts);
     }
 

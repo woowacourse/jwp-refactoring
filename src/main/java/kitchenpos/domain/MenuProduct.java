@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -46,5 +48,12 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
+    }
+
+    public void changeMenuId(Long menuId) {
+        if (Objects.isNull(menuId)) {
+            throw new IllegalArgumentException();
+        }
+        this.menuId = menuId;
     }
 }

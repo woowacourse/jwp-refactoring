@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuCreateRequest {
 
@@ -24,7 +26,7 @@ public class MenuCreateRequest {
 
     @NotNull
     @NotEmpty
-    private final List<MenuProductCreateRequest> menuProducts;
+    private final List<@Valid MenuProductCreateRequest> menuProducts;
 
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductCreateRequest> menuProducts) {

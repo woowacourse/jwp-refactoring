@@ -54,7 +54,7 @@ public class Product {
         return price;
     }
 
-    public BigDecimal calculatePrice(int quantity) {
+    public BigDecimal calculatePrice(long quantity) {
         return this.price.multiply(BigDecimal.valueOf(quantity));
     }
 }

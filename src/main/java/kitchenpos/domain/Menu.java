@@ -1,11 +1,16 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.apache.logging.log4j.util.Strings;
+
+import kitchenpos.exception.InvalidMenuPriceException;
 
 @Entity
 public class Menu {
@@ -24,6 +29,14 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        if (Strings.isBlank(name) || Objects.isNull(menuGroupId)) {
+            throw new IllegalArgumentException();
+        }
+
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidMenuPriceException();
+        }
+
         this.id = id;
         this.name = name;
         this.price = price;
