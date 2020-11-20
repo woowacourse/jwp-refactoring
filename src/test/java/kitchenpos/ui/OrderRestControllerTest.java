@@ -28,7 +28,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
+@SuppressWarnings("NonAsciiCharacters")
 class OrderRestControllerTest extends ControllerTest {
+
     @Autowired
     OrderService orderService;
 
@@ -53,17 +55,17 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("create: 테이블, 주문 라인 목록과 함께 주문 추가 요청을 한다. 새 주문 생성 성공 후 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
-        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품메뉴그룹 = menuGroupDao.save(createMenuGroup("단품 메뉴"));
+        Menu 후라이드한마리세트 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(후라이드한마리세트.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        Order order = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem));
+        OrderLineItem 주문항목 = createOrderLineItem(null, 후라이드한마리세트.getId(), 1);
+        Order 생성하려는주문 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(주문항목));
 
-        final String createOrderApiUrl = "/api/orders";
-        final ResultActions resultActions = create(createOrderApiUrl, order);
+        final String 주문추가_API_URL = "/api/orders";
+        final ResultActions resultActions = create(주문추가_API_URL, 생성하려는주문);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -77,18 +79,18 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("list: 전체 주문 목록 조회 요청시, 200 상태 코드와 함께, 전체 주문 내역을 반환한다.")
     @Test
     void list() throws Exception {
-        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품메뉴그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드한마리세트 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품메뉴그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(후라이드한마리세트.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        Order order = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem));
-        orderService.create(order);
+        OrderLineItem 주문항목 = createOrderLineItem(null, 후라이드한마리세트.getId(), 1);
+        Order 생성하려는주문 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(주문항목));
+        orderService.create(생성하려는주문);
 
-        final String findOrdersApiUrl = "/api/orders";
-        final ResultActions resultActions = findList(findOrdersApiUrl);
+        final String 주문목록조회_API_URL = "/api/orders";
+        final ResultActions resultActions = findList(주문목록조회_API_URL);
 
         resultActions
                 .andExpect(status().isOk())
@@ -98,15 +100,15 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("changeOrderStatus: 요리 완료 상태가 아닌 경우, 주문 현재 진행 상태 변경 요청시 변경 후, 200 상태코드와, 변경한 주문 내용을 반환한다.")
     @Test
     void changeOrderStatus() throws Exception {
-        OrderTable notEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Order nonCompletedOrder = orderDao.save(
-                createOrder(notEmptyTable.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COOKING, null));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Order 완료되지않은주문 = orderDao.save(
+                createOrder(점유중인테이블.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COOKING, null));
 
-        Order newOrder = createOrder(null, null, OrderStatus.MEAL, null);
-        Long savedOrderId = nonCompletedOrder.getId();
+        Order 변경하려는주문내용 = createOrder(null, null, OrderStatus.MEAL, null);
+        Long 기존의주문Id = 완료되지않은주문.getId();
 
-        String updateOrderStatusApiUrl = "/api/orders/{orderId}/order-status";
-        final ResultActions resultActions = updateByPathIdAndBody(updateOrderStatusApiUrl, savedOrderId, newOrder);
+        String 주문상태변경_API_URL = "/api/orders/{orderId}/order-status";
+        final ResultActions resultActions = updateByPathIdAndBody(주문상태변경_API_URL, 기존의주문Id, 변경하려는주문내용);
 
         resultActions
                 .andExpect(status().isOk())

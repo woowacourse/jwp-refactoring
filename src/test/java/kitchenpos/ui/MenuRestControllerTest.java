@@ -19,7 +19,9 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
+@SuppressWarnings("NonAsciiCharacters")
 class MenuRestControllerTest extends ControllerTest {
+
     @Autowired
     MenuGroupDao menuGroupDao;
 
@@ -29,29 +31,29 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("create: 이름을 body message에 포함해 메뉴 등록을 요청시 ,메뉴 생성 성공 시 201 응답을 반환한다.")
     @Test
     void create() throws Exception {
-        MenuGroup setMenuGroup = menuGroupDao.save(createMenuGroup("세트 그룹"));
-        Product product_20_000_won = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
-        MenuProduct menuProduct_with_40_000_won = createMenuProduct(null, product_20_000_won.getId(), 2);
-        Menu menu_with_price_is_40_000_won = createMenu("후라이드 2마리 세트", BigDecimal.valueOf(40_000), setMenuGroup.getId(),
-                Collections.singletonList(menuProduct_with_40_000_won));
+        MenuGroup 세트메뉴 = menuGroupDao.save(createMenuGroup("세트 그룹"));
+        Product 후라이드치킨 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(20_000)));
+        MenuProduct 후라이드치킨_두마리 = createMenuProduct(null, 후라이드치킨.getId(), 2);
+        Menu 후라이드_2마리_세트_메뉴 = createMenu("후라이드 2마리 세트", BigDecimal.valueOf(40_000), 세트메뉴.getId(),
+                Collections.singletonList(후라이드치킨_두마리));
 
-        final String createMenuApiUrl = "/api/menus";
-        final ResultActions resultActions = create(createMenuApiUrl, menu_with_price_is_40_000_won);
+        final String 메뉴추가_API_URL = "/api/menus";
+        final ResultActions resultActions = create(메뉴추가_API_URL, 후라이드_2마리_세트_메뉴);
 
         resultActions
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", notNullValue()))
                 .andExpect(jsonPath("$.name", is("후라이드 2마리 세트")))
                 .andExpect(jsonPath("$.price", is(40_000d)))
-                .andExpect(jsonPath("$.menuGroupId", is(1)))
+                .andExpect(jsonPath("$.menuGroupId", notNullValue()))
                 .andExpect(jsonPath("$.menuProducts", hasSize(1)));
     }
 
     @DisplayName("list: 전체 메뉴 목록 요청시, 200 응답 코드와 함께 메뉴 목록을 반환한다.")
     @Test
     void list() throws Exception {
-        final String findMenusApiUrl = "/api/menus";
-        final ResultActions resultActions = findList(findMenusApiUrl);
+        final String 메뉴목록조회_API_URL = "/api/menus";
+        final ResultActions resultActions = findList(메뉴목록조회_API_URL);
 
         resultActions
                 .andExpect(status().isOk())

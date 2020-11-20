@@ -13,7 +13,9 @@ import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableRestControllerTest extends ControllerTest {
+
     @Autowired
     private TableService tableService;
 
@@ -23,10 +25,10 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("create: 새 테이블 생성 요청시, 200 상태코드 반환, 새로 생성된 테이블을 반환한다.")
     @Test
     void create() throws Exception {
-        final OrderTable orderTable = createTable(null, 5, false);
+        final OrderTable 손님있는테이블 = createTable(null, 5, false);
 
-        final String createTableApiUrl = "/api/tables";
-        final ResultActions resultActions = create(createTableApiUrl, orderTable);
+        final String 테이블추가_API_URL = "/api/tables";
+        final ResultActions resultActions = create(테이블추가_API_URL, 손님있는테이블);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -41,8 +43,8 @@ class TableRestControllerTest extends ControllerTest {
     void list() throws Exception {
         orderTableDao.save(createTable(null, 5, false));
 
-        final String tableListApiUrl = "/api/tables";
-        final ResultActions resultActions = findList(tableListApiUrl);
+        final String 테이블목록조회_API_URL = "/api/tables";
+        final ResultActions resultActions = findList(테이블목록조회_API_URL);
 
         resultActions
                 .andExpect(status().isOk())
@@ -52,12 +54,12 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("changeEmpty: 현재 주문 테이블의 비움 처리 요청시, 200 상태코드반환, 주문 테이블 비운 처리")
     @Test
     void changeEmpty() throws Exception {
-        final OrderTable savedNonEmptyTable = tableService.create(createTable(null, 0, false));
-        final OrderTable emptyTable = createTable(null, 0, true);
+        final OrderTable 비어있지않는테이블 = tableService.create(createTable(null, 0, false));
 
-        String updateEmptyStatusApiUrl = "/api/tables/{orderTableId}/empty";
-        final Long savedTableId = savedNonEmptyTable.getId();
-        final ResultActions resultActions = updateByPathIdAndBody(updateEmptyStatusApiUrl, savedTableId, emptyTable);
+        String 테이블비움요청_API_URL = "/api/tables/{orderTableId}/empty";
+        final Long 기존테이블식별자 = 비어있지않는테이블.getId();
+        final OrderTable 변경하려는테이블상태 = createTable(null, 0, true);
+        final ResultActions resultActions = updateByPathIdAndBody(테이블비움요청_API_URL, 기존테이블식별자, 변경하려는테이블상태);
 
         resultActions
                 .andExpect(status().isOk())
@@ -70,13 +72,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("changeNumberOfGuests: 대상 테이블의 손님 수를 변경 후, 200 코드와 변경된 테이블 entity를 반환한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        final OrderTable savedNonEmptyTable = tableService.create(createTable(null, 5, false));
-        final OrderTable tableWithNewNumberOfGuest = createTable(null, 10, false);
+        final OrderTable 비어있지않는테이블 = tableService.create(createTable(null, 5, false));
+        final OrderTable 변경하려는테이블상태 = createTable(null, 10, false);
 
-        String updateGuestCountApiUrl = "/api/tables/{orderTableId}/number-of-guests";
-        final Long nonEmptyTableId = savedNonEmptyTable.getId();
-        final ResultActions resultActions = updateByPathIdAndBody(updateGuestCountApiUrl, nonEmptyTableId,
-                tableWithNewNumberOfGuest);
+        String 테이블손님수변경_API_URL = "/api/tables/{orderTableId}/number-of-guests";
+        final Long 기존테이블식별자 = 비어있지않는테이블.getId();
+        final ResultActions resultActions = updateByPathIdAndBody(테이블손님수변경_API_URL, 기존테이블식별자,
+                변경하려는테이블상태);
 
         resultActions
                 .andExpect(status().isOk())

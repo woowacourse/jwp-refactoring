@@ -21,7 +21,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 class TableGroupRestControllerTest extends ControllerTest {
+
     @Autowired
     TableService tableService;
 
@@ -40,13 +42,13 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("create: 2개 이상의 중복되지 않고 비어있지 않는 테이블목록에 대해 테이블 그룹 지정 요청시, 201 반환과 함께 그룹 지정된 테이블 그룹을 반환한다.")
     @Test
     void create() throws Exception {
-        OrderTable firstSavedTable = orderTableDao.save(createTable(null, 0, true));
-        OrderTable secondSavedTable = orderTableDao.save(createTable(null, 0, true));
-        TableGroup tableGroupWithMultipleTable = createTableGroup(null, Lists.list(firstSavedTable, secondSavedTable));
+        OrderTable 첫번째빈테이블 = orderTableDao.save(createTable(null, 0, true));
+        OrderTable 두번째빈테이블 = orderTableDao.save(createTable(null, 0, true));
+        TableGroup 지정하려는테이블그룹 = createTableGroup(null, Lists.list(첫번째빈테이블, 두번째빈테이블));
 
-        String groupApiUrl = "/api/table-groups";
+        String 테이블그룹추가_API_URL = "/api/table-groups";
 
-        final ResultActions resultActions = create(groupApiUrl, tableGroupWithMultipleTable);
+        final ResultActions resultActions = create(테이블그룹추가_API_URL, 지정하려는테이블그룹);
 
         resultActions
                 .andExpect(status().isCreated())
@@ -58,22 +60,22 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("ungroup: 테이블 그룹 대상에 포함되어있는 테이블 모두 주문 완료 상태인 경우, 해당 테이블들의 테이블 그룹 해지 후 204 코드를 반환한다.")
     @Test
     void ungroup() throws Exception {
-        OrderTable firstEmptyTable = orderTableDao.save(createTable(null, 0, true));
-        OrderTable secondEmptyTable = orderTableDao.save(createTable(null, 0, true));
+        OrderTable 첫번째빈테이블 = orderTableDao.save(createTable(null, 0, true));
+        OrderTable 두번째빈테이블 = orderTableDao.save(createTable(null, 0, true));
 
         orderDao.save(
-                createOrder(firstEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION,
+                createOrder(첫번째빈테이블.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION,
                         null));
         orderDao.save(
-                createOrder(secondEmptyTable.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
+                createOrder(두번째빈테이블.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
                         null));
 
-        TableGroup createdTableGroup = tableGroupService.create(
-                createTableGroup(null, Lists.list(firstEmptyTable, secondEmptyTable)));
+        TableGroup 생성된테이블그룹 = tableGroupService.create(
+                createTableGroup(null, Lists.list(첫번째빈테이블, 두번째빈테이블)));
 
-        String unGroupApiUrl = "/api/table-groups/{tableGroupId}";
+        String 테이블그룹해제_API_URL = "/api/table-groups/{tableGroupId}";
 
-        final ResultActions resultActions = deleteByPathId(unGroupApiUrl, createdTableGroup.getId());
+        final ResultActions resultActions = deleteByPathId(테이블그룹해제_API_URL, 생성된테이블그룹.getId());
 
         resultActions
                 .andExpect(status().isNoContent());
