@@ -41,7 +41,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
+        Order savedOrder = orderRepository.save(new Order(orderTable));
         OrderLineItems fetchedOrderLineItems = new OrderLineItems(orderLineItems, savedOrder);
         orderLineItemRepository.saveAll(fetchedOrderLineItems.getOrderLineItems());
 
@@ -50,11 +50,6 @@ public class OrderService {
 
     public List<Order> findAllFetch() {
         final List<Order> orders = orderRepository.findAll();
-
-        for (final Order order : orders) {
-            order.updateOrderLineItems(orderLineItemRepository.findAllByOrder(order));
-        }
-
         return orders;
     }
 

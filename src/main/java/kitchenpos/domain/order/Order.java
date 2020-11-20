@@ -8,11 +8,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Table(name = "`Order`")
@@ -27,19 +25,15 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     public OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
     @CreatedDate
     private LocalDateTime orderedTime;
 
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable) {
         this.orderTable = orderTable;
         this.orderStatus = DEFAULT_ORDER_STATUS;
-        this.orderLineItems = orderLineItems;
     }
 
     public void updateOrderStatus(final String orderStatus) {
@@ -47,10 +41,6 @@ public class Order extends BaseEntity {
             throw new IllegalArgumentException();
         }
         this.orderStatus = OrderStatus.valueOf(orderStatus);
-    }
-
-    public void updateOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public OrderTable getOrderTable() {
@@ -63,9 +53,5 @@ public class Order extends BaseEntity {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }
