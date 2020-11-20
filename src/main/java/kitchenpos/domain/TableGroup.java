@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -20,6 +21,11 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup() {
+    }
+
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
     }
 
     public Long getId() {

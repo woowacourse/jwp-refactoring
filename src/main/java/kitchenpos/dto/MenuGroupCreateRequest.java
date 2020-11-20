@@ -5,9 +5,6 @@ import kitchenpos.domain.MenuGroup;
 public class MenuGroupCreateRequest {
     private String name;
 
-    public MenuGroupCreateRequest() {
-    }
-
     private MenuGroupCreateRequest(String name) {
         this.name = name;
     }

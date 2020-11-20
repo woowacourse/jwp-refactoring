@@ -6,9 +6,6 @@ public class OrderChangeRequest {
 
     private String orderStatus;
 
-    public OrderChangeRequest() {
-    }
-
     private OrderChangeRequest(String orderStatus){
         this.orderStatus = orderStatus;
     }

@@ -17,6 +17,7 @@ import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
 
 public class TestObjectFactory {
 
@@ -68,11 +69,11 @@ public class TestObjectFactory {
         return orderLineItem;
     }
 
-    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+    public static TableGroupCreateRequest createTableGroupCreateRequest(
+        List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
-        return tableGroup;
+        return TableGroupCreateRequest.of(tableGroup);
     }
 
     public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {

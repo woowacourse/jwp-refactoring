@@ -8,15 +8,12 @@ import kitchenpos.domain.OrderTable;
 public class OrderCreateRequest {
 
     private Long orderTableId;
-    private List<OrderLineItemCreateRequest> orderLineItemCreateRequests;
-
-    public OrderCreateRequest() {
-    }
+    private List<OrderLineItemRequest> orderLineItemRequests;
 
     private OrderCreateRequest(Long orderTableId,
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+        List<OrderLineItemRequest> orderLineItemRequests) {
         this.orderTableId = orderTableId;
-        this.orderLineItemCreateRequests = orderLineItemCreateRequests;
+        this.orderLineItemRequests = orderLineItemRequests;
     }
 
     public static OrderCreateRequest of(Order order) {
@@ -24,14 +21,14 @@ public class OrderCreateRequest {
         List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         return new OrderCreateRequest(orderTable.getId(),
-            OrderLineItemCreateRequest.toRequestList(orderLineItems));
+            OrderLineItemRequest.toRequestList(orderLineItems));
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineItemCreateRequest> getOrderLineItemCreateRequests() {
-        return orderLineItemCreateRequests;
+    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+        return orderLineItemRequests;
     }
 }

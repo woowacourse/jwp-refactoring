@@ -6,29 +6,26 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
-public class OrderLineItemCreateRequest {
+public class OrderLineItemRequest {
 
     private Long menuId;
     private long quantity;
 
-    public OrderLineItemCreateRequest() {
-    }
-
-    private OrderLineItemCreateRequest(Long menuId, long quantity) {
+    private OrderLineItemRequest(Long menuId, long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
     }
 
-    public static OrderLineItemCreateRequest of(OrderLineItem orderLineItem) {
+    public static OrderLineItemRequest of(OrderLineItem orderLineItem) {
         Menu menu = orderLineItem.getMenu();
         long quantity = orderLineItem.getQuantity();
 
-        return new OrderLineItemCreateRequest(menu.getId(), quantity);
+        return new OrderLineItemRequest(menu.getId(), quantity);
     }
 
-    public static List<OrderLineItemCreateRequest> toRequestList(List<OrderLineItem> menuProducts) {
+    public static List<OrderLineItemRequest> toRequestList(List<OrderLineItem> menuProducts) {
         return menuProducts.stream()
-            .map(OrderLineItemCreateRequest::of)
+            .map(OrderLineItemRequest::of)
             .collect(Collectors.toList());
     }
 

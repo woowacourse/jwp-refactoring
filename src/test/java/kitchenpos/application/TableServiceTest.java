@@ -8,13 +8,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,9 +86,9 @@ class TableServiceTest {
         OrderTable savedOrderTableB = tableService.create(orderTableB);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTableA, savedOrderTableB);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
-        tableGroupService.create(tableGroup);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
+        tableGroupService.create(tableGroupCreateRequest);
 
         OrderTable newOrderTable = TestObjectFactory.createOrderTable(2, true);
         assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTableA.getId(), newOrderTable))

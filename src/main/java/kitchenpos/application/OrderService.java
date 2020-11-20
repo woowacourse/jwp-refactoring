@@ -12,7 +12,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
@@ -45,18 +45,18 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest
-            .getOrderLineItemCreateRequests();
+        final List<OrderLineItemRequest> orderLineItemRequests = orderCreateRequest
+            .getOrderLineItemRequests();
 
-        if (CollectionUtils.isEmpty(orderLineItemCreateRequests)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItemCreateRequests.stream()
+        final List<Long> menuIds = orderLineItemRequests.stream()
             .map(o -> o.getMenuId())
             .collect(Collectors.toList());
 
-        if (orderLineItemCreateRequests.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
@@ -72,10 +72,10 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
-            Menu menu = menuRepository.getOne(orderLineItemCreateRequest.getMenuId());
-            long quantity = orderLineItemCreateRequest.getQuantity();
-            OrderLineItem orderLineItem = orderLineItemCreateRequest
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            Menu menu = menuRepository.getOne(orderLineItemRequest.getMenuId());
+            long quantity = orderLineItemRequest.getQuantity();
+            OrderLineItem orderLineItem = orderLineItemRequest
                 .toEntity(savedOrder, menu, quantity);
 
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));

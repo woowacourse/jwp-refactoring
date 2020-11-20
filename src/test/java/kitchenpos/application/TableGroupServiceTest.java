@@ -12,8 +12,9 @@ import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.TableGroupCreateRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.utils.TestObjectFactory;
@@ -51,17 +52,17 @@ class TableGroupServiceTest {
         OrderTable savedOrderTableB = tableService.create(orderTableB);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTableA, savedOrderTableB);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
         assertAll(() -> {
-            assertThat(savedTableGroup).isInstanceOf(TableGroup.class);
-            assertThat(savedTableGroup.getId()).isNotNull();
-            assertThat(savedTableGroup.getCreatedDate()).isNotNull();
-            assertThat(savedTableGroup.getOrderTables()).isNotNull();
-            assertThat(savedTableGroup.getOrderTables()).isNotEmpty();
-            assertThat(savedTableGroup.getOrderTables()).hasSize(2);
+            assertThat(tableGroupResponse).isInstanceOf(TableGroupResponse.class);
+            assertThat(tableGroupResponse.getId()).isNotNull();
+            assertThat(tableGroupResponse.getCreatedDate()).isNotNull();
+            assertThat(tableGroupResponse.getOrderTables()).isNotNull();
+            assertThat(tableGroupResponse.getOrderTables()).isNotEmpty();
+            assertThat(tableGroupResponse.getOrderTables()).hasSize(2);
         });
     }
 
@@ -74,10 +75,10 @@ class TableGroupServiceTest {
         OrderTable savedOrderTableB = tableService.create(orderTableB);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTableA, savedOrderTableB);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,10 +89,10 @@ class TableGroupServiceTest {
         OrderTable savedOrderTable = tableService.create(orderTable);
         List<OrderTable> orderTables = Collections.singletonList(savedOrderTable);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,9 +105,9 @@ class TableGroupServiceTest {
         OrderTable savedOrderTableB = tableService.create(orderTableB);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTableA, savedOrderTableB);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
+        TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
         tableGroupService.ungroup(savedTableGroup.getId());
 
         Optional<OrderTable> ungroupedOrderTableA = orderTableRepository
@@ -137,9 +138,9 @@ class TableGroupServiceTest {
         OrderTable savedOrderTableB = tableService.create(orderTableB);
         List<OrderTable> orderTables = Arrays.asList(savedOrderTableA, savedOrderTableB);
 
-        TableGroup tableGroup = TestObjectFactory
-            .createTableGroup(orderTables);
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupCreateRequest tableGroupCreateRequest = TestObjectFactory
+            .createTableGroupCreateRequest(orderTables);
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
@@ -149,7 +150,7 @@ class TableGroupServiceTest {
             .createOrderCreateRequest(savedOrderTableA, COOKING.name(), orderLineItems);
         orderService.create(orderCreateRequest);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
