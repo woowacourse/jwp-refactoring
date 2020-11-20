@@ -10,6 +10,10 @@ import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.exception.MenuNotExistException;
+import kitchenpos.exception.NullRequestException;
+import kitchenpos.exception.TableEmptyException;
+import kitchenpos.exception.TableNotExistenceException;
 import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -56,7 +60,7 @@ class OrderServiceTest extends TestFixture {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(new ArrayList<>(), TABLE_ID_1);
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(NullRequestException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 중복 메뉴가 있을 때")
@@ -70,7 +74,7 @@ class OrderServiceTest extends TestFixture {
         given(menuDao.countByIdIn(any())).willReturn(1L);
 
         assertThatThrownBy(() -> orderService.create(duplicatedMenusOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(MenuNotExistException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 존재하지 않는 테이블에서 주문 할 때")
@@ -85,7 +89,7 @@ class OrderServiceTest extends TestFixture {
         given(tableDao.findById(notExistTableOrderRequest.getTableId())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(notExistTableOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableNotExistenceException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 빈 테이블에서 주문 할 때")
@@ -101,7 +105,7 @@ class OrderServiceTest extends TestFixture {
         given(tableDao.findById(TABLE_ID_1)).willReturn(Optional.of(emptyTable));
 
         assertThatThrownBy(() -> orderService.create(emptyTableOrderRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(TableEmptyException.class);
     }
 
     @DisplayName("주문 생성 성공 테스트")

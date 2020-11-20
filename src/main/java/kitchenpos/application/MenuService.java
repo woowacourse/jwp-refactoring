@@ -1,12 +1,5 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -20,6 +13,12 @@ import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.exception.MenuGroupNotExistException;
 import kitchenpos.exception.NullRequestException;
 import kitchenpos.exception.ProductNotExistException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -49,8 +48,7 @@ public class MenuService {
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         List<MenuProductRequest> menuProductRequests = menuCreateRequest.getMenuProductRequests();
 
-        Menu menu = new Menu(name, price, menuGroupId);
-        final Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuDao.save(new Menu(name, price, menuGroupId));
 
         menuProductRequests.stream()
             .map(request -> new MenuProduct(savedMenu.getId(), request.getProductId(), request.getQuantity()))

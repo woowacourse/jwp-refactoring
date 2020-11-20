@@ -11,6 +11,10 @@ import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.exception.MenuNotExistException;
+import kitchenpos.exception.NullRequestException;
+import kitchenpos.exception.TableEmptyException;
+import kitchenpos.exception.TableNotExistenceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,40 +43,62 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderCreateRequest orderCreateRequest) {
+        validateOrderCreateRequest(orderCreateRequest);
 
         List<OrderMenuRequest> orderMenuRequests = orderCreateRequest.getOrderMenuRequests();
+        Long tableId = orderCreateRequest.getTableId();
 
-        if (orderMenuRequests.isEmpty()){
-            throw new IllegalArgumentException();
+        Order savedOrder = orderDao.save(new Order(tableId));
+
+        Long orderId = savedOrder.getId();
+        orderMenuRequests.stream()
+            .map(request -> new OrderMenu(orderId, request.getMenuId(), request.getQuantity()))
+            .forEach(orderMenuDao::save);
+
+        return savedOrder;
+    }
+
+    private void validateOrderCreateRequest(OrderCreateRequest orderCreateRequest) {
+        validateEmpty(orderCreateRequest);
+        validateMenuExistence(orderCreateRequest.getOrderMenuRequests());
+        validateTable(orderCreateRequest.getTableId());
+    }
+
+    private void validateEmpty(OrderCreateRequest orderCreateRequest) {
+        List<OrderMenuRequest> orderMenuRequests = orderCreateRequest.getOrderMenuRequests();
+        Long tableId = orderCreateRequest.getTableId();
+
+        if (orderMenuRequests.isEmpty() || Objects.isNull(tableId)) {
+            throw new NullRequestException();
         }
 
-        final List<Long> menuIds = orderMenuRequests.stream()
+        for (OrderMenuRequest orderMenuRequest : orderMenuRequests) {
+            Long menuId = orderMenuRequest.getMenuId();
+            Long quantity = orderMenuRequest.getQuantity();
+
+            if (Objects.isNull(menuId) || Objects.isNull(quantity)) {
+                throw new NullRequestException();
+            }
+        }
+    }
+
+    private void validateMenuExistence(List<OrderMenuRequest> orderMenuRequests) {
+        List<Long> menuIds = orderMenuRequests.stream()
                 .map(OrderMenuRequest::getMenuId)
                 .collect(Collectors.toList());
 
         if (orderMenuRequests.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new MenuNotExistException();
         }
+    }
 
-        final Table table = tableDao.findById(orderCreateRequest.getTableId())
-                .orElseThrow(IllegalArgumentException::new);
+    private void validateTable(Long tableId) {
+        Table table = tableDao.findById(tableId)
+            .orElseThrow(TableNotExistenceException::new);
 
         if (table.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new TableEmptyException();
         }
-
-        final Order savedOrder = orderDao.save(new Order(table.getId()));
-
-        final Long orderId = savedOrder.getId();
-
-        List<OrderMenu> orderMenus = orderMenuRequests.stream()
-            .map(request -> new OrderMenu(orderId, request.getMenuId(), request.getQuantity()))
-            .collect(Collectors.toList());
-
-        for (final OrderMenu orderMenu : orderMenus) {
-            orderMenuDao.save(orderMenu);
-        }
-        return savedOrder;
     }
 
     public List<Order> list() {
