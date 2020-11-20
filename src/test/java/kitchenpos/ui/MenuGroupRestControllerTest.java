@@ -6,12 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Collections;
-import java.util.List;
 
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupCreateResponse;
-import kitchenpos.dto.MenuGroupFindAllResponse;
-import kitchenpos.dto.MenuGroupFindAllResponses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +19,9 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menuGroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.MenuGroupCreateResponse;
+import kitchenpos.dto.menuGroup.MenuGroupFindAllResponses;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest {

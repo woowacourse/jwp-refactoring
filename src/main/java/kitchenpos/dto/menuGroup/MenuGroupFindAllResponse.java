@@ -1,25 +1,21 @@
-package kitchenpos.dto;
+package kitchenpos.dto.menuGroup;
 
 import kitchenpos.domain.MenuGroup;
 
-public class MenuGroupCreateRequest {
+public class MenuGroupFindAllResponse {
     private Long id;
     private String name;
 
-    protected MenuGroupCreateRequest() {
+    protected MenuGroupFindAllResponse() {
     }
 
-    public MenuGroupCreateRequest(Long id, String name) {
+    public MenuGroupFindAllResponse(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public MenuGroupCreateRequest(MenuGroup menuGroup) {
+    public MenuGroupFindAllResponse(MenuGroup menuGroup) {
         this(menuGroup.getId(), menuGroup.getName());
-    }
-
-    public MenuGroup toEntity() {
-        return new MenuGroup(this.id, this.name);
     }
 
     public Long getId() {

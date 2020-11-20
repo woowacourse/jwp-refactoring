@@ -1,8 +1,5 @@
 package kitchenpos.application;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +8,9 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Money;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuCreateResponse;
+import kitchenpos.dto.menu.MenuFindAllResponses;
 
 @Service
 public class MenuService {
@@ -29,11 +29,12 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public MenuCreateResponse create(final MenuCreateRequest menuCreateRequest) {
+        Menu menu = menuCreateRequest.toEntity();
         final Money price = menu.getPrice();
 
         validPriceIsNullOrMinus(price);
-        validMenuGroupIsNotExist(menu.getMenuGroup());
+        validMenuGroupIsNotExist(menu.getMenuGroupId());
 
         final MenuProducts menuProducts = menu.getMenuProducts();
 
@@ -42,7 +43,7 @@ public class MenuService {
         final Menu savedMenu = menuRepository.save(menu);
         menuProductService.associateMenuProductsAndMenu(menuProducts, savedMenu);
 
-        return savedMenu;
+        return new MenuCreateResponse(savedMenu);
     }
 
     private void validMenuGroupIsNotExist(Long menuGroupId) {
@@ -52,12 +53,12 @@ public class MenuService {
     }
 
     private void validPriceIsNullOrMinus(Money price) {
-        if (price == null || price.isMinus()) {
+        if (price.getValue() == null || price.isMinus()) {
             throw new IllegalArgumentException();
         }
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public MenuFindAllResponses list() {
+        return MenuFindAllResponses.from(menuRepository.findAll());
     }
 }

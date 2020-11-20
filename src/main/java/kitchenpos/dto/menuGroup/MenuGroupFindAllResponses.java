@@ -1,9 +1,9 @@
-package kitchenpos.dto;
-
-import kitchenpos.domain.MenuGroup;
+package kitchenpos.dto.menuGroup;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFindAllResponses {
     private List<MenuGroupFindAllResponse> menuGroupFindAllResponse;

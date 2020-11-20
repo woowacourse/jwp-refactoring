@@ -42,7 +42,7 @@ public class Menu {
 		return price;
 	}
 
-	public Long getMenuGroup() {
+	public Long getMenuGroupId() {
 		return menuGroupId;
 	}
 

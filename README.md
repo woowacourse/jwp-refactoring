@@ -76,7 +76,7 @@
     -[x] TableService
 -[ ] DTO 클래스 생성
     -[x] MenuGroupRestsController
-    -[ ] MenuRestController
+    -[x] MenuRestController
     -[ ] OrderRestController
     -[ ] ProductRestController
     -[ ] TableGroupRestController

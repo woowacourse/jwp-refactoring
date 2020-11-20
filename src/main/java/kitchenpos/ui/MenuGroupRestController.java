@@ -1,18 +1,17 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupCreateResponse;
-import kitchenpos.dto.MenuGroupFindAllResponses;
+import java.net.URI;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.dto.menuGroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.MenuGroupCreateResponse;
+import kitchenpos.dto.menuGroup.MenuGroupFindAllResponses;
 
 @RestController
 public class MenuGroupRestController {

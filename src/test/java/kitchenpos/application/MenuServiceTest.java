@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,11 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuCreateResponse;
+import kitchenpos.dto.menu.MenuFindAllResponse;
+import kitchenpos.dto.menu.MenuFindAllResponses;
+import kitchenpos.dto.menu.MenuProductCreateRequests;
 
 class MenuServiceTest extends ServiceTest {
 
@@ -34,10 +38,12 @@ class MenuServiceTest extends ServiceTest {
 	@Test
 	void create_whenMenuPriceIsNull_thenThrowIllegalArgumentException() {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
-		Menu menu = createMenu(null, "메뉴", null, menuGroup.getId(),
-			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
 
-		assertThatThrownBy(() -> menuService.create(menu))
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(null, "메뉴", null, menuGroup.getId(),
+			MenuProductCreateRequests.from(
+				new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L)))));
+
+		assertThatThrownBy(() -> menuService.create(menuCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -47,8 +53,9 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
 		Menu menu = createMenu(null, "메뉴", new Money(-1L), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		assertThatThrownBy(() -> menuService.create(menu))
+		assertThatThrownBy(() -> menuService.create(menuCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -58,8 +65,9 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = createMenuGroup(1L, "그룹");
 		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		assertThatThrownBy(() -> menuService.create(menu))
+		assertThatThrownBy(() -> menuService.create(menuCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -69,8 +77,9 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(null, "메뉴", new Money(100L), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(createMenuProduct(null, 1L, 2L, 3L))));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		assertThatThrownBy(() -> menuService.create(menu))
+		assertThatThrownBy(() -> menuService.create(menuCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -86,8 +95,9 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(menuProduct)));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		assertThatThrownBy(() -> menuService.create(menu))
+		assertThatThrownBy(() -> menuService.create(menuCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
@@ -103,15 +113,17 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(menuProduct)));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		Menu actual = menuService.create(menu);
+		MenuCreateResponse actual = menuService.create(menuCreateRequest);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getName()).isEqualTo(menu.getName()),
-			() -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice()),
-			() -> assertThat(actual.getMenuGroup()).isEqualTo(menu.getMenuGroup()),
-			() -> assertThat(actual.getMenuProducts().getMenuProducts().get(0).getQuantity()).isEqualTo(2L)
+			() -> assertThat(actual.getPrice()).isEqualTo(menu.getPrice().getValue()),
+			() -> assertThat(actual.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
+			() -> assertThat(actual.getMenuProducts().getMenuProductCreateResponses().get(0).getQuantity()).isEqualTo(
+				2L)
 		);
 	}
 
@@ -125,19 +137,21 @@ class MenuServiceTest extends ServiceTest {
 		MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
 		Menu menu = createMenu(1L, "메뉴", new Money(menuPrice), menuGroup.getId(),
 			new MenuProducts(Collections.singletonList(menuProduct)));
+		MenuCreateRequest menuCreateRequest = new MenuCreateRequest(menu);
 
-		Menu expect = menuService.create(menu);
+		MenuCreateResponse expect = menuService.create(menuCreateRequest);
 
-		List<Menu> actual = menuService.list();
-		Menu actualItem = actual.get(0);
+		MenuFindAllResponses actual = menuService.list();
+		MenuFindAllResponse actualItem = actual.getMenuFindAllResponses().get(0);
 
-		assertThat(actual).hasSize(1);
+		assertThat(actual.getMenuFindAllResponses()).hasSize(1);
 		assertAll(
 			() -> assertThat(actualItem.getName()).isEqualTo(expect.getName()),
 			() -> assertThat(actualItem.getPrice()).isEqualTo(expect.getPrice()),
-			() -> assertThat(actualItem.getMenuGroup()).isEqualTo(expect.getMenuGroup()),
-			() -> assertThat(actualItem.getMenuProducts().getMenuProducts().get(0).getQuantity()).isEqualTo(
-				expect.getMenuProducts().getMenuProducts().get(0).getQuantity())
+			() -> assertThat(actualItem.getMenuGroupId()).isEqualTo(expect.getMenuGroupId()),
+			() -> assertThat(
+				actualItem.getMenuProducts().getMenuProductFindAllResponses().get(0).getQuantity()).isEqualTo(
+				expect.getMenuProducts().getMenuProductCreateResponses().get(0).getQuantity())
 		);
 	}
 }

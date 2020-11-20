@@ -3,12 +3,13 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupCreateResponse;
-import kitchenpos.dto.MenuGroupFindAllResponse;
-import kitchenpos.dto.MenuGroupFindAllResponses;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import kitchenpos.dto.menuGroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.MenuGroupCreateResponse;
+import kitchenpos.dto.menuGroup.MenuGroupFindAllResponse;
+import kitchenpos.dto.menuGroup.MenuGroupFindAllResponses;
 
 class MenuGroupServiceTest extends ServiceTest {
     @Autowired
