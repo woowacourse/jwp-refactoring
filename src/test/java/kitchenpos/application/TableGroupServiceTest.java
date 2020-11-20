@@ -22,6 +22,8 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.OrderNotCompleteException;
+import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.exception.TableGroupSizeException;
 import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -73,7 +75,7 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = TableGroupFixture.createEmptyRequest();
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(TableGroupSizeException.class);
     }
 
     @DisplayName("그룹 요청 테이블의 개수가 1개인 경우 예외를 반환한다.")
@@ -82,7 +84,7 @@ class TableGroupServiceTest {
         TableGroupCreateRequest request = TableGroupFixture.createOneTableRequest();
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(TableGroupSizeException.class);
     }
 
     @DisplayName("실제 존재하지 않는 테이블을 그룹화하는 경우 예외를 반환한다.")
@@ -92,7 +94,7 @@ class TableGroupServiceTest {
         tables.remove(0);
 
         assertThatThrownBy(() -> tableGroupService.create(request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("Empty가 아닌 상태의 테이블을 그룹화 하는 경우 예외를 반환한다.")
@@ -133,10 +135,8 @@ class TableGroupServiceTest {
     void ungroup() {
         TableGroup withId = TableGroupFixture.createWithId(1L);
         orderTableRepository.saveAll(tables);
-        // when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
-        //     .thenReturn(false);
-
         tableGroupService.ungroup(withId.getId());
+
         assertThat(tables)
             .extracting(OrderTable::getTableGroupId)
             .allMatch(Objects::isNull);

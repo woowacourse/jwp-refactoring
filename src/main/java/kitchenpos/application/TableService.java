@@ -7,13 +7,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.DefaultOrderVerifier;
-import kitchenpos.domain.OrderVerifier;
+import kitchenpos.domain.verifier.DefaultOrderVerifier;
+import kitchenpos.domain.verifier.OrderVerifier;
 import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderTableRepository;
 
 @Service
@@ -21,12 +20,12 @@ import kitchenpos.repository.OrderTableRepository;
 @Transactional
 public class TableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderVerifier defaultOrderVerifier;
+    private final OrderVerifier orderVerifier;
 
     public TableService(OrderTableRepository orderTableRepository,
-        DefaultOrderVerifier defaultOrderVerifier) {
+        DefaultOrderVerifier orderVerifier) {
         this.orderTableRepository = orderTableRepository;
-        this.defaultOrderVerifier = defaultOrderVerifier;
+        this.orderVerifier = orderVerifier;
     }
 
     public OrderTableResponse create(final OrderTableRequest request) {
@@ -41,7 +40,7 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
         final OrderTableChangeEmptyRequest request) {
 
-        final OrderTable savedOrderTable = defaultOrderVerifier.verifyOrderStatusByTableId(orderTableId);
+        final OrderTable savedOrderTable = orderVerifier.verifyOrderStatusByTableId(orderTableId);
         savedOrderTable.changeEmpty(request.isEmpty());
 
         return OrderTableResponse.of(savedOrderTable);
@@ -50,9 +49,7 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
         final OrderTableChangeNumberOfGuestsRequest request) {
 
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
-
+        final OrderTable savedOrderTable = orderVerifier.verifyOrderStatusByTableId(orderTableId);
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());
 
         return OrderTableResponse.of(savedOrderTable);

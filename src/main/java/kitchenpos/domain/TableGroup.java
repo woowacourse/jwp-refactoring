@@ -9,7 +9,7 @@ import javax.persistence.Id;
 
 @Entity
 public class TableGroup extends BaseEntity {
-    public static final int SIZE_LIMIT = 2;
+    public static final int MIN_SIZE = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

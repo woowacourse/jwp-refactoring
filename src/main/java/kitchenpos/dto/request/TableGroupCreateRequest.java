@@ -8,13 +8,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import kitchenpos.validator.OrderTableCountValidate;
 
 public class TableGroupCreateRequest {
 
     @NotNull
     @Size(min = 2, message = "Table group request must contain 2 or more tables.")
-    @OrderTableCountValidate
     private final List<@Valid OrderTableId> orderTables;
 
     @JsonCreator
