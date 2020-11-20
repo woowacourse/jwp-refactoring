@@ -57,6 +57,10 @@ public class TestObjects {
         return menuProduct;
     }
 
+    public static Order createOrder(Long tableId, OrderStatus orderStatus) {
+        return createOrder(tableId, LocalDateTime.now(), orderStatus, null);
+    }
+
     public static Order createOrder(Long tableId, LocalDateTime orderTime, OrderStatus orderStatus,
             List<OrderLineItem> orderLineItems) {
         final Order order = new Order();

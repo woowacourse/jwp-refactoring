@@ -71,7 +71,9 @@ INSERT INTO order_table (id, table_group_id, number_of_guests, empty)
 VALUES (8, 2, 4, false);
 
 INSERT INTO orders (id, order_table_id, order_status, ordered_time)
-VALUES (1, 1, 'MEAL', PARSEDATETIME('2020-11-18 12:00:00', 'yyyy-MM-dd HH:mm:ss'));
+VALUES (1, 1, 'MEAL', PARSEDATETIME('2020-11-20 12:00:00', 'yyyy-MM-dd HH:mm:ss'));
+INSERT INTO orders (id, order_table_id, order_status, ordered_time)
+VALUES (2, 2, 'COOKING', PARSEDATETIME('2020-11-20 18:00:00', 'yyyy-MM-dd HH:mm:ss'));
 
 INSERT INTO order_line_item (seq, order_id, menu_id, quantity)
 VALUES (1, 1, 1, 1);
