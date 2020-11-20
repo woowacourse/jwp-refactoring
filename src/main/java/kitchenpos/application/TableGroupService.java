@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.IdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
@@ -16,18 +15,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
     private final TableGroupVerifier tableGroupVerifier;
 
     public TableGroupService(
-        final OrderDao orderDao,
         final OrderTableDao orderTableDao,
         final TableGroupDao tableGroupDao,
         final TableGroupVerifier tableGroupVerifier
     ) {
-        this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
         this.tableGroupVerifier = tableGroupVerifier;
