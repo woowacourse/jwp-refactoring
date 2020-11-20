@@ -1,6 +1,13 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.NotEnoughGuestsException;
+import kitchenpos.exception.TableEmptyException;
+
+import java.util.Objects;
+
 public class Table {
+    public static final int MIN_NUMBER_OF_GUESTS = 0;
+
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
@@ -31,11 +38,25 @@ public class Table {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
+        validateChangeable(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateChangeable(int numberOfGuests) {
+        if (numberOfGuests < MIN_NUMBER_OF_GUESTS) {
+            throw new NotEnoughGuestsException();
+        }
+        if (isEmpty()) {
+            throw new TableEmptyException();
+        }
     }
 
     public void changeEmpty(final boolean empty) {
         this.empty = empty;
+    }
+
+    public boolean hasGroup() {
+        return Objects.nonNull(tableGroupId);
     }
 
     public Long getId() {
