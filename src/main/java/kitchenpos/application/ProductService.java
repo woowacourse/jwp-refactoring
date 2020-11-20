@@ -1,14 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.exception.InvalidRequestException;
 
 @Service
 public class ProductService {
@@ -20,13 +22,20 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductCreateRequest productCreateRequest) {
-        final BigDecimal price = new BigDecimal(productCreateRequest.getPrice());
+        validateProductCreateRequest(productCreateRequest);
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+        String name = productCreateRequest.getName();
+        BigDecimal price = new BigDecimal(productCreateRequest.getPrice());
+        return productDao.save(new Product(name, price));
+    }
+
+    private void validateProductCreateRequest(ProductCreateRequest productCreateRequest) {
+        String name = productCreateRequest.getName();
+        Long price = productCreateRequest.getPrice();
+
+        if (Objects.isNull(price) || Objects.isNull(name)) {
+            throw new InvalidRequestException("Product 요청 값이 비어있습니다");
         }
-
-        return productDao.save(new Product(productCreateRequest.getName(), price));
     }
 
     public List<Product> list() {
