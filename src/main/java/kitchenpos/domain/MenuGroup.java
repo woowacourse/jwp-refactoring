@@ -16,6 +16,10 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
+    public MenuGroup(String name) {
+        this.name = name;
+    }
+
     public Long getId() {
         return id;
     }

@@ -27,8 +27,8 @@ public class MenuProductResponse {
         return new MenuProductResponse(seq, menuId, productId, quantity);
     }
 
-    public static List<MenuProductResponse> toResponseList(List<MenuProduct> savedMenuProducts) {
-        return savedMenuProducts.stream()
+    public static List<MenuProductResponse> toResponseList(List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
             .map(mp -> MenuProductResponse.of(mp))
             .collect(Collectors.toList());
     }

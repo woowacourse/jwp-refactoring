@@ -12,25 +12,25 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuGroupCreateRequest;
+import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuProductResponse;
 
 public class TestObjectFactory {
 
-    public static MenuGroup createMenuGroup(String menuName) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuName);
+    public static MenuGroupCreateRequest createMenuGroupCreateRequest(String menuName) {
+        MenuGroup menuGroup = new MenuGroup(menuName);
 
-        return menuGroup;
+        return MenuGroupCreateRequest.of(menuGroup);
     }
 
     public static MenuCreateRequest createMenuCreateReqeust(String name, BigDecimal price,
-        MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        MenuGroupResponse menuGroupResponse, List<MenuProduct> menuProducts) {
         List<MenuProductRequest> menuProductResponses = menuProducts.stream()
             .map(mp -> MenuProductRequest.of(mp))
             .collect(Collectors.toList());
 
-        return new MenuCreateRequest(name, price, menuGroup.getId(), menuProductResponses);
+        return new MenuCreateRequest(name, price, menuGroupResponse.getId(), menuProductResponses);
     }
 
     public static MenuProduct createMenuProduct(Product product, long quantity) {
