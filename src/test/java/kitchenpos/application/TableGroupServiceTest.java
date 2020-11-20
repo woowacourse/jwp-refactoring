@@ -21,6 +21,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.TableGroupCreateRequest;
 import kitchenpos.exception.AlreadyInTableGroupException;
+import kitchenpos.exception.OrderNotCompleteException;
 import kitchenpos.exception.TableGroupWithNotEmptyTableException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -155,6 +156,6 @@ class TableGroupServiceTest {
         orderRepository.save(order);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(withNotCompleteTable.getId()))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(OrderNotCompleteException.class);
     }
 }

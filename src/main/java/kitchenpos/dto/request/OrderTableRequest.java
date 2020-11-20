@@ -8,7 +8,6 @@ public class OrderTableRequest {
 
     @PositiveOrZero
     private final int numberOfGuests;
-
     private final boolean empty;
 
     public OrderTableRequest(int numberOfGuests, boolean empty) {

@@ -22,6 +22,7 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.AlreadyInTableGroupException;
 import kitchenpos.exception.NegativeNumberOfGuestsException;
+import kitchenpos.exception.OrderNotCompleteException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
@@ -113,7 +114,7 @@ class TableServiceTest {
 
         assertThatThrownBy(
             () -> tableService.changeEmpty(mealOrCookingTable.getId(), request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(OrderNotCompleteException.class);
     }
 
     @DisplayName("손님의 수를 수정한다.")
