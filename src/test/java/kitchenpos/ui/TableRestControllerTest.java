@@ -39,8 +39,7 @@ class TableRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		orderTable = new OrderTable();
-		orderTable.setId(1L);
+		orderTable = new OrderTable(1L, 1L, 1, true);
 	}
 
 	@Test

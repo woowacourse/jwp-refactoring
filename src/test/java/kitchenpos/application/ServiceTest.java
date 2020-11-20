@@ -22,53 +22,53 @@ import kitchenpos.domain.TableGroup;
 @Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = "/truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public abstract class ServiceTest {
-	public Menu createMenu(Long id, String name, Money price, Long menuGroupId, MenuProducts menuProducts) {
-		return new Menu(id, name, price, menuGroupId, menuProducts);
-	}
+    public Menu createMenu(Long id, String name, Money price, Long menuGroupId, MenuProducts menuProducts) {
+        return new Menu(id, name, price, menuGroupId, menuProducts);
+    }
 
-	public MenuGroup createMenuGroup(Long id, String name) {
-		return new MenuGroup(id, name);
-	}
+    public MenuGroup createMenuGroup(Long id, String name) {
+        return new MenuGroup(id, name);
+    }
 
-	public MenuProduct createMenuProduct(Long menuId, Long productId, Long quantity, Long seq) {
-		return new MenuProduct(seq, menuId, productId, quantity);
-	}
+    public MenuProduct createMenuProduct(Long menuId, Long productId, Long quantity, Long seq) {
+        return new MenuProduct(seq, menuId, productId, quantity);
+    }
 
-	public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,
-		List<OrderLineItem> orderLineItems) {
-		return new Order(id, orderTableId, status, orderedTime, new OrderLineItems(orderLineItems));
-	}
+    public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,
+                             List<OrderLineItem> orderLineItems) {
+        return new Order(id, orderTableId, status, orderedTime, new OrderLineItems(orderLineItems));
+    }
 
-	public OrderLineItem createOrderLineItem(Long orderId, Long menuId, Long seq, Long quantity) {
-		OrderLineItem orderLineItem = new OrderLineItem();
-		orderLineItem.setOrderId(orderId);
-		orderLineItem.setMenuId(menuId);
-		orderLineItem.setSeq(seq);
-		orderLineItem.setQuantity(quantity);
+    public OrderLineItem createOrderLineItem(Long orderId, Long menuId, Long seq, Long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setSeq(seq);
+        orderLineItem.setQuantity(quantity);
 
-		return orderLineItem;
-	}
+        return orderLineItem;
+    }
 
-	public OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
-		OrderTable orderTable = new OrderTable();
-		orderTable.setId(id);
-		orderTable.setEmpty(empty);
-		orderTable.setTableGroupId(tableGroupId);
-		orderTable.setNumberOfGuests(numberOfGuests);
+    public OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
+        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        orderTable.setId(id);
+        orderTable.setEmpty(empty);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(numberOfGuests);
 
-		return orderTable;
-	}
+        return orderTable;
+    }
 
-	public Product createProduct(Long id, String name, Money price) {
-		return new Product(id, name, price);
-	}
+    public Product createProduct(Long id, String name, Money price) {
+        return new Product(id, name, price);
+    }
 
-	public TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-		TableGroup tableGroup = new TableGroup();
-		tableGroup.setId(id);
-		tableGroup.setCreatedDate(createdDate);
-		tableGroup.setOrderTables(orderTables);
+    public TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setId(id);
+        tableGroup.setCreatedDate(createdDate);
+        tableGroup.setOrderTables(orderTables);
 
-		return tableGroup;
-	}
+        return tableGroup;
+    }
 }

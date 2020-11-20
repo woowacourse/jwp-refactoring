@@ -18,123 +18,123 @@ import kitchenpos.domain.TableGroup;
 
 class TableServiceTest extends ServiceTest {
 
-	@Autowired
-	private TableService tableService;
+    @Autowired
+    private TableService tableService;
 
-	@Autowired
-	private OrderTableRepository orderTableRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
-	@Autowired
-	private TableGroupService tableGroupService;
+    @Autowired
+    private TableGroupService tableGroupService;
 
-	@Test
-	void create() {
-		OrderTable orderTable = createOrderTable(null, false, null, 1);
+    @Test
+    void create() {
+        OrderTable orderTable = createOrderTable(null, false, null, 1);
 
-		OrderTable actual = tableService.create(orderTable);
+        OrderTable actual = tableService.create(orderTable);
 
-		assertAll(
-			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.isEmpty()).isEqualTo(false),
-			() -> assertThat(actual.getTableGroupId()).isNull(),
-			() -> assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
-		);
-	}
+        assertAll(
+                () -> assertThat(actual.getId()).isNotNull(),
+                () -> assertThat(actual.isEmpty()).isEqualTo(false),
+                () -> assertThat(actual.getTableGroupId()).isNull(),
+                () -> assertThat(actual.getNumberOfGuests()).isEqualTo(orderTable.getNumberOfGuests())
+        );
+    }
 
-	@Test
-	void list() {
-		OrderTable orderTable = createOrderTable(null, false, null, 1);
+    @Test
+    void list() {
+        OrderTable orderTable = createOrderTable(null, false, null, 1);
 
-		OrderTable expect = tableService.create(orderTable);
+        OrderTable expect = tableService.create(orderTable);
 
-		List<OrderTable> actual = tableService.list();
+        List<OrderTable> actual = tableService.list();
 
-		assertThat(actual).hasSize(1);
-		assertThat(actual.get(0)).usingRecursiveComparison()
-			.isEqualTo(expect);
-	}
+        assertThat(actual).hasSize(1);
+        assertThat(actual.get(0)).usingRecursiveComparison()
+                .isEqualTo(expect);
+    }
 
-	@DisplayName("존재하지 않는 OrderTable의 empty 상태를 수정할 때 IllegalArgumentException이 발생한다.")
-	@Test
-	void changeEmpty_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
-		assertThatThrownBy(() -> tableService.changeEmpty(1L, new OrderTable()))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
+    @DisplayName("존재하지 않는 OrderTable의 empty 상태를 수정할 때 IllegalArgumentException이 발생한다.")
+    @Test
+    void changeEmpty_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, createOrderTable(1L, true, 1L, 1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-	@DisplayName("단체 지정된 주문 테이블 수정할 때 IllegalArgumentException이 발생한다.")
-	@Test
-	void changeEmpty_whenOrderTableIsSetTableGroup_thenThrowIllegalArgumentException() {
-		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
-		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+    @DisplayName("단체 지정된 주문 테이블 수정할 때 IllegalArgumentException이 발생한다.")
+    @Test
+    void changeEmpty_whenOrderTableIsSetTableGroup_thenThrowIllegalArgumentException() {
+        OrderTable orderTable1 = createOrderTable(null, true, null, 2);
+        OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
+        OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+        OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+        List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
+        TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
 
-		tableGroupService.create(tableGroup);
+        tableGroupService.create(tableGroup);
 
-		assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), new OrderTable()))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
+        assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable1.getId(), createOrderTable(1L, true, 1L, 1)))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-	@DisplayName("empty 상태 변경 성공")
-	@Test
-	void changeEmpty() {
-		OrderTable orderTable = createOrderTable(null, false, null, 1);
+    @DisplayName("empty 상태 변경 성공")
+    @Test
+    void changeEmpty() {
+        OrderTable orderTable = createOrderTable(null, false, null, 1);
 
-		OrderTable savedOrderTable = tableService.create(orderTable);
-		OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), true, null, 1);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), true, null, 1);
 
-		OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), changingOrderTable);
+        OrderTable actual = tableService.changeEmpty(savedOrderTable.getId(), changingOrderTable);
 
-		assertThat(actual.isEmpty()).isEqualTo(changingOrderTable.isEmpty());
-	}
+        assertThat(actual.isEmpty()).isEqualTo(changingOrderTable.isEmpty());
+    }
 
-	@DisplayName("손님의 수가 음수일 때 IllegalArgumentException 발생")
-	@Test
-	void changeNumberOfGuests_whenNumberOfGuestIsMinus_thenThrowIllegalArgumentException() {
-		OrderTable orderTable = createOrderTable(null, false, null, 1);
+    @DisplayName("손님의 수가 음수일 때 IllegalArgumentException 발생")
+    @Test
+    void changeNumberOfGuests_whenNumberOfGuestIsMinus_thenThrowIllegalArgumentException() {
+        OrderTable orderTable = createOrderTable(null, false, null, 1);
 
-		OrderTable savedOrderTable = tableService.create(orderTable);
-		OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), false, null, -1);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), false, null, -1);
 
-		assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-	@DisplayName("존재하지 않는 OrderTable의 numberOfGusets를 수정할 때 IllegalArgumentException 발생")
-	@Test
-	void changeNumberOfGuests_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
-		OrderTable orderTable = createOrderTable(null, false, null, 1);
+    @DisplayName("존재하지 않는 OrderTable의 numberOfGusets를 수정할 때 IllegalArgumentException 발생")
+    @Test
+    void changeNumberOfGuests_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
+        OrderTable orderTable = createOrderTable(null, false, null, 1);
 
-		assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-	@DisplayName("비어있는 OrderTable을 수정할 때 IllegalArgumentException 발생")
-	@Test
-	void changeNumberOfGuests_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
-		OrderTable orderTable = createOrderTable(null, true, null, 0);
+    @DisplayName("비어있는 OrderTable을 수정할 때 IllegalArgumentException 발생")
+    @Test
+    void changeNumberOfGuests_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
+        OrderTable orderTable = createOrderTable(null, true, null, 0);
 
-		OrderTable savedOrderTable = tableService.create(orderTable);
-		OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), true, null, 2);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), true, null, 2);
 
-		assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable))
-			.isInstanceOf(IllegalArgumentException.class);
-	}
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-	@DisplayName("OrderTable numberOfGuest 상태 변경 성공")
-	@Test
-	void changeNumberOfGuests() {
-		OrderTable orderTable = createOrderTable(null, false, null, 2);
+    @DisplayName("OrderTable numberOfGuest 상태 변경 성공")
+    @Test
+    void changeNumberOfGuests() {
+        OrderTable orderTable = createOrderTable(null, false, null, 2);
 
-		OrderTable savedOrderTable = tableService.create(orderTable);
-		OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), false, null, 4);
+        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTable changingOrderTable = createOrderTable(savedOrderTable.getId(), false, null, 4);
 
-		OrderTable actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable);
+        OrderTable actual = tableService.changeNumberOfGuests(savedOrderTable.getId(), changingOrderTable);
 
-		assertThat(actual.getNumberOfGuests()).isEqualTo(changingOrderTable.getNumberOfGuests());
-	}
+        assertThat(actual.getNumberOfGuests()).isEqualTo(changingOrderTable.getNumberOfGuests());
+    }
 }
