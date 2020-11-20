@@ -25,7 +25,7 @@ public class MenuService {
     public MenuResponse create(MenuCreateRequest menuCreateRequest) {
         Menu menu = menuCreateService.createMenu(menuCreateRequest.getName(), menuCreateRequest.getPrice(),
             menuCreateRequest.getMenuGroupId(),
-            menuCreateRequest.getMenuProductCreateInfos());
+            menuCreateRequest.getMenuProducts());
 
         return MenuResponse.of(menuRepository.save(menu));
     }

@@ -9,17 +9,17 @@ public class MenuCreateRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProductCreateInfo> menuProductCreateInfos;
+    private List<MenuProductCreateInfo> menuProducts;
 
     private MenuCreateRequest() {
     }
 
     public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
-        List<MenuProductCreateInfo> menuProductCreateInfos) {
+        List<MenuProductCreateInfo> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductCreateInfos = menuProductCreateInfos;
+        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -34,7 +34,7 @@ public class MenuCreateRequest {
         return menuGroupId;
     }
 
-    public List<MenuProductCreateInfo> getMenuProductCreateInfos() {
-        return menuProductCreateInfos;
+    public List<MenuProductCreateInfo> getMenuProducts() {
+        return menuProducts;
     }
 }
