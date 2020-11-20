@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.apache.logging.log4j.util.Strings;
+
 @Entity
 public class MenuGroup {
 
@@ -18,6 +20,9 @@ public class MenuGroup {
     }
 
     public MenuGroup(Long id, String name) {
+        if (Strings.isBlank(name)) {
+            throw new IllegalArgumentException();
+        }
         this.id = id;
         this.name = name;
     }
