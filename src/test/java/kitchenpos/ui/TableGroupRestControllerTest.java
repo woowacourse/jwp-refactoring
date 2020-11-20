@@ -45,11 +45,7 @@ class TableGroupRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		OrderTable orderTable = new OrderTable();
-		orderTable.setId(1L);
-		orderTable.setEmpty(true);
-		orderTable.setTableGroupId(1L);
-		orderTable.setNumberOfGuests(2);
+		OrderTable orderTable = new OrderTable(1L, 1L, 2, true);
 
 		tableGroup = new TableGroup();
 		tableGroup.setId(1L);

@@ -24,10 +24,14 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableRepository.save(orderTable);
+        return orderTableRepository.save(
+                new OrderTable(
+                        null,
+                        null,
+                        orderTable.getNumberOfGuests(),
+                        orderTable.isEmpty()
+                )
+        );
     }
 
     public List<OrderTable> list() {
@@ -37,39 +41,52 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        validTableGroupIdIsNull(savedOrderTable.getTableGroupId());
+        validOrderStatusIsNotCookingOrMeal(orderTableId);
 
         savedOrderTable.setEmpty(orderTable.isEmpty());
 
         return orderTableRepository.save(savedOrderTable);
     }
 
-    @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
-        if (numberOfGuests < 0) {
+    private void validOrderStatusIsNotCookingOrMeal(Long orderTableId) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
+    }
+
+    private void validTableGroupIdIsNull(Long tableGroupId) {
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Transactional
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+        validOrderTableHasMinusNumberOfGuests(orderTable);
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
 
+        validSavedOrderTableIsEmpty(savedOrderTable);
+
+        savedOrderTable.setNumberOfGuests(orderTable.getNumberOfGuests());
+
+        return orderTableRepository.save(savedOrderTable);
+    }
+
+    private void validSavedOrderTableIsEmpty(OrderTable savedOrderTable) {
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
+    }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTableRepository.save(savedOrderTable);
+    private void validOrderTableHasMinusNumberOfGuests(OrderTable orderTable) {
+        if (orderTable.hasMinusNumberOfGuests()) {
+            throw new IllegalArgumentException();
+        }
     }
 }

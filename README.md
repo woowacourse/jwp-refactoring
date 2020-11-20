@@ -71,9 +71,9 @@
 -[ ] Service 리팩토링
     -[x] MenuService
     -[x] OrderService
-    -[ ] ProductService
+    -[x] ProductService
     -[ ] TableGroupService
-    -[ ] TableService
+    -[x] TableService
 -[ ] DTO 클래스 생성
 
 ## 용어 사전
