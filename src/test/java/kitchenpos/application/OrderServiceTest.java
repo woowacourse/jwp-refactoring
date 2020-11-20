@@ -30,9 +30,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
+@SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
 class OrderServiceTest {
+
     @Autowired
     private OrderService orderService;
 
@@ -57,118 +59,118 @@ class OrderServiceTest {
     @DisplayName("list: 전체 주문 목록을 조회한다.")
     @Test
     void list() {
-        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
+        Menu 치킨단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(치킨단품메뉴.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        Order order = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem));
-        orderService.create(order);
+        OrderLineItem 단일주문항목 = createOrderLineItem(null, 치킨단품메뉴.getId(), 1);
+        Order 새주문요청 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(단일주문항목));
+        orderService.create(새주문요청);
 
-        final List<Order> list = orderService.list();
+        final List<Order> 전체주문목록 = orderService.list();
 
-        assertThat(list).hasSize(1);
+        assertThat(전체주문목록).hasSize(1);
     }
 
     @DisplayName("create: 점유중인 테이블에서 메뉴 중복이 없는 하나 이상의 상품 주문시, 주문 추가 후, 생성된 주문 객체를 반환한다.")
     @Test
     void create() {
-        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        Order order = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem));
-        Order newOrder = orderService.create(order);
+        OrderLineItem 단일주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
+        Order 새주문 = orderService.create(
+                createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING, Lists.list(단일주문항목)));
 
         assertAll(
-                () -> assertThat(newOrder.getId()).isNotNull(),
-                () -> assertThat(newOrder.getOrderedTime()).isNotNull(),
-                () -> assertThat(newOrder.getOrderStatus()).isEqualTo("COOKING"),
-                () -> assertThat(newOrder.getOrderTableId()).isEqualTo(nonEmptyTable.getId()),
-                () -> assertThat(newOrder.getOrderLineItems()).hasSize(1)
+                () -> assertThat(새주문.getId()).isNotNull(),
+                () -> assertThat(새주문.getOrderedTime()).isNotNull(),
+                () -> assertThat(새주문.getOrderStatus()).isEqualTo("COOKING"),
+                () -> assertThat(새주문.getOrderTableId()).isEqualTo(점유중인테이블.getId()),
+                () -> assertThat(새주문.getOrderLineItems()).hasSize(1)
         );
     }
 
     @DisplayName("create: 점유중인 테이블에서 주문 상품이 없는 경우, 주문 추가 실패 후, IllegalArgumentException 발생")
     @Test
     void create_fail_if_order_contains_no_order_line_item() {
-        OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Order orderNotContainsAnyProduct = createOrder(nonEmptyTable.getId(), null, OrderStatus.COOKING,
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Order 주문상품이없는주문요청 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING,
                 Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(orderNotContainsAnyProduct))
+        assertThatThrownBy(() -> orderService.create(주문상품이없는주문요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("create: 점유중이 아닌 테이블에서 주문 요청시, 주문 추가 실패 후, IllegalArgumentException 발생")
+    @DisplayName("create: 비어있는 테이블에서 주문 요청시, 주문 추가 실패 후, IllegalArgumentException 발생")
     @Test
     void create_fail_if_table_is_empty() {
-        OrderTable emptyTable = orderTableDao.save(createTable(null, 0, true));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 비어있는테이블 = orderTableDao.save(createTable(null, 0, true));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        Order newOrder = createOrder(emptyTable.getId(), null, OrderStatus.COOKING, Lists.list(firstOrderLineItem));
+        OrderLineItem 후라이드단품주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
+        Order 빈테이블에대한주문요청 = createOrder(비어있는테이블.getId(), null, OrderStatus.COOKING, Lists.list(후라이드단품주문항목));
 
-        assertThatThrownBy(() -> orderService.create(newOrder))
+        assertThatThrownBy(() -> orderService.create(빈테이블에대한주문요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("create: 점유중인 테이블에서 중복된 중복 메뉴를 포함한 상품 들 주문 요청시, 주문 추가 실패 후, IllegalArgumentException 발생")
     @Test
     void create_fail_if_order_line_item_contains_duplicate_menu() {
-        OrderTable notEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Product product = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup("단품 그룹"));
-        Menu menu = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), menuGroup.getId(), null));
-        menuProductDao.save(createMenuProduct(menu.getId(), product.getId(), 1));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Product 후라이드단품 = productDao.save(createProduct("후라이드 치킨", BigDecimal.valueOf(15_000)));
+        MenuGroup 단품그룹 = menuGroupDao.save(createMenuGroup("단품 그룹"));
+        Menu 후라이드단품메뉴 = menuDao.save(createMenu("치킨 세트", BigDecimal.valueOf(15_000), 단품그룹.getId(), null));
+        menuProductDao.save(createMenuProduct(후라이드단품메뉴.getId(), 후라이드단품.getId(), 1));
 
-        OrderLineItem firstOrderLineItem = createOrderLineItem(null, menu.getId(), 1);
-        OrderLineItem secondOrderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        Order newOrder = createOrder(notEmptyTable.getId(), null, OrderStatus.COOKING,
-                Lists.list(firstOrderLineItem, secondOrderLineItem));
+        OrderLineItem 첫번째주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 1);
+        OrderLineItem 첫번째주문항목과같은품목의주문항목 = createOrderLineItem(null, 후라이드단품메뉴.getId(), 2);
+        Order 중복메뉴를포함한주문요청 = createOrder(점유중인테이블.getId(), null, OrderStatus.COOKING,
+                Lists.list(첫번째주문항목, 첫번째주문항목과같은품목의주문항목));
 
-        assertThatThrownBy(() -> orderService.create(newOrder))
+        assertThatThrownBy(() -> orderService.create(중복메뉴를포함한주문요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeOrderStatus: 완료 되지 않는 주문의 경우, 주문 상태의 변경 요청시, 상태 변경 후, 변경된 주문 객체를 반환한다.")
     @Test
     void changeOrderStatus() {
-        OrderTable notEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Order nonCompletedOrder = orderDao.save(
-                createOrder(notEmptyTable.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COOKING, null));
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Order 완료되지않은주문 = orderDao.save(
+                createOrder(점유중인테이블.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COOKING, null));
 
-        Order order = createOrder(null, null, OrderStatus.MEAL, null);
-        Long savedOrderId = nonCompletedOrder.getId();
-        Order updatedOrder = orderService.changeOrderStatus(savedOrderId, order);
+        Long 완료되지않은주문의식별자 = 완료되지않은주문.getId();
+        Order 주문의상태변경요청 = createOrder(null, null, OrderStatus.MEAL, null);
+        Order 상태변경완료된주문 = orderService.changeOrderStatus(완료되지않은주문의식별자, 주문의상태변경요청);
 
         assertAll(
-                () -> assertThat(updatedOrder.getId()).isEqualTo(savedOrderId),
-                () -> assertThat(updatedOrder.getOrderedTime()).isNotNull(),
-                () -> assertThat(updatedOrder.getOrderStatus()).isEqualTo("MEAL"),
-                () -> assertThat(updatedOrder.getOrderTableId()).isEqualTo(notEmptyTable.getId())
+                () -> assertThat(상태변경완료된주문.getId()).isEqualTo(완료되지않은주문의식별자),
+                () -> assertThat(상태변경완료된주문.getOrderedTime()).isNotNull(),
+                () -> assertThat(상태변경완료된주문.getOrderStatus()).isEqualTo("MEAL"),
+                () -> assertThat(상태변경완료된주문.getOrderTableId()).isEqualTo(점유중인테이블.getId())
         );
     }
 
     @DisplayName("changeOrderStatus: 이미 완료한 주문의 상태의 변경 요청시, 상태 변경 실패 후, IllegalArgumentException 발생.")
     @Test
     void changeOrderStatus_fail_if_order_status_is_completion() {
-        OrderTable notEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        Order completedOrder = orderDao.save(
-                createOrder(notEmptyTable.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COMPLETION,
+        OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        Order 완료상태의주문 = orderDao.save(
+                createOrder(점유중인테이블.getId(), LocalDateTime.of(2020, 10, 10, 20, 40), OrderStatus.COMPLETION,
                         null));
-        Long savedOrderId = completedOrder.getId();
-        Order nonCompletedOrder = createOrder(null, null, OrderStatus.MEAL, null);
+        Long 완료된주문의식별자 = 완료상태의주문.getId();
+        Order 주문상태변경요청 = createOrder(null, null, OrderStatus.MEAL, null);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, nonCompletedOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(완료된주문의식별자, 주문상태변경요청))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

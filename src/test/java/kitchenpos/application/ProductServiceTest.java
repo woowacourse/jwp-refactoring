@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Product;
 
+@SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
 class ProductServiceTest {
@@ -25,21 +26,21 @@ class ProductServiceTest {
     @DisplayName("create: 이름과 가격을 입력 받아, 제품을 생성 요청 시, 입력 값을 기반으로  ID와 제품이 생성된다.")
     @Test
     void create() {
-        Product savedProduct = productService.create(createProduct("맛난 치킨", BigDecimal.valueOf(16_000)));
+        Product 추가된새제품 = productService.create(createProduct("맛난 치킨", BigDecimal.valueOf(16_000)));
 
         assertAll(
-                () -> assertThat(savedProduct.getId()).isNotNull(),
-                () -> assertThat(savedProduct.getName()).isEqualTo("맛난 치킨"),
-                () -> assertThat(savedProduct.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16_000))
+                () -> assertThat(추가된새제품.getId()).isNotNull(),
+                () -> assertThat(추가된새제품.getName()).isEqualTo("맛난 치킨"),
+                () -> assertThat(추가된새제품.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(16_000))
         );
     }
 
     @DisplayName("create: 제품 생성 요청시, 입력 받은 가격이 음수라면, 제품 생성 시 예외가 발생한다.")
     @Test
     void create_throw_exception_if_price_is_negative() {
-        Product product = createProduct("맛난 치킨", BigDecimal.valueOf(-16_000));
+        Product 추가된새제품 = createProduct("맛난 치킨", BigDecimal.valueOf(-16_000));
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(추가된새제품))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -47,9 +48,9 @@ class ProductServiceTest {
     @DisplayName("create: 제품 생성 요청시, 입력 받은 가격이 null이라면, 제품 생성 시 예외가 발생한다.")
     @Test
     void create_throw_exception_if_price_is_null() {
-        Product product = createProduct("맛난 치킨", null);
+        Product 가격이없는새제품 = createProduct("맛난 치킨", null);
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(가격이없는새제품))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -59,8 +60,8 @@ class ProductServiceTest {
     void list() {
         productService.create(createProduct("후라이드 치킨", BigDecimal.valueOf(16_000)));
         productService.create(createProduct("오곡 치킨", BigDecimal.valueOf(16_000)));
-        List<Product> list = productService.list();
+        List<Product> 전체제품목록 = productService.list();
 
-        assertThat(list).hasSize(2);
+        assertThat(전체제품목록).hasSize(2);
     }
 }

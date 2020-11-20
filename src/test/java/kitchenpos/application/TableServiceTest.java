@@ -23,9 +23,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
 class TableServiceTest {
+
     @Autowired
     private TableService tableService;
 
@@ -42,13 +44,13 @@ class TableServiceTest {
     @ParameterizedTest
     @CsvSource(value = {"true, 0", "false, 10"})
     void create(boolean isEmpty, int numberOfGuests) {
-        OrderTable createdTable = tableService.create(createTable(null, numberOfGuests, isEmpty));
+        OrderTable 새테이블 = tableService.create(createTable(null, numberOfGuests, isEmpty));
 
         assertAll(
-                () -> assertThat(createdTable.getId()).isNotNull(),
-                () -> assertThat(createdTable.getNumberOfGuests()).isEqualTo(numberOfGuests),
-                () -> assertThat(createdTable.getTableGroupId()).isNull(),
-                () -> assertThat(createdTable.isEmpty()).isEqualTo(isEmpty)
+                () -> assertThat(새테이블.getId()).isNotNull(),
+                () -> assertThat(새테이블.getNumberOfGuests()).isEqualTo(numberOfGuests),
+                () -> assertThat(새테이블.getTableGroupId()).isNull(),
+                () -> assertThat(새테이블.isEmpty()).isEqualTo(isEmpty)
         );
     }
 
@@ -59,22 +61,22 @@ class TableServiceTest {
         tableService.create(createTable(null, 0, true));
         tableService.create(createTable(null, 3, false));
 
-        final List<OrderTable> tables = tableService.list();
+        final List<OrderTable> 전체테이블목록 = tableService.list();
 
-        assertThat(tables).hasSize(3);
+        assertThat(전체테이블목록).hasSize(3);
     }
 
     @DisplayName("changeEmpty: groupId가 없고, 현재 테이블의 주문이 완료 상태라면, 테이블의 비어있는 상태를 변경할 수 있다.")
     @Test
     void changeEmpty() {
-        OrderTable nonGroupedTable = orderTableDao.save(createTable(null, 10, false));
-        Long savedTableId = nonGroupedTable.getId();
-        Order completedOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COMPLETION,
+        OrderTable 그루핑되지않는테이블 = orderTableDao.save(createTable(null, 10, false));
+        Long 테이블식별자 = 그루핑되지않는테이블.getId();
+        Order 완료된주문 = createOrder(테이블식별자, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COMPLETION,
                 null);
-        orderDao.save(completedOrder);
-        OrderTable emptyTable = createTable(null, 0, true);
+        orderDao.save(완료된주문);
+        OrderTable 빈테이블 = createTable(null, 0, true);
 
-        OrderTable updatedOrderTable = tableService.changeEmpty(savedTableId, emptyTable);
+        OrderTable updatedOrderTable = tableService.changeEmpty(테이블식별자, 빈테이블);
 
         assertAll(
                 () -> assertThat(updatedOrderTable.getId()).isNotNull(),
@@ -87,13 +89,13 @@ class TableServiceTest {
     @DisplayName("changeEmpty: 테이블 그룹이 지정된 테이블을 점유 상태 변경 시 IllegalArgumentException 발생한다")
     @Test
     void changeEmpty_fail_if_table_contains_group_table() {
-        TableGroup tableGroup = tableGroupDao.save(
+        TableGroup 테이블그룹 = tableGroupDao.save(
                 createTableGroup(LocalDateTime.of(2020, 10, 15, 23, 50), null));
-        OrderTable groupedTable = orderTableDao.save(createTable(tableGroup.getId(), 10, false));
-        OrderTable emptyTable = createTable(null, 0, true);
+        OrderTable 그루핑된테이블 = orderTableDao.save(createTable(테이블그룹.getId(), 10, false));
+        OrderTable 빈테이블 = createTable(null, 0, true);
 
-        Long tableId = groupedTable.getId();
-        assertThatThrownBy(() -> tableService.changeEmpty(tableId, emptyTable))
+        Long 변경하려는테이블의식별자 = 그루핑된테이블.getId();
+        assertThatThrownBy(() -> tableService.changeEmpty(변경하려는테이블의식별자, 빈테이블))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -101,67 +103,65 @@ class TableServiceTest {
     @DisplayName("changeEmpty: 주문 완료 상태가 아닌 테이블 점유 상태 변경시, IllegalArgumentException 발생한다.")
     @Test
     void changeEmpty_fail_if_table_s_order_is_not_completion() {
-        OrderTable savedTable = orderTableDao.save(createTable(null, 10, false));
-        Long savedTableId = savedTable.getId();
-        Order nonCompleteOrder = createOrder(savedTableId, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COOKING,
-                null);
-        orderDao.save(nonCompleteOrder);
-        OrderTable emptyTable = createTable(null, 0, true);
+        OrderTable 테이블 = orderTableDao.save(createTable(null, 10, false));
+        Long 테이블의식별자 = 테이블.getId();
+        Order 테이블의_완료상태가아닌_주문 = orderDao.save(createOrder(테이블의식별자, LocalDateTime.of(2020, 8, 20, 20, 20),
+                OrderStatus.COOKING, null));
+        OrderTable 빈테이블 = createTable(null, 0, true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(savedTableId, emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(테이블의식별자, 빈테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeEmpty: 존재하지 않는 테이블 id의 테이블 점유 변경 요청 시, IllegalArgumentException 발생한다.")
     @Test
     void changeEmpty_fail_if_table_does_not_exist() {
-        OrderTable nonExistTable = createTable(null, 10, false);
-        Long nonExistTableId = nonExistTable.getId();
-        OrderTable emptyTable = createTable(null, 0, true);
+        OrderTable 존재하지않는테이블 = createTable(null, 10, false);
+        Long 존재하지않는테이블의식별자 = 존재하지않는테이블.getId();
+        OrderTable 빈테이블 = createTable(null, 0, true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(nonExistTableId, emptyTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(존재하지않는테이블의식별자, 빈테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeNumberOfGuests: 비어있지 않는 테이블의 방문 인원 수 변경 시, 변경 이뤄진 테이블을 반환한다.")
     @Test
     void changeNumberOfGuests() {
-        final OrderTable nonEmptyTable = tableService.create(createTable(null, 5, false));
-        final Long nonEmptyTableId = nonEmptyTable.getId();
-        final OrderTable tableWithNewNumberOfGuest = createTable(null, 10, false);
+        OrderTable 점유중인테이블 = tableService.create(createTable(null, 5, false));
+        Long 점유중인테이블의식별자 = 점유중인테이블.getId();
+        OrderTable 인원수를변경하려는테이블 = createTable(null, 10, false);
 
-        final OrderTable updatedOrderTable = tableService.changeNumberOfGuests(nonEmptyTableId,
-                tableWithNewNumberOfGuest);
+        OrderTable 인원수가변경된테이블 = tableService.changeNumberOfGuests(점유중인테이블의식별자, 인원수를변경하려는테이블);
 
         assertAll(
-                () -> assertThat(updatedOrderTable.getId()).isNotNull(),
-                () -> assertThat(updatedOrderTable.isEmpty()).isEqualTo(false),
-                () -> assertThat(updatedOrderTable.getNumberOfGuests()).isEqualTo(10),
-                () -> assertThat(updatedOrderTable.getTableGroupId()).isNull()
+                () -> assertThat(인원수가변경된테이블.getId()).isNotNull(),
+                () -> assertThat(인원수가변경된테이블.isEmpty()).isEqualTo(false),
+                () -> assertThat(인원수가변경된테이블.getNumberOfGuests()).isEqualTo(10),
+                () -> assertThat(인원수가변경된테이블.getTableGroupId()).isNull()
         );
     }
 
     @DisplayName("changeNumberOfGuests: 비어있지 않는 테이블의 방문 인원 수 변경 하려는 숫자가 음수라면, 변경에 실패하고, IllegalArgumentException을 발생한다.")
     @Test
     void changeNumberOfGuests_fail_if_number_of_guest_is_negative() {
-        final OrderTable nonEmptyTable = orderTableDao.save(createTable(null, 5, false));
-        final Long nonEmptyTableId = nonEmptyTable.getId();
+        final OrderTable 점유중인테이블 = orderTableDao.save(createTable(null, 5, false));
+        final Long 점유중인테이블의식별자 = 점유중인테이블.getId();
 
-        final OrderTable tableWithNegativeGuest = createTable(null, -10, false);
+        final OrderTable 방문객의수가음수인테이블 = createTable(null, -10, false);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(nonEmptyTableId, tableWithNegativeGuest))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(점유중인테이블의식별자, 방문객의수가음수인테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("changeNumberOfGuests: 비어있는 테이블의 방문 인원 수 변경시, 변경에 실패하고, IllegalArgumentException을 발생한다.")
     @Test
     void changeNumberOfGuests_fail_if_table_is_empty() {
-        final OrderTable emptySavedTable = tableService.create(createTable(null, 0, true));
-        final Long savedTableId = emptySavedTable.getId();
+        final OrderTable 비어있는테이블 = tableService.create(createTable(null, 0, true));
+        final Long savedTableId = 비어있는테이블.getId();
 
-        final OrderTable tableWithNewNumberOfGuest = createTable(null, 10, true);
+        final OrderTable 변경인원수가포함된테이블 = createTable(null, 10, true);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTableId, tableWithNewNumberOfGuest))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedTableId, 변경인원수가포함된테이블))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

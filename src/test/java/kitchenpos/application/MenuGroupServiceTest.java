@@ -14,20 +14,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.MenuGroup;
 
+@SuppressWarnings("NonAsciiCharacters")
 @SpringBootTest
 @Transactional
 class MenuGroupServiceTest {
+
     @Autowired
     private MenuGroupService menuGroupService;
 
     @DisplayName("create: 메뉴 그룹 생성 요청시, 입력 받은 이름을 기반으로 생성 하면, ID 생성 및 입력 값을 통해 생성된다.")
     @Test
     void create() {
-        MenuGroup createdMenuGroup = menuGroupService.create(createMenuGroup("치킨 두마리 세트"));
+        MenuGroup 추가하고자하는메뉴그룹 = menuGroupService.create(createMenuGroup("세트 그룹"));
 
         assertAll(
-                () -> assertThat(createdMenuGroup.getId()).isNotNull(),
-                () -> assertThat(createdMenuGroup.getName()).isEqualTo("치킨 두마리 세트")
+                () -> assertThat(추가하고자하는메뉴그룹.getId()).isNotNull(),
+                () -> assertThat(추가하고자하는메뉴그룹.getName()).isEqualTo("세트 그룹")
         );
     }
 
@@ -36,8 +38,9 @@ class MenuGroupServiceTest {
     void list() {
         menuGroupService.create(createMenuGroup("치킨세트"));
         menuGroupService.create(createMenuGroup("치킨단품"));
-        List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSize(2);
+        List<MenuGroup> 전체메뉴그룹목록 = menuGroupService.list();
+
+        assertThat(전체메뉴그룹목록).hasSize(2);
     }
 }
