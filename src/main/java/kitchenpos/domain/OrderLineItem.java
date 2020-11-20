@@ -12,12 +12,12 @@ public class OrderLineItem {
     private Long seq;
     private Long orderId;
     private Long menuId;
-    private long quantity;
+    private Long quantity;
 
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Long seq, Long orderId, Long menuId, Long quantity) {
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
@@ -40,7 +40,7 @@ public class OrderLineItem {
         return menuId;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 }

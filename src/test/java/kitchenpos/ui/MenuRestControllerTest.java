@@ -83,7 +83,7 @@ class MenuRestControllerTest {
 	}
 
 	@Test
-	void list() throws Exception {
+	void findAll() throws Exception {
 		given(menuService.list()).willReturn(menuFindAllResponses);
 
 		mockMvc.perform(get("/api/menus")

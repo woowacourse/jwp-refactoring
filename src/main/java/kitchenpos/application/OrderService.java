@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderCreateResponse;
+import kitchenpos.dto.order.OrderFindAllResponses;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +28,10 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-        final MenuRepository menuRepository,
-        final OrderRepository orderRepository,
-        final OrderLineItemRepository orderLineItemRepository,
-        final OrderTableRepository orderTableRepository
+            final MenuRepository menuRepository,
+            final OrderRepository orderRepository,
+            final OrderLineItemRepository orderLineItemRepository,
+            final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -37,30 +40,31 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderCreateResponse create(final OrderCreateRequest orderCreateRequest) {
+        Order order = orderCreateRequest.toEntity();
         final OrderLineItems orderLineItems = order.getOrderLineItems();
 
         validOrderLineItemsIsEmpty(orderLineItems);
         validOrderLineItemsHaveNotExistMenu(orderLineItems);
 
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
 
         validOrderTableIsEmpty(orderTable);
 
         final Order savedOrder = orderRepository.save(
-            new Order(
-                null,
-                orderTable.getId(),
-                OrderStatus.COOKING.name(),
-                LocalDateTime.now(),
-                order.getOrderLineItems()
-            )
+                new Order(
+                        null,
+                        orderTable.getId(),
+                        OrderStatus.COOKING.name(),
+                        LocalDateTime.now(),
+                        order.getOrderLineItems()
+                )
         );
 
         associateOrderLineItemsAndOrder(orderLineItems, savedOrder);
 
-        return savedOrder;
+        return new OrderCreateResponse(savedOrder);
     }
 
     private void validOrderLineItemsIsEmpty(OrderLineItems orderLineItems) {
@@ -89,14 +93,14 @@ public class OrderService {
         savedOrder.setOrderLineItems(new OrderLineItems(savedOrderLineItems));
     }
 
-    public List<Order> list() {
-        return orderRepository.findAll();
+    public OrderFindAllResponses list() {
+        return OrderFindAllResponses.from(orderRepository.findAll());
     }
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();

@@ -2,6 +2,9 @@ package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderCreateResponse;
+import kitchenpos.dto.order.OrderFindAllResponses;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,21 +20,20 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
+    public ResponseEntity<OrderCreateResponse> create(@RequestBody final OrderCreateRequest order) {
+        final OrderCreateResponse created = orderService.create(order);
         final URI uri = URI.create("/api/orders/" + created.getId());
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(created);
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<OrderFindAllResponses> findAll() {
         return ResponseEntity.ok()
-                .body(orderService.list())
-                ;
+                .body(orderService.list());
     }
 
+    // todo: 요놈 안했어요~
     @PutMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
             @PathVariable final Long orderId,

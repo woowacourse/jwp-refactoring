@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
+import kitchenpos.dto.order.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -27,65 +28,78 @@ import kitchenpos.domain.OrderStatus;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
-	private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-	private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
-	@MockBean
-	private OrderService orderService;
+    @MockBean
+    private OrderService orderService;
 
-	private OrderLineItem orderLineItem;
+    private OrderLineItem orderLineItem;
 
-	private Order order;
+    private Order order;
 
-	private List<Order> orders;
+    private List<Order> orders;
 
-	@BeforeEach
-	public void setUp(WebApplicationContext webApplicationContext) {
-		objectMapper = new ObjectMapper();
+    private OrderCreateRequest orderCreateRequest;
 
-		objectMapper.registerModule(new JavaTimeModule());
+    private OrderCreateResponse orderCreateResponse;
 
-		this.mockMvc = MockMvcBuilders
-			.webAppContextSetup(webApplicationContext)
-			.build();
+    private OrderFindAllResponses orderFindAllResponses;
 
-		orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
+    @BeforeEach
+    public void setUp(WebApplicationContext webApplicationContext) {
+        objectMapper = new ObjectMapper();
 
-		OrderLineItems orderLineItems = new OrderLineItems(Collections.singletonList(orderLineItem));
+        objectMapper.registerModule(new JavaTimeModule());
 
-		order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .build();
 
-		orders = Collections.singletonList(order);
-	}
+        orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 
-	@Test
-	public void create() throws Exception {
-		given(orderService.create(any())).willReturn(order);
+        OrderLineItems orderLineItems = new OrderLineItems(Collections.singletonList(orderLineItem));
 
-		mockMvc.perform(post("/api/orders")
-			.content(objectMapper.writeValueAsString(order))
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isCreated())
-			.andExpect(header().string("Location", "/api/orders/1"));
-	}
+        order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
-	@Test
-	void list() throws Exception {
-		given(orderService.list()).willReturn(orders);
+        orders = Collections.singletonList(order);
 
-		mockMvc.perform(get("/api/orders")
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk());
-	}
+        orderCreateRequest = new OrderCreateRequest(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
+                OrderLineItemCreateRequests.from(orderLineItems));
 
-	@Test
-	void changeOrderStatus() throws Exception {
-		given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
+        orderCreateResponse = new OrderCreateResponse(order);
 
-		mockMvc.perform(put("/api/orders/1/order-status")
-			.content(objectMapper.writeValueAsString(order))
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk());
-	}
+		orderFindAllResponses = OrderFindAllResponses.from(orders);
+    }
+
+    @Test
+    public void create() throws Exception {
+        given(orderService.create(any())).willReturn(orderCreateResponse);
+
+        mockMvc.perform(post("/api/orders")
+                .content(objectMapper.writeValueAsString(orderCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/orders/1"));
+    }
+
+    @Test
+    void findAll() throws Exception {
+        given(orderService.list()).willReturn(orderFindAllResponses);
+
+        mockMvc.perform(get("/api/orders")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void changeOrderStatus() throws Exception {
+        given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
+
+        mockMvc.perform(put("/api/orders/1/order-status")
+                .content(objectMapper.writeValueAsString(order))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
