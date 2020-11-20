@@ -30,7 +30,7 @@ public class MenuService {
         return MenuResponse.of(menuRepository.save(menu));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return MenuResponse.ofList(menuRepository.findAll());
     }
