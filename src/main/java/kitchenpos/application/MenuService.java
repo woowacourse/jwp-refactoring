@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
@@ -72,6 +73,7 @@ public class MenuService {
         for (final MenuProductRequest menuProductRequest : menuProductsRequest) {
             Product product = productRepository.getOne(menuProductRequest.getProductId());
             MenuProduct menuProduct = menuProductRequest.toEntity(savedMenu, product);
+
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);

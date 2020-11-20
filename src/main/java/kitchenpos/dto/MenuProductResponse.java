@@ -11,7 +11,10 @@ public class MenuProductResponse {
     private Long productId;
     private long quantity;
 
-    public MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
+    public MenuProductResponse() {
+    }
+
+    private MenuProductResponse(Long seq, Long menuId, Long productId, long quantity) {
         this.seq = seq;
         this.menuId = menuId;
         this.productId = productId;
@@ -29,7 +32,7 @@ public class MenuProductResponse {
 
     public static List<MenuProductResponse> toResponseList(List<MenuProduct> menuProducts) {
         return menuProducts.stream()
-            .map(mp -> MenuProductResponse.of(mp))
+            .map(MenuProductResponse::of)
             .collect(Collectors.toList());
     }
 

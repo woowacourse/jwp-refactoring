@@ -1,7 +1,10 @@
 package kitchenpos.dto;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Product;
 
 public class MenuProductRequest {
@@ -19,6 +22,12 @@ public class MenuProductRequest {
 
     public static MenuProductRequest of(MenuProduct menuProduct) {
         return new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity());
+    }
+
+    public static List<MenuProductRequest> toRequestList(List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+            .map(MenuProductRequest::of)
+            .collect(Collectors.toList());
     }
 
     public Long getProductId() {

@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -106,9 +107,9 @@ class TableServiceTest {
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
-        Order order = TestObjectFactory
-            .createOrder(savedTable, COOKING.name(), orderLineItems);
-        orderService.create(order);
+        OrderCreateRequest orderCreateRequest = TestObjectFactory
+            .createOrderCreateRequest(savedTable, COOKING.name(), orderLineItems);
+        orderService.create(orderCreateRequest);
 
         assertThatThrownBy(() -> tableService.changeEmpty(savedTable.getId(), newOrderTable))
             .isInstanceOf(IllegalArgumentException.class);

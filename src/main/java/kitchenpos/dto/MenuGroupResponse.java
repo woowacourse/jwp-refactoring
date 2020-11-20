@@ -24,7 +24,7 @@ public class MenuGroupResponse {
 
     public static List<MenuGroupResponse> toResponseList(List<MenuGroup> menuGroups) {
         return menuGroups.stream()
-            .map(mg -> MenuGroupResponse.of(mg))
+            .map(MenuGroupResponse::of)
             .collect(Collectors.toList());
     }
 

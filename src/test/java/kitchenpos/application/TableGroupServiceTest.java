@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -8,13 +9,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -143,9 +144,10 @@ class TableGroupServiceTest {
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
-        Order order
-            = TestObjectFactory.createOrder(savedOrderTableA, null, orderLineItems);
-        orderService.create(order);
+        OrderCreateRequest orderCreateRequest
+            = TestObjectFactory
+            .createOrderCreateRequest(savedOrderTableA, COOKING.name(), orderLineItems);
+        orderService.create(orderCreateRequest);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class);

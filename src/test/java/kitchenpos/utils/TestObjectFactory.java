@@ -1,20 +1,21 @@
 package kitchenpos.utils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
-import kitchenpos.dto.MenuGroupResponse;
-import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.OrderChangeRequest;
+import kitchenpos.dto.OrderCreateRequest;
 
 public class TestObjectFactory {
 
@@ -24,13 +25,11 @@ public class TestObjectFactory {
         return MenuGroupCreateRequest.of(menuGroup);
     }
 
-    public static MenuCreateRequest createMenuCreateReqeust(String name, BigDecimal price,
-        MenuGroupResponse menuGroupResponse, List<MenuProduct> menuProducts) {
-        List<MenuProductRequest> menuProductResponses = menuProducts.stream()
-            .map(mp -> MenuProductRequest.of(mp))
-            .collect(Collectors.toList());
+    public static MenuCreateRequest createMenuCreateRequest(String name, BigDecimal price,
+        MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        Menu menu = new Menu(name, price, menuGroup, menuProducts);
 
-        return new MenuCreateRequest(name, price, menuGroupResponse.getId(), menuProductResponses);
+        return MenuCreateRequest.of(menu);
     }
 
     public static MenuProduct createMenuProduct(Product product, long quantity) {
@@ -49,13 +48,17 @@ public class TestObjectFactory {
         return product;
     }
 
-    public static Order createOrder(OrderTable orderTable, String orderStatus, List<OrderLineItem> orderLineItems) {
-        Order order = new Order();
-        order.setOrderTable(orderTable);
-        order.setOrderStatus(orderStatus);
-        order.setOrderLineItems(orderLineItems);
+    public static OrderCreateRequest createOrderCreateRequest(OrderTable orderTable,
+        String orderStatus, List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now(), orderLineItems);
 
-        return order;
+        return OrderCreateRequest.of(order);
+    }
+
+    public static OrderChangeRequest createOrderChangeRequest(String orderStatus) {
+        Order order = new Order(null, OrderStatus.valueOf(orderStatus), null);
+
+        return OrderChangeRequest.of(order);
     }
 
     public static OrderLineItem createOrderLineItem(Menu menu, long quantity) {

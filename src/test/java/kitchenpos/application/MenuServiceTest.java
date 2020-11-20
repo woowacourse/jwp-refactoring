@@ -13,6 +13,7 @@ import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import kitchenpos.dto.MenuResponse;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -39,18 +40,21 @@ class MenuServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
     @DisplayName("새로운 메뉴를 생성한다.")
     @Test
     void create() {
         MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
         List<MenuProduct> newMenuProduct =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateReqeust(NEW_MENU_NAME, NEW_MENU_PRICE, menuGroupResponse,
-                newMenuProduct);
+            .createMenuCreateRequest(NEW_MENU_NAME, NEW_MENU_PRICE, menuGroup, newMenuProduct);
 
         MenuResponse menuResponse = menuService.create(menuCreateRequest);
 
@@ -75,14 +79,15 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 null일 경우")
     @Test
     void create_IfMenuPriceNull_ThrowException() {
-        MenuGroupResponse menuGroup = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateReqeust(NEW_MENU_NAME, null, menuGroup, new_menu_product);
+            .createMenuCreateRequest(NEW_MENU_NAME, null, menuGroup, new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -91,14 +96,15 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 0 이하일 경우")
     @Test
     void create_IfMenuPriceIsNotPositive_ThrowException() {
-        MenuGroupResponse menuGroup = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateReqeust(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup,
+            .createMenuCreateRequest(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup,
                 new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
@@ -110,7 +116,6 @@ class MenuServiceTest {
     void create_IfGroupIdNotExist_ThrowException() {
         MenuGroup invalidMenuGroup = new MenuGroup();
         invalidMenuGroup.setId(0L);
-        MenuGroupResponse invalidMenuGroupResponse = MenuGroupResponse.of(invalidMenuGroup);
 
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
@@ -118,7 +123,7 @@ class MenuServiceTest {
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateReqeust(NEW_MENU_NAME, NEW_MENU_PRICE, invalidMenuGroupResponse,
+            .createMenuCreateRequest(NEW_MENU_NAME, NEW_MENU_PRICE, invalidMenuGroup,
                 new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))
@@ -128,14 +133,15 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 모든 메뉴 가격 합을 초과할 경우")
     @Test
     void create_IfInvalidMenuPrice_ThrowException() {
-        MenuGroupResponse menuGroup = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
+        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
                 menuProductRepository.findAllByMenuId(2L).get(0),
                 menuProductRepository.findAllByMenuId(5L).get(0));
 
         MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateReqeust(NEW_MENU_NAME, new BigDecimal(50_000L), menuGroup,
+            .createMenuCreateRequest(NEW_MENU_NAME, new BigDecimal(50_000L), menuGroup,
                 new_menu_product);
 
         assertThatThrownBy(() -> menuService.create(menuCreateRequest))

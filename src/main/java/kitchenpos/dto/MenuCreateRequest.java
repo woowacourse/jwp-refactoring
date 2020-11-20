@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuCreateRequest {
 
@@ -15,12 +16,22 @@ public class MenuCreateRequest {
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
+    private MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductRequest> menuProductRequest) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProductRequest = menuProductRequest;
+    }
+
+    public static MenuCreateRequest of(Menu menu) {
+        String name = menu.getName();
+        BigDecimal price = menu.getPrice();
+        MenuGroup menuGroup = menu.getMenuGroup();
+        List<MenuProduct> menuProducts = menu.getMenuProducts();
+
+        return new MenuCreateRequest(name, price, menuGroup.getId(),
+            MenuProductRequest.toRequestList(menuProducts));
     }
 
     public String getName() {

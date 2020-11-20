@@ -29,7 +29,21 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    public Order(){
+    }
+
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus.name();
+        this.orderedTime = orderedTime;
+    }
+
+    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+        List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus.name();
+        this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {
