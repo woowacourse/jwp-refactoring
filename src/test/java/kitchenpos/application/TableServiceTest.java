@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +46,7 @@ class TableServiceTest {
         OrderTable orderTable = new OrderTable(10, false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order(savedOrderTable, Collections.emptyList());
+        Order order = new Order(savedOrderTable);
         order.updateOrderStatus(OrderStatus.COMPLETION.name());
         orderRepository.save(order);
 

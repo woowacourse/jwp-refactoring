@@ -118,7 +118,6 @@ class OrderServiceTest {
 
         // when
         assertThat(list).hasSize(orderRepository.findAll().size());
-        assertThat(list.get(0).getOrderLineItems()).hasSize(1);
     }
 
     @DisplayName("Order 상태를 변경한다.")
