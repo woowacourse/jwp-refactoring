@@ -36,9 +36,8 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("Menu entity 를 save하면, db에 저장 후 반환하는 entity는 해당 레코드의 id를 가져온다.")
     @Test
     void save() {
-        Menu 닭다리세트 = createMenu("닭다리세트", BigDecimal.valueOf(17000), 2L);
-        Menu save = menuDao.save(닭다리세트);
-        assertThat(save.getId()).isNotNull();
+        Menu 닭다리세트 = menuDao.save(createMenu("닭다리세트", BigDecimal.valueOf(17000), 2L));
+        assertThat(닭다리세트.getId()).isNotNull();
     }
 
     @DisplayName("존재하는 Menu Id로 findById 호출시, db에 존재하는 레코드를 entity로 가져온다.")
@@ -51,8 +50,8 @@ class JdbcTemplateMenuDaoTest {
     @DisplayName("존재하지 않는 Menu Id로 findById 호출시, 비어있는 optional 값을 반환한다.")
     @Test
     void findById_return_empty_if_database_does_not_have_record_with_id() {
-        Optional<Menu> 존재하는메뉴 = menuDao.findById(9999L);
-        assertThat(존재하는메뉴).isEmpty();
+        Optional<Menu> 존재하지않는메뉴 = menuDao.findById(9999L);
+        assertThat(존재하지않는메뉴).isEmpty();
     }
 
     @DisplayName("전체 메뉴 목록 조회시, database가 가지고 있는 모든 menu 테이블의 레코드를 가져온다.")
