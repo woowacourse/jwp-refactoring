@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.application.TableService;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -29,32 +31,34 @@ public class TableRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        OrderTable orderTableRequest = createOrderTableRequest(true, 0);
+        OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(true, 0);
 
         mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(orderTableRequest))
+            .content(objectMapper.writeValueAsString(orderTableCreateRequest))
         )
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.id").exists())
             .andExpect(jsonPath(("$.tableGroupId")).doesNotExist())
-            .andExpect(jsonPath("$.numberOfGuests").value(orderTableRequest.getNumberOfGuests()))
-            .andExpect(jsonPath("$.empty").value(orderTableRequest.isEmpty()));
+            .andExpect(
+                jsonPath("$.numberOfGuests").value(orderTableCreateRequest.getNumberOfGuests()))
+            .andExpect(jsonPath("$.empty").value(orderTableCreateRequest.isEmpty()));
     }
 
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTableResponse> orderTables = OrderTableResponse.listOf(orderTableDao.findAll());
 
         String json = mockMvc.perform(get("/api/tables"))
             .andDo(print())
             .andExpect(status().isOk())
             .andReturn().getResponse().getContentAsString();
 
-        List<OrderTable> response = objectMapper.readValue(json,
-            objectMapper.getTypeFactory().constructCollectionType(List.class, OrderTable.class));
+        List<OrderTableResponse> response = objectMapper.readValue(json,
+            objectMapper.getTypeFactory()
+                .constructCollectionType(List.class, OrderTableResponse.class));
 
         assertThat(response).usingFieldByFieldElementComparator().containsAll(orderTables);
     }
@@ -63,35 +67,36 @@ public class TableRestControllerTest extends AbstractControllerTest {
     @Test
     void changeEmpty() throws Exception {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
-        OrderTable orderTableRequest = createOrderTableRequest(false, 1);
+        OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(false, 1);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/empty", orderTable.getId())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(orderTableRequest))
+            .content(objectMapper.writeValueAsString(orderTableCreateRequest))
         )
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(orderTable.getId()))
             .andExpect(jsonPath(("$.tableGroupId")).value(orderTable.getTableGroupId()))
             .andExpect(jsonPath("$.numberOfGuests").value(orderTable.getNumberOfGuests()))
-            .andExpect(jsonPath("$.empty").value(orderTableRequest.isEmpty()));
+            .andExpect(jsonPath("$.empty").value(orderTableCreateRequest.isEmpty()));
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeOrderStatus() throws Exception {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 2, null));
-        OrderTable orderTableRequest = createOrderTableRequest(true, 1);
+        OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(true, 1);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", orderTable.getId())
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(orderTableRequest))
+            .content(objectMapper.writeValueAsString(orderTableCreateRequest))
         )
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(orderTable.getId()))
             .andExpect(jsonPath(("$.tableGroupId")).value(orderTable.getTableGroupId()))
-            .andExpect(jsonPath("$.numberOfGuests").value(orderTableRequest.getNumberOfGuests()))
+            .andExpect(
+                jsonPath("$.numberOfGuests").value(orderTableCreateRequest.getNumberOfGuests()))
             .andExpect(jsonPath("$.empty").value(orderTable.isEmpty()));
     }
 }

@@ -84,9 +84,9 @@ public class OrderTableDaoTest {
     @Test
     void findAllByTableGroupId() {
         TableGroup tableGroup1 = tableGroupDao
-            .save(createTableGroup(null, LocalDateTime.now(), null));
+            .save(createTableGroup(null, LocalDateTime.now()));
         TableGroup tableGroup2 = tableGroupDao
-            .save(createTableGroup(null, LocalDateTime.now(), null));
+            .save(createTableGroup(null, LocalDateTime.now()));
         List<OrderTable> savedOrderTables = Arrays.asList(
             orderTableDao.save(createOrderTable(null, true, 0, tableGroup1.getId())),
             orderTableDao.save(createOrderTable(null, true, 0, tableGroup1.getId()))
