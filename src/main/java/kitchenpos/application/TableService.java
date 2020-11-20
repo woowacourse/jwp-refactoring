@@ -5,7 +5,6 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableVerifier;
@@ -14,16 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final OrderTableVerifier orderTableVerifier;
 
     public TableService(
-        final OrderDao orderDao,
         final OrderTableDao orderTableDao,
         final OrderTableVerifier orderTableVerifier
     ) {
-        this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.orderTableVerifier = orderTableVerifier;
     }
