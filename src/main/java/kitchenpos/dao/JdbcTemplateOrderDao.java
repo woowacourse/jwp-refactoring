@@ -1,7 +1,15 @@
 package kitchenpos.dao;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.sql.DataSource;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -10,14 +18,8 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 @Repository
 public class JdbcTemplateOrderDao implements OrderDao {
@@ -56,6 +58,14 @@ public class JdbcTemplateOrderDao implements OrderDao {
     }
 
     @Override
+    public List<Order> findByTableIds(List<Long> tableIds) {
+        final String sql = "SELECT * FROM orders WHERE table_id IN (:tableId)";
+        final SqlParameterSource parameters = new MapSqlParameterSource("tableId", tableIds);
+
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
     public List<Order> findAll() {
         final String sql = "SELECT id, table_id, order_status, ordered_time FROM orders";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
@@ -72,21 +82,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
 
         final SqlParameterSource parameters = new MapSqlParameterSource()
                 .addValue("tableId", tableId)
-                .addValue("orderStatuses", orderStatusesInString);
-        return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
-    }
-
-    @Override
-    public boolean existsByTableIdInAndOrderStatusIn(final List<Long> tableIds, final List<OrderStatus> orderStatuses) {
-        final String sql = "SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END" +
-                " FROM orders WHERE table_id IN (:tableIds) AND order_status IN (:orderStatuses)";
-
-        List<String> orderStatusesInString = orderStatuses.stream()
-            .map(OrderStatus::name)
-            .collect(Collectors.toList());
-
-        final SqlParameterSource parameters = new MapSqlParameterSource()
-                .addValue("tableIds", tableIds)
                 .addValue("orderStatuses", orderStatusesInString);
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
@@ -109,7 +104,6 @@ public class JdbcTemplateOrderDao implements OrderDao {
     private Order toEntity(final ResultSet resultSet) throws SQLException {
         Long id = resultSet.getLong(KEY_COLUMN_NAME);
         Long tableId = resultSet.getLong("table_id");
-        System.out.println("asdf: " + resultSet.getString("order_status"));
         OrderStatus orderStatus = OrderStatus.valueOf(resultSet.getString("order_status"));
         LocalDateTime orderedTime = resultSet.getObject("ordered_time", LocalDateTime.class);
 

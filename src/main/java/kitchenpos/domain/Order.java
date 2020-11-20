@@ -1,8 +1,8 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.OrderStatusCannotChangeException;
-
 import java.time.LocalDateTime;
+
+import kitchenpos.exception.OrderStatusCannotChangeException;
 
 public class Order {
     private Long id;
@@ -31,6 +31,10 @@ public class Order {
             throw new OrderStatusCannotChangeException();
         }
         this.orderStatus = orderStatus;
+    }
+
+    public boolean hasInProgressStatus() {
+        return !orderStatus.isCompletion();
     }
 
     public Long getId() {

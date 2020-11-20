@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,12 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.exception.NotEnoughTableException;
 import kitchenpos.exception.NullRequestException;
+import kitchenpos.exception.TableGroupCannotChangeException;
 import kitchenpos.exception.TableGroupExistenceException;
 import kitchenpos.exception.TableNotEmptyException;
 import kitchenpos.exception.TableNotExistenceException;
@@ -91,20 +91,26 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = tableDao.findAllByTableGroupId(tableGroupId);
+        List<Table> tables = tableDao.findAllByTableGroupId(tableGroupId);
 
-        final List<Long> tableIds = tables.stream()
-                .map(Table::getId)
-                .collect(Collectors.toList());
-
-        if (orderDao.existsByTableIdInAndOrderStatusIn(
-                tableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
+        validateOrderStatus(tables);
         for (final Table table : tables) {
             table.ungroup();
             tableDao.save(table);
+        }
+    }
+
+    private void validateOrderStatus(List<Table> tables) {
+        List<Long> tableIds = tables.stream()
+            .map(Table::getId)
+            .collect(Collectors.toList());
+
+        List<Order> foundOrders = orderDao.findByTableIds(tableIds);
+
+        for (Order foundOrder : foundOrders) {
+            if (foundOrder.hasInProgressStatus()) {
+                throw new TableGroupCannotChangeException();
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -16,9 +17,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.exception.NotEnoughTableException;
+import kitchenpos.exception.TableGroupCannotChangeException;
 import kitchenpos.exception.TableNotExistenceException;
 import kitchenpos.fixture.TestFixture;
 
@@ -82,9 +86,10 @@ class TableGroupServiceTest extends TestFixture {
     @Test
     void ungroupFailByNotCompleted() {
         given(tableDao.findAllByTableGroupId(anyLong())).willReturn(TABLES);
-        given(orderDao.existsByTableIdInAndOrderStatusIn(any(), any())).willReturn(true);
+        given(orderDao.findByTableIds(any())).willReturn(Arrays.asList(ORDER_1));
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(anyLong())).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(anyLong()))
+            .isInstanceOf(TableGroupCannotChangeException.class);
     }
 
     @DisplayName("테이블 그룹 해제 성공 테스트")
@@ -94,7 +99,8 @@ class TableGroupServiceTest extends TestFixture {
         Table table2 = new Table(TABLE_ID_2, TABLE_GROUP_ID, 0, TABLE_EMPTY_2);
 
         given(tableDao.findAllByTableGroupId(anyLong())).willReturn(Arrays.asList(table1, table2));
-        given(orderDao.existsByTableIdInAndOrderStatusIn(any(), any())).willReturn(false);
+        given(orderDao.findByTableIds(any()))
+            .willReturn(Arrays.asList(new Order(ORDER_ID_1, TABLE_ID_1, OrderStatus.COMPLETION, LocalDateTime.now())));
 
         tableGroupService.ungroup(TABLE_GROUP_ID);
         assertAll(
