@@ -16,7 +16,6 @@ import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.repository.OrderTableRepository;
 
 @Service
-@Validated
 @Transactional
 public class TableService {
     private final OrderTableRepository orderTableRepository;

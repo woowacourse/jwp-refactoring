@@ -17,6 +17,7 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.ProductCreateRequest;
 import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.exception.InvalidProductPriceException;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.ProductRepository;
 
@@ -51,7 +52,7 @@ class ProductServiceTest {
         ProductCreateRequest request = ProductFixture.createRequestPriceOf(null);
 
         assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("가격이 음수인 Product 생성 요청시 예외를 반환한다.")
@@ -60,7 +61,7 @@ class ProductServiceTest {
         ProductCreateRequest request = ProductFixture.createRequestPriceOf(-100L);
 
         assertThatThrownBy(() -> productService.create(request))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("정상적으로 저장된 Product를 불러온다.")

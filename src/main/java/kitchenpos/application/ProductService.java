@@ -14,7 +14,6 @@ import kitchenpos.dto.response.ProductResponse;
 import kitchenpos.repository.ProductRepository;
 
 @Service
-@Validated
 public class ProductService {
     private final ProductRepository productRepository;
 
@@ -23,7 +22,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(@Valid final ProductCreateRequest request) {
+    public ProductResponse create(final ProductCreateRequest request) {
         return ProductResponse.of(productRepository.save(request.toEntity()));
     }
 
