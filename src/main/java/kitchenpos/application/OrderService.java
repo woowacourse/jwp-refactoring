@@ -6,15 +6,11 @@ import kitchenpos.dao.OrderMenuDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderMenu;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
-import kitchenpos.exception.MenuNotExistException;
-import kitchenpos.exception.NullRequestException;
-import kitchenpos.exception.TableEmptyException;
-import kitchenpos.exception.TableNotExistenceException;
+import kitchenpos.exception.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -108,16 +104,11 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusChangeRequest orderStatusChangeRequest) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+                .orElseThrow(OrderNotExistException::new);
 
         savedOrder.changeOrderStatus(orderStatusChangeRequest.getOrderStatus());
 
         orderDao.save(savedOrder);
-
         return savedOrder;
     }
 }

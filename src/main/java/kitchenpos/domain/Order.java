@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.OrderStatusCannotChangeException;
+
 import java.time.LocalDateTime;
 
 public class Order {
@@ -24,7 +26,10 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public void changeOrderStatus(final OrderStatus orderStatus) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new OrderStatusCannotChangeException();
+        }
         this.orderStatus = orderStatus;
     }
 
