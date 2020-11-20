@@ -3,7 +3,7 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import kitchenpos.domain.exception.InvalidPriceException;
+import kitchenpos.exception.InvalidPriceException;
 
 public class Product {
     private Long id;

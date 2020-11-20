@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.exception.InvalidRequestException;
+import kitchenpos.exception.NullRequestException;
 
 @Service
 public class ProductService {
@@ -34,7 +34,7 @@ public class ProductService {
         Long price = productCreateRequest.getPrice();
 
         if (Objects.isNull(price) || Objects.isNull(name)) {
-            throw new InvalidRequestException("Product 요청 값이 비어있습니다");
+            throw new NullRequestException();
         }
     }
 
