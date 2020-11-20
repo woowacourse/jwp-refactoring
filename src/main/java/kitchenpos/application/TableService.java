@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.verifier.DefaultOrderVerifier;

@@ -15,6 +15,7 @@ import kitchenpos.exception.AlreadyCompleteOrderException;
 @Entity
 @Table(name = "Orders")
 public class Order extends BaseEntity {
+    public static final OrderStatus INITIAL_STATUS = OrderStatus.COOKING;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,6 +40,10 @@ public class Order extends BaseEntity {
     }
 
     public static Order of(Long orderTableId, OrderStatus orderStatus) {
+        if (orderStatus != INITIAL_STATUS) {
+            throw new IllegalArgumentException();
+        }
+
         return new Order(null, orderTableId, orderStatus);
     }
 

@@ -6,4 +6,6 @@ import kitchenpos.domain.OrderTable;
 
 public interface OrderTableVerifier {
     List<OrderTable> verifyOrderTables(List<Long> orderTableIds);
+
+    void verifyOrderTableByEmpty(Long orderTableId);
 }

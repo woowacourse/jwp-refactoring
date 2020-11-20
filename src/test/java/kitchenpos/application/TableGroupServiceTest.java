@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import javax.validation.ConstraintViolationException;
-
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

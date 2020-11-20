@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.exception.AlreadyEmptyTableException;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.exception.TableGroupSizeException;
 import kitchenpos.repository.OrderTableRepository;
 
 @Component
-public class DefaultOrderTableVerifier implements OrderTableVerifier{
+public class DefaultOrderTableVerifier implements OrderTableVerifier {
     private final OrderTableRepository orderTableRepository;
 
     public DefaultOrderTableVerifier(OrderTableRepository orderTableRepository) {
@@ -30,5 +31,15 @@ public class DefaultOrderTableVerifier implements OrderTableVerifier{
         }
 
         return orderTables;
+    }
+
+    @Override
+    public void verifyOrderTableByEmpty(Long orderTableId) {
+        OrderTable orderTable = orderTableRepository.findById(orderTableId)
+            .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
+
+        if (orderTable.isEmpty()) {
+            throw new AlreadyEmptyTableException(orderTableId);
+        }
     }
 }

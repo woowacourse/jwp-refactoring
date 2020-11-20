@@ -24,7 +24,8 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroup> create(@Valid @RequestBody final TableGroupCreateRequest request) {
+    public ResponseEntity<TableGroup> create(
+        @Valid @RequestBody final TableGroupCreateRequest request) {
         final TableGroup created = tableGroupService.create(request);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)

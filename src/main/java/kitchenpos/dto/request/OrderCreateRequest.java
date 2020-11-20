@@ -2,18 +2,21 @@ package kitchenpos.dto.request;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.validator.OrderLineItemCountValidate;
-import kitchenpos.validator.OrderTableEmptyValidate;
 
 public class OrderCreateRequest {
-    @OrderTableEmptyValidate
+
+    @NotNull
     private final Long orderTableId;
 
-    @OrderLineItemCountValidate
-    private final List<OrderLineItemCreateRequest> orderLineItems;
+    @NotNull
+    @NotEmpty
+    private final List<@Valid OrderLineItemCreateRequest> orderLineItems;
 
     @JsonCreator
     public OrderCreateRequest(Long orderTableId, List<OrderLineItemCreateRequest> orderLineItems) {
@@ -22,7 +25,7 @@ public class OrderCreateRequest {
     }
 
     public Order toEntity() {
-        return Order.of(orderTableId, OrderStatus.COOKING);
+        return Order.of(orderTableId, Order.INITIAL_STATUS);
     }
 
     public Long getOrderTableId() {

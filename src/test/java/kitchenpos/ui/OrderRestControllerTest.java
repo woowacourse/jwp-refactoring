@@ -23,7 +23,6 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
-import kitchenpos.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
@@ -67,7 +66,8 @@ class OrderRestControllerTest {
             OrderResponse.of(order));
         when(orderTableRepository.findById(anyLong()))
             .thenReturn(Optional.of(OrderTableFixture.createNotEmptyWithId(1L)));
-        when(menuRepository.countByIdIn(anyList())).thenReturn(Long.valueOf(request.getOrderLineItems().size()));
+        when(menuRepository.countByIdIn(anyList())).thenReturn(
+            Long.valueOf(request.getOrderLineItems().size()));
 
         mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)

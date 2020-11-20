@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Arrays;
 
-import javax.validation.ConstraintViolationException;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,10 @@ import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
 import kitchenpos.dto.response.OrderResponse;
 import kitchenpos.exception.AlreadyCompleteOrderException;
+import kitchenpos.exception.AlreadyEmptyTableException;
+import kitchenpos.exception.EmptyMenuOrderException;
+import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderLineItemFixture;
@@ -67,9 +69,10 @@ class OrderServiceTest {
     @Test
     void createWithoutOrderItem() {
         OrderCreateRequest createEmptyItemRequest = OrderFixture.createRequest(1L);
+        orderTableRepository.save(OrderTableFixture.createNotEmptyWithId(1L));
 
         assertThatThrownBy(() -> orderService.create(createEmptyItemRequest))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(EmptyMenuOrderException.class);
     }
 
     @DisplayName("Menu가 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -77,9 +80,10 @@ class OrderServiceTest {
     void createWithNotExistMenu() {
         OrderCreateRequest requestWithNotExistMenu = OrderFixture.createRequest(1L,
             OrderLineItemFixture.createRequest(1L, 1));
+        orderTableRepository.save(OrderTableFixture.createNotEmptyWithId(1L));
 
         assertThatThrownBy(() -> orderService.create(requestWithNotExistMenu))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(MenuNotFoundException.class);
     }
 
     @DisplayName("Table이 존재하지 않으면 Order 생성 요청 시 예외를 반환한다.")
@@ -91,7 +95,7 @@ class OrderServiceTest {
         menuRepository.save(MenuFixture.createWithoutId(1L, 15000L));
 
         assertThatThrownBy(() -> orderService.create(requestWithNotExistTable))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("Order Table이 비어있으면 Order 생성 요청 시 예외를 반환한다.")
@@ -105,7 +109,7 @@ class OrderServiceTest {
         orderTableRepository.save(emptyTable);
 
         assertThatThrownBy(() -> orderService.create(requestWithEmptyTable))
-            .isInstanceOf(ConstraintViolationException.class);
+            .isInstanceOf(AlreadyEmptyTableException.class);
     }
 
     @DisplayName("정상적으로 저장된 Order를 모두 조회한다.")

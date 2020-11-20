@@ -1,7 +1,6 @@
 package kitchenpos.exception;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class InvalidProductPriceException extends BusinessException {
     public InvalidProductPriceException() {
