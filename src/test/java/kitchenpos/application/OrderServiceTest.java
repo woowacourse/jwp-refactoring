@@ -10,10 +10,7 @@ import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
-import kitchenpos.exception.MenuNotExistException;
-import kitchenpos.exception.NullRequestException;
-import kitchenpos.exception.TableEmptyException;
-import kitchenpos.exception.TableNotExistenceException;
+import kitchenpos.exception.*;
 import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -131,7 +128,7 @@ class OrderServiceTest extends TestFixture {
         given(orderDao.findById(anyLong())).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, orderStatusChangeRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderNotExistException.class);
     }
 
     @DisplayName("주문 상태 변경 예외 테스트: 이미 완료 상태인 주문")
@@ -143,7 +140,7 @@ class OrderServiceTest extends TestFixture {
         given(orderDao.findById(anyLong())).willReturn(Optional.of(completedOrder));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, orderStatusChangeRequest))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(OrderStatusCannotChangeException.class);
     }
 
     @DisplayName("주문 상태 변경 성공 테스트")
