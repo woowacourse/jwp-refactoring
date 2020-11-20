@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
@@ -21,9 +20,6 @@ import org.springframework.http.MediaType;
 public class MenuGroupRestControllerTest extends AbstractControllerTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test

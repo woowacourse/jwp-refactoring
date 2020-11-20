@@ -11,7 +11,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.application.TableService;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderTableDao;
@@ -22,9 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 public class TableRestControllerTest extends AbstractControllerTest {
-    @Autowired
-    private TableService tableService;
-
     @Autowired
     private OrderTableDao orderTableDao;
 

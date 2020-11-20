@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.OrderService;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.dao.MenuDao;
@@ -37,9 +36,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 public class OrderRestControllerTest extends AbstractControllerTest {
-    @Autowired
-    private OrderService orderService;
-
     @Autowired
     private OrderTableDao orderTableDao;
 
