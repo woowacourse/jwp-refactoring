@@ -15,6 +15,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
@@ -40,23 +41,11 @@ public abstract class ServiceTest {
     }
 
     public OrderLineItem createOrderLineItem(Long orderId, Long menuId, Long seq, Long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setSeq(seq);
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 
     public OrderTable createOrderTable(Long id, boolean empty, Long tableGroupId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable(id, tableGroupId, numberOfGuests, empty);
-        orderTable.setId(id);
-        orderTable.setEmpty(empty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public Product createProduct(Long id, String name, Money price) {
@@ -64,11 +53,6 @@ public abstract class ServiceTest {
     }
 
     public TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-
-        return tableGroup;
+        return new TableGroup(id, createdDate, new OrderTables(orderTables));
     }
 }

@@ -19,9 +19,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 
 @WebMvcTest(TableGroupRestController.class)
@@ -47,10 +47,8 @@ class TableGroupRestControllerTest {
 
 		OrderTable orderTable = new OrderTable(1L, 1L, 2, true);
 
-		tableGroup = new TableGroup();
-		tableGroup.setId(1L);
-		tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 28, 16, 40));
-		tableGroup.setOrderTables(Collections.singletonList(orderTable));
+		tableGroup = new TableGroup(1L, LocalDateTime.of(2020, 10, 28, 16, 40),
+			new OrderTables(Collections.singletonList(orderTable)));
 	}
 
 	@Test

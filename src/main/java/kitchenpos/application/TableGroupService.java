@@ -1,20 +1,18 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 
 @Service
@@ -32,60 +30,70 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+        OrderTables orderTables = tableGroup.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        validOrderTablesIsNotEmptyAndSizeIsTwoOrMore(orderTables);
+
+        List<Long> orderTableIds = orderTables.extractOrderTableIds();
+
+        OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
+
+        validOrderTablesAreExist(orderTables, savedOrderTables);
+        validOrderTableIsEmptyAndTableGroupIdIsNull(savedOrderTables.getOrderTables());
+
+        tableGroup.setCreatedDateNow();
+
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+
+        associateOrderTablesAndTableGroup(savedOrderTables, savedTableGroup);
+
+        return savedTableGroup;
+    }
+
+    private void validOrderTablesIsNotEmptyAndSizeIsTwoOrMore(OrderTables orderTables) {
+        if (orderTables.getOrderTables() == null || orderTables.size() < 2) {
             throw new IllegalArgumentException();
         }
+    }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
+    private void validOrderTablesAreExist(OrderTables orderTables, OrderTables savedOrderTables) {
         if (orderTables.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
+    }
 
+    private void validOrderTableIsEmptyAndTableGroupIdIsNull(List<OrderTable> savedOrderTables) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
+    }
 
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
+    private void associateOrderTablesAndTableGroup(OrderTables savedOrderTables, TableGroup savedTableGroup) {
+        savedOrderTables.setTableGroupId(savedTableGroup.getId());
+        savedOrderTables.setEmpty(false);
+        orderTableRepository.saveAll(savedOrderTables.getOrderTables());
         savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = orderTables.extractOrderTableIds();
 
+        validOrderStatusIsNotCookingOrMeal(orderTableIds);
+
+        orderTables.setTableGroupId(null);
+        orderTables.setEmpty(false);
+        orderTableRepository.saveAll(orderTables.getOrderTables());
+    }
+
+    private void validOrderStatusIsNotCookingOrMeal(List<Long> orderTableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroupId(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
         }
     }
 }

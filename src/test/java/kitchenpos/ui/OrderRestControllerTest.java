@@ -50,11 +50,7 @@ class OrderRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		orderLineItem = new OrderLineItem();
-		orderLineItem.setMenuId(1L);
-		orderLineItem.setOrderId(1L);
-		orderLineItem.setQuantity(1L);
-		orderLineItem.setSeq(1L);
+		orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 
 		OrderLineItems orderLineItems = new OrderLineItems(Collections.singletonList(orderLineItem));
 

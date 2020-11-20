@@ -68,11 +68,11 @@
 
 ### 요구사항
 -[x] JPA를 적용
--[ ] Service 리팩토링
+-[x] Service 리팩토링
     -[x] MenuService
     -[x] OrderService
     -[x] ProductService
-    -[ ] TableGroupService
+    -[x] TableGroupService
     -[x] TableService
 -[ ] DTO 클래스 생성
 

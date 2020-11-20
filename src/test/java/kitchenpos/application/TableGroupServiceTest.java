@@ -96,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getCreatedDate()).isNotNull(),
-			() -> assertThat(actual.getOrderTables()).hasSize(2)
+			() -> assertThat(actual.getOrderTables().getOrderTables()).hasSize(2)
 		);
 	}
 
