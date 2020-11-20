@@ -14,8 +14,8 @@ public abstract class TestFixture {
     public static final long MENU_GROUP_ID_2 = 2L;
     public static final String MENU_GROUP_NAME_1 = "메뉴그룹이름1";
     public static final String MENU_GROUP_NAME_2 = "메뉴그룹이름2";
-    public static final MenuGroup MENU_GROUP_1 = new MenuGroup();
-    public static final MenuGroup MENU_GROUP_2 = new MenuGroup();
+    public static final MenuGroup MENU_GROUP_1 = new MenuGroup(MENU_GROUP_ID_1, MENU_GROUP_NAME_1);
+    public static final MenuGroup MENU_GROUP_2 = new MenuGroup(MENU_GROUP_ID_2, MENU_GROUP_NAME_2);
 
     public static final long MENU_PRODUCT_SEQ_1 = 1L;
     public static final long MENU_PRODUCT_SEQ_2 = 2L;
@@ -32,8 +32,6 @@ public abstract class TestFixture {
     public static final String MENU_NAME_2 = "메뉴이름2";
     public static final BigDecimal MENU_PRICE_1 = BigDecimal.valueOf(1L, 2);
     public static final BigDecimal MENU_PRICE_2 = BigDecimal.valueOf(2L, 2);
-    public static final List<MenuProduct> MENU_PRODUCTS_1 = Arrays.asList(MENU_PRODUCT_1);
-    public static final List<MenuProduct> MENU_PRODUCTS_2 = Arrays.asList(MENU_PRODUCT_2);
     public static final Menu MENU_1 = new Menu(MENU_ID_1, MENU_NAME_1, MENU_PRICE_1, MENU_GROUP_ID_1);
     public static final Menu MENU_2 = new Menu(MENU_ID_2, MENU_NAME_2, MENU_PRICE_2, MENU_GROUP_ID_2);
 
@@ -78,11 +76,6 @@ public abstract class TestFixture {
 
     @BeforeEach
     void setUpFixture() {
-        MENU_GROUP_1.setId(MENU_GROUP_ID_1);
-        MENU_GROUP_1.setName(MENU_GROUP_NAME_1);
-        MENU_GROUP_2.setId(MENU_GROUP_ID_2);
-        MENU_GROUP_2.setName(MENU_GROUP_NAME_2);
-
         ORDER_MENU_1.setSeq(ORDER_MENU_SEQ_1);
         ORDER_MENU_1.setOrderId(ORDER_ID_1);
         ORDER_MENU_1.setMenuId(MENU_ID_1);
