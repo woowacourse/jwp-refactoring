@@ -31,7 +31,7 @@ public abstract class ControllerTest {
     void setUp(WebApplicationContext webApplicationContext) {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
                 .alwaysDo(print())
-                .addFilters(new CharacterEncodingFilter(UTF_8))
+                .addFilters(new CharacterEncodingFilter(UTF_8, true))
                 .build();
     }
 
