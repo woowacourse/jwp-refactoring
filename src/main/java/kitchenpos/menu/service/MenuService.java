@@ -1,8 +1,8 @@
 package kitchenpos.menu.service;
 
-import java.math.BigDecimal;
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,11 +12,10 @@ import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.dto.MenuCreateRequest;
-import kitchenpos.menu.dto.MenuRequestDto;
 import kitchenpos.menu.dto.MenuResponses;
-import kitchenpos.menu.exception.MenuPriceExceededException;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 
@@ -42,28 +41,19 @@ public class MenuService {
 
     @Transactional
     public Long create(final MenuCreateRequest request) {
-        List<MenuRequestDto> menuRequestDtos = request.getMenuProductRequest().stream()
-            .map(req -> new MenuRequestDto(findProduct(req.getProductId()), req.getQuantity()))
-            .collect(Collectors.toList());
-
-        BigDecimal sum = menuRequestDtos.stream()
-            .map(requestDto -> requestDto.getProduct().multiply(requestDto.getQuantity()))
-            .reduce(BigDecimal.valueOf(0), BigDecimal::add);
-
-        BigDecimal price = BigDecimal.valueOf(request.getPrice());
-        if (price.compareTo(sum) > 0) {
-            throw new MenuPriceExceededException();
-        }
-
         MenuGroup menuGroup = findMenuGroup(request.getMenuGroupId());
         Menu menu = request.toEntity(menuGroup);
 
         final Menu savedMenu = menuRepository.save(menu);
 
-        List<MenuProduct> savedMenuProducts = menuRequestDtos.stream()
-            .map(x -> new MenuProduct(null, menu, x.getProduct(), x.getQuantity()))
+        MenuProducts menuProducts = request.getMenuProductRequest()
+            .stream()
+            .map(req -> new MenuProduct(null, menu, findProduct(req.getProductId()), req.getQuantity()))
+            .collect(collectingAndThen(toList(), list -> new MenuProducts(list, request.getPrice())));
+
+        List<MenuProduct> savedMenuProducts = menuProducts.stream()
             .map(menuProductRepository::save)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         savedMenu.changeMenuProducts(savedMenuProducts);
 
