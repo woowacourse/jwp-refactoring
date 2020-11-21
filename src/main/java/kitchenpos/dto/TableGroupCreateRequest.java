@@ -10,6 +10,9 @@ public class TableGroupCreateRequest {
 
     private List<Long> orderTableIds;
 
+    public TableGroupCreateRequest() {
+    }
+
     private TableGroupCreateRequest(List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }

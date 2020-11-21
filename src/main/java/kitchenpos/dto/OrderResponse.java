@@ -13,6 +13,9 @@ public class OrderResponse {
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItemResponses;
 
+    public OrderResponse() {
+    }
+
     private OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
         List<OrderLineItemResponse> orderLineItemResponses) {
         this.id = id;

@@ -13,6 +13,9 @@ public class MenuCreateRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProductRequest;
 
+    public MenuCreateRequest() {
+    }
+
     private MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductRequest> menuProductRequest) {
         this.name = name;

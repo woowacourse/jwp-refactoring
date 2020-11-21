@@ -2,6 +2,7 @@ package kitchenpos.utils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -16,6 +17,9 @@ import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderTableChangeRequest;
+import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.TableGroupCreateRequest;
 
@@ -34,14 +38,6 @@ public class TestObjectFactory {
         return MenuCreateRequest.of(menu);
     }
 
-    public static MenuProduct createMenuProduct(Product product, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(product);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
-    }
-
     public static ProductCreateRequest createProductCreateRequest(String name, BigDecimal price) {
         Product product = new Product(name, price);
 
@@ -50,7 +46,8 @@ public class TestObjectFactory {
 
     public static OrderCreateRequest createOrderCreateRequest(OrderTable orderTable,
         String orderStatus, List<OrderLineItem> orderLineItems) {
-        Order order = new Order(orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now(), orderLineItems);
+        Order order = new Order(orderTable, OrderStatus.valueOf(orderStatus),
+            LocalDateTime.now(), orderLineItems);
 
         return OrderCreateRequest.of(order);
     }
@@ -62,25 +59,37 @@ public class TestObjectFactory {
     }
 
     public static OrderLineItem createOrderLineItem(Menu menu, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(menu);
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+        return new OrderLineItem(null, null, menu, quantity);
     }
 
     public static TableGroupCreateRequest createTableGroupCreateRequest(
-        List<OrderTable> orderTables) {
+        List<OrderTableResponse> orderTableResponses) {
+        List<OrderTable> orderTables = new ArrayList<>();
+
+        for (OrderTableResponse orderTableResponse : orderTableResponses) {
+            Long id = orderTableResponse.getId();
+            int numberOfGuests = orderTableResponse.getNumberOfGuests();
+            boolean empty = orderTableResponse.isEmpty();
+
+            orderTables.add(new OrderTable(id, null, numberOfGuests, empty));
+        }
+
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
 
         return TableGroupCreateRequest.of(tableGroup);
     }
 
-    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+    public static OrderTableCreateRequest createOrderTableCreateRequest(int numberOfGuests,
+        boolean empty) {
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
 
-        return orderTable;
+        return OrderTableCreateRequest.of(orderTable);
+    }
+
+    public static OrderTableChangeRequest createOrderTableChangeRequest(int numberOfGuests,
+        boolean empty) {
+        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
+
+        return OrderTableChangeRequest.of(orderTable);
     }
 }

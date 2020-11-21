@@ -10,6 +10,9 @@ public class OrderCreateRequest {
     private Long orderTableId;
     private List<OrderLineItemRequest> orderLineItemRequests;
 
+    public OrderCreateRequest() {
+    }
+
     private OrderCreateRequest(Long orderTableId,
         List<OrderLineItemRequest> orderLineItemRequests) {
         this.orderTableId = orderTableId;

@@ -3,7 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.domain.OrderStatus.COMPLETION;
 import static kitchenpos.domain.OrderStatus.COOKING;
 import static kitchenpos.domain.OrderStatus.MEAL;
-import static kitchenpos.utils.TestObjectFactory.createOrderTable;
+import static kitchenpos.utils.TestObjectFactory.createOrderTableCreateRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -13,10 +13,13 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,17 +40,22 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
     @DisplayName("주문을 생성한다.")
     @Test
     void create() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(2, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(2, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
         OrderResponse savedOrder = orderService.create(orderCreateRequest);
 
         assertAll(() -> {
@@ -67,11 +75,13 @@ class OrderServiceTest {
         Menu menu = menuRepository.getOne(0L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -80,13 +90,15 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다. - 메뉴 리스트가 비어있을 경우")
     @Test
     void create_IfEmptyMenuList_ThrowException() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         List<OrderLineItem> orderLineItems
             = Collections.emptyList();
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -111,14 +123,16 @@ class OrderServiceTest {
     @DisplayName("주문을 생성한다. - 주문 테이블이 비어있을 경우")
     @Test
     void create_IfTableEmpty_ThrowException() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, true));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, true));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(orderCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
@@ -127,14 +141,16 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 조회한다.")
     @Test
     void list() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
         orderService.create(orderCreateRequest);
 
         List<OrderResponse> orderResponses = orderService.list();
@@ -148,14 +164,16 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다.")
     @Test
     void changeOrderStatus() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest oldOrder
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
         OrderChangeRequest newOrder
             = TestObjectFactory.createOrderChangeRequest(MEAL.name());
 
@@ -170,14 +188,16 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다. - 존재하지 않는 주문일 경우")
     @Test
     void changeOrderStatus_NotExistOrder_ThrowException() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest oldOrder
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
         OrderChangeRequest newOrder
             = TestObjectFactory.createOrderChangeRequest(MEAL.name());
 
@@ -190,14 +210,16 @@ class OrderServiceTest {
     @DisplayName("주문 상태를 변경한다. - 계산 완료인 경우")
     @Test
     void changeOrderStatus_AlreadyPayed_ThrowException() {
-        OrderTable orderedTable
-            = tableService.create(createOrderTable(1, false));
+        OrderTableResponse orderTableResponse
+            = tableService.create(createOrderTableCreateRequest(1, false));
+        TableGroup tableGroup = tableGroupRepository.getOne(orderTableResponse.getId());
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
         OrderCreateRequest oldOrder
             = TestObjectFactory
-            .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems);
         OrderChangeRequest newOrder
             = TestObjectFactory.createOrderChangeRequest(COMPLETION.name());
 
