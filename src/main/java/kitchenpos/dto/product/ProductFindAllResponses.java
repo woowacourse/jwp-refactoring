@@ -8,7 +8,7 @@ import kitchenpos.domain.Product;
 public class ProductFindAllResponses {
 	private List<ProductFindAllResponse> productFindAllResponses;
 
-	public ProductFindAllResponses() {
+	protected ProductFindAllResponses() {
 	}
 
 	public ProductFindAllResponses(List<ProductFindAllResponse> productFindAllResponses) {
