@@ -33,13 +33,28 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
         final List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
+        validateOrderTableIds(orderTableIds);
 
+        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateSavedOrderTable(orderTableIds, savedOrderTables);
+
+        final TableGroup savedTableGroup
+            = saveTableGroup(tableGroupCreateRequest, savedOrderTables);
+
+        saveNewOrderTable(savedOrderTables, savedTableGroup);
+
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
+    }
+
+    private void validateOrderTableIds(List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+    }
 
+    private void validateSavedOrderTable(List<Long> orderTableIds,
+        List<OrderTable> savedOrderTables) {
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
@@ -49,33 +64,44 @@ public class TableGroupService {
                 throw new IllegalArgumentException();
             }
         }
+    }
 
+    private TableGroup saveTableGroup(
+        TableGroupCreateRequest tableGroupCreateRequest,
+        List<OrderTable> savedOrderTables) {
         TableGroup tableGroup
             = tableGroupCreateRequest.toEntity(LocalDateTime.now(), savedOrderTables);
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        return tableGroupRepository.save(tableGroup);
+    }
 
+    private void saveNewOrderTable(List<OrderTable> savedOrderTables,
+        TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(), savedTableGroup,
+            OrderTable newOrderTable = new OrderTable(savedOrderTable.getId(), savedTableGroup,
                 savedOrderTable.getNumberOfGuests(), false);
-            orderTableRepository.save(changedOrderTable);
-        }
 
-        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
+            orderTableRepository.save(newOrderTable);
+        }
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final List<OrderTable> orderTables = orderTableRepository
+            .findAllByTableGroupId(tableGroupId);
 
         final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
+        saveChangedOrderTable(orderTables);
+    }
+
+    private void saveChangedOrderTable(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
             OrderTable changedOrderTable = new OrderTable(orderTable.getId(), null,
                 orderTable.getNumberOfGuests(), false);

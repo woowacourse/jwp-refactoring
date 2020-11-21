@@ -115,7 +115,6 @@ class MenuServiceTest {
     @Test
     void create_IfGroupIdNotExist_ThrowException() {
         MenuGroup invalidMenuGroup = new MenuGroup(0L,null);
-//        invalidMenuGroup.setId(0L);
 
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),

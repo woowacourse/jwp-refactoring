@@ -21,16 +21,20 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductCreateRequest productCreateRequest) {
-        final BigDecimal price = productCreateRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        validatePrice(productCreateRequest);
 
         Product savedProduct
             = productRepository.save(productCreateRequest.toEntity(productCreateRequest));
 
         return ProductResponse.of(savedProduct);
+    }
+
+    private void validatePrice(ProductCreateRequest productCreateRequest) {
+        final BigDecimal price = productCreateRequest.getPrice();
+
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<ProductResponse> list() {
