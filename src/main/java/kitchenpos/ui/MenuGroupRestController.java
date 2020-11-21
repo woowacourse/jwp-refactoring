@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.ui.dto.MenuGroupRequest;
-import kitchenpos.ui.dto.MenuGroupResponse;
-import kitchenpos.ui.dto.MenuGroupResponses;
+import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponses;
 
 @RestController
 public class MenuGroupRestController {
@@ -23,7 +23,7 @@ public class MenuGroupRestController {
 
     @PostMapping("/api/menu-groups")
     public ResponseEntity<MenuGroupResponse> create(@RequestBody final MenuGroupRequest request) {
-        final MenuGroupResponse created = menuGroupService.create(request.toEntity());
+        final MenuGroupResponse created = menuGroupService.create(request);
         final URI uri = URI.create("/api/menu-groups/" + created.getId());
         return ResponseEntity.created(uri)
             .body(created);

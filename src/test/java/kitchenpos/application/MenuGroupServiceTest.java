@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.config.TruncateDatabaseConfig;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
+import kitchenpos.ui.dto.menugroup.MenuGroupResponses;
 
 class MenuGroupServiceTest extends TruncateDatabaseConfig {
 
@@ -20,10 +23,9 @@ class MenuGroupServiceTest extends TruncateDatabaseConfig {
     @DisplayName("MenuGroup 생성")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("신메뉴");
+        MenuGroupRequest request = new MenuGroupRequest("신메뉴");
 
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(request);
 
         assertAll(
             () -> assertThat(savedMenuGroup.getId()).isNotNull(),
@@ -34,16 +36,16 @@ class MenuGroupServiceTest extends TruncateDatabaseConfig {
     @DisplayName("MenuGroup 리스트 조회")
     @Test
     void list() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("신메뉴");
-        menuGroupService.create(menuGroup);
+        MenuGroupRequest request = new MenuGroupRequest("신메뉴");
+        menuGroupService.create(request);
 
-        List<MenuGroup> menuGroupList = menuGroupService.list();
+        MenuGroupResponses menuGroupResponses = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupResponses.getMenuGroupResponses();
 
         assertAll(
-            () -> assertThat(menuGroupList).hasSize(1),
-            () -> assertThat(menuGroupList.get(0).getId()).isNotNull(),
-            () -> assertThat(menuGroupList.get(0).getName()).isEqualTo("신메뉴")
+            () -> assertThat(menuGroups).hasSize(1),
+            () -> assertThat(menuGroups.get(0).getId()).isNotNull(),
+            () -> assertThat(menuGroups.get(0).getName()).isEqualTo("신메뉴")
         );
 
     }
