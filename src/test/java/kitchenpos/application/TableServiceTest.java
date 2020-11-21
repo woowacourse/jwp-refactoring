@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -10,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderTableChangeRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
@@ -19,6 +19,8 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.utils.TestObjectFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
@@ -106,8 +108,9 @@ class TableServiceTest {
     }
 
     @DisplayName("테이블을 빈 테이블로 바꾼다. - 주문 상태가 요리, 식사인 경우")
-    @Test
-    void changeEmpty_IfStatusIsCookingOrMeal_ThrowException() {
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL"})
+    void changeEmpty_IfStatusIsCookingOrMeal_ThrowException(String status) {
         OrderTableCreateRequest oldOrderTableCreateRequest =
             TestObjectFactory.createOrderTableCreateRequest(1, false);
         OrderTableChangeRequest newOrderTableCreateRequest =
@@ -118,8 +121,10 @@ class TableServiceTest {
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
+        OrderStatus orderStatus = OrderStatus.valueOf(status);
         OrderCreateRequest orderCreateRequest = TestObjectFactory
-            .createOrderCreateRequest(savedTable.toEntity(null), COOKING.name(),
+            .createOrderCreateRequest(savedTable.toEntity(null),
+                orderStatus.name(),
                 orderLineItems);
         orderService.create(orderCreateRequest);
 
