@@ -85,7 +85,7 @@ class OrderServiceTest {
         tableRepository.save(table);
 
         OrderLineItemDto orderLineItemDto = new OrderLineItemDto(savedMenu.getId(), 2L);
-        OrderCreateRequest request = new OrderCreateRequest(null, Arrays.asList(orderLineItemDto, orderLineItemDto));
+        OrderCreateRequest request = new OrderCreateRequest(-1L, Arrays.asList(orderLineItemDto, orderLineItemDto));
 
         assertThatThrownBy(() -> orderService.create(request))
             .isInstanceOf(IllegalArgumentException.class);

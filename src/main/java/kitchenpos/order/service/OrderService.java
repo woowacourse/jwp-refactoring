@@ -10,12 +10,12 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.OrderLineItems;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
-import kitchenpos.order.dto.OrderLineItemDto;
 import kitchenpos.order.dto.OrderResponses;
 import kitchenpos.table.domain.Table;
 
@@ -41,27 +41,17 @@ public class OrderService {
 
     @Transactional
     public Long create(final OrderCreateRequest request) {
-        List<OrderLineItemDto> orderLineItemDtos = request.getOrderLineItemDtos();
-
-        final List<Long> menuIds = orderLineItemDtos.stream()
-            .map(OrderLineItemDto::getMenuId)
-            .collect(Collectors.toList());
-
-        // todo 이게 필요한가?
-        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds) || orderLineItemDtos.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
         final Table savedTable = findTable(request.getTableId());
         Order order = new Order(savedTable, OrderStatus.COOKING);
 
         final Order savedOrder = orderRepository.save(order);
+        OrderLineItems orderLineItems = new OrderLineItems(order, request.getOrderLineItemDtos());
 
-        for (OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, orderLineItemDto.getMenuId(),
-                orderLineItemDto.getQuantity());
-            orderLineItemRepository.save(orderLineItem);
-        }
+        List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
+            .map(orderLineItemRepository::save)
+            .collect(Collectors.toList());
+        
+        savedOrder.changeOrderLineItems(savedOrderLineItems);
 
         return savedOrder.getId();
     }
