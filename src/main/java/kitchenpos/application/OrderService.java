@@ -4,9 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-import kitchenpos.dto.order.OrderCreateRequest;
-import kitchenpos.dto.order.OrderCreateResponse;
-import kitchenpos.dto.order.OrderFindAllResponses;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +16,10 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderCreateResponse;
+import kitchenpos.dto.order.OrderFindAllResponses;
+import kitchenpos.dto.order.OrderUpdateStatusRequest;
 
 @Service
 public class OrderService {
@@ -54,11 +55,11 @@ public class OrderService {
 
         final Order savedOrder = orderRepository.save(
                 new Order(
-                        null,
-                        orderTable.getId(),
-                        OrderStatus.COOKING.name(),
-                        LocalDateTime.now(),
-                        order.getOrderLineItems()
+                    null,
+                    orderTable.getId(),
+                    OrderStatus.COOKING,
+                    LocalDateTime.now(),
+                    order.getOrderLineItems()
                 )
         );
 
@@ -98,16 +99,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderUpdateStatusRequest orderStatusRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
+
+        savedOrder.setOrderStatus(orderStatus);
 
         return savedOrder;
     }

@@ -1,15 +1,21 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderCreateResponse;
 import kitchenpos.dto.order.OrderFindAllResponses;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.util.List;
+import kitchenpos.dto.order.OrderUpdateStatusRequest;
 
 @RestController
 public class OrderRestController {
@@ -33,12 +39,11 @@ public class OrderRestController {
                 .body(orderService.list());
     }
 
-    // todo: 요놈 안했어요~
-    @PutMapping("/api/orders/{orderId}/order-status")
+    @PatchMapping("/api/orders/{orderId}/order-status")
     public ResponseEntity<Order> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
+        @RequestBody final OrderUpdateStatusRequest orderUpdateStatusRequest
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderUpdateStatusRequest));
     }
 }

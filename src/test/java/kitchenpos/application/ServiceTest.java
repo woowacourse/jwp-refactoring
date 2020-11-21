@@ -14,6 +14,7 @@ import kitchenpos.domain.Money;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.Product;
@@ -35,8 +36,8 @@ public abstract class ServiceTest {
         return new MenuProduct(seq, menuId, productId, quantity);
     }
 
-    public Order createOrder(Long id, String status, Long orderTableId, LocalDateTime orderedTime,
-                             List<OrderLineItem> orderLineItems) {
+    public Order createOrder(Long id, OrderStatus status, Long orderTableId, LocalDateTime orderedTime,
+        List<OrderLineItem> orderLineItems) {
         return new Order(id, orderTableId, status, orderedTime, new OrderLineItems(orderLineItems));
     }
 

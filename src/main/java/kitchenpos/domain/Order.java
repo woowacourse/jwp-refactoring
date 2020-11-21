@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -14,7 +16,8 @@ public class Order {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private Long orderTableId;
-	private String orderStatus;
+	@Enumerated(value = EnumType.STRING)
+	private OrderStatus orderStatus;
 	private LocalDateTime orderedTime;
 	@Embedded
 	private OrderLineItems orderLineItems;
@@ -22,7 +25,7 @@ public class Order {
 	protected Order() {
 	}
 
-	public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+	public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
 		OrderLineItems orderLineItems) {
 		this.id = id;
 		this.orderTableId = orderTableId;
@@ -39,11 +42,11 @@ public class Order {
 		return orderTableId;
 	}
 
-	public String getOrderStatus() {
+	public OrderStatus getOrderStatus() {
 		return orderStatus;
 	}
 
-	public void setOrderStatus(String orderStatus) {
+	public void setOrderStatus(OrderStatus orderStatus) {
 		this.orderStatus = orderStatus;
 	}
 

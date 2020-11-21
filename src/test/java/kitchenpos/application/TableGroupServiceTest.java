@@ -110,10 +110,10 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
 		orderRepository.save(
-			createOrder(null, OrderStatus.COOKING.name(), savedOrderTable1.getId(), LocalDateTime.now(),
+			createOrder(null, OrderStatus.COOKING, savedOrderTable1.getId(), LocalDateTime.now(),
 				Collections.singletonList(null)));
 
-		orderRepository.save(createOrder(null, OrderStatus.MEAL.name(), savedOrderTable2.getId(), LocalDateTime.now(),
+		orderRepository.save(createOrder(null, OrderStatus.MEAL, savedOrderTable2.getId(), LocalDateTime.now(),
 			Collections.singletonList(null)));
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
@@ -135,11 +135,11 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
 		orderRepository.save(
-			createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable1.getId(), LocalDateTime.now(),
+			createOrder(null, OrderStatus.COMPLETION, savedOrderTable1.getId(), LocalDateTime.now(),
 				Collections.singletonList(null)));
 
 		orderRepository.save(
-			createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable2.getId(), LocalDateTime.now(),
+			createOrder(null, OrderStatus.COMPLETION, savedOrderTable2.getId(), LocalDateTime.now(),
 				Collections.singletonList(null)));
 
 		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));

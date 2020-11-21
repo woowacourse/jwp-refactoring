@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import kitchenpos.dto.order.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -25,6 +24,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderCreateResponse;
+import kitchenpos.dto.order.OrderFindAllResponses;
+import kitchenpos.dto.order.OrderLineItemCreateRequests;
+import kitchenpos.dto.order.OrderUpdateStatusRequest;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest {
@@ -54,23 +58,23 @@ class OrderRestControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         this.mockMvc = MockMvcBuilders
-                .webAppContextSetup(webApplicationContext)
-                .build();
+            .webAppContextSetup(webApplicationContext)
+            .build();
 
         orderLineItem = new OrderLineItem(1L, 1L, 1L, 1L);
 
         OrderLineItems orderLineItems = new OrderLineItems(Collections.singletonList(orderLineItem));
 
-        order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        order = new Order(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
 
         orders = Collections.singletonList(order);
 
         orderCreateRequest = new OrderCreateRequest(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(),
-                OrderLineItemCreateRequests.from(orderLineItems));
+            OrderLineItemCreateRequests.from(orderLineItems));
 
         orderCreateResponse = new OrderCreateResponse(order);
 
-		orderFindAllResponses = OrderFindAllResponses.from(orders);
+        orderFindAllResponses = OrderFindAllResponses.from(orders);
     }
 
     @Test
@@ -78,10 +82,10 @@ class OrderRestControllerTest {
         given(orderService.create(any())).willReturn(orderCreateResponse);
 
         mockMvc.perform(post("/api/orders")
-                .content(objectMapper.writeValueAsString(orderCreateRequest))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/orders/1"));
+            .content(objectMapper.writeValueAsString(orderCreateRequest))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(header().string("Location", "/api/orders/1"));
     }
 
     @Test
@@ -89,17 +93,19 @@ class OrderRestControllerTest {
         given(orderService.list()).willReturn(orderFindAllResponses);
 
         mockMvc.perform(get("/api/orders")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 
     @Test
     void changeOrderStatus() throws Exception {
         given(orderService.changeOrderStatus(anyLong(), any())).willReturn(order);
 
-        mockMvc.perform(put("/api/orders/1/order-status")
-                .content(objectMapper.writeValueAsString(order))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        OrderUpdateStatusRequest orderUpdateStatusRequest = new OrderUpdateStatusRequest(OrderStatus.COOKING.name());
+
+        mockMvc.perform(patch("/api/orders/1/order-status")
+            .content(objectMapper.writeValueAsString(orderUpdateStatusRequest))
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
     }
 }
