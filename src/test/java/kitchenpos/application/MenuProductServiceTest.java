@@ -8,11 +8,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 
 class MenuProductServiceTest extends ServiceTest {
 	@Autowired

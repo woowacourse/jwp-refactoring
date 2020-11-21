@@ -3,12 +3,12 @@ package kitchenpos.application;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.product.ProductCreateRequest;
 import kitchenpos.dto.product.ProductCreateResponse;
 import kitchenpos.dto.product.ProductFindAllResponses;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class ProductService {

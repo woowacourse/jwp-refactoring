@@ -9,8 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,6 +20,8 @@ import kitchenpos.dto.menu.MenuCreateResponse;
 import kitchenpos.dto.menu.MenuFindAllResponse;
 import kitchenpos.dto.menu.MenuFindAllResponses;
 import kitchenpos.dto.menu.MenuProductCreateRequests;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.ProductRepository;
 
 class MenuServiceTest extends ServiceTest {
 

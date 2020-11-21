@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.table.OrderTableFindAllResponses;
 import kitchenpos.dto.table.OrderTableUpdateEmptyRequest;
@@ -22,6 +21,7 @@ import kitchenpos.dto.tableGroup.OrderTableCreateRequest;
 import kitchenpos.dto.tableGroup.OrderTableCreateRequests;
 import kitchenpos.dto.tableGroup.OrderTableCreateResponse;
 import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
+import kitchenpos.repository.OrderTableRepository;
 
 class TableServiceTest extends ServiceTest {
 

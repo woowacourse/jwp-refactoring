@@ -10,10 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -29,6 +25,10 @@ import kitchenpos.dto.order.OrderCreateResponse;
 import kitchenpos.dto.order.OrderFindAllResponse;
 import kitchenpos.dto.order.OrderFindAllResponses;
 import kitchenpos.dto.order.OrderUpdateStatusRequest;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.ProductRepository;
 
 class OrderServiceTest extends ServiceTest {
     @Autowired

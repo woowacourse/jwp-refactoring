@@ -12,14 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.tableGroup.OrderTableCreateRequest;
 import kitchenpos.dto.tableGroup.OrderTableCreateRequests;
 import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
 import kitchenpos.dto.tableGroup.TableGroupCreateResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 class TableGroupServiceTest extends ServiceTest {
 	@Autowired

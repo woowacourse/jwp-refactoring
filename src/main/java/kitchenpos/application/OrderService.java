@@ -7,10 +7,6 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderLineItemRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
@@ -20,6 +16,10 @@ import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderCreateResponse;
 import kitchenpos.dto.order.OrderFindAllResponses;
 import kitchenpos.dto.order.OrderUpdateStatusRequest;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @Service
 public class OrderService {

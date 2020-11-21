@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Money;
 import kitchenpos.domain.Products;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuProductService {
