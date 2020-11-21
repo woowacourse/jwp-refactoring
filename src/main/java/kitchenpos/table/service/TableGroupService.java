@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.TableRepository;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableRepository;
 import kitchenpos.table.domain.Tables;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 

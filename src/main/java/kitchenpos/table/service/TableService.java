@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableRepository;
 import kitchenpos.table.dto.TableCreateRequest;
 import kitchenpos.table.dto.TableEmptyEditRequest;
 import kitchenpos.table.dto.TableGuestEditRequest;

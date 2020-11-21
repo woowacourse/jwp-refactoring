@@ -21,7 +21,6 @@ import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.TableRepository;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
 import kitchenpos.order.dto.OrderLineItemDto;
@@ -31,6 +30,7 @@ import kitchenpos.order.service.OrderService;
 import kitchenpos.product.domain.Product;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableRepository;
 
 @SpringBootTest
 @Sql(value = "/truncate.sql")
