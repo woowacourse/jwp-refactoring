@@ -74,13 +74,13 @@
     -[x] ProductService
     -[x] TableGroupService
     -[x] TableService
--[ ] DTO 클래스 생성
+-[x] DTO 클래스 생성
     -[x] MenuGroupRestsController
     -[x] MenuRestController
     -[x] OrderRestController
     -[x] ProductRestController
-    -[ ] TableGroupRestController
-    -[ ] TableRestController
+    -[x] TableGroupRestController
+    -[x] TableRestController
 
 ## 용어 사전
 

@@ -24,10 +24,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public boolean hasMinusNumberOfGuests() {
-        return this.numberOfGuests < 0;
-    }
-
     public boolean isEmpty() {
         return empty;
     }

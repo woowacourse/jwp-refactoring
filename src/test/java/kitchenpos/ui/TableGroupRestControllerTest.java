@@ -23,6 +23,9 @@ import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tableGroup.OrderTableCreateRequests;
+import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
+import kitchenpos.dto.tableGroup.TableGroupCreateResponse;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest {
@@ -34,6 +37,10 @@ class TableGroupRestControllerTest {
 	private MockMvc mockMvc;
 
 	private TableGroup tableGroup;
+
+	private TableGroupCreateRequest tableGroupCreateRequest;
+
+	private TableGroupCreateResponse tableGroupCreateResponse;
 
 	@BeforeEach
 	void setUp(WebApplicationContext webApplicationContext) {
@@ -49,14 +56,19 @@ class TableGroupRestControllerTest {
 
 		tableGroup = new TableGroup(1L, LocalDateTime.of(2020, 10, 28, 16, 40),
 			new OrderTables(Collections.singletonList(orderTable)));
+
+		tableGroupCreateRequest = new TableGroupCreateRequest(1L, LocalDateTime.of(2020, 10, 28, 16, 40),
+			OrderTableCreateRequests.from(new OrderTables(Collections.singletonList(orderTable))));
+
+		tableGroupCreateResponse = new TableGroupCreateResponse(tableGroup);
 	}
 
 	@Test
 	void create() throws Exception {
-		given(tableGroupService.create(any(TableGroup.class))).willReturn(tableGroup);
+		given(tableGroupService.create(any(TableGroupCreateRequest.class))).willReturn(tableGroupCreateResponse);
 
 		mockMvc.perform(post("/api/table-groups")
-			.content(objectMapper.writeValueAsString(tableGroup))
+			.content(objectMapper.writeValueAsString(tableGroupCreateRequest))
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", "/api/table-groups/1"));

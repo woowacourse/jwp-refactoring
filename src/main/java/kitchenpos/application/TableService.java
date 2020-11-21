@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +10,13 @@ import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.table.OrderTableFindAllResponses;
+import kitchenpos.dto.table.OrderTableUpdateEmptyRequest;
+import kitchenpos.dto.table.OrderTableUpdateEmptyResponse;
+import kitchenpos.dto.table.OrderTableUpdateNumberOfGuestsRequest;
+import kitchenpos.dto.table.OrderTableUpdateNumberOfGuestsResponse;
+import kitchenpos.dto.tableGroup.OrderTableCreateRequest;
+import kitchenpos.dto.tableGroup.OrderTableCreateResponse;
 
 @Service
 public class TableService {
@@ -23,32 +29,34 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        return orderTableRepository.save(
-                new OrderTable(
-                        null,
-                        null,
-                        orderTable.getNumberOfGuests(),
-                        orderTable.isEmpty()
-                )
+    public OrderTableCreateResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
+        OrderTable savedOrderTable = orderTableRepository.save(
+            new OrderTable(
+                null,
+                null,
+                orderTableCreateRequest.getNumberOfGuests(),
+                orderTableCreateRequest.getEmpty()
+            )
         );
+        return new OrderTableCreateResponse(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public OrderTableFindAllResponses list() {
+        return OrderTableFindAllResponses.from(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableUpdateEmptyResponse changeEmpty(final Long orderTableId,
+        final OrderTableUpdateEmptyRequest orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         validTableGroupIdIsNull(savedOrderTable.getTableGroupId());
         validOrderStatusIsNotCookingOrMeal(orderTableId);
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(orderTable.getEmpty());
 
-        return orderTableRepository.save(savedOrderTable);
+        return new OrderTableUpdateEmptyResponse(orderTableRepository.save(savedOrderTable));
     }
 
     private void validOrderStatusIsNotCookingOrMeal(Long orderTableId) {
@@ -65,17 +73,18 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        validOrderTableHasMinusNumberOfGuests(orderTable);
+    public OrderTableUpdateNumberOfGuestsResponse changeNumberOfGuests(final Long orderTableId,
+        final OrderTableUpdateNumberOfGuestsRequest orderTableUpdateNumberOfGuestsRequest) {
+        validNumberOfGuestsUpdateIsMinus(orderTableUpdateNumberOfGuestsRequest);
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         validSavedOrderTableIsEmpty(savedOrderTable);
 
-        savedOrderTable.setNumberOfGuests(orderTable.getNumberOfGuests());
+        savedOrderTable.setNumberOfGuests(orderTableUpdateNumberOfGuestsRequest.getNumberOfGuests());
 
-        return orderTableRepository.save(savedOrderTable);
+        return new OrderTableUpdateNumberOfGuestsResponse(orderTableRepository.save(savedOrderTable));
     }
 
     private void validSavedOrderTableIsEmpty(OrderTable savedOrderTable) {
@@ -84,8 +93,9 @@ public class TableService {
         }
     }
 
-    private void validOrderTableHasMinusNumberOfGuests(OrderTable orderTable) {
-        if (orderTable.hasMinusNumberOfGuests()) {
+    private void validNumberOfGuestsUpdateIsMinus(
+        OrderTableUpdateNumberOfGuestsRequest orderTableUpdateNumberOfGuestsRequest) {
+        if (orderTableUpdateNumberOfGuestsRequest.getNumberOfGuests() < 0) {
             throw new IllegalArgumentException();
         }
     }

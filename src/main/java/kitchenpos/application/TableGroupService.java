@@ -14,6 +14,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
+import kitchenpos.dto.tableGroup.TableGroupCreateResponse;
 
 @Service
 public class TableGroupService {
@@ -29,7 +31,8 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroupCreateResponse create(final TableGroupCreateRequest tableGroupCreateRequest) {
+        TableGroup tableGroup = tableGroupCreateRequest.toEntity();
         OrderTables orderTables = tableGroup.getOrderTables();
 
         validOrderTablesIsNotEmptyAndSizeIsTwoOrMore(orderTables);
@@ -47,7 +50,7 @@ public class TableGroupService {
 
         associateOrderTablesAndTableGroup(savedOrderTables, savedTableGroup);
 
-        return savedTableGroup;
+        return new TableGroupCreateResponse(savedTableGroup);
     }
 
     private void validOrderTablesIsNotEmptyAndSizeIsTwoOrMore(OrderTables orderTables) {
