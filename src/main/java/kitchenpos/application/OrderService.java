@@ -94,7 +94,7 @@ public class OrderService {
         savedOrder.setOrderLineItems(new OrderLineItems(savedOrderLineItems));
     }
 
-    public OrderFindAllResponses list() {
+    public OrderFindAllResponses findAll() {
         return OrderFindAllResponses.from(orderRepository.findAll());
     }
 

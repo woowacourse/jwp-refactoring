@@ -37,9 +37,9 @@ public class TableRestController {
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<OrderTableFindAllResponses> list() {
+    public ResponseEntity<OrderTableFindAllResponses> findAll() {
         return ResponseEntity.ok()
-            .body(tableService.list());
+            .body(tableService.findAll());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")

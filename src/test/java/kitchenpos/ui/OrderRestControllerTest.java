@@ -90,7 +90,7 @@ class OrderRestControllerTest {
 
     @Test
     void findAll() throws Exception {
-        given(orderService.list()).willReturn(orderFindAllResponses);
+        given(orderService.findAll()).willReturn(orderFindAllResponses);
 
         mockMvc.perform(get("/api/orders")
             .contentType(MediaType.APPLICATION_JSON))

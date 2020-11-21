@@ -70,7 +70,7 @@ class MenuGroupRestControllerTest {
 
     @Test
     void list() throws Exception {
-        given(menuGroupService.list()).willReturn(menuGroupFindAllResponses);
+        given(menuGroupService.findAll()).willReturn(menuGroupFindAllResponses);
 
         mockMvc.perform(get("/api/menu-groups")
                 .contentType(MediaType.APPLICATION_JSON))

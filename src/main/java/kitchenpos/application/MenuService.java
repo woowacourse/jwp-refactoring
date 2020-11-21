@@ -58,7 +58,7 @@ public class MenuService {
         }
     }
 
-    public MenuFindAllResponses list() {
+    public MenuFindAllResponses findAll() {
         return MenuFindAllResponses.from(menuRepository.findAll());
     }
 }

@@ -54,7 +54,7 @@ class TableServiceTest extends ServiceTest {
 
         OrderTableCreateResponse expect = tableService.create(orderTableCreateRequest);
 
-        OrderTableFindAllResponses actual = tableService.list();
+        OrderTableFindAllResponses actual = tableService.findAll();
 
         assertThat(actual.getOrderTableFindAllResponses()).hasSize(1);
         assertThat(actual.getOrderTableFindAllResponses().get(0)).usingRecursiveComparison()

@@ -41,7 +41,7 @@ public class TableService {
         return new OrderTableCreateResponse(savedOrderTable);
     }
 
-    public OrderTableFindAllResponses list() {
+    public OrderTableFindAllResponses findAll() {
         return OrderTableFindAllResponses.from(orderTableRepository.findAll());
     }
 

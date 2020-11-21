@@ -23,7 +23,7 @@ public class MenuGroupService {
         return new MenuGroupCreateResponse(menuGroup);
     }
 
-    public MenuGroupFindAllResponses list() {
+    public MenuGroupFindAllResponses findAll() {
         return MenuGroupFindAllResponses.from(menuGroupRepository.findAll());
     }
 }

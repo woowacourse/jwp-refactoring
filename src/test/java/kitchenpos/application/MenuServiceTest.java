@@ -141,7 +141,7 @@ class MenuServiceTest extends ServiceTest {
 
 		MenuCreateResponse expect = menuService.create(menuCreateRequest);
 
-		MenuFindAllResponses actual = menuService.list();
+		MenuFindAllResponses actual = menuService.findAll();
 		MenuFindAllResponse actualItem = actual.getMenuFindAllResponses().get(0);
 
 		assertThat(actual.getMenuFindAllResponses()).hasSize(1);

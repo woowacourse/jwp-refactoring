@@ -36,7 +36,7 @@ public class OrderRestController {
     @GetMapping("/api/orders")
     public ResponseEntity<OrderFindAllResponses> findAll() {
         return ResponseEntity.ok()
-                .body(orderService.list());
+            .body(orderService.findAll());
     }
 
     @PatchMapping("/api/orders/{orderId}/order-status")

@@ -31,7 +31,7 @@ class MenuGroupServiceTest extends ServiceTest {
 
         menuGroupService.create(menuGroup);
 
-        MenuGroupFindAllResponses actual = menuGroupService.list();
+        MenuGroupFindAllResponses actual = menuGroupService.findAll();
         MenuGroupFindAllResponse actualItem = actual.getMenuGroupFindAllResponses().get(0);
 
         assertAll(

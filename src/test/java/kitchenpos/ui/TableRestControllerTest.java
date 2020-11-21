@@ -96,7 +96,7 @@ class TableRestControllerTest {
 
 	@Test
 	void list() throws Exception {
-		given(tableService.list()).willReturn(orderTableFindAllResponses);
+		given(tableService.findAll()).willReturn(orderTableFindAllResponses);
 
 		mockMvc.perform(get("/api/tables"))
 			.andExpect(status().isOk());

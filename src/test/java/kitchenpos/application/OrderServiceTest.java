@@ -157,7 +157,7 @@ class OrderServiceTest extends ServiceTest {
         OrderCreateResponse savedOrder = orderService.create(
             new OrderCreateRequest(order));
 
-        OrderFindAllResponses actual = orderService.list();
+        OrderFindAllResponses actual = orderService.findAll();
         OrderFindAllResponse actualItem = actual.getOrderFindAllResponses().get(0);
 
         assertThat(actual.getOrderFindAllResponses()).hasSize(1);

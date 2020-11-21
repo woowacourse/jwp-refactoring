@@ -84,7 +84,7 @@ class MenuRestControllerTest {
 
 	@Test
 	void findAll() throws Exception {
-		given(menuService.list()).willReturn(menuFindAllResponses);
+		given(menuService.findAll()).willReturn(menuFindAllResponses);
 
 		mockMvc.perform(get("/api/menus")
 			.contentType(MediaType.APPLICATION_JSON))
