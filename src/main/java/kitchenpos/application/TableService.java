@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.verifier.DefaultOrderVerifier;
+import kitchenpos.domain.verifier.OrderStatusVerifier;
 import kitchenpos.domain.verifier.OrderVerifier;
 import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
@@ -21,7 +21,7 @@ public class TableService {
     private final OrderVerifier orderVerifier;
 
     public TableService(OrderTableRepository orderTableRepository,
-        DefaultOrderVerifier orderVerifier) {
+        OrderStatusVerifier orderVerifier) {
         this.orderTableRepository = orderTableRepository;
         this.orderVerifier = orderVerifier;
     }

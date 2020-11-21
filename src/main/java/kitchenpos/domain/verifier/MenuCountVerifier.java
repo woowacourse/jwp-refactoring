@@ -11,15 +11,15 @@ import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.repository.MenuRepository;
 
 @Component
-public class DefaultMenuVerifier implements MenuVerifier {
+public class MenuCountVerifier implements CountVerifier<Menu> {
     private final MenuRepository menuRepository;
 
-    public DefaultMenuVerifier(MenuRepository menuRepository) {
+    public MenuCountVerifier(MenuRepository menuRepository) {
         this.menuRepository = menuRepository;
     }
 
     @Override
-    public void verifyMenuCount(List<Long> menuIds) {
+    public List<Menu> verify(List<Long> menuIds) {
         if (CollectionUtils.isEmpty(menuIds)) {
             throw new EmptyMenuOrderException();
         }
@@ -28,6 +28,6 @@ public class DefaultMenuVerifier implements MenuVerifier {
         if (menus.size() != menuIds.size()) {
             throw new MenuNotFoundException();
         }
-
+        return menus;
     }
 }

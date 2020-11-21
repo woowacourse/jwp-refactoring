@@ -6,15 +6,15 @@ import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 
 @Component
-public class DefaultMenuGroupVerifier implements MenuGroupVerifier{
+public class MenuGroupExistVerifier implements MenuGroupVerifier{
     private final MenuGroupRepository menuGroupRepository;
 
-    public DefaultMenuGroupVerifier(MenuGroupRepository menuGroupRepository) {
+    public MenuGroupExistVerifier(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
     @Override
-    public void verifyExist(Long menuGroupId) {
+    public void verify(Long menuGroupId) {
         if (!menuGroupRepository.existsById(menuGroupId)) {
             throw new MenuGroupNotFoundException(menuGroupId);
         }

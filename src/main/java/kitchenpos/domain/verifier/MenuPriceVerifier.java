@@ -10,22 +10,21 @@ import org.springframework.stereotype.Component;
 
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.MenuProductCreateRequest;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.ProductRepository;
 
 @Component
-public class DefaultProductVerifier implements ProductVerifier{
+public class MenuPriceVerifier implements MenuVerifier {
 
     private final ProductRepository productRepository;
 
-    public DefaultProductVerifier(ProductRepository productRepository) {
+    public MenuPriceVerifier(ProductRepository productRepository) {
         this.productRepository = productRepository;
     }
 
     @Override
-    public void verifyPrice(List<Long> productIds, List<MenuProduct> menuProducts, BigDecimal menuPrice) {
+    public void verify(List<Long> productIds, List<MenuProduct> menuProducts, BigDecimal menuPrice) {
         List<Product> products = productRepository.findAllById(productIds);
         Map<Long, Product> productMap = products.stream()
             .collect(Collectors.toMap(Product::getId, p -> p));

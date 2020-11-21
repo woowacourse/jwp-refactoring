@@ -6,9 +6,10 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.verifier.MenuVerifier;
+import kitchenpos.domain.verifier.CountVerifier;
 import kitchenpos.domain.verifier.OrderTableVerifier;
 import kitchenpos.dto.request.OrderChangeStatusRequest;
 import kitchenpos.dto.request.OrderCreateRequest;
@@ -23,24 +24,25 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableVerifier orderTableVerifier;
-    private final MenuVerifier menuVerifier;
+    private final CountVerifier<Menu> menuCountVerifier;
 
     public OrderService(OrderRepository orderRepository,
         OrderLineItemRepository orderLineItemRepository,
-        OrderTableVerifier orderTableVerifier, MenuVerifier menuVerifier) {
+        OrderTableVerifier orderTableVerifier,
+        CountVerifier<Menu> menuCountVerifier) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableVerifier = orderTableVerifier;
-        this.menuVerifier = menuVerifier;
+        this.menuCountVerifier = menuCountVerifier;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
-        orderTableVerifier.verifyOrderTableByEmpty(request.getOrderTableId());
+        orderTableVerifier.verify(request.getOrderTableId());
         List<Long> menuIds = request.getOrderLineItems().stream()
             .map(OrderLineItemCreateRequest::getMenuId)
             .collect(Collectors.toList());
-        menuVerifier.verifyMenuCount(menuIds);
+        menuCountVerifier.verify(menuIds);
 
         final Order savedOrder = orderRepository.save(request.toEntity());
         final Long orderId = savedOrder.getId();

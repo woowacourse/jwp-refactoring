@@ -14,13 +14,13 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 @Component
-public class DefaultOrderVerifier implements OrderVerifier {
+public class OrderStatusVerifier implements OrderVerifier {
     private static final List<OrderStatus> NOT_COMPLETE_STATUS = Arrays.asList(OrderStatus.COOKING,
         OrderStatus.MEAL);
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public DefaultOrderVerifier(OrderRepository orderRepository,
+    public OrderStatusVerifier(OrderRepository orderRepository,
         OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;

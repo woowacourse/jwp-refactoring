@@ -20,8 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.verifier.DefaultMenuGroupVerifier;
-import kitchenpos.domain.verifier.DefaultProductVerifier;
+import kitchenpos.domain.verifier.MenuGroupExistVerifier;
+import kitchenpos.domain.verifier.MenuPriceVerifier;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.exception.InvalidMenuPriceException;
@@ -57,8 +57,8 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         menuService = new MenuService(menuRepository, menuProductRepository,
-            new DefaultMenuGroupVerifier(menuGroupRepository),
-            new DefaultProductVerifier(productRepository));
+            new MenuGroupExistVerifier(menuGroupRepository),
+            new MenuPriceVerifier(productRepository));
 
         Product product1 = ProductFixture.createWithId(ProductFixture.ID1);
         Product product2 = ProductFixture.createWithId(ProductFixture.ID2);
