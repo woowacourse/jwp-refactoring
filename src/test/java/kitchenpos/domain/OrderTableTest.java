@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ class OrderTableTest {
     void changeEmptyWithGroupId() {
         OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
         assertThatThrownBy(() -> orderTable.changeEmpty(true, tableOrderEmptyValidator))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalStateException.class);
     }
 
     @DisplayName("테이블의 현재 손님 수를 변경한다.")
@@ -64,6 +65,50 @@ class OrderTableTest {
     void changeNumberOfGuestsWithEmpty() {
         OrderTable orderTable = new OrderTable(1, true);
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(4))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("현재 테이블을 그룹 지정한다.")
+    @Test
+    void designateGroup() {
+        OrderTable orderTable = new OrderTable(1, true);
+
+        orderTable.designateGroup(2L);
+
+        assertAll(
+            () -> assertThat(orderTable).extracting(OrderTable::getTableGroupId).isEqualTo(2L),
+            () -> assertThat(orderTable).extracting(OrderTable::isEmpty, BOOLEAN).isFalse()
+        );
+    }
+
+    @DisplayName("테이블이 비어있지 않을 때 그룹 지정을 하면 예외 처리한다.")
+    @Test
+    void designateGroupWithEmpty() {
+        OrderTable orderTable = new OrderTable(1, false);
+
+        assertThatThrownBy(() -> orderTable.designateGroup(2L))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("테이블이 이미 그룹 지정이 되어 있으면 예외 처리한다.")
+    @Test
+    void designateGroupWithGroup() {
+        OrderTable orderTable = new OrderTable(1L, 1L, 1, true);
+
+        assertThatThrownBy(() -> orderTable.designateGroup(2L))
+            .isInstanceOf(IllegalStateException.class);
+    }
+
+    @DisplayName("테이블의 그룹 지정을 해제한다.")
+    @Test
+    void ungroup() {
+        OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
+
+        orderTable.ungroup();
+
+        assertAll(
+            () -> assertThat(orderTable).extracting(OrderTable::getTableGroupId).isNull(),
+            () -> assertThat(orderTable).extracting(OrderTable::isEmpty, BOOLEAN).isFalse()
+        );
     }
 }

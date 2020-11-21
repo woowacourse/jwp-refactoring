@@ -46,20 +46,33 @@ public class OrderTable {
 
     private void validateTableGroup() {
         if (Objects.nonNull(tableGroupId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
-        verifyEmpty();
+        validateEmpty();
         this.numberOfGuests = numberOfGuests;
     }
 
-    private void verifyEmpty() {
+    private void validateEmpty() {
         if (empty) {
-            throw new IllegalArgumentException();
+            throw new IllegalStateException();
         }
+    }
+
+    public void designateGroup(Long newTableGroupId) {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalStateException();
+        }
+        tableGroupId = newTableGroupId;
+        empty = false;
+    }
+
+    public void ungroup() {
+        tableGroupId = null;
+        empty = false;
     }
 
     public Long getId() {

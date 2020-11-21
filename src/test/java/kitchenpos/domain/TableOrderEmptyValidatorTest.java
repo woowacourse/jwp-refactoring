@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,22 @@ class TableOrderEmptyValidatorTest {
         orderDao.save(order);
 
         assertThatThrownBy(() -> tableOrderEmptyValidator.validate(table.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("지정한 테이블들을 비우거나 채울 때 테이블에 완료되지 않은 주문이 있는 경우 예외 처리한다.")
+    @Test
+    void validateTables() {
+        OrderTable table = tableRepository.save(new OrderTable(1, true));
+
+        Order order = new Order();
+        order.setOrderedTime(LocalDateTime.now());
+        order.setOrderTableId(table.getId());
+        order.setOrderStatus(OrderStatus.COOKING.name());
+
+        orderDao.save(order);
+
+        assertThatThrownBy(() -> tableOrderEmptyValidator.validate(Collections.singletonList(table.getId())))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
