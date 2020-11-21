@@ -110,8 +110,7 @@ class OrderServiceTest {
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
-        OrderTable orderedTable = new OrderTable();
-        orderedTable.setId(0L);
+        OrderTable orderedTable = new OrderTable(0L,null,0,false);
         OrderCreateRequest orderCreateRequest
             = TestObjectFactory
             .createOrderCreateRequest(orderedTable, COOKING.name(), orderLineItems);

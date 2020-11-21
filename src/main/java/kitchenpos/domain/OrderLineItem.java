@@ -49,16 +49,4 @@ public class OrderLineItem {
     public long getQuantity() {
         return quantity;
     }
-
-    public void setOrder(Order savedOrder) {
-        this.order = savedOrder;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
-    public void setQuantity(long quantity) {
-        this.quantity = quantity;
-    }
 }

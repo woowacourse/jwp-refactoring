@@ -55,9 +55,9 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
+            OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(), savedTableGroup,
+                savedOrderTable.getNumberOfGuests(), false);
+            orderTableRepository.save(changedOrderTable);
         }
 
         return TableGroupResponse.of(savedTableGroup, savedOrderTables);
@@ -77,9 +77,10 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
+            OrderTable changedOrderTable = new OrderTable(orderTable.getId(), null,
+                orderTable.getNumberOfGuests(), false);
+
+            orderTableRepository.save(changedOrderTable);
         }
     }
 }

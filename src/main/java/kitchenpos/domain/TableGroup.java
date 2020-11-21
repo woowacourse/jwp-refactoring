@@ -39,12 +39,4 @@ public class TableGroup {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public void setOrderTables(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
 }

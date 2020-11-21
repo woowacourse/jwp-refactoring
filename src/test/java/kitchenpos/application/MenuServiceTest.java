@@ -114,8 +114,8 @@ class MenuServiceTest {
     @DisplayName("새로운 메뉴를 생성한다. - groupId가 메뉴 그룹에 존재하지 않는 경우")
     @Test
     void create_IfGroupIdNotExist_ThrowException() {
-        MenuGroup invalidMenuGroup = new MenuGroup();
-        invalidMenuGroup.setId(0L);
+        MenuGroup invalidMenuGroup = new MenuGroup(0L,null);
+//        invalidMenuGroup.setId(0L);
 
         List<MenuProduct> new_menu_product =
             Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),

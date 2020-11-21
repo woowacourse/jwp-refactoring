@@ -3,6 +3,7 @@ package kitchenpos.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuResponse {
 
@@ -24,7 +25,7 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse of(Menu menu, List<MenuProductResponse> menuProductResponses) {
+    public static MenuResponse of(Menu menu,List<MenuProductResponse> menuProductResponses) {
         Long id = menu.getId();
         String name = menu.getName();
         BigDecimal price = menu.getPrice();

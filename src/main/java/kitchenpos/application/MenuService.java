@@ -76,7 +76,6 @@ public class MenuService {
 
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
         List<MenuProductResponse> menuProductResponses
             = MenuProductResponse.toResponseList(savedMenuProducts);
 

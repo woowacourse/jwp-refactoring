@@ -22,6 +22,6 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroup toEntity() {
-        return new MenuGroup(this.name);
+        return new MenuGroup(null, this.name);
     }
 }

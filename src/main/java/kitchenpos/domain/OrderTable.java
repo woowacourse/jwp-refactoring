@@ -52,20 +52,4 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public void setEmpty(boolean empty) {
-        this.empty = empty;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNumberOfGuests(int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
 }

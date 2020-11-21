@@ -89,12 +89,18 @@ public class OrderService {
 
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
+        final List<Order> ordersWithLineItems = new ArrayList<>();
 
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
+            Order orderWithLineItem
+                = new Order(order.getId(), order.getOrderTable(),
+                OrderStatus.valueOf(order.getOrderStatus()), order.getOrderedTime(),
+                orderLineItemRepository.findAllByOrderId(order.getId()));
+
+            ordersWithLineItems.add(orderWithLineItem);
         }
 
-        return OrderResponse.toResponseList(orders);
+        return OrderResponse.toResponseList(ordersWithLineItems);
     }
 
     @Transactional
@@ -108,12 +114,13 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderChangeRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
 
-        orderRepository.save(savedOrder);
+        Order changedOrder
+            = new Order(savedOrder.getId(), savedOrder.getOrderTable(), orderStatus,
+            savedOrder.getOrderedTime(), orderLineItemRepository.findAllByOrderId(orderId));
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+        orderRepository.save(changedOrder);
 
-        return OrderResponse.of(savedOrder);
+        return OrderResponse.of(changedOrder);
     }
 }

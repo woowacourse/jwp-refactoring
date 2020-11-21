@@ -26,7 +26,7 @@ import kitchenpos.dto.TableGroupCreateRequest;
 public class TestObjectFactory {
 
     public static MenuGroupCreateRequest createMenuGroupCreateRequest(String menuName) {
-        MenuGroup menuGroup = new MenuGroup(menuName);
+        MenuGroup menuGroup = new MenuGroup(null, menuName);
 
         return MenuGroupCreateRequest.of(menuGroup);
     }

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableChangeRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
@@ -59,8 +58,10 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTableChangeRequest.isEmpty());
-        OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
+        OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
+            savedOrderTable.getTableGroup(), savedOrderTable.getNumberOfGuests(),
+            orderTableChangeRequest.isEmpty());
+        OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
     }
@@ -81,8 +82,10 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
-        OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
+        OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
+            savedOrderTable.getTableGroup(), numberOfGuests,
+            savedOrderTable.isEmpty());
+        OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
     }
