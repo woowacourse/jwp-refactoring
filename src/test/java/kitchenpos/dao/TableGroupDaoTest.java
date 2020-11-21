@@ -21,15 +21,14 @@ public class TableGroupDaoTest {
     @DisplayName("단체 지정을 저장할 수 있다.")
     @Test
     void save() {
-        TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(), null);
+        TableGroup tableGroup = createTableGroup(null, LocalDateTime.now());
 
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         assertAll(
             () -> assertThat(savedTableGroup.getId()).isNotNull(),
             () -> assertThat(savedTableGroup.getCreatedDate())
-                .isEqualTo(tableGroup.getCreatedDate()),
-            () -> assertThat(savedTableGroup.getOrderTables()).isNull()
+                .isEqualTo(tableGroup.getCreatedDate())
         );
     }
 
@@ -37,7 +36,7 @@ public class TableGroupDaoTest {
     @Test
     void findById() {
         TableGroup tableGroup = tableGroupDao
-            .save(createTableGroup(null, LocalDateTime.now(), null));
+            .save(createTableGroup(null, LocalDateTime.now()));
 
         Optional<TableGroup> foundTableGroup = tableGroupDao.findById(tableGroup.getId());
 
@@ -48,12 +47,9 @@ public class TableGroupDaoTest {
     @Test
     void findAll() {
         List<TableGroup> savedTableGroups = Arrays.asList(
-            tableGroupDao
-                .save(createTableGroup(null, LocalDateTime.now(), null)),
-            tableGroupDao
-                .save(createTableGroup(null, LocalDateTime.now(), null)),
-            tableGroupDao
-                .save(createTableGroup(null, LocalDateTime.now(), null))
+            tableGroupDao.save(createTableGroup(null, LocalDateTime.now())),
+            tableGroupDao.save(createTableGroup(null, LocalDateTime.now())),
+            tableGroupDao.save(createTableGroup(null, LocalDateTime.now()))
         );
 
         List<TableGroup> allTableGroups = tableGroupDao.findAll();

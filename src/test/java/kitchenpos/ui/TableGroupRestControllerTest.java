@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.application.TableGroupService;
+import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
@@ -30,9 +30,6 @@ public class TableGroupRestControllerTest extends AbstractControllerTest {
     @Autowired
     private TableGroupDao tableGroupDao;
 
-    @Autowired
-    private TableGroupService tableGroupService;
-
     @DisplayName("단체 지정을 생성할 수 있다.")
     @Test
     void create() throws Exception {
@@ -40,12 +37,11 @@ public class TableGroupRestControllerTest extends AbstractControllerTest {
             orderTableDao.save(createOrderTable(null, true, 0, null)),
             orderTableDao.save(createOrderTable(null, true, 0, null))
         );
-
-        TableGroup tableGroupRequest = createTableGroupRequest(orderTables);
+        TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(orderTables);
 
         mockMvc.perform(post("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(objectMapper.writeValueAsString(tableGroupRequest))
+            .content(objectMapper.writeValueAsString(tableGroupCreateRequest))
         )
             .andDo(print())
             .andExpect(status().isCreated())
@@ -57,16 +53,11 @@ public class TableGroupRestControllerTest extends AbstractControllerTest {
     @DisplayName("단체 지정을 해제할 수 있다.")
     @Test
     void ungroup() throws Exception {
-        List<OrderTable> orderTables = Arrays.asList(
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null))
-        );
         TableGroup tableGroup = tableGroupDao
-            .save(createTableGroup(null, LocalDateTime.now(), orderTables));
-        orderTables.forEach(it -> {
-            it.setTableGroupId(tableGroup.getId());
-            orderTableDao.save(it);
-        });
+            .save(createTableGroup(null, LocalDateTime.now()));
+
+        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
+        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
 
         mockMvc.perform(delete("/api/table-groups/{id}", tableGroup.getId()))
             .andDo(print())

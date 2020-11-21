@@ -40,7 +40,7 @@ public class OrderDaoTest {
     @DisplayName("주문을 저장할 수 있다.")
     @Test
     void save() {
-        Order order = createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING,
+        Order order = createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
             orderTable.getId());
 
         Order savedOrder = orderDao.save(order);
@@ -55,7 +55,7 @@ public class OrderDaoTest {
     @Test
     void findById() {
         Order order = orderDao.save(
-            createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING, orderTable.getId()));
+            createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
 
         Optional<Order> foundOrder = orderDao.findById(order.getId());
 
@@ -66,11 +66,11 @@ public class OrderDaoTest {
     @Test
     void findAll() {
         List<Order> savedOrders = Arrays.asList(
-            orderDao.save(createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING,
+            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId())),
-            orderDao.save(createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING,
+            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId())),
-            orderDao.save(createOrder(null, LocalDateTime.now(), null, OrderStatus.COOKING,
+            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId()))
         );
 
@@ -85,7 +85,7 @@ public class OrderDaoTest {
     void existsByOrderTableIdAndOrderStatusIn(List<OrderStatus> orderStatuses,
         List<OrderStatus> condition, boolean expected) {
         List<Order> savedOrders = orderStatuses.stream().map(it -> orderDao.save(
-            createOrder(null, LocalDateTime.now(), null, it, orderTable.getId())))
+            createOrder(null, LocalDateTime.now(), it, orderTable.getId())))
             .collect(Collectors.toList());
 
         assertAll(
@@ -150,7 +150,7 @@ public class OrderDaoTest {
     void existsByOrderTableIdInAndOrderStatusIn(List<OrderStatus> orderStatuses,
         List<OrderStatus> condition, boolean expected) {
         List<Order> savedOrders = orderStatuses.stream().map(it -> orderDao.save(
-            createOrder(null, LocalDateTime.now(), null, it, orderTable.getId())))
+            createOrder(null, LocalDateTime.now(), it, orderTable.getId())))
             .collect(Collectors.toList());
 
         assertAll(

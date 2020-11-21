@@ -2,6 +2,8 @@ package kitchenpos.application;
 
 import static kitchenpos.fixture.OrderFixture.createOrder;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableChangeEmptyRequest;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableChangeNumberOfGuestsRequest;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableRequest;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +14,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
+import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
+import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.application.dto.OrderTableCreateRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -42,26 +48,28 @@ public class TableServiceTest extends AbstractServiceTest {
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable = createOrderTableRequest(true, 0);
+        OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(true, 0);
 
-        OrderTable savedOrderTable = tableService.create(orderTable);
+        OrderTableResponse savedOrderTable = tableService.create(orderTableCreateRequest);
 
         assertAll(
             () -> assertThat(savedOrderTable.getId()).isNotNull(),
-            () -> assertThat(savedOrderTable).isEqualToIgnoringGivenFields(orderTable, "id")
+            () -> assertThat(savedOrderTable.getNumberOfGuests())
+                .isEqualTo(orderTableCreateRequest.getNumberOfGuests()),
+            () -> assertThat(savedOrderTable.isEmpty()).isEqualTo(orderTableCreateRequest.isEmpty())
         );
     }
 
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() {
-        List<OrderTable> orderTables = Arrays.asList(
+        List<OrderTableResponse> orderTables = OrderTableResponse.listOf(Arrays.asList(
             orderTableDao.save(createOrderTable(null, true, 0, null)),
             orderTableDao.save(createOrderTable(null, true, 0, null)),
             orderTableDao.save(createOrderTable(null, true, 0, null))
-        );
+        ));
 
-        List<OrderTable> allOrderTables = tableService.list();
+        List<OrderTableResponse> allOrderTables = tableService.list();
 
         assertThat(allOrderTables).usingFieldByFieldElementComparator().containsAll(orderTables);
     }
@@ -71,9 +79,11 @@ public class TableServiceTest extends AbstractServiceTest {
     @ParameterizedTest
     void changeEmpty(boolean oldEmpty, boolean newEmpty) {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, oldEmpty, 0, null));
-        OrderTable orderTableRequest = createOrderTableRequest(newEmpty, 0);
+        OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(
+            newEmpty
+        );
 
-        OrderTable changedOrderTable = tableService
+        OrderTableResponse changedOrderTable = tableService
             .changeEmpty(orderTable.getId(), orderTableRequest);
 
         assertThat(changedOrderTable.isEmpty()).isEqualTo(orderTableRequest.isEmpty());
@@ -92,10 +102,10 @@ public class TableServiceTest extends AbstractServiceTest {
     @Test
     void changeEmpty_throws_exception() {
         TableGroup tableGroup = tableGroupDao
-            .save(createTableGroup(null, LocalDateTime.now(), null));
+            .save(createTableGroup(null, LocalDateTime.now()));
         OrderTable orderTable = orderTableDao
             .save(createOrderTable(null, true, 0, tableGroup.getId()));
-        OrderTable orderTableRequest = createOrderTableRequest(false, 0);
+        OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tableService
             .changeEmpty(orderTable.getId(), orderTableRequest));
@@ -107,8 +117,8 @@ public class TableServiceTest extends AbstractServiceTest {
     void changeEmpty_throws_exception2(OrderStatus orderStatus) {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
         Order order = orderDao
-            .save(createOrder(null, LocalDateTime.now(), null, orderStatus, orderTable.getId()));
-        OrderTable orderTableRequest = createOrderTableRequest(false, 0);
+            .save(createOrder(null, LocalDateTime.now(), orderStatus, orderTable.getId()));
+        OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tableService
             .changeEmpty(orderTable.getId(), orderTableRequest));
@@ -125,9 +135,11 @@ public class TableServiceTest extends AbstractServiceTest {
     @Test
     void changeNumberOfGuests() {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
-        OrderTable orderTableRequest = createOrderTableRequest(false, 1);
+        OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
+            1
+        );
 
-        OrderTable changedOrderTable = tableService
+        OrderTableResponse changedOrderTable = tableService
             .changeNumberOfGuests(orderTable.getId(), orderTableRequest);
 
         assertThat(changedOrderTable.getNumberOfGuests())
@@ -138,7 +150,9 @@ public class TableServiceTest extends AbstractServiceTest {
     @Test
     void changeNumberOfGuests_throws_exception() {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
-        OrderTable orderTableRequest = createOrderTableRequest(false, -1);
+        OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
+            -1
+        );
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
             () -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableRequest));
@@ -148,7 +162,9 @@ public class TableServiceTest extends AbstractServiceTest {
     @Test
     void changeNumberOfGuests_throws_exception2() {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
-        OrderTable orderTableRequest = createOrderTableRequest(false, 1);
+        OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
+            1
+        );
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(
             () -> tableService.changeNumberOfGuests(orderTable.getId(), orderTableRequest));

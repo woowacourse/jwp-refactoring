@@ -8,8 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.ProductCreateRequest;
+import kitchenpos.application.dto.ProductResponse;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,14 +28,14 @@ public class ProductServiceTest extends AbstractServiceTest {
     @ParameterizedTest
     @ValueSource(longs = {0L, 1L})
     void create(Long price) {
-        Product product = createProductRequest("치킨", price);
+        ProductCreateRequest productCreateRequest = createProductRequest("치킨", price);
 
-        Product savedProduct = productService.create(product);
+        ProductResponse savedProduct = productService.create(productCreateRequest);
 
         assertAll(
             () -> assertThat(savedProduct).isNotNull(),
             () -> assertThat(savedProduct.getId()).isNotNull(),
-            () -> assertThat(savedProduct.getName()).isEqualTo(product.getName()),
+            () -> assertThat(savedProduct.getName()).isEqualTo(productCreateRequest.getName()),
             () -> assertThat(savedProduct.getPrice().longValue())
                 .isEqualTo(savedProduct.getPrice().longValue())
         );
@@ -44,10 +45,10 @@ public class ProductServiceTest extends AbstractServiceTest {
     @DisplayName("상품 가격이 null 인 경우 상품을 생성할 수 없다.")
     @Test
     void create_throws_exception() {
-        Product product = createProductRequest("치킨", null);
+        ProductCreateRequest productCreateRequest = createProductRequest("치킨", null);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> productService.create(product));
+            .isThrownBy(() -> productService.create(productCreateRequest));
     }
 
 
@@ -55,23 +56,23 @@ public class ProductServiceTest extends AbstractServiceTest {
     @ParameterizedTest
     @ValueSource(longs = {-1L, -2L})
     void create_throws_exception(Long price) {
-        Product product = createProductRequest("치킨", price);
+        ProductCreateRequest productCreateRequest = createProductRequest("치킨", price);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> productService.create(product));
+            .isThrownBy(() -> productService.create(productCreateRequest));
     }
 
 
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() {
-        List<Product> savedProducts = Arrays.asList(
+        List<ProductResponse> savedProducts = ProductResponse.listOf(Arrays.asList(
             productDao.save(createProduct(null, "치킨1", 10000L)),
             productDao.save(createProduct(null, "치킨2", 10000L)),
             productDao.save(createProduct(null, "치킨3", 10000L))
-        );
+        ));
 
-        List<Product> allProducts = productService.list();
+        List<ProductResponse> allProducts = productService.list();
 
         assertThat(allProducts).usingFieldByFieldElementComparator().containsAll(savedProducts);
     }

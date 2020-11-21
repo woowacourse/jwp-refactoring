@@ -1,13 +1,15 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupCreateRequest;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,26 +24,26 @@ public class MenuGroupServiceTest extends AbstractServiceTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = createMenuGroupRequest("메뉴그룹1");
+        MenuGroupCreateRequest menuGroupCreateRequest = createMenuGroupRequest("메뉴그룹1");
 
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroupCreateRequest);
 
         assertAll(
             () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-            () -> assertThat(savedMenuGroup.getName()).isEqualTo(menuGroup.getName())
+            () -> assertThat(savedMenuGroup.getName()).isEqualTo(menuGroupCreateRequest.getName())
         );
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void list() {
-        List<MenuGroup> savedMenuGroups = Arrays.asList(
-            menuGroupDao.save(createMenuGroupRequest("메뉴그룹1")),
-            menuGroupDao.save(createMenuGroupRequest("메뉴그룹2")),
-            menuGroupDao.save(createMenuGroupRequest("메뉴그룹3"))
-        );
+        List<MenuGroupResponse> savedMenuGroups = MenuGroupResponse.listOf(Arrays.asList(
+            menuGroupDao.save(createMenuGroup(null, "메뉴그룹1")),
+            menuGroupDao.save(createMenuGroup(null, "메뉴그룹2")),
+            menuGroupDao.save(createMenuGroup(null, "메뉴그룹3"))
+        ));
 
-        List<MenuGroup> allMenuGroups = menuGroupService.list();
+        List<MenuGroupResponse> allMenuGroups = menuGroupService.list();
 
         assertThat(allMenuGroups).usingFieldByFieldElementComparator().containsAll(savedMenuGroups);
     }

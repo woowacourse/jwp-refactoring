@@ -1,20 +1,23 @@
 package kitchenpos.fixture;
 
+import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderLineItemFixture {
     public static OrderLineItem createOrderLineItem(Long seq, Long orderId, Long menuId,
         long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-
-        return orderLineItem;
+        return new OrderLineItem(
+            seq,
+            orderId,
+            menuId,
+            quantity
+        );
     }
 
-    public static OrderLineItem createOrderLineItemRequest(Long menuId, long quantity) {
-        return createOrderLineItem(null, null, menuId, quantity);
+    public static OrderLineItemCreateRequest createOrderLineItemRequest(
+        Long menuId,
+        long quantity
+    ) {
+        return new OrderLineItemCreateRequest(menuId, quantity);
     }
 }

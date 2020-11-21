@@ -1,6 +1,5 @@
 package kitchenpos.dao;
 
-import static java.util.Collections.emptyList;
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.MenuProductFixture.createMenuProduct;
@@ -42,7 +41,7 @@ public class MenuProductDaoTest {
     void setup() {
         menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
         product = productDao.save(createProduct(null, "상품", 1000L));
-        menu = menuDao.save(createMenu(null, "메뉴", 3000L, menuGroup.getId(), emptyList()));
+        menu = menuDao.save(createMenu(null, "메뉴", 3000L, menuGroup.getId()));
     }
 
     @DisplayName("메뉴 상품을 저장할 수 있다.")
@@ -88,7 +87,7 @@ public class MenuProductDaoTest {
     @Test
     void findAllByMenuId() {
         Menu secondMenu = menuDao
-            .save(createMenu(null, "메뉴", 3000L, menuGroup.getId(), emptyList()));
+            .save(createMenu(null, "메뉴", 3000L, menuGroup.getId()));
         MenuProduct menuProduct = menuProductDao
             .save(createMenuProduct(null, secondMenu.getId(), product.getId(), 3L));
         menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
