@@ -59,11 +59,12 @@ public class TableService {
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableChangeRequest request) {
         final Table savedTable = tableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
+        int numberOfGuests = request.getNumberOfGuests();
 
-        if (savedTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 테이블의 손님 수를 바꿀 수 없습니다.");
+        if (savedTable.isEmpty() && numberOfGuests != 0) {
+            throw new IllegalArgumentException("비어있는 테이블의 손님 수를 0이 아닌 수로 바꿀 수 없습니다.");
         }
-        savedTable.changeNumberOfGuests(request.getNumberOfGuests());
+        savedTable.changeNumberOfGuests(numberOfGuests);
 
         return TableResponse.of(tableDao.save(savedTable));
     }
