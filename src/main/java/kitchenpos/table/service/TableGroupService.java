@@ -8,10 +8,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.TableRepository;
-import kitchenpos.order.exception.IllegalOrderStatusException;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.Tables;
 import kitchenpos.table.dto.TableGroupCreateRequest;
 
 @Service
@@ -45,15 +45,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<Table> tables = tableRepository.findAllByTableGroupId(tableGroupId);
-
-        if (tables.stream()
-            .anyMatch(Table::isNotCompletion)) {
-            throw new IllegalOrderStatusException("OrderStatus의 상태가 Ungroup할 수 없습니다.");
-        }
-
-        for (final Table table : tables) {
-            table.changeTableGroup(null);
-        }
+        Tables tables = new Tables(tableRepository.findAllByTableGroupId(tableGroupId));
+        tables.unGroup();
     }
 }
