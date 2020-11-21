@@ -78,7 +78,7 @@
     -[x] MenuGroupRestsController
     -[x] MenuRestController
     -[x] OrderRestController
-    -[ ] ProductRestController
+    -[x] ProductRestController
     -[ ] TableGroupRestController
     -[ ] TableRestController
 
