@@ -19,15 +19,25 @@ public class MenuCreateService {
     public Menu createMenu(String name, BigDecimal price, Long menuGroupId,
         List<MenuProductCreateInfo> menuProductCreateInfos) {
         validateMenuGroupId(menuGroupId);
+
         List<Long> productIds = menuProductCreateInfos.stream()
             .map(MenuProductCreateInfo::getProductId)
             .collect(Collectors.toList());
-        PriceValidator priceValidator = PriceValidator.of(productRepository.findAllById(productIds));
+        List<Product> products = productRepository.findAllById(productIds);
+        verifyFindAllProduct(productIds, products);
+
+        PriceValidator priceValidator = PriceValidator.of(products);
         priceValidator.validate(price, menuProductCreateInfos);
 
         return new Menu(name, price, menuGroupId,
             menuProductCreateInfos.stream().map(MenuProductCreateInfo::toMenuProduct).collect(
                 Collectors.toList()));
+    }
+
+    private void verifyFindAllProduct(List<Long> productIds, List<Product> products) {
+        if (products.size() != productIds.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateMenuGroupId(Long menuGroupId) {
