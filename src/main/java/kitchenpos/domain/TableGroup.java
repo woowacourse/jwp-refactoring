@@ -14,8 +14,7 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    // TODO: 20. 11. 22. protected 바꾸기
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate) {

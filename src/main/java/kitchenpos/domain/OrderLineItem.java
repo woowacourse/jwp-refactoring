@@ -18,8 +18,7 @@ public class OrderLineItem {
     private Long menuId;
     private long quantity;
 
-    // TODO: 20. 11. 22. protected 바꾸기
-    public OrderLineItem() {
+    protected OrderLineItem() {
     }
 
     public OrderLineItem(Long menuId, long quantity) {

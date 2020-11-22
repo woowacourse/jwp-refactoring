@@ -29,8 +29,7 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
-    // TODO: 20. 11. 22. protected 바꾸기
-    public Order() {
+    protected Order() {
     }
 
     public Order(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,

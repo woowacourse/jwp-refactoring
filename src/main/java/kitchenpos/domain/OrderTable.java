@@ -16,8 +16,7 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    // TODO: 20. 11. 20. protected 바꾸기
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(int numberOfGuests, boolean empty) {

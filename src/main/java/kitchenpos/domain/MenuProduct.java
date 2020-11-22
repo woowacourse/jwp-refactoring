@@ -18,8 +18,7 @@ public class MenuProduct {
     private Long productId;
     private long quantity;
 
-    // TODO: 20. 11. 17. protected 바꾸기
-    public MenuProduct() {
+    protected MenuProduct() {
     }
 
     public MenuProduct(Long productId, long quantity) {

@@ -12,8 +12,7 @@ public class MenuGroup {
     private Long id;
     private String name;
 
-    // TODO: 20. 11. 17. protected 바꾸기
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(String name) {
