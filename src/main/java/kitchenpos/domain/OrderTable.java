@@ -37,9 +37,9 @@ public class OrderTable {
         }
     }
 
-    public void changeEmpty(boolean empty, TableOrderEmptyValidator tableOrderEmptyValidator) {
+    public void changeEmpty(boolean empty, TableOrderEmptyValidateService tableOrderEmptyValidateService) {
         validateTableGroup();
-        tableOrderEmptyValidator.validate(id);
+        tableOrderEmptyValidateService.validate(id);
         this.empty = empty;
     }
 

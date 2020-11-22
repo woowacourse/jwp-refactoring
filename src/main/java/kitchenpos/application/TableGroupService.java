@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.GroupTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.domain.TableOrderEmptyValidator;
+import kitchenpos.domain.TableOrderEmptyValidateService;
 import kitchenpos.domain.TableRepository;
 import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
@@ -17,13 +17,13 @@ import kitchenpos.dto.TableGroupResponse;
 public class TableGroupService {
     private final TableRepository tableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableOrderEmptyValidator tableOrderEmptyValidator;
+    private final TableOrderEmptyValidateService tableOrderEmptyValidateService;
 
     public TableGroupService(TableRepository tableRepository, TableGroupRepository tableGroupRepository,
-        TableOrderEmptyValidator tableOrderEmptyValidator) {
+        TableOrderEmptyValidateService tableOrderEmptyValidateService) {
         this.tableRepository = tableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableOrderEmptyValidator = tableOrderEmptyValidator;
+        this.tableOrderEmptyValidateService = tableOrderEmptyValidateService;
     }
 
     @Transactional
@@ -47,6 +47,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         GroupTables groupTables = new GroupTables(tableRepository.findByTableGroupId(tableGroupId));
-        groupTables.ungroup(tableOrderEmptyValidator);
+        groupTables.ungroup(tableOrderEmptyValidateService);
     }
 }

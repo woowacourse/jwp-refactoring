@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
 
-class TableOrderEmptyValidatorTest extends ServiceTest {
+class TableOrderEmptyValidateServiceTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 
@@ -29,7 +29,7 @@ class TableOrderEmptyValidatorTest extends ServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private TableOrderEmptyValidator tableOrderEmptyValidator;
+    private TableOrderEmptyValidateService tableOrderEmptyValidateService;
 
     @DisplayName("테이블에 완료되지 않은 주문이 있는 경우 예외 처리한다.")
     @Test
@@ -47,7 +47,7 @@ class TableOrderEmptyValidatorTest extends ServiceTest {
         orderRepository.save(
             Order.place(orderTable.getId(), Collections.singletonList(new OrderLineItem(savedMenu.getId(), 2L))));
 
-        assertThatThrownBy(() -> tableOrderEmptyValidator.validate(orderTable.getId()))
+        assertThatThrownBy(() -> tableOrderEmptyValidateService.validate(orderTable.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -67,7 +67,7 @@ class TableOrderEmptyValidatorTest extends ServiceTest {
         orderRepository.save(
             Order.place(orderTable.getId(), Collections.singletonList(new OrderLineItem(savedMenu.getId(), 2L))));
 
-        assertThatThrownBy(() -> tableOrderEmptyValidator.validate(Collections.singletonList(orderTable.getId())))
+        assertThatThrownBy(() -> tableOrderEmptyValidateService.validate(Collections.singletonList(orderTable.getId())))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

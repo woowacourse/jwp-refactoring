@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TableOrderEmptyValidator {
+public class TableOrderEmptyValidateService {
     private final OrderRepository orderRepository;
 
-    public TableOrderEmptyValidator(OrderRepository orderRepository) {
+    public TableOrderEmptyValidateService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 

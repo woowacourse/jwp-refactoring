@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class GroupTablesTest {
     @Mock
-    private TableOrderEmptyValidator tableOrderEmptyValidator;
+    private TableOrderEmptyValidateService tableOrderEmptyValidateService;
 
     @DisplayName("그룹을 지정할 테이블이 null이면 예외 처리한다.")
     @Test
@@ -63,15 +63,15 @@ class GroupTablesTest {
         List<OrderTable> orderTables = Arrays.asList(new OrderTable(1L, 1L, 1, false),
             new OrderTable(2L, 1L, 2, false));
         GroupTables groupTables = new GroupTables(orderTables);
-        doNothing().when(tableOrderEmptyValidator).validate(anyList());
+        doNothing().when(tableOrderEmptyValidateService).validate(anyList());
 
-        groupTables.ungroup(tableOrderEmptyValidator);
+        groupTables.ungroup(tableOrderEmptyValidateService);
 
         assertAll(
             () -> assertThat(groupTables).extracting(GroupTables::getOrderTables,
                 InstanceOfAssertFactories.list(OrderTable.class)).extracting(OrderTable::getTableGroupId)
                 .containsOnlyNulls(),
-            () -> verify(tableOrderEmptyValidator).validate(anyList())
+            () -> verify(tableOrderEmptyValidateService).validate(anyList())
         );
     }
 }

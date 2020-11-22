@@ -25,8 +25,8 @@ public class GroupTables {
         }
     }
 
-    public void ungroup(TableOrderEmptyValidator tableOrderEmptyValidator) {
-        tableOrderEmptyValidator.validate(getTableIds());
+    public void ungroup(TableOrderEmptyValidateService tableOrderEmptyValidateService) {
+        tableOrderEmptyValidateService.validate(getTableIds());
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }

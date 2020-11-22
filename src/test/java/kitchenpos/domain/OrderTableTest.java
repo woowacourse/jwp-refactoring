@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderTableTest {
     @Mock
-    private TableOrderEmptyValidator tableOrderEmptyValidator;
+    private TableOrderEmptyValidateService tableOrderEmptyValidateService;
 
     @DisplayName("테이블을 생성한다.")
     @Test
@@ -31,17 +31,17 @@ class OrderTableTest {
     @DisplayName("테이블 상태를 비도록 수정한다.")
     @Test
     void changeEmpty() {
-        doNothing().when(tableOrderEmptyValidator).validate(anyLong());
+        doNothing().when(tableOrderEmptyValidateService).validate(anyLong());
 
         OrderTable orderTable = new OrderTable(1L, null, 1, false);
-        orderTable.changeEmpty(true, tableOrderEmptyValidator);
+        orderTable.changeEmpty(true, tableOrderEmptyValidateService);
     }
 
     @DisplayName("메뉴 그룹이 있을 경우 테이블 상태를 변경하면 예외 처리한다.")
     @Test
     void changeEmptyWithGroupId() {
         OrderTable orderTable = new OrderTable(1L, 1L, 1, false);
-        assertThatThrownBy(() -> orderTable.changeEmpty(true, tableOrderEmptyValidator))
+        assertThatThrownBy(() -> orderTable.changeEmpty(true, tableOrderEmptyValidateService))
             .isInstanceOf(IllegalStateException.class);
     }
 
