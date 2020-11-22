@@ -1,24 +1,23 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+
+import io.micrometer.core.instrument.util.StringUtils;
 
 @Entity
 public class Menu {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private BigDecimal price;
@@ -31,6 +30,7 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+        validateName(name);
         validatePrice(price);
         this.id = id;
         this.name = name;
@@ -38,11 +38,17 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup  menuGroup) {
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    private void validatePrice(BigDecimal price){
+    private void validateName(String name) {
+        if (StringUtils.isEmpty(name)) {
+            throw new IllegalArgumentException("메뉴 이름을 입력해주세요");
+        }
+    }
+
+    private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("유효한 가격이 아닙니다.");
         }
