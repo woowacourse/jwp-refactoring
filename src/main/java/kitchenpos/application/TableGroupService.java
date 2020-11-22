@@ -49,17 +49,17 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        List<Table> tables = tableRepository.findAllByTableGroup_Id(tableGroupId);
-        validateOrderCompletion(tables);
-
-        for (final Table table : tables) {
-            table.unGroup();
-        }
+        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+            .orElseThrow(
+                () -> new IllegalArgumentException("테이블 GROUP ID를 찾을 수 없습니다 : " + tableGroupId));
+        validateOrderCompletion(tableGroup);
+        tableGroup.unGroup();
+        tableGroupRepository.delete(tableGroup);
     }
 
-    private void validateOrderCompletion(List<Table> tables) {
+    private void validateOrderCompletion(TableGroup tableGroup) {
         if (orderRepository
-            .existsByTableInAndOrderStatusIn(tables, NOT_COMPLETION_ORDER_STATUSES)) {
+            .existsByTableTableGroupAndOrderStatusIn(tableGroup, NOT_COMPLETION_ORDER_STATUSES)) {
             throw new IllegalArgumentException("진행중인 주문건이 있습니다.");
         }
     }

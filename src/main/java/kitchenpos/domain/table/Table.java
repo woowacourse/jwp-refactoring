@@ -41,16 +41,22 @@ public class Table extends BaseIdEntity {
         return of(null, numberOfGuests, empty);
     }
 
-    public void changeEmpty(final boolean empty) {
-        if (Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 해지되지 않았습니다.");
+    public void changeEmpty(boolean empty) {
+        validate(Objects.nonNull(this.tableGroup) && empty, "TableGroup이 해지되지 않았습니다.");
+        this.empty = empty;
+    }
+
+    private void validate(boolean condition, String exceptionMessage) {
+        if (condition) {
+            throw new IllegalArgumentException(exceptionMessage);
         }
-        setEmpty(empty);
     }
 
     public void unGroup() {
+        if (tableGroup.contains(this)) {
+            tableGroup.removeTable(this);
+        }
         this.tableGroup = null;
-        this.empty = false;
     }
 
     public TableGroup getTableGroup() {
@@ -58,15 +64,20 @@ public class Table extends BaseIdEntity {
     }
 
     public void setTableGroup(final TableGroup tableGroup) {
-        if (Objects.nonNull(tableGroup) && Objects.nonNull(this.tableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 이미 존재합니다.");
+        if (Objects.nonNull(tableGroup)) {
+            validate(Objects.nonNull(this.tableGroup), "TableGroup이 이미 존재합니다.");
+            tableGroup.addTable(this);
         }
-        if (Objects.isNull(tableGroup) && Objects.isNull(this.tableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 이미 존재하지 않습니다.");
+        if (Objects.isNull(tableGroup)) {
+            validate(Objects.isNull(this.tableGroup), "TableGroup이 이미 존재하지 않습니다.");
+            removeTableOfTableGroup();
         }
         this.tableGroup = tableGroup;
-        if (Objects.nonNull(tableGroup)) {
-            tableGroup.addTables(this);
+    }
+
+    private void removeTableOfTableGroup() {
+        if (this.tableGroup.hasTable(this)) {
+            this.tableGroup.removeTable(this);
         }
     }
 
@@ -82,22 +93,16 @@ public class Table extends BaseIdEntity {
     }
 
     public void changeNumberOfGuests(final int numberOfGuests) {
-        validateTableNotEmpty();
+        validate(empty, "Table이 현재 비어있기 때문에 numberOfGuest를 설정할 수 없습니다.");
         this.numberOfGuests = new NumberOfGuests(numberOfGuests);
     }
 
-    private void validateTableNotEmpty() {
-        if (empty) {
-            throw new IllegalArgumentException("Table이 현재 비어있기 때문에 numberOfGuest를 설정할 수 없습니다.");
-        }
+    public boolean hasTableGroup() {
+        return Objects.nonNull(tableGroup);
     }
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     @Override

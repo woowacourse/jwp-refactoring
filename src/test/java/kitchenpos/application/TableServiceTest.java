@@ -119,7 +119,7 @@ class TableServiceTest extends KitchenPosServiceTest {
         Long savedOrderTableId = savedTable.getId();
 
         TableChangeEmptyRequest tableChangeEmptyRequest
-            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_FALSE);
+            = new TableChangeEmptyRequest(TEST_ORDER_TABLE_EMPTY_TRUE);
         assertThatThrownBy(
             () -> tableService.changeEmpty(savedOrderTableId, tableChangeEmptyRequest))
             .isInstanceOf(IllegalArgumentException.class);

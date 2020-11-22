@@ -38,4 +38,24 @@ class MenuPriceTest {
 
         assertThat(menuPrice.getPrice()).isEqualTo(expectedPrice);
     }
+
+    @DisplayName("input 값보다 큰지 확인 - True, 큰 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {99, 98, 97})
+    void isMoreThan_MoreThan_ReturnTrue(int input) {
+        MenuPrice menuPrice = new MenuPrice(BigDecimal.valueOf(100));
+        boolean moreThan = menuPrice.isMoreThan(BigDecimal.valueOf(input));
+
+        assertThat(moreThan).isTrue();
+    }
+
+    @DisplayName("input 값보다 큰지 확인 - False, 작거나 같은 경우")
+    @ParameterizedTest
+    @ValueSource(ints = {100, 101, 102})
+    void isMoreThan_LessThanOrEqual_ReturnFalse(int input) {
+        MenuPrice menuPrice = new MenuPrice(BigDecimal.valueOf(100));
+        boolean moreThan = menuPrice.isMoreThan(BigDecimal.valueOf(input));
+
+        assertThat(moreThan).isFalse();
+    }
 }

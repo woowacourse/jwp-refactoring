@@ -51,6 +51,15 @@ public abstract class KitchenPosRepositoryTest {
             .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedTable = tableRepository.save(table);
 
+        assertThat(savedTable.getId()).isNotNull();
+        return savedTable;
+    }
+
+    protected Table getCreatedTableWithTableGroup() {
+        Table table = Table
+            .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
+        Table savedTable = tableRepository.save(table);
+
         Table otherTable = Table
             .entityOf(TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_TRUE);
         Table savedOtherTable = tableRepository.save(otherTable);

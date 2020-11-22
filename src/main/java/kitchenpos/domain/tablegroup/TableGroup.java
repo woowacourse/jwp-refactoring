@@ -31,7 +31,7 @@ public class TableGroup extends BaseIdEntity {
         validate(tables);
 
         this.createdDate = createdDate;
-        this.tables = tables;
+        this.tables = new ArrayList<>(tables);
         setTableGroup(tables);
     }
 
@@ -52,8 +52,8 @@ public class TableGroup extends BaseIdEntity {
     private void setTableGroup(List<Table> tables) {
         for (Table table : tables) {
             validateTableEmpty(table);
+            table.changeEmpty(false);
             table.setTableGroup(this);
-            table.setEmpty(false);
         }
     }
 
@@ -71,10 +71,34 @@ public class TableGroup extends BaseIdEntity {
         return tables;
     }
 
-    public void addTables(Table table) {
+    public void addTable(Table table) {
+        if (table.isEmpty()) {
+            throw new IllegalArgumentException("Table이 비어있는 경우, TableGroup 셋팅이 불가능합니다.");
+        }
         if (!tables.contains(table)) {
             this.tables.add(table);
         }
+    }
+
+    public void removeTable(Table table) {
+        tables.remove(table);
+        if (table.hasTableGroup()) {
+            table.setTableGroup(null);
+        }
+    }
+
+    public boolean hasTable(Table table) {
+        return tables.contains(table);
+    }
+
+    public void unGroup() {
+        for (Table table : tables) {
+            table.setTableGroup(null);
+        }
+    }
+
+    public boolean contains(Table table) {
+        return this.tables.contains(table);
     }
 
     @Override
