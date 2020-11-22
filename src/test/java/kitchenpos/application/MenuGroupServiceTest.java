@@ -26,7 +26,7 @@ class MenuGroupServiceTest {
     void createMenuGroupTest() {
         MenuGroupCreateRequest menuGroupCreateRequest = new MenuGroupCreateRequest("반마리메뉴");
 
-        MenuGroupResponse menuGroupResponse = this.menuGroupService.create(menuGroupCreateRequest);
+        MenuGroupResponse menuGroupResponse = this.menuGroupService.createMenuGroup(menuGroupCreateRequest);
 
         assertAll(
                 () -> assertThat(menuGroupResponse).isNotNull(),
@@ -41,9 +41,9 @@ class MenuGroupServiceTest {
         MenuGroupCreateRequest menuGroupCreateRequest2 = new MenuGroupCreateRequest("세마리메뉴");
         List<MenuGroupCreateRequest> menuGroupCreateRequests = Arrays.asList(menuGroupCreateRequest1,
                                                                              menuGroupCreateRequest2);
-        menuGroupCreateRequests.forEach(menuGroupCreateRequest -> this.menuGroupService.create(menuGroupCreateRequest));
+        menuGroupCreateRequests.forEach(menuGroupCreateRequest -> this.menuGroupService.createMenuGroup(menuGroupCreateRequest));
 
-        List<MenuGroupResponse> menuGroupResponses = this.menuGroupService.list();
+        List<MenuGroupResponse> menuGroupResponses = this.menuGroupService.listAllMenuGroups();
 
         assertThat(menuGroupResponses).hasSize(menuGroupCreateRequests.size());
     }

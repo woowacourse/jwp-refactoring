@@ -19,14 +19,14 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroupResponse create(MenuGroupCreateRequest menuGroupCreateRequest) {
+    public MenuGroupResponse createMenuGroup(MenuGroupCreateRequest menuGroupCreateRequest) {
         MenuGroup menuGroup = menuGroupCreateRequest.toMenuGroup();
         MenuGroup savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         return MenuGroupResponse.from(savedMenuGroup);
     }
 
-    public List<MenuGroupResponse> list() {
+    public List<MenuGroupResponse> listAllMenuGroups() {
         List<MenuGroup> allMenuGroups = menuGroupRepository.findAll();
 
         return allMenuGroups.stream()
