@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.menugroup;
 
 import java.util.Collections;
 import java.util.List;

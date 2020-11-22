@@ -4,14 +4,26 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuRequest {
 
+    @NotBlank
     private String name;
+
+    @DecimalMin("0")
     private BigDecimal price;
+
+    @NotNull
     private Long menuGroupId;
+
+    @NotEmpty
     private List<MenuProductRequest> menuProducts;
 
     protected MenuRequest() {
