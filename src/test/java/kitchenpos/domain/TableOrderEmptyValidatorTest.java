@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
 
-@ServiceTest
-class TableOrderEmptyValidatorTest {
+class TableOrderEmptyValidatorTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 

@@ -15,8 +15,7 @@ import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.MenuGroupResponse;
 
-@ServiceTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
 

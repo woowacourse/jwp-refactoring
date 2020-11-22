@@ -33,8 +33,7 @@ import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
 
-@ServiceTest
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 

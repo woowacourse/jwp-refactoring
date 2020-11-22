@@ -24,8 +24,7 @@ import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuResponse;
 
-@ServiceTest
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 

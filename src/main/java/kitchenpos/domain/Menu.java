@@ -31,10 +31,10 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = getMenuProducts(menuProducts);
+        this.menuProducts = menuProducts(menuProducts);
     }
 
-    private List<MenuProduct> getMenuProducts(List<MenuProduct> menuProducts) {
+    private List<MenuProduct> menuProducts(List<MenuProduct> menuProducts) {
         List<MenuProduct> newMenuProducts = new ArrayList<>(menuProducts);
         for (MenuProduct menuProduct : newMenuProducts) {
             menuProduct.setMenu(this);

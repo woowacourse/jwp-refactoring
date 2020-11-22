@@ -21,8 +21,7 @@ import kitchenpos.dto.TableGroupCreateRequest;
 import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.dto.TableResponse;
 
-@ServiceTest
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 

@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.common.ServiceTest;
 import kitchenpos.dto.OrderLineItemCreateInfo;
 
-@ServiceTest
-class OrderCreateServiceTest {
+class OrderCreateServiceTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 

@@ -16,8 +16,7 @@ import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.dto.ProductResponse;
 
-@ServiceTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductRepository productRepository;
 

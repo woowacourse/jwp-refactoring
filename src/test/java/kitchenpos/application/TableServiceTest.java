@@ -17,8 +17,7 @@ import kitchenpos.dto.TableCreateRequest;
 import kitchenpos.dto.TableEmptyChangeRequest;
 import kitchenpos.dto.TableResponse;
 
-@ServiceTest
-class TableServiceTest {
+class TableServiceTest extends ServiceTest {
     @Autowired
     private TableRepository tableRepository;
 

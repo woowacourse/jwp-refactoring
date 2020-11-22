@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
 
-@ServiceTest
-class MenuCreateServiceTest {
+class MenuCreateServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
