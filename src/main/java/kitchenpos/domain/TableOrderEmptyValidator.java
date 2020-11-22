@@ -5,26 +5,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import kitchenpos.dao.OrderDao;
-
 @Service
 public class TableOrderEmptyValidator {
-    private final OrderDao orderRepository;
+    private final OrderRepository orderRepository;
 
-    public TableOrderEmptyValidator(OrderDao orderRepository) {
+    public TableOrderEmptyValidator(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     public void validate(Long tableId) {
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            tableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            tableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
 
     public void validate(List<Long> tableIds) {
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-            tableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            tableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
     }
