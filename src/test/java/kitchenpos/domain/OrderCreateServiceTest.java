@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.common.ServiceTest;
-import kitchenpos.dto.OrderLineItemCreateInfo;
 
 class OrderCreateServiceTest extends ServiceTest {
     @Autowired

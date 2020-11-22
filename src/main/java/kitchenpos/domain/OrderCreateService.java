@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import kitchenpos.dto.OrderLineItemCreateInfo;
-
 @Service
 public class OrderCreateService {
     private final MenuRepository menuRepository;

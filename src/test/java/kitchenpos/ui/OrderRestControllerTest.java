@@ -16,9 +16,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 import kitchenpos.application.OrderService;
+import kitchenpos.domain.OrderLineItemCreateInfo;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemCreateInfo;
 import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderStatusChangeRequest;
