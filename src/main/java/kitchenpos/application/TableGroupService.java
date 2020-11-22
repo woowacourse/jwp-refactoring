@@ -36,7 +36,7 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroupResponse create(TableGroupCreateRequest tableGroupCreateRequest) {
+    public TableGroupResponse createTableGroup(TableGroupCreateRequest tableGroupCreateRequest) {
         List<Long> orderTableIds = tableGroupCreateRequest.getOrderTableIds();
         validateOrderTableIds(orderTableIds);
 

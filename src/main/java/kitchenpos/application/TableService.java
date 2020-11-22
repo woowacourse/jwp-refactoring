@@ -30,7 +30,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(OrderTableCreateRequest orderTableCreateRequest) {
+    public OrderTableResponse createOrderTable(OrderTableCreateRequest orderTableCreateRequest) {
         NumberOfGuests numberOfGuests = NumberOfGuests.from(orderTableCreateRequest.getNumberOfGuests());
 
         OrderTable orderTable = new OrderTable(numberOfGuests, orderTableCreateRequest.isEmpty());
@@ -39,7 +39,7 @@ public class TableService {
         return OrderTableResponse.from(savedOrderTable);
     }
 
-    public List<OrderTableResponse> list() {
+    public List<OrderTableResponse> listAllOrderTables() {
         return orderTableRepository.findAll().stream()
                 .map(OrderTableResponse::from)
                 .collect(Collectors.toList());

@@ -39,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse create(OrderCreateRequest orderCreateRequest) {
+    public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
         List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
         validateOrderLineItemCreateRequests(orderLineItemCreateRequests);
 
@@ -90,7 +90,7 @@ public class OrderService {
         return savedOrderLineItems;
     }
 
-    public List<OrderResponse> list() {
+    public List<OrderResponse> listAllOrders() {
         List<Order> orders = orderRepository.findAll();
         orders.forEach(order -> order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId())));
 

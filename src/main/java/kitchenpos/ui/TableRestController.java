@@ -20,21 +20,23 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest orderTableCreateRequest) {
-        final OrderTableResponse created = tableService.create(orderTableCreateRequest);
+    public ResponseEntity<OrderTableResponse> respondCreatedOrderTableResponse(
+            @RequestBody final OrderTableCreateRequest orderTableCreateRequest
+    ) {
+        final OrderTableResponse created = tableService.createOrderTable(orderTableCreateRequest);
         final URI uri = URI.create("/api/tables/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(created);
     }
 
     @GetMapping("/api/tables")
-    public ResponseEntity<List<OrderTableResponse>> list() {
+    public ResponseEntity<List<OrderTableResponse>> respondAllOrderTableResponses() {
         return ResponseEntity.ok()
-                .body(tableService.list());
+                .body(tableService.listAllOrderTables());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTableResponse> changeEmpty(
+    public ResponseEntity<OrderTableResponse> respondEmptyChangedOrderTableResponse(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest
     ) {
@@ -43,7 +45,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(
+    public ResponseEntity<OrderTableResponse> respondNumberOfGuestsChangedOrderTableResponse(
             @PathVariable final Long orderTableId,
             @RequestBody final OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest
             ) {

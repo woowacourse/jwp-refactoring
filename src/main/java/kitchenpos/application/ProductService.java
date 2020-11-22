@@ -20,7 +20,7 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(ProductCreateRequest productCreateRequest) {
+    public ProductResponse createProduct(ProductCreateRequest productCreateRequest) {
         ProductPrice productPrice = ProductPrice.from(productCreateRequest.getPrice());
         Product product = new Product(productCreateRequest.getName(), productPrice);
         Product savedProduct = productRepository.save(product);
@@ -28,7 +28,7 @@ public class ProductService {
         return ProductResponse.from(savedProduct);
     }
 
-    public List<ProductResponse> list() {
+    public List<ProductResponse> listAllProducts() {
         return productRepository.findAll().stream()
                 .map(ProductResponse::from)
                 .collect(Collectors.toList());

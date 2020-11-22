@@ -70,7 +70,7 @@ class MenuServiceTest {
                                                                     this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        MenuResponse menuResponse = this.menuService.create(menuCreateRequest);
+        MenuResponse menuResponse = this.menuService.createMenu(menuCreateRequest);
 
         assertAll(
                 () -> assertThat(menuResponse).isNotNull(),
@@ -89,7 +89,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", null, this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 0 미만이면 예외 발생")
@@ -102,7 +102,7 @@ class MenuServiceTest {
                                                                     this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 메뉴 그룹을 지정하면 예외 발생")
@@ -114,7 +114,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
                                                                     notExistMenuGroupId, menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(MenuGroupNotFoundException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(MenuGroupNotFoundException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 존재하지 않는 상품을 지정하면 예외 발생")
@@ -127,7 +127,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
                                                                     this.savedMenuGroup.getId(), menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(ProductNotFoundException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(ProductNotFoundException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 메뉴의 가격이 지정한 상품 가격의 총합을 초과하면 예외 발생")
@@ -145,7 +145,7 @@ class MenuServiceTest {
                                                                     this.savedMenuGroup.getId(),
                                                                     menuProductCreateRequests);
 
-        assertThatThrownBy(() -> this.menuService.create(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
 
     @DisplayName("존재하는 모든 메뉴를 조회")
@@ -163,9 +163,9 @@ class MenuServiceTest {
                                                                      menuProductCreateRequests2);
 
         List<MenuCreateRequest> menuCreateRequests = Arrays.asList(menuCreateRequest1, menuCreateRequest2);
-        menuCreateRequests.forEach(menuCreateRequest -> this.menuService.create(menuCreateRequest));
+        menuCreateRequests.forEach(menuCreateRequest -> this.menuService.createMenu(menuCreateRequest));
 
-        List<MenuResponse> menuResponses = this.menuService.list();
+        List<MenuResponse> menuResponses = this.menuService.listAllMenus();
 
         assertThat(menuResponses).hasSize(menuCreateRequests.size());
     }

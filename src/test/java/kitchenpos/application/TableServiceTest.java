@@ -54,7 +54,7 @@ class TableServiceTest {
     void createTableTest(int numberOfGuests, boolean isEmpty) {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(numberOfGuests, isEmpty);
 
-        OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTableResponse = this.tableService.createOrderTable(orderTableCreateRequest);
 
         assertAll(
                 () -> assertThat(orderTableResponse).isNotNull(),
@@ -71,9 +71,9 @@ class TableServiceTest {
         OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(3, false);
         List<OrderTableCreateRequest> orderTableCreateRequests = Arrays.asList(orderTableCreateRequest1,
                                                                                orderTableCreateRequest2);
-        orderTableCreateRequests.forEach(orderTableCreateRequest -> this.tableService.create(orderTableCreateRequest));
+        orderTableCreateRequests.forEach(orderTableCreateRequest -> this.tableService.createOrderTable(orderTableCreateRequest));
 
-        List<OrderTableResponse> orderTableResponses = this.tableService.list();
+        List<OrderTableResponse> orderTableResponses = this.tableService.listAllOrderTables();
 
         assertThat(orderTableResponses).hasSize(orderTableCreateRequests.size());
     }
@@ -83,7 +83,7 @@ class TableServiceTest {
     @CsvSource(value = {"2,false", "2,true"})
     void changeEmptyTest(int numberOfGuests, boolean isEmpty) {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(numberOfGuests, isEmpty);
-        OrderTableResponse orderTableCreateResponse = this.tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTableCreateResponse = this.tableService.createOrderTable(orderTableCreateRequest);
         OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(!isEmpty);
 
         OrderTableResponse orderTableChangeResponse = this.tableService.changeEmpty(orderTableCreateResponse.getId(),
@@ -141,7 +141,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsTest() {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, false);
-        OrderTableResponse orderTableCreateResponse = this.tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTableCreateResponse = this.tableService.createOrderTable(orderTableCreateRequest);
         OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(2);
 
         OrderTableResponse orderTableChangeResponse =
@@ -155,7 +155,7 @@ class TableServiceTest {
     @ValueSource(ints = {-1, -2, -10})
     void changeNumberOfGuestsUnderZeroThenThrowException(int invalidNumberOfGuests) {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, false);
-        OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTableResponse = this.tableService.createOrderTable(orderTableCreateRequest);
         OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(invalidNumberOfGuests);
 
         assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeNumberOfGuestsRequest))
@@ -176,7 +176,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithEmptyOrderTableThenThrowException() {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
-        OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
+        OrderTableResponse orderTableResponse = this.tableService.createOrderTable(orderTableCreateRequest);
         OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(2);
 
         assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(),

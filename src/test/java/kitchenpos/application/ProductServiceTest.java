@@ -31,7 +31,7 @@ class ProductServiceTest {
     void createProductTest() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(16_000));
 
-        ProductResponse productResponse = this.productService.create(productCreateRequest);
+        ProductResponse productResponse = this.productService.createProduct(productCreateRequest);
 
         assertAll(
                 () -> assertThat(productResponse).isNotNull(),
@@ -45,7 +45,7 @@ class ProductServiceTest {
     void createProductWithNullPriceThenThrowException() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", null);
 
-        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
+        assertThatThrownBy(() -> this.productService.createProduct(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("새로운 상품을 생성할 때 가격이 0 미만이면 예외 발생")
@@ -54,7 +54,7 @@ class ProductServiceTest {
     void createProductWithInvalidPriceThenThrowException(int invalidPrice) {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", BigDecimal.valueOf(invalidPrice));
 
-        assertThatThrownBy(() -> this.productService.create(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
+        assertThatThrownBy(() -> this.productService.createProduct(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
     }
 
     @DisplayName("존재하는 모든 상품을 조회")
@@ -64,9 +64,9 @@ class ProductServiceTest {
         ProductCreateRequest productCreateRequest2 = new ProductCreateRequest("간장치킨", BigDecimal.valueOf(16_000));
 
         List<ProductCreateRequest> productCreateRequests = Arrays.asList(productCreateRequest1, productCreateRequest2);
-        productCreateRequests.forEach(product -> this.productService.create(product));
+        productCreateRequests.forEach(product -> this.productService.createProduct(product));
 
-        List<ProductResponse> productResponses = this.productService.list();
+        List<ProductResponse> productResponses = this.productService.listAllProducts();
 
         assertThat(productResponses).hasSize(productCreateRequests.size());
     }

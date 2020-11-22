@@ -89,7 +89,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
+        OrderResponse orderResponse = this.orderService.createOrder(orderCreateRequest);
 
         assertAll(
                 () -> assertThat(orderResponse).isNotNull(),
@@ -106,7 +106,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        Collections.emptyList());
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest))
+        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest))
                 .isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
     }
 
@@ -123,7 +123,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
+        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 존재하지 않는 테이블을 주문 테이블로 지정하면 예외 발생")
@@ -136,7 +136,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notExistOrderTableId,
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(OrderTableNotFoundException.class);
+        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(OrderTableNotFoundException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 빈 테이블을 주문 테이블로 지정하면 예외 발생")
@@ -148,7 +148,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.create(orderCreateRequest)).isInstanceOf(EmptyOrderTableException.class);
+        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(EmptyOrderTableException.class);
     }
 
     @DisplayName("존재하는 모든 주문을 조회")
@@ -165,9 +165,9 @@ class OrderServiceTest {
                                                                         orderLineItemCreateRequests2);
 
         List<OrderCreateRequest> orderCreateRequests = Arrays.asList(orderCreateRequest1, orderCreateRequest2);
-        orderCreateRequests.forEach(order -> this.orderService.create(order));
+        orderCreateRequests.forEach(order -> this.orderService.createOrder(order));
 
-        List<OrderResponse> orderResponses = this.orderService.list();
+        List<OrderResponse> orderResponses = this.orderService.listAllOrders();
 
         assertThat(orderResponses).hasSize(orderCreateRequests.size());
     }
@@ -180,7 +180,7 @@ class OrderServiceTest {
                                                                                      this.orderLineItemCreateRequest2);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
-        OrderResponse orderResponse = this.orderService.create(orderCreateRequest);
+        OrderResponse orderResponse = this.orderService.createOrder(orderCreateRequest);
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus);
 
         OrderResponse changedOrderResponse = this.orderService.changeOrderStatus(orderResponse.getId(),

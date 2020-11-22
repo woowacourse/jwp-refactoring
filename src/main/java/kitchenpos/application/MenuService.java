@@ -41,7 +41,7 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse create(MenuCreateRequest menuCreateRequest) {
+    public MenuResponse createMenu(MenuCreateRequest menuCreateRequest) {
         MenuPrice menuPrice = MenuPrice.from(menuCreateRequest.getPrice());
 
         List<MenuProductCreateRequest> menuProductCreateRequests = menuCreateRequest.getMenuProductCreateRequests();
@@ -89,7 +89,7 @@ public class MenuService {
                 .collect(Collectors.toList());
     }
 
-    public List<MenuResponse> list() {
+    public List<MenuResponse> listAllMenus() {
         List<Menu> menus = menuRepository.findAll();
 
         List<MenuResponse> menuResponses = new ArrayList<>();
