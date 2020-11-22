@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductCreateRequest productCreateRequest) {
+    public ResponseEntity<ProductResponse> create(@RequestBody final ProductCreateRequest productCreateRequest) {
         final ProductResponse created = productService.create(productCreateRequest);
         final URI uri = URI.create("/api/products/" + created.getId());
 

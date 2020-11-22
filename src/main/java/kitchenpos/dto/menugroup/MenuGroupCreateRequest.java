@@ -2,10 +2,7 @@ package kitchenpos.dto.menugroup;
 
 import kitchenpos.domain.menu.MenuGroup;
 
-import javax.validation.constraints.NotBlank;
-
 public class MenuGroupCreateRequest {
-    @NotBlank(message = "메뉴 그룹의 이름은 반드시 존재해야 합니다!")
     private String name;
 
     public MenuGroupCreateRequest() {
@@ -16,7 +13,7 @@ public class MenuGroupCreateRequest {
     }
 
     public MenuGroup toMenuGroup() {
-        return new MenuGroup(this.name);
+        return MenuGroup.from(this.name);
     }
 
     public String getName() {

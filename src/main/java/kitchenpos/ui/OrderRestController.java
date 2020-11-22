@@ -7,7 +7,6 @@ import kitchenpos.dto.order.OrderStatusChangeRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<OrderResponse> create(@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderCreateRequest orderCreateRequest) {
         final OrderResponse created = orderService.create(orderCreateRequest);
         final URI uri = URI.create("/api/orders/" + created.getId());
 

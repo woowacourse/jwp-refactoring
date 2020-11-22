@@ -12,7 +12,7 @@ public class MenuPrice {
     @Column(name = "price")
     private BigDecimal value;
 
-    public MenuPrice() {
+    protected MenuPrice() {
     }
 
     private MenuPrice(BigDecimal value) {
@@ -21,6 +21,7 @@ public class MenuPrice {
 
     public static MenuPrice from(BigDecimal value) {
         validateValue(value);
+
         return new MenuPrice(value);
     }
 

@@ -2,6 +2,7 @@ package kitchenpos.domain.order;
 
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.exception.OrderStatusNotChangeableException;
+import kitchenpos.util.ValidateUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class Order {
     @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
+    protected Order() {
     }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
@@ -35,7 +36,14 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        ValidateUtil.validateNonNull(orderTable, orderStatus, orderedTime);
+
+        return new Order(orderTable, orderStatus, orderedTime);
+    }
+
     public void changeOrderStatus(OrderStatus orderStatus) {
+        ValidateUtil.validateNonNull(orderStatus);
         if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new OrderStatusNotChangeableException();
         }

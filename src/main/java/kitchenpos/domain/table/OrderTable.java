@@ -1,5 +1,7 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.util.ValidateUtil;
+
 import javax.persistence.*;
 
 @Entity
@@ -14,12 +16,18 @@ public class OrderTable {
     private NumberOfGuests numberOfGuests;
     private boolean empty;
 
-    public OrderTable() {
+    protected OrderTable() {
     }
 
     public OrderTable(NumberOfGuests numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static OrderTable of(NumberOfGuests numberOfGuests, boolean empty) {
+        ValidateUtil.validateNonNull(numberOfGuests);
+
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public Long getId() {
@@ -46,7 +54,9 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(boolean empty) {
+    public void setEmpty(Boolean empty) {
+        ValidateUtil.validateNonNull(empty);
+
         this.empty = empty;
     }
 }

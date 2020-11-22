@@ -1,6 +1,7 @@
 package kitchenpos.domain.menu;
 
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.util.ValidateUtil;
 
 import javax.persistence.*;
 import java.util.List;
@@ -20,13 +21,20 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    public Menu() {
+    protected Menu() {
     }
 
     public Menu(String name, MenuPrice menuPrice, MenuGroup menuGroup) {
         this.name = name;
         this.menuPrice = menuPrice;
         this.menuGroup = menuGroup;
+    }
+
+    public static Menu of(String name, MenuPrice menuPrice, MenuGroup menuGroup) {
+        ValidateUtil.validateNonNullAndNotEmpty(name);
+        ValidateUtil.validateNonNull(menuPrice, menuGroup);
+
+        return new Menu(name, menuPrice, menuGroup);
     }
 
     public Long getId() {

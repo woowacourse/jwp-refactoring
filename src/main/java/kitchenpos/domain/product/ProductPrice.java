@@ -12,7 +12,7 @@ public class ProductPrice {
     @Column(name = "price")
     private BigDecimal value;
 
-    public ProductPrice() {
+    protected ProductPrice() {
     }
 
     private ProductPrice(BigDecimal value) {
@@ -21,6 +21,7 @@ public class ProductPrice {
 
     public static ProductPrice from(BigDecimal value) {
         validateValue(value);
+
         return new ProductPrice(value);
     }
 

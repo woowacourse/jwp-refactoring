@@ -3,7 +3,8 @@ package kitchenpos.application;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.table.OrderTable;
-import kitchenpos.dto.ordertable.OrderTableChangeRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.exception.InvalidOrderTableException;
@@ -45,12 +46,12 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableChangeRequest orderTableChangeRequest) {
+    public OrderTableResponse changeEmpty(Long orderTableId,  OrderTableChangeEmptyRequest orderTableChangeEmptyRequest) {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
         validateOrderTable(orderTableId, savedOrderTable);
 
-        savedOrderTable.setEmpty(orderTableChangeRequest.isEmpty());
+        savedOrderTable.setEmpty(orderTableChangeEmptyRequest.isEmpty());
 
         return OrderTableResponse.from(savedOrderTable);
     }
@@ -67,8 +68,8 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeRequest orderTableChangeRequest) {
-        NumberOfGuests numberOfGuests = NumberOfGuests.from(orderTableChangeRequest.getNumberOfGuests());
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest) {
+        NumberOfGuests numberOfGuests = NumberOfGuests.from(orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
 
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new OrderTableNotFoundException(orderTableId));

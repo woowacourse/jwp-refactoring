@@ -1,5 +1,7 @@
 package kitchenpos.domain.menu;
 
+import kitchenpos.util.ValidateUtil;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,11 +14,17 @@ public class MenuGroup {
     private Long id;
     private String name;
 
-    public MenuGroup() {
+    protected MenuGroup() {
     }
 
     public MenuGroup(String name) {
         this.name = name;
+    }
+
+    public static MenuGroup from(String name) {
+        ValidateUtil.validateNonNullAndNotEmpty(name);
+
+        return new MenuGroup(name);
     }
 
     public Long getId() {

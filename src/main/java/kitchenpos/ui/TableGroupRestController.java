@@ -6,7 +6,6 @@ import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
@@ -18,7 +17,7 @@ public class TableGroupRestController {
     }
 
     @PostMapping("/api/table-groups")
-    public ResponseEntity<TableGroupResponse> create(@RequestBody @Valid final TableGroupCreateRequest tableGroupCreateRequest) {
+    public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupCreateRequest tableGroupCreateRequest) {
         final TableGroupResponse created = tableGroupService.create(tableGroupCreateRequest);
         final URI uri = URI.create("/api/table-groups/" + created.getId());
 

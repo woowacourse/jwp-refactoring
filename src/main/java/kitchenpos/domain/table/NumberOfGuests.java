@@ -12,7 +12,7 @@ public class NumberOfGuests {
     @Column(name = "numberOfGuests")
     private int value;
 
-    public NumberOfGuests() {
+    protected NumberOfGuests() {
     }
 
     private NumberOfGuests(int value) {
@@ -21,6 +21,7 @@ public class NumberOfGuests {
 
     public static NumberOfGuests from(int value) {
         validateValue(value);
+
         return new NumberOfGuests(value);
     }
 

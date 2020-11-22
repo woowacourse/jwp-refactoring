@@ -5,7 +5,8 @@ import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.table.NumberOfGuests;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
-import kitchenpos.dto.ordertable.OrderTableChangeRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.ordertable.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.ordertable.OrderTableCreateRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.exception.InvalidNumberOfGuestsException;
@@ -83,13 +84,13 @@ class TableServiceTest {
     void changeEmptyTest(int numberOfGuests, boolean isEmpty) {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(numberOfGuests, isEmpty);
         OrderTableResponse orderTableCreateResponse = this.tableService.create(orderTableCreateRequest);
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(numberOfGuests, !isEmpty);
+        OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(!isEmpty);
 
         OrderTableResponse orderTableChangeResponse = this.tableService.changeEmpty(orderTableCreateResponse.getId(),
-                                                                                    orderTableChangeRequest);
+                                                                                    orderTableChangeEmptyRequest);
 
         assertAll(
-                () -> assertThat(orderTableChangeResponse.isEmpty()).isEqualTo(orderTableChangeRequest.isEmpty()),
+                () -> assertThat(orderTableChangeResponse.isEmpty()).isEqualTo(orderTableChangeEmptyRequest.isEmpty()),
                 () -> assertThat(orderTableChangeResponse.isEmpty()).isEqualTo(!orderTableCreateRequest.isEmpty()),
                 () -> assertThat(orderTableChangeResponse.getNumberOfGuests()).isEqualTo(orderTableCreateRequest.getNumberOfGuests())
         );
@@ -99,9 +100,9 @@ class TableServiceTest {
     @Test
     void changeEmptyWithNotExistOrderTableThenThrowException() {
         long notExistOrderTableId = -1L;
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(0, false);
+        OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(false);
 
-        assertThatThrownBy(() -> this.tableService.changeEmpty(notExistOrderTableId, orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeEmpty(notExistOrderTableId, orderTableChangeEmptyRequest))
                 .isInstanceOf(OrderTableNotFoundException.class);
     }
 
@@ -116,9 +117,9 @@ class TableServiceTest {
         orderTable1.setTableGroup(savedTableGroup);
         OrderTable savedOrderTable = this.orderTableRepository.save(orderTable1);
 
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(false);
+        OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(false);
 
-        assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable.getId(), orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable.getId(), orderTableChangeEmptyRequest))
                 .isInstanceOf(InvalidOrderTableException.class);
     }
 
@@ -130,9 +131,9 @@ class TableServiceTest {
         OrderTable savedOrderTable1 = this.orderTableRepository.save(orderTable1);
         createSavedOrder(savedOrderTable1, OrderStatus.from(orderStatus));
 
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(true);
+        OrderTableChangeEmptyRequest orderTableChangeEmptyRequest = new OrderTableChangeEmptyRequest(true);
 
-        assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable1.getId(), orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeEmpty(savedOrderTable1.getId(), orderTableChangeEmptyRequest))
                 .isInstanceOf(InvalidOrderTableException.class);
     }
 
@@ -141,13 +142,12 @@ class TableServiceTest {
     void changeNumberOfGuestsTest() {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, false);
         OrderTableResponse orderTableCreateResponse = this.tableService.create(orderTableCreateRequest);
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(2);
+        OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(2);
 
         OrderTableResponse orderTableChangeResponse =
-                this.tableService.changeNumberOfGuests(orderTableCreateResponse.getId(),
-                                                                                             orderTableChangeRequest);
+                this.tableService.changeNumberOfGuests(orderTableCreateResponse.getId(), orderTableChangeNumberOfGuestsRequest);
 
-        assertThat(orderTableChangeResponse.getNumberOfGuests()).isEqualTo(orderTableChangeRequest.getNumberOfGuests());
+        assertThat(orderTableChangeResponse.getNumberOfGuests()).isEqualTo(orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
     }
 
     @DisplayName("특정 주문 테이블의 방문 손님 수를 변경할 때, 손님 수가 0 미만이면 예외 발생")
@@ -156,9 +156,9 @@ class TableServiceTest {
     void changeNumberOfGuestsUnderZeroThenThrowException(int invalidNumberOfGuests) {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, false);
         OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(invalidNumberOfGuests);
+        OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(invalidNumberOfGuests);
 
-        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(), orderTableChangeNumberOfGuestsRequest))
                 .isInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
@@ -166,9 +166,9 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsWithNotExistOrderTableThenThrowException() {
         long notExistOrderTableId = -1L;
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(0);
+        OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(0);
 
-        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(notExistOrderTableId, orderTableChangeRequest))
+        assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(notExistOrderTableId, orderTableChangeNumberOfGuestsRequest))
                 .isInstanceOf(OrderTableNotFoundException.class);
     }
 
@@ -177,10 +177,10 @@ class TableServiceTest {
     void changeNumberOfGuestsWithEmptyOrderTableThenThrowException() {
         OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(0, true);
         OrderTableResponse orderTableResponse = this.tableService.create(orderTableCreateRequest);
-        OrderTableChangeRequest orderTableChangeRequest = new OrderTableChangeRequest(2);
+        OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest = new OrderTableChangeNumberOfGuestsRequest(2);
 
         assertThatThrownBy(() -> this.tableService.changeNumberOfGuests(orderTableResponse.getId(),
-                                                                        orderTableChangeRequest))
+                                                                        orderTableChangeNumberOfGuestsRequest))
                 .isInstanceOf(InvalidOrderTableException.class);
     }
 

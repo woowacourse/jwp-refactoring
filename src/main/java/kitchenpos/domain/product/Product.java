@@ -1,5 +1,7 @@
 package kitchenpos.domain.product;
 
+import kitchenpos.util.ValidateUtil;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,12 +15,19 @@ public class Product {
     private String name;
     private ProductPrice productPrice;
 
-    public Product() {
+    protected Product() {
     }
 
     public Product(String name, ProductPrice productPrice) {
         this.name = name;
         this.productPrice = productPrice;
+    }
+
+    public static Product of(String name, ProductPrice productPrice) {
+        ValidateUtil.validateNonNullAndNotEmpty(name);
+        ValidateUtil.validateNonNull(productPrice);
+
+        return new Product(name, productPrice);
     }
 
     public Long getId() {

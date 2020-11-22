@@ -1,5 +1,7 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.util.ValidateUtil;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,12 +16,18 @@ public class TableGroup {
     @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public static TableGroup of(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        ValidateUtil.validateNonNull(createdDate, orderTables);
+
+        return new TableGroup(createdDate, orderTables);
     }
 
     public Long getId() {
