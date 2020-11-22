@@ -42,9 +42,7 @@ class ProductServiceTest {
     @DisplayName("상품 전체 목록을 조회한다.")
     @Test
     void list() {
-        Product product = new Product();
-        product.setName("상품1");
-        product.setPrice(BigDecimal.valueOf(1_000L));
+        Product product = new Product("상품1", BigDecimal.valueOf(1_000L));
 
         productRepository.save(product);
 
