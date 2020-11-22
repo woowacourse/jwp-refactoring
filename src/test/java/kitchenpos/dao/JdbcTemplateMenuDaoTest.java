@@ -74,12 +74,21 @@ class JdbcTemplateMenuDaoTest {
     @Test
     @DisplayName("모든 엔티티를 조회하면 저장되어 있는 엔티티들이 반환된다")
     void findAll() {
-        menuDao.save(createMenu(null, "후라이드", BigDecimal.valueOf(1000, 2), menuGroupId));
-        menuDao.save(createMenu(null, "양념치킨", BigDecimal.valueOf(2000, 2), menuGroupId));
-        menuDao.save(createMenu(null, "무슨치킨", BigDecimal.valueOf(3000, 2), menuGroupId));
-        menuDao.save(createMenu(null, "땅땅치킨", BigDecimal.valueOf(4000, 2), menuGroupId));
+        List<Menu> menus = Arrays.asList(
+                createMenu(null, "후라이드", BigDecimal.valueOf(1000, 2), menuGroupId),
+                createMenu(null, "양념치킨", BigDecimal.valueOf(2000, 2), menuGroupId),
+                createMenu(null, "무슨치킨", BigDecimal.valueOf(3000, 2), menuGroupId),
+                createMenu(null, "땅땅치킨", BigDecimal.valueOf(4000, 2), menuGroupId)
+        );
+        for (Menu menu : menus) {
+            menuDao.save(menu);
+        }
 
-        assertThat(menuDao.findAll()).hasSize(4);
+        List<Menu> result = menuDao.findAll();
+        assertAll(
+                () -> assertThat(result).usingElementComparatorIgnoringFields("id").containsAll(result),
+                () -> assertThat(result).extracting(Menu::getId).doesNotContainNull()
+        );
     }
 
     @Test
