@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.service.TableValidator;
 import kitchenpos.ui.dto.OrderTableCreateRequest;
 import kitchenpos.ui.dto.OrderTableNumOfGuestRequest;
 import kitchenpos.ui.dto.OrderTableStatusRequest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +13,12 @@ import java.util.List;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
-    private final ApplicationEventPublisher publisher;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao, ApplicationEventPublisher publisher) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableDao orderTableDao, TableValidator tableValidator) {
         this.orderTableDao = orderTableDao;
-        this.publisher = publisher;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -36,7 +33,8 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTableStatusRequest request) {
         final OrderTable orderTable = orderTableDao.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        orderTable.changeEmpty(request.isEmpty(), publisher);
+        tableValidator.validateOrderStatusOfTable(orderTable.getId());
+        orderTable.changeEmpty(request.isEmpty());
         return orderTableDao.save(orderTable);
     }
 

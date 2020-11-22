@@ -5,8 +5,8 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.service.TableValidator;
 import kitchenpos.ui.dto.TableGroupCreateRequest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,18 +19,18 @@ public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
-    private final ApplicationEventPublisher publisher;
+    private final TableValidator tableValidator;
 
     public TableGroupService(
             final OrderDao orderDao,
             final OrderTableDao orderTableDao,
             final TableGroupDao tableGroupDao,
-            final ApplicationEventPublisher publisher
+            final TableValidator tableValidator
     ) {
         this.orderDao = orderDao;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
-        this.publisher = publisher;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -58,7 +58,8 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
         for (final OrderTable orderTable : orderTables) {
-            orderTableDao.save(orderTable.ungroup(publisher));
+            tableValidator.validateOrderStatusOfTable(orderTable.getId());
+            orderTableDao.save(orderTable.ungroup());
         }
     }
 }

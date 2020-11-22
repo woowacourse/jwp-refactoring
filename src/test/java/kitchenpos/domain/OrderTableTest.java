@@ -17,21 +17,19 @@ class OrderTableTest {
     @DisplayName("empty 여부 변경 메서드는")
     class DESCRIBE_ChangeOrderStatus {
         private OrderTable subject() {
-            return orderTable.changeEmpty(empty, publisher);
+            return orderTable.changeEmpty(empty);
         }
 
         private boolean empty;
-        private ApplicationEventPublisher publisher;
 
         @Nested
-        @DisplayName("그룹이 없는 테이블과 변경할 empty 여부, 퍼블리셔가 주어지면")
+        @DisplayName("그룹이 없는 테이블과 변경할 empty 여부가 주어지면")
         class CONTEXT_Given {
             @BeforeEach
             void setUp() {
                 orderTable = createOrderTable(1L, true, null, 4);
 
                 empty = !orderTable.isEmpty();
-                publisher = new CustomEventPublisher.AlwaysPass();
             }
 
             @Test
@@ -52,25 +50,6 @@ class OrderTableTest {
                 orderTable = createOrderTable(1L, true, 1L, 4);
 
                 empty = !orderTable.isEmpty();
-                publisher = new CustomEventPublisher.AlwaysPass();
-            }
-
-            @Test
-            @DisplayName("예외가 발생한다")
-            void IT_changeEmpty() {
-                assertThatThrownBy(DESCRIBE_ChangeOrderStatus.this::subject).isInstanceOf(IllegalArgumentException.class);
-            }
-        }
-
-        @Nested
-        @DisplayName("검증 이벤트가 실패한다면")
-        class CONTEXT_WhenValidateEventFail {
-            @BeforeEach
-            void setUp() {
-                orderTable = createOrderTable(1L, true, null, 4);
-
-                empty = !orderTable.isEmpty();
-                publisher = new CustomEventPublisher.AlwaysFail();
             }
 
             @Test
@@ -210,19 +189,15 @@ class OrderTableTest {
     @DisplayName("ungroup 메서드는")
     class DESCRIBE_Ungroup {
         private OrderTable subject() {
-            return orderTable.ungroup(publisher);
+            return orderTable.ungroup();
         }
 
-        private ApplicationEventPublisher publisher;
-
         @Nested
-        @DisplayName("퍼블리셔가 주어지면")
+        @DisplayName("유효한 테이블이 주어지면")
         class CONTEXT_Given {
             @BeforeEach
             void setUp() {
                 orderTable = createOrderTable(1L, false, 2L, 4);
-
-                publisher = new CustomEventPublisher.AlwaysPass();
             }
 
             @Test
@@ -233,23 +208,6 @@ class OrderTableTest {
                 assertThat(updated).isEqualToIgnoringGivenFields(orderTable, "empty", "tableGroupId");
                 assertThat(updated.isEmpty()).isFalse();
                 assertThat(updated.getTableGroupId()).isNull();
-            }
-        }
-
-        @Nested
-        @DisplayName("검증 이벤트가 실패한다면")
-        class CONTEXT_WhenValidateEventFail {
-            @BeforeEach
-            void setUp() {
-                orderTable = createOrderTable(1L, true, null, 4);
-
-                publisher = new CustomEventPublisher.AlwaysFail();
-            }
-
-            @Test
-            @DisplayName("예외가 발생한다")
-            void IT_changeEmpty() {
-                assertThatThrownBy(DESCRIBE_Ungroup.this::subject).isInstanceOf(IllegalArgumentException.class);
             }
         }
     }

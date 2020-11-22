@@ -4,14 +4,13 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.service.ValidateOrderStatusEvent;
+import kitchenpos.domain.service.TableValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +19,7 @@ import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-class TableEventListenerTest {
+class TableValidatorTest {
     @Autowired
     private OrderDao orderDao;
 
@@ -28,7 +27,7 @@ class TableEventListenerTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private ApplicationEventPublisher applicationEventPublisher;
+    private TableValidator tableValidator;
 
     @ParameterizedTest
     @CsvSource(value = {"COOKING", "MEAL"})
@@ -37,7 +36,7 @@ class TableEventListenerTest {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, null, 4));
         orderDao.save(createOrder(null, orderStatus, orderTable.getId(), LocalDateTime.now()));
 
-        assertThatThrownBy(() -> applicationEventPublisher.publishEvent(new ValidateOrderStatusEvent(orderTable)))
+        assertThatThrownBy(() -> tableValidator.validateOrderStatusOfTable(orderTable.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -48,6 +47,6 @@ class TableEventListenerTest {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, null, 4));
         orderDao.save(createOrder(null, OrderStatus.COMPLETION, orderTable.getId(), LocalDateTime.now()));
 
-        applicationEventPublisher.publishEvent(new ValidateOrderStatusEvent(orderTable));
+        tableValidator.validateOrderStatusOfTable(orderTable.getId());
     }
 }
