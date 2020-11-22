@@ -1,4 +1,4 @@
-package kitchenpos.domain.event;
+package kitchenpos.domain.service;
 
 import kitchenpos.domain.OrderTable;
 import org.springframework.context.ApplicationEvent;

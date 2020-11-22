@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.service.MenuValidator;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -7,7 +8,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.ui.dto.MenuCreateRequest;
 import kitchenpos.ui.dto.MenuProductCreateRequest;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,18 +18,18 @@ public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
-    private final ApplicationEventPublisher publisher;
+    private final MenuValidator menuValidator;
 
     public MenuService(
             final MenuDao menuDao,
             final MenuGroupDao menuGroupDao,
             final MenuProductDao menuProductDao,
-            final ApplicationEventPublisher publisher
+            final MenuValidator menuValidator
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.publisher = publisher;
+        this.menuValidator = menuValidator;
     }
 
     @Transactional
@@ -38,7 +38,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu menu = menuDao.save(request.toEntity(publisher));
+        final Menu menu = menuDao.save(menuValidator.getValidMenu(request));
         for (final MenuProductCreateRequest menuProductRequest : request.getMenuProducts()) {
             menu.add(menuProductDao.save(menuProductRequest.toEntity(menu.getId())));
         }

@@ -3,7 +3,7 @@ package kitchenpos.application.event.listener;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.event.ValidateOrderStatusEvent;
+import kitchenpos.domain.service.ValidateOrderStatusEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

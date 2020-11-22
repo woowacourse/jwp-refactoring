@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.domain.event.ValidateOrderStatusEvent;
+import kitchenpos.domain.service.ValidateOrderStatusEvent;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.Objects;

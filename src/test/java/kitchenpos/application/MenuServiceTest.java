@@ -88,7 +88,7 @@ class MenuServiceTest {
                         () -> assertThat(result).usingRecursiveComparison()
                                 .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
                                 .withComparatorForType(BigDecimal::compareTo, BigDecimal.class)
-                                .isEqualTo(request.toEntity(publisher)),
+                                .isEqualTo(request.toEntity()),
                         () -> assertThat(result.getId()).isNotNull(),
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getSeq).doesNotContainNull(),
                         () -> assertThat(result.getMenuProducts()).extracting(MenuProduct::getMenuId).doesNotContainNull()
