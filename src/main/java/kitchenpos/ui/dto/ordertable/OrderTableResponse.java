@@ -20,7 +20,7 @@ public class OrderTableResponse {
     }
 
     public static OrderTableResponse from(OrderTable orderTable) {
-        return new OrderTableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
+        return new OrderTableResponse(orderTable.getId(), orderTable.getIdOfTableGroup(),
             orderTable.getNumberOfGuests(),
             orderTable.isEmpty());
     }

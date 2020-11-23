@@ -46,12 +46,39 @@ public class OrderTable {
         this.empty = true;
     }
 
+    public void changeEmpty(boolean empty) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("그룹 지정된 테이블은 빈 테이블 설정 및 해지를 할 수 없습니다.");
+        }
+
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("변경할 인원수는 0명 이상이어야 합니다.");
+        }
+
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException("비어있는 테이블입니다.");
+        }
+
+        this.numberOfGuests = numberOfGuests;
+    }
+
     public Long getId() {
         return id;
     }
 
     public TableGroup getTableGroup() {
         return tableGroup;
+    }
+
+    public Long getIdOfTableGroup() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
+        return tableGroup.getId();
     }
 
     public int getNumberOfGuests() {
