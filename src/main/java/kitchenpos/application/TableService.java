@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,19 +31,16 @@ public class TableService {
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
-
+        savedOrderTable.validateNotGrouped();
+       
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 
         savedOrderTable.changeStatus(orderTable.isEmpty());
 
-        return orderTableRepository.save(savedOrderTable);
+        return savedOrderTable;
     }
 
     @Transactional
@@ -54,6 +50,6 @@ public class TableService {
 
         savedOrderTable.changeNumberOfGuests(orderTable.getNumberOfGuests());
 
-        return orderTableRepository.save(savedOrderTable);
+        return savedOrderTable;
     }
 }

@@ -28,9 +28,7 @@ public class MenuService {
         final Products products = productService.findAllByIdIn(menu.extractProductIds());
         final Price sum = products.calculateTotalPrice(menu.extractProductQuantity());
 
-        if (menu.isExpensive(sum)) {
-            throw new IllegalArgumentException();
-        }
+        menu.validateCheaperThan(sum);
 
         return menuRepository.save(menu);
     }

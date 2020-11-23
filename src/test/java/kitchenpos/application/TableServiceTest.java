@@ -63,7 +63,6 @@ class TableServiceTest {
 
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(persistOrderTable));
         given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList())).willReturn(false);
-        given(orderTableRepository.save(any(OrderTable.class))).willReturn(createOrderTable(1L, null, 0, true));
 
         assertThat(tableService.changeEmpty(1L, orderTable)).isEqualToComparingFieldByField(persistOrderTable);
     }
@@ -109,7 +108,6 @@ class TableServiceTest {
         final OrderTable orderTable = createOrderTable(1L, 2L, 3, false);
 
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(persistOrderTable));
-        given(orderTableRepository.save(any(OrderTable.class))).willReturn(orderTable);
 
         assertThat(tableService.changeNumberOfGuests(1L, orderTable))
             .isEqualToComparingFieldByField(orderTable);

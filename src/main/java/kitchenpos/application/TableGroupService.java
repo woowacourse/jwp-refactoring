@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +21,6 @@ public class TableGroupService {
     @Transactional
     public TableGroup create(final TableGroup tableGroup) {
         final OrderTables orderTables = orderService.findAllByIdIn(tableGroup.extractOrderTableIds());
-        if (orderTables.getOrderTables().stream()
-            .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))) {
-            throw new IllegalArgumentException();
-        }
         orderTables.changeEmptyStatus();
         tableGroup.modifyOrderTables(orderTables);
 
@@ -38,7 +33,7 @@ public class TableGroupService {
             .orElseThrow(IllegalArgumentException::new);
         final List<Long> orderTableIds = tableGroup.extractOrderTableIds();
         if (orderService.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

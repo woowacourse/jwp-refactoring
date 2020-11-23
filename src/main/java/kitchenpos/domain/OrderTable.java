@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -51,6 +53,18 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateNotGrouped() {
+        if (Objects.nonNull(tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }

@@ -46,8 +46,10 @@ public class Menu {
         return new MenuBuilder();
     }
 
-    public boolean isExpensive(final Price price) {
-        return this.price.compareTo(price) > 0;
+    public void validateCheaperThan(final Price price) {
+        if (this.price.compareTo(price) > 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public List<Long> extractProductIds() {

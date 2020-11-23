@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -42,6 +43,10 @@ public class OrderTables {
     }
 
     public void changeEmptyStatus() {
+        if (orderTables.stream()
+            .anyMatch(orderTable -> !orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId()))) {
+            throw new IllegalArgumentException();
+        }
         for (OrderTable orderTable : orderTables) {
             orderTable.changeStatus(false);
         }

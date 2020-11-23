@@ -30,9 +30,7 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.validateNotEmpty();
 
         order.changeStatus(OrderStatus.COOKING);
 
@@ -47,10 +45,6 @@ public class OrderService {
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (OrderStatus.COMPLETION.equals(savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
 
         savedOrder.changeStatus(order.getOrderStatus());
 
@@ -71,7 +65,7 @@ public class OrderService {
     }
 
     public boolean existsByOrderTableIdInAndOrderStatusIn(final List<Long> orderTableIds,
-        final List<String> orderStatuses) {
+        final List<OrderStatus> orderStatuses) {
         return orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, orderStatuses);
     }
 }
