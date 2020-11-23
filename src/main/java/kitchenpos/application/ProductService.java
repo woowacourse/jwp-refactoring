@@ -1,34 +1,40 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
+import kitchenpos.domain.Money;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductCreateRequest;
+import kitchenpos.dto.product.ProductCreateResponse;
+import kitchenpos.dto.product.ProductFindAllResponses;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class ProductService {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public ProductService(final ProductDao productDao) {
-        this.productDao = productDao;
+    public ProductService(final ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     @Transactional
-    public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+    public ProductCreateResponse create(final ProductCreateRequest productCreateRequest) {
+        Product product = productCreateRequest.toEntity();
+        final Money price = product.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        validPriceIsNullOrPriceIsMinus(price);
 
-        return productDao.save(product);
+        return new ProductCreateResponse(productRepository.save(product));
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    private void validPriceIsNullOrPriceIsMinus(Money price) {
+        if (price.getValue() == null || price.isMinus()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public ProductFindAllResponses findAll() {
+        return ProductFindAllResponses.from(productRepository.findAll());
     }
 }

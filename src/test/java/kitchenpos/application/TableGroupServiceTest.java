@@ -7,118 +7,146 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tableGroup.OrderTableCreateRequest;
+import kitchenpos.dto.tableGroup.OrderTableCreateRequests;
+import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
+import kitchenpos.dto.tableGroup.TableGroupCreateResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 class TableGroupServiceTest extends ServiceTest {
 	@Autowired
 	private TableGroupService tableGroupService;
 
 	@Autowired
-	private OrderTableDao orderTableDao;
+	private OrderTableRepository orderTableRepository;
 
 	@Autowired
-	private OrderDao orderDao;
+	private OrderRepository orderRepository;
 
 	@DisplayName("orderTable이 비어있을 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsEmpty_thenThrowIllegalArgumentException() {
-		TableGroup tableGroup = createTableGroup(1L, LocalDateTime.of(2020, 10, 28, 17, 1), Collections.emptyList());
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), new OrderTableCreateRequests(Collections.emptyList()));
 
-		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+		assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("orderTable이 2개 미만일 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableCountIsLowerThenTwo_thenThrowIllegalArgumentException() {
-		OrderTable orderTable = createOrderTable(null, true, null, 2);
+		OrderTableCreateRequest orderTableCreateRequest = new OrderTableCreateRequest(null, null, 0, true);
 
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1),
-			Collections.singletonList(orderTable));
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1),
+			new OrderTableCreateRequests(Collections.singletonList(orderTableCreateRequest)));
 
-		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+		assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("존재하지 않는 orderTable을 가질 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsNotExist_thenThrowIllegalArgumentException() {
-		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
-		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+		OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(null, null, 0, true);
+		OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(null, null, 0, true);
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(orderTable1, orderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+		OrderTableCreateRequests orderTableCreateRequests = new OrderTableCreateRequests(new ArrayList<>(
+			Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2)));
 
-		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), orderTableCreateRequests);
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("비어있지 않은 orderTable을 가질 경우 IllegalArgumentException 발생")
 	@Test
 	void create_whenOrderTableIsNotEmpty_thenThrowIllegalArgumentException() {
-		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
+		OrderTable orderTable1 = createOrderTable(null, true, null, 0);
 		OrderTable orderTable2 = createOrderTable(null, false, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+		OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(savedOrderTable1);
+		OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(savedOrderTable2);
 
-		assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+		OrderTableCreateRequests orderTableCreateRequests = new OrderTableCreateRequests(new ArrayList<>(
+			Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2)));
+
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), orderTableCreateRequests);
+
+		assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("Table Group 저장 성공")
 	@Test
 	void create() {
-		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
-		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+		OrderTable orderTable1 = createOrderTable(null, true, null, 0);
+		OrderTable orderTable2 = createOrderTable(null, true, null, 0);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+		OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(savedOrderTable1);
+		OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(savedOrderTable2);
 
-		TableGroup actual = tableGroupService.create(tableGroup);
+		OrderTableCreateRequests orderTableCreateRequests = new OrderTableCreateRequests(new ArrayList<>(
+			Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2)));
+
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), orderTableCreateRequests);
+
+		TableGroupCreateResponse actual = tableGroupService.create(tableGroupCreateRequest);
 
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
 			() -> assertThat(actual.getCreatedDate()).isNotNull(),
-			() -> assertThat(actual.getOrderTables()).hasSize(2)
+			() -> assertThat(actual.getOrderTables().getOrderTableCreateResponses()).hasSize(2)
 		);
 	}
 
 	@DisplayName("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 IllegalArgumentException 발생")
 	@Test
 	void ungroup_whenTableStatusIsCookingOrMeal_thenThrowIllegalArgumentException() {
-		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
-		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
+		OrderTable orderTable1 = createOrderTable(null, true, null, 0);
+		OrderTable orderTable2 = createOrderTable(null, true, null, 0);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		orderDao.save(createOrder(null, OrderStatus.COOKING.name(), savedOrderTable1.getId(), LocalDateTime.now(),
+		orderRepository.save(
+			createOrder(null, OrderStatus.COOKING, savedOrderTable1.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
+
+		orderRepository.save(createOrder(null, OrderStatus.MEAL, savedOrderTable2.getId(), LocalDateTime.now(),
 			Collections.singletonList(null)));
 
-		orderDao.save(createOrder(null, OrderStatus.MEAL.name(), savedOrderTable2.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(savedOrderTable1.getId(), null,
+			0, true);
+		OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(savedOrderTable2.getId(), null,
+			0, true);
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+		OrderTableCreateRequests orderTableCreateRequests = new OrderTableCreateRequests(new ArrayList<>(
+			Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2)));
 
-		TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), orderTableCreateRequests);
+
+		TableGroupCreateResponse savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
 		assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
 			.isInstanceOf(IllegalArgumentException.class);
@@ -130,19 +158,29 @@ class TableGroupServiceTest extends ServiceTest {
 		OrderTable orderTable1 = createOrderTable(null, true, null, 2);
 		OrderTable orderTable2 = createOrderTable(null, true, null, 3);
 
-		OrderTable savedOrderTable1 = orderTableDao.save(orderTable1);
-		OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
+		OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
+		OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);
 
-		orderDao.save(createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable1.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		orderRepository.save(
+			createOrder(null, OrderStatus.COMPLETION, savedOrderTable1.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
 
-		orderDao.save(createOrder(null, OrderStatus.COMPLETION.name(), savedOrderTable2.getId(), LocalDateTime.now(),
-			Collections.singletonList(null)));
+		orderRepository.save(
+			createOrder(null, OrderStatus.COMPLETION, savedOrderTable2.getId(), LocalDateTime.now(),
+				Collections.singletonList(null)));
 
-		List<OrderTable> orderTables = new ArrayList<>(Arrays.asList(savedOrderTable1, savedOrderTable2));
-		TableGroup tableGroup = createTableGroup(null, LocalDateTime.of(2020, 10, 28, 17, 1), orderTables);
+		OrderTableCreateRequest orderTableCreateRequest1 = new OrderTableCreateRequest(savedOrderTable1.getId(), null,
+			0, true);
+		OrderTableCreateRequest orderTableCreateRequest2 = new OrderTableCreateRequest(savedOrderTable2.getId(), null,
+			0, true);
 
-		TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+		OrderTableCreateRequests orderTableCreateRequests = new OrderTableCreateRequests(new ArrayList<>(
+			Arrays.asList(orderTableCreateRequest1, orderTableCreateRequest2)));
+
+		TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(null,
+			LocalDateTime.of(2020, 10, 28, 17, 1), orderTableCreateRequests);
+
+		TableGroupCreateResponse savedTableGroup = tableGroupService.create(tableGroupCreateRequest);
 
 		tableGroupService.ungroup(savedTableGroup.getId());
 	}

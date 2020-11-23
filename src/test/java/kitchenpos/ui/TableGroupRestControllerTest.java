@@ -19,10 +19,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.tableGroup.OrderTableCreateRequests;
+import kitchenpos.dto.tableGroup.TableGroupCreateRequest;
+import kitchenpos.dto.tableGroup.TableGroupCreateResponse;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest {
@@ -35,6 +38,10 @@ class TableGroupRestControllerTest {
 
 	private TableGroup tableGroup;
 
+	private TableGroupCreateRequest tableGroupCreateRequest;
+
+	private TableGroupCreateResponse tableGroupCreateResponse;
+
 	@BeforeEach
 	void setUp(WebApplicationContext webApplicationContext) {
 		objectMapper = new ObjectMapper();
@@ -45,24 +52,23 @@ class TableGroupRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		OrderTable orderTable = new OrderTable();
-		orderTable.setId(1L);
-		orderTable.setEmpty(true);
-		orderTable.setTableGroupId(1L);
-		orderTable.setNumberOfGuests(2);
+		OrderTable orderTable = new OrderTable(1L, 1L, 2, true);
 
-		tableGroup = new TableGroup();
-		tableGroup.setId(1L);
-		tableGroup.setCreatedDate(LocalDateTime.of(2020, 10, 28, 16, 40));
-		tableGroup.setOrderTables(Collections.singletonList(orderTable));
+		tableGroup = new TableGroup(1L, LocalDateTime.of(2020, 10, 28, 16, 40),
+			new OrderTables(Collections.singletonList(orderTable)));
+
+		tableGroupCreateRequest = new TableGroupCreateRequest(1L, LocalDateTime.of(2020, 10, 28, 16, 40),
+			OrderTableCreateRequests.from(new OrderTables(Collections.singletonList(orderTable))));
+
+		tableGroupCreateResponse = new TableGroupCreateResponse(tableGroup);
 	}
 
 	@Test
 	void create() throws Exception {
-		given(tableGroupService.create(any(TableGroup.class))).willReturn(tableGroup);
+		given(tableGroupService.create(any(TableGroupCreateRequest.class))).willReturn(tableGroupCreateResponse);
 
 		mockMvc.perform(post("/api/table-groups")
-			.content(objectMapper.writeValueAsString(tableGroup))
+			.content(objectMapper.writeValueAsString(tableGroupCreateRequest))
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", "/api/table-groups/1"));

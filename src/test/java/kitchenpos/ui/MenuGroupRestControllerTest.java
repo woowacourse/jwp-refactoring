@@ -6,7 +6,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,55 +17,63 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menuGroup.MenuGroupCreateRequest;
+import kitchenpos.dto.menuGroup.MenuGroupCreateResponse;
+import kitchenpos.dto.menuGroup.MenuGroupFindAllResponses;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest {
-	@MockBean
-	private MenuGroupService menuGroupService;
+    @MockBean
+    private MenuGroupService menuGroupService;
 
-	private MockMvc mockMvc;
+    private MockMvc mockMvc;
 
-	private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
-	private MenuGroup menuGroup;
+    private MenuGroup menuGroup;
 
-	private List<MenuGroup> menuGroups;
+    private MenuGroupCreateRequest menuGroupCreateRequest;
 
-	@BeforeEach
-	public void setUp(WebApplicationContext webApplicationContext) {
-		objectMapper = new ObjectMapper();
+    private MenuGroupCreateResponse menuGroupCreateResponse;
 
-		this.mockMvc = MockMvcBuilders
-			.webAppContextSetup(webApplicationContext)
-			.build();
+    private MenuGroupFindAllResponses menuGroupFindAllResponses;
 
-		menuGroup = new MenuGroup();
-		menuGroup.setId(1L);
-		menuGroup.setName("메뉴그룹");
+    @BeforeEach
+    public void setUp(WebApplicationContext webApplicationContext) {
+        objectMapper = new ObjectMapper();
 
-		menuGroups = Collections.singletonList(menuGroup);
-	}
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(webApplicationContext)
+                .build();
 
-	@Test
-	void create() throws Exception {
-		given(menuGroupService.create(any())).willReturn(menuGroup);
+        menuGroup = new MenuGroup(1L, "메뉴그룹");
 
-		mockMvc.perform(post("/api/menu-groups")
-			.content(objectMapper.writeValueAsString(menuGroup))
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isCreated())
-			.andExpect(header().string("Location", "/api/menu-groups/1"));
-	}
+        menuGroupCreateRequest = new MenuGroupCreateRequest(menuGroup);
 
-	@Test
-	void list() throws Exception {
-		given(menuGroupService.list()).willReturn(menuGroups);
+        menuGroupCreateResponse = new MenuGroupCreateResponse(menuGroup);
 
-		mockMvc.perform(get("/api/menu-groups")
-			.contentType(MediaType.APPLICATION_JSON))
-			.andExpect(status().isOk());
-	}
+        menuGroupFindAllResponses = MenuGroupFindAllResponses.from(Collections.singletonList(menuGroup));
+    }
+
+    @Test
+    void create() throws Exception {
+        given(menuGroupService.create(any())).willReturn(menuGroupCreateResponse);
+
+        mockMvc.perform(post("/api/menu-groups")
+                .content(objectMapper.writeValueAsString(menuGroupCreateRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/menu-groups/1"));
+    }
+
+    @Test
+    void list() throws Exception {
+        given(menuGroupService.findAll()).willReturn(menuGroupFindAllResponses);
+
+        mockMvc.perform(get("/api/menu-groups")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

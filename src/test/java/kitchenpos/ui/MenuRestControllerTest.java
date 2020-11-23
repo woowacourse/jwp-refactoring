@@ -4,7 +4,6 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,9 +17,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Money;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuCreateResponse;
+import kitchenpos.dto.menu.MenuFindAllResponse;
+import kitchenpos.dto.menu.MenuFindAllResponses;
 
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest {
@@ -35,6 +40,14 @@ class MenuRestControllerTest {
 
 	private List<Menu> menus;
 
+	private MenuCreateRequest menuCreateRequest;
+
+	private MenuCreateResponse menuCreateResponse;
+
+	private MenuFindAllResponse menuFindAllResponse;
+
+	private MenuFindAllResponses menuFindAllResponses;
+
 	@BeforeEach
 	public void setUp(WebApplicationContext webApplicationContext) {
 		objectMapper = new ObjectMapper();
@@ -43,28 +56,35 @@ class MenuRestControllerTest {
 			.webAppContextSetup(webApplicationContext)
 			.build();
 
-		menu = new Menu();
-		menu.setId(1L);
-		menu.setName("메뉴");
-		menu.setPrice(BigDecimal.valueOf(3000));
+		MenuProducts menuProducts = new MenuProducts(Collections.singletonList(new MenuProduct(1L, 1L, 1L, 1L)));
+
+		menu = new Menu(1L, "메뉴", new Money(3000L), 1L, menuProducts);
 
 		menus = Collections.singletonList(menu);
+
+		menuCreateRequest = new MenuCreateRequest(menu);
+
+		menuCreateResponse = new MenuCreateResponse(menu);
+
+		menuFindAllResponse = new MenuFindAllResponse(menu);
+
+		menuFindAllResponses = new MenuFindAllResponses(Collections.singletonList(menuFindAllResponse));
 	}
 
 	@Test
 	void create() throws Exception {
-		given(menuService.create(any())).willReturn(menu);
+		given(menuService.create(any())).willReturn(menuCreateResponse);
 
 		mockMvc.perform(post("/api/menus")
-			.content(objectMapper.writeValueAsString(menu))
+			.content(objectMapper.writeValueAsString(menuCreateRequest))
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isCreated())
 			.andExpect(header().string("Location", "/api/menus/1"));
 	}
 
 	@Test
-	void list() throws Exception {
-		given(menuService.list()).willReturn(menus);
+	void findAll() throws Exception {
+		given(menuService.findAll()).willReturn(menuFindAllResponses);
 
 		mockMvc.perform(get("/api/menus")
 			.contentType(MediaType.APPLICATION_JSON))
