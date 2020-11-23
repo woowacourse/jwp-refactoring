@@ -3,9 +3,11 @@ package kitchenpos.application;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.createMenuWithoutId;
-import static kitchenpos.fixture.OrderFixture.createOrderWithOrderTableAndOrderStatus;
+import static kitchenpos.fixture.OrderFixture.createOrderWithOrderTable;
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItemWithoutId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithoutId;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest
@@ -31,10 +34,14 @@ class OrderLineItemServiceTest {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
     @DisplayName("OrderLineItems create 정상 동작")
     @Test
     void createOrderLineItems() {
-        Order order = orderRepository.save(createOrderWithOrderTableAndOrderStatus());
+        OrderTable orderTable = orderTableRepository.save(createOrderTableWithoutId());
+        Order order = orderRepository.save(createOrderWithOrderTable(orderTable));
         Menu savedMenu = menuRepository.save(createMenuWithoutId());
         Long quantity = 1L;
         OrderLineItemRequest orderLineItemRequest = createOrderLineItemRequest(savedMenu.getId(), quantity);

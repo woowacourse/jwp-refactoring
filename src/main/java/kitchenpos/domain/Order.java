@@ -31,17 +31,32 @@ public class Order {
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
 
-    public Order changeOrderStatus(String orderStatus) {
-        if (Objects.equals(orderStatus, this.orderStatus.name())) {
+    public static Order cooking(OrderTable orderTable) {
+        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    private static void validateOrderTable(OrderTable orderTable) {
+        Objects.requireNonNull(orderTable, "OrderTable null이면 Order를 생성할 수 없습니다.");
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("비어있는 order table에 order를 생성할 수 없습니다.");
+        }
+    }
+
+    public Order changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus == OrderStatus.COMPLETION) {
+            throw new IllegalArgumentException("완료된 주문은 상태를 변경할 수 없습니다.");
+        }
+        if (this.orderStatus == orderStatus) {
             return this;
         }
-        return new Order(id, orderTable, OrderStatus.valueOf(orderStatus), orderedTime);
+        return new Order(id, orderTable, orderStatus, orderedTime);
     }
 
     public Long getId() {
@@ -52,8 +67,8 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
-        return orderStatus.name();
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {

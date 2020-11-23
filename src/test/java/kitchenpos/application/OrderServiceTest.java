@@ -23,8 +23,8 @@ import java.util.List;
 
 import static kitchenpos.fixture.MenuFixture.createMenuWithId;
 import static kitchenpos.fixture.MenuFixture.createMenuWithoutId;
-import static kitchenpos.fixture.OrderFixture.createOrderWithOrderStatus;
 import static kitchenpos.fixture.OrderFixture.createOrderWithOrderTable;
+import static kitchenpos.fixture.OrderFixture.createOrderWithOrderTableAndOrderStatus;
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItemWithOrderAndMenu;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithEmpty;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithoutId;
@@ -108,23 +108,13 @@ public class OrderServiceTest {
     @DisplayName("Order 상태 바꾸기 성공")
     @Test
     void changeOrderStatus() {
-        Order savedOrder = orderRepository.save(createOrderWithOrderStatus(OrderStatus.MEAL));
-        Order expect = createOrderWithOrderStatus(OrderStatus.COMPLETION);
+        OrderTable orderTable = orderTableRepository.save(createOrderTableWithoutId());
+        Order savedOrder = orderRepository.save(createOrderWithOrderTableAndOrderStatus(orderTable, OrderStatus.MEAL));
+        Order expect = createOrderWithOrderTableAndOrderStatus(orderTable, OrderStatus.COMPLETION);
 
         Order actual = orderService.changeOrderStatus(savedOrder.getId(), expect);
 
         assertThat(actual.getOrderStatus()).isEqualTo(expect.getOrderStatus());
-    }
-
-    @DisplayName("Order 원래 상태가 COMPLETION 일 때 상태 바꾸기 예외 반환")
-    @Test
-    void changeWrongOrderStatus() {
-        Order savedOrder = orderRepository.save(createOrderWithOrderStatus(OrderStatus.COMPLETION));
-        Order expect = createOrderWithOrderStatus(OrderStatus.MEAL);
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), expect))
-                .withMessage("완료된 주문은 상태를 변경할 수 없습니다.");
     }
 
     private OrderRequest createOrderRequest(OrderTable orderTable, Menu menu) {

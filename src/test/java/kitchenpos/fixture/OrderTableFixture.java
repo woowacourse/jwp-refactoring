@@ -12,7 +12,7 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createOrderTableWithId(Long id) {
-        return createOrderTable(id, createTableGroupWithoutId(), 1, true);
+        return createOrderTable(id, createTableGroupWithoutId(), 1, false);
     }
 
     public static OrderTable createOrderTableWithoutId() {

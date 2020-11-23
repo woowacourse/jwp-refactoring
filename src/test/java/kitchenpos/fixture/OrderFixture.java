@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderTable;
 import java.time.LocalDateTime;
 
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithId;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithoutId;
 
 public class OrderFixture {
 
@@ -22,15 +23,12 @@ public class OrderFixture {
         return createOrder(id, createOrderTableWithId(1L), OrderStatus.COOKING);
     }
 
-    public static Order createOrderWithOrderTableAndOrderStatus() {
-        return createOrder(null, null, OrderStatus.COOKING);
-    }
-
     public static Order createOrderWithOrderStatus(OrderStatus orderStatus) {
-        return createOrder(null, null, orderStatus);
+        return createOrder(null, createOrderTableWithoutId(), orderStatus);
     }
 
     public static Order createOrderWithOrderTable(OrderTable orderTable) {
         return createOrder(null, orderTable, OrderStatus.MEAL);
     }
+
 }

@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
@@ -13,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,8 +35,7 @@ public class OrderService {
         validateOrderLineItemNotEmpty(orderLineItemRequests);
         OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 order table id 입니다."));
-        validateTableNotEmpty(orderTable);
-        Order savedOrder = orderRepository.save(orderRequest.toOrder(orderTable));
+        Order savedOrder = orderRepository.save(Order.cooking(orderTable));
         List<OrderLineItem> orderLineItems = orderLineItemService.createOrderLineItems(savedOrder, orderLineItemRequests);
         return OrderResponse.of(savedOrder, orderLineItems);
     }
@@ -50,21 +46,12 @@ public class OrderService {
         }
     }
 
-    private void validateTableNotEmpty(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 order table에 order를 생성할 수 없습니다.");
-        }
-    }
-
     public List<OrderResponse> list() {
         List<OrderLineItem> orderLineItems = orderLineItemService.findAll();
         Set<Order> orders = extractDistinctOrder(orderLineItems);
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        for (Order order : orders) {
-            List<OrderLineItem> orderLineItemsByOrder = selectiveByOrder(order, orderLineItems);
-            orderResponses.add(OrderResponse.of(order, orderLineItemsByOrder));
-        }
-        return orderResponses;
+        return orders.stream()
+                .map(order -> OrderResponse.of(order, selectiveByOrder(order, orderLineItems)))
+                .collect(Collectors.toList());
     }
 
     private Set<Order> extractDistinctOrder(List<OrderLineItem> orderLineItems) {
@@ -83,9 +70,6 @@ public class OrderService {
     public Order changeOrderStatus(Long orderId, Order order) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 order id 입니다."));
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("완료된 주문은 상태를 변경할 수 없습니다.");
-        }
         Order changedOrder = savedOrder.changeOrderStatus(order.getOrderStatus());
         return orderRepository.save(changedOrder);
     }
