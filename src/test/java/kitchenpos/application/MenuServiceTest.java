@@ -5,7 +5,6 @@ import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
@@ -46,9 +45,9 @@ class MenuServiceTest {
     private Product savedProduct1;
     private Product savedProduct2;
     private Product savedProduct3;
-    private MenuProductCreateRequest menuProductCreateRequest1;
-    private MenuProductCreateRequest menuProductCreateRequest2;
-    private MenuProductCreateRequest menuProductCreateRequest3;
+    private MenuCreateRequest.MenuProductDto menuProductDto1;
+    private MenuCreateRequest.MenuProductDto menuProductDto2;
+    private MenuCreateRequest.MenuProductDto menuProductDto3;
 
     @BeforeEach
     void setUp() {
@@ -56,19 +55,17 @@ class MenuServiceTest {
         this.savedProduct1 = createSavedProduct("양념치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
         this.savedProduct2 = createSavedProduct("간장치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
         this.savedProduct3 = createSavedProduct("후라이드치킨", ProductPrice.from(BigDecimal.valueOf(15_000)));
-        this.menuProductCreateRequest1 = new MenuProductCreateRequest(this.savedProduct1.getId(), 1);
-        this.menuProductCreateRequest2 = new MenuProductCreateRequest(this.savedProduct2.getId(), 1);
-        this.menuProductCreateRequest3 = new MenuProductCreateRequest(this.savedProduct3.getId(), 1);
+        this.menuProductDto1 = new MenuCreateRequest.MenuProductDto(this.savedProduct1.getId(), 1);
+        this.menuProductDto2 = new MenuCreateRequest.MenuProductDto(this.savedProduct2.getId(), 1);
+        this.menuProductDto3 = new MenuCreateRequest.MenuProductDto(this.savedProduct3.getId(), 1);
     }
 
     @DisplayName("새로운 메뉴 생성")
     @Test
     void createMenuTest() {
-        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                 this.menuProductCreateRequest2);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos = Arrays.asList(this.menuProductDto1, this.menuProductDto2);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
-                                                                    this.savedMenuGroup.getId(),
-                                                                    menuProductCreateRequests);
+                                                                    this.savedMenuGroup.getId(), menuProductDtos);
 
         MenuResponse menuResponse = this.menuService.createMenu(menuCreateRequest);
 
@@ -77,17 +74,16 @@ class MenuServiceTest {
                 () -> assertThat(menuResponse.getName()).isEqualTo(menuCreateRequest.getName()),
                 () -> assertThat(menuResponse.getPrice()).isEqualTo(menuCreateRequest.getPrice()),
                 () -> assertThat(menuResponse.getMenuGroupId()).isEqualTo(menuCreateRequest.getMenuGroupId()),
-                () -> assertThat(menuResponse.getMenuProducts()).hasSize(menuCreateRequest.getMenuProductCreateRequests().size())
+                () -> assertThat(menuResponse.getMenuProductDtos()).hasSize(menuCreateRequest.getMenuProductDtos().size())
         );
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 존재하지 않으면 예외 발생")
     @Test
     void createMenuWithNullPriceThenThrowException() {
-        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                 this.menuProductCreateRequest2);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos = Arrays.asList(this.menuProductDto1, this.menuProductDto2);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", null, this.savedMenuGroup.getId(),
-                                                                    menuProductCreateRequests);
+                                                                    menuProductDtos);
 
         assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
@@ -96,11 +92,9 @@ class MenuServiceTest {
     @ParameterizedTest
     @ValueSource(ints = {-1, -2, -9999})
     void createMenuWithInvalidPriceThenThrowException(int invalidPrice) {
-        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                 this.menuProductCreateRequest2);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos = Arrays.asList(this.menuProductDto1, this.menuProductDto2);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(invalidPrice),
-                                                                    this.savedMenuGroup.getId(),
-                                                                    menuProductCreateRequests);
+                                                                    this.savedMenuGroup.getId(), menuProductDtos);
 
         assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
     }
@@ -109,10 +103,9 @@ class MenuServiceTest {
     @Test
     void createMenuWithNotExistMenuGroupThenThrowException() {
         long notExistMenuGroupId = -1L;
-        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                 this.menuProductCreateRequest2);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos = Arrays.asList(this.menuProductDto1, this.menuProductDto2);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
-                                                                    notExistMenuGroupId, menuProductCreateRequests);
+                                                                    notExistMenuGroupId, menuProductDtos);
 
         assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(MenuGroupNotFoundException.class);
     }
@@ -121,8 +114,8 @@ class MenuServiceTest {
     @Test
     void createMenuWithNotExistMenuProductThenThrowException() {
         long notExistProductId = -1L;
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(notExistProductId, 1);
-        List<MenuProductCreateRequest> menuProductCreateRequests = Collections.singletonList(menuProductCreateRequest);
+        MenuCreateRequest.MenuProductDto menuProductDto = new MenuCreateRequest.MenuProductDto(notExistProductId, 1);
+        List<MenuCreateRequest.MenuProductDto> menuProductCreateRequests = Collections.singletonList(menuProductDto);
 
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
                                                                     this.savedMenuGroup.getId(), menuProductCreateRequests);
@@ -135,10 +128,9 @@ class MenuServiceTest {
     void createMenuWithInvalidPriceThenThrowException() {
         Product savedProduct1 = createSavedProduct("양념치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
         Product savedProduct2 = createSavedProduct("간장치킨", ProductPrice.from(BigDecimal.valueOf(16_000)));
-        MenuProductCreateRequest menuProductCreateRequest1 = new MenuProductCreateRequest(savedProduct1.getId(), 1);
-        MenuProductCreateRequest menuProductCreateRequest2 = new MenuProductCreateRequest(savedProduct2.getId(), 1);
-        List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(menuProductCreateRequest1,
-                                                                                 menuProductCreateRequest2);
+        MenuCreateRequest.MenuProductDto menuProductDto1 = new MenuCreateRequest.MenuProductDto(savedProduct1.getId(), 1);
+        MenuCreateRequest.MenuProductDto menuProductDto2 = new MenuCreateRequest.MenuProductDto(savedProduct2.getId(), 1);
+        List<MenuCreateRequest.MenuProductDto> menuProductCreateRequests = Arrays.asList(menuProductDto1, menuProductDto2);
 
         BigDecimal invalidPrice = BigDecimal.valueOf(33_000);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", invalidPrice,
@@ -151,16 +143,12 @@ class MenuServiceTest {
     @DisplayName("존재하는 모든 메뉴를 조회")
     @Test
     void listMenuTest() {
-        List<MenuProductCreateRequest> menuProductCreateRequests1 = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                  this.menuProductCreateRequest2);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos1 = Arrays.asList(this.menuProductDto1, this.menuProductDto2);
         MenuCreateRequest menuCreateRequest1 = new MenuCreateRequest("양념간장두마리메뉴", BigDecimal.valueOf(28_000),
-                                                                     this.savedMenuGroup.getId(),
-                                                                     menuProductCreateRequests1);
-        List<MenuProductCreateRequest> menuProductCreateRequests2 = Arrays.asList(this.menuProductCreateRequest1,
-                                                                                  this.menuProductCreateRequest3);
+                                                                     this.savedMenuGroup.getId(), menuProductDtos1);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos2 = Arrays.asList(this.menuProductDto1, this.menuProductDto3);
         MenuCreateRequest menuCreateRequest2 = new MenuCreateRequest("후라이드양념두마리메뉴", BigDecimal.valueOf(27_000),
-                                                                     this.savedMenuGroup.getId(),
-                                                                     menuProductCreateRequests2);
+                                                                     this.savedMenuGroup.getId(), menuProductDtos2);
 
         List<MenuCreateRequest> menuCreateRequests = Arrays.asList(menuCreateRequest1, menuCreateRequest2);
         menuCreateRequests.forEach(menuCreateRequest -> this.menuService.createMenu(menuCreateRequest));

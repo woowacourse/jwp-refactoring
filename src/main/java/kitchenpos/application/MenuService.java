@@ -8,8 +8,6 @@ import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductPrice;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menuproduct.MenuProductCreateRequest;
-import kitchenpos.dto.menuproduct.MenuProductResponse;
 import kitchenpos.exception.InvalidMenuPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
@@ -44,28 +42,29 @@ public class MenuService {
     public MenuResponse createMenu(MenuCreateRequest menuCreateRequest) {
         MenuPrice menuPrice = MenuPrice.from(menuCreateRequest.getPrice());
 
-        List<MenuProductCreateRequest> menuProductCreateRequests = menuCreateRequest.getMenuProductCreateRequests();
-        validateMenuPrice(menuPrice, menuProductCreateRequests);
+        List<MenuCreateRequest.MenuProductDto> menuProductDtos = menuCreateRequest.getMenuProductDtos();
+        validateMenuPrice(menuPrice, menuProductDtos);
 
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         MenuGroup menuGroup =
                 menuGroupRepository.findById(menuGroupId).orElseThrow(() -> new MenuGroupNotFoundException(menuGroupId));
+
         Menu savedMenu = menuRepository.save(new Menu(menuCreateRequest.getName(), menuPrice, menuGroup));
 
-        List<MenuProductResponse> menuProductResponses = createMenuProductResponses(savedMenu, menuProductCreateRequests);
+        List<MenuProduct> menuProducts = createMenuProducts(savedMenu, menuProductDtos);
 
-        return MenuResponse.of(savedMenu, menuProductResponses);
+        return MenuResponse.of(savedMenu, menuProducts);
     }
 
-    private void validateMenuPrice(MenuPrice menuPrice, List<MenuProductCreateRequest> menuProductCreateRequests) {
+    private void validateMenuPrice(MenuPrice menuPrice, List<MenuCreateRequest.MenuProductDto> menuProductDtos) {
         BigDecimal menuProductPriceSum = BigDecimal.ZERO;
 
-        for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
-            Long productId = menuProductCreateRequest.getProductId();
+        for (MenuCreateRequest.MenuProductDto menuProductDto : menuProductDtos) {
+            Long productId = menuProductDto.getProductId();
             Product product =
                     productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
             ProductPrice productPrice = product.getProductPrice();
-            BigDecimal productQuantity = BigDecimal.valueOf(menuProductCreateRequest.getQuantity());
+            BigDecimal productQuantity = BigDecimal.valueOf(menuProductDto.getQuantity());
             menuProductPriceSum = menuProductPriceSum.add(productPrice.multiply(productQuantity));
         }
 
@@ -74,34 +73,22 @@ public class MenuService {
         }
     }
 
-    private List<MenuProductResponse> createMenuProductResponses(Menu menu, List<MenuProductCreateRequest> menuProductCreateRequests) {
+    private List<MenuProduct> createMenuProducts(Menu menu, List<MenuCreateRequest.MenuProductDto> menuProductDtos) {
         List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (MenuProductCreateRequest menuProductCreateRequest : menuProductCreateRequests) {
-            Long productId = menuProductCreateRequest.getProductId();
+        for (MenuCreateRequest.MenuProductDto menuProductDto : menuProductDtos) {
+            Long productId = menuProductDto.getProductId();
             Product product =
                     productRepository.findById(productId).orElseThrow(() -> new ProductNotFoundException(productId));
-            MenuProduct menuProduct = new MenuProduct(menu, product, menuProductCreateRequest.getQuantity());
+            MenuProduct menuProduct = MenuProduct.of(menu, product, menuProductDto.getQuantity());
             savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
 
-        return savedMenuProducts.stream()
-                .map(MenuProductResponse::from)
-                .collect(Collectors.toList());
+        return savedMenuProducts;
     }
 
     public List<MenuResponse> listAllMenus() {
-        List<Menu> menus = menuRepository.findAll();
-
-        List<MenuResponse> menuResponses = new ArrayList<>();
-        for (Menu menu : menus) {
-            List<MenuProductResponse> menuProductResponses =
-                    menuProductRepository.findAllByMenuId(menu.getId()).stream()
-                            .map(MenuProductResponse::from)
-                            .collect(Collectors.toList());
-            MenuResponse menuResponse = MenuResponse.of(menu, menuProductResponses);
-            menuResponses.add(menuResponse);
-        }
-
-        return menuResponses;
+        return menuRepository.findAll().stream()
+                .map(menu -> MenuResponse.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
+                .collect(Collectors.toList());
     }
 }
