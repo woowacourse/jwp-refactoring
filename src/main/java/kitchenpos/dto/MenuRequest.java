@@ -23,8 +23,8 @@ public class MenuRequest {
         this.menuProductRequests = menuProductRequests;
     }
 
-    public Menu toMenu() {
-        return new Menu(null, name, new Price(price), new MenuGroup(menuGroupId, null));
+    public Menu toMenu(MenuGroup menuGroup) {
+        return new Menu(null, name, new Price(price), menuGroup);
     }
 
     public String getName() {

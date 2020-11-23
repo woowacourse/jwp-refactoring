@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
@@ -28,11 +29,10 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(MenuRequest menuRequest) {
-        if (!menuGroupRepository.existsById(menuRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 Menu Group Id 입니다.");
-        }
+        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Menu Group Id 입니다."));
 
-        Menu savedMenu = menuRepository.save(menuRequest.toMenu());
+        Menu savedMenu = menuRepository.save(menuRequest.toMenu(menuGroup));
         List<MenuProduct> menuProduct = menuProductService.createMenuProduct(savedMenu, menuRequest.getMenuProductRequests());
         return MenuResponse.of(savedMenu, menuProduct);
     }
