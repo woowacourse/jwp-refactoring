@@ -7,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 
 @Entity
 public class Menu {
@@ -33,7 +32,7 @@ public class Menu {
         this.menuGroup = menuGroup;
     }
 
-    public boolean isSmallerPrice(BigDecimal totalPrice) {
+    public boolean isSmallerPrice(Price totalPrice) {
         return price.isSmaller(totalPrice);
     }
 

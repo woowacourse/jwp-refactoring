@@ -14,10 +14,10 @@ class MenuTest {
     @DisplayName("isSmallerPrice 기능 테스트")
     @ParameterizedTest
     @CsvSource(value = {"2999:true", "3000:false", "3001:false"}, delimiter = ':')
-    void isSmallerPrice(BigDecimal price, boolean expect) {
+    void isSmallerPrice(int price, boolean expect) {
         Menu menu = MenuFixture.createMenuWithPrice(BigDecimal.valueOf(3000L));
 
-        boolean actual = menu.isSmallerPrice(price);
+        boolean actual = menu.isSmallerPrice(new Price(price));
 
         assertThat(actual).isEqualTo(expect);
     }

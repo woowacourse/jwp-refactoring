@@ -5,6 +5,7 @@ import java.util.Objects;
 
 public class Price {
     private static final int MIN_PRICE = 0;
+    public static final Price ZERO = new Price(0);
 
     private BigDecimal price;
 
@@ -26,15 +27,21 @@ public class Price {
         }
     }
 
-    public boolean isSmaller(BigDecimal totalPrice) {
-        return this.price.compareTo(totalPrice) > 0;
+    public boolean isSmaller(Price totalPrice) {
+        return this.price.compareTo(totalPrice.price) > 0;
     }
 
-    public BigDecimal multiply(Long quantity) {
-        return price.multiply(BigDecimal.valueOf(quantity));
+    public Price multiply(Long quantity) {
+        BigDecimal result = price.multiply(BigDecimal.valueOf(quantity));
+        return new Price(result);
     }
 
     public BigDecimal getPrice() {
         return price;
+    }
+
+    public Price sum(Price calculateAmount) {
+        BigDecimal result = this.price.add(calculateAmount.price);
+        return new Price(result);
     }
 }

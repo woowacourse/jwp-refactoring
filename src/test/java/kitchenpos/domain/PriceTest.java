@@ -15,10 +15,10 @@ class PriceTest {
     @DisplayName("isSmaller 기능 테스트")
     @ParameterizedTest
     @CsvSource(value = {"9:true", "10:false", "11:false"}, delimiter = ':')
-    void isSmaller(BigDecimal price, boolean expect) {
+    void isSmaller(int price, boolean expect) {
         Price priceOne = new Price(BigDecimal.TEN);
 
-        boolean actual = priceOne.isSmaller(price);
+        boolean actual = priceOne.isSmaller(new Price(price));
 
         assertThat(actual).isEqualTo(expect);
     }
@@ -26,19 +26,19 @@ class PriceTest {
     @DisplayName("multiply 기능 테스트")
     @ParameterizedTest
     @CsvSource(value = {"3:3", "5:5", "7:7"}, delimiter = ':')
-    void multiply(Long quantity, Long expect) {
+    void multiply(Long quantity, int price) {
         Price priceOne = new Price(BigDecimal.ONE);
 
-        BigDecimal actual = priceOne.multiply(quantity);
+        Price actual = priceOne.multiply(quantity);
 
-        assertThat(actual).isEqualTo(BigDecimal.valueOf(expect));
+        assertThat(actual).isEqualToComparingFieldByField(new Price(price));
     }
 
     @DisplayName("price가 0보다 작은 경우 예외 반환")
     @Test
     void validateGreaterOrSameThanZero() {
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> new Price(BigDecimal.valueOf(-1L)))
+                .isThrownBy(() -> new Price(-1))
                 .withMessage("price가 null이거나 0보다 작을 수 없습니다.");
     }
 }

@@ -19,10 +19,10 @@ class MenuProductTest {
         Product product = createProductWithPrice(BigDecimal.TEN);
         MenuProduct menuProduct = createMenuProductWithProductAndQuantity(product, 10L);
 
-        BigDecimal actual = menuProduct.calculateAmount();
+        Price actual = menuProduct.calculateAmount();
 
-        BigDecimal expected = BigDecimal.valueOf(100L);
-        assertThat(actual).isEqualTo(expected);
+        Price expected = new Price(100);
+        assertThat(actual).isEqualToComparingFieldByField(expected);
     }
 
     @DisplayName("equalsByMenuId, MenuProduct의 Menu id와 같은지 비교")

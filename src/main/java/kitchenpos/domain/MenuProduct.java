@@ -7,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import java.math.BigDecimal;
 
 @Entity
 public class MenuProduct {
@@ -27,6 +26,10 @@ public class MenuProduct {
     protected MenuProduct() {
     }
 
+    public MenuProduct(Menu menu, Product product, Long quantity) {
+        this(null, menu, product, quantity);
+    }
+
     public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
         this.seq = seq;
         this.menu = menu;
@@ -34,7 +37,7 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public BigDecimal calculateAmount() {
+    public Price calculateAmount() {
         return this.product.calculateAmount(quantity);
     }
 

@@ -13,7 +13,7 @@ public class MenuRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProductRequests;
 
-    protected MenuRequest() {
+    public MenuRequest() {
     }
 
     public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProductRequests) {

@@ -9,7 +9,6 @@ import kitchenpos.repository.MenuRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,12 +40,9 @@ public class MenuService {
     public List<MenuResponse> list() {
         List<MenuProduct> menuProducts = menuProductService.findAll();
         Set<Menu> menus = extractDistinctMenu(menuProducts);
-        List<MenuResponse> menuResponses = new ArrayList<>();
-        for (Menu menu : menus) {
-            List<MenuProduct> menuProductsByMenu = selectiveByMenu(menu, menuProducts);
-            menuResponses.add(MenuResponse.of(menu, menuProductsByMenu));
-        }
-        return menuResponses;
+        return menus.stream()
+                .map(menu -> MenuResponse.of(menu, selectiveByMenu(menu, menuProducts)))
+                .collect(Collectors.toList());
     }
 
     private Set<Menu> extractDistinctMenu(List<MenuProduct> menuProducts) {

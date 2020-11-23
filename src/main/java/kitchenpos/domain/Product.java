@@ -27,7 +27,7 @@ public class Product {
         this.price = price;
     }
 
-    public BigDecimal calculateAmount(Long quantity) {
+    public Price calculateAmount(Long quantity) {
         return price.multiply(quantity);
     }
 
