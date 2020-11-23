@@ -12,6 +12,7 @@ import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.util.ValidateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,11 +42,12 @@ public class MenuService {
 
         MenuPrice menuPrice = MenuPrice.of(menuCreateRequest.getPrice(), products.calculateMenuProductPriceSum());
 
+        ValidateUtil.validateNonNull(menuCreateRequest.getMenuGroupId());
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         MenuGroup menuGroup =
                 menuGroupRepository.findById(menuGroupId).orElseThrow(() -> new MenuGroupNotFoundException(menuGroupId));
 
-        Menu savedMenu = menuRepository.save(new Menu(menuCreateRequest.getName(), menuPrice, menuGroup));
+        Menu savedMenu = menuRepository.save(Menu.of(menuCreateRequest.getName(), menuPrice, menuGroup));
 
         List<MenuProduct> menuProducts = products.createMenuProducts(savedMenu);
         menuProducts.forEach(menuProductRepository::save);
