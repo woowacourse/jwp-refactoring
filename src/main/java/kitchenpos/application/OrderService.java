@@ -8,7 +8,6 @@ import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
-import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 import kitchenpos.exception.*;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -40,8 +39,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = orderCreateRequest.getOrderLineItemCreateRequests();
-        validateOrderLineItemCreateRequests(orderLineItemCreateRequests);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos = orderCreateRequest.getOrderLineItemDtos();
+        validateOrderLineItemCreateRequests(orderLineItemDtos);
 
         Long orderTableId = orderCreateRequest.getOrderTableId();
         OrderTable orderTable =
@@ -51,22 +50,22 @@ public class OrderService {
         Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
         Order savedOrder = orderRepository.save(order);
 
-        List<OrderLineItem> savedOrderLineItems = createOrderLineItems(orderLineItemCreateRequests, order);
+        List<OrderLineItem> savedOrderLineItems = createOrderLineItems(orderLineItemDtos, order);
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return OrderResponse.from(savedOrder);
     }
 
-    private void validateOrderLineItemCreateRequests(List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
-        if (CollectionUtils.isEmpty(orderLineItemCreateRequests)) {
+    private void validateOrderLineItemCreateRequests(List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos) {
+        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
             throw new InvalidOrderLineItemCreateRequestsException("주문 항목이 없습니다!");
         }
 
-        final List<Long> menuIds = orderLineItemCreateRequests.stream()
-                .map(OrderLineItemCreateRequest::getMenuId)
+        final List<Long> menuIds = orderLineItemDtos.stream()
+                .map(OrderCreateRequest.OrderLineItemDto::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItemCreateRequests.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
             throw new InvalidOrderLineItemCreateRequestsException("주문 항목 내에서 중복되는 메뉴가 없어야 합니다!");
         }
     }
@@ -77,13 +76,12 @@ public class OrderService {
         }
     }
 
-    private List<OrderLineItem> createOrderLineItems(List<OrderLineItemCreateRequest> orderLineItemCreateRequests,
-                                                     Order order) {
+    private List<OrderLineItem> createOrderLineItems(List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos, Order order) {
         List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemCreateRequest orderLineItemCreateRequest : orderLineItemCreateRequests) {
-            Long menuId = orderLineItemCreateRequest.getMenuId();
+        for (final OrderCreateRequest.OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
+            Long menuId = orderLineItemDto.getMenuId();
             Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new MenuNotFoundException(menuId));
-            OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemCreateRequest.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemDto.getQuantity());
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
 

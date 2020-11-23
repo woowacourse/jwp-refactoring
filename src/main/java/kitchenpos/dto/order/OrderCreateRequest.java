@@ -1,26 +1,45 @@
 package kitchenpos.dto.order;
 
-import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
-
 import java.util.List;
 
 public class OrderCreateRequest {
     private Long orderTableId;
-    private List<OrderLineItemCreateRequest> orderLineItemCreateRequests;
+    private List<OrderLineItemDto> orderLineItemDtos;
 
     public OrderCreateRequest() {
     }
 
-    public OrderCreateRequest(Long orderTableId, List<OrderLineItemCreateRequest> orderLineItemCreateRequests) {
+    public OrderCreateRequest(Long orderTableId, List<OrderLineItemDto> orderLineItemDtos) {
         this.orderTableId = orderTableId;
-        this.orderLineItemCreateRequests = orderLineItemCreateRequests;
+        this.orderLineItemDtos = orderLineItemDtos;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderLineItemCreateRequest> getOrderLineItemCreateRequests() {
-        return orderLineItemCreateRequests;
+    public List<OrderLineItemDto> getOrderLineItemDtos() {
+        return orderLineItemDtos;
+    }
+
+    public static class OrderLineItemDto {
+        private Long menuId;
+        private long quantity;
+
+        public OrderLineItemDto() {
+        }
+
+        public OrderLineItemDto(Long menuId, long quantity) {
+            this.menuId = menuId;
+            this.quantity = quantity;
+        }
+
+        public Long getMenuId() {
+            return menuId;
+        }
+
+        public long getQuantity() {
+            return quantity;
+        }
     }
 }

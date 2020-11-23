@@ -11,7 +11,6 @@ import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
-import kitchenpos.dto.orderlineitem.OrderLineItemCreateRequest;
 import kitchenpos.exception.*;
 import kitchenpos.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,10 +59,10 @@ class OrderServiceTest {
     private Menu savedMenu1;
     private Menu savedMenu2;
     private Menu savedMenu3;
-    private OrderLineItemCreateRequest orderLineItemCreateRequest1;
-    private OrderLineItemCreateRequest orderLineItemCreateRequest2;
-    private OrderLineItemCreateRequest orderLineItemCreateRequest3;
-    private OrderLineItemCreateRequest orderLineItemCreateRequest4;
+    private OrderCreateRequest.OrderLineItemDto orderLineItemDto1;
+    private OrderCreateRequest.OrderLineItemDto orderLineItemDto2;
+    private OrderCreateRequest.OrderLineItemDto orderLineItemDto3;
+    private OrderCreateRequest.OrderLineItemDto orderLineItemDto4;
 
     @BeforeEach
     void setUp() {
@@ -75,17 +74,17 @@ class OrderServiceTest {
         this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", MenuPrice.of(BigDecimal.valueOf(28_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
         this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", MenuPrice.of(BigDecimal.valueOf(27_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
         this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", MenuPrice.of(BigDecimal.valueOf(27_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
-        this.orderLineItemCreateRequest1 = new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
-        this.orderLineItemCreateRequest2 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 1);
-        this.orderLineItemCreateRequest4 = new OrderLineItemCreateRequest(this.savedMenu3.getId(), 1);
-        this.orderLineItemCreateRequest3 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 2);
+        this.orderLineItemDto1 = new OrderCreateRequest.OrderLineItemDto(this.savedMenu1.getId(), 1);
+        this.orderLineItemDto2 = new OrderCreateRequest.OrderLineItemDto(this.savedMenu2.getId(), 1);
+        this.orderLineItemDto4 = new OrderCreateRequest.OrderLineItemDto(this.savedMenu3.getId(), 1);
+        this.orderLineItemDto3 = new OrderCreateRequest.OrderLineItemDto(this.savedMenu2.getId(), 2);
     }
 
     @DisplayName("새로운 주문 생성")
     @Test
     void createOrderTest() {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                     this.orderLineItemCreateRequest2);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemDto1,
+                                                                                              this.orderLineItemDto2);
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
@@ -94,7 +93,7 @@ class OrderServiceTest {
         assertAll(
                 () -> assertThat(orderResponse).isNotNull(),
                 () -> assertThat(orderResponse.getOrderTableId()).isEqualTo(orderCreateRequest.getOrderTableId()),
-                () -> assertThat(orderResponse.getOrderLineItemResponses()).hasSize(orderResponse.getOrderLineItemResponses().size()),
+                () -> assertThat(orderResponse.getOrderLineItemDtos()).hasSize(orderResponse.getOrderLineItemDtos().size()),
                 () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(orderResponse.getOrderedTime()).isNotNull()
         );
@@ -113,12 +112,12 @@ class OrderServiceTest {
     @DisplayName("새로운 주문을 생성할 때 주문 항목 내에서 중복되는 메뉴가 있으면 예외 발생")
     @Test
     void createOrderWithOrderLineItemsCountNotEqualToMenuCountThenThrowException() {
-        OrderLineItemCreateRequest orderLineItemCreateRequest1 =
-                new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
-        OrderLineItemCreateRequest orderLineItemCreateRequest2 =
-                new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(orderLineItemCreateRequest1,
-                                                                                     orderLineItemCreateRequest2);
+        OrderCreateRequest.OrderLineItemDto orderLineItemDto1 =
+                new OrderCreateRequest.OrderLineItemDto(this.savedMenu1.getId(), 1);
+        OrderCreateRequest.OrderLineItemDto orderLineItemDto2 =
+                new OrderCreateRequest.OrderLineItemDto(this.savedMenu1.getId(), 1);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemCreateRequests = Arrays.asList(orderLineItemDto1,
+                                                                                              orderLineItemDto2);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
@@ -131,10 +130,8 @@ class OrderServiceTest {
     void createOrderWithNotExistOrderTableThenThrowException() {
         long notExistOrderTableId = -1L;
 
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                     this.orderLineItemCreateRequest2);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notExistOrderTableId,
-                                                                       orderLineItemCreateRequests);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos = Arrays.asList(this.orderLineItemDto1, this.orderLineItemDto2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(notExistOrderTableId, orderLineItemDtos);
 
         assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(OrderTableNotFoundException.class);
     }
@@ -143,10 +140,8 @@ class OrderServiceTest {
     @Test
     void createOrderWithEmptyOrderTableThenThrowException() {
         OrderTable savedOrderTable = createSavedOrderTable(this.tableGroup, NumberOfGuests.from(0), true);
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                     this.orderLineItemCreateRequest2);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(),
-                                                                       orderLineItemCreateRequests);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos = Arrays.asList(this.orderLineItemDto1, this.orderLineItemDto2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(savedOrderTable.getId(), orderLineItemDtos);
 
         assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(EmptyOrderTableException.class);
     }
@@ -154,15 +149,11 @@ class OrderServiceTest {
     @DisplayName("존재하는 모든 주문을 조회")
     @Test
     void listOrderTest() {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests1 = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                      this.orderLineItemCreateRequest2);
-        OrderCreateRequest orderCreateRequest1 = new OrderCreateRequest(this.savedOrderTable.getId(),
-                                                                        orderLineItemCreateRequests1);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos1 = Arrays.asList(this.orderLineItemDto1, this.orderLineItemDto2);
+        OrderCreateRequest orderCreateRequest1 = new OrderCreateRequest(this.savedOrderTable.getId(), orderLineItemDtos1);
 
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests2 = Arrays.asList(this.orderLineItemCreateRequest3,
-                                                                                      this.orderLineItemCreateRequest4);
-        OrderCreateRequest orderCreateRequest2 = new OrderCreateRequest(this.savedOrderTable.getId(),
-                                                                        orderLineItemCreateRequests2);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos2 = Arrays.asList(this.orderLineItemDto3, this.orderLineItemDto4);
+        OrderCreateRequest orderCreateRequest2 = new OrderCreateRequest(this.savedOrderTable.getId(), orderLineItemDtos2);
 
         List<OrderCreateRequest> orderCreateRequests = Arrays.asList(orderCreateRequest1, orderCreateRequest2);
         orderCreateRequests.forEach(order -> this.orderService.createOrder(order));
@@ -176,10 +167,8 @@ class OrderServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"MEAL", "COMPLETION"})
     void changeOrderStatusTest(String orderStatus) {
-        List<OrderLineItemCreateRequest> orderLineItemCreateRequests = Arrays.asList(this.orderLineItemCreateRequest1,
-                                                                                     this.orderLineItemCreateRequest2);
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
-                                                                       orderLineItemCreateRequests);
+        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos = Arrays.asList(this.orderLineItemDto1, this.orderLineItemDto2);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(), orderLineItemDtos);
         OrderResponse orderResponse = this.orderService.createOrder(orderCreateRequest);
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus);
 
