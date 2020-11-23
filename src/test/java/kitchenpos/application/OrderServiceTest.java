@@ -106,7 +106,7 @@ class OrderServiceTest {
                                                                        Collections.emptyList());
 
         assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest))
-                .isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
+                .isInstanceOf(InvalidOrderLineItemDtosException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 주문 항목 내에서 중복되는 메뉴가 있으면 예외 발생")
@@ -122,7 +122,7 @@ class OrderServiceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(this.savedOrderTable.getId(),
                                                                        orderLineItemCreateRequests);
 
-        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(InvalidOrderLineItemCreateRequestsException.class);
+        assertThatThrownBy(() -> this.orderService.createOrder(orderCreateRequest)).isInstanceOf(InvalidOrderLineItemDtosException.class);
     }
 
     @DisplayName("새로운 주문을 생성할 때 존재하지 않는 테이블을 주문 테이블로 지정하면 예외 발생")

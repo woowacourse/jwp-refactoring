@@ -1,6 +1,7 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.table.OrderTable;
+import kitchenpos.exception.EmptyOrderTableException;
 import kitchenpos.exception.OrderStatusNotChangeableException;
 import kitchenpos.util.ValidateUtil;
 
@@ -36,10 +37,19 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public static Order of(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        ValidateUtil.validateNonNull(orderTable, orderStatus, orderedTime);
+    public static Order from(OrderTable orderTable) {
+        ValidateUtil.validateNonNull(orderTable);
+        validateOrderTable(orderTable);
+        OrderStatus orderStatus = OrderStatus.COOKING;
+        LocalDateTime orderedTime = LocalDateTime.now();
 
         return new Order(orderTable, orderStatus, orderedTime);
+    }
+
+    private static void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new EmptyOrderTableException();
+        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

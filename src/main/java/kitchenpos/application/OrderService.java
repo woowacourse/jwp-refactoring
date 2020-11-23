@@ -1,37 +1,32 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.order.Order;
-import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.*;
 import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.OrderCreateRequest;
 import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.order.OrderStatusChangeRequest;
-import kitchenpos.exception.*;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.exception.OrderNotFoundException;
+import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.util.ValidateUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
+    private final OrderLineItemAssembler orderLineItemAssembler;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(MenuRepository menuRepository, OrderRepository orderRepository,
+    public OrderService(OrderLineItemAssembler orderLineItemAssembler, OrderRepository orderRepository,
                         OrderLineItemRepository orderLineItemRepository, OrderTableRepository orderTableRepository) {
-        this.menuRepository = menuRepository;
+        this.orderLineItemAssembler = orderLineItemAssembler;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
@@ -39,53 +34,21 @@ public class OrderService {
 
     @Transactional
     public OrderResponse createOrder(OrderCreateRequest orderCreateRequest) {
-        List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos = orderCreateRequest.getOrderLineItemDtos();
-        validateOrderLineItemCreateRequests(orderLineItemDtos);
-
+        ValidateUtil.validateNonNull(orderCreateRequest.getOrderTableId());
         Long orderTableId = orderCreateRequest.getOrderTableId();
         OrderTable orderTable =
                 orderTableRepository.findById(orderTableId).orElseThrow(() -> new OrderTableNotFoundException(orderTableId));
-        validateOrderTable(orderTable);
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Order order = Order.from(orderTable);
         Order savedOrder = orderRepository.save(order);
 
-        List<OrderLineItem> savedOrderLineItems = createOrderLineItems(orderLineItemDtos, order);
-        savedOrder.setOrderLineItems(savedOrderLineItems);
+        OrderLineItemDtos orderLineItemDtos = orderCreateRequest.toOrderLineItemDtos();
+        List<OrderLineItem> orderLineItems = orderLineItemAssembler.createOrderLineItems(orderLineItemDtos, order);
+        orderLineItems.forEach(orderLineItemRepository::save);
+
+        savedOrder.setOrderLineItems(orderLineItems);
 
         return OrderResponse.from(savedOrder);
-    }
-
-    private void validateOrderLineItemCreateRequests(List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos) {
-        if (CollectionUtils.isEmpty(orderLineItemDtos)) {
-            throw new InvalidOrderLineItemCreateRequestsException("주문 항목이 없습니다!");
-        }
-
-        final List<Long> menuIds = orderLineItemDtos.stream()
-                .map(OrderCreateRequest.OrderLineItemDto::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemDtos.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new InvalidOrderLineItemCreateRequestsException("주문 항목 내에서 중복되는 메뉴가 없어야 합니다!");
-        }
-    }
-
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new EmptyOrderTableException();
-        }
-    }
-
-    private List<OrderLineItem> createOrderLineItems(List<OrderCreateRequest.OrderLineItemDto> orderLineItemDtos, Order order) {
-        List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderCreateRequest.OrderLineItemDto orderLineItemDto : orderLineItemDtos) {
-            Long menuId = orderLineItemDto.getMenuId();
-            Menu menu = menuRepository.findById(menuId).orElseThrow(() -> new MenuNotFoundException(menuId));
-            OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemDto.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-
-        return savedOrderLineItems;
     }
 
     public List<OrderResponse> listAllOrders() {
@@ -100,7 +63,7 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(Long orderId, OrderStatusChangeRequest orderStatusChangeRequest) {
         Order savedOrder = orderRepository.findById(orderId).orElseThrow(() -> new OrderNotFoundException(orderId));
-        OrderStatus orderStatus = OrderStatus.from(orderStatusChangeRequest.getOrderStatus());
+        OrderStatus orderStatus = orderStatusChangeRequest.toOrderStatus();
         savedOrder.changeOrderStatus(orderStatus);
 
         return OrderResponse.from(savedOrder);
