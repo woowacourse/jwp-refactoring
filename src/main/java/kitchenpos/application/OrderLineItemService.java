@@ -9,8 +9,9 @@ import kitchenpos.repository.OrderLineItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderLineItemService {
@@ -24,12 +25,12 @@ public class OrderLineItemService {
 
     @Transactional
     public List<OrderLineItem> createOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 menu id 입니다."));
-            orderLineItems.add(orderLineItemRequest.toOrderLineItem(order, menu));
-        }
+        Map<Long, Long> menuIdToQuantity = orderLineItemRequests.stream()
+                .collect(Collectors.toMap(OrderLineItemRequest::getMenuId, OrderLineItemRequest::getQuantity));
+        List<Menu> menus = menuRepository.findAllById(menuIdToQuantity.keySet());
+        List<OrderLineItem> orderLineItems = menus.stream()
+                .map(menu -> new OrderLineItem(order, menu, menuIdToQuantity.get(menu.getId())))
+                .collect(Collectors.toList());
         return orderLineItemRepository.saveAll(orderLineItems);
     }
 

@@ -31,7 +31,6 @@ public class MenuService {
     public MenuResponse create(MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Menu Group Id 입니다."));
-
         Menu savedMenu = menuRepository.save(menuRequest.toMenu(menuGroup));
         List<MenuProduct> menuProduct = menuProductService.createMenuProduct(savedMenu, menuRequest.getMenuProductRequests());
         return MenuResponse.of(savedMenu, menuProduct);
