@@ -72,9 +72,9 @@ class OrderServiceTest {
         this.savedOrderTable = createSavedOrderTable(this.tableGroup, NumberOfGuests.from(0), false);
 
         MenuGroup savedMenuGroup = createSavedMenuGroup("두마리메뉴");
-        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", MenuPrice.from(BigDecimal.valueOf(28_000)), savedMenuGroup);
-        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", MenuPrice.from(BigDecimal.valueOf(27_000)), savedMenuGroup);
-        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", MenuPrice.from(BigDecimal.valueOf(27_000)), savedMenuGroup);
+        this.savedMenu1 = createSavedMenu("양념간장두마리메뉴", MenuPrice.of(BigDecimal.valueOf(28_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
+        this.savedMenu2 = createSavedMenu("후라이드양념두마리메뉴", MenuPrice.of(BigDecimal.valueOf(27_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
+        this.savedMenu3 = createSavedMenu("후라이드간장두마리메뉴", MenuPrice.of(BigDecimal.valueOf(27_000), BigDecimal.valueOf(30_000)), savedMenuGroup);
         this.orderLineItemCreateRequest1 = new OrderLineItemCreateRequest(this.savedMenu1.getId(), 1);
         this.orderLineItemCreateRequest2 = new OrderLineItemCreateRequest(this.savedMenu2.getId(), 1);
         this.orderLineItemCreateRequest4 = new OrderLineItemCreateRequest(this.savedMenu3.getId(), 1);
