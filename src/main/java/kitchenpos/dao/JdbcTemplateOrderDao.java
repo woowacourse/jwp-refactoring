@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.sql.DataSource;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -28,8 +29,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
             .withTableName(TABLE_NAME)
-            .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+            .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return new Order(
             resultSet.getLong(KEY_COLUMN_NAME),
             resultSet.getLong("order_table_id"),
-            resultSet.getString("order_status"),
+            OrderStatus.valueOf(resultSet.getString("order_status")),
             resultSet.getObject("ordered_time", LocalDateTime.class)
         );
     }

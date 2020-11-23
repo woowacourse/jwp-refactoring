@@ -33,6 +33,6 @@ public class OrderVerifier {
             throw new IllegalArgumentException();
         }
 
-        return new Order(null, orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now());
+        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 }

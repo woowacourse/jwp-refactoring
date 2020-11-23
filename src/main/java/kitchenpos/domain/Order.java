@@ -1,15 +1,14 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 public class Order {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -21,11 +20,11 @@ public class Order {
             throw new IllegalArgumentException();
         }
 
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     private boolean isCompleted() {
-        return Objects.equals(OrderStatus.COMPLETION.name(), orderStatus);
+        return orderStatus == OrderStatus.COMPLETION;
     }
 
     public Long getId() {
@@ -36,7 +35,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

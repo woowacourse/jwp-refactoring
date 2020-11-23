@@ -83,7 +83,7 @@ public class OrderServiceTest extends AbstractServiceTest {
             () -> assertThat(savedOrder.getOrderTableId())
                 .isEqualTo(orderCreateRequest.getOrderTableId()),
             () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
             () -> assertThat(savedOrder.getOrderLineItems())
                 .usingElementComparatorIgnoringFields("seq", "orderId")
                 .isEqualTo(orderCreateRequest.getOrderLineItems())
@@ -186,7 +186,7 @@ public class OrderServiceTest extends AbstractServiceTest {
 
         OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(), orderRequest);
 
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus().name());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
     }
 
     @DisplayName("완료된 주문의 상태를 변경할 수 없다.")
