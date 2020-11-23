@@ -36,7 +36,7 @@ class OrderTableTest {
         OrderTable orderTable = createOrderTableWithTableGroup(createTableGroupWithId(1L));
         TableGroup expected = createTableGroupWithId(2L);
 
-        OrderTable actual = orderTable.changeTableGroup(expected);
+        OrderTable actual = orderTable.group(expected);
 
         assertThat(actual.getTableGroup()).isEqualToComparingFieldByField(expected);
     }

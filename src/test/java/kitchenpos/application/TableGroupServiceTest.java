@@ -70,8 +70,7 @@ public class TableGroupServiceTest {
         TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableRequests);
 
         assertThatNullPointerException()
-                .isThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .withMessage("테이블 그룹에 속할 테이블 객체가 null 입니다.");
+                .isThrownBy(() -> tableGroupService.create(tableGroupRequest));
     }
 
     @DisplayName("TableGroup의 orderTable 개수가 2개 미만인 경우 예외 반환")
@@ -95,7 +94,7 @@ public class TableGroupServiceTest {
 
         assertThatIllegalArgumentException()
                 .isThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .withMessage("요청한 Table 중 저장되어있지 않은 Table이 있습니다.");
+                .withMessage("요청한 Table 중 DB에 저장되어있지 않은 Table이 있습니다.");
     }
 
     @DisplayName("TableGroup의 orderTable이 비어 있지않은 경우 예외 반환")

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -14,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,29 +32,23 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(TableGroupRequest tableGroupRequest) {
-        List<OrderTableRequest> orderTableRequests = tableGroupRequest.getOrderTables();
-        Objects.requireNonNull(orderTableRequests, "테이블 그룹에 속할 테이블 객체가 null 입니다.");
-        List<Long> orderTableIds = orderTableRequests.stream()
-                .map(OrderTableRequest::getId)
+        List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        validateRequestOrderTable(orderTableIds, orderTables);
+        TableGroup savedTableGroup = tableGroupRepository.save(TableGroup.create());
+        List<OrderTable> groupedTables = orderTables.stream()
+                .map(orderTable -> orderTable.group(savedTableGroup))
                 .collect(Collectors.toList());
-        List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        validateRequestOrderTable(orderTableRequests, savedOrderTables);
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroupRequest.toTableGroup());
-        updateTableGroupOfOrderTables(savedOrderTables, savedTableGroup);
+        orderTableRepository.saveAll(groupedTables);
         return savedTableGroup;
     }
 
-    private void validateRequestOrderTable(List<OrderTableRequest> orderTableRequests, List<OrderTable> savedOrderTables) {
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < MIN_TABLE_SIZE) {
+    private void validateRequestOrderTable(List<Long> orderTableIds, List<OrderTable> orderTables) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < MIN_TABLE_SIZE) {
             throw new IllegalArgumentException("table group에 속한 테이블은 2개 이상이여야 합니다.");
         }
-        if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("요청한 Table 중 저장되어있지 않은 Table이 있습니다.");
-        }
-        for (OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException("이미 테이블 그룹에 속한 테이블이거나 비어있지 않은 테이블입니다.");
-            }
+        if (orderTableIds.size() != orderTables.size()) {
+            throw new IllegalArgumentException("요청한 Table 중 DB에 저장되어있지 않은 Table이 있습니다.");
         }
     }
 
@@ -67,8 +59,10 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         validateOrderStatusCompletion(orderTableIds);
-
-        updateTableGroupOfOrderTables(orderTables, null);
+        List<OrderTable> ungroupedTables = orderTables.stream()
+                .map(orderTable -> orderTable.unGroup())
+                .collect(Collectors.toList());
+        orderTableRepository.saveAll(ungroupedTables);
     }
 
     private void validateOrderStatusCompletion(List<Long> orderTableIds) {
@@ -78,11 +72,4 @@ public class TableGroupService {
         }
     }
 
-    private void updateTableGroupOfOrderTables(List<OrderTable> orderTables, TableGroup tableGroup) {
-        for (OrderTable savedOrderTable : orderTables) {
-            savedOrderTable = savedOrderTable.changeTableGroup(tableGroup);
-            savedOrderTable = savedOrderTable.changeEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-    }
 }

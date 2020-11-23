@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -33,11 +34,26 @@ public class OrderTable {
     }
 
     public OrderTable changeEmpty(boolean empty) {
-        return new OrderTable(this.id, this.tableGroup, this.numberOfGuests, empty);
+        if (tableGroup != null) {
+            throw new IllegalArgumentException("table group에 속해있는 테이블은 empty 수정이 불가합니다.");
+        }
+        return new OrderTable(this.id, null, this.numberOfGuests, empty);
     }
 
-    public OrderTable changeTableGroup(TableGroup tableGroup) {
-        return new OrderTable(this.id, tableGroup, this.numberOfGuests, this.empty);
+    public OrderTable group(TableGroup tableGroup) {
+        Objects.requireNonNull(tableGroup);
+        if (isNotGrouping()) {
+            throw new IllegalArgumentException("이미 테이블 그룹에 속한 테이블이거나 비어있지 않은 테이블입니다.");
+        }
+        return new OrderTable(this.id, tableGroup, this.numberOfGuests, false);
+    }
+
+    private boolean isNotGrouping() {
+        return !isEmpty() || tableGroup != null;
+    }
+
+    public OrderTable unGroup() {
+        return new OrderTable(this.id, null, this.numberOfGuests, this.empty);
     }
 
     public OrderTable changeNumberOfGuests(int numberOfGuests) {

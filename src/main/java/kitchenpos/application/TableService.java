@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,21 +35,15 @@ public class TableService {
 
     @Transactional
     public OrderTable changeEmpty(Long orderTableId, OrderTable orderTable) {
-        OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        validateCanChangeEmpty(orderTableId, savedOrderTable);
-        savedOrderTable = savedOrderTable.changeEmpty(orderTable.isEmpty());
-        return orderTableRepository.save(savedOrderTable);
-    }
-
-    private void validateCanChangeEmpty(Long orderTableId, OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException("table group에 속해있는 테이블은 empty 수정이 불가합니다.");
-        }
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("조리중이거나 식사중일 땐 empty 수정이 불가합니다.");
         }
+        OrderTable savedOrderTable = findOrderTableById(orderTableId);
+        savedOrderTable = savedOrderTable.changeEmpty(orderTable.isEmpty());
+        return orderTableRepository.save(savedOrderTable);
     }
+
 
     @Transactional
     public OrderTable changeNumberOfGuests(Long orderTableId, OrderTable orderTable) {

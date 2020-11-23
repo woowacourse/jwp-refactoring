@@ -22,6 +22,10 @@ public class TableGroup {
         this.createdDate = createdDate;
     }
 
+    public static TableGroup create() {
+        return new TableGroup(null, LocalDateTime.now());
+    }
+
     public Long getId() {
         return id;
     }
