@@ -73,7 +73,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         final List<MenuResponse> menuResponses = menus.stream()
-            .map(menu -> MenuResponse.of(menu, menuProductRepository.findAllBy(menu.getId())))
+            .map(menu -> MenuResponse.of(menu, menuProductRepository.findAllByMenuId(menu.getId())))
             .collect(Collectors.toList());
 
         return MenuResponses.from(menuResponses);

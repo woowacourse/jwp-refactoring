@@ -36,7 +36,7 @@ class MenuServiceTest extends TruncateDatabaseConfig {
     @ParameterizedTest
     @NullSource
     void createFail_When_Price_Null(BigDecimal price) {
-        menuGroupRepository.save(new MenuGroup(1L, "치킨류"));
+        menuGroupRepository.save(new MenuGroup("치킨류"));
         MenuRequest menuRequest = new MenuRequest("치킨 반반 세트", price, 1L, Lists.newArrayList());
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -46,7 +46,7 @@ class MenuServiceTest extends TruncateDatabaseConfig {
     @DisplayName("메뉴 생성 실패 - 가격 음수")
     @Test
     void createFail_When_Negative_Price() {
-        menuGroupRepository.save(new MenuGroup(1L, "치킨류"));
+        menuGroupRepository.save(new MenuGroup("치킨류"));
         MenuRequest menuRequest = new MenuRequest("치킨 반반 세트", BigDecimal.valueOf(-10L), 1L, Lists.newArrayList());
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
@@ -73,7 +73,7 @@ class MenuServiceTest extends TruncateDatabaseConfig {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 그룹 조회")
+    @DisplayName("메뉴 리스트 조회")
     @Test
     void list() {
         setTestData();
@@ -91,8 +91,8 @@ class MenuServiceTest extends TruncateDatabaseConfig {
     }
 
     private void setTestData() {
-        menuGroupRepository.save(new MenuGroup(1L, "치킨류"));
-        productRepository.save(new Product(1L, "후라이드 치킨", BigDecimal.valueOf(10_000)));
-        productRepository.save(new Product(2L, "양념 치킨", BigDecimal.valueOf(10_000)));
+        menuGroupRepository.save(new MenuGroup("치킨류"));
+        productRepository.save(new Product("후라이드 치킨", BigDecimal.valueOf(10_000)));
+        productRepository.save(new Product("양념 치킨", BigDecimal.valueOf(10_000)));
     }
 }

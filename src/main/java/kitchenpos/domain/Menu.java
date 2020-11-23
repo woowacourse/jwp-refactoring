@@ -29,17 +29,12 @@ public class Menu {
     protected Menu() {
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
         validateName(name);
         validatePrice(price);
-        this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
     }
 
     private void validateName(String name) {

@@ -68,7 +68,7 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     @DisplayName("주문 생성 실패 - 비어있는 테이블")
     @Test
     void createFail_When_OrderTable_IsEmpty() {
-        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, true));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable( 3, true));
 
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Lists.newArrayList());
 
@@ -79,7 +79,7 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     @DisplayName("주문 생성")
     @Test
     void create() {
-        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable( 3, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자류"));
         Menu savedMenu = menuRepository.save(new Menu("피자", BigDecimal.valueOf(13_000L), menuGroup));
 
@@ -98,7 +98,7 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     @DisplayName("주문 목록 조회")
     @Test
     void list() {
-        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable( 3, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자류"));
         Menu savedMenu = menuRepository.save(new Menu("피자", BigDecimal.valueOf(13_000L), menuGroup));
         OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
@@ -129,7 +129,7 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     @ParameterizedTest
     @CsvSource(value = {"MEAL", "COOKING", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable( 3, false));
         Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
         OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus.name());
