@@ -3,7 +3,7 @@ package kitchenpos.acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -22,12 +22,12 @@ class ProductAcceptanceTest extends AcceptanceTest {
         createProduct("후라이드 치킨", 9_000);
         createProduct("간장 치킨", 10_000);
 
-        List<Product> products = findProducts();
+        List<ProductResponse> products = findProducts();
         assertThat(doesProductExistInProducts("후라이드 치킨", products)).isTrue();
         assertThat(doesProductExistInProducts("간장 치킨", products)).isTrue();
     }
 
-    private List<Product> findProducts() {
+    private List<ProductResponse> findProducts() {
         return given()
         .when()
             .get("/api/products")
@@ -36,10 +36,10 @@ class ProductAcceptanceTest extends AcceptanceTest {
             .log().all()
             .extract()
             .jsonPath()
-            .getList("", Product.class);
+            .getList("", ProductResponse.class);
     }
 
-    private boolean doesProductExistInProducts(String productName, List<Product> products) {
+    private boolean doesProductExistInProducts(String productName, List<ProductResponse> products) {
         return products.stream()
             .anyMatch(product -> product
                 .getName()

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
+import kitchenpos.dto.product.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,8 +18,8 @@ import org.springframework.http.MediaType;
 
 class MenuAcceptanceTest extends AcceptanceTest {
 
-    private List<Product> products;
-    private MenuGroup 세트_메뉴;
+    private List<ProductResponse> products;
+    private MenuGroupResponse 세트_메뉴;
 
     @BeforeEach
     void setUp() {
@@ -48,7 +48,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("메뉴를 관리한다.")
     void manageMenu() {
         // 메뉴 등록
-        Menu response = createMenu("후라이드 세트", products, 16_000L, 세트_메뉴.getId());
+        MenuResponse response = createMenu("후라이드 세트", products, 16_000L, 세트_메뉴.getId());
 
         assertThat(response.getId()).isNotNull();
         assertThat(response.getMenuGroupId()).isEqualTo(세트_메뉴.getId());
@@ -57,11 +57,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThatMenuContainsProducts(response, products);
 
         // 메뉴 목록 조회
-        List<Menu> menus = findMenus();
+        List<MenuResponse> menus = findMenus();
         doesMenuExistInMenus(response, menus);
     }
 
-    private List<Menu> findMenus() {
+    private List<MenuResponse> findMenus() {
         return given()
             .when()
                 .get("/api/menus")
@@ -70,10 +70,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 .log().all()
                 .extract()
                 .jsonPath()
-                .getList("", Menu.class);
+                .getList("", MenuResponse.class);
     }
 
-    private boolean doesMenuExistInMenus(Menu menu, List<Menu> menus) {
+    private boolean doesMenuExistInMenus(MenuResponse menu, List<MenuResponse> menus) {
         return menus.stream()
             .anyMatch(menuEntity -> menuEntity
                 .getId()
@@ -86,7 +86,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 가격 정보가 누락된 채로 메뉴 등록을 시도한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴의 가격 정보가 누락된 경우 예외처리")
@@ -100,7 +100,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 가격을 음수로 하여 메뉴 등록을 시도한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴의 가격 정보가 음수인 경우 예외처리")
@@ -114,7 +114,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
      * Given 상품들이 등록되어 있다, 메뉴 그룹이 등록되어 있다.
      *
      * When 메뉴 그룹을 지정하지 않고 메뉴 생성을 요청한다.
-     * Then 500 에러 응답을 받는다.    // todo: 나중에 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("메뉴 생성 - 메뉴 그룹을 지정하지 않은 경우 예외처리")
@@ -122,21 +122,21 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThatFailToCreateMenuWithoutMenuGroupId("후라이드 세트", products, 1_000L);
     }
 
-    private void assertThatMenuContainsProducts(Menu menu, List<Product> products) {
+    private void assertThatMenuContainsProducts(MenuResponse menu, List<ProductResponse> products) {
         List<MenuProduct> responseMenuProducts = menu.getMenuProducts();
 
-        for (Product product : products) {
+        for (ProductResponse product : products) {
             assertThat(doesMenuContainProduct(responseMenuProducts, product)).isTrue();
         }
     }
 
-    private boolean doesMenuContainProduct(List<MenuProduct> menuProducts, Product product) {
+    private boolean doesMenuContainProduct(List<MenuProduct> menuProducts, ProductResponse product) {
         return menuProducts.stream()
             .anyMatch(menuProduct -> menuProduct.getProductId()
                 .equals(product.getId()));
     }
 
-    private void assertThatFailToCreateMenuWithoutPrice(String menuName, List<Product> products, Long menuGroupId) {
+    private void assertThatFailToCreateMenuWithoutPrice(String menuName, List<ProductResponse> products, Long menuGroupId) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("name", menuName);
@@ -149,7 +149,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     }
 
     private void assertThatFailToCreateMenuWithNegativePrice(String menuName,
-        List<Product> products, Long menuPrice, Long menuGroupId) {
+        List<ProductResponse> products, Long menuPrice, Long menuGroupId) {
         if (menuPrice >= 0L) {
             throw new IllegalArgumentException("menuPrice 가 음수가 아닙니다.\n"
                 + "음수가 아닌 가격에 대한 정상적인 메뉴 생성 테스트는"
@@ -168,7 +168,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     }
 
     private void assertThatFailToCreateMenuWithoutMenuGroupId(String menuName,
-        List<Product> products, Long menuPrice) {
+        List<ProductResponse> products, Long menuPrice) {
         Map<String, Object> body = new HashMap<>();
 
         body.put("name", menuName);
@@ -188,6 +188,6 @@ class MenuAcceptanceTest extends AcceptanceTest {
         .when()
             .post("/api/menus")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }

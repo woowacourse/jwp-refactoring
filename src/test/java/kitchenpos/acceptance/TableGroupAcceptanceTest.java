@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.table.TableResponse;
+import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +19,9 @@ import org.springframework.http.MediaType;
 
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    private OrderTable tableA;
-    private OrderTable tableB;
-    private OrderTable tableC;
+    private TableResponse tableA;
+    private TableResponse tableB;
+    private TableResponse tableC;
 
     @BeforeEach
     void setUp() {
@@ -44,7 +44,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("테이블 그룹 관리")
     void manageTableGroup() {
         // 테이블 그룹짓기
-        TableGroup tableGroup = groupTables(Arrays.asList(tableA, tableB, tableC));
+        TableGroupResponse tableGroup = groupTables(Arrays.asList(tableA, tableB, tableC));
 
         assertThat(tableGroup.getId()).isNotNull();
         assertThatOrderTableBelongsTableGroup(tableA, tableGroup);
@@ -75,7 +75,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
      * Given 비어있는 테이블과 비어있지않은 테이블들이 존재한다.
      *
      * When 비어있지 않은 테이블이 포함된 테이블 그룹 생성을 시도한다.
-     * Then 500 에러 응답을 받는다.    // Todo : 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("테이블 그룹 생성 - 비어있지 않은 테이블을 포함하는 경우 예외처리")
@@ -91,7 +91,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
      * Given 이미 다른 그룹에 속한 테이블 A와 그렇지 않은 테이블들이 있다.
      *
      * When 테이블 A를 포함하여 그룹 생성하기를 시도한다.
-     * Then 500 에러 응답을 받는다.    // Todo : 응답 리팩토링
+     * Then 500 에러 응답을 받는다.
      */
     @Test
     @DisplayName("테이블 그룹 생성 - 다른 그룹에 속한 테이블을 또 사용할 경우 예외처리")
@@ -101,7 +101,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         assertThatFailToGroupTables(Arrays.asList(tableC, tableA));
     }
 
-    private void ungroup(TableGroup tableGroup) {
+    private void ungroup(TableGroupResponse tableGroup) {
         given()
             .accept(MediaType.APPLICATION_JSON_VALUE)
         .when()
@@ -110,26 +110,26 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
             .statusCode(HttpStatus.NO_CONTENT.value());
     }
 
-    private void assertThatOrderTableBelongsTableGroup(OrderTable table, TableGroup tableGroup) {
-        List<Long> tableIds = tableGroup.getOrderTables()
+    private void assertThatOrderTableBelongsTableGroup(TableResponse table, TableGroupResponse tableGroup) {
+        List<Long> tableIds = tableGroup.getTables()
             .stream()
-            .map(OrderTable::getId)
+            .map(TableResponse::getId)
             .collect(Collectors.toList());
         assertThat(tableIds).contains(table.getId());
     }
 
-    private void assertThatFailToGroupTables(List<OrderTable> orderTables) {
+    private void assertThatFailToGroupTables(List<TableResponse> tables) {
         Map<String, Object> body = new HashMap<>();
 
         List<Map> tablesForGroupingRequest = new ArrayList<>();
 
-        for (OrderTable orderTable : orderTables) {
+        for (TableResponse table : tables) {
             Map<String, Object> tableForGroupingRequest = new HashMap<>();
-            tableForGroupingRequest.put("id", orderTable.getId());
+            tableForGroupingRequest.put("id", table.getId());
 
             tablesForGroupingRequest.add(tableForGroupingRequest);
         }
-        body.put("orderTables", tablesForGroupingRequest);
+        body.put("tables", tablesForGroupingRequest);
 
         given()
             .body(body)
@@ -138,6 +138,6 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         .when()
             .post("/api/table-groups")
         .then()
-            .statusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 }

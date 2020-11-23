@@ -3,14 +3,22 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.config.DataSourceConfig;
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
+import kitchenpos.dto.menugroup.MenuGroupResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
 
-@SpringBootTest
 @Sql("/truncate.sql")
+@Import(DataSourceConfig.class)
+@SpringBootTest(classes = {
+    MenuGroupService.class,
+    JdbcTemplateMenuGroupDao.class
+})
 class MenuGroupServiceTest {
 
     @Autowired
@@ -18,35 +26,32 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("세트메뉴");
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("세트메뉴");
 
-        MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroupRequest);
         assertThat(savedMenuGroup.getId()).isNotNull();
         assertThat(savedMenuGroup.getName()).isEqualTo("세트메뉴");
     }
 
     @Test
     void list() {
-        MenuGroup menuGroup = new MenuGroup();
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("세트메뉴");
+        MenuGroupResponse 세트메뉴 = menuGroupService.create(menuGroupRequest);
 
-        menuGroup.setName("세트메뉴");
-        MenuGroup 세트메뉴 = menuGroupService.create(menuGroup);
+        menuGroupRequest = new MenuGroupRequest("사이드메뉴");
+        MenuGroupResponse 사이드메뉴 = menuGroupService.create(menuGroupRequest);
 
-        menuGroup.setName("사이드메뉴");
-        MenuGroup 사이드메뉴 = menuGroupService.create(menuGroup);
+        menuGroupRequest = new MenuGroupRequest("안주류");
+        MenuGroupResponse 안주류 = menuGroupService.create(menuGroupRequest);
 
-        menuGroup.setName("안주류");
-        MenuGroup 안주류 = menuGroupService.create(menuGroup);
-
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponse> menuGroups = menuGroupService.list();
         assertThat(menuGroups).hasSize(3);
         assertThatMenuGroupsContainsMenuGroup(menuGroups, 세트메뉴);
         assertThatMenuGroupsContainsMenuGroup(menuGroups, 사이드메뉴);
         assertThatMenuGroupsContainsMenuGroup(menuGroups, 안주류);
     }
 
-    void assertThatMenuGroupsContainsMenuGroup(List<MenuGroup> menuGroups, MenuGroup menuGroup) {
+    void assertThatMenuGroupsContainsMenuGroup(List<MenuGroupResponse> menuGroups, MenuGroupResponse menuGroup) {
         boolean actual = menuGroups.stream()
             .anyMatch(menuGroupOfList ->
                 menuGroupOfList.getId().equals(menuGroup.getId()));
