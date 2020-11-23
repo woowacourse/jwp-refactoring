@@ -3,14 +3,14 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductCreateRequest;
+import kitchenpos.dto.product.ProductCreateResponse;
+import kitchenpos.dto.product.ProductFindAllResponse;
+import kitchenpos.dto.product.ProductFindAllResponses;
 
 class ProductServiceTest extends ServiceTest {
 	@Autowired
@@ -19,42 +19,46 @@ class ProductServiceTest extends ServiceTest {
 	@DisplayName("price가 null일 경우 - IllegalArgumentException 발생")
 	@Test
 	void create_whenPriceIsNull_thenThrowIllegalArgumentException() {
-		Product product = createProduct(null, "김", null);
+		ProductCreateRequest productCreateRequest = new ProductCreateRequest(null, "김", null);
 
-		assertThatThrownBy(() -> productService.create(product))
+		assertThatThrownBy(() -> productService.create(productCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("price가 음수일 경우 - IllegalArgumentException 발생")
 	@Test
 	void create_whenPriceIsMinus_thenThrowIllegalArgumentException() {
-		Product product = createProduct(null, "김", BigDecimal.valueOf(-1));
+		ProductCreateRequest productCreateRequest = new ProductCreateRequest(null, "김", -1L);
 
-		assertThatThrownBy(() -> productService.create(product))
+		assertThatThrownBy(() -> productService.create(productCreateRequest))
 			.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@DisplayName("product 저장 성공")
 	@Test
 	void create() {
-		Product product = createProduct(null, "김", BigDecimal.valueOf(1000));
+		ProductCreateRequest productCreateRequest = new ProductCreateRequest(null, "김", 1000L);
 
-		Product actual = productService.create(product);
+		ProductCreateResponse actual = productService.create(productCreateRequest);
 		assertAll(
 			() -> assertThat(actual.getId()).isNotNull(),
-			() -> assertThat(actual.getName()).isEqualTo(product.getName()),
-			() -> assertThat(actual.getPrice().longValue()).isEqualTo(product.getPrice().longValue())
+			() -> assertThat(actual.getName()).isEqualTo(productCreateRequest.getName()),
+			() -> assertThat(actual.getPrice()).isEqualTo(productCreateRequest.getPrice())
 		);
 	}
 
 	@Test
 	void list() {
-		Product product = createProduct(null, "김", BigDecimal.valueOf(1000));
+		ProductCreateRequest productCreateRequest = new ProductCreateRequest(null, "김", 1000L);
 
-		Product expect = productService.create(product);
+		ProductCreateResponse expect = productService.create(productCreateRequest);
 
-		List<Product> actual = productService.list();
-		assertThat(actual).hasSize(1);
-		assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expect);
+		ProductFindAllResponses actual = productService.findAll();
+		ProductFindAllResponse actualItem = actual.getProductFindAllResponses().get(0);
+		assertThat(actual.getProductFindAllResponses()).hasSize(1);
+		assertAll(
+			() -> assertThat(actualItem.getName()).isEqualTo(expect.getName()),
+			() -> assertThat(actualItem.getPrice()).isEqualTo(expect.getPrice())
+		);
 	}
 }
