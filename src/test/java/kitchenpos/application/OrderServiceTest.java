@@ -1,31 +1,34 @@
 package kitchenpos.application;
 
-import static kitchenpos.db.TestDataFactory.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.config.TruncateDatabaseConfig;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.ui.dto.order.OrderLineItemRequest;
+import kitchenpos.ui.dto.order.OrderRequest;
+import kitchenpos.ui.dto.order.OrderResponse;
+import kitchenpos.ui.dto.order.OrderResponses;
+import kitchenpos.ui.dto.order.OrderStatusChangeRequest;
 
 class OrderServiceTest extends TruncateDatabaseConfig {
 
@@ -33,116 +36,77 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("주문 생성 실패 - 주문 항목 없음")
     @Test
     void createFail_When_OrderLineItems_Not_Exist() {
-        Order order = createOrder(1L, 1L, OrderStatus.COOKING, LocalDateTime.now(), null);
+        OrderRequest orderRequest = new OrderRequest(1L, null);
 
-        assertThatThrownBy(() -> orderService.create(order))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 생성 실패 - 주문 항목 중복")
-    @Test
-    void createFail_When_Invalid_OrderLineItems() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
-
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(), 2);
-
-        Order order = createOrder(null, 1L, OrderStatus.COOKING, LocalDateTime.now(),
-            Arrays.asList(orderLineItem, orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성 실패 - 존재하지 않는 주문 테이블")
     @Test
     void createFail_When_Invalid_OrderTable() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
+        OrderRequest orderRequest = new OrderRequest(-1L, Lists.newArrayList());
 
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        OrderTable orderTable = createOrderTable(null, null, 3, false);
-        orderTableDao.save(orderTable);
-
-        Order order = createOrder(null, -1L, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성 실패 - 비어있는 테이블")
     @Test
     void createFail_When_OrderTable_IsEmpty() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, true));
 
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Lists.newArrayList());
 
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-            Arrays.asList(orderLineItem));
-
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 생성")
     @Test
     void create() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자류"));
+        Menu savedMenu = menuRepository.save(new Menu("피자", BigDecimal.valueOf(13_000L), menuGroup));
 
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        OrderTable savedOrderTable = saveOrderTable();
-
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-            Arrays.asList(orderLineItem));
-
-        Order savedOrder = orderService.create(order);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
+            Lists.newArrayList(new OrderLineItemRequest(savedMenu.getId(), 1)));
+        OrderResponse orderResponse = orderService.create(orderRequest);
 
         assertAll(
-            () -> assertThat(savedOrder.getId()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
-            () -> assertThat(savedOrder.getOrderTableId()).isEqualTo(savedOrderTable.getId()),
-            () -> assertThat(savedOrder.getOrderLineItems().size()).isEqualTo(1)
+            () -> assertThat(orderResponse.getId()).isNotNull(),
+            () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
+            () -> assertThat(orderResponse.getOrderTableId()).isEqualTo(savedOrderTable.getId()),
+            () -> assertThat(orderResponse.getOrderLineItems().size()).isEqualTo(1)
         );
     }
 
-    @DisplayName("주문 리스트 조회")
+    @DisplayName("주문 목록 조회")
     @Test
     void list() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("피자류"));
+        Menu savedMenu = menuRepository.save(new Menu("피자", BigDecimal.valueOf(13_000L), menuGroup));
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(),
+            Lists.newArrayList(new OrderLineItemRequest(savedMenu.getId(), 1)));
+        OrderResponse savedOrder = orderService.create(orderRequest);
 
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(), 2);
-        OrderTable savedOrderTable = saveOrderTable();
-
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-            Arrays.asList(orderLineItem));
-
-        Order savedOrder = orderService.create(order);
-
-        List<Order> orders = orderService.list();
+        OrderResponses orderResponses = orderService.list();
+        List<OrderResponse> orders = orderResponses.getOrders();
 
         assertAll(
             () -> assertThat(orders).hasSize(1),
@@ -155,51 +119,25 @@ class OrderServiceTest extends TruncateDatabaseConfig {
     @DisplayName("주문 변경 실패 - 존재하지 않는 주문")
     @Test
     void changeOrderStatusFail_When_Order_Not_Exist() {
-        Order order = createOrder(null, 1L, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList());
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COMPLETION.name());
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, orderStatusChangeRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 변경")
-    @Test
-    void changeOrderStatus() {
-        MenuGroup menuGroup = saveMenuGroup();
-        Product product = saveProduct();
-        Menu menu = saveMenu(menuGroup, product);
+    @ParameterizedTest
+    @CsvSource(value = {"MEAL", "COOKING", "COMPLETION"})
+    void changeOrderStatus(OrderStatus orderStatus) {
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, 3, false));
+        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
 
-        OrderLineItem orderLineItem = createOrderLineItem(null, menu.getId(),2);
-        OrderTable savedOrderTable = saveOrderTable();
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(orderLineItem));
-        Order savedOrder = orderService.create(order);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(orderStatus.name());
 
-        Order order2 = createOrder(null, 1L, OrderStatus.MEAL, LocalDateTime.now(), Arrays.asList(orderLineItem));
+        orderService.changeOrderStatus(order.getId(), orderStatusChangeRequest);
+        Order changedOrder = orderRepository.findById(order.getId())
+            .orElseThrow(RuntimeException::new);
 
-        Order changedOrder = orderService.changeOrderStatus(savedOrder.getId(), order2);
-
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
-
-    }
-
-    private Product saveProduct() {
-        Product product = createProduct(null, "치킨", BigDecimal.valueOf(15_000L));
-        return productDao.save(product);
-    }
-
-    private MenuGroup saveMenuGroup() {
-        MenuGroup menuGroup = createMenuGroup(null, "치킨류");
-        return menuGroupDao.save(menuGroup);
-    }
-
-    private Menu saveMenu(MenuGroup menuGroup, Product product) {
-        MenuProduct menuProduct = createMenuProduct(null, product.getId(), 1L);
-        Menu menu = createMenu(null, "우형치킨", BigDecimal.valueOf(14_000L), menuGroup.getId(),
-            Arrays.asList(menuProduct));
-        return menuDao.save(menu);
-    }
-
-    private OrderTable saveOrderTable() {
-        OrderTable orderTable = createOrderTable(null, null, 3, false);
-        return orderTableDao.save(orderTable);
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderStatus);
     }
 }
