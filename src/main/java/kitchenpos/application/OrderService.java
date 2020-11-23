@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.groupingBy;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
@@ -57,9 +61,19 @@ public class OrderService {
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        return orderDao.findAll()
+        Map<Long, Order> allOrders = orderDao.findAll()
             .stream()
-            .map(it -> OrderResponse.of(it, orderLineItemDao.findAllByOrderId(it.getId())))
+            .collect(Collectors.toMap(Order::getId, it -> it));
+        Map<Order, List<OrderLineItem>> orderLineItemsGroup = orderLineItemDao
+            .findAllByOrderIdIn(allOrders.keySet()).stream()
+            .collect(groupingBy(it -> allOrders.get(it.getOrderId())));
+
+        return allOrders.values()
+            .stream()
+            .map(it -> OrderResponse.of(
+                it,
+                orderLineItemsGroup.getOrDefault(it, Collections.emptyList())
+            ))
             .collect(Collectors.toList());
     }
 

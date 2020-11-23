@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.sql.DataSource;
 import kitchenpos.domain.MenuProduct;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -26,8 +27,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
         jdbcInsert = new SimpleJdbcInsert(dataSource)
             .withTableName(TABLE_NAME)
-            .usingGeneratedKeyColumns(KEY_COLUMN_NAME)
-        ;
+            .usingGeneratedKeyColumns(KEY_COLUMN_NAME);
     }
 
     @Override
@@ -57,6 +57,14 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id = (:menuId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("menuId", menuId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public List<MenuProduct> findAllByMenuIdIn(final Set<Long> menuIds) {
+        final String sql = "SELECT seq, menu_id, product_id, quantity FROM menu_product WHERE menu_id IN (:menuIds)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+            .addValue("menuIds", menuIds);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 

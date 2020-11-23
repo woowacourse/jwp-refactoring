@@ -141,6 +141,8 @@ public class MenuServiceTest extends AbstractServiceTest {
 
         List<MenuResponse> allMenus = menuService.list();
 
+        System.out.println(Arrays.toString(allMenus.toArray()));
+
         assertThat(allMenus).usingFieldByFieldElementComparator().containsAll(savedMenus);
     }
 }

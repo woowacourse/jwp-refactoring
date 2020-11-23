@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.sql.DataSource;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -57,6 +58,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id = (:orderId)";
         final SqlParameterSource parameters = new MapSqlParameterSource()
             .addValue("orderId", orderId);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
+    }
+
+    @Override
+    public List<OrderLineItem> findAllByOrderIdIn(Set<Long> orderIds) {
+        final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE order_id IN (:orderIds)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+            .addValue("orderIds", orderIds);
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 

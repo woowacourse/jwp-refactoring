@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.groupingBy;
+
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
@@ -53,9 +57,20 @@ public class MenuService {
 
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
-        return menuDao.findAll()
+        Map<Long, Menu> allMenus = menuDao.findAll()
             .stream()
-            .map(it -> MenuResponse.of(it, menuProductDao.findAllByMenuId(it.getId())))
+            .collect(Collectors.toMap(Menu::getId, it -> it));
+        Map<Menu, List<MenuProduct>> menuProductsGroup = menuProductDao
+            .findAllByMenuIdIn(allMenus.keySet())
+            .stream()
+            .collect(groupingBy(it -> allMenus.get(it.getMenuId())));
+
+        return allMenus.values()
+            .stream()
+            .map(it -> MenuResponse.of(
+                it,
+                menuProductsGroup.getOrDefault(it, Collections.emptyList())
+            ))
             .collect(Collectors.toList());
     }
 }
