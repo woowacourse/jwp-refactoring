@@ -63,7 +63,24 @@
 -[x] 주문 상태 변경 기능 구현
 -[x] 주문 상태 변경에 대한 예외 처리
     * 주문 상태가 계산 완료인 경우 변경할 수 없다.
+    
+## 서비스 리팩토링
 
+### 요구사항
+-[x] JPA를 적용
+-[x] Service 리팩토링
+    -[x] MenuService
+    -[x] OrderService
+    -[x] ProductService
+    -[x] TableGroupService
+    -[x] TableService
+-[x] DTO 클래스 생성
+    -[x] MenuGroupRestsController
+    -[x] MenuRestController
+    -[x] OrderRestController
+    -[x] ProductRestController
+    -[x] TableGroupRestController
+    -[x] TableRestController
 
 ## 용어 사전
 
