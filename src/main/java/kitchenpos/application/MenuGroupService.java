@@ -20,6 +20,7 @@ public class MenuGroupService {
         return MenuGroupResponse.from(menuGroupDao.save(menuGroupCreateRequest.toEntity()));
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         return MenuGroupResponse.listOf(menuGroupDao.findAll());
     }

@@ -51,6 +51,7 @@ public class MenuService {
         return MenuResponse.of(menu, savedMenuProducts);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         return menuDao.findAll()
             .stream()

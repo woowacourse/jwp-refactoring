@@ -20,6 +20,7 @@ public class ProductService {
         return ProductResponse.from(productDao.save(productCreateRequest.toEntity()));
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return ProductResponse.listOf(productDao.findAll());
     }

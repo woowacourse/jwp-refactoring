@@ -29,6 +29,7 @@ public class TableService {
         return OrderTableResponse.from(orderTableDao.save(orderTableCreateRequest.toEntity()));
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
         return OrderTableResponse.listOf(orderTableDao.findAll());
     }

@@ -55,6 +55,7 @@ public class OrderService {
         return OrderResponse.of(order, savedOrderLineItems);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         return orderDao.findAll()
             .stream()
