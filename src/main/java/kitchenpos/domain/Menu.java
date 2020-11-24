@@ -1,7 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Objects;
 
 public class Menu {
 
@@ -9,23 +9,32 @@ public class Menu {
     private String name;
     private Price price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
     private Menu() {
     }
 
-    public Menu(Long id, String name, Price price, Long menuGroupId,
-        List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, Price price, Long menuGroupId) {
+        validate(name, price, menuGroupId);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
     }
 
-    public Menu(String name, Price price, Long menuGroupId,
-        List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public Menu(String name, Price price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    private void validate(String name, Price price, Long menuGroupId) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new IllegalArgumentException("menu name cannot be empty.");
+        }
+        if (Objects.isNull(price)) {
+            throw new IllegalArgumentException("menu price cannot be null.");
+        }
+        if (Objects.isNull(menuGroupId)) {
+            throw new IllegalArgumentException("menu group id cannot be null.");
+        }
     }
 
     public boolean isPriceBiggerThen(Price price) {
@@ -46,9 +55,5 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
     }
 }

@@ -1,10 +1,7 @@
 package kitchenpos.dto.menu;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Price;
 
 public class MenuRequest {
 
@@ -22,10 +19,6 @@ public class MenuRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntityWithoutMenuProducts() {
-        return new Menu(name, new Price(price), menuGroupId, new ArrayList<>());
     }
 
     public String getName() {

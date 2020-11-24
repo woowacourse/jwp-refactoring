@@ -19,7 +19,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest request) {
-        Product product = productDao.save(request.toEntity());
+        Product product = productDao.save(new Product(request.getName(), request.getPrice()));
 
         return ProductResponse.of(product);
     }

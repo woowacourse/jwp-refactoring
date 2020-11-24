@@ -4,7 +4,7 @@ import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Objects;
 
 public class Order {
 
@@ -12,23 +12,40 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
     private Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        validate(orderTableId, orderStatus, orderedTime);
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+    }
+
+    private void validate(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        validateOrderStatus(orderStatus);
+
+        if (Objects.isNull(orderTableId)) {
+            throw new IllegalArgumentException("어떤 테이블이 주문하고자 하는지 지정해주세요.");
+        }
+        if (Objects.isNull(orderedTime)) {
+            throw new IllegalArgumentException("orderTime cannot be null.");
+        }
+    }
+
+    private void validateOrderStatus(String orderStatus) {
+        if (Objects.isNull(orderStatus) || orderStatus.isEmpty()) {
+            throw new IllegalArgumentException("orderStatus of Order cannot be empty.");
+        }
+        if (!OrderStatus.isDefinedOrderStatus(orderStatus)) {
+            throw new IllegalArgumentException(orderStatus + " is not a defined order status.");
+        }
     }
 
     @JsonIgnore
@@ -54,9 +71,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }
