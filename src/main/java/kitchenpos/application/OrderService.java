@@ -57,7 +57,6 @@ public class OrderService {
                 orderLineItemRequest.getMenuId(),
                 orderLineItemRequest.getQuantity()
             );
-
             orderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         return OrderResponse.of(savedOrder, OrderLineItemResponse.of(orderLineItems));

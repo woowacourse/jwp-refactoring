@@ -15,7 +15,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Void> handleBadRequest(IllegalArgumentException e) {
-        logger.info(e.getMessage());
+        logger.warn(e.getMessage());
 
         return ResponseEntity.badRequest().build();
     }
