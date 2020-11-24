@@ -9,13 +9,11 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
-@SpringBootTest
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
     @Autowired

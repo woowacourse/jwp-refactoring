@@ -13,13 +13,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-@SpringBootTest
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
     @Autowired
@@ -60,6 +58,6 @@ class ProductServiceTest {
 
         List<Product> actual = productService.list();
 
-        assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
+        assertThat(actual).hasSize(1);
     }
 }
