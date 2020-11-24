@@ -1,6 +1,9 @@
 package kitchenpos.application.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderCreateRequest {
     private Long orderTableId;
@@ -15,6 +18,10 @@ public class OrderCreateRequest {
     ) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
+    }
+
+    public Order toEntity() {
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public Long getOrderTableId() {

@@ -96,7 +96,8 @@ public class OrderServiceTest extends AbstractServiceTest {
         OrderCreateRequest orderCreateRequest = createOrderRequest(orderTable.getId(), emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("주문 항목이 존재해야 합니다.");
     }
 
     @DisplayName("주문 항목과 메뉴의 개수가 같지 않으면 주문을 생성할 수 없다.")
@@ -111,7 +112,8 @@ public class OrderServiceTest extends AbstractServiceTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("주문 항목 개수와 메뉴 개수는 같아야 합니다.");
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다.")
@@ -136,7 +138,8 @@ public class OrderServiceTest extends AbstractServiceTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("빈 테이블은 주문할 수 없습니다.");
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")

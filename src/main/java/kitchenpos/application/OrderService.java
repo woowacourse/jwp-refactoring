@@ -10,6 +10,7 @@ import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -25,38 +26,51 @@ public class OrderService {
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
+    private final MenuDao menuDao;
     private final OrderVerifier orderVerifier;
 
     public OrderService(
         final OrderDao orderDao,
         final OrderLineItemDao orderLineItemDao,
         final OrderTableDao orderTableDao,
+        final MenuDao menuDao,
         final OrderVerifier orderVerifier
     ) {
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
+        this.menuDao = menuDao;
         this.orderVerifier = orderVerifier;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
+        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
+            .orElseThrow(IllegalArgumentException::new);
+
         final List<OrderLineItem> orderLineItems = orderCreateRequest.getOrderLineItems()
             .stream()
             .map(OrderLineItemCreateRequest::toEntity)
             .collect(Collectors.toList());
 
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+        final List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
 
-        final Order order = orderDao.save(orderVerifier.toOrder(orderTable, orderLineItems));
+        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("주문 항목 개수와 메뉴 개수는 같아야 합니다.");
+        }
+
+        orderVerifier.verify(orderTable, orderLineItems);
+
+        final Order savedOrder = orderDao.save(orderCreateRequest.toEntity());
 
         List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
-            .peek(it -> it.changeOrderId(order.getId()))
+            .peek(it -> it.changeOrderId(savedOrder.getId()))
             .map(orderLineItemDao::save)
             .collect(Collectors.toList());
 
-        return OrderResponse.of(order, savedOrderLineItems);
+        return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
     @Transactional(readOnly = true)

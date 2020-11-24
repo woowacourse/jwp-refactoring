@@ -121,7 +121,8 @@ public class TableServiceTest extends AbstractServiceTest {
         OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tableService
-            .changeEmpty(orderTable.getId(), orderTableRequest));
+            .changeEmpty(orderTable.getId(), orderTableRequest))
+            .withMessage("완료되지 않은 주문이 존재하지 않아야 합니다.");
     }
 
     private static Stream<Arguments> provideOrderStatus() {

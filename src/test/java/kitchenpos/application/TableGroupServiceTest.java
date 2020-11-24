@@ -84,7 +84,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("단체 지정할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     @DisplayName("주문 테이블이 2개 미만인 경우 단체 지정할 수 없다.")
@@ -95,7 +96,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("단체 지정할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     @DisplayName("실제 주문 테이블 수보다 많은 테이블을 선택한 경우 단체 지정할 수 없다.")
@@ -109,7 +111,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("존재하지 않는 주문 테이블은 단체 지정할 수 없습니다.");
     }
 
     @DisplayName("단체 지정을 해제할 수 있다.")
@@ -145,7 +148,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         ));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+            .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            .withMessage("완료되지 않은 주문이 존재하지 않아야 합니다.");
     }
 
     private static Stream<Arguments> provideOrderStatus() {

@@ -25,13 +25,15 @@ public class ProductTest {
     @Test
     void constructor_throws_exception() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> new Product(1L, "상품", null));
+            .isThrownBy(() -> new Product(1L, "상품", null))
+            .withMessage("상품 금액은 0원 이상이어야 합니다.");
     }
 
     @DisplayName("상품 가격이 0원 미만인 경우 생성할 수 없다.")
     @Test
     void constructor_throws_exception2() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> new Product(1L, "상품", BigDecimal.valueOf(-1)));
+            .isThrownBy(() -> new Product(1L, "상품", BigDecimal.valueOf(-1)))
+            .withMessage("상품 금액은 0원 이상이어야 합니다.");
     }
 }

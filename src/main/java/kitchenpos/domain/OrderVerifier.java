@@ -1,38 +1,19 @@
 package kitchenpos.domain;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 @Component
 public class OrderVerifier {
-    private final MenuDao menuDao;
-
-    public OrderVerifier(MenuDao menuDao) {
-        this.menuDao = menuDao;
-    }
-
-    public Order toOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public void verify(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         if (Objects.isNull(orderTable) || orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
         }
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 존재해야 합니다.");
         }
-
-        final List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItem::getMenuId)
-            .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-
-        return new Order(null, orderTable.getId(), OrderStatus.COOKING, LocalDateTime.now());
     }
 }

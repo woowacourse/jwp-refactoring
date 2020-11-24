@@ -42,7 +42,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        orderTableVerifier.verifyNotCompleted(orderTableId);
+        orderTableVerifier.verifyNotCompletedOrderStatus(orderTableId);
 
         savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.isEmpty());
 

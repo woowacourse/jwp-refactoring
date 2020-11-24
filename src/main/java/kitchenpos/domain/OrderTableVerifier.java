@@ -12,10 +12,10 @@ public class OrderTableVerifier {
         this.orderDao = orderDao;
     }
 
-    public void verifyNotCompleted(Long orderTableId) {
+    public void verifyNotCompletedOrderStatus(Long orderTableId) {
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("완료되지 않은 주문이 존재하지 않아야 합니다.");
         }
     }
 }

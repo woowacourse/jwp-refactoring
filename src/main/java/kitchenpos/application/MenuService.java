@@ -10,6 +10,7 @@ import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
@@ -21,38 +22,42 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuProductDao menuProductDao;
+    private final MenuGroupDao menuGroupDao;
     private final MenuVerifier menuVerifier;
 
     public MenuService(
         MenuDao menuDao,
         MenuProductDao menuProductDao,
+        MenuGroupDao menuGroupDao,
         MenuVerifier menuVerifier
     ) {
         this.menuDao = menuDao;
         this.menuProductDao = menuProductDao;
+        this.menuGroupDao = menuGroupDao;
         this.menuVerifier = menuVerifier;
     }
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
+        if (!menuGroupDao.existsById(menuCreateRequest.getMenuGroupId())) {
+            throw new IllegalArgumentException("메뉴 그룹을 찾지 못했습니다.");
+        }
+
         List<MenuProduct> menuProducts = menuCreateRequest.getMenuProducts()
             .stream()
             .map(MenuProductCreateRequest::toEntity)
             .collect(Collectors.toList());
 
-        Menu menu = menuDao.save(menuVerifier.toMenu(
-            menuCreateRequest.getName(),
-            menuCreateRequest.getPrice(),
-            menuCreateRequest.getMenuGroupId(),
-            menuProducts
-        ));
+        menuVerifier.verifyPrice(menuCreateRequest.getPrice(), menuProducts);
+
+        Menu savedMenu = menuDao.save(menuCreateRequest.toEntity());
 
         List<MenuProduct> savedMenuProducts = menuProducts.stream()
-            .peek(it -> it.changeMenuId(menu.getId()))
+            .peek(it -> it.changeMenuId(savedMenu.getId()))
             .map(menuProductDao::save)
             .collect(Collectors.toList());
 
-        return MenuResponse.of(menu, savedMenuProducts);
+        return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
     @Transactional(readOnly = true)

@@ -38,6 +38,7 @@ public class OrderTest {
         Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.MIN);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL));
+            .isThrownBy(() -> order.changeOrderStatus(OrderStatus.MEAL))
+            .withMessage("완료된 주문의 상태는 변경할 수 없습니다.");
     }
 }

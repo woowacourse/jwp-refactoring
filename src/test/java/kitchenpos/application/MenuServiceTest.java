@@ -109,7 +109,8 @@ public class MenuServiceTest extends AbstractServiceTest {
             emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> menuService.create(menuCreateRequest));
+            .isThrownBy(() -> menuService.create(menuCreateRequest))
+            .withMessage("메뉴 그룹을 찾지 못했습니다.");
     }
 
     @DisplayName("메뉴 상품 금액의 합이 메뉴의 가격보다 작다면 메뉴를 생성할 수 없다.")
@@ -125,7 +126,8 @@ public class MenuServiceTest extends AbstractServiceTest {
             menuProductCreateRequests);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> menuService.create(menuCreateRequest));
+            .isThrownBy(() -> menuService.create(menuCreateRequest))
+            .withMessage("메뉴 가격은 상품 금액의 합보다 작거나 같아야 합니다.");
     }
 
     @DisplayName("메뉴 목록을 조회할 수 있다.")
@@ -140,8 +142,6 @@ public class MenuServiceTest extends AbstractServiceTest {
             .collect(Collectors.toList());
 
         List<MenuResponse> allMenus = menuService.list();
-
-        System.out.println(Arrays.toString(allMenus.toArray()));
 
         assertThat(allMenus).usingFieldByFieldElementComparator().containsAll(savedMenus);
     }

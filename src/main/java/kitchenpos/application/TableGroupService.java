@@ -36,17 +36,22 @@ public class TableGroupService {
             .map(IdRequest::getId)
             .collect(Collectors.toList());
 
-        final TableGroup tableGroup = tableGroupDao
-            .save(tableGroupVerifier.toTableGroup(orderTableIds));
+        tableGroupVerifier.verifyOrderTableSize(orderTableIds);
 
-        final List<OrderTable> orderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.groupBy(tableGroup.getId());
+        if (orderTableIds.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException("존재하지 않는 주문 테이블은 단체 지정할 수 없습니다.");
+        }
+
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroupCreateRequest.toEntity());
+
+        for (final OrderTable orderTable : savedOrderTables) {
+            orderTable.groupBy(savedTableGroup.getId());
             orderTableDao.save(orderTable);
         }
 
-        return TableGroupResponse.of(tableGroup, orderTables);
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
     @Transactional
@@ -57,7 +62,7 @@ public class TableGroupService {
             .map(OrderTable::getId)
             .collect(Collectors.toList());
 
-        tableGroupVerifier.verifyNotCompleted(orderTableIds);
+        tableGroupVerifier.verifyNotCompletedOrderStatus(orderTableIds);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
