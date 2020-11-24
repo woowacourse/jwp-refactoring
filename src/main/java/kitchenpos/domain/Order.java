@@ -32,7 +32,7 @@ public class Order {
         validateOrderStatus(orderStatus);
 
         if (Objects.isNull(orderTableId)) {
-            throw new IllegalArgumentException("orderTableId of Order cannot be null.");
+            throw new IllegalArgumentException("어떤 테이블이 주문하고자 하는지 지정해주세요.");
         }
         if (Objects.isNull(orderedTime)) {
             throw new IllegalArgumentException("orderTime cannot be null.");

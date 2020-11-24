@@ -46,9 +46,8 @@ public class MenuService {
 
         validateMenuPrice(savedMenu, menuProducts);
 
-        List<MenuProduct> savedMenuProducts = menuProducts.getMenuProducts().stream()
-            .map(menuProductDao::save)
-            .collect(toList());
+        List<MenuProduct> savedMenuProducts = saveMenuProducts(menuProducts);
+
         return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
@@ -75,6 +74,12 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
         return new Price(sum);
+    }
+
+    private List<MenuProduct> saveMenuProducts(MenuProducts menuProducts) {
+        return menuProducts.getMenuProducts().stream()
+            .map(menuProductDao::save)
+            .collect(toList());
     }
 
     public List<MenuResponse> list() {

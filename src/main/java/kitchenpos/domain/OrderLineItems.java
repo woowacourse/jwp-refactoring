@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -26,5 +27,17 @@ public class OrderLineItems {
             .collect(Collectors.toList());
 
         return new OrderLineItems(orderLineItems);
+    }
+
+    public List<Long> getMenuIds() {
+        List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
+
+        return Collections.unmodifiableList(menuIds);
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return Collections.unmodifiableList(orderLineItems);
     }
 }
