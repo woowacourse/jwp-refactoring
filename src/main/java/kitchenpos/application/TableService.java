@@ -26,7 +26,7 @@ public class TableService {
 
     @Transactional
     public TableResponse create(final TableCreateRequest orderTable) {
-        Table table = tableDao.save(orderTable.toEntity());
+        Table table = tableDao.save(new Table(orderTable.getNumberOfGuests(), orderTable.isEmpty()));
 
         return TableResponse.of(table);
     }
@@ -40,19 +40,16 @@ public class TableService {
 
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableChangeRequest request) {
-        final Table savedTable = tableDao.findById(orderTableId)
+        final boolean isEmptyWantedResult = request.isEmpty();
+        final Table targetTable = tableDao.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
 
-        if (savedTable.isGrouped() && request.isEmpty()) {
-            throw new IllegalArgumentException("그룹에 속한 테이블을 빈 테이블로 바꿀 수 없습니다."
-                + "해당 테이블은 그룹이 해제되면 자동으로 비워집니다.");
+        if (isEmptyWantedResult && isNotMealOver(orderTableId)) {
+            throw new IllegalArgumentException("식사가 아직 끝나지 않은 테이블을 비울 수 없습니다.");
         }
-        if (isNotMealOver(orderTableId)) {
-            throw new IllegalArgumentException();
-        }
-        savedTable.changeEmpty(request.isEmpty());
+        targetTable.changeEmpty(isEmptyWantedResult);
 
-        return TableResponse.of(tableDao.save(savedTable));
+        return TableResponse.of(tableDao.save(targetTable));
     }
 
     @Transactional

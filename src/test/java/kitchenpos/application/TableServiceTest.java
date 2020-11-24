@@ -75,12 +75,8 @@ class TableServiceTest {
     void createTableWithGhostGuests() {
         TableCreateRequest table = new TableCreateRequest(true, 5);
 
-        TableResponse result = tableService.create(table);
-
-        assertThat(result.getId()).isNotNull();
-        assertThat(result.getTableGroupId()).isNull();
-        assertThat(result.getNumberOfGuests()).isEqualTo(table.getNumberOfGuests());
-        assertThat(result.isEmpty()).isEqualTo(table.isEmpty());
+        assertThatThrownBy(() -> tableService.create(table))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -136,7 +132,7 @@ class TableServiceTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"true,true", "true,false", "false,true", "false,false"})
+    @CsvSource({"false,true", "false,false"})
     @DisplayName("change empty - 손님 수가 0보다 클 때")
     void changeEmpty_IfNumberOfGuestIsPositive(boolean from, boolean to) {
         // given

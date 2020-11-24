@@ -1,7 +1,5 @@
 package kitchenpos.dto.table;
 
-import kitchenpos.domain.Table;
-
 public class TableCreateRequest {
 
     private int numberOfGuests;
@@ -18,10 +16,6 @@ public class TableCreateRequest {
     public TableCreateRequest(boolean empty, int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-    }
-
-    public Table toEntity() {
-        return new Table(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {
