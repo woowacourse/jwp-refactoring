@@ -16,7 +16,7 @@
     - [x] 메뉴의 가격은 0원 이상이어야 한다.
     - [x] 메뉴에 속한 상품 금액의 합은 메뉴의 가격보다 크거나 같아야 한다.
     - [x] 1개 이상의 등록된 상품으로 메뉴를 등록할 수 있다.
-- [ ] 메뉴의 목록을 조회할 수 있다.
+- [x] 메뉴의 목록을 조회할 수 있다.
 
 ### 주문 테이블(order table)
 - [ ] 주문 테이블을 등록할 수 있다.
@@ -68,7 +68,7 @@
 - [ ] 모든 Business Object에 대한 테스트 코드 작성
     - [x] ProductService 테스트 코드 작성
     - [x] MenuGroupService 테스트 코드 작성
-    - [ ] MenuService 테스트 코드 작성
+    - [x] MenuService 테스트 코드 작성
     - [ ] OrderService 테스트 코드 작성
     - [ ] TableService 테스트 코드 작성
     - [ ] TableGroupService 테스트 코드 작성

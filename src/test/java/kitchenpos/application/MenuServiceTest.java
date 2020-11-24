@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -31,6 +33,9 @@ class MenuServiceTest extends ServiceTest {
 
     @Autowired
     private ProductDao productDao;
+
+    @Autowired
+    private MenuDao menuDao;
 
     @DisplayName("메뉴를 등록할 수 있다.")
     @Test
@@ -107,5 +112,20 @@ class MenuServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> menuService.create(menuRequest))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "백마리치킨"));
+        Product product = productDao.save(createProduct(null, "양념치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProduct = createMenuProduct(null, null, product.getId(), 1);
+        Menu menuRequest = createMenu(null, "양념치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+            Collections.singletonList(menuProduct));
+        menuDao.save(menuRequest);
+
+        List<Menu> menus = menuService.list();
+
+        assertThat(menus).hasSize(1);
     }
 }
