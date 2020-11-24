@@ -4,84 +4,48 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.product.domain.Product;
+import kitchenpos.table.domain.Table;
+import kitchenpos.table.domain.TableGroup;
 
 public class EntityCreateHelper {
     public static MenuGroup createMenuGroup(Long id, String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(name);
-        return menuGroup;
+        return new MenuGroup(id, name);
     }
 
-    public static Menu createMenu(Long id, Long menuGroupId, List<MenuProduct> menuProducts, String name,
+    public static Menu createMenu(Long id, MenuGroup menuGroup, List<MenuProduct> menuProducts, String name,
         BigDecimal price) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        menu.setName(name);
-        menu.setPrice(price);
-        return menu;
+        return new Menu(id, name, price, menuGroup, menuProducts);
     }
 
-    public static MenuProduct createMenuProduct(Long menuId, Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+    public static MenuProduct createMenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        return new MenuProduct(seq, menu, product, quantity);
     }
 
-    public static OrderLineItem createOrderLineItem(Long orderId, Long menuId, long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    public static OrderLineItem createOrderLineItem(Long seq, Order order, Long menuId, long quantity) {
+        return new OrderLineItem(seq, order, menuId, quantity);
     }
 
-    public static OrderTable createOrderTable(Long id, boolean isEmpty, Long tableGroupId, int numberOfGuests) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setEmpty(isEmpty);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        return orderTable;
+    public static Table createTable(Long id, boolean isEmpty, TableGroup tableGroup, int numberOfGuests) {
+        return new Table(id, tableGroup, numberOfGuests, isEmpty);
     }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 
-    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+    public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<Table> tables) {
+        return new TableGroup(id, tables);
     }
 
-    public static Order createOrder(Long id, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems,
-        OrderStatus orderStatus, Long orderTableId) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderStatus(orderStatus.name());
-        order.setOrderTableId(orderTableId);
-        return order;
+    public static Order createOrder(Long id, List<OrderLineItem> orderLineItems,
+        OrderStatus orderStatus, Table table) {
+        return new Order(id, table, orderStatus, orderLineItems);
     }
 }
