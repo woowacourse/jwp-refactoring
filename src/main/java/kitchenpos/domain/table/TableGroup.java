@@ -1,10 +1,12 @@
 package kitchenpos.domain.table;
 
+import kitchenpos.exception.InvalidOrderTableException;
 import kitchenpos.util.ValidateUtil;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -24,10 +26,21 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public static TableGroup of(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        ValidateUtil.validateNonNull(createdDate, orderTables);
+    public static TableGroup from(List<OrderTable> orderTables) {
+        ValidateUtil.validateNonNull(orderTables);
+        validateOrderTables(orderTables);
+        LocalDateTime createdDate = LocalDateTime.now();
 
         return new TableGroup(createdDate, orderTables);
+    }
+
+    private static void validateOrderTables(List<OrderTable> orderTables) {
+        orderTables.forEach(orderTable -> {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new InvalidOrderTableException
+                        ("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 존재해서는 안됩니다!");
+            }
+        });
     }
 
     public Long getId() {
@@ -43,6 +56,8 @@ public class TableGroup {
     }
 
     public void setOrderTables(List<OrderTable> orderTables) {
+        ValidateUtil.validateNonNull(orderTables);
+
         this.orderTables = orderTables;
     }
 }

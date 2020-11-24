@@ -59,4 +59,13 @@ public class OrderTable {
 
         this.empty = empty;
     }
+
+    public void changeNotEmpty() {
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
 }

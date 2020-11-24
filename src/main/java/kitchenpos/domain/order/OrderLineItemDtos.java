@@ -31,8 +31,8 @@ public class OrderLineItemDtos {
                 .collect(Collectors.toList());
     }
 
-    public boolean isNotEqualSize(long menuCount) {
-        return this.orderLineItemDtos.size() != menuCount;
+    public boolean isNotEqualSize(long size) {
+        return this.orderLineItemDtos.size() != size;
     }
 
     public Stream<OrderCreateRequest.OrderLineItemDto> stream() {
