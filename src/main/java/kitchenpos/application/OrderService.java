@@ -113,7 +113,7 @@ public class OrderService {
         for (final Order order : orders) {
             Order orderWithLineItem
                 = new Order(order.getId(), order.getOrderTable(),
-                OrderStatus.valueOf(order.getOrderStatus()), order.getOrderedTime(),
+                order.getOrderStatus(), order.getOrderedTime(),
                 orderLineItemRepository.findAllByOrderId(order.getId()));
 
             ordersWithLineItems.add(orderWithLineItem);
@@ -142,7 +142,7 @@ public class OrderService {
     }
 
     private void validateStatus(Order savedOrder) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
     }

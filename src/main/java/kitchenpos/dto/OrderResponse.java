@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderResponse {
 
@@ -28,12 +29,12 @@ public class OrderResponse {
     public static OrderResponse of(Order order) {
         Long id = order.getId();
         Long orderTableId = order.getOrderTable().getId();
-        String orderStatus = order.getOrderStatus();
+        OrderStatus orderStatus = order.getOrderStatus();
         LocalDateTime orderedTime = order.getOrderedTime();
         List<OrderLineItemResponse> orderLineItemResponses = OrderLineItemResponse
             .toResponseList(order.getOrderLineItems());
 
-        return new OrderResponse(id, orderTableId, orderStatus, orderedTime,
+        return new OrderResponse(id, orderTableId, orderStatus.name(), orderedTime,
             orderLineItemResponses);
     }
 
@@ -41,10 +42,10 @@ public class OrderResponse {
         List<OrderLineItemResponse> orderLineItemResponses) {
         Long id = order.getId();
         Long orderTableId = order.getOrderTable().getId();
-        String orderStatus = order.getOrderStatus();
+        OrderStatus orderStatus = order.getOrderStatus();
         LocalDateTime orderedTime = order.getOrderedTime();
 
-        return new OrderResponse(id, orderTableId, orderStatus, orderedTime,
+        return new OrderResponse(id, orderTableId, orderStatus.name(), orderedTime,
             orderLineItemResponses);
     }
 

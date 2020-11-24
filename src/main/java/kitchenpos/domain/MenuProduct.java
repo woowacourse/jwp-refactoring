@@ -21,6 +21,7 @@ public class MenuProduct {
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
+
     private long quantity;
 
     public MenuProduct() {
