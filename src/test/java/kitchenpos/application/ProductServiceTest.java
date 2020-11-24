@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource(value = "-1000")
     @NullSource
-    void create_GivenMinus_ThenThrownException(BigDecimal price) {
+    void create_WithNegativePrice_ThrownException(BigDecimal price) {
         Product productRequest = createProduct(null, "고추마요 치킨", price);
 
         assertThatThrownBy(() -> productService.create(productRequest))
