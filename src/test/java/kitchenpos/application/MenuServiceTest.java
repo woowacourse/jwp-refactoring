@@ -85,7 +85,7 @@ class MenuServiceTest {
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("양념간장두마리메뉴", null, this.savedMenuGroup.getId(),
                                                                     menuProductDtos);
 
-        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(InvalidMenuPriceException.class);
+        assertThatThrownBy(() -> this.menuService.createMenu(menuCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 메뉴를 생성할 때 가격이 0 미만이면 예외 발생")

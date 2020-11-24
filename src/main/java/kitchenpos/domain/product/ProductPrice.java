@@ -1,11 +1,11 @@
 package kitchenpos.domain.product;
 
 import kitchenpos.exception.InvalidProductPriceException;
+import kitchenpos.util.ValidateUtil;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 @Embeddable
 public class ProductPrice {
@@ -20,13 +20,14 @@ public class ProductPrice {
     }
 
     public static ProductPrice from(BigDecimal value) {
+        ValidateUtil.validateNonNull(value);
         validateValue(value);
 
         return new ProductPrice(value);
     }
 
     private static void validateValue(BigDecimal value) {
-        if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new InvalidProductPriceException("상품의 가격은 0원 이상이어야 합니다!");
         }
     }

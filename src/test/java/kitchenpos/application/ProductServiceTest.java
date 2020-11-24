@@ -45,7 +45,7 @@ class ProductServiceTest {
     void createProductWithNullPriceThenThrowException() {
         ProductCreateRequest productCreateRequest = new ProductCreateRequest("양념치킨", null);
 
-        assertThatThrownBy(() -> this.productService.createProduct(productCreateRequest)).isInstanceOf(InvalidProductPriceException.class);
+        assertThatThrownBy(() -> this.productService.createProduct(productCreateRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("새로운 상품을 생성할 때 가격이 0 미만이면 예외 발생")
