@@ -74,9 +74,7 @@ class TableServiceTest extends ServiceTest {
     void changeEmpty_WithTableGroup_ThrownException() {
         TableGroup tableGroup = tableGroupDao.save(
             createTableGroup(null, LocalDateTime.now(), new ArrayList<>()));
-        OrderTable tableRequest = createOrderTable(null, tableGroup.getId(), 0, false);
-        OrderTable table = orderTableDao.save(tableRequest);
-        orderTableDao.save(tableRequest);
+        OrderTable table = orderTableDao.save(createOrderTable(null, tableGroup.getId(), 0, false));
         OrderTable emptyTableRequest = createOrderTable(table.getId(),
             table.getTableGroupId(), table.getNumberOfGuests(), true);
 
@@ -97,6 +95,45 @@ class TableServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> tableService.changeEmpty(emptyTableRequest.getId(),
             emptyTableRequest))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
+    @Test
+    void changeNumberOfGuests() {
+        int numberOfGuests = 3;
+        OrderTable orderTable = orderTableDao.save(
+            createOrderTable(null, null, 1, false));
+        OrderTable changedOrderTableRequest = createOrderTable(orderTable.getId(),
+            orderTable.getTableGroupId(), numberOfGuests, false);
+
+        OrderTable changedOrderTable = tableService.changeNumberOfGuests(
+            changedOrderTableRequest.getId(), changedOrderTableRequest);
+
+        assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(numberOfGuests);
+    }
+
+    @DisplayName("손님 수 변경 시, 음수면 예외가 발생한다")
+    @Test
+    void changeNumberOfGuests_WithNegativeNumber_ThrownException() {
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 1, false));
+        OrderTable changedOrderTableRequest = createOrderTable(orderTable.getId(),
+            orderTable.getTableGroupId(), -3, false);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(changedOrderTableRequest.getId(),
+            changedOrderTableRequest))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("손님 수 변경 시, 빈 테이블이면 예외가 발생한다")
+    @Test
+    void changeNumberOfGuests_WithEmptyTable_ThrownException() {
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, true));
+        OrderTable changedOrderTableRequest = createOrderTable(orderTable.getId(),
+            orderTable.getTableGroupId(), 3, true);
+
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(changedOrderTableRequest.getId(),
+            changedOrderTableRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }
