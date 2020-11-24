@@ -6,7 +6,6 @@ import kitchenpos.util.ValidateUtil;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -36,7 +35,7 @@ public class TableGroup {
 
     private static void validateOrderTables(List<OrderTable> orderTables) {
         orderTables.forEach(orderTable -> {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (!orderTable.isEmpty() || orderTable.hasTableGroup()) {
                 throw new InvalidOrderTableException
                         ("단체 지정 생성 시 소속된 주문 테이블은 주문을 등록할 수 없으며(빈 테이블) 다른 단체 지정이 존재해서는 안됩니다!");
             }

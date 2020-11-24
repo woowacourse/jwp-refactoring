@@ -63,7 +63,7 @@ public class TableGroupService {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getNotUngroupableStatus())) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, OrderStatus.getInProgressStatus())) {
             throw new InvalidOrderTableException("단체 지정 제거 시 소속된 주문 테이블의 주문 상태는 조리 혹은 식사가 아니어야 합니다!");
         }
 

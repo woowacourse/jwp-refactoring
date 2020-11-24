@@ -3,6 +3,7 @@ package kitchenpos.domain.table;
 import kitchenpos.util.ValidateUtil;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -67,5 +68,9 @@ public class OrderTable {
     public void ungroup() {
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public boolean hasTableGroup() {
+        return Objects.nonNull(this.tableGroup);
     }
 }

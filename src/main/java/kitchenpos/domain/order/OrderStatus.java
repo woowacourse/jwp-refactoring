@@ -18,7 +18,7 @@ public enum OrderStatus {
                 .orElseThrow(() -> new OrderStatusNotFoundException(orderStatus));
     }
 
-    public static List<OrderStatus> getNotUngroupableStatus() {
+    public static List<OrderStatus> getInProgressStatus() {
         return Arrays.asList(COOKING, MEAL);
     }
 }
