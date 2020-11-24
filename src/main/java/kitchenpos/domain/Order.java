@@ -4,7 +4,6 @@ import static kitchenpos.domain.OrderStatus.COMPLETION;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class Order {
 
@@ -12,23 +11,19 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
     private Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
     @JsonIgnore
@@ -54,9 +49,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

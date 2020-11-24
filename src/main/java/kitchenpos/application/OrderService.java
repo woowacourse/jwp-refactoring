@@ -46,7 +46,7 @@ public class OrderService {
         List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
 
         final Order order = new Order(
-            request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now(), new ArrayList<>());
+            request.getOrderTableId(), OrderStatus.COOKING.name(), LocalDateTime.now());
         final Order savedOrder = orderDao.save(order);
 
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
