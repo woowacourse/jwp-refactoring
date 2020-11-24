@@ -19,7 +19,7 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest request) {
-        MenuGroup menuGroup = menuGroupDao.save(request.toEntity());
+        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(request.getName()));
 
         return MenuGroupResponse.of(menuGroup);
     }
