@@ -31,10 +31,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
+    public static OrderTable of(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        return new OrderTable(null, tableGroup, numberOfGuests, empty);
     }
 
     public Long getId() {

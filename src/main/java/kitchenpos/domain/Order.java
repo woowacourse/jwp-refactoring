@@ -41,18 +41,15 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus,
+        LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus.name();
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
+        return new Order(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus.name();
-        this.orderedTime = orderedTime;
+    public static Order of(OrderTable orderTable, OrderStatus orderStatus,
+        LocalDateTime orderedTime) {
+        return new Order(null, orderTable, orderStatus, orderedTime, null);
     }
 
     public Long getId() {

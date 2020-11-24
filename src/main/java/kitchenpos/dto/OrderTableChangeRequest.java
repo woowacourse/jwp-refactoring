@@ -36,6 +36,6 @@ public class OrderTableChangeRequest {
     }
 
     public OrderTable toEntity(TableGroup tableGroup) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+        return OrderTable.of(tableGroup, numberOfGuests, empty);
     }
 }

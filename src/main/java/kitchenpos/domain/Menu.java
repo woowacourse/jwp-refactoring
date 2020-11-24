@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -27,24 +26,19 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    public Menu(){
+    public Menu() {
     }
 
-    public Menu(String name, Price price, MenuGroup menuGroup) {
-        this.id = null;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = new ArrayList<>();
-    }
-
-    public Menu(String name, Price price, MenuGroup menuGroup,
-        List<MenuProduct> menuProducts) {
+    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.id = null;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    public static Menu of(String name, Price price, MenuGroup menuGroup) {
+        return new Menu(name, price, menuGroup, new ArrayList<>());
     }
 
     public Long getId() {

@@ -47,14 +47,14 @@ public class TestObjectFactory {
 
     public static OrderCreateRequest createOrderCreateRequest(OrderTable orderTable,
         String orderStatus, List<OrderLineItem> orderLineItems) {
-        Order order = new Order(orderTable, OrderStatus.valueOf(orderStatus),
+        Order order = Order.of(orderTable, OrderStatus.valueOf(orderStatus),
             LocalDateTime.now(), orderLineItems);
 
         return OrderCreateRequest.of(order);
     }
 
     public static OrderChangeRequest createOrderChangeRequest(String orderStatus) {
-        Order order = new Order(null, OrderStatus.valueOf(orderStatus), null);
+        Order order = Order.of(null, OrderStatus.valueOf(orderStatus), null);
 
         return OrderChangeRequest.of(order);
     }
@@ -82,14 +82,14 @@ public class TestObjectFactory {
 
     public static OrderTableCreateRequest createOrderTableCreateRequest(int numberOfGuests,
         boolean empty) {
-        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
+        OrderTable orderTable = OrderTable.of(null, numberOfGuests, empty);
 
         return OrderTableCreateRequest.of(orderTable);
     }
 
     public static OrderTableChangeRequest createOrderTableChangeRequest(int numberOfGuests,
         boolean empty) {
-        OrderTable orderTable = new OrderTable(null, numberOfGuests, empty);
+        OrderTable orderTable = OrderTable.of(null, numberOfGuests, empty);
 
         return OrderTableChangeRequest.of(orderTable);
     }
