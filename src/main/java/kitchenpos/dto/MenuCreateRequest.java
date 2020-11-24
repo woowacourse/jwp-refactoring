@@ -5,6 +5,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 
 public class MenuCreateRequest {
 
@@ -26,11 +27,11 @@ public class MenuCreateRequest {
 
     public static MenuCreateRequest of(Menu menu) {
         String name = menu.getName();
-        BigDecimal price = menu.getPrice();
+        Price price = menu.getPrice();
         MenuGroup menuGroup = menu.getMenuGroup();
         List<MenuProduct> menuProducts = menu.getMenuProducts();
 
-        return new MenuCreateRequest(name, price, menuGroup.getId(),
+        return new MenuCreateRequest(name, price.getPrice(), menuGroup.getId(),
             MenuProductRequest.toRequestList(menuProducts));
     }
 
@@ -51,6 +52,6 @@ public class MenuCreateRequest {
     }
 
     public Menu toEntity(MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup);
+        return new Menu(name, Price.of(price), menuGroup);
     }
 }

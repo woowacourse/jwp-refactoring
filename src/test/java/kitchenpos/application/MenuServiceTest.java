@@ -78,41 +78,6 @@ class MenuServiceTest {
         });
     }
 
-    @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 null일 경우")
-    @Test
-    void create_IfMenuPriceNull_ThrowException() {
-        MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
-        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
-        List<MenuProduct> new_menu_product =
-            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
-                menuProductRepository.findAllByMenuId(2L).get(0),
-                menuProductRepository.findAllByMenuId(5L).get(0));
-
-        MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateRequest(NEW_MENU_NAME, null, menuGroup, new_menu_product);
-
-        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("새로운 메뉴를 생성한다. - 메뉴 가격이 0 이하일 경우")
-    @Test
-    void create_IfMenuPriceIsNotPositive_ThrowException() {
-        MenuGroupResponse menuGroupResponse = menuGroupService.create(MENU_GROUP_CREATE_REQUEST);
-        MenuGroup menuGroup = menuGroupRepository.getOne(menuGroupResponse.getId());
-        List<MenuProduct> new_menu_product =
-            Arrays.asList(menuProductRepository.findAllByMenuId(1L).get(0),
-                menuProductRepository.findAllByMenuId(2L).get(0),
-                menuProductRepository.findAllByMenuId(5L).get(0));
-
-        MenuCreateRequest menuCreateRequest = TestObjectFactory
-            .createMenuCreateRequest(NEW_MENU_NAME, new BigDecimal(-1L), menuGroup,
-                new_menu_product);
-
-        assertThatThrownBy(() -> menuService.create(menuCreateRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
     @DisplayName("새로운 메뉴를 생성한다. - groupId가 메뉴 그룹에 존재하지 않는 경우")
     @Test
     void create_IfGroupIdNotExist_ThrowException() {

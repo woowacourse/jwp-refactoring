@@ -11,6 +11,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
@@ -33,13 +34,13 @@ public class TestObjectFactory {
 
     public static MenuCreateRequest createMenuCreateRequest(String name, BigDecimal price,
         MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu(name, price, menuGroup, menuProducts);
+        Menu menu = new Menu(name, Price.of(price), menuGroup, menuProducts);
 
         return MenuCreateRequest.of(menu);
     }
 
     public static ProductCreateRequest createProductCreateRequest(String name, BigDecimal price) {
-        Product product = new Product(name, price);
+        Product product = new Product(name, Price.of(price));
 
         return ProductCreateRequest.of(product);
     }

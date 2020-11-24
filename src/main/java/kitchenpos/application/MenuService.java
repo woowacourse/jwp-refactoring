@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -41,7 +40,6 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
-        validatePrice(menuCreateRequest);
         validateMenuGroupExist(menuCreateRequest);
         validateSummation(menuCreateRequest);
 
@@ -50,14 +48,6 @@ public class MenuService {
             = createMenuProductResponses(savedMenu, menuCreateRequest);
 
         return MenuResponse.of(savedMenu, menuProductResponses);
-    }
-
-    private void validatePrice(MenuCreateRequest menuCreateRequest) {
-        final BigDecimal price = menuCreateRequest.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateMenuGroupExist(MenuCreateRequest menuCreateRequest) {

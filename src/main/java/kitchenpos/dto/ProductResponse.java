@@ -3,6 +3,7 @@ package kitchenpos.dto;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class ProductResponse {
@@ -21,7 +22,8 @@ public class ProductResponse {
     }
 
     public static ProductResponse of(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPrice());
+        Price price = product.getPrice();
+        return new ProductResponse(product.getId(), product.getName(), price.getPrice());
     }
 
     public static List<ProductResponse> toResponseList(List<Product> products) {

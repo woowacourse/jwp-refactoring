@@ -18,7 +18,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private BigDecimal price;
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
@@ -30,7 +30,7 @@ public class Menu {
     public Menu(){
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, Price price, MenuGroup menuGroup) {
         this.id = null;
         this.name = name;
         this.price = price;
@@ -38,7 +38,7 @@ public class Menu {
         this.menuProducts = new ArrayList<>();
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup,
+    public Menu(String name, Price price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         this.id = null;
         this.name = name;
@@ -55,7 +55,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
