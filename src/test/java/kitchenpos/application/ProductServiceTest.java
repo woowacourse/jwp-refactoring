@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import static kitchenpos.util.ObjectUtil.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
@@ -19,52 +19,36 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
 
+    @DisplayName("id가 없는 상품으로 id가 있는 상품을 정상적으로 생성한다.")
     @Test
-    @DisplayName("상품 생성")
-    void create() {
-        Product product = createProduct(null, null, 1000);
-        given(productDao.save(any(Product.class))).willReturn(product);
+    void createTest() {
+        final Product expectedProduct = createProduct(1L, "후라이드", 1000);
 
-        Product saved = productService.create(product);
+        given(productRepository.save(any(Product.class))).willReturn(expectedProduct);
 
-        assertThat(saved).isNotNull();
-        assertThat(saved.getPrice()).isEqualTo(BigDecimal.valueOf(1000));
+        assertThat(productService.create(createProduct(null, "후라이드", 1000)))
+            .isEqualToComparingFieldByField(expectedProduct);
     }
 
+    @DisplayName("주문들을 정상적으로 조회한다.")
     @Test
-    @DisplayName("상품 목록 조회")
-    void list() {
-        Product product = createProduct(null, null, 1000);
-        given(productDao.findAll()).willReturn(Collections.singletonList(product));
+    void listTest() {
+        final List<Product> expectedProducts = Collections.singletonList(createProduct(1L, "후라이드",1000));
 
-        List<Product> result = productService.list();
+        given(productRepository.findAll()).willReturn(expectedProducts);
 
-        assertThat(result).isNotNull();
-        assertAll(
-            () -> assertThat(result).hasSize(1),
-            () -> assertThat(result.get(0)).usingRecursiveComparison()
-                .isEqualTo(product)
-        );
-    }
-
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(ints = {-1000})
-    @DisplayName("상품의 가격이 null이거나 0미만인 경우 예외 발생")
-    void priceBelowZero(Integer input) {
-        Product product = createProduct(null, null, input);
-        assertThatThrownBy(() -> productService.create(product))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThat(productService.list()).usingRecursiveComparison()
+            .isEqualTo(expectedProducts);
     }
 }

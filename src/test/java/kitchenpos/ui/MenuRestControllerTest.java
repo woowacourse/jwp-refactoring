@@ -1,20 +1,24 @@
 package kitchenpos.ui;
 
-import static org.hamcrest.Matchers.*;
+import static kitchenpos.util.ObjectUtil.*;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureJdbc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -23,70 +27,68 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import kitchenpos.application.MenuService;
-import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
+import kitchenpos.ui.dto.MenuCreateRequest;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuResponse;
 
-@WebMvcTest(controllers = MenuRestController.class)
-@AutoConfigureJdbc
-@ContextConfiguration(classes = {
-    MenuRestController.class,
-    MenuService.class,
-    JdbcTemplateMenuDao.class,
-    JdbcTemplateMenuGroupDao.class,
-    JdbcTemplateMenuProductDao.class,
-    JdbcTemplateProductDao.class
-})
+@WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest {
-    private MockMvc mvc;
-
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private MenuService menuService;
+
+    private MockMvc mockMvc;
+
     @BeforeEach
-    void setUp(WebApplicationContext context) {
-        mvc = MockMvcBuilders.webAppContextSetup(context)
-            .addFilter(new CharacterEncodingFilter("UTF-8", true))
+    void setUp(WebApplicationContext webApplicationContext) {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext)
+            .addFilters(new CharacterEncodingFilter("UTF-8", true))
+            .alwaysDo(print())
             .build();
     }
 
+    @DisplayName("정상적인 요청에 created 상태로 응답하는지 확인한다.")
     @Test
-    void create() throws Exception {
-        Menu menu = new Menu();
-        menu.setMenuGroupId(1L);
-        menu.setName("메뉴");
-        menu.setMenuProducts(Collections.emptyList());
-        menu.setPrice(BigDecimal.valueOf(0));
-        Menu result = new Menu();
-        result.setId(7L);
-        result.setMenuGroupId(1L);
-        result.setName("메뉴");
-        result.setMenuProducts(Collections.emptyList());
-        result.setPrice(BigDecimal.valueOf(0));
+    void createTest() throws Exception {
+        final String name = "메뉴";
+        final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
+        final MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 10L);
+        final Menu savedMenu = createMenu(1L, name, 1000, 1L, Collections.singletonList(menuProduct));
+        final MenuCreateRequest menuWithoutId = new MenuCreateRequest(name, new Price(BigDecimal.valueOf(1000)), 1L,
+            Collections.singletonList(menuProductRequest));
+        final MenuResponse menuResponse = MenuResponse.from(savedMenu);
 
-        mvc.perform(post("/api/menus")
+        given(menuService.create(any(Menu.class))).willReturn(savedMenu);
+
+        mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(menu))
+            .content(objectMapper.writeValueAsBytes(menuWithoutId))
         )
-            .andDo(print())
             .andExpect(status().isCreated())
-            .andExpect(content().json(objectMapper.writeValueAsString(result)));
+            .andExpect(content().bytes(objectMapper.writeValueAsBytes(menuResponse)))
+            .andExpect(header().exists("Location"));
     }
 
+    @DisplayName("정상적인 메뉴 리스트 요청에 ok상태로 응답하는지 확인한다.")
     @Test
-    void list() throws Exception {
-        String body = "{\"id\":1,\"name\":\"후라이드치킨\","
-            + "\"price\":16000.00,\"menuGroupId\":2,"
-            + "\"menuProducts\":"
-            + "[{\"seq\":1,\"menuId\":1,\"productId\":1,\"quantity\":1}]}";
-        
-        mvc.perform(get("/api/menus")
-            .contentType(MediaType.APPLICATION_JSON)
-        )
-            .andDo(print())
+    void listTest() throws Exception {
+        final MenuProduct menuProduct = createMenuProduct(null, 1L, 1L, 10);
+        final Menu first = createMenu(1L, "후라이드", 0, 1L, Collections.singletonList(menuProduct));
+        final Menu second = createMenu(2L, "양념", 0, 1L, Collections.singletonList(menuProduct));
+        final List<Menu> menus = Arrays.asList(first, second);
+        final List<MenuResponse> menuResponses = menus.stream()
+            .map(MenuResponse::from)
+            .collect(Collectors.toList());
+
+        given(menuService.list()).willReturn(menus);
+
+        mockMvc.perform(get("/api/menus"))
             .andExpect(status().isOk())
-            .andExpect(content().string(containsString(body)));
+            .andExpect(content().bytes(objectMapper.writeValueAsBytes(menuResponses)));
     }
 }

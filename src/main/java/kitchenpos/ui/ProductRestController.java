@@ -2,6 +2,9 @@ package kitchenpos.ui;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,26 +14,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductCreateRequest;
+import kitchenpos.ui.dto.ProductResponse;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @RestController
 public class ProductRestController {
     private final ProductService productService;
 
-    public ProductRestController(final ProductService productService) {
-        this.productService = productService;
-    }
-
     @PostMapping("/api/products")
-    public ResponseEntity<Product> create(@RequestBody final Product product) {
-        final Product created = productService.create(product);
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody final ProductCreateRequest productCreateRequest) {
+        final Product created = productService.create(productCreateRequest.toRequestEntity());
         final URI uri = URI.create("/api/products/" + created.getId());
         return ResponseEntity.created(uri)
-            .body(created);
+            .body(ProductResponse.from(created));
     }
 
     @GetMapping("/api/products")
-    public ResponseEntity<List<Product>> list() {
+    public ResponseEntity<List<ProductResponse>> list() {
+        List<ProductResponse> productResponses = productService.list()
+            .stream()
+            .map(ProductResponse::from)
+            .collect(Collectors.toList());
         return ResponseEntity.ok()
-            .body(productService.list());
+            .body(productResponses);
     }
 }
