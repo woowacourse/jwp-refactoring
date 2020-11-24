@@ -2,6 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.application.dto.IdRequest;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
@@ -10,8 +14,6 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupVerifier;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
@@ -50,8 +52,6 @@ public class TableGroupService {
             orderTable.groupBy(savedTableGroup.getId());
         }
 
-        orderTableRepository.saveAll(savedOrderTables);
-
         return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
@@ -68,7 +68,5 @@ public class TableGroupService {
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
-
-        orderTableRepository.saveAll(orderTables);
     }
 }

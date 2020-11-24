@@ -1,11 +1,15 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemCreateRequest;
@@ -18,8 +22,6 @@ import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
@@ -103,9 +105,6 @@ public class OrderService {
 
         savedOrder.changeOrderStatus(orderChangeOrderStatusRequest.getOrderStatus());
 
-        return OrderResponse.of(
-            orderRepository.save(savedOrder),
-            orderLineItemRepository.findAllByOrderId(savedOrder.getId())
-        );
+        return OrderResponse.of(savedOrder, orderLineItemRepository.findAllByOrderId(savedOrder.getId()));
     }
 }

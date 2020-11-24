@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
 import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
@@ -8,8 +12,6 @@ import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableVerifier;
 import kitchenpos.repository.OrderTableRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
@@ -47,7 +49,7 @@ public class TableService {
 
         savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.isEmpty());
 
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     @Transactional
@@ -61,6 +63,6 @@ public class TableService {
         savedOrderTable
             .changeNumberOfGuests(orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
 
-        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
+        return OrderTableResponse.from(savedOrderTable);
     }
 }
