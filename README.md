@@ -19,7 +19,7 @@
 - [x] 메뉴의 목록을 조회할 수 있다.
 
 ### 주문 테이블(order table)
-- [ ] 주문 테이블을 등록할 수 있다.
+- [x] 주문 테이블을 등록할 수 있다.
 - [ ] 주문 테이블의 목록을 조회할 수 있다.
 - [ ] 빈 테이블로 변경할 수 있다.
     - [ ] 단체 지정된 주문 테이블은 빈 테이블로 설정할 수 없다.
@@ -69,6 +69,6 @@
     - [x] ProductService 테스트 코드 작성
     - [x] MenuGroupService 테스트 코드 작성
     - [x] MenuService 테스트 코드 작성
-    - [ ] OrderService 테스트 코드 작성
     - [ ] TableService 테스트 코드 작성
+    - [ ] OrderService 테스트 코드 작성
     - [ ] TableGroupService 테스트 코드 작성
