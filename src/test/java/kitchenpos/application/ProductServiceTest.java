@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -26,13 +28,16 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다.")
     @Test
     void create() {
-        Product product = new Product();
-        product.setName("고추마요치킨");
-        product.setPrice(BigDecimal.valueOf(18_000));
+        String name = "고추마요 치킨";
+        BigDecimal price = BigDecimal.valueOf(18_000);
+        Product productRequest = createProduct(null, name, price);
 
-        Product saved = productService.create(product);
-
-        assertThat(saved.getId()).isNotNull();
+        Product saved = productService.create(productRequest);
+        assertAll(
+            () -> assertThat(saved.getId()).isNotNull(),
+            () -> assertThat(saved.getName()).isEqualTo(name),
+            () -> assertThat(saved.getPrice().longValue()).isEqualTo(price.longValue())
+        );
     }
 
     @DisplayName("상품 등록 시, 상품 가격이 음수 혹은 null이면 예외가 발생한다.")
@@ -40,21 +45,18 @@ class ProductServiceTest {
     @CsvSource(value = "-1000")
     @NullSource
     void create_GivenMinus_ThenThrownException(BigDecimal price) {
-        Product product = new Product();
-        product.setName("고추마요치킨");
-        product.setPrice(price);
+        Product productRequest = createProduct(null, "고추마요 치킨", price);
 
-        assertThatThrownBy(() -> productService.create(product))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(productRequest))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
-        Product product = new Product();
-        product.setName("고추마요치킨");
-        product.setPrice(BigDecimal.valueOf(18_000));
-        productDao.save(product);
+        BigDecimal price = BigDecimal.valueOf(18_000);
+        Product productRequest = createProduct(null, "고추마요 치킨", price);
+        productDao.save(productRequest);
 
         List<Product> actual = productService.list();
 

@@ -1,6 +1,8 @@
 package kitchenpos.application;
 
+import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
@@ -22,19 +24,21 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
+        String name = "치킨";
+        MenuGroup menuGroup = createMenuGroup(null, name);
 
         MenuGroup saved = menuGroupService.create(menuGroup);
 
-        assertThat(saved.getId()).isNotNull();
+        assertAll(
+            () -> assertThat(saved.getId()).isNotNull(),
+            () -> assertThat(saved.getName()).isEqualTo(name)
+        );
     }
 
     @DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
+        MenuGroup menuGroup = createMenuGroup(null, "치킨");
         menuGroupDao.save(menuGroup);
 
         List<MenuGroup> menuGroups = menuGroupService.list();
