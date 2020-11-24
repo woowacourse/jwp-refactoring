@@ -4,6 +4,7 @@ import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -129,7 +130,6 @@ class OrderServiceTest extends ServiceTest {
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-
     @DisplayName("주문의 목록을 조회할 수 있다.")
     @Test
     void list() {
@@ -151,5 +151,66 @@ class OrderServiceTest extends ServiceTest {
         List<Order> list = orderService.list();
 
         assertThat(list).hasSize(1);
+    }
+
+    @DisplayName("주문 상태를 변경할 수 있다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"MEAL", "COMPLETION"})
+    void changeOrderStatus(String status) {
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 2, false));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리치킨"));
+        Product product = productDao.save(
+            createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProductRequest =
+            createMenuProduct(null, null, product.getId(), 1);
+        Menu menu = menuDao.save(
+            createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+                Collections.singletonList(menuProductRequest)));
+        OrderLineItem orderLineItemRequest =
+            createOrderLineItem(null, null, menu.getId(), 1);
+        Order orderRequest = createOrder(null, orderTable.getId(), null, null,
+            Collections.singletonList(orderLineItemRequest));
+        Order order = orderService.create(orderRequest);
+
+        Order changedOrderRequest = createOrder(order.getId(), order.getOrderTableId(), status,
+            LocalDateTime.now(), order.getOrderLineItems());
+
+        Order changedOrder = orderService.changeOrderStatus(changedOrderRequest.getId(),
+            changedOrderRequest);
+
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(status);
+    }
+
+    @DisplayName("주문 상태가 계산 완료인 경우 변경할 수 없다.")
+    @ParameterizedTest
+    @ValueSource(strings = {"COOKING", "MEAL", "COMPLETION"})
+    void changeOrderStatus_WithCompletionOrder_ThrownException(String status) {
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 2, false));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리치킨"));
+        Product product = productDao.save(
+            createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProductRequest =
+            createMenuProduct(null, null, product.getId(), 1);
+        Menu menu = menuDao.save(
+            createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+                Collections.singletonList(menuProductRequest)));
+        OrderLineItem orderLineItemRequest =
+            createOrderLineItem(null, null, menu.getId(), 1);
+        Order orderRequest = createOrder(null, orderTable.getId(), null, null,
+            Collections.singletonList(orderLineItemRequest));
+        Order order = orderService.create(orderRequest);
+
+        Order completionOrderRequest = createOrder(order.getId(), order.getOrderTableId(),
+            "COMPLETION",
+            LocalDateTime.now(), order.getOrderLineItems());
+        orderService.changeOrderStatus(completionOrderRequest.getId(), completionOrderRequest);
+
+        Order changedOrderRequest = createOrder(order.getId(), order.getOrderTableId(), status,
+            LocalDateTime.now(), order.getOrderLineItems());
+
+        assertThatThrownBy(
+            () -> orderService.changeOrderStatus(changedOrderRequest.getId(), changedOrderRequest))
+            .isInstanceOf(IllegalArgumentException.class);
+
     }
 }

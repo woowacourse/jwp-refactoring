@@ -44,8 +44,8 @@
     - [x] 주문 목록은 하나 이상이어야 한다.
     - [x] 존재하지 않는 메뉴로는 주문할 수 없다.
 - [x] 주문의 목록을 조회할 수 있다.
-- [ ] 주문 상태를 변경할 수 있다.
-    - [ ] 주문 상태가 계산 완료인 경우 변경할 수 없다.
+- [x] 주문 상태를 변경할 수 있다.
+    - [x] 주문 상태가 계산 완료인 경우 변경할 수 없다.
 
 ## 용어 사전
 
@@ -68,10 +68,10 @@
 ## 구현 목록
 ### 1단계
 - [x] 키친포스의 요구사항 작성
-- [ ] 모든 Business Object에 대한 테스트 코드 작성
+- [x] 모든 Business Object에 대한 테스트 코드 작성
     - [x] ProductService 테스트 코드 작성
     - [x] MenuGroupService 테스트 코드 작성
     - [x] MenuService 테스트 코드 작성
     - [x] TableService 테스트 코드 작성
     - [x] TableGroupService 테스트 코드 작성
-    - [ ] OrderService 테스트 코드 작성
+    - [x] OrderService 테스트 코드 작성
