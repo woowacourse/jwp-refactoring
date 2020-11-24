@@ -1,16 +1,19 @@
 package kitchenpos.ordertable.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderTableGuestsChangeRequest {
-    private int numberOfGuests;
+    @NotNull
+    private Integer numberOfGuests;
 
     public OrderTableGuestsChangeRequest() {
     }
 
-    public OrderTableGuestsChangeRequest(int numberOfGuests) {
+    public OrderTableGuestsChangeRequest(Integer numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 }

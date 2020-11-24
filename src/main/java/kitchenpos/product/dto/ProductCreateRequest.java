@@ -1,7 +1,11 @@
 package kitchenpos.product.dto;
 
+import com.sun.istack.NotNull;
+
 public class ProductCreateRequest {
+    @NotNull
     private String name;
+    @NotNull
     private Long price;
 
     private ProductCreateRequest() {

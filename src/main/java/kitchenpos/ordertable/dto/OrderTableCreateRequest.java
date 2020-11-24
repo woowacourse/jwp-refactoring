@@ -1,22 +1,26 @@
 package kitchenpos.ordertable.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderTableCreateRequest {
-    private int numberOfGuests;
-    private boolean empty;
+    @NotNull
+    private Integer numberOfGuests;
+    @NotNull
+    private Boolean empty;
 
     public OrderTableCreateRequest() {
     }
 
-    public OrderTableCreateRequest(int numberOfGuests, boolean empty) {
+    public OrderTableCreateRequest(Integer numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 }

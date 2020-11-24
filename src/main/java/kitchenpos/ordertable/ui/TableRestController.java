@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTableResponse> create(@RequestBody final OrderTableCreateRequest request) {
+    public ResponseEntity<OrderTableResponse> create(@RequestBody @Valid final OrderTableCreateRequest request) {
         OrderTableResponse response = orderTableService.create(request);
         URI uri = URI.create("/api/tables/" + response.getId());
 
@@ -42,7 +43,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
-    public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId, @RequestBody final OrderTableEmptyChangeRequest request) {
+    public ResponseEntity<OrderTableResponse> changeEmpty(@PathVariable final Long orderTableId, @RequestBody @Valid final OrderTableEmptyChangeRequest request) {
         OrderTableResponse response = orderTableService.changeEmpty(orderTableId, request);
 
         return ResponseEntity.ok()
@@ -50,7 +51,7 @@ public class TableRestController {
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
-    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId, @RequestBody final OrderTableGuestsChangeRequest request) {
+    public ResponseEntity<OrderTableResponse> changeNumberOfGuests(@PathVariable final Long orderTableId, @RequestBody @Valid final OrderTableGuestsChangeRequest request) {
         return ResponseEntity.ok()
                 .body(orderTableService.changeNumberOfGuests(orderTableId, request));
     }

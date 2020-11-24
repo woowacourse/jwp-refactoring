@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
+import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -38,7 +40,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuCreateRequest request) {
+    public MenuResponse create(final MenuCreateRequest request) {
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹을 선택해주세요."));
 
@@ -56,10 +58,12 @@ public class MenuService {
 
         menuProductRepository.saveAll(menuProducts.getMenuProducts());
 
-        return savedMenu;
+        return new MenuResponse(savedMenu.getId(), savedMenu.getPrice());
     }
 
-    public List<Menu> list() {
-        return menuRepository.findAll();
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(menu -> new MenuResponse(menu.getId(), menu.getPrice()))
+                .collect(Collectors.toList());
     }
 }
