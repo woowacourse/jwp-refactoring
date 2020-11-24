@@ -15,6 +15,7 @@ import kitchenpos.dto.tablegroup.TableGroupCreateRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -33,18 +34,18 @@ public class TableGroupService {
     public TableGroupResponse create(final TableGroupCreateRequest request) {
         final List<Long> tableIds = Optional.ofNullable(request.getTableIds())
             .orElseThrow(() -> new IllegalArgumentException("그룹지을 테이블들을 지정해주지 않으셨습니다."));
-        final List<Table> savedTables = tableDao.findAllByIdIn(tableIds);
+        final List<Table> tables = tableDao.findAllByIdIn(tableIds);
 
-        validSameSize(tableIds, savedTables);
-        validGroupable(savedTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedTables));
+        validSameSize(tableIds, tables);
+        validGroupable(tables);
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
 
         final Long tableGroupId = savedTableGroup.getId();
-        for (final Table savedTable : savedTables) {
+        for (final Table savedTable : tables) {
             savedTable.putInGroup(tableGroupId);
             tableDao.save(savedTable);
         }
-        return TableGroupResponse.of(savedTableGroup, savedTables);
+        return TableGroupResponse.of(savedTableGroup, tables);
     }
 
     @Transactional
@@ -71,8 +72,11 @@ public class TableGroupService {
             orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()));
     }
 
-    private void validGroupable(List<Table> savedTables) {
-        for (final Table savedTable : savedTables) {
+    private void validGroupable(List<Table> tables) {
+        if (CollectionUtils.isEmpty(tables) || tables.size() < 2) {
+            throw new IllegalArgumentException("그룹지을 테이블을 2개 이상 지정해주세요.");
+        }
+        for (final Table savedTable : tables) {
             if (!savedTable.isEmpty()) {
                 throw new IllegalArgumentException("비어있지 않은 테이블을 새로운 그룹에 포함시킬 수 없습니다.");
             }
