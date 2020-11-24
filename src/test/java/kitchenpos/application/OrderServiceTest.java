@@ -59,6 +59,28 @@ class OrderServiceTest extends ServiceTest {
         assertThat(order.getId()).isNotNull();
     }
 
+    @DisplayName("존재하지 않는 테이블은 주문할 수 없다.")
+    @ParameterizedTest
+    @ValueSource(longs = 1)
+    @NullSource
+    void create_WithNonExistingTable_ThrownException(Long tableId) {
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리치킨"));
+        Product product = productDao.save(
+            createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProductRequest =
+            createMenuProduct(null, null, product.getId(), 1);
+        Menu menu = menuDao.save(
+            createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+                Collections.singletonList(menuProductRequest)));
+        OrderLineItem orderLineItemRequest =
+            createOrderLineItem(null, null, menu.getId(), 1);
+        Order orderRequest = createOrder(null, tableId, null, null,
+            Collections.singletonList(orderLineItemRequest));
+
+        assertThatThrownBy(() -> orderService.create(orderRequest))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
     @DisplayName("빈 테이블은 주문할 수 없다.")
     @Test
     void create_WithEmptyTable_ThrownException() {
