@@ -67,7 +67,7 @@
 ### 1단계
 - [x] 키친포스의 요구사항 작성
 - [ ] 모든 Business Object에 대한 테스트 코드 작성
-    - [ ] ProductService 테스트 코드 작성
+    - [x] ProductService 테스트 코드 작성
     - [ ] MenuService 테스트 코드 작성
     - [ ] MenuGroupService 테스트 코드 작성
     - [ ] OrderService 테스트 코드 작성

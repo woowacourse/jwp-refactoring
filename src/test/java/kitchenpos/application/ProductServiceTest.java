@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,11 +23,11 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다.")
     @Test
     void create() {
-        Product expected = new Product();
-        expected.setName("고추마요치킨");
-        expected.setPrice(BigDecimal.valueOf(18_000));
+        Product product = new Product();
+        product.setName("고추마요치킨");
+        product.setPrice(BigDecimal.valueOf(18_000));
 
-        Product saved = productService.create(expected);
+        Product saved = productService.create(product);
 
         assertThat(saved.getId()).isNotNull();
     }
@@ -42,5 +43,18 @@ class ProductServiceTest {
 
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("상품 목록을 조회한다.")
+    @Test
+    void list() {
+        Product product = new Product();
+        product.setName("고추마요치킨");
+        product.setPrice(BigDecimal.valueOf(18_000));
+        productService.create(product);
+
+        List<Product> actual = productService.list();
+
+        assertThat(actual).isNotEmpty();
     }
 }
