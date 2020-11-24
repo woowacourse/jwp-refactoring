@@ -2,10 +2,11 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.application.table.TableService;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.response.OrderTableResponse;
 import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.ui.table.TableRestController;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

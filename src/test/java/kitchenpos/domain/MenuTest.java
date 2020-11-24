@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.product.Price;
 import kitchenpos.fixture.MenuFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

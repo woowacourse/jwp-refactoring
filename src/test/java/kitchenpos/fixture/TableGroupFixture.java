@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.table.TableGroup;
 
 import java.time.LocalDateTime;
 

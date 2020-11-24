@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.dto.table.request.OrderTableRequest;
+import kitchenpos.dto.table.request.TableGroupRequest;
 import kitchenpos.fixture.OrderFixture;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,6 @@ import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithoutId;
 import static kitchenpos.utils.TestUtils.findById;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
@@ -61,27 +61,6 @@ public class TableGroupServiceTest {
             assertThat(actual.getId()).isNotNull();
             assertThat(actual.getCreatedDate()).isNotNull();
         });
-    }
-
-    @DisplayName("TableGroup의 orderTable들이 비어있는 경우 예외 반환")
-    @Test
-    void createEmptyOrderTables() {
-        List<OrderTableRequest> orderTableRequests = null;
-        TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTableRequests);
-
-        assertThatNullPointerException()
-                .isThrownBy(() -> tableGroupService.create(tableGroupRequest));
-    }
-
-    @DisplayName("TableGroup의 orderTable 개수가 2개 미만인 경우 예외 반환")
-    @Test
-    void createWrongOrderTablesCount() {
-        OrderTable savedOrderTable = orderTableRepository.save(createOrderTableWithEmpty(true));
-        TableGroupRequest tableGroupRequest = createTableRequest(Arrays.asList(savedOrderTable));
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .withMessage("table group에 속한 테이블은 2개 이상이여야 합니다.");
     }
 
     @DisplayName("TableGroup의 orderTable이 한개라도 DB에 등록되어 있지 않은 경우 예외 반환")

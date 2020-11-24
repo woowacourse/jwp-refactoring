@@ -1,7 +1,7 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithoutId;
 

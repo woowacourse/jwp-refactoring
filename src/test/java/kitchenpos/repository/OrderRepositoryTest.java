@@ -1,8 +1,11 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.fixture.OrderFixture;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

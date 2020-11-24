@@ -1,11 +1,12 @@
 package kitchenpos.domain;
 
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithEmpty;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithNumberOfGuest;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTableWithTableGroup;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithId;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -33,7 +34,7 @@ class OrderTableTest {
     @DisplayName("OrderTable TableGroup 변경")
     @Test
     void changeTableGroup() {
-        OrderTable orderTable = createOrderTableWithTableGroup(createTableGroupWithId(1L));
+        OrderTable orderTable = createOrderTableWithEmpty(true);
         TableGroup expected = createTableGroupWithId(2L);
 
         OrderTable actual = orderTable.group(expected);

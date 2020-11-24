@@ -1,14 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableResponse;
+import kitchenpos.application.table.TableService;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.TableGroup;
+import kitchenpos.dto.table.response.OrderTableResponse;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.TableGroupFixture;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderTableRepository;
+import kitchenpos.repository.table.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,17 +1,18 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderRequest;
-import kitchenpos.dto.OrderResponse;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.application.order.OrderService;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.order.request.OrderLineItemRequest;
+import kitchenpos.dto.order.request.OrderRequest;
+import kitchenpos.dto.order.response.OrderResponse;
+import kitchenpos.repository.menu.MenuRepository;
+import kitchenpos.repository.order.OrderLineItemRepository;
+import kitchenpos.repository.order.OrderRepository;
+import kitchenpos.repository.order.OrderTableRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,16 +67,6 @@ public class OrderServiceTest {
         assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);
-    }
-
-    @DisplayName("Order에 속하는 OrderLineItem이 아무것도 없는 경우 예외 반환")
-    @Test
-    void createEmptyOrderLineItem() {
-        OrderRequest orderRequestEmptyOrderLineItem = createOrderRequestEmptyOrderLineItem();
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> orderService.create(orderRequestEmptyOrderLineItem))
-                .withMessage("주문 내역이 비어있습니다.");
     }
 
     @DisplayName("Order를 받은 OrderTable이 비어있는 경우 예외 반환")

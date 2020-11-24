@@ -1,9 +1,10 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.dto.table.request.OrderTableRequest;
+import kitchenpos.dto.table.request.TableGroupRequest;
+import kitchenpos.ui.table.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

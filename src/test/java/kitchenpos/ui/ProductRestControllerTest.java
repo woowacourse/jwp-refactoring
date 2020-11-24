@@ -1,8 +1,9 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.application.product.ProductService;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.product.ProductRestController;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
