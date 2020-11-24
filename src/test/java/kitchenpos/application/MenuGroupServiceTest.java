@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.config.TruncateDatabaseConfig;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
 import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
 import kitchenpos.ui.dto.menugroup.MenuGroupResponses;
