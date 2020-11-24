@@ -2,7 +2,6 @@ package kitchenpos.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.sql.DataSource;
@@ -74,8 +73,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
             resultSet.getLong("id"),
             resultSet.getString("name"),
             new Price(resultSet.getBigDecimal("price")),
-            resultSet.getLong("menu_group_id"),
-            new ArrayList<>()
+            resultSet.getLong("menu_group_id")
         );
     }
 }

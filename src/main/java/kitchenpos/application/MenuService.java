@@ -40,7 +40,7 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        Menu menu = request.toEntityWithoutMenuProducts();
+        Menu menu = new Menu(request.getName(), new Price(request.getPrice()), request.getMenuGroupId());
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
 
         if (!menuGroupDao.existsById(request.getMenuGroupId())) {
@@ -65,6 +65,7 @@ public class MenuService {
 
     private Price sumProductPrices(List<MenuProductRequest> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
+
         for (final MenuProductRequest menuProduct : menuProducts) {
             final Product product = productDao.findById(menuProduct.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
