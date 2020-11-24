@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toList;
 
 import java.math.BigDecimal;
@@ -10,9 +9,10 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
 import kitchenpos.dto.menu.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -40,20 +40,41 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        Menu menu = new Menu(request.getName(), new Price(request.getPrice()), request.getMenuGroupId());
-        final List<MenuProductRequest> menuProducts = request.getMenuProducts();
+        final Menu savedMenu = saveMenu(new Menu(
+            request.getName(), new Price(request.getPrice()), request.getMenuGroupId()));
+        final MenuProducts menuProducts = MenuProducts.from(request.getMenuProducts(), savedMenu);
 
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
+        validateMenuPrice(savedMenu, menuProducts);
+
+        List<MenuProduct> savedMenuProducts = menuProducts.getMenuProducts().stream()
+            .map(menuProductDao::save)
+            .collect(toList());
+        return MenuResponse.of(savedMenu, savedMenuProducts);
+    }
+
+    private Menu saveMenu(Menu menu) {
+        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
             throw new IllegalArgumentException("메뉴는 반드시 하나의 메뉴그룹에 속해야합니다.");
         }
+        return menuDao.save(menu);
+    }
+
+    private void validateMenuPrice(Menu menu, MenuProducts menuProducts) {
         if (menu.isPriceBiggerThen(sumProductPrices(menuProducts))) {
             throw new IllegalArgumentException(
                 "메뉴의 가격은 해당 메뉴를 구성하는 상품들의 가격보다 작거나 같아야 합니다.");
         }
-        final Menu savedMenu = menuDao.save(menu);
-        return menuProducts.stream()
-            .map(menuProductRequest -> menuProductDao.save(menuProductRequest.toEntity(savedMenu.getId())))
-            .collect(collectingAndThen(toList(), products -> MenuResponse.of(savedMenu, products)));
+    }
+
+    private Price sumProductPrices(MenuProducts menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+
+        for (final MenuProduct menuProduct : menuProducts.getMenuProducts()) {
+            final Product product = productDao.findById(menuProduct.getProductId())
+                .orElseThrow(IllegalArgumentException::new);
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+        return new Price(sum);
     }
 
     public List<MenuResponse> list() {
@@ -61,16 +82,5 @@ public class MenuService {
             .stream()
             .map(menu -> MenuResponse.of(menu, menuProductDao.findAllByMenuId(menu.getId())))
             .collect(toList());
-    }
-
-    private Price sumProductPrices(List<MenuProductRequest> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-
-        for (final MenuProductRequest menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-        return new Price(sum);
     }
 }
