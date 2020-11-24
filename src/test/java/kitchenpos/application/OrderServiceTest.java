@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -126,5 +127,29 @@ class OrderServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> orderService.create(orderRequest))
             .isInstanceOf(IllegalArgumentException.class);
+    }
+
+
+    @DisplayName("주문의 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 2, false));
+        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리치킨"));
+        Product product = productDao.save(
+            createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProductRequest =
+            createMenuProduct(null, null, product.getId(), 1);
+        Menu menu = menuDao.save(
+            createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+                Collections.singletonList(menuProductRequest)));
+        OrderLineItem orderLineItemRequest =
+            createOrderLineItem(null, null, menu.getId(), 1);
+        Order orderRequest = createOrder(null, orderTable.getId(), null, null,
+            Collections.singletonList(orderLineItemRequest));
+        orderService.create(orderRequest);
+
+        List<Order> list = orderService.list();
+
+        assertThat(list).hasSize(1);
     }
 }
