@@ -11,4 +11,14 @@ public enum OrderStatus {
             .findFirst()
             .orElseThrow(IllegalArgumentException::new);
     }
+
+    public static boolean isDefinedOrderStatus(String target) {
+        try {
+            of(target);
+
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
 }
