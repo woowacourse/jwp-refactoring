@@ -32,7 +32,7 @@ class ProductServiceTest {
         assertThat(saved.getId()).isNotNull();
     }
 
-    @DisplayName("상품 가격이 음수 혹은 null이면 예외가 발생한다.")
+    @DisplayName("상품 등록 시, 상품 가격이 음수 혹은 null이면 예외가 발생한다.")
     @ParameterizedTest
     @CsvSource(value = "-1000")
     @NullSource
