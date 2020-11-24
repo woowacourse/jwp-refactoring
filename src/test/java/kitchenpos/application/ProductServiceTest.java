@@ -13,12 +13,15 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
 @SpringBootTest
 class ProductServiceTest {
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductDao productDao;
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
@@ -51,10 +54,10 @@ class ProductServiceTest {
         Product product = new Product();
         product.setName("고추마요치킨");
         product.setPrice(BigDecimal.valueOf(18_000));
-        productService.create(product);
+        productDao.save(product);
 
         List<Product> actual = productService.list();
 
-        assertThat(actual).isNotEmpty();
+        assertThat(actual).hasSizeGreaterThanOrEqualTo(1);
     }
 }

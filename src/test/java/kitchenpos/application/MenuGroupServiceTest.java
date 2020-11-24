@@ -9,12 +9,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @SpringBootTest
 class MenuGroupServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
+    private JdbcTemplateMenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
@@ -32,10 +35,10 @@ class MenuGroupServiceTest {
     void list() {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName("치킨");
-        menuGroupService.create(menuGroup);
+        menuGroupDao.save(menuGroup);
 
         List<MenuGroup> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).isNotEmpty();
+        assertThat(menuGroups).hasSizeGreaterThanOrEqualTo(1);
     }
 }
