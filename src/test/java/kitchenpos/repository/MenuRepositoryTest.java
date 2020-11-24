@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
@@ -15,20 +15,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DaoTest
-public class MenuDaoTest {
+@DataJpaTest
+public class MenuRepositoryTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private MenuGroup menuGroup;
 
     @BeforeEach
     void setup() {
-        menuGroup = menuGroupDao.save(createMenuGroup(null, "2+1메뉴"));
+        menuGroup = menuGroupRepository.save(createMenuGroup(null, "2+1메뉴"));
     }
 
     @DisplayName("메뉴를 저장할 수 있다.")
@@ -36,7 +37,7 @@ public class MenuDaoTest {
     void save() {
         Menu menu = createMenu(null, "메뉴", 0L, menuGroup.getId());
 
-        Menu savedMenu = menuDao.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
 
         assertAll(
             () -> assertThat(savedMenu).isNotNull(),
@@ -51,10 +52,10 @@ public class MenuDaoTest {
     @DisplayName("메뉴 아이디로 메뉴를 조회할 수 있다.")
     @Test
     void findById() {
-        Menu menu = menuDao
+        Menu menu = menuRepository
             .save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
 
-        Optional<Menu> foundMenu = menuDao.findById(menu.getId());
+        Optional<Menu> foundMenu = menuRepository.findById(menu.getId());
 
         assertThat(foundMenu.get()).isEqualToComparingFieldByField(menu);
     }
@@ -63,12 +64,12 @@ public class MenuDaoTest {
     @Test
     void findAll() {
         List<Menu> savedMenus = Arrays.asList(
-            menuDao.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
+            menuRepository.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
         );
 
-        List<Menu> allMenus = menuDao.findAll();
+        List<Menu> allMenus = menuRepository.findAll();
 
         assertThat(allMenus).usingFieldByFieldElementComparator().containsAll(savedMenus);
     }
@@ -77,12 +78,12 @@ public class MenuDaoTest {
     @Test
     void countByIdIn() {
         List<Menu> savedMenus = Arrays.asList(
-            menuDao.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
+            menuRepository.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
         );
 
-        Long menuCount = menuDao
+        Long menuCount = menuRepository
             .countByIdIn(savedMenus.stream().map(Menu::getId).collect(Collectors.toList()));
 
         assertThat(menuCount).isEqualTo(savedMenus.size());

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
@@ -22,23 +22,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DaoTest
-public class OrderLineItemDaoTest {
+@DataJpaTest
+public class OrderLineItemRepositoryTest {
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private MenuRepository menuRepository;
 
     OrderTable orderTable;
 
@@ -50,11 +51,11 @@ public class OrderLineItemDaoTest {
 
     @BeforeEach
     void setup() {
-        orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
-        order = orderDao.save(
+        orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
+        order = orderRepository.save(
             createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
-        menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        menu = menuRepository.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
     }
 
     @DisplayName("주문 항목을 저장할 수 있다.")
@@ -62,7 +63,7 @@ public class OrderLineItemDaoTest {
     void save() {
         OrderLineItem orderLineItem = createOrderLineItem(null, order.getId(), menu.getId(), 0);
 
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
+        OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
 
         assertAll(
             () -> assertThat(savedOrderLineItem.getSeq()).isNotNull(),
@@ -73,16 +74,16 @@ public class OrderLineItemDaoTest {
     @DisplayName("주문 항목 아이디로 주문 항목을 조회할 수 있다.")
     @Test
     void findById() {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
-        Order order = orderDao
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
+        Order order = orderRepository
             .save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId()));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
-        OrderLineItem orderLineItem = orderLineItemDao
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        Menu menu = menuRepository.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        OrderLineItem orderLineItem = orderLineItemRepository
             .save(createOrderLineItem(null, order.getId(), menu.getId(), 0));
 
-        Optional<OrderLineItem> foundOrderLineItem = orderLineItemDao
+        Optional<OrderLineItem> foundOrderLineItem = orderLineItemRepository
             .findById(orderLineItem.getSeq());
 
         assertThat(foundOrderLineItem.get()).isEqualToComparingFieldByField(orderLineItem);
@@ -92,12 +93,12 @@ public class OrderLineItemDaoTest {
     @Test
     void findAll() {
         List<OrderLineItem> orderLineItems = Arrays.asList(
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0))
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0))
         );
 
-        List<OrderLineItem> allOrderLineItems = orderLineItemDao.findAll();
+        List<OrderLineItem> allOrderLineItems = orderLineItemRepository.findAll();
 
         assertThat(allOrderLineItems).usingFieldByFieldElementComparator()
             .containsAll(orderLineItems);
@@ -107,12 +108,12 @@ public class OrderLineItemDaoTest {
     @Test
     void findAllByOrderId() {
         List<OrderLineItem> orderLineItems = Arrays.asList(
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
-            orderLineItemDao.save(createOrderLineItem(null, order.getId(), menu.getId(), 0))
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0)),
+            orderLineItemRepository.save(createOrderLineItem(null, order.getId(), menu.getId(), 0))
         );
 
-        List<OrderLineItem> allOrderLineItemsByOrderId = orderLineItemDao
+        List<OrderLineItem> allOrderLineItemsByOrderId = orderLineItemRepository
             .findAllByOrderId(order.getId());
 
         assertThat(allOrderLineItemsByOrderId).usingFieldByFieldElementComparator()

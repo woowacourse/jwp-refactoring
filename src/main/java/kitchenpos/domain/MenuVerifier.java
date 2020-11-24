@@ -3,21 +3,21 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MenuVerifier {
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
-    public MenuVerifier(ProductDao productDao) {
-        this.productDao = productDao;
+    public MenuVerifier(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
 
     public void verifyPrice(BigDecimal price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProductId())
+            final Product product = productRepository.findById(menuProduct.getProductId())
                 .orElseThrow(IllegalArgumentException::new);
             sum = sum
                 .add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));

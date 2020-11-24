@@ -9,14 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.MenuGroupCreateRequest;
 import kitchenpos.application.dto.MenuGroupResponse;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MenuGroupServiceTest extends AbstractServiceTest {
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuGroupService menuGroupService;
@@ -38,9 +38,9 @@ public class MenuGroupServiceTest extends AbstractServiceTest {
     @Test
     void list() {
         List<MenuGroupResponse> savedMenuGroups = MenuGroupResponse.listOf(Arrays.asList(
-            menuGroupDao.save(createMenuGroup(null, "메뉴그룹1")),
-            menuGroupDao.save(createMenuGroup(null, "메뉴그룹2")),
-            menuGroupDao.save(createMenuGroup(null, "메뉴그룹3"))
+            menuGroupRepository.save(createMenuGroup(null, "메뉴그룹1")),
+            menuGroupRepository.save(createMenuGroup(null, "메뉴그룹2")),
+            menuGroupRepository.save(createMenuGroup(null, "메뉴그룹3"))
         ));
 
         List<MenuGroupResponse> allMenuGroups = menuGroupService.list();

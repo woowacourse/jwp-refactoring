@@ -5,33 +5,34 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableVerifier;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
     private final OrderTableVerifier orderTableVerifier;
 
     public TableService(
-        final OrderTableDao orderTableDao,
+        final OrderTableRepository orderTableRepository,
         final OrderTableVerifier orderTableVerifier
     ) {
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
         this.orderTableVerifier = orderTableVerifier;
     }
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest orderTableCreateRequest) {
-        return OrderTableResponse.from(orderTableDao.save(orderTableCreateRequest.toEntity()));
+        return OrderTableResponse
+            .from(orderTableRepository.save(orderTableCreateRequest.toEntity()));
     }
 
     @Transactional(readOnly = true)
     public List<OrderTableResponse> list() {
-        return OrderTableResponse.listOf(orderTableDao.findAll());
+        return OrderTableResponse.listOf(orderTableRepository.findAll());
     }
 
     @Transactional
@@ -39,14 +40,14 @@ public class TableService {
         final Long orderTableId,
         final OrderTableChangeEmptyRequest orderTableChangeEmptyRequest
     ) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         orderTableVerifier.verifyNotCompletedOrderStatus(orderTableId);
 
         savedOrderTable.changeEmpty(orderTableChangeEmptyRequest.isEmpty());
 
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 
     @Transactional
@@ -54,12 +55,12 @@ public class TableService {
         final Long orderTableId,
         final OrderTableChangeNumberOfGuestsRequest orderTableChangeNumberOfGuestsRequest
     ) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrderTable
             .changeNumberOfGuests(orderTableChangeNumberOfGuestsRequest.getNumberOfGuests());
 
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return OrderTableResponse.from(orderTableRepository.save(savedOrderTable));
     }
 }

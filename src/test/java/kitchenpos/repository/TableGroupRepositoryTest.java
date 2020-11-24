@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,18 +12,19 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DaoTest
-public class TableGroupDaoTest {
+@DataJpaTest
+public class TableGroupRepositoryTest {
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("단체 지정을 저장할 수 있다.")
     @Test
     void save() {
         TableGroup tableGroup = createTableGroup(null, LocalDateTime.now());
 
-        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         assertAll(
             () -> assertThat(savedTableGroup.getId()).isNotNull(),
@@ -35,10 +36,10 @@ public class TableGroupDaoTest {
     @DisplayName("단체 지정 아이디로 단체 지정을 조회할 수 있다.")
     @Test
     void findById() {
-        TableGroup tableGroup = tableGroupDao
+        TableGroup tableGroup = tableGroupRepository
             .save(createTableGroup(null, LocalDateTime.now()));
 
-        Optional<TableGroup> foundTableGroup = tableGroupDao.findById(tableGroup.getId());
+        Optional<TableGroup> foundTableGroup = tableGroupRepository.findById(tableGroup.getId());
 
         assertThat(foundTableGroup.get()).isEqualToComparingFieldByField(tableGroup);
     }
@@ -47,12 +48,12 @@ public class TableGroupDaoTest {
     @Test
     void findAll() {
         List<TableGroup> savedTableGroups = Arrays.asList(
-            tableGroupDao.save(createTableGroup(null, LocalDateTime.now())),
-            tableGroupDao.save(createTableGroup(null, LocalDateTime.now())),
-            tableGroupDao.save(createTableGroup(null, LocalDateTime.now()))
+            tableGroupRepository.save(createTableGroup(null, LocalDateTime.now())),
+            tableGroupRepository.save(createTableGroup(null, LocalDateTime.now())),
+            tableGroupRepository.save(createTableGroup(null, LocalDateTime.now()))
         );
 
-        List<TableGroup> allTableGroups = tableGroupDao.findAll();
+        List<TableGroup> allTableGroups = tableGroupRepository.findAll();
 
         assertThat(allTableGroups).usingFieldByFieldElementComparator()
             .containsAll(savedTableGroups);

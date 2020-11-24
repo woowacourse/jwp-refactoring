@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.fixture.OrderFixture.createOrder;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
@@ -21,29 +21,32 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DaoTest
-public class OrderDaoTest {
+@DataJpaTest
+public class OrderRepositoryTest {
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private OrderTable orderTable;
 
     @BeforeEach
     void setup() {
-        orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
+        orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
     }
 
     @DisplayName("주문을 저장할 수 있다.")
     @Test
     void save() {
+        System.out.println("FWEFWEFWEF");
+        System.out.println(orderTable.getId());
         Order order = createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
             orderTable.getId());
 
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         assertAll(
             () -> assertThat(savedOrder.getId()).isNotNull(),
@@ -54,10 +57,10 @@ public class OrderDaoTest {
     @DisplayName("주문 아이디로 주문을 조회할 수 있다.")
     @Test
     void findById() {
-        Order order = orderDao.save(
+        Order order = orderRepository.save(
             createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
 
-        Optional<Order> foundOrder = orderDao.findById(order.getId());
+        Optional<Order> foundOrder = orderRepository.findById(order.getId());
 
         assertThat(foundOrder.get()).isEqualToComparingFieldByField(order);
     }
@@ -66,15 +69,15 @@ public class OrderDaoTest {
     @Test
     void findAll() {
         List<Order> savedOrders = Arrays.asList(
-            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
+            orderRepository.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId())),
-            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
+            orderRepository.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId())),
-            orderDao.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
+            orderRepository.save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING,
                 orderTable.getId()))
         );
 
-        List<Order> allOrders = orderDao.findAll();
+        List<Order> allOrders = orderRepository.findAll();
 
         assertThat(allOrders).usingFieldByFieldElementComparator().containsAll(savedOrders);
     }
@@ -84,22 +87,18 @@ public class OrderDaoTest {
     @ParameterizedTest
     void existsByOrderTableIdAndOrderStatusIn(List<OrderStatus> orderStatuses,
         List<OrderStatus> condition, boolean expected) {
-        List<Order> savedOrders = orderStatuses.stream().map(it -> orderDao.save(
+        List<Order> savedOrders = orderStatuses.stream().map(it -> orderRepository.save(
             createOrder(null, LocalDateTime.now(), it, orderTable.getId())))
             .collect(Collectors.toList());
 
         assertAll(
-            () -> assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId(),
-                condition.stream()
-                    .map(OrderStatus::name)
-                    .collect(Collectors.toList()))
-            ).isEqualTo(expected),
-            () -> assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTable.getId() + 1,
-                condition.stream()
-                    .map(OrderStatus::name)
-                    .collect(Collectors.toList()))
+            () -> assertThat(
+                orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), condition)
+            )
+                .isEqualTo(expected),
+            () -> assertThat(
+                orderRepository
+                    .existsByOrderTableIdAndOrderStatusIn(orderTable.getId() + 1, condition)
             ).isFalse()
         );
     }
@@ -149,22 +148,21 @@ public class OrderDaoTest {
     @ParameterizedTest
     void existsByOrderTableIdInAndOrderStatusIn(List<OrderStatus> orderStatuses,
         List<OrderStatus> condition, boolean expected) {
-        List<Order> savedOrders = orderStatuses.stream().map(it -> orderDao.save(
+        List<Order> savedOrders = orderStatuses.stream().map(it -> orderRepository.save(
             createOrder(null, LocalDateTime.now(), it, orderTable.getId())))
             .collect(Collectors.toList());
 
         assertAll(
-            () -> assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(orderTable.getId(), orderTable.getId() + 1),
-                condition.stream()
-                    .map(OrderStatus::name)
-                    .collect(Collectors.toList()))
+            () -> assertThat(
+                orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                    Arrays.asList(orderTable.getId(), orderTable.getId() + 1),
+                    condition)
             ).isEqualTo(expected),
-            () -> assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(orderTable.getId() + 1, orderTable.getId() + 2),
-                condition.stream()
-                    .map(OrderStatus::name)
-                    .collect(Collectors.toList()))
+            () -> assertThat(
+                orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+                    Arrays.asList(orderTable.getId() + 1, orderTable.getId() + 2),
+                    condition
+                )
             ).isFalse()
         );
     }

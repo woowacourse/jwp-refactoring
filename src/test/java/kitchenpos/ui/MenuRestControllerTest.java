@@ -18,11 +18,11 @@ import java.util.List;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +30,21 @@ import org.springframework.http.MediaType;
 
 public class MenuRestControllerTest extends AbstractControllerTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("메뉴를 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Product product1 = productDao.save(createProduct(null, "상품1", 100L));
-        Product product2 = productDao.save(createProduct(null, "상품2", 500L));
-        Product product3 = productDao.save(createProduct(null, "상품3", 1000L));
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        Product product1 = productRepository.save(createProduct(null, "상품1", 100L));
+        Product product2 = productRepository.save(createProduct(null, "상품2", 500L));
+        Product product3 = productRepository.save(createProduct(null, "상품3", 1000L));
         List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(
             createMenuProductRequest(product1.getId(), 10),
             createMenuProductRequest(product2.getId(), 10),
@@ -74,7 +74,7 @@ public class MenuRestControllerTest extends AbstractControllerTest {
     @DisplayName("메뉴 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<MenuResponse> menus = menuDao.findAll()
+        List<MenuResponse> menus = menuRepository.findAll()
             .stream()
             .map(it -> MenuResponse.of(it, emptyList()))
             .collect(toList());

@@ -1,20 +1,20 @@
 package kitchenpos.domain;
 
 import java.util.Arrays;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrderTableVerifier {
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
-    public OrderTableVerifier(OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public OrderTableVerifier(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     public void verifyNotCompletedOrderStatus(Long orderTableId) {
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("완료되지 않은 주문이 존재하지 않아야 합니다.");
         }
     }

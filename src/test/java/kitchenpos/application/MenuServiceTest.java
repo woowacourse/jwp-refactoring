@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,12 +18,12 @@ import java.util.stream.Stream;
 import kitchenpos.application.dto.MenuCreateRequest;
 import kitchenpos.application.dto.MenuProductCreateRequest;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,16 +33,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class MenuServiceTest extends AbstractServiceTest {
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
@@ -50,15 +51,15 @@ public class MenuServiceTest extends AbstractServiceTest {
 
     @BeforeEach
     void setup() {
-        menuGroup = menuGroupDao.save(createMenuGroup(null, "2+1메뉴"));
+        menuGroup = menuGroupRepository.save(createMenuGroup(null, "2+1메뉴"));
     }
 
     @DisplayName("메뉴를 생성할 수 있다.")
     @Test
     void create() {
-        Product product1 = productDao.save(createProduct(null, "상품1", 100L));
-        Product product2 = productDao.save(createProduct(null, "상품2", 500L));
-        Product product3 = productDao.save(createProduct(null, "상품3", 1000L));
+        Product product1 = productRepository.save(createProduct(null, "상품1", 100L));
+        Product product2 = productRepository.save(createProduct(null, "상품2", 500L));
+        Product product3 = productRepository.save(createProduct(null, "상품3", 1000L));
         List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(
             createMenuProductRequest(product1.getId(), 10),
             createMenuProductRequest(product2.getId(), 10),
@@ -117,7 +118,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     @ParameterizedTest
     @ValueSource(longs = {10001L, 10002L})
     void create_throws_exception3(Long price) {
-        Product product = productDao.save(createProduct(null, "상품", 1000L));
+        Product product = productRepository.save(createProduct(null, "상품", 1000L));
         List<MenuProductCreateRequest> menuProductCreateRequests = Arrays.asList(
             createMenuProductRequest(product.getId(), 10)
         );
@@ -134,15 +135,17 @@ public class MenuServiceTest extends AbstractServiceTest {
     @Test
     void list() {
         List<MenuResponse> savedMenus = Stream.of(
-            menuDao.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
-            menuDao.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
+            menuRepository.save(createMenu(null, "메뉴1", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴2", 0L, menuGroup.getId())),
+            menuRepository.save(createMenu(null, "메뉴3", 0L, menuGroup.getId()))
         )
             .map(it -> MenuResponse.of(it, emptyList()))
             .collect(Collectors.toList());
 
         List<MenuResponse> allMenus = menuService.list();
 
-        assertThat(allMenus).usingFieldByFieldElementComparator().containsAll(savedMenus);
+        assertThat(allMenus).usingFieldByFieldElementComparator()
+            .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+            .containsAll(savedMenus);
     }
 }

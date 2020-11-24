@@ -13,8 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import org.springframework.http.MediaType;
 
 public class TableRestControllerTest extends AbstractControllerTest {
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
@@ -45,7 +45,7 @@ public class TableRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<OrderTableResponse> orderTables = OrderTableResponse.listOf(orderTableDao.findAll());
+        List<OrderTableResponse> orderTables = OrderTableResponse.listOf(orderTableRepository.findAll());
 
         String json = mockMvc.perform(get("/api/tables"))
             .andDo(print())
@@ -64,7 +64,7 @@ public class TableRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 테이블의 빈 테이블 여부를 변경할 수 있다.")
     @Test
     void changeEmpty() throws Exception {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
         OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(false, 1);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/empty", orderTable.getId())
@@ -82,7 +82,7 @@ public class TableRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeOrderStatus() throws Exception {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 2, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, false, 2, null));
         OrderTableCreateRequest orderTableCreateRequest = createOrderTableRequest(true, 1);
 
         mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", orderTable.getId())

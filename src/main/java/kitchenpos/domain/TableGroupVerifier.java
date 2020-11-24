@@ -2,7 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
+import kitchenpos.repository.OrderRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -10,10 +10,10 @@ import org.springframework.util.CollectionUtils;
 public class TableGroupVerifier {
     private static final int MIN_TABLE_COUNT = 2;
 
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
 
-    public TableGroupVerifier(OrderDao orderDao) {
-        this.orderDao = orderDao;
+    public TableGroupVerifier(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
     }
 
     public void verifyOrderTableSize(List<Long> orderTableIds) {
@@ -24,8 +24,8 @@ public class TableGroupVerifier {
     }
 
     public void verifyNotCompletedOrderStatus(List<Long> orderTableIds) {
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
+            orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("완료되지 않은 주문이 존재하지 않아야 합니다.");
         }
     }

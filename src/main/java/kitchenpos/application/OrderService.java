@@ -10,42 +10,43 @@ import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderLineItemCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderVerifier;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
-    private final MenuDao menuDao;
+    private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderTableRepository orderTableRepository;
+    private final MenuRepository menuRepository;
     private final OrderVerifier orderVerifier;
 
     public OrderService(
-        final OrderDao orderDao,
-        final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao,
-        final MenuDao menuDao,
+        final OrderRepository orderRepository,
+        final OrderLineItemRepository orderLineItemRepository,
+        final OrderTableRepository orderTableRepository,
+        final MenuRepository menuRepository,
         final OrderVerifier orderVerifier
     ) {
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
-        this.menuDao = menuDao;
+        this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
+        this.orderTableRepository = orderTableRepository;
+        this.menuRepository = menuRepository;
         this.orderVerifier = orderVerifier;
     }
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository
+            .findById(orderCreateRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
 
         final List<OrderLineItem> orderLineItems = orderCreateRequest.getOrderLineItems()
@@ -57,28 +58,29 @@ public class OrderService {
             .map(OrderLineItem::getMenuId)
             .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("주문 항목 개수와 메뉴 개수는 같아야 합니다.");
         }
 
         orderVerifier.verify(orderTable, orderLineItems);
 
-        final Order savedOrder = orderDao.save(orderCreateRequest.toEntity());
+        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity());
 
-        List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
-            .peek(it -> it.changeOrderId(savedOrder.getId()))
-            .map(orderLineItemDao::save)
-            .collect(Collectors.toList());
+        List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.saveAll(
+            orderLineItems.stream()
+                .peek(it -> it.changeOrderId(savedOrder.getId()))
+                .collect(Collectors.toList())
+        );
 
         return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        Map<Long, Order> allOrders = orderDao.findAll()
+        Map<Long, Order> allOrders = orderRepository.findAll()
             .stream()
             .collect(Collectors.toMap(Order::getId, it -> it));
-        Map<Order, List<OrderLineItem>> orderLineItemsGroup = orderLineItemDao
+        Map<Order, List<OrderLineItem>> orderLineItemsGroup = orderLineItemRepository
             .findAllByOrderIdIn(allOrders.keySet()).stream()
             .collect(groupingBy(it -> allOrders.get(it.getOrderId())));
 
@@ -96,14 +98,14 @@ public class OrderService {
         final Long orderId,
         final OrderChangeOrderStatusRequest orderChangeOrderStatusRequest
     ) {
-        final Order savedOrder = orderDao.findById(orderId)
+        final Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
 
         savedOrder.changeOrderStatus(orderChangeOrderStatusRequest.getOrderStatus());
 
         return OrderResponse.of(
-            orderDao.save(savedOrder),
-            orderLineItemDao.findAllByOrderId(savedOrder.getId())
+            orderRepository.save(savedOrder),
+            orderLineItemRepository.findAllByOrderId(savedOrder.getId())
         );
     }
 }
