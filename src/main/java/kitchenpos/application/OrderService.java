@@ -48,38 +48,9 @@ public class OrderService {
         OrderLineItems orderLineItems = OrderLineItems.from(request.getOrderLineItems(), savedOrder);
 
         validateMenusAreExist(orderLineItems.getMenuIds());
-
         final List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(orderLineItems);
 
         return OrderResponse.of(savedOrder, OrderLineItemResponse.of(savedOrderLineItems));
-    }
-
-    private Order saveOrder(Order order) {
-        validateTableIdIsExist(order.getOrderTableId());
-
-        return orderDao.save(order);
-    }
-
-    private void validateTableIdIsExist(Long tableId) {
-        tableDao.findById(tableId)
-            .filter(table -> !table.isEmpty())
-            .orElseThrow(() -> new IllegalArgumentException("ID가 " + tableId + "인 테이블이 존재하지 않습니다."));
-    }
-
-    private void validateMenusAreExist(List<Long> menuIds) {
-        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴를 주문할 수 없습니다.");
-        }
-    }
-
-    private List<OrderLineItem> saveOrderLineItems(OrderLineItems orderLineItems) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-
-        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
-            OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
-            savedOrderLineItems.add(savedOrderLineItem);
-        }
-        return Collections.unmodifiableList(savedOrderLineItems);
     }
 
     @Transactional
@@ -102,5 +73,33 @@ public class OrderService {
             .map(order -> OrderResponse.of(order, OrderLineItemResponse.of(
                 orderLineItemDao.findAllByOrderId(order.getId()))))
             .collect(Collectors.toList());
+    }
+
+    private Order saveOrder(Order order) {
+        validateTableIdIsExist(order.getOrderTableId());
+
+        return orderDao.save(order);
+    }
+
+    private List<OrderLineItem> saveOrderLineItems(OrderLineItems orderLineItems) {
+        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+
+        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
+            OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
+            savedOrderLineItems.add(savedOrderLineItem);
+        }
+        return Collections.unmodifiableList(savedOrderLineItems);
+    }
+
+    private void validateTableIdIsExist(Long tableId) {
+        tableDao.findById(tableId)
+            .filter(table -> !table.isEmpty())
+            .orElseThrow(() -> new IllegalArgumentException("ID가 " + tableId + "인 테이블이 존재하지 않습니다."));
+    }
+
+    private void validateMenusAreExist(List<Long> menuIds) {
+        if (menuIds.size() != menuDao.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴를 주문할 수 없습니다.");
+        }
     }
 }
