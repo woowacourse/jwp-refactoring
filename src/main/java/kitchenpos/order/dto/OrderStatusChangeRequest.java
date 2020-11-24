@@ -1,6 +1,9 @@
 package kitchenpos.order.dto;
 
+import com.sun.istack.NotNull;
+
 public class OrderStatusChangeRequest {
+    @NotNull
     private String orderStatus;
 
     public OrderStatusChangeRequest() {

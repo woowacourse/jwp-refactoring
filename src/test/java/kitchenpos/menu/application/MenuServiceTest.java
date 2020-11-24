@@ -4,6 +4,7 @@ import kitchenpos.generic.Price;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.dto.MenuCreateRequest;
 import kitchenpos.menu.dto.MenuProductCreateRequest;
+import kitchenpos.menu.dto.MenuResponse;
 import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.menugroup.domain.MenuGroup;
@@ -53,9 +54,9 @@ class MenuServiceTest {
 
         MenuCreateRequest request = new MenuCreateRequest("간장+허니", 60000L, savedMenuGroup.getId(),
                 Arrays.asList(menuProductRequest1, menuProductRequest2));
-        Menu savedMenu = menuService.create(request);
+        MenuResponse savedMenu = menuService.create(request);
 
-        assertThat(savedMenu.getId()).isNotNull();
+        assertThat(savedMenu.getMenuId()).isNotNull();
         assertThat(savedMenu.getPrice()).isEqualTo(Price.of(60000L));
     }
 

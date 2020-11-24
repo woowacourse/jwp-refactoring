@@ -1,16 +1,19 @@
 package kitchenpos.ordertable.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class OrderTableEmptyChangeRequest {
-    private boolean empty;
+    @NotNull
+    private Boolean empty;
 
     public OrderTableEmptyChangeRequest() {
     }
 
-    public OrderTableEmptyChangeRequest(boolean empty) {
+    public OrderTableEmptyChangeRequest(Boolean empty) {
         this.empty = empty;
     }
 
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 }

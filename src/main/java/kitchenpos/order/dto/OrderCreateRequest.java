@@ -1,10 +1,12 @@
 package kitchenpos.order.dto;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
+    @NotNull
     private Long orderTableId;
 
     @NotEmpty(message = "주문 항목 없이 주문을 할 수 없습니다.")
