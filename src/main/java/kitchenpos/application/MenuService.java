@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
@@ -23,18 +23,18 @@ import kitchenpos.repository.ProductRepository;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
-    private final MenuProductDao menuProductDao;
+    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
         final MenuRepository menuRepository,
         final MenuGroupDao menuGroupDao,
-        final MenuProductDao menuProductDao,
+        final MenuProductRepository menuProductRepository,
         final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
-        this.menuProductDao = menuProductDao;
+        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -67,7 +67,7 @@ public class MenuService {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProductCreateRequestDto menuProductCreateRequest : menuProductCreateRequests) {
             MenuProduct menuProduct = menuProductCreateRequest.toEntity(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
 
         return MenuResponseDto.from(savedMenu, savedMenuProducts);
@@ -78,7 +78,7 @@ public class MenuService {
 
         List<MenuResponseDto> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
             menuResponses.add(MenuResponseDto.from(menu, menuProducts));
         }
         return menuResponses;

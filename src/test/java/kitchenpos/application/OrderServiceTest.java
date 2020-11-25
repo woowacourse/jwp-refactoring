@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -26,6 +25,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
+import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
@@ -46,7 +46,7 @@ class OrderServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @DisplayName("주문을 등록할 수 있다.")
     @Test
@@ -56,7 +56,7 @@ class OrderServiceTest extends ServiceTest {
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         MenuProduct menuProduct = new MenuProduct(null, menu.getId(), product.getId(), 1);
-        menuProductDao.save(menuProduct);
+        menuProductRepository.save(menuProduct);
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
             new OrderLineCreateRequestDto(menu.getId(), 1));
         OrderCreateRequestDto orderCreateRequestDto = new OrderCreateRequestDto(orderTable.getId(),
@@ -89,7 +89,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
-        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
+        menuProductRepository.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
             new OrderLineCreateRequestDto(menu.getId(), 1));
         OrderCreateRequestDto orderCreateRequest = new OrderCreateRequestDto(orderTable.getId(),
@@ -132,7 +132,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
-        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
+        menuProductRepository.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
             new OrderLineCreateRequestDto(menu.getId(), 1));
         OrderCreateRequestDto orderCreateRequest = new OrderCreateRequestDto(orderTable.getId(),
@@ -152,7 +152,7 @@ class OrderServiceTest extends ServiceTest {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
-        menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
+        menuProductRepository.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
             new OrderLineCreateRequestDto(menu.getId(), 1));
         OrderCreateRequestDto orderCreateRequest = new OrderCreateRequestDto(orderTable.getId(),
