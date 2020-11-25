@@ -128,7 +128,7 @@
     - [x] Menu에 setter 없애기
     - [x] MenuGroup에 setter 없애기
     - [x] Order에 setter 없애기
-    - [ ] OrderTable에 setter 없애기
+    - [x] OrderTable에 setter 없애기
     - [ ] TableGroup에 setter 없애기
 
  
