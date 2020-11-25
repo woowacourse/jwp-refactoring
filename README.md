@@ -119,7 +119,7 @@
 - [ ] 모델에 setter 메서드 사용하지 않기
     - [x] Product에 setter 없애기
     - [x] Menu에 setter 없애기
-    - [ ] MenuGroup에 setter 없애기
+    - [x] MenuGroup에 setter 없애기
     - [ ] Order에 setter 없애기
     - [ ] OrderTable에 setter 없애기
     - [ ] TableGroup에 setter 없애기
