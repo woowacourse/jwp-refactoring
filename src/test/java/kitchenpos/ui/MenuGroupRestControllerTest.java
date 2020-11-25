@@ -57,6 +57,18 @@ class MenuGroupRestControllerTest {
     }
 
     @Test
+    void create_emptyBody_exception() throws Exception {
+        MenuGroup request = null;
+
+        mockMvc.perform(post("/api/menu-groups")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void list() throws Exception {
         MenuGroupResponse menuGroup1 = menuGroupService.create(new MenuGroupRequest("고기"));
         MenuGroupResponse menuGroup2 = menuGroupService.create(new MenuGroupRequest("국"));
