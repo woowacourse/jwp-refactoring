@@ -117,7 +117,7 @@
     - [x] TableGroupService의 로직을 TableGroup으로 이동
     
 - [ ] 모델에 setter 메서드 사용하지 않기
-    - [ ] Product에 setter 없애기
+    - [x] Product에 setter 없애기
     - [ ] Menu에 setter 없애기
     - [ ] MenuGroup에 setter 없애기
     - [ ] Order에 setter 없애기
