@@ -9,16 +9,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequestDto;
 import kitchenpos.dto.MenuGroupResponseDto;
+import kitchenpos.repository.MenuGroupRepository;
 
 class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
@@ -38,7 +38,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = new MenuGroup(null, "치킨");
-        menuGroupDao.save(menuGroup);
+        menuGroupRepository.save(menuGroup);
 
         List<MenuGroupResponseDto> menuGroups = menuGroupService.list();
 

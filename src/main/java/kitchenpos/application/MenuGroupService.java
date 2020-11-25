@@ -5,28 +5,28 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupCreateRequestDto;
 import kitchenpos.dto.MenuGroupResponseDto;
+import kitchenpos.repository.MenuGroupRepository;
 
 @Service
 public class MenuGroupService {
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupDao menuGroupDao) {
-        this.menuGroupDao = menuGroupDao;
+    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+        this.menuGroupRepository = menuGroupRepository;
     }
 
     @Transactional
     public MenuGroupResponseDto create(final MenuGroupCreateRequestDto menuGroupCreateRequest) {
         MenuGroup menuGroup = menuGroupCreateRequest.toEntity();
-        MenuGroup saved = menuGroupDao.save(menuGroup);
+        MenuGroup saved = menuGroupRepository.save(menuGroup);
         return MenuGroupResponseDto.from(saved);
     }
 
     public List<MenuGroupResponseDto> list() {
-        List<MenuGroup> menuGroups = menuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         return MenuGroupResponseDto.listOf(menuGroups);
     }
 }

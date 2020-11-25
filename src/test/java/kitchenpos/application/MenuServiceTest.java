@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,6 +21,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -31,7 +31,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -45,7 +45,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴를 등록할 수 있다.")
     @Test
     void create() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "백마리치킨"));
         Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(product.getId(), 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_000),
@@ -81,7 +81,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록 시, 메뉴에 속한 상품 금액의 합은 메뉴의 가격보다 크거나 같아야 한다.")
     @Test
     void create_OverSumOfProductsPrice_ThrownException() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "백마리치킨"));
         Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(product.getId(), 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_001),
@@ -96,7 +96,7 @@ class MenuServiceTest extends ServiceTest {
     @ValueSource(longs = 1)
     @NullSource
     void create_NonExistingProductId_ThrownException(Long productId) {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "백마리치킨"));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(productId, 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_000),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
@@ -108,7 +108,7 @@ class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "백마리치킨"));
         Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "양념치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductRepository.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
