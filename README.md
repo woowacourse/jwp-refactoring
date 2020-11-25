@@ -112,11 +112,11 @@
 
 - [ ] 테스트하기 쉬운 부분과 어려운 부분을 분리
     - [x] ProductService의 로직을 Product로 이동
-    - [x] MenuService의 로직을 Menu로 이동
+    - [ ] MenuService의 로직을 Menu로 이동
     - [x] MenuGroupService의 로직을 MenuGroup으로 이동
-    - [x] OrderService의 로직을 Order로 이동
-    - [x] OrderTableService의 로직을 OrderTable로 이동
-    - [x] TableGroupService의 로직을 TableGroup으로 이동
+    - [ ] OrderService의 로직을 Order로 이동
+    - [ ] OrderTableService의 로직을 OrderTable로 이동
+    - [ ] TableGroupService의 로직을 TableGroup으로 이동
     
 - [x] 모델에 setter 메서드 사용하지 않기
     - [x] Product에 setter 없애기
