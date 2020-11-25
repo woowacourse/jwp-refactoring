@@ -1,5 +1,7 @@
 package kitchenpos.application.command;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
@@ -11,12 +13,12 @@ public class CreateOrderCommand {
     @NotNull
     private Long orderTableId;
     @NotEmpty
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems;
 
     private CreateOrderCommand() {
     }
 
-    public CreateOrderCommand(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public CreateOrderCommand(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
@@ -26,6 +28,9 @@ public class CreateOrderCommand {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.stream()
+                .map(orderLineItemRequest -> new OrderLineItem(orderLineItemRequest.getMenuId(),
+                        orderLineItemRequest.getQuantity()))
+                .collect(toList());
     }
 }

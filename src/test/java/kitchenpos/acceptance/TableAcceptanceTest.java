@@ -71,7 +71,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createTable() throws Exception {
-        OrderTable orderTable = new OrderTable(null, null, 0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
 
         String request = objectMapper.writeValueAsString(orderTable);
         return post(request, API_TABLES);

@@ -1,15 +1,17 @@
-package kitchenpos.domain.model.order;
+package kitchenpos.application.verifier;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import kitchenpos.domain.model.menu.MenuRepository;
+import kitchenpos.domain.model.order.Order;
+import kitchenpos.domain.model.order.OrderLineItem;
 import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
-@Service
+@Component
 public class CreateOrderVerifier {
     private final MenuRepository menuRepository;
     private final OrderTableRepository orderTableRepository;

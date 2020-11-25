@@ -5,15 +5,31 @@ import static java.util.stream.Collectors.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.model.AggregateReference;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+
 import kitchenpos.domain.model.ordertable.OrderTable;
 
+@Entity
 public class TableGroup {
-    private final Long id;
-    private final List<AggregateReference<OrderTable>> orderTables;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @OneToMany
+    @JoinColumn(name = "table_group_id", nullable = false)
+    private List<OrderTable> orderTables;
+
     private LocalDateTime createdDate;
 
-    public TableGroup(Long id, List<AggregateReference<OrderTable>> orderTables,
+    protected TableGroup() {
+    }
+
+    public TableGroup(Long id, List<OrderTable> orderTables,
             LocalDateTime createdDate) {
         this.id = id;
         this.orderTables = orderTables;
@@ -25,13 +41,9 @@ public class TableGroup {
         return this;
     }
 
-    public void ungroup(TableGroupUngroupService tableGroupUngroupService) {
-        tableGroupUngroupService.resetOrderTables(orderTableIds());
-    }
-
     public List<Long> orderTableIds() {
         return orderTables.stream()
-                .map(AggregateReference::getId)
+                .map(OrderTable::getId)
                 .collect(toList());
     }
 
@@ -39,7 +51,7 @@ public class TableGroup {
         return id;
     }
 
-    public List<AggregateReference<OrderTable>> getOrderTables() {
+    public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 

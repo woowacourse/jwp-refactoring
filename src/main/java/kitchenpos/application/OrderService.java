@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.application.command.ChangeOrderStatusCommand;
 import kitchenpos.application.command.CreateOrderCommand;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.model.order.CreateOrderVerifier;
+import kitchenpos.application.verifier.CreateOrderVerifier;
 import kitchenpos.domain.model.order.Order;
 import kitchenpos.domain.model.order.OrderRepository;
 import kitchenpos.domain.model.order.OrderStatus;
@@ -32,7 +32,7 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        return OrderResponse.listOf(orderRepository.findAll());
+        return OrderResponse.listOf(orderRepository.findAllWithOrderLineItems());
     }
 
     @Transactional

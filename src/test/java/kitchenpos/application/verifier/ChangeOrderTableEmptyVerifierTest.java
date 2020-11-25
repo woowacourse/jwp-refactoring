@@ -1,4 +1,4 @@
-package kitchenpos.domain.model.ordertable;
+package kitchenpos.application.verifier;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -20,6 +20,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.domain.model.order.OrderRepository;
 import kitchenpos.domain.model.order.OrderStatus;
+import kitchenpos.domain.model.ordertable.OrderTable;
+import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
 @ExtendWith(MockitoExtension.class)
 class ChangeOrderTableEmptyVerifierTest {
@@ -31,13 +33,11 @@ class ChangeOrderTableEmptyVerifierTest {
     @InjectMocks
     private ChangeOrderTableEmptyVerifier changeOrderTableEmptyVerifier;
 
-    private OrderTable orderTable1;
-    private OrderTable orderTable2;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable(1L, null, 0, false);
-        orderTable2 = new OrderTable(2L, 1L, 0, true);
+        orderTable = new OrderTable(1L, 0, false);
     }
 
     @DisplayName("테이블 주문 여부 변경")
@@ -45,39 +45,29 @@ class ChangeOrderTableEmptyVerifierTest {
     Stream<DynamicTest> toOrderTable() {
         return Stream.of(
                 dynamicTest("테이블 주문 여부를 변경한다.", this::changeEmptySuccess),
-                dynamicTest("단체 지정이 존재할때 IllegalArgumentException 발생",
-                        this::orderTableHasTableGroupId),
                 dynamicTest("테이블에 모든 주문이 완료 상태가 아닐때 IllegalArgumentException 발생",
                         this::invalidOrderStatus)
         );
     }
 
     private void changeEmptySuccess() {
-        given(orderTableRepository.findById(orderTable1.getId()))
-                .willReturn(Optional.of(orderTable1));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
+        given(orderTableRepository.findById(orderTable.getId()))
+                .willReturn(Optional.of(orderTable));
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
 
-        assertDoesNotThrow(() -> changeOrderTableEmptyVerifier.toOrderTable(orderTable1.getId()));
-    }
-
-    private void orderTableHasTableGroupId() {
-        given(orderTableRepository.findById(orderTable2.getId()))
-                .willReturn(Optional.of(orderTable2));
-
-        assertThatIllegalArgumentException()
-                .isThrownBy(() -> changeOrderTableEmptyVerifier.toOrderTable(orderTable2.getId()));
+        assertDoesNotThrow(() -> changeOrderTableEmptyVerifier.toOrderTable(orderTable.getId()));
     }
 
     private void invalidOrderStatus() {
-        given(orderTableRepository.findById(orderTable1.getId()))
-                .willReturn(Optional.of(orderTable1));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable1.getId(),
+        given(orderTableRepository.findById(orderTable.getId()))
+                .willReturn(Optional.of(orderTable));
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> changeOrderTableEmptyVerifier.toOrderTable(orderTable1.getId()));
+                .isThrownBy(() -> changeOrderTableEmptyVerifier.toOrderTable(orderTable.getId()));
     }
 }

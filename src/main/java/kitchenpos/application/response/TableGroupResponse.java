@@ -3,20 +3,18 @@ package kitchenpos.application.response;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.model.AggregateReference;
-import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.tablegroup.TableGroup;
 
 public class TableGroupResponse {
     private Long id;
     private LocalDateTime createdDate;
-    private List<AggregateReference<OrderTable>> orderTables;
+    private List<Long> orderTables;
 
     private TableGroupResponse() {
     }
 
-    public TableGroupResponse(Long id, LocalDateTime createdDate,
-            List<AggregateReference<OrderTable>> orderTables) {
+    private TableGroupResponse(Long id, LocalDateTime createdDate,
+            List<Long> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -24,7 +22,7 @@ public class TableGroupResponse {
 
     public static TableGroupResponse of(TableGroup tableGroup) {
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
-                tableGroup.getOrderTables());
+                tableGroup.orderTableIds());
     }
 
     public Long getId() {
@@ -35,7 +33,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<AggregateReference<OrderTable>> getOrderTables() {
+    public List<Long> getOrderTables() {
         return orderTables;
     }
 }

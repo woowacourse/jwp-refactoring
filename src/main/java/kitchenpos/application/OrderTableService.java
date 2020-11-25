@@ -9,7 +9,7 @@ import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.command.CreateOrderTableCommand;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.model.ordertable.ChangeOrderTableEmptyVerifier;
+import kitchenpos.application.verifier.ChangeOrderTableEmptyVerifier;
 import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
 

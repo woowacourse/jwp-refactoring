@@ -1,13 +1,15 @@
-package kitchenpos.domain.model.tablegroup;
+package kitchenpos.application.verifier;
 
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
+import static java.util.stream.Collectors.*;
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
+import kitchenpos.domain.model.tablegroup.TableGroup;
 
 @ExtendWith(MockitoExtension.class)
 class CreateTableGroupVerifierTest {
@@ -36,9 +39,7 @@ class CreateTableGroupVerifierTest {
                 dynamicTest("단체 지정을 생성한다.", this::createSuccess),
                 dynamicTest("요청한 테이블들이 하나씩 존재하지 않을때 IllegalArgumentException 발생",
                         this::orderTableMismatch),
-                dynamicTest("테이블에 손님이 있을때 IllegalArgumentException 발생", this::orderTableNotEmpty),
-                dynamicTest("단체 지정이 되어있을때 IllegalArgumentException 발생",
-                        this::orderTableHasTableGroup)
+                dynamicTest("테이블에 손님이 있을때 IllegalArgumentException 발생", this::orderTableNotEmpty)
         );
     }
 
@@ -46,8 +47,8 @@ class CreateTableGroupVerifierTest {
         TableGroup tableGroup = createTableGroup();
 
         given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
-                .willReturn(asList(new OrderTable(1L, null, 0, true),
-                        new OrderTable(2L, null, 0, true)));
+                .willReturn(asList(new OrderTable(1L, 0, true),
+                        new OrderTable(2L, 0, true)));
 
         assertDoesNotThrow(() -> createTableGroupVerifier.toTableGroup(tableGroup.orderTableIds()));
     }
@@ -56,7 +57,7 @@ class CreateTableGroupVerifierTest {
         TableGroup tableGroup = createTableGroup();
 
         given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
-                .willReturn(singletonList(new OrderTable(1L, null, 0, true)));
+                .willReturn(singletonList(new OrderTable(1L, 0, true)));
 
         throwIllegalArgumentException(tableGroup);
     }
@@ -65,24 +66,17 @@ class CreateTableGroupVerifierTest {
         TableGroup tableGroup = createTableGroup();
 
         given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
-                .willReturn(asList(new OrderTable(1L, null, 0, false),
-                        new OrderTable(2L, null, 0, true)));
-
-        throwIllegalArgumentException(tableGroup);
-    }
-
-    private void orderTableHasTableGroup() {
-        TableGroup tableGroup = createTableGroup();
-
-        given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
-                .willReturn(asList(new OrderTable(1L, 1L, 0, true),
-                        new OrderTable(2L, null, 0, true)));
+                .willReturn(asList(new OrderTable(1L, 0, false),
+                        new OrderTable(2L, 0, true)));
 
         throwIllegalArgumentException(tableGroup);
     }
 
     private TableGroup createTableGroup() {
-        return new TableGroup(null, TABLE_GROUP_CREATE_REQUEST.getOrderTables(), null);
+        List<OrderTable> orderTables = TABLE_GROUP_CREATE_REQUEST.getOrderTables().stream()
+                .map(id -> new OrderTable(id, 0, false))
+                .collect(toList());
+        return new TableGroup(null, orderTables, null);
     }
 
     private void throwIllegalArgumentException(TableGroup tableGroup) {

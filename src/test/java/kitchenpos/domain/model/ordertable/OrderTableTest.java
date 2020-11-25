@@ -1,7 +1,6 @@
 package kitchenpos.domain.model.ordertable;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
 
 import java.util.stream.Stream;
@@ -21,14 +20,14 @@ class OrderTableTest {
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable(1L, null, 0, false);
-        orderTable2 = new OrderTable(2L, 1L, 0, true);
+        orderTable1 = new OrderTable(1L, 0, false);
+        orderTable2 = new OrderTable(2L, 0, true);
     }
 
     @DisplayName("테이블 손님 여부 변경")
     @Test
     void changeEmpty() {
-        OrderTable orderTable = new OrderTable(null, null, 0, true);
+        OrderTable orderTable = new OrderTable(null, 0, true);
         orderTable.changeEmpty(false);
 
         assertThat(orderTable.isEmpty()).isFalse();
@@ -49,19 +48,6 @@ class OrderTableTest {
                             .isThrownBy(() -> orderTable2.changeNumberOfGuests(
                                     orderTable2.getNumberOfGuests() + 1));
                 })
-        );
-    }
-
-    @DisplayName("단체 지정 생성")
-    @Test
-    void makeTableGroup() {
-        Long tableGroupId = 1L;
-        OrderTable orderTable = new OrderTable(null, null, 0, true);
-        orderTable.makeTableGroup(tableGroupId);
-
-        assertAll(
-                () -> assertThat(orderTable.getTableGroupId()).isEqualTo(tableGroupId),
-                () -> assertThat(orderTable.isEmpty()).isFalse()
         );
     }
 }

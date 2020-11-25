@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.domain.model.menu.CreateMenuVerifier;
+import kitchenpos.application.verifier.CreateMenuVerifier;
 
 @Import({MenuService.class, CreateMenuVerifier.class})
 class MenuServiceTest extends ApplicationServiceTest {
@@ -29,7 +29,7 @@ class MenuServiceTest extends ApplicationServiceTest {
     @DisplayName("메뉴 전체 조회")
     @Test
     void list() {
-        menuService.create(MENU_REQUEST);
+        menuService.create(MENU_REQUEST2);
         List<MenuResponse> list = menuService.list();
 
         assertThat(list.isEmpty()).isFalse();

@@ -1,4 +1,4 @@
-package kitchenpos.domain.model.order;
+package kitchenpos.application.verifier;
 
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import kitchenpos.domain.model.menu.MenuRepository;
+import kitchenpos.domain.model.order.Order;
 import kitchenpos.domain.model.ordertable.OrderTable;
 import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
@@ -48,7 +49,7 @@ class CreateOrderVerifierTest {
         Order order = createOrder();
         given(menuRepository.countByIdIn(any())).willReturn((long)order.getOrderLineItems().size());
         given(orderTableRepository.findById(order.getOrderTableId()))
-                .willReturn(Optional.of(new OrderTable(1L, null, 1, false)));
+                .willReturn(Optional.of(new OrderTable(1L, 1, false)));
 
         assertDoesNotThrow(
                 () -> createOrderVerifier.toOrder(ORDER_CREATE_REQUEST.getOrderLineItems(),
@@ -76,7 +77,7 @@ class CreateOrderVerifierTest {
         Order order = createOrder();
         given(menuRepository.countByIdIn(any())).willReturn((long)order.getOrderLineItems().size());
         given(orderTableRepository.findById(order.getOrderTableId()))
-                .willReturn(Optional.of(new OrderTable(1L, null, 1, true)));
+                .willReturn(Optional.of(new OrderTable(1L, 1, true)));
 
         throwIllegalArgumentException();
     }

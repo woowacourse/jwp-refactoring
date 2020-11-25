@@ -5,36 +5,37 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.command.CreateTableGroupCommand;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.domain.model.tablegroup.CreateTableGroupVerifier;
+import kitchenpos.application.verifier.CreateTableGroupVerifier;
+import kitchenpos.application.verifier.UngroupTableVerifier;
 import kitchenpos.domain.model.tablegroup.TableGroup;
 import kitchenpos.domain.model.tablegroup.TableGroupRepository;
-import kitchenpos.domain.model.tablegroup.TableGroupUngroupService;
 
 @Service
 public class TableGroupService {
     private final TableGroupRepository tableGroupRepository;
     private final CreateTableGroupVerifier createTableGroupVerifier;
-    private final TableGroupUngroupService tableGroupUngroupService;
+    private final UngroupTableVerifier ungroupTableVerifier;
 
     public TableGroupService(final TableGroupRepository tableGroupRepository,
             CreateTableGroupVerifier createTableGroupVerifier,
-            TableGroupUngroupService tableGroupUngroupService) {
+            UngroupTableVerifier ungroupTableVerifier) {
         this.tableGroupRepository = tableGroupRepository;
         this.createTableGroupVerifier = createTableGroupVerifier;
-        this.tableGroupUngroupService = tableGroupUngroupService;
+        this.ungroupTableVerifier = ungroupTableVerifier;
     }
 
     @Transactional
     public TableGroupResponse create(final CreateTableGroupCommand command) {
-        TableGroup tableGroup = createTableGroupVerifier.toTableGroup(command.orderTableIds());
+        TableGroup tableGroup = createTableGroupVerifier.toTableGroup(command.getOrderTables());
         TableGroup saved = tableGroupRepository.save(tableGroup.create());
         return TableGroupResponse.of(saved);
     }
 
     @Transactional
-    public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+    public void ungroup(final Long id) {
+        TableGroup tableGroup = tableGroupRepository.findByIdWithOrderTables(id)
                 .orElseThrow(IllegalArgumentException::new);
-        tableGroup.ungroup(tableGroupUngroupService);
+        ungroupTableVerifier.verify(tableGroup.orderTableIds());
+        tableGroupRepository.deleteById(id);
     }
 }

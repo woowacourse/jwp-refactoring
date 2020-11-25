@@ -18,7 +18,7 @@ public class CreateOrderTableCommand {
     }
 
     public OrderTable toEntity() {
-        return new OrderTable(null, null, numberOfGuests, empty);
+        return new OrderTable(null, numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

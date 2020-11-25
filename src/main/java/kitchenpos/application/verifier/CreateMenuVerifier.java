@@ -1,10 +1,12 @@
-package kitchenpos.domain.model.menu;
+package kitchenpos.application.verifier;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import kitchenpos.domain.model.menu.Menu;
+import kitchenpos.domain.model.menu.MenuProduct;
 import kitchenpos.domain.model.menugroup.MenuGroupRepository;
 import kitchenpos.domain.model.product.Product;
 import kitchenpos.domain.model.product.ProductRepository;

@@ -1,4 +1,4 @@
-package kitchenpos.domain.model.tablegroup;
+package kitchenpos.application.verifier;
 
 import static java.util.Arrays.*;
 import static org.assertj.core.api.Assertions.*;
@@ -17,21 +17,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.domain.model.AggregateReference;
 import kitchenpos.domain.model.order.OrderRepository;
 import kitchenpos.domain.model.order.OrderStatus;
 import kitchenpos.domain.model.ordertable.OrderTable;
-import kitchenpos.domain.model.ordertable.OrderTableRepository;
+import kitchenpos.domain.model.tablegroup.TableGroup;
 
 @ExtendWith(MockitoExtension.class)
-class TableGroupUngroupServiceTest {
-    @Mock
-    private OrderTableRepository orderTableRepository;
+class UngroupTableVerifierTest {
     @Mock
     private OrderRepository orderRepository;
 
     @InjectMocks
-    private TableGroupUngroupService tableGroupUngroupService;
+    private UngroupTableVerifier ungroupTableVerifier;
 
     @DisplayName("단체 지정 해제")
     @TestFactory
@@ -44,40 +41,29 @@ class TableGroupUngroupServiceTest {
     }
 
     private void ungroupSuccess() {
-        OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
-        OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
-        TableGroup tableGroup = new TableGroup(1L,
-                asList(new AggregateReference<>(orderTable1.getId()),
-                        new AggregateReference<>(orderTable2.getId())), LocalDateTime.now());
+        OrderTable orderTable1 = new OrderTable(1L, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, 0, false);
+        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2),
+                LocalDateTime.now());
 
-        given(orderTableRepository.findAllByIdIn(tableGroup.orderTableIds()))
-                .willReturn(asList(orderTable1, orderTable2));
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(false);
-        given(orderTableRepository.save(orderTable1)).willReturn(orderTable1);
-        given(orderTableRepository.save(orderTable2)).willReturn(orderTable2);
 
-        tableGroup.ungroup(tableGroupUngroupService);
-
-        assertAll(
-                () -> assertThat(orderTable1.getTableGroupId()).isNull(),
-                () -> assertThat(orderTable2.getTableGroupId()).isNull()
-        );
+        assertDoesNotThrow(() -> ungroupTableVerifier.verify(asList(1L, 2L)));
     }
 
     private void invalidOrderStatus() {
-        OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
-        OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
-        TableGroup tableGroup = new TableGroup(1L,
-                asList(new AggregateReference<>(orderTable1.getId()),
-                        new AggregateReference<>(orderTable2.getId())), LocalDateTime.now());
+        OrderTable orderTable1 = new OrderTable(1L, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, 0, false);
+        TableGroup tableGroup = new TableGroup(1L, asList(orderTable1, orderTable2),
+                LocalDateTime.now());
 
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(tableGroup.orderTableIds(),
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
                 .willReturn(true);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> tableGroup.ungroup(tableGroupUngroupService));
+                .isThrownBy(() -> ungroupTableVerifier.verify(asList(1L, 2L)));
     }
 }

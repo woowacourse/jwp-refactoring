@@ -1,4 +1,4 @@
-package kitchenpos.domain.model.menu;
+package kitchenpos.application.verifier;
 
 import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import kitchenpos.domain.model.menu.Menu;
 import kitchenpos.domain.model.menugroup.MenuGroupRepository;
 import kitchenpos.domain.model.product.Product;
 import kitchenpos.domain.model.product.ProductRepository;

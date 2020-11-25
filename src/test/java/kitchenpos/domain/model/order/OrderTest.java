@@ -18,7 +18,7 @@ class OrderTest {
     @Test
     void create() {
         Order order = new Order(1L, 1L, null, null,
-                singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
+                singletonList(new OrderLineItem(1L, 1L)));
 
         Order created = order.create();
         assertAll(
@@ -39,7 +39,7 @@ class OrderTest {
 
     private void changeOrderStatusSuccess() {
         Order order = new Order(1L, 1L, "MEAL", LocalDateTime.now(),
-                singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
+                singletonList(new OrderLineItem(1L, 1L)));
 
         order.changeOrderStatus(OrderStatus.COMPLETION);
 
@@ -48,7 +48,7 @@ class OrderTest {
 
     private void invalidOrder() {
         Order order = new Order(1L, 1L, "COMPLETION", LocalDateTime.now(),
-                singletonList(new OrderLineItem(1L, 1L, 1L, 1L)));
+                singletonList(new OrderLineItem(1L, 1L)));
 
         assertThatIllegalArgumentException().isThrownBy(
                 () -> order.changeOrderStatus(OrderStatus.COMPLETION));

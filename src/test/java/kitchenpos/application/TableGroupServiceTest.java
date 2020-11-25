@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.domain.model.tablegroup.CreateTableGroupVerifier;
-import kitchenpos.domain.model.tablegroup.TableGroupUngroupService;
+import kitchenpos.application.verifier.CreateTableGroupVerifier;
+import kitchenpos.application.verifier.UngroupTableVerifier;
 
-@Import({TableGroupService.class, CreateTableGroupVerifier.class, TableGroupUngroupService.class})
+@Import({TableGroupService.class, CreateTableGroupVerifier.class, UngroupTableVerifier.class})
 class TableGroupServiceTest extends ApplicationServiceTest {
     @Autowired
     private TableGroupService tableGroupService;

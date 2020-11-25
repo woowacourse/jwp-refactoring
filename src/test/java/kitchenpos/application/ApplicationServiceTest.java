@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@ComponentScan(basePackages = "kitchenpos.adapter.infrastructure.persistence")
-@JdbcTest
+@DataJpaTest
 public class ApplicationServiceTest {
 }

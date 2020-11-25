@@ -17,7 +17,7 @@ class CreateMenuCommandTest extends CommandTest {
     void validation() {
         CreateMenuCommand request = new CreateMenuCommand("후라이드+후라이드", BigDecimal.valueOf(19_000L),
                 1L,
-                singletonList(new MenuProduct(null, null, 1L, 2L)));
+                singletonList(new MenuProduct(1L, 2L)));
         CreateMenuCommand badRequest = new CreateMenuCommand("", BigDecimal.valueOf(-1L), null,
                 emptyList());
 

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderTableResponse;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
 @Transactional
 public class AcceptanceTest {
     protected static final String LOCATION = "Location";

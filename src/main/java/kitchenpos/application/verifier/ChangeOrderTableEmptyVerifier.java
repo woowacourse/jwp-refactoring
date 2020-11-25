@@ -1,12 +1,13 @@
-package kitchenpos.domain.model.ordertable;
+package kitchenpos.application.verifier;
 
 import static java.util.Arrays.*;
-import static java.util.Objects.*;
 
 import org.springframework.stereotype.Component;
 
 import kitchenpos.domain.model.order.OrderRepository;
 import kitchenpos.domain.model.order.OrderStatus;
+import kitchenpos.domain.model.ordertable.OrderTable;
+import kitchenpos.domain.model.ordertable.OrderTableRepository;
 
 @Component
 public class ChangeOrderTableEmptyVerifier {
@@ -22,10 +23,6 @@ public class ChangeOrderTableEmptyVerifier {
     public OrderTable toOrderTable(Long id) {
         final OrderTable saved = orderTableRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (nonNull(saved.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(id,
                 asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {

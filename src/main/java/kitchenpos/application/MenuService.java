@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.application.command.CreateMenuCommand;
 import kitchenpos.application.response.MenuResponse;
-import kitchenpos.domain.model.menu.CreateMenuVerifier;
+import kitchenpos.application.verifier.CreateMenuVerifier;
 import kitchenpos.domain.model.menu.Menu;
 import kitchenpos.domain.model.menu.MenuRepository;
 
@@ -30,8 +30,9 @@ public class MenuService {
         return MenuResponse.of(saved);
     }
 
+    @Transactional
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuRepository.findAll();
+        final List<Menu> menus = menuRepository.findAllWithMenuProducts();
         return MenuResponse.listOf(menus);
     }
 }

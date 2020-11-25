@@ -17,9 +17,9 @@ import org.springframework.context.annotation.Import;
 
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.model.order.CreateOrderVerifier;
+import kitchenpos.application.verifier.ChangeOrderTableEmptyVerifier;
+import kitchenpos.application.verifier.CreateOrderVerifier;
 import kitchenpos.domain.model.order.OrderStatus;
-import kitchenpos.domain.model.ordertable.ChangeOrderTableEmptyVerifier;
 
 @Import({OrderService.class, OrderTableService.class, CreateOrderVerifier.class,
         ChangeOrderTableEmptyVerifier.class})
@@ -42,7 +42,7 @@ class OrderServiceTest extends ApplicationServiceTest {
                 () -> assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
                 () -> assertThat(response.getOrderedTime()).isNotNull(),
                 () -> response.getOrderLineItems().forEach(orderLineItem ->
-                        assertThat(orderLineItem.getOrderId()).isEqualTo(response.getId()))
+                        assertThat(orderLineItem).isNotNull())
         );
     }
 
@@ -59,8 +59,7 @@ class OrderServiceTest extends ApplicationServiceTest {
                 () -> assertThat(created.getId()).isEqualTo(last.getId()),
                 () -> assertThat(created.getOrderedTime()).isEqualTo(last.getOrderedTime()),
                 () -> assertThat(created.getOrderStatus()).isEqualTo(last.getOrderStatus()),
-                () -> assertThat(created.getOrderLineItems().get(0).getOrderId()).isEqualTo(
-                        last.getOrderLineItems().get(0).getOrderId())
+                () -> assertThat(created.getOrderLineItems().get(0)).isNotNull()
         );
     }
 
@@ -87,8 +86,7 @@ class OrderServiceTest extends ApplicationServiceTest {
                 () -> assertThat(changed.getOrderedTime()).isEqualTo(last.getOrderedTime()),
                 () -> assertThat(changed.getOrderStatus()).isEqualTo(
                         ORDER_STATUS_CHANGE_REQUEST2.getOrderStatus()),
-                () -> assertThat(changed.getOrderLineItems().get(0).getOrderId()).isEqualTo(
-                        last.getOrderLineItems().get(0).getOrderId())
+                () -> assertThat(changed.getOrderLineItems().get(0)).isNotNull()
         );
     }
 

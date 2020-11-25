@@ -1,31 +1,21 @@
 package kitchenpos.domain.model.order;
 
-public class OrderLineItem {
-    private Long seq;
-    private Long orderId;
+import javax.persistence.Entity;
+
+import kitchenpos.domain.model.IdentifiedValueObject;
+
+@Entity
+public class OrderLineItem extends IdentifiedValueObject {
     private Long menuId;
+
     private long quantity;
 
-    private OrderLineItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
-        this.seq = seq;
-        this.orderId = orderId;
+    public OrderLineItem(Long menuId, long quantity) {
         this.menuId = menuId;
         this.quantity = quantity;
-    }
-
-    public void orderBy(final Long orderId) {
-        this.orderId = orderId;
-    }
-
-    public Long getSeq() {
-        return seq;
-    }
-
-    public Long getOrderId() {
-        return orderId;
     }
 
     public Long getMenuId() {

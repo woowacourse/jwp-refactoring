@@ -45,5 +45,9 @@ public class CreateMenuCommand {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+        // return menuProducts.stream()
+        //         .map(menuProductRequest -> new MenuProduct(menuProductRequest.getProductId(),
+        //                 menuProductRequest.getQuantity()))
+        //         .collect(toList());
     }
 }

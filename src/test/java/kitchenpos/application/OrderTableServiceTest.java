@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
 import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
 import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.domain.model.ordertable.ChangeOrderTableEmptyVerifier;
+import kitchenpos.application.verifier.ChangeOrderTableEmptyVerifier;
 
 @Import({OrderTableService.class, ChangeOrderTableEmptyVerifier.class})
 class OrderTableServiceTest extends ApplicationServiceTest {

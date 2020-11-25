@@ -3,7 +3,9 @@ package kitchenpos.domain.model.ordertable;
 import java.util.List;
 import java.util.Optional;
 
-public interface OrderTableRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
     OrderTable save(OrderTable entity);
 
     Optional<OrderTable> findById(Long id);
@@ -11,6 +13,4 @@ public interface OrderTableRepository {
     List<OrderTable> findAll();
 
     List<OrderTable> findAllByIdIn(List<Long> ids);
-
-    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }
