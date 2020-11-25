@@ -8,7 +8,6 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
@@ -17,22 +16,23 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
 
     public MenuService(
-        final MenuDao menuDao,
+        final MenuRepository menuRepository,
         final MenuGroupDao menuGroupDao,
         final MenuProductDao menuProductDao,
         final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
@@ -61,7 +61,7 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격의 합보다 작거나 같아야 합니다.");
         }
 
-        final Menu savedMenu = menuDao.save(menuCreateRequest.toEntity());
+        final Menu savedMenu = menuRepository.save(menuCreateRequest.toEntity());
 
         final Long menuId = savedMenu.getId();
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
@@ -74,7 +74,7 @@ public class MenuService {
     }
 
     public List<MenuResponseDto> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         List<MenuResponseDto> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {

@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
@@ -24,6 +23,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
 class MenuServiceTest extends ServiceTest {
@@ -37,7 +37,7 @@ class MenuServiceTest extends ServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuProductDao menuProductDao;
@@ -110,7 +110,7 @@ class MenuServiceTest extends ServiceTest {
     void list() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
         Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
-        Menu menu = menuDao.save(new Menu(null, "양념치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
+        Menu menu = menuRepository.save(new Menu(null, "양념치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
 
         List<MenuResponseDto> menuResponses = menuService.list();
