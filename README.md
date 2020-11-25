@@ -109,7 +109,7 @@
     
 ### 2단계
 - [ ] 테스트하기 쉬운 부분과 어려운 부분을 분리
-    - [ ] ProductService의 로직을 Product로 이동
+    - [x] ProductService의 로직을 Product로 이동
     - [ ] MenuService의 로직을 Menu로 이동
     - [ ] MenuGroupService의 로직을 MenGroup으로 이동
     - [ ] OderTableService의 로직을 OrderTable로 이동
