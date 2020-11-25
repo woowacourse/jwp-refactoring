@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +37,7 @@ class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup = createMenuGroup(null, "치킨");
+        MenuGroup menuGroup = new MenuGroup(null, "치킨");
         menuGroupDao.save(menuGroup);
 
         List<MenuGroupResponseDto> menuGroups = menuGroupService.list();

@@ -1,10 +1,8 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +40,8 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
     @Test
     void list() {
-        TableGroup tableGroup = tableGroupDao.save(
-            createTableGroup(null, LocalDateTime.now(), new ArrayList<>()));
-        orderTableDao.save(createOrderTable(null, tableGroup.getId(), 2, false));
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        orderTableDao.save(new OrderTable(null, tableGroup.getId(), 2, false));
 
         List<OrderTableResponseDto> orderTables = tableService.list();
 
@@ -56,11 +53,8 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean status) {
         OrderTableResponseDto orderTableResponse = tableService.create();
-        OrderTable emptyTableRequest = createOrderTable(orderTableResponse.getId(),
-            orderTableResponse.getTableGroupId(), orderTableResponse.getNumberOfGuests(), status);
 
-        OrderTableResponseDto changedOrderTable = tableService.changeEmpty(emptyTableRequest.getId(),
-            emptyTableRequest);
+        OrderTableResponseDto changedOrderTable = tableService.changeEmpty(orderTableResponse.getId(), status);
 
         assertThat(changedOrderTable.isEmpty()).isEqualTo(status);
     }
@@ -69,21 +63,17 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_WithInvalidOrderState_ThrownException(String status) {
-        OrderTable table = orderTableDao.save(createOrderTable(null, null, 0, false));
+        OrderTable table = orderTableDao.save(new OrderTable(null, null, 0, false));
         orderDao.save(new Order(null, table.getId(), status, LocalDateTime.now()));
-        OrderTable emptyTableRequest = createOrderTable(table.getId(),
-            table.getTableGroupId(), table.getNumberOfGuests(), true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(emptyTableRequest.getId(),
-            emptyTableRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), true))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = orderTableDao.save(
-            createOrderTable(null, null, 1, false));
+        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
 
         OrderTableResponseDto changedOrderTable = tableService.changeNumberOfGuests(
             orderTable.getId(), 3);

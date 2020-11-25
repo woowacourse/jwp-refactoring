@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,8 +35,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, null, 0, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, null, 0, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
         TableGroupCreateRequestDto tableGroupCreateRequest = new TableGroupCreateRequestDto(
             Arrays.asList(orderTable1.getId(), orderTable2.getId()));
 
@@ -55,7 +54,7 @@ class TableGroupServiceTest extends ServiceTest {
     void create_WithLessThanTwoTables_ThrownException(int size) {
         List<OrderTable> orderTables = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 0, true));
+            OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
             orderTables.add(orderTable);
         }
         List<Long> orderTableIds = orderTables.stream()
@@ -70,8 +69,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정 시, 존재하지 않는 테이블은 단체지정 할 수 없다.")
     @Test
     void create_WithNonExistingTable_ThrownException() {
-        OrderTable savedTable = orderTableDao.save(createOrderTable(null, null, 0, true));
-        OrderTable notSavedTable = createOrderTable(null, null, 2, true);
+        OrderTable savedTable = orderTableDao.save(new OrderTable(null, null, 0, true));
+        OrderTable notSavedTable = new OrderTable(null, null, 2, true);
         TableGroupCreateRequestDto tableGroupCreateRequest = new TableGroupCreateRequestDto(
             Arrays.asList(savedTable.getId(), notSavedTable.getId()));
 
@@ -82,8 +81,8 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 해지할 수 있다.")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, null, 0, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, null, 0, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
         TableGroupResponseDto tableGroupResponse = tableGroupService.create(
             new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
 
@@ -98,8 +97,8 @@ class TableGroupServiceTest extends ServiceTest {
     @ParameterizedTest
     @ValueSource(strings = {"COOKING", "MEAL"})
     void ungroup_WithInvalidOrderStatus_ThrownException(String status) {
-        OrderTable orderTable1 = orderTableDao.save(createOrderTable(null, null, 0, true));
-        OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, null, 0, true));
+        OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
         TableGroupResponseDto tableGroupResponse = tableGroupService.create(
             new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
         orderDao.save(new Order(null, orderTable1.getId(), status, LocalDateTime.now()));

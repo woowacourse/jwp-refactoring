@@ -40,10 +40,10 @@ public class TableRestController {
     @PutMapping("/api/tables/{orderTableId}/empty")
     public ResponseEntity<OrderTableResponseDto> changeEmpty(
         @PathVariable final Long orderTableId,
-        @RequestBody final OrderTable orderTable
+        @RequestBody final boolean isEmpty
     ) {
         return ResponseEntity.ok()
-            .body(tableService.changeEmpty(orderTableId, orderTable));
+            .body(tableService.changeEmpty(orderTableId, isEmpty));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")

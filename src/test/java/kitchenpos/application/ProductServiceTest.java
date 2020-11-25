@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -42,7 +41,7 @@ class ProductServiceTest extends ServiceTest {
     @Test
     void list() {
         BigDecimal price = BigDecimal.valueOf(18_000);
-        Product productRequest = createProduct(null, "고추마요 치킨", price);
+        Product productRequest = new Product(null, "고추마요 치킨", price);
         productDao.save(productRequest);
 
         List<ProductResponseDto> actual = productService.list();
