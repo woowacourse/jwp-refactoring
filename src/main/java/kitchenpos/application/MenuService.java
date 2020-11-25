@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,31 +11,31 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.ProductRepository;
 
 @Service
 public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
         final MenuDao menuDao,
         final MenuGroupDao menuGroupDao,
         final MenuProductDao menuProductDao,
-        final ProductDao productDao
+        final ProductRepository productRepository
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -47,7 +48,10 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProductCreateRequestDto menuProductCreateRequest : menuProductCreateRequests) {
-            final Product product = productDao.findById(menuProductCreateRequest.getProductId())
+            if (Objects.isNull(menuProductCreateRequest.getProductId())) {
+                throw new IllegalArgumentException("존재하지 않는 메뉴는 등록할 수 없습니다.");
+            }
+            final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴는 등록할 수 없습니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductCreateRequest.getQuantity())));
         }
