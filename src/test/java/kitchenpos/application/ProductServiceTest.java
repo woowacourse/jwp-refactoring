@@ -9,13 +9,12 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequestDto;
+import kitchenpos.dto.ProductResponseDto;
 
 class ProductServiceTest extends ServiceTest {
     @Autowired
@@ -28,25 +27,15 @@ class ProductServiceTest extends ServiceTest {
     void create() {
         String name = "고추마요 치킨";
         BigDecimal price = BigDecimal.valueOf(18_000);
-        Product productRequest = createProduct(null, name, price);
+        ProductCreateRequestDto productRequest = new ProductCreateRequestDto(name, price);
 
-        Product saved = productService.create(productRequest);
+        ProductResponseDto productResponse = productService.create(productRequest);
+
         assertAll(
-            () -> assertThat(saved.getId()).isNotNull(),
-            () -> assertThat(saved.getName()).isEqualTo(name),
-            () -> assertThat(saved.getPrice().longValue()).isEqualTo(price.longValue())
+            () -> assertThat(productResponse.getId()).isNotNull(),
+            () -> assertThat(productResponse.getName()).isEqualTo(name),
+            () -> assertThat(productResponse.getPrice().longValue()).isEqualTo(price.longValue())
         );
-    }
-
-    @DisplayName("상품 등록 시, 상품 가격이 음수 혹은 null이면 예외가 발생한다.")
-    @ParameterizedTest
-    @CsvSource(value = "-1000")
-    @NullSource
-    void create_WithNegativePrice_ThrownException(BigDecimal price) {
-        Product productRequest = createProduct(null, "고추마요 치킨", price);
-
-        assertThatThrownBy(() -> productService.create(productRequest))
-            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품 목록을 조회한다.")
@@ -56,7 +45,7 @@ class ProductServiceTest extends ServiceTest {
         Product productRequest = createProduct(null, "고추마요 치킨", price);
         productDao.save(productRequest);
 
-        List<Product> actual = productService.list();
+        List<ProductResponseDto> actual = productService.list();
 
         assertThat(actual).hasSize(1);
     }
