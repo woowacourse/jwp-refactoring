@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -9,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -19,24 +19,25 @@ import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuRepository menuRepository,
         final OrderRepository orderRepository,
         final OrderLineItemDao orderLineItemDao,
-        final OrderTableDao orderTableDao
+        final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
@@ -55,7 +56,11 @@ public class OrderService {
             throw new IllegalArgumentException("존재하지 않는 메뉴로 주문할 수 없습니다.");
         }
 
-        final OrderTable orderTable = orderTableDao.findById(orderCreateRequest.getOrderTableId())
+        if (Objects.isNull(orderCreateRequest.getOrderTableId())) {
+            throw new IllegalArgumentException("존재하지 않는 테이블에 주문할 수 없습니다.");
+        }
+
+        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블에 주문할 수 없습니다."));
 
         if (orderTable.isEmpty()) {
