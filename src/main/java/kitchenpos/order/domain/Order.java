@@ -80,10 +80,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public boolean isNotCompletion() {
-        return this.getOrderStatus().isNotCompletion();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o)

@@ -9,9 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-
-import kitchenpos.order.domain.Order;
 
 @Entity
 @javax.persistence.Table(name = "order_table")
@@ -21,15 +18,13 @@ public class Table {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "table")
-    private Order order;
-
     @ManyToOne
     private TableGroup tableGroup;
 
     @Column(nullable = false)
     @Embedded
     private TableNumberOfGuests tableNumberOfGuests;
+
     @Column(nullable = false)
     @Embedded
     private TableEmpty tableEmpty;
@@ -46,16 +41,6 @@ public class Table {
         this.tableGroup = tableGroup;
         this.tableNumberOfGuests = new TableNumberOfGuests(numberOfGuests);
         this.tableEmpty = new TableEmpty(empty);
-    }
-
-    public void changeOrder(Order order) {
-        if (Objects.isNull(this.order)) {
-            this.order = order;
-        }
-    }
-
-    public Order getOrder() {
-        return order;
     }
 
     public TableNumberOfGuests getTableNumberOfGuests() {
@@ -97,13 +82,5 @@ public class Table {
 
     public TableGroup getTableGroup() {
         return tableGroup;
-    }
-
-    public boolean hasOrder() {
-        return Objects.nonNull(this.order);
-    }
-
-    public boolean isNotCompletion() {
-        return hasOrder() && order.isNotCompletion();
     }
 }
