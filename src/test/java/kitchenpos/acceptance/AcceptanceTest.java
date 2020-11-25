@@ -3,7 +3,7 @@ package kitchenpos.acceptance;
 import static java.lang.Long.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
-import static kitchenpos.ui.TableRestController.*;
+import static kitchenpos.adapter.presentation.web.OrderTableRestController.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -21,38 +21,14 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.factory.MenuFactory;
-import kitchenpos.factory.MenuGroupFactory;
-import kitchenpos.factory.MenuProductFactory;
-import kitchenpos.factory.OrderFactory;
-import kitchenpos.factory.OrderLineItemFactory;
-import kitchenpos.factory.OrderTableFactory;
-import kitchenpos.factory.ProductFactory;
-import kitchenpos.factory.TableGroupFactory;
+import kitchenpos.application.command.ChangeOrderTableEmptyCommand;
+import kitchenpos.application.response.OrderTableResponse;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Transactional
 public class AcceptanceTest {
     protected static final String LOCATION = "Location";
     private static final String DELIMITER = "/";
-
-    @Autowired
-    protected OrderFactory orderFactory;
-    @Autowired
-    protected OrderLineItemFactory orderLineItemFactory;
-    @Autowired
-    protected OrderTableFactory orderTableFactory;
-    @Autowired
-    protected TableGroupFactory tableGroupFactory;
-    @Autowired
-    protected ProductFactory productFactory;
-    @Autowired
-    protected MenuProductFactory menuProductFactory;
-    @Autowired
-    protected MenuFactory menuFactory;
-    @Autowired
-    protected MenuGroupFactory menuGroupFactory;
 
     @Autowired
     protected ObjectMapper objectMapper;
@@ -123,10 +99,11 @@ public class AcceptanceTest {
                 .andExpect(status().isNoContent());
     }
 
-    protected OrderTable changeOrderTableEmpty(boolean empty, Long orderTableId) throws Exception {
-        OrderTable orderTable = orderTableFactory.create(empty);
+    protected OrderTableResponse changeOrderTableEmpty(boolean empty, Long orderTableId) throws
+            Exception {
+        ChangeOrderTableEmptyCommand request = new ChangeOrderTableEmptyCommand(empty);
 
-        String request = objectMapper.writeValueAsString(orderTable);
-        return put(OrderTable.class, request, API_TABLES + "/" + orderTableId + "/empty");
+        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request),
+                API_TABLES + "/" + orderTableId + "/empty");
     }
 }

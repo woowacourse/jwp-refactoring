@@ -1,6 +1,6 @@
 package kitchenpos.acceptance;
 
-import static kitchenpos.ui.TableRestController.*;
+import static kitchenpos.adapter.presentation.web.OrderTableRestController.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
@@ -12,7 +12,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.command.ChangeNumberOfOrderTableGuestsCommand;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.domain.model.ordertable.OrderTable;
 
 public class TableAcceptanceTest extends AcceptanceTest {
     /**
@@ -40,25 +42,28 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         return Stream.of(
                 dynamicTest("테이블 전체 조회", () -> {
-                    List<OrderTable> tables = getAll(OrderTable.class, API_TABLES);
-                    OrderTable lastTable = getLastItem(tables);
+                    List<OrderTableResponse> tables = getAll(OrderTableResponse.class, API_TABLES);
+                    OrderTableResponse lastTable = getLastItem(tables);
 
                     assertThat(lastTable.getId()).isEqualTo(orderTableId);
                 }),
                 dynamicTest("테이블 주문 여부 변경", () -> {
                     boolean empty = false;
-                    OrderTable orderTable = changeOrderTableEmpty(empty, orderTableId);
+                    OrderTableResponse response = changeOrderTableEmpty(empty, orderTableId);
+
                     assertAll(
-                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
-                            () -> assertThat(orderTable.isEmpty()).isEqualTo(empty)
+                            () -> assertThat(response.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(response.isEmpty()).isEqualTo(empty)
                     );
                 }),
                 dynamicTest("테이블 손님 수 변경", () -> {
                     int numberOfGuests = 3;
-                    OrderTable orderTable = changNumberOfGuests(numberOfGuests, orderTableId);
+                    OrderTableResponse response = changeNumberOfGuests(numberOfGuests,
+                            orderTableId);
+
                     assertAll(
-                            () -> assertThat(orderTable.getId()).isEqualTo(orderTableId),
-                            () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(
+                            () -> assertThat(response.getId()).isEqualTo(orderTableId),
+                            () -> assertThat(response.getNumberOfGuests()).isEqualTo(
                                     numberOfGuests)
                     );
                 })
@@ -66,17 +71,17 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private Long createTable() throws Exception {
-        OrderTable orderTable = orderTableFactory.create(0, true);
+        OrderTable orderTable = new OrderTable(null, null, 0, true);
 
         String request = objectMapper.writeValueAsString(orderTable);
         return post(request, API_TABLES);
     }
 
-    private OrderTable changNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
-        OrderTable orderTable = orderTableFactory.create(numberOfGuests);
-        
-        String request = objectMapper.writeValueAsString(orderTable);
-        return put(OrderTable.class, request,
+    private OrderTableResponse changeNumberOfGuests(int numberOfGuests, Long orderTableId) throws Exception {
+        ChangeNumberOfOrderTableGuestsCommand request = new ChangeNumberOfOrderTableGuestsCommand(
+                numberOfGuests);
+
+        return put(OrderTableResponse.class, objectMapper.writeValueAsString(request),
                 API_TABLES + "/" + orderTableId + "/number-of-guests");
     }
 }

@@ -1,7 +1,7 @@
 package kitchenpos.acceptance;
 
-import static java.util.Collections.*;
-import static kitchenpos.ui.OrderRestController.*;
+import static kitchenpos.adapter.presentation.web.OrderRestController.*;
+import static kitchenpos.fixture.RequestFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.DynamicTest.*;
@@ -13,9 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.application.response.OrderResponse;
 
 public class OrderAcceptanceTest extends AcceptanceTest {
     /**
@@ -40,35 +38,31 @@ public class OrderAcceptanceTest extends AcceptanceTest {
 
         return Stream.of(
                 dynamicTest("주문 전체 조회", () -> {
-                    List<Order> orders = getAll(Order.class, API_ORDERS);
-                    Order lastOrder = getLastItem(orders);
+                    List<OrderResponse> orders = getAll(OrderResponse.class, API_ORDERS);
+                    OrderResponse lastOrder = getLastItem(orders);
 
                     assertThat(lastOrder.getId()).isEqualTo(orderId);
                 }),
                 dynamicTest("주문 상태 변경", () -> {
-                    String orderStatus = OrderStatus.MEAL.name();
-                    Order request = orderFactory.create(orderStatus);
-                    Order order = changeOrderStatus(request, orderId);
-
+                    OrderResponse response = changeOrderStatus(orderId);
                     assertAll(
-                            () -> assertThat(order.getId()).isEqualTo(orderId),
-                            () -> assertThat(order.getOrderStatus()).isEqualTo(orderStatus)
+                            () -> assertThat(response.getId()).isEqualTo(orderId),
+                            () -> assertThat(response.getOrderStatus()).isEqualTo(
+                                    ORDER_STATUS_CHANGE_REQUEST1.getOrderStatus())
                     );
                 })
         );
     }
 
     private Long createOrder() throws Exception {
-        OrderLineItem orderLineItem = orderLineItemFactory.create(1L, 1L);
-        Order order = orderFactory.create(1L, singletonList(orderLineItem));
-        changeOrderTableEmpty(false, order.getOrderTableId());
+        changeOrderTableEmpty(false, ORDER_CREATE_REQUEST.getOrderTableId());
 
-        String request = objectMapper.writeValueAsString(order);
+        String request = objectMapper.writeValueAsString(ORDER_CREATE_REQUEST);
         return post(request, API_ORDERS);
     }
 
-    private Order changeOrderStatus(Order order, Long orderId) throws Exception {
-        String request = objectMapper.writeValueAsString(order);
-        return put(Order.class, request, API_ORDERS + "/" + orderId + "/order-status");
+    private OrderResponse changeOrderStatus(Long orderId) throws Exception {
+        String request = objectMapper.writeValueAsString(ORDER_STATUS_CHANGE_REQUEST1);
+        return put(OrderResponse.class, request, API_ORDERS + "/" + orderId + "/order-status");
     }
 }

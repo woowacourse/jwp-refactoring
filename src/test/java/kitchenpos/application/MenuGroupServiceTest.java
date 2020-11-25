@@ -1,40 +1,36 @@
 package kitchenpos.application;
 
-import static org.mockito.Mockito.*;
+import static kitchenpos.fixture.RequestFixture.*;
+import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.factory.MenuGroupFactory;
+import kitchenpos.application.response.MenuGroupResponse;
 
-@ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
-    @Mock
-    private MenuGroupDao menuGroupDao;
-
-    @InjectMocks
+@Import(MenuGroupService.class)
+class MenuGroupServiceTest extends ApplicationServiceTest {
+    @Autowired
     private MenuGroupService menuGroupService;
 
-    private MenuGroupFactory menuGroupFactory = new MenuGroupFactory();
-
+    @DisplayName("메뉴 그룹 생성")
     @Test
     void create() {
-        MenuGroup menuGroup = menuGroupFactory.create("추천 메뉴");
+        Long menuId = menuGroupService.create(MENU_GROUP_REQUEST).getId();
 
-        menuGroupService.create(menuGroup);
-
-        verify(menuGroupDao).save(menuGroup);
+        assertThat(menuId).isNotNull();
     }
 
+    @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() {
-        menuGroupService.list();
+        menuGroupService.create(MENU_GROUP_REQUEST);
+        List<MenuGroupResponse> list = menuGroupService.list();
 
-        verify(menuGroupDao).findAll();
+        assertThat(list.isEmpty()).isFalse();
     }
 }
