@@ -25,6 +25,7 @@ public class ProductService {
         return ProductResponseDto.from(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponseDto> list() {
         List<Product> products = productRepository.findAll();
         return ProductResponseDto.listOf(products);
