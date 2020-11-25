@@ -25,7 +25,6 @@ public class KitchenposTestHelper {
 
     public static TableGroup createTableGroupRequest(List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
         return tableGroup;
     }
 
@@ -33,7 +32,6 @@ public class KitchenposTestHelper {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
         tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
         return tableGroup;
     }
 

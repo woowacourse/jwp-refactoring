@@ -70,4 +70,15 @@ public class OrderTable {
 
         this.numberOfGuests = numberOfGuests;
     }
+
+    public void group(final Long tableGroupId) {
+        if (Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalArgumentException("이미 그룹 지정이 된 테이블입니다.");
+        }
+        if (!this.empty) {
+            throw new IllegalArgumentException("비어있지 않은 테이블은 그룹지정을 할 수 없습니다.");
+        }
+        this.tableGroupId = tableGroupId;
+        this.empty = false;
+    }
 }
