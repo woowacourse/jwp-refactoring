@@ -1,5 +1,9 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
+import kitchenpos.exception.OrderNotExistException;
+
 public class OrderMenu {
     private Long seq;
     private Long orderId;
@@ -14,6 +18,10 @@ public class OrderMenu {
     }
 
     public OrderMenu(Long seq, Long orderId, Long menuId, long quantity) {
+        if (Objects.isNull(orderId)) {
+            throw new OrderNotExistException();
+        }
+
         this.seq = seq;
         this.orderId = orderId;
         this.menuId = menuId;
