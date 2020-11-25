@@ -38,7 +38,7 @@
 - 모든 table을 조회할 수 있다.
     - [x] 모든 주문 테이블을 한 번에 조회할 수 있다.
 
-- 주문 테이블을 비어있는 상태로 만들 수 있다.
+- 주문 테이블을 빈 테이블 설정 또는 해지할 수 있다.
     - [x] 빈 테이블 설정을 위해서는 테이블 그룹에 속해 있지 않아야 한다.
     - [x] 주문 테이블의 상태가 cooking이거나 meal인 상태가 아니어야 한다.
 
@@ -112,7 +112,7 @@
     - [x] ProductService의 로직을 Product로 이동
     - [ ] MenuService의 로직을 Menu로 이동
     - [ ] MenuGroupService의 로직을 MenGroup으로 이동
-    - [ ] OderTableService의 로직을 OrderTable로 이동
+    - [x] OrderTableService의 로직을 OrderTable로 이동
     - [ ] TableGroupService의 로직을 TableGroup으로 이동
     
 - [ ] 모델에 setter 메서드 사용하지 않기
