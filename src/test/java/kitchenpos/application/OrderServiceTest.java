@@ -187,22 +187,16 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus_WithCompletionOrder_ThrownException(String status) {
         OrderTable orderTable = orderTableDao.save(createOrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "한마리치킨"));
-        Product product = productDao.save(
-            createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
-        MenuProduct menuProductRequest =
-            createMenuProduct(null, null, product.getId(), 1);
-        Menu menu = menuDao.save(
-            createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
-                Collections.singletonList(menuProductRequest)));
-        OrderLineItem orderLineItemRequest =
-            createOrderLineItem(null, null, menu.getId(), 1);
+        Product product = productDao.save(createProduct(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        MenuProduct menuProductRequest = createMenuProduct(null, null, product.getId(), 1);
+        Menu menu = menuDao.save(createMenu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId(),
+            Collections.singletonList(menuProductRequest)));
+        OrderLineItem orderLineItemRequest = createOrderLineItem(null, null, menu.getId(), 1);
         Order orderRequest = createOrder(null, orderTable.getId(), null, null,
             Collections.singletonList(orderLineItemRequest));
         Order order = orderService.create(orderRequest);
 
-        Order completionOrderRequest = createOrder(order.getId(), order.getOrderTableId(),
-            "COMPLETION",
-            LocalDateTime.now(), order.getOrderLineItems());
+        Order completionOrderRequest = createOrder(order.getId(), order.getOrderTableId(), "COMPLETION", LocalDateTime.now(), order.getOrderLineItems());
         orderService.changeOrderStatus(completionOrderRequest.getId(), completionOrderRequest);
 
         Order changedOrderRequest = createOrder(order.getId(), order.getOrderTableId(), status,
@@ -211,6 +205,5 @@ class OrderServiceTest extends ServiceTest {
         assertThatThrownBy(
             () -> orderService.changeOrderStatus(changedOrderRequest.getId(), changedOrderRequest))
             .isInstanceOf(IllegalArgumentException.class);
-
     }
 }
