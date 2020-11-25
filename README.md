@@ -113,7 +113,7 @@
     - [ ] MenuService의 로직을 Menu로 이동
     - [ ] MenuGroupService의 로직을 MenGroup으로 이동
     - [x] OrderTableService의 로직을 OrderTable로 이동
-    - [ ] TableGroupService의 로직을 TableGroup으로 이동
+    - [x] TableGroupService의 로직을 TableGroup으로 이동
     
 - [ ] 모델에 setter 메서드 사용하지 않기
     - [ ] Product에 setter 없애기

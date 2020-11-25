@@ -81,4 +81,8 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.empty = false;
     }
+
+    public void ungroup() {
+        this.tableGroupId = null;
+    }
 }

@@ -23,11 +23,6 @@ public class KitchenposTestHelper {
         return orderTable;
     }
 
-    public static TableGroup createTableGroupRequest(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        return tableGroup;
-    }
-
     public static TableGroup createTableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(id);
