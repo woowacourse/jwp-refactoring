@@ -58,6 +58,18 @@ class ProductRestControllerTest {
     }
 
     @Test
+    void create_emptyBody_exception() throws Exception {
+        ProductRequest request = null;
+
+        mockMvc.perform(post("/api/products")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void list() throws Exception {
         ProductResponse savedProduct = productService.create(new ProductRequest("1", BigDecimal.TEN));
         ProductResponse savedProduct2 = productService.create(new ProductRequest("2", BigDecimal.TEN));
