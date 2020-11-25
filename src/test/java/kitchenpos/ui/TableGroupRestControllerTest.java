@@ -9,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Table;
@@ -41,6 +43,9 @@ class TableGroupRestControllerTest {
 
     @Autowired
     private TableGroupDao tableGroupDao;
+
+    @Autowired
+    private TableGroupService tableGroupService;
 
     @Test
     void create() throws Exception {
@@ -75,6 +80,38 @@ class TableGroupRestControllerTest {
     }
 
     @Test
+    void create_emptyBody_exception() throws Exception {
+        TableGroupCreateRequest request = new TableGroupCreateRequest(new ArrayList<>());
+
+        mockMvc.perform(post("/api/table-groups")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void create_alreadyGrouped_exception() throws Exception {
+        Table table1 = tableDao.save(new Table(4, true));
+        Table table2 = tableDao.save(new Table(5, true));
+        Table table3 = tableDao.save(new Table(6, true));
+        TableGroupCreateRequest before = new TableGroupCreateRequest(
+            Arrays.asList(table1.getId(), table2.getId()));
+        tableGroupService.create(before);
+
+        TableGroupCreateRequest request = new TableGroupCreateRequest(
+            Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
+
+        mockMvc.perform(post("/api/table-groups")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void ungroup() throws Exception {
         Table table1 = tableDao.save(new Table(4, true));
         Table table2 = tableDao.save(new Table(5, true));
@@ -104,5 +141,17 @@ class TableGroupRestControllerTest {
             .findAllByIdIn(Arrays.asList(table1.getId(), table2.getId(), table3.getId()));
 
         assertThat(tables).allSatisfy(orderTable -> assertThat(orderTable.getTableGroupId()).isNull());
+    }
+
+    @Test
+    void ungroup_emptyParam_exception() throws Exception {
+        String url = String.format("/api/table-groups/%d", null);
+
+        mockMvc.perform(delete(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andReturn();
     }
 }
