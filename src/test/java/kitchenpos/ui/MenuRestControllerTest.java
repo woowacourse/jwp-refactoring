@@ -42,10 +42,10 @@ class MenuRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.id", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.name", is("후라이드 2마리 세트")))
                 .andExpect(jsonPath("$.price", is(40_000d)))
-                .andExpect(jsonPath("$.menuGroupId", notNullValue()))
+                .andExpect(jsonPath("$.menuGroupId", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.menuProducts", hasSize(1)));
     }
 

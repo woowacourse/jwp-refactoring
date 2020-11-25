@@ -69,10 +69,10 @@ class OrderRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
-                .andExpect(jsonPath("$.orderTableId", notNullValue()))
+                .andExpect(jsonPath("$.id", notNullValue(Long.class)))
+                .andExpect(jsonPath("$.orderTableId", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.orderStatus", is("COOKING")))
-                .andExpect(jsonPath("$.orderedTime", notNullValue()))
+                .andExpect(jsonPath("$.orderedTime", notNullValue(LocalDateTime.class)))
                 .andExpect(jsonPath("$.orderLineItems", hasSize(1)));
     }
 
@@ -112,10 +112,10 @@ class OrderRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", notNullValue()))
-                .andExpect(jsonPath("$.orderTableId", notNullValue()))
+                .andExpect(jsonPath("$.id", notNullValue(Long.class)))
+                .andExpect(jsonPath("$.orderTableId", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.orderStatus", is("MEAL")))
-                .andExpect(jsonPath("$.orderedTime", notNullValue()));
+                .andExpect(jsonPath("$.orderedTime", notNullValue(LocalDateTime.class)));
 
     }
 }

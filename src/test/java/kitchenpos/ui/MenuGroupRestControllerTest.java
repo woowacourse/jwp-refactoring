@@ -23,7 +23,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
 
         resultActions
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", notNullValue()))
+                .andExpect(jsonPath("$.id", notNullValue(Long.class)))
                 .andExpect(jsonPath("$.name", is("단품메뉴")));
     }
 
