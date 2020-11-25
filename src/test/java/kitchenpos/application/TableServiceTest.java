@@ -8,16 +8,18 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponseDto;
+import kitchenpos.repository.OrderRepository;
 
 class TableServiceTest extends ServiceTest {
     @Autowired
@@ -27,7 +29,7 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문 테이블을 등록할 수 있다.")
     @Test
@@ -61,10 +63,10 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("빈 테이블로 변경 시, 주문 상태가 조리 또는 식사인 주문 테이블은 빈 테이블로 설정할 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void changeEmpty_WithInvalidOrderState_ThrownException(String status) {
+    @CsvSource({"COOKING", "MEAL"})
+    void changeEmpty_WithInvalidOrderState_ThrownException(OrderStatus status) {
         OrderTable table = orderTableDao.save(new OrderTable(null, null, 0, false));
-        orderDao.save(new Order(null, table.getId(), status, LocalDateTime.now()));
+        orderRepository.save(new Order(null, table.getId(), status, LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), true))
             .isInstanceOf(IllegalArgumentException.class);
@@ -75,8 +77,7 @@ class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
 
-        OrderTableResponseDto changedOrderTable = tableService.changeNumberOfGuests(
-            orderTable.getId(), 3);
+        OrderTableResponseDto changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), 3);
 
         assertThat(changedOrderTable.getNumberOfGuests()).isEqualTo(3);
     }

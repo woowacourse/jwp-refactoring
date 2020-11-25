@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
@@ -19,22 +18,23 @@ import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
         final MenuRepository menuRepository,
-        final OrderDao orderDao,
+        final OrderRepository orderRepository,
         final OrderLineItemDao orderLineItemDao,
         final OrderTableDao orderTableDao
     ) {
         this.menuRepository = menuRepository;
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
     }
@@ -62,7 +62,7 @@ public class OrderService {
             throw new IllegalArgumentException("비어있는 테이블에는 주문할 수 없습니다.k");
         }
 
-        final Order savedOrder = orderDao.save(orderCreateRequest.toEntity());
+        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity());
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
@@ -76,7 +76,7 @@ public class OrderService {
     }
 
     public List<OrderResponseDto> list() {
-        final List<Order> orders = orderDao.findAll();
+        final List<Order> orders = orderRepository.findAll();
 
         List<OrderResponseDto> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
@@ -89,11 +89,11 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
-        final Order order = orderDao.findById(orderId)
+        final Order order = orderRepository.findById(orderId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문번호입니다."));
 
         order.changeOrderStatus(orderStatus);
-        Order savedOrder = orderDao.save(order);
+        Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
 

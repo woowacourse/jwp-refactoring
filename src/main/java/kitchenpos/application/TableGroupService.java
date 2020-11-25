@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
@@ -15,16 +14,17 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
+import kitchenpos.repository.OrderRepository;
 
 @Service
 public class TableGroupService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao,
+    public TableGroupService(final OrderRepository orderRepository, final OrderTableDao orderTableDao,
         final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
         this.tableGroupDao = tableGroupDao;
     }
@@ -62,7 +62,7 @@ public class TableGroupService {
             .map(OrderTable::getId)
             .collect(Collectors.toList());
 
-        final List<Order> orders = orderDao.findAllByOrderTableIdIn(orderTableIds);
+        final List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
 
         for (Order order : orders) {
             if (!order.isComplete()) {

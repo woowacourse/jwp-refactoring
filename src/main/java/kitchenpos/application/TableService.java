@@ -6,19 +6,19 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableResponseDto;
+import kitchenpos.repository.OrderRepository;
 
 @Service
 public class TableService {
-    private final OrderDao orderDao;
+    private final OrderRepository orderRepository;
     private final OrderTableDao orderTableDao;
 
-    public TableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public TableService(final OrderRepository orderRepository, final OrderTableDao orderTableDao) {
+        this.orderRepository = orderRepository;
         this.orderTableDao = orderTableDao;
     }
 
@@ -38,8 +38,8 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태이블입니다."));
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
+            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("테이블에 들어간 주문 중 '조리' 또는 '식사 중' 상태인 주문이 남아있습니다.");
         }
 

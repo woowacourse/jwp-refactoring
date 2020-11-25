@@ -2,13 +2,33 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "orders")
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private Long orderTableId;
-    private String orderStatus;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    protected Order() {
+    }
+
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -16,14 +36,14 @@ public class Order {
     }
 
     public boolean isComplete() {
-        return OrderStatus.COMPLETION.name().equals(this.orderStatus);
+        return OrderStatus.COMPLETION.equals(this.orderStatus);
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION.name().equals(this.orderStatus)) {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
             throw new IllegalArgumentException("이미 결제가 끝난 주문은 변경할 수 없습니다.");
         }
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -34,7 +54,7 @@ public class Order {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

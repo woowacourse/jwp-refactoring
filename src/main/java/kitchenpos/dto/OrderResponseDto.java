@@ -15,7 +15,7 @@ public class OrderResponseDto {
 
     public static OrderResponseDto from(Order order, List<OrderLineItem> orderLineItems) {
         List<OrderLineItemResponseDto> orderLineItemResponses = OrderLineItemResponseDto.listOf(orderLineItems);
-        return new OrderResponseDto(order.getId(), order.getOrderTableId(), order.getOrderStatus(),
+        return new OrderResponseDto(order.getId(), order.getOrderTableId(), order.getOrderStatus().name(),
             order.getOrderedTime(), orderLineItemResponses);
     }
 
