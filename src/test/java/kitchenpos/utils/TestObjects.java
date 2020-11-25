@@ -79,6 +79,10 @@ public class TestObjects {
         return orderLineItem;
     }
 
+    public static TableGroup createTableGroup(LocalDateTime createdDate) {
+        return createTableGroup(createdDate, null);
+    }
+
     public static TableGroup createTableGroup(LocalDateTime createdDate, List<OrderTable> tables) {
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setCreatedDate(createdDate);
