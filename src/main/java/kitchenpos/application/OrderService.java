@@ -1,11 +1,18 @@
 package kitchenpos.application;
 
+import static java.util.stream.Collectors.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.Menus;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
@@ -50,21 +57,21 @@ public class OrderService {
     }
 
     private List<OrderLineItem> mapToOrderLineItems(OrderRequest request, Order order) {
-        List<OrderLineItemRequest> orderLineItems = request.getOrderLineItems();
+        List<OrderLineItemRequest> orderLineItemRequests = request.getOrderLineItems();
+        List<Long> menuIds = request.getMenuIds();
 
-        final List<Long> menuIds = orderLineItems.stream()
-            .map(OrderLineItemRequest::getMenuId)
-            .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
+            throw new IllegalArgumentException("주문 항목 개수와 메뉴 개수가 일치하지 않습니다");
         }
 
-        return orderLineItems.stream()
-            .map(orderLineItemRequest -> orderLineItemRequest.toEntity(order,
-                menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(IllegalArgumentException::new)))
-            .collect(Collectors.toList());
+        Menus menus = new Menus(menuRepository.findAllById(menuIds));
+
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            Menu menu = menus.findById(orderLineItemRequest.getMenuId());
+            orderLineItems.add(orderLineItemRequest.toEntity(order, menu));
+        }
+        return orderLineItems;
     }
 
     private OrderTable findOrderTable(OrderRequest request) {
@@ -78,11 +85,19 @@ public class OrderService {
     }
 
     public OrderResponses list() {
-        final List<Order> orders = orderRepository.findAll();
+        final Map<Long, Order> orders = orderRepository.findAll()
+            .stream()
+            .collect(Collectors.toMap(Order::getId, order -> order));
 
-        List<OrderResponse> orderResponses = orders.stream()
-            .map(order -> OrderResponse.of(order, orderLineItemRepository.findAllByOrderId(order.getId())))
-            .collect(Collectors.toList());
+        Map<Long, List<OrderLineItem>> orderLineItems = orderLineItemRepository.findAllByOrderIdIn(orders.keySet())
+            .stream()
+            .collect(groupingBy(orderLineItem -> orders.get(orderLineItem.getIdOfOrder()).getId()));
+
+        List<OrderResponse> orderResponses = orders.values()
+            .stream()
+            .map(order -> OrderResponse.of(order, orderLineItems.getOrDefault(order.getId(), Collections.emptyList())))
+            .collect(toList());
+
         return OrderResponses.from(orderResponses);
     }
 

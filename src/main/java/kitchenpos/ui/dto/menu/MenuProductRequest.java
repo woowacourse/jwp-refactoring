@@ -13,7 +13,7 @@ public class MenuProductRequest {
 
     @NotNull
     @Min(0)
-    private long quantity;
+    private Long quantity;
 
     protected MenuProductRequest() {
     }
@@ -32,7 +32,7 @@ public class MenuProductRequest {
         return productId;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 }

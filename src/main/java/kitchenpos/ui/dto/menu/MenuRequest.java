@@ -3,6 +3,7 @@ package kitchenpos.ui.dto.menu;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
@@ -50,6 +51,12 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
+    }
+
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+            .map(MenuProductRequest::getProductId)
+            .collect(Collectors.toList());
     }
 
     public Menu toEntity(BigDecimal sumOfProductsPrice, MenuGroup menuGroup) {

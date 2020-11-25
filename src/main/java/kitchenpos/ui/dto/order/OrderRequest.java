@@ -2,6 +2,7 @@ package kitchenpos.ui.dto.order;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -28,6 +29,12 @@ public class OrderRequest {
 
     public Order toEntity(OrderTable orderTable) {
         return new Order(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+    }
+
+    public List<Long> getMenuIds(){
+        return orderLineItems.stream()
+            .map(OrderLineItemRequest::getMenuId)
+            .collect(Collectors.toList());
     }
 
     public Long getOrderTableId() {
