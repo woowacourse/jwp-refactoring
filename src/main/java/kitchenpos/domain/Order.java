@@ -8,18 +8,8 @@ public class Order {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
 
     public Order() {
-    }
-
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
-        this.id = id;
-        this.orderTableId = orderTableId;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
     }
 
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
@@ -61,15 +51,14 @@ public class Order {
         this.orderedTime = orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
     public boolean isComplete() {
         return OrderStatus.COMPLETION.name().equals(this.orderStatus);
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.name().equals(this.orderStatus)) {
+            throw new IllegalArgumentException("이미 결제가 끝난 주문은 변경할 수 없습니다.");
+        }
+        this.orderStatus = orderStatus.name();
     }
 }

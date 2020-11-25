@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
@@ -101,8 +102,7 @@ class TableGroupServiceTest extends ServiceTest {
         OrderTable orderTable2 = orderTableDao.save(createOrderTable(null, null, 0, true));
         TableGroupResponseDto tableGroupResponse = tableGroupService.create(
             new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
-        orderDao.save(
-            createOrder(null, orderTable1.getId(), status, LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(null, orderTable1.getId(), status, LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
             .isInstanceOf(IllegalArgumentException.class);

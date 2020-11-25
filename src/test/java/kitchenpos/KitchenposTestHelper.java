@@ -37,7 +37,6 @@ public class KitchenposTestHelper {
         order.setOrderTableId(orderTableId);
         order.setOrderStatus(orderStatus);
         order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
         return order;
     }
 
