@@ -18,7 +18,6 @@ import org.springframework.test.context.jdbc.Sql;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
@@ -188,8 +187,8 @@ class OrderServiceTest {
     }
 
     private Menu saveMenu(MenuGroup savedMenuGroup, Product savedProduct) {
-        MenuProduct menuProduct = createMenuProduct(null, null, savedProduct, 1L);
-        Menu 치킨세트 = createMenu(null, savedMenuGroup, Arrays.asList(menuProduct), "둘둘치킨",
+        createMenuProduct(null, null, savedProduct, 1L);
+        Menu 치킨세트 = createMenu(null, savedMenuGroup, "둘둘치킨",
             BigDecimal.valueOf(1900L));
 
         return menuRepository.save(치킨세트);

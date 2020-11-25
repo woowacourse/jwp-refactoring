@@ -51,11 +51,9 @@ public class MenuService {
             .map(req -> new MenuProduct(null, menu, findProduct(req.getProductId()), req.getQuantity()))
             .collect(collectingAndThen(toList(), list -> new MenuProducts(list, request.getPrice())));
 
-        List<MenuProduct> savedMenuProducts = menuProducts.stream()
+        menuProducts.stream()
             .map(menuProductRepository::save)
             .collect(toList());
-
-        savedMenu.changeMenuProducts(savedMenuProducts);
 
         return savedMenu.getId();
     }

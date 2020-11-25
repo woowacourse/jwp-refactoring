@@ -42,8 +42,8 @@ public class TableService {
     public void editEmpty(final Long orderTableId, TableEmptyEditRequest request) {
         final Table savedTable = findOne(orderTableId);
 
-        if (orderRepository.existsByTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
+        if (orderRepository.existsByTableAndOrderStatusIn(
+            savedTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalOrderStatusException("테이블을 비울 때, 유효하지않은 OrderStatus 상태입니다.");
         }
 

@@ -1,7 +1,6 @@
 package kitchenpos.menu.dto;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import kitchenpos.menu.domain.Menu;
@@ -42,6 +41,6 @@ public class MenuCreateRequest {
     }
 
     public Menu toEntity(MenuGroup menuGroup) {
-        return new Menu(name, BigDecimal.valueOf(price), menuGroup, new ArrayList<>());
+        return new Menu(name, BigDecimal.valueOf(price), menuGroup);
     }
 }

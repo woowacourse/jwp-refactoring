@@ -1,7 +1,6 @@
 package kitchenpos.menu.domain;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -9,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import kitchenpos.menu.exception.InvalidMenuPriceException;
 
@@ -27,24 +25,19 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
-
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
-        List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
         validate(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
     }
 
     private void validate(BigDecimal price) {
@@ -67,13 +60,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void changeMenuProducts(List<MenuProduct> savedMenuProducts) {
-        this.menuProducts = savedMenuProducts;
     }
 }
