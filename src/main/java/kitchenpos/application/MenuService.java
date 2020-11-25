@@ -3,13 +3,16 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuVerifier;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
@@ -40,40 +43,35 @@ public class MenuService {
 
     @Transactional
     public MenuResponseDto create(final MenuCreateRequestDto menuCreateRequest) {
-        if (Objects.isNull(menuCreateRequest.getMenuGroupId()) || !menuGroupRepository.existsById(
-            menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴그룹입니다.");
-        }
+        validateMenuGroupExistence(menuCreateRequest.getMenuGroupId());
 
-        final List<MenuProductCreateRequestDto> menuProductCreateRequests = menuCreateRequest.getMenuProductRequestDto();
+        final List<Long> productsIds = menuCreateRequest.getMenuProductRequestDto().stream()
+            .map(MenuProductCreateRequestDto::getProductId)
+            .collect(Collectors.toList());
+        final List<MenuProduct> menuProducts = menuCreateRequest.getMenuProductRequestDto().stream()
+            .map(MenuProductCreateRequestDto::toEntity)
+            .collect(Collectors.toList());
+        final List<Product> products = productRepository.findAllById(productsIds);
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProductCreateRequestDto menuProductCreateRequest : menuProductCreateRequests) {
-            if (Objects.isNull(menuProductCreateRequest.getProductId())) {
-                throw new IllegalArgumentException("존재하지 않는 메뉴는 등록할 수 없습니다.");
-            }
-            final Product product = productRepository.findById(menuProductCreateRequest.getProductId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴는 등록할 수 없습니다."));
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductCreateRequest.getQuantity())));
-        }
-
-        final BigDecimal price = menuCreateRequest.getPrice();
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("메뉴의 가격은 메뉴 상품 가격의 합보다 작거나 같아야 합니다.");
-        }
+        MenuVerifier.validateMenuPrice(menuCreateRequest.getPrice(), menuProducts, products);
 
         final Menu savedMenu = menuRepository.save(menuCreateRequest.toEntity());
-
         final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProductCreateRequestDto menuProductCreateRequest : menuProductCreateRequests) {
-            MenuProduct menuProduct = menuProductCreateRequest.toEntity(menuId);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.changeMenuId(menuId);
         }
+        menuProductRepository.saveAll(menuProducts);
 
-        return MenuResponseDto.from(savedMenu, savedMenuProducts);
+        return MenuResponseDto.from(savedMenu, menuProducts);
     }
 
+    private void validateMenuGroupExistence(Long menuGroupId) {
+        if (Objects.isNull(menuGroupId) || !menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("존재하지 않는 메뉴그룹입니다.");
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<MenuResponseDto> list() {
         final List<Menu> menus = menuRepository.findAll();
 

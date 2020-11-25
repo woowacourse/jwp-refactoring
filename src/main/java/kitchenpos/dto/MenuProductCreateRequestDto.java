@@ -25,4 +25,8 @@ public class MenuProductCreateRequestDto {
     public MenuProduct toEntity(Long menuId) {
         return new MenuProduct(null, menuId, productId, quantity);
     }
+
+    public MenuProduct toEntity() {
+        return new MenuProduct(null, null, productId, quantity);
+    }
 }
