@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -20,6 +19,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponseDto;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 
 class TableServiceTest extends ServiceTest {
     @Autowired
@@ -27,7 +27,7 @@ class TableServiceTest extends ServiceTest {
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
     @Autowired
     private OrderRepository orderRepository;
 
@@ -42,7 +42,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 목록을 조회할 수 있다.")
     @Test
     void list() {
-        TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         orderTableRepository.save(new OrderTable(null, tableGroup.getId(), 2, false));
 
         List<OrderTableResponseDto> orderTables = tableService.list();
