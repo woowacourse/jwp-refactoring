@@ -1,162 +1,111 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IsolatedTest;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupCreateRequestDto;
+import kitchenpos.dto.TableGroupResponseDto;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
-class TableGroupServiceTest extends IsolatedTest {
-
+class TableGroupServiceTest extends ServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
-    @DisplayName("테이블 그룹을 생성한다.")
+    @DisplayName("단체 지정을 할 수 있다.")
     @Test
-    void createTableGroup() {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, true);
+    void create() {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        TableGroupCreateRequestDto tableGroupCreateRequest = new TableGroupCreateRequestDto(
+            Arrays.asList(orderTable1.getId(), orderTable2.getId()));
 
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
+        TableGroupResponseDto tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
 
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
-
-        assertThat(savedTableGroup.getOrderTables()).size().isEqualTo(2);
+        assertAll(
+            () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+            () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
+        );
     }
 
-    @DisplayName("테이블 그룹 생성 요청 수가 2보다 작으면 예외 발생")
+    @DisplayName("단체 지정 시, 2개 미만의 테이블은 단체지정을 할 수 없다.")
     @ParameterizedTest
     @ValueSource(ints = {0, 1})
-    void createTableGroupSizeException(int size) {
+    void create_WithLessThanTwoTables_ThrownException(int size) {
         List<OrderTable> orderTables = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            orderTables.add(createOrderTable(Long.valueOf(i + 1), null, 0, true));
+            OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+            orderTables.add(orderTable);
         }
+        List<Long> orderTableIds = orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toList());
+        TableGroupCreateRequestDto tableGroupCreateRequest = new TableGroupCreateRequestDto(orderTableIds);
 
-        TableGroup tableGroupRequest = createTableGroupRequest(orderTables);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("존재하지 않는 테이블을 그룹 지정시 예외 발생")
+    @DisplayName("단체 지정 시, 존재하지 않는 테이블은 단체지정 할 수 없다.")
     @Test
-    void createTableGroupByNotExistingOrderTableException() {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, true);
+    void create_WithNonExistingTable_ThrownException() {
+        OrderTable savedTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        OrderTable notSavedTable = new OrderTable(null, null, 2, true);
+        TableGroupCreateRequestDto tableGroupCreateRequest = new TableGroupCreateRequestDto(
+            Arrays.asList(savedTable.getId(), notSavedTable.getId()));
 
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
-
-        OrderTable notSavedTable = new OrderTable();
-        notSavedTable.setId(3L);
-
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2, notSavedTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("그룹 지정하려는 테이블이 비어있지 않으면 예외 발생")
-    @ParameterizedTest
-    @ValueSource(longs = {1, 2})
-    void createTableGroupByNotProperOrderTableStatusException(Long value) {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, value.equals(1L) ? true : false);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, value.equals(2L) ? true : false);
-
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
-
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("그룹 지정하려는 테이블이 이미 그룹 지정되어 있으면 예외 발생")
+    @DisplayName("단체 지정을 해지할 수 있다.")
     @Test
-    void createTableGroupByOrderTableAlreadyInGroupException() {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest3 = createOrderTable(null, null, 0, true);
+    void ungroup() {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        TableGroupResponseDto tableGroupResponse = tableGroupService.create(
+            new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
 
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
-        OrderTable savedTable3 = orderTableDao.save(tableRequest3);
+        tableGroupService.ungroup(tableGroupResponse.getId());
 
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2));
-
-        tableGroupService.create(tableGroupRequest);
-
-        TableGroup tableGroupRequest2 = createTableGroupRequest(Arrays.asList(savedTable2, savedTable3));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest2))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("테이블 그룹을 해제한다.")
-    @Test
-    void ungroupTable() {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, true);
-
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
-
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
-
-        tableGroupService.ungroup(savedTableGroup.getId());
-
-        for (OrderTable orderTable : orderTableDao.findAll()) {
+        for (OrderTable orderTable : orderTableRepository.findAll()) {
             assertThat(orderTable.getTableGroupId()).isNull();
         }
     }
 
-    @DisplayName("테이블 그룹 해제시 테이블의 주문 상태가 완료가 아닐 경우 예외")
+    @DisplayName("단체 해제 시, 단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void ungroupTableByNotCompleteOrderStatusException(String orderStatus) {
-        OrderTable tableRequest1 = createOrderTable(null, null, 0, true);
-        OrderTable tableRequest2 = createOrderTable(null, null, 0, true);
+    @CsvSource({"COOKING", "MEAL"})
+    void ungroup_WithInvalidOrderStatus_ThrownException(OrderStatus status) {
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(null, null, 0, true));
+        TableGroupResponseDto tableGroupResponse = tableGroupService.create(
+            new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
+        orderRepository.save(new Order(null, orderTable1.getId(), status, LocalDateTime.now()));
 
-        OrderTable savedTable1 = orderTableDao.save(tableRequest1);
-        OrderTable savedTable2 = orderTableDao.save(tableRequest2);
-
-        TableGroup tableGroupRequest = createTableGroupRequest(Arrays.asList(savedTable1, savedTable2));
-
-        TableGroup savedTableGroup = tableGroupService.create(tableGroupRequest);
-
-        Order order = createOrder(null, savedTable1.getId(), orderStatus, LocalDateTime.now(), Collections.emptyList());
-        orderDao.save(order);
-
-        assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 }

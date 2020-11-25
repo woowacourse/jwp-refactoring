@@ -1,42 +1,47 @@
 package kitchenpos.application;
 
-import static kitchenpos.KitchenposTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.IsolatedTest;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequestDto;
+import kitchenpos.dto.MenuGroupResponseDto;
+import kitchenpos.repository.MenuGroupRepository;
 
-class MenuGroupServiceTest extends IsolatedTest {
-
+class MenuGroupServiceTest extends ServiceTest {
     @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
+    @DisplayName("메뉴 그룹을 등록할 수 있다.")
     @Test
-    void createMenuGroupByValidInput() {
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
+    void create() {
+        String name = "치킨";
+        MenuGroupCreateRequestDto menuGroupCreateRequest = new MenuGroupCreateRequestDto(name);
 
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
+        MenuGroupResponseDto menuGroupResponse = menuGroupService.create(menuGroupCreateRequest);
 
         assertAll(
-            () -> assertThat(menuGroup.getId()).isNotNull(),
-            () -> assertThat(menuGroup.getName()).isEqualTo(menuGroupRequest.getName())
+            () -> assertThat(menuGroupResponse.getId()).isNotNull(),
+            () -> assertThat(menuGroupResponse.getName()).isEqualTo(name)
         );
     }
 
+    @DisplayName("메뉴 그룹의 목록을 조회할 수 있다.")
     @Test
-    void findAll() {
-        MenuGroup menuGroupRequest = createMenuGroup(null, "한마리 치킨");
+    void list() {
+        MenuGroup menuGroup = new MenuGroup(null, "치킨");
+        menuGroupRepository.save(menuGroup);
 
-        MenuGroup menuGroup = menuGroupService.create(menuGroupRequest);
+        List<MenuGroupResponseDto> menuGroups = menuGroupService.list();
 
-        List<MenuGroup> groups = menuGroupService.list();
-
-        assertThat(groups).size().isEqualTo(1);
+        assertThat(menuGroups).hasSize(1);
     }
 }
