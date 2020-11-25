@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponseDto;
@@ -69,8 +70,7 @@ class TableServiceTest extends ServiceTest {
     @ValueSource(strings = {"COOKING", "MEAL"})
     void changeEmpty_WithInvalidOrderState_ThrownException(String status) {
         OrderTable table = orderTableDao.save(createOrderTable(null, null, 0, false));
-        orderDao.save(
-            createOrder(null, table.getId(), status, LocalDateTime.now(), new ArrayList<>()));
+        orderDao.save(new Order(null, table.getId(), status, LocalDateTime.now()));
         OrderTable emptyTableRequest = createOrderTable(table.getId(),
             table.getTableGroupId(), table.getNumberOfGuests(), true);
 

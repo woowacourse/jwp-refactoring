@@ -90,21 +90,15 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+    public OrderResponseDto changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
+        final Order order = orderDao.findById(orderId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문번호입니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        order.changeOrderStatus(orderStatus);
+        Order savedOrder = orderDao.save(order);
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
 
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
+        return OrderResponseDto.from(savedOrder, orderLineItems);
     }
 }

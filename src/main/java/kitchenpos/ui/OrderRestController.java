@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
 
@@ -39,10 +39,10 @@ public class OrderRestController {
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponseDto> changeOrderStatus(
         @PathVariable final Long orderId,
-        @RequestBody final Order order
+        @RequestBody final OrderStatus orderStatus
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatus));
     }
 }

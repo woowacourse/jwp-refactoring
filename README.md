@@ -112,7 +112,7 @@
     - [x] ProductService의 로직을 Product로 이동
     - [x] MenuService의 로직을 Menu로 이동
     - [x] MenuGroupService의 로직을 MenuGroup으로 이동
-    - [ ] OrderService의 로직을 Order로 이동
+    - [x] OrderService의 로직을 Order로 이동
     - [x] OrderTableService의 로직을 OrderTable로 이동
     - [x] TableGroupService의 로직을 TableGroup으로 이동
     
