@@ -26,8 +26,6 @@ public class ProductService {
     }
 
     public List<ProductResponse> list() {
-        List<Product> products = productRepository.findAll();
-
-        return ProductResponse.toResponseList(products);
+        return ProductResponse.toResponseList(productRepository.findAll());
     }
 }

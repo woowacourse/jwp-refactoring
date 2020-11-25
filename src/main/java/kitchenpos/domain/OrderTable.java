@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,6 +34,24 @@ public class OrderTable {
 
     public static OrderTable of(TableGroup tableGroup, int numberOfGuests, boolean empty) {
         return new OrderTable(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public void validateGroupNotNull() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 null이 아닙니다.");
+        }
+    }
+
+    public void validateNumberOfGuests() {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 숫는 0 이상이어야 합니다.");
+        }
+    }
+
+    public void validateEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {

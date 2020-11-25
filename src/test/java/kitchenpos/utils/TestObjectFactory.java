@@ -54,7 +54,7 @@ public class TestObjectFactory {
     }
 
     public static OrderChangeRequest createOrderChangeRequest(String orderStatus) {
-        Order order = Order.of(null, OrderStatus.valueOf(orderStatus), null);
+        Order order = Order.of(new OrderTable(), OrderStatus.valueOf(orderStatus), null);
 
         return OrderChangeRequest.of(order);
     }

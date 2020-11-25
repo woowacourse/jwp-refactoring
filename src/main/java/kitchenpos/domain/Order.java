@@ -53,7 +53,14 @@ public class Order {
 
     public static Order of(OrderTable orderTable, OrderStatus orderStatus,
         LocalDateTime orderedTime) {
+        validate(orderTable);
         return new Order(null, orderTable, orderStatus, orderedTime, null);
+    }
+
+    private static void validate(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("OrderTable이 비어있습니다.");
+        }
     }
 
     public Long getId() {

@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Products;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
@@ -15,6 +16,7 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.utils.ProductsFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,23 +27,28 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
+    private final ProductsFactory productsFactory;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
-        final ProductRepository productRepository
-    ) {
+        final MenuRepository menuRepository,
+        final MenuGroupRepository menuGroupRepository,
+        final MenuProductRepository menuProductRepository,
+        final ProductRepository productRepository,
+        ProductsFactory productsFactory) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
+        this.productsFactory = productsFactory;
     }
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest menuCreateRequest) {
-        validateMenuGroupExist(menuCreateRequest);
-        validateSummation(menuCreateRequest);
+        Products products = new Products(productsFactory.generate(menuCreateRequest));
+        Price price = Price.of(menuCreateRequest.getPrice());
+
+        validateMenuGroupIdExist(menuCreateRequest);
+        products.validate(price);
 
         final Menu savedMenu = saveMenu(menuCreateRequest);
         List<MenuProductResponse> menuProductResponses
@@ -50,26 +57,8 @@ public class MenuService {
         return MenuResponse.of(savedMenu, menuProductResponses);
     }
 
-    private void validateMenuGroupExist(MenuCreateRequest menuCreateRequest) {
+    private void validateMenuGroupIdExist(MenuCreateRequest menuCreateRequest) {
         if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateSummation(MenuCreateRequest menuCreateRequest) {
-        final BigDecimal price = menuCreateRequest.getPrice();
-        final List<MenuProductRequest> menuProductsRequest
-            = menuCreateRequest.getMenuProductRequests();
-        BigDecimal sum = BigDecimal.ZERO;
-
-        for (final MenuProductRequest menuProductRequest : menuProductsRequest) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum.add(
-                product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
     }
@@ -91,7 +80,8 @@ public class MenuService {
     }
 
     private Menu saveMenu(MenuCreateRequest menuCreateRequest) {
-        MenuGroup menuGroup = menuGroupRepository.getOne(menuCreateRequest.getMenuGroupId());
+        MenuGroup menuGroup = menuGroupRepository.findById(menuCreateRequest.getMenuGroupId())
+            .orElseThrow(()->new IllegalArgumentException("Group Id를 찾을 수 없습니다."));
 
         return menuRepository.save(menuCreateRequest.toEntity(menuGroup));
     }

@@ -4,15 +4,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.Menus;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderChangeRequest;
 import kitchenpos.dto.OrderCreateRequest;
-import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderLineItemResponse;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
@@ -21,7 +20,6 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -32,10 +30,10 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+        final MenuRepository menuRepository,
+        final OrderRepository orderRepository,
+        final OrderLineItemRepository orderLineItemRepository,
+        final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -45,43 +43,24 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest orderCreateRequest) {
-        final List<OrderLineItemRequest> orderLineItemRequests
-            = orderCreateRequest.getOrderLineItemRequests();
-        validateOrderLineItemRequests(orderLineItemRequests);
-
-        final List<Long> menuIds = orderLineItemRequests.stream()
-            .map(o -> o.getMenuId())
-            .collect(Collectors.toList());
-        validateMenuIds(orderLineItemRequests, menuIds);
+        OrderLineItems orderLineItems
+            = new OrderLineItems(orderCreateRequest.getOrderLineItems());
+        Menus menus = new Menus(orderLineItems.toMenus());
+        validateMenuIds(menus);
 
         final OrderTable orderTable = orderTableRepository
             .findById(orderCreateRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        validateOrderTable(orderTable);
 
         final Order savedOrder = saveOrder(orderTable);
         List<OrderLineItemResponse> orderLineItemResponses
-            = createOrderLineItemResponses(savedOrder, orderLineItemRequests);
+            = createOrderLineItemResponses(orderLineItems, savedOrder);
 
         return OrderResponse.of(savedOrder, orderLineItemResponses);
     }
 
-    private void validateOrderLineItemRequests(
-        List<OrderLineItemRequest> orderLineItemRequests) {
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateMenuIds(List<OrderLineItemRequest> orderLineItemRequests,
-        List<Long> menuIds) {
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
+    private void validateMenuIds(Menus menus) {
+        if (!menus.isSameSize(menuRepository.countByIdIn(menus.extractIds()))) {
             throw new IllegalArgumentException();
         }
     }
@@ -91,16 +70,16 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    private List<OrderLineItemResponse> createOrderLineItemResponses(Order savedOrder,
-        List<OrderLineItemRequest> orderLineItemRequests) {
+    private List<OrderLineItemResponse> createOrderLineItemResponses(
+        OrderLineItems orderLineItems, Order savedOrder) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            Menu menu = menuRepository.getOne(orderLineItemRequest.getMenuId());
-            long quantity = orderLineItemRequest.getQuantity();
-            OrderLineItem orderLineItem = orderLineItemRequest
-                .toEntity(savedOrder, menu, quantity);
+        for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
+            OrderLineItem newOrderLineItem
+                = new OrderLineItem(savedOrder.getId(), savedOrder, orderLineItem.getMenu(),
+                orderLineItem.getQuantity());
+            OrderLineItem savedOrderLineItem = orderLineItemRepository.save(newOrderLineItem);
 
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            savedOrderLineItems.add(savedOrderLineItem);
         }
 
         return OrderLineItemResponse.toResponseList(savedOrderLineItems);

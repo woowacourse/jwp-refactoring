@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableChangeRequest;
@@ -19,14 +18,12 @@ public class TableService {
 
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final TableGroupRepository tableGroupRepository;
 
     public TableService(final OrderRepository orderRepository,
         final OrderTableRepository orderTableRepository,
         final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
@@ -49,7 +46,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        validateTableGroup(savedOrderTable);
+        savedOrderTable.validateGroupNotNull();
         validateStatus(orderTableId);
 
         OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
@@ -58,12 +55,6 @@ public class TableService {
         OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
-    }
-
-    private void validateTableGroup(OrderTable savedOrderTable) {
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
     }
 
     private void validateStatus(Long orderTableId) {
@@ -77,11 +68,13 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId,
         final OrderTableChangeRequest orderTableChangeRequest) {
         final int numberOfGuests = orderTableChangeRequest.getNumberOfGuests();
-        validateNumberOfGuests(numberOfGuests);
+
+        OrderTable orderTable = orderTableChangeRequest.toEntity(null);
+        orderTable.validateNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-        validateOrderTableEmpty(savedOrderTable);
+        savedOrderTable.validateEmpty();
 
         OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
             savedOrderTable.getTableGroup(), numberOfGuests,
@@ -89,17 +82,5 @@ public class TableService {
         OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
-    }
-
-    private void validateNumberOfGuests(int numberOfGuests) {
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTableEmpty(OrderTable savedOrderTable) {
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
     }
 }
