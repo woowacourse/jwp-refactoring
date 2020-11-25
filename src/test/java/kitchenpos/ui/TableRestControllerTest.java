@@ -16,7 +16,9 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
+import kitchenpos.dto.ChangeEmptyRequest;
+import kitchenpos.dto.ChangeNumberOfGuestsRequest;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends MvcTest {
@@ -27,65 +29,63 @@ class TableRestControllerTest extends MvcTest {
     @DisplayName("/api/tables로 POST요청 성공 테스트")
     @Test
     void createTest() throws Exception {
-        given(tableService.create(any())).willReturn(ORDER_TABLE_1);
+        given(tableService.create()).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(ORDER_TABLE_1);
-        MvcResult mvcResult = postAction("/api/tables", inputJson)
+        MvcResult mvcResult = postAction("/api/tables")
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "/api/tables/1"))
             .andReturn();
 
-        OrderTable orderTableResponse =
-            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), OrderTable.class);
-        assertThat(orderTableResponse).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        Table tableResponse =
+            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Table.class);
+        assertThat(tableResponse).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 
     @DisplayName("/api/tables로 GET요청 성공 테스트")
     @Test
     void listTest() throws Exception {
-        given(tableService.list()).willReturn(Arrays.asList(ORDER_TABLE_1, ORDER_TABLE_2));
+        given(tableService.list()).willReturn(Arrays.asList(TABLE_1, TABLE_2));
 
         MvcResult mvcResult = getAction("/api/tables")
             .andExpect(status().isOk())
             .andReturn();
 
-        List<OrderTable> orderTablesResponse = objectMapper.readValue(
+        List<Table> tablesResponse = objectMapper.readValue(
             mvcResult.getResponse().getContentAsString(),
-            new TypeReference<List<OrderTable>>() {});
+            new TypeReference<List<Table>>() {});
         assertAll(
-            () -> assertThat(orderTablesResponse.size()).isEqualTo(2),
-            () -> assertThat(orderTablesResponse.get(0)).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1),
-            () -> assertThat(orderTablesResponse.get(1)).usingRecursiveComparison().isEqualTo(ORDER_TABLE_2)
+            () -> assertThat(tablesResponse.size()).isEqualTo(2),
+            () -> assertThat(tablesResponse.get(0)).usingRecursiveComparison().isEqualTo(TABLE_1),
+            () -> assertThat(tablesResponse.get(1)).usingRecursiveComparison().isEqualTo(TABLE_2)
         );
     }
 
-    @DisplayName("/api/tables/{orderTableId}/empty로 PUT 요청 성공 테스트")
+    @DisplayName("/api/tables/{tableId}/empty로 PUT 요청 성공 테스트")
     @Test
     void changeEmptyTest() throws Exception {
-        given(tableService.changeEmpty(anyLong(), any())).willReturn(ORDER_TABLE_1);
+        given(tableService.changeEmpty(anyLong(), anyBoolean())).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(ORDER_TABLE_1);
-        MvcResult mvcResult = putAction(String.format("/api/tables/%d/empty", ORDER_TABLE_ID_1), inputJson)
+        String inputJson = objectMapper.writeValueAsString(new ChangeEmptyRequest(TABLE_EMPTY_1));
+        MvcResult mvcResult = putAction(String.format("/api/tables/%d/empty", TABLE_ID_1), inputJson)
             .andExpect(status().isOk())
             .andReturn();
 
-        OrderTable orderTableResponse =
-            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), OrderTable.class);
-        assertThat(orderTableResponse).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        Table tableResponse =
+            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Table.class);
+        assertThat(tableResponse).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 
-    @DisplayName("api/table/{orderTableId}/number-of-guests로 PUT 요청 성공 테스트")
+    @DisplayName("api/table/{tableId}/number-of-guests로 PUT 요청 성공 테스트")
     @Test
     void changeNumberOfGuestsTest() throws Exception {
-        given(tableService.changeNumberOfGuests(anyLong(), any())).willReturn(ORDER_TABLE_1);
+        given(tableService.changeNumberOfGuests(anyLong(), anyInt())).willReturn(TABLE_1);
 
-        String inputJson = objectMapper.writeValueAsString(ORDER_TABLE_1);
-        MvcResult mvcResult = putAction(String.format("/api/tables/%d/number-of-guests", ORDER_TABLE_ID_1), inputJson)
+        String inputJson = objectMapper.writeValueAsString(new ChangeNumberOfGuestsRequest(TABLE_NUMBER_OF_GUESTS_1));
+        MvcResult mvcResult = putAction(String.format("/api/tables/%d/number-of-guests", TABLE_ID_1), inputJson)
             .andExpect(status().isOk())
             .andReturn();
 
-        OrderTable orderTableResponse =
-            objectMapper.readValue(mvcResult.getResponse().getContentAsString(), OrderTable.class);
-        assertThat(orderTableResponse).usingRecursiveComparison().isEqualTo(ORDER_TABLE_1);
+        Table tableResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Table.class);
+        assertThat(tableResponse).usingRecursiveComparison().isEqualTo(TABLE_1);
     }
 }

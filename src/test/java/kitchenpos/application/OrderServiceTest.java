@@ -2,10 +2,15 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderMenuDao;
+import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Table;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderMenuRequest;
+import kitchenpos.dto.OrderStatusChangeRequest;
+import kitchenpos.exception.*;
 import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,128 +41,123 @@ class OrderServiceTest extends TestFixture {
     private OrderDao orderDao;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderMenuDao orderMenuDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+        orderService = new OrderService(menuDao, orderDao, orderMenuDao, tableDao);
     }
 
     @DisplayName("주문 생성 예외 테스트: 주문이 비었을 때")
     @Test
-    void createFailByEmptyOrderLineItem() {
-        Order emptyLineItemOrder = new Order();
-        emptyLineItemOrder.setId(ORDER_ID_1);
-        emptyLineItemOrder.setOrderTableId(ORDER_TABLE_ID_1);
-        emptyLineItemOrder.setOrderStatus(ORDER_STATUS_1);
-        emptyLineItemOrder.setOrderedTime(ORDERED_TIME_1);
-        emptyLineItemOrder.setOrderLineItems(new ArrayList<>());
+    void createFailByEmptyOrderMenu() {
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(new ArrayList<>(), TABLE_ID_1);
 
-        assertThatThrownBy(() -> orderService.create(emptyLineItemOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+            .isInstanceOf(NullRequestException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 중복 메뉴가 있을 때")
     @Test
     void createFailByDuplicatedMenu() {
-        Order duplicatedMenusOrder = new Order();
-        duplicatedMenusOrder.setId(ORDER_ID_1);
-        duplicatedMenusOrder.setOrderTableId(ORDER_TABLE_ID_1);
-        duplicatedMenusOrder.setOrderStatus(ORDER_STATUS_1);
-        duplicatedMenusOrder.setOrderedTime(ORDERED_TIME_1);
-        duplicatedMenusOrder.setOrderLineItems(Arrays.asList(ORDER_LINE_ITEM_1, ORDER_LINE_ITEM_1));
+        OrderMenuRequest orderMenuRequest1 = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderMenuRequest orderMenuRequest2 = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_2);
+        OrderCreateRequest duplicatedMenusOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest1, orderMenuRequest2), TABLE_ID_1);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
 
-        assertThatThrownBy(() -> orderService.create(duplicatedMenusOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(duplicatedMenusOrderRequest))
+            .isInstanceOf(MenuNotExistException.class);
     }
 
-    @DisplayName("주문 생성 예외 테스트: 존재하지 않는 테이블 테이블에서 주문 할 때")
+    @DisplayName("주문 생성 예외 테스트: 존재하지 않는 테이블에서 주문 할 때")
     @Test
     void createFailByNotExistTable() {
-        Order notExistTableOrder = ORDER_1;
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+
+        OrderCreateRequest notExistTableOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), -1L);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(notExistTableOrder.getId())).willReturn(Optional.empty());
+        given(tableDao.findById(notExistTableOrderRequest.getTableId())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.create(notExistTableOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(notExistTableOrderRequest))
+            .isInstanceOf(TableNotExistenceException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 빈 테이블에서 주문 할 때")
     @Test
     void createFailByEmptyTable() {
-        Order emptyTableOrder = ORDER_1;
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderCreateRequest emptyTableOrderRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), TABLE_ID_1);
 
-        OrderTable emptyOrderTable = new OrderTable();
-        emptyOrderTable.setId(ORDER_TABLE_ID_1);
-        emptyOrderTable.setTableGroupId(TABLE_GROUP_ID);
-        emptyOrderTable.setNumberOfGuests(ORDER_TABLE_NUMBER_OF_GUESTS_1);
-        emptyOrderTable.setEmpty(true);
+        Table emptyTable = new Table(TABLE_ID_1, TABLE_GROUP_ID, TABLE_NUMBER_OF_GUESTS_1, true);
 
         given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(emptyTableOrder.getId())).willReturn(Optional.of(emptyOrderTable));
+        given(tableDao.findById(TABLE_ID_1)).willReturn(Optional.of(emptyTable));
 
-        assertThatThrownBy(() -> orderService.create(emptyTableOrder))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(emptyTableOrderRequest))
+            .isInstanceOf(TableEmptyException.class);
     }
 
     @DisplayName("주문 생성 성공 테스트")
     @Test
     void createTest() {
-        given(menuDao.countByIdIn(any())).willReturn((long) ORDER_1.getOrderLineItems().size());
-        given(orderTableDao.findById(any())).willReturn(Optional.of(ORDER_TABLE_1));
-        given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderLineItemDao.save(ORDER_LINE_ITEM_1)).willReturn(ORDER_LINE_ITEM_1);
+        OrderMenuRequest orderMenuRequest = new OrderMenuRequest(MENU_ID_1, ORDER_MENU_QUANTITY_1);
+        OrderCreateRequest orderCreateRequest =
+            new OrderCreateRequest(Arrays.asList(orderMenuRequest), TABLE_ID_1);
 
-        assertThat(orderService.create(ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
+        given(menuDao.countByIdIn(any())).willReturn(1L);
+        given(tableDao.findById(any())).willReturn(Optional.of(TABLE_1));
+        given(orderDao.save(any())).willReturn(ORDER_1);
+        given(orderMenuDao.save(any())).willReturn(ORDER_MENU_1);
+
+        assertThat(orderService.create(orderCreateRequest)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
 
     @DisplayName("주문 상태 변경 예외 테스트: 존재하지 않는 주문 id")
     @Test
     void changeOrderStatusFailByNotExistOrderId() {
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest();
+
         given(orderDao.findById(anyLong())).willReturn(Optional.empty());
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, ORDER_1))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, orderStatusChangeRequest))
+            .isInstanceOf(OrderNotExistException.class);
     }
 
     @DisplayName("주문 상태 변경 예외 테스트: 이미 완료 상태인 주문")
     @Test
     void changeOrderStatusFailByAlreadyCompletedOrder() {
-        Order completedOrder = new Order();
-        completedOrder.setId(ORDER_ID_1);
-        completedOrder.setOrderTableId(ORDER_TABLE_ID_1);
-        completedOrder.setOrderStatus("COMPLETION");
-        completedOrder.setOrderedTime(ORDERED_TIME_1);
-        completedOrder.setOrderLineItems(ORDER_LINE_ITEMS_1);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest();
+        Order completedOrder = new Order(ORDER_ID_1, TABLE_ID_1, OrderStatus.COMPLETION, ORDERED_TIME_1);
 
         given(orderDao.findById(anyLong())).willReturn(Optional.of(completedOrder));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, ORDER_1))
-            .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.changeOrderStatus(ORDER_ID_1, orderStatusChangeRequest))
+            .isInstanceOf(OrderStatusCannotChangeException.class);
     }
 
     @DisplayName("주문 상태 변경 성공 테스트")
     @Test
     void changeOrderStatus() {
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(OrderStatus.COOKING);
+
         given(orderDao.findById(anyLong())).willReturn(Optional.of(ORDER_1));
         given(orderDao.save(any())).willReturn(ORDER_1);
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
 
-        assertThat(orderService.changeOrderStatus(ORDER_ID_1, ORDER_1)).usingRecursiveComparison().isEqualTo(ORDER_1);
+        assertThat(orderService.changeOrderStatus(ORDER_ID_1, orderStatusChangeRequest)).usingRecursiveComparison().isEqualTo(ORDER_1);
     }
 
     @DisplayName("주문 목록 조회 테스트")
     @Test
     void listTest() {
         given(orderDao.findAll()).willReturn(Arrays.asList(ORDER_1, ORDER_2));
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_1)).willReturn(ORDER_LINE_ITEMS_1);
-        given(orderLineItemDao.findAllByOrderId(ORDER_ID_2)).willReturn(ORDER_LINE_ITEMS_2);
 
         List<Order> orders = orderService.list();
         assertAll(

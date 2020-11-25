@@ -11,12 +11,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class JdbcTemplateMenuDaoTest extends DaoTest {
+class MenuDaoTest extends DaoTest {
 
     @DisplayName("전체조회 테스트")
     @Test
     void findAllTest() {
-        List<Menu> menus = jdbcTemplateMenuDao.findAll();
+        List<Menu> menus = menuDao.findAll();
 
         assertAll(
             () -> assertThat(menus).hasSize(2),
@@ -30,7 +30,7 @@ class JdbcTemplateMenuDaoTest extends DaoTest {
     @DisplayName("단건조회 예외 테스트: id에 해당하는 메뉴가 존재하지 않을때")
     @Test
     void findByIdFailByNotExistTest() {
-        Optional<Menu> menu = jdbcTemplateMenuDao.findById(-1L);
+        Optional<Menu> menu = menuDao.findById(-1L);
 
         assertThat(menu).isEmpty();
     }
@@ -38,7 +38,7 @@ class JdbcTemplateMenuDaoTest extends DaoTest {
     @DisplayName("단건조회 테스트")
     @Test
     void findByIdTest() {
-        Menu menu = jdbcTemplateMenuDao.findById(MENU_ID_1).get();
+        Menu menu = menuDao.findById(MENU_ID_1).get();
 
         assertAll(
             () -> assertThat(menu.getId()).isEqualTo(MENU_ID_1),
@@ -49,7 +49,7 @@ class JdbcTemplateMenuDaoTest extends DaoTest {
     @DisplayName("id목록으로 count 테스트")
     @Test
     void countByIdInTest() {
-        long count = jdbcTemplateMenuDao.countByIdIn(Arrays.asList(MENU_ID_1, MENU_ID_2));
+        long count = menuDao.countByIdIn(Arrays.asList(MENU_ID_1, MENU_ID_2));
 
         assertThat(count).isEqualTo(2);
     }

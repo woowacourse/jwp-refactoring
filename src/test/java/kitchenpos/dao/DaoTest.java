@@ -1,7 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Table;
 import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,73 +15,62 @@ import javax.sql.DataSource;
 @Sql({"classpath:truncate.sql"})
 public abstract class DaoTest extends TestFixture {
 
-    protected JdbcTemplateMenuDao jdbcTemplateMenuDao;
-    protected JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
-    protected JdbcTemplateMenuProductDao jdbcTemplateMenuProductDao;
-    protected JdbcTemplateOrderDao jdbcTemplateOrderDao;
-    protected JdbcTemplateOrderLineItemDao jdbcTemplateOrderLineItemDao;
-    protected JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
-    protected JdbcTemplateProductDao jdbcTemplateProductDao;
-    protected JdbcTemplateTableGroupDao jdbcTemplateTableGroupDao;
+    protected MenuDao menuDao;
+    protected MenuGroupDao menuGroupDao;
+    protected MenuProductDao menuProductDao;
+    protected OrderDao orderDao;
+    protected OrderMenuDao orderMenuDao;
+    protected TableDao tableDao;
+    protected ProductDao productDao;
+    protected TableGroupDao tableGroupDao;
 
     @Autowired
     protected DataSource dataSource;
 
     @BeforeEach
     void setUpDatabase() {
-        jdbcTemplateMenuDao = new JdbcTemplateMenuDao(dataSource);
-        jdbcTemplateMenuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
-        jdbcTemplateMenuProductDao = new JdbcTemplateMenuProductDao(dataSource);
-        jdbcTemplateOrderDao = new JdbcTemplateOrderDao(dataSource);
-        jdbcTemplateOrderLineItemDao = new JdbcTemplateOrderLineItemDao(dataSource);
-        jdbcTemplateOrderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        jdbcTemplateProductDao = new JdbcTemplateProductDao(dataSource);
-        jdbcTemplateTableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        menuDao = new JdbcTemplateMenuDao(dataSource);
+        menuGroupDao = new JdbcTemplateMenuGroupDao(dataSource);
+        menuProductDao = new JdbcTemplateMenuProductDao(dataSource);
+        orderDao = new JdbcTemplateOrderDao(dataSource);
+        orderMenuDao = new JdbcTemplateOrderMenuDao(dataSource);
+        tableDao = new JdbcTemplateTableDao(dataSource);
+        productDao = new JdbcTemplateProductDao(dataSource);
+        tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
 
-        jdbcTemplateMenuGroupDao.save(MENU_GROUP_1);
-        jdbcTemplateMenuGroupDao.save(MENU_GROUP_2);
+        menuGroupDao.save(MENU_GROUP_1);
+        menuGroupDao.save(MENU_GROUP_2);
 
-        jdbcTemplateProductDao.save(PRODUCT_1);
-        jdbcTemplateProductDao.save(PRODUCT_2);
+        productDao.save(PRODUCT_1);
+        productDao.save(PRODUCT_2);
 
-        jdbcTemplateMenuDao.save(MENU_1);
-        jdbcTemplateMenuDao.save(MENU_2);
+        menuDao.save(MENU_1);
+        menuDao.save(MENU_2);
 
-        jdbcTemplateMenuProductDao.save(MENU_PRODUCT_1);
-        jdbcTemplateMenuProductDao.save(MENU_PRODUCT_2);
+        menuProductDao.save(MENU_PRODUCT_1);
+        menuProductDao.save(MENU_PRODUCT_2);
 
-        jdbcTemplateTableGroupDao.save(TABLE_GROUP);
+        tableGroupDao.save(TABLE_GROUP);
 
-        OrderTable nullIdOrderTable1 = createNullIdOrderTable(ORDER_TABLE_1);
-        OrderTable nullIdOrderTable2 = createNullIdOrderTable(ORDER_TABLE_2);
-        jdbcTemplateOrderTableDao.save(nullIdOrderTable1);
-        jdbcTemplateOrderTableDao.save(nullIdOrderTable2);
+        Table nullIdTable1 = createNullIdTable(TABLE_1);
+        Table nullIdTable2 = createNullIdTable(TABLE_2);
+        tableDao.save(nullIdTable1);
+        tableDao.save(nullIdTable2);
 
         Order nullIdOrder1 = createNullIdOrder(ORDER_1);
         Order nullIdOrder2 = createNullIdOrder(ORDER_2);
-        jdbcTemplateOrderDao.save(nullIdOrder1);
-        jdbcTemplateOrderDao.save(nullIdOrder2);
+        orderDao.save(nullIdOrder1);
+        orderDao.save(nullIdOrder2);
 
-        jdbcTemplateOrderLineItemDao.save(ORDER_LINE_ITEM_1);
-        jdbcTemplateOrderLineItemDao.save(ORDER_LINE_ITEM_2);
+        orderMenuDao.save(ORDER_MENU_1);
+        orderMenuDao.save(ORDER_MENU_2);
     }
 
-    private OrderTable createNullIdOrderTable(OrderTable orderTable) {
-        OrderTable output = new OrderTable();
-        output.setEmpty(orderTable.isEmpty());
-        output.setNumberOfGuests(orderTable.getNumberOfGuests());
-        output.setTableGroupId(orderTable.getTableGroupId());
-
-        return output;
+    private Table createNullIdTable(Table table) {
+        return new Table(null, table.getTableGroupId(), table.getNumberOfGuests(), table.isEmpty());
     }
 
     private Order createNullIdOrder(Order order) {
-        Order output = new Order();
-        output.setOrderTableId(order.getOrderTableId());
-        output.setOrderStatus(order.getOrderStatus());
-        output.setOrderedTime(order.getOrderedTime());
-        output.setOrderLineItems(order.getOrderLineItems());
-
-        return output;
+        return new Order(null, order.getTableId(), order.getOrderStatus(), order.getOrderedTime());
     }
 }

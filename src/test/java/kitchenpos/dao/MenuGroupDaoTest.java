@@ -10,12 +10,12 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class JdbcTemplateMenuGroupDaoTest extends DaoTest {
+class MenuGroupDaoTest extends DaoTest {
 
     @DisplayName("전체조회 테스트")
     @Test
     void findAllTest() {
-        List<MenuGroup> menuGroups = jdbcTemplateMenuGroupDao.findAll();
+        List<MenuGroup> menuGroups = menuGroupDao.findAll();
 
         assertAll(
             () -> assertThat(menuGroups).hasSize(2),
@@ -27,7 +27,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
     @DisplayName("단건조회 예외 테스트: id에 해당하는 메뉴그룹이 존재하지 않을때")
     @Test
     void findByIdFailByNotExistTest() {
-        Optional<MenuGroup> menuGroup = jdbcTemplateMenuGroupDao.findById(-1L);
+        Optional<MenuGroup> menuGroup = menuGroupDao.findById(-1L);
 
         assertThat(menuGroup).isEmpty();
     }
@@ -35,7 +35,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
     @DisplayName("단건조회 테스트")
     @Test
     void findByIdTest() {
-        MenuGroup menuGroup = jdbcTemplateMenuGroupDao.findById(MENU_GROUP_ID_1).get();
+        MenuGroup menuGroup = menuGroupDao.findById(MENU_GROUP_ID_1).get();
 
         assertThat(menuGroup).usingRecursiveComparison().isEqualTo(MENU_GROUP_1);
     }
@@ -43,7 +43,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
     @DisplayName("id로 존재 여부 테스트")
     @Test
     void existsByIdTest() {
-        boolean isExist = jdbcTemplateMenuGroupDao.existsById(MENU_GROUP_ID_1);
+        boolean isExist = menuGroupDao.existsById(MENU_GROUP_ID_1);
 
         assertThat(isExist).isTrue();
     }

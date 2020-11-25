@@ -1,52 +1,55 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
+
+import kitchenpos.exception.OrderStatusCannotChangeException;
 
 public class Order {
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    private Long tableId;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(Long tableId) {
+        this.tableId = tableId;
+        this.orderStatus = OrderStatus.COOKING;
+        this.orderedTime = LocalDateTime.now();
+    }
+
+    public Order(Long id, Long tableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.id = id;
+        this.tableId = tableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.isCompletion()) {
+            throw new OrderStatusCannotChangeException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean hasInProgressStatus() {
+        return !orderStatus.isCompletion();
+    }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getTableId() {
+        return tableId;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

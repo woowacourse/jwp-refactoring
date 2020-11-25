@@ -1,12 +1,12 @@
 CREATE TABLE orders (
     id BIGINT(20) NOT NULL AUTO_INCREMENT,
-    order_table_id BIGINT(20) NOT NULL,
+    table_id BIGINT(20) NOT NULL,
     order_status VARCHAR(255) NOT NULL,
     ordered_time DATETIME NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE order_line_item (
+CREATE TABLE order_menu (
     seq BIGINT(20) NOT NULL AUTO_INCREMENT,
     order_id BIGINT(20) NOT NULL,
     menu_id BIGINT(20) NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE menu_product (
     PRIMARY KEY (seq)
 );
 
-CREATE TABLE order_table (
+CREATE TABLE tables (
     id BIGINT(20) NOT NULL AUTO_INCREMENT,
     table_group_id BIGINT(20),
     number_of_guests INT(11) NOT NULL,
@@ -58,15 +58,15 @@ CREATE TABLE product (
 );
 
 ALTER TABLE orders
-    ADD CONSTRAINT fk_orders_order_table
-        FOREIGN KEY (order_table_id) REFERENCES order_table (id);
+    ADD CONSTRAINT fk_orders_tables
+        FOREIGN KEY (table_id) REFERENCES tables (id);
 
-ALTER TABLE order_line_item
-    ADD CONSTRAINT fk_order_line_item_orders
+ALTER TABLE order_menu
+    ADD CONSTRAINT fk_order_menu_orders
         FOREIGN KEY (order_id) REFERENCES orders (id);
 
-ALTER TABLE order_line_item
-    ADD CONSTRAINT fk_order_line_item_menu
+ALTER TABLE order_menu
+    ADD CONSTRAINT fk_order_menu_menu
         FOREIGN KEY (menu_id) REFERENCES menu (id);
 
 ALTER TABLE menu
@@ -81,6 +81,6 @@ ALTER TABLE menu_product
     ADD CONSTRAINT fk_menu_product_product
         FOREIGN KEY (product_id) REFERENCES product (id);
 
-ALTER TABLE order_table
-    ADD CONSTRAINT fk_order_table_table_group
+ALTER TABLE tables
+    ADD CONSTRAINT fk_tables_table_group
         FOREIGN KEY (table_group_id) REFERENCES table_group (id);
