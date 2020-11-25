@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.ProductRepository;
 import kitchenpos.dto.menu.ProductCreateRequest;
@@ -27,6 +28,14 @@ public class ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponse> list() {
         return productRepository.findAll()
+                .stream()
+                .map(ProductResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductResponse> findProductsByMenu(Menu menu) {
+        return productRepository.findAllByMenu(menu)
                 .stream()
                 .map(ProductResponse::new)
                 .collect(Collectors.toList());

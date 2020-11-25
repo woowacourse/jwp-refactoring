@@ -7,7 +7,6 @@ import kitchenpos.dto.order.TableGroupResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,10 +42,6 @@ public class TableGroupService {
 
     private List<OrderTable> findOrderTables(final TableGroupCreateRequest request) {
         final List<OrderTableRequest> orderTables = request.getOrderTables();
-
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException(INVALID_GROUP_REQUEST_EXCEPTION_MESSAGE);
-        }
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTableRequest::getId)

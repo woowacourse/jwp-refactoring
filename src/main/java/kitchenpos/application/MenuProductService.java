@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.*;
 import kitchenpos.dto.menu.ProductQuantityRequests;
-import kitchenpos.dto.menu.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +9,6 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +37,5 @@ public class MenuProductService {
         if (Objects.isNull(productQuantityRequests)) {
             throw new IllegalArgumentException("잘못된 상품이 입력되었습니다.");
         }
-    }
-
-    public List<ProductResponse> findProductsByMenu(Menu menu) {
-        return menuProductRepository.findAllByMenu(menu)
-                .stream()
-                .map(MenuProduct::getProduct)
-                .map(ProductResponse::new)
-                .collect(Collectors.toList());
     }
 }

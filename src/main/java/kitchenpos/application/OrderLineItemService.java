@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class OrderLineItemService {
     private final OrderLineItemRepository orderLineItemRepository;
     private final MenuRepository menuRepository;
-    private final MenuProductService menuProductService;
+    private final ProductService productService;
 
     @Transactional
     public void createOrderLineItems(Order order, OrderLineItemRequests orderLineItemRequests) {
@@ -46,7 +46,7 @@ public class OrderLineItemService {
         return orderLineItems.stream()
                 .map(orderLineItem -> {
                     Menu menu = orderLineItem.getMenu();
-                    return new MenuResponse(menu, menuProductService.findProductsByMenu(menu));
+                    return new MenuResponse(menu, productService.findProductsByMenu(menu));
                 })
                 .collect(Collectors.toList());
     }

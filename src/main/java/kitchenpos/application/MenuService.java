@@ -21,6 +21,7 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final ProductRepository productRepository;
+    private final ProductService productService;
     private final MenuProductService menuProductService;
 
     @Transactional
@@ -66,7 +67,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         return menus.stream()
-                .map(menu -> new MenuResponse(menu, menuProductService.findProductsByMenu(menu)))
+                .map(menu -> new MenuResponse(menu, productService.findProductsByMenu(menu)))
                 .collect(Collectors.toList());
     }
 }
