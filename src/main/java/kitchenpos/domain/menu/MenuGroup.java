@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -21,6 +22,13 @@ public class MenuGroup {
     private String name;
 
     public MenuGroup(String name) {
+        validate(name);
         this.name = name;
+    }
+
+    private void validate(String name) {
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new IllegalArgumentException("잘못된 MenuGroup 이름이 입력되었습니다.");
+        }
     }
 }

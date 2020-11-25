@@ -25,9 +25,6 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableCreateRequest request) {
-        if (Objects.isNull(request)) {
-            throw new IllegalArgumentException("잘못된 테이블 생성 요청이 전달되었습니다.");
-        }
         OrderTable orderTable = request.toOrderTable();
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
