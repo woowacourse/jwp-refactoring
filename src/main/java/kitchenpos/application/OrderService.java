@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -18,6 +17,7 @@ import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
@@ -25,18 +25,18 @@ import kitchenpos.repository.OrderTableRepository;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemDao orderLineItemDao;
+    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuRepository menuRepository,
         final OrderRepository orderRepository,
-        final OrderLineItemDao orderLineItemDao,
+        final OrderLineItemRepository orderLineItemRepository,
         final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemDao = orderLineItemDao;
+        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -72,7 +72,7 @@ public class OrderService {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineCreateRequestDto orderLineCreateRequest : orderLineCreateRequests) {
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineCreateRequest.toEntity(orderId)));
+            savedOrderLineItems.add(orderLineItemRepository.save(orderLineCreateRequest.toEntity(orderId)));
         }
 
         OrderResponseDto orderResponseDto = OrderResponseDto.from(savedOrder, savedOrderLineItems);
@@ -85,7 +85,7 @@ public class OrderService {
 
         List<OrderResponseDto> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
-            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+            List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(order.getId());
             orderResponses.add(OrderResponseDto.from(order, orderLineItems));
         }
 
@@ -100,7 +100,7 @@ public class OrderService {
         order.changeOrderStatus(orderStatus);
         Order savedOrder = orderRepository.save(order);
 
-        List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(savedOrder.getId());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(savedOrder.getId());
 
         return OrderResponseDto.from(savedOrder, orderLineItems);
     }
