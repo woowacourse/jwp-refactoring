@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
 
@@ -31,9 +30,8 @@ public class MenuRestController {
     }
 
     @GetMapping("/api/menus")
-    public ResponseEntity<List<Menu>> list() {
+    public ResponseEntity<List<MenuResponseDto>> list() {
         return ResponseEntity.ok()
-            .body(menuService.list())
-            ;
+            .body(menuService.list());
     }
 }

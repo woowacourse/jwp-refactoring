@@ -72,7 +72,6 @@ public class KitchenposTestHelper {
         menu.setName(name);
         menu.setPrice(price);
         menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
         return menu;
     }
 
