@@ -12,7 +12,8 @@ public class TableGroupResponseDto {
     private final List<OrderTableResponseDto> orderTables;
 
     public static TableGroupResponseDto from(TableGroup tableGroup, List<OrderTable> orderTables) {
-        return new TableGroupResponseDto(tableGroup.getId(), tableGroup.getCreatedDate(), OrderTableResponseDto.listOf(orderTables));
+        return new TableGroupResponseDto(tableGroup.getId(), tableGroup.getCreatedDate(),
+            OrderTableResponseDto.listOf(orderTables));
     }
 
     public TableGroupResponseDto(Long id, LocalDateTime createdDate,
