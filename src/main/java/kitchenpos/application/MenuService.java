@@ -8,13 +8,13 @@ import java.util.Objects;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
@@ -22,25 +22,26 @@ import kitchenpos.repository.ProductRepository;
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuGroupDao menuGroupDao;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
         final MenuRepository menuRepository,
-        final MenuGroupDao menuGroupDao,
+        final MenuGroupRepository menuGroupRepository,
         final MenuProductRepository menuProductRepository,
         final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupDao = menuGroupDao;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponseDto create(final MenuCreateRequestDto menuCreateRequest) {
-        if (!menuGroupDao.existsById(menuCreateRequest.getMenuGroupId())) {
+        if (Objects.isNull(menuCreateRequest.getMenuGroupId()) || !menuGroupRepository.existsById(
+            menuCreateRequest.getMenuGroupId())) {
             throw new IllegalArgumentException("존재하지 않는 메뉴그룹입니다.");
         }
 
