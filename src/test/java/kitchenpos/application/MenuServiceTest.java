@@ -112,8 +112,8 @@ class MenuServiceTest extends ServiceTest {
             Collections.singletonList(menuProduct));
         menuDao.save(menuRequest);
 
-        List<Menu> menus = menuService.list();
+        List<MenuResponseDto> menuResponses = menuService.list();
 
-        assertThat(menus).hasSize(1);
+        assertThat(menuResponses).hasSize(1);
     }
 }

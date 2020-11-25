@@ -69,13 +69,14 @@ public class MenuService {
         return MenuResponseDto.from(savedMenu, savedMenuProducts);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponseDto> list() {
         final List<Menu> menus = menuDao.findAll();
 
+        List<MenuResponseDto> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
+            menuResponses.add(MenuResponseDto.from(menu, menuProducts));
         }
-
-        return menus;
+        return menuResponses;
     }
 }
