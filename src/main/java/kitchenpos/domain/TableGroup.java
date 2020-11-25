@@ -13,6 +13,10 @@ public class TableGroup {
     private TableGroup() {
     }
 
+    public TableGroup(List<Table> tables) {
+        this(null, LocalDateTime.now(), tables);
+    }
+
     public TableGroup(LocalDateTime createdDate, List<Table> tables) {
         this(null, createdDate, tables);
     }

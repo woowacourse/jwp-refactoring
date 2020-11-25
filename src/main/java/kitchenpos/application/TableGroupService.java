@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +36,7 @@ public class TableGroupService {
 
         validSameSize(tableIds, savedTables);
         validGroupable(savedTables);
-        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now(), savedTables));
+        final TableGroup savedTableGroup = tableGroupDao.save(new TableGroup(savedTables));
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final Table savedTable : savedTables) {
