@@ -1,24 +1,30 @@
 package kitchenpos.application;
 
-import static kitchenpos.db.TestDataFactory.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.config.TruncateDatabaseConfig;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
 
 class TableGroupServiceTest extends TruncateDatabaseConfig {
 
@@ -26,78 +32,78 @@ class TableGroupServiceTest extends TruncateDatabaseConfig {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
-    @DisplayName("TableGroup 생성 실패 - OrderTable이 비어있거나 1개인 경우")
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
+
+    @DisplayName("TableGroup 생성 실패 - OrderTable이 없을 경우")
     @Test
-    void createFail_When_OrderTable_IsEmpty() {
-        OrderTable orderTable = createOrderTable(1L, 1L, 3, true);
-        TableGroup emptyTableGroup = createTableGroup(1L, LocalDateTime.now(), Collections.emptyList());
-        TableGroup singleTableGroup = createTableGroup(1L, LocalDateTime.now(), Collections.singletonList(orderTable));
+    void createFail_When_OrderTable_IsNotExist() {
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Lists.emptyList());
 
-        assertAll(
-            () -> assertThatThrownBy(() -> tableGroupService.create(emptyTableGroup))
-                .isInstanceOf(IllegalArgumentException.class),
-            () -> assertThatThrownBy(() -> tableGroupService.create(singleTableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-        );
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("TableGroup 생성 실패 - OrderTable이 1개 이하인 경우")
+    @Test
+    void createFail_When_OrderTable_IsSingle() {
+        OrderTable savedOrderTable = orderTableRepository.save(new OrderTable(3, true));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Collections.singletonList(savedOrderTable.getId()));
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("TableGroup 생성 실패 - OrderTable이 중복되거나 주문 내역이 없는 테이블인 경우")
     @Test
     void createFail_When_OrderTable_Invalid_Size() {
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
-        OrderTable invalidOrderTable = createOrderTable(-1L, 1L, 3, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        TableGroup duplicateTableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable, savedOrderTable));
-        TableGroup invalidTableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(invalidOrderTable, orderTable));
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        OrderTable savedOrderTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable savedOrderTable2 = orderTableRepository.save(new OrderTable(3, true));
+        savedOrderTable1.groupBy(savedTableGroup);
+        orderTableRepository.save(savedOrderTable1);
 
-        assertAll(
-            () -> assertThatThrownBy(() -> tableGroupService.create(duplicateTableGroup))
-                .isInstanceOf(IllegalArgumentException.class),
-            () -> assertThatThrownBy(() -> tableGroupService.create(invalidTableGroup))
-                .isInstanceOf(IllegalArgumentException.class)
-        );
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+            Lists.newArrayList(savedOrderTable1.getId(), savedOrderTable2.getId()));
+
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("TableGroup 생성")
     @Test
     void create() {
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
-        OrderTable orderTable2 = createOrderTable(null, null, 4, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable, savedOrderTable2));
+        OrderTable savedOrderTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable savedOrderTable2 = orderTableRepository.save(new OrderTable(3, true));
 
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(
+            Lists.newArrayList(savedOrderTable1.getId(), savedOrderTable2.getId()));
+        TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
 
         assertAll(
-            () -> assertThat(savedTableGroup.getId()).isNotNull(),
-            () -> assertThat(savedTableGroup.getOrderTables()).hasSize(2)
+            () -> assertThat(tableGroupResponse.getId()).isNotNull(),
+            () -> assertThat(tableGroupResponse.getOrderTables()).hasSize(2)
         );
 
     }
 
     @DisplayName("TableGroup 해제 실패 - 요리 중이거나 식사 중인 경우")
-    @Test
-    void ungroupFail_When_OrderStatus_CookingOrMeal() {
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
-        OrderTable orderTable2 = createOrderTable(null, null, 4, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable, savedOrderTable2));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
+    @ParameterizedTest
+    @CsvSource(value = {"MEAL", "COOKING"})
+    void ungroupFail_When_OrderStatus_CookingOrMeal(OrderStatus orderStatus) {
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        OrderTable savedOrderTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable savedOrderTable2 = orderTableRepository.save(new OrderTable(3, true));
+        savedOrderTable1.groupBy(savedTableGroup);
+        savedOrderTable2.groupBy(savedTableGroup);
+        orderTableRepository.saveAll(Arrays.asList(savedOrderTable1, savedOrderTable2));
 
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COOKING, LocalDateTime.now(),
-            Collections.emptyList());
-        orderDao.save(order);
+        orderRepository.save(new Order(savedOrderTable1, orderStatus, LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(savedTableGroup.getId()))
             .isInstanceOf(IllegalArgumentException.class);
@@ -106,21 +112,19 @@ class TableGroupServiceTest extends TruncateDatabaseConfig {
     @DisplayName("TableGroup 해제")
     @Test
     void upgroup() {
-        OrderTable orderTable = createOrderTable(null, null, 3, true);
-        OrderTable orderTable2 = createOrderTable(null, null, 4, true);
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        OrderTable savedOrderTable2 = orderTableDao.save(orderTable2);
-        TableGroup tableGroup = createTableGroup(null, LocalDateTime.now(),
-            Arrays.asList(savedOrderTable, savedOrderTable2));
-        TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-
-        Order order = createOrder(null, savedOrderTable.getId(), OrderStatus.COMPLETION, LocalDateTime.now(),
-            Collections.emptyList());
-        Order savedOrder = orderDao.save(order);
+        TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
+        OrderTable savedOrderTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable savedOrderTable2 = orderTableRepository.save(new OrderTable(3, true));
+        savedOrderTable1.groupBy(savedTableGroup);
+        savedOrderTable2.groupBy(savedTableGroup);
+        orderTableRepository.saveAll(Arrays.asList(savedOrderTable1, savedOrderTable2));
+        orderRepository.save(new Order(savedOrderTable1, OrderStatus.COMPLETION, LocalDateTime.now()));
 
         tableGroupService.ungroup(savedTableGroup.getId());
 
-        assertThat(orderTableDao.findById(savedOrder.getId()).get().getTableGroupId()).isNull();
+        List<OrderTable> foundOrderTables = orderTableRepository.findAllByTableGroupId(savedTableGroup.getId());
+        assertThat(foundOrderTables).isEmpty();
+
     }
 }
 
