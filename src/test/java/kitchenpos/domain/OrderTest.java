@@ -9,11 +9,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 class OrderTest {
-
+    @DisplayName("주문 상태를 변경할 수 있다.")
     @ParameterizedTest
     @CsvSource(value = {"COMPLETION:true", "MEAL:false", "COOKING:false"}, delimiterString = ":")
     void isComplete(OrderStatus orderStatus, boolean result) {
-        Order order = new Order(null, null, orderStatus.name(), LocalDateTime.now());
+        Order order = new Order(null, null, orderStatus, LocalDateTime.now());
 
         assertThat(order.isComplete()).isEqualTo(result);
     }
@@ -22,7 +22,7 @@ class OrderTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL", "COMPLETION"})
     void changeOrderStatus_WithCompletionOrder_ThrownException(OrderStatus orderStatus) {
-        Order order = new Order(1L, 1L, "COMPLETION", LocalDateTime.now());
+        Order order = new Order(1L, 1L, OrderStatus.COMPLETION, LocalDateTime.now());
 
         assertThatThrownBy(() -> order.changeOrderStatus(orderStatus))
             .isInstanceOf(IllegalArgumentException.class)

@@ -28,6 +28,6 @@ public class OrderCreateRequestDto {
     }
 
     public Order toEntity() {
-        return new Order(null, orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
+        return new Order(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 }

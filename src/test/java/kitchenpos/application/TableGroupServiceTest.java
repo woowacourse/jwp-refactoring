@@ -12,15 +12,17 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
+import kitchenpos.repository.OrderRepository;
 
 class TableGroupServiceTest extends ServiceTest {
     @Autowired
@@ -30,7 +32,7 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("단체 지정을 할 수 있다.")
     @Test
@@ -95,13 +97,13 @@ class TableGroupServiceTest extends ServiceTest {
 
     @DisplayName("단체 해제 시, 단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없다.")
     @ParameterizedTest
-    @ValueSource(strings = {"COOKING", "MEAL"})
-    void ungroup_WithInvalidOrderStatus_ThrownException(String status) {
+    @CsvSource({"COOKING", "MEAL"})
+    void ungroup_WithInvalidOrderStatus_ThrownException(OrderStatus status) {
         OrderTable orderTable1 = orderTableDao.save(new OrderTable(null, null, 0, true));
         OrderTable orderTable2 = orderTableDao.save(new OrderTable(null, null, 0, true));
         TableGroupResponseDto tableGroupResponse = tableGroupService.create(
             new TableGroupCreateRequestDto(Arrays.asList(orderTable1.getId(), orderTable2.getId())));
-        orderDao.save(new Order(null, orderTable1.getId(), status, LocalDateTime.now()));
+        orderRepository.save(new Order(null, orderTable1.getId(), status, LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupResponse.getId()))
             .isInstanceOf(IllegalArgumentException.class);

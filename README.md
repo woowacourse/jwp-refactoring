@@ -131,7 +131,7 @@
     - [x] MenuDao 대신 MenuRepository 사용 
     - [x] MenuProductDao 대신 MenuProductRepository 사용
     - [ ] MenuGroupDao 대신 MenuGroupRepository 사용 
-    - [ ] OrderDao 대신 OrderRepository 사용 
+    - [x] OrderDao 대신 OrderRepository 사용 
     - [ ] OrderTableDao 대신 OrderTableRepository 사용 
     - [ ] TableGroupDao 대신 TableGroupRepository 사용 
  
