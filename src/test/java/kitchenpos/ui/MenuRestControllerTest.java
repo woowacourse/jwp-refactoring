@@ -79,6 +79,57 @@ class MenuRestControllerTest {
     }
 
     @Test
+    void create_emptyBody_exception() throws Exception {
+        mockMvc.perform(post("/api/menus")
+            .content(mapper.writeValueAsString(null))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void create_wrongPrice_exception() throws Exception {
+        Product product = new Product("product1", BigDecimal.ONE);
+        Product persistProduct = productDao.save(product);
+
+        MenuProductRequest menuProduct = new MenuProductRequest(persistProduct.getId(), 5);
+
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
+        MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
+
+        MenuRequest request = new MenuRequest("menu1", BigDecimal.TEN, persistMenuGroup.getId(),
+            Arrays.asList(menuProduct));
+
+        mockMvc.perform(post("/api/menus")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void create_menuGroupNotSavedBefore_exception() throws Exception {
+        Product product = new Product("product1", BigDecimal.ONE);
+        Product persistProduct = productDao.save(product);
+
+        MenuProductRequest menuProduct = new MenuProductRequest(persistProduct.getId(), 10);
+
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
+
+        MenuRequest request = new MenuRequest("menu1", BigDecimal.TEN, menuGroup.getId(),
+            Arrays.asList(menuProduct));
+
+        mockMvc.perform(post("/api/menus")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void list() throws Exception {
         Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);

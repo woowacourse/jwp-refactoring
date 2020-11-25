@@ -44,10 +44,8 @@ public class MenuService {
         Menu menu = request.toEntityWithoutMenuProducts();
         final List<MenuProductRequest> menuProducts = request.getMenuProducts();
 
-        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
-            throw new IllegalArgumentException();
-        }
-        if (menu.isPriceBiggerThen(sumProductPrices(menuProducts))) {
+        if (menu.isPriceBiggerThen(sumProductPrices(menuProducts)) ||
+            !menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
         final Menu savedMenu = menuDao.save(menu);
