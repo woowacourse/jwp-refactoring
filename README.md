@@ -111,7 +111,7 @@
 - [ ] 테스트하기 쉬운 부분과 어려운 부분을 분리
     - [x] ProductService의 로직을 Product로 이동
     - [ ] MenuService의 로직을 Menu로 이동
-    - [ ] MenuGroupService의 로직을 MenuGroup으로 이동
+    - [x] MenuGroupService의 로직을 MenuGroup으로 이동
     - [ ] OrderService의 로직을 Order로 이동
     - [x] OrderTableService의 로직을 OrderTable로 이동
     - [x] TableGroupService의 로직을 TableGroup으로 이동
