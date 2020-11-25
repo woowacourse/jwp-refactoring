@@ -49,4 +49,8 @@ public class Order {
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
+
+    public boolean isComplete() {
+        return OrderStatus.COMPLETION.name().equals(this.orderStatus);
+    }
 }

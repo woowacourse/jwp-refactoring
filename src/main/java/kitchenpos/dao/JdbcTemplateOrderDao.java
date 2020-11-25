@@ -1,6 +1,7 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Order;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -77,6 +78,14 @@ public class JdbcTemplateOrderDao implements OrderDao {
                 .addValue("orderTableIds", orderTableIds)
                 .addValue("orderStatuses", orderStatuses);
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
+    }
+
+    @Override
+    public List<Order> findAllByOrderTableIdIn(List<Long> orderTableIds) {
+        final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE order_table_id IN (:ids)";
+        final SqlParameterSource parameters = new MapSqlParameterSource()
+            .addValue("ids", orderTableIds);
+        return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
     private Order select(final Long id) {
