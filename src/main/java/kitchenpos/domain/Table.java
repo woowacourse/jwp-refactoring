@@ -1,9 +1,10 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
+
 import kitchenpos.exception.NotEnoughGuestsException;
 import kitchenpos.exception.TableEmptyException;
-
-import java.util.Objects;
+import kitchenpos.exception.TableGroupExistenceException;
 
 public class Table {
     public static final int MIN_NUMBER_OF_GUESTS = 0;
@@ -52,6 +53,9 @@ public class Table {
     }
 
     public void changeEmpty(final boolean empty) {
+        if (this.hasGroup()) {
+            throw new TableGroupExistenceException();
+        }
         this.empty = empty;
     }
 

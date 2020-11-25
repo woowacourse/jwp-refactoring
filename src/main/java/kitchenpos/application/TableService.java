@@ -1,17 +1,17 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.Table;
 import kitchenpos.exception.TableCannotChangeEmptyException;
-import kitchenpos.exception.TableGroupExistenceException;
 import kitchenpos.exception.TableNotExistenceException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Service
 public class TableService {
@@ -44,10 +44,6 @@ public class TableService {
     }
 
     private void validateChangeableTable(Table savedTable) {
-        if (savedTable.hasGroup()) {
-            throw new TableGroupExistenceException();
-        }
-
         List<Order> foundOrders = orderDao.findByTableIds(Arrays.asList(savedTable.getId()));
         for (Order foundOrder : foundOrders) {
             if (foundOrder.hasInProgressStatus()) {
