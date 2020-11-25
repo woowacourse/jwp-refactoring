@@ -1,5 +1,12 @@
 package kitchenpos.application;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderMenuDao;
@@ -10,13 +17,11 @@ import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
-import kitchenpos.exception.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import kitchenpos.exception.MenuNotExistException;
+import kitchenpos.exception.NullRequestException;
+import kitchenpos.exception.OrderNotExistException;
+import kitchenpos.exception.TableEmptyException;
+import kitchenpos.exception.TableNotExistenceException;
 
 @Service
 public class OrderService {
@@ -44,7 +49,7 @@ public class OrderService {
         List<OrderMenuRequest> orderMenuRequests = orderCreateRequest.getOrderMenuRequests();
         Long tableId = orderCreateRequest.getTableId();
 
-        Order savedOrder = orderDao.save(new Order(tableId));
+        Order savedOrder = orderDao.save(Order.start(tableId));
 
         Long orderId = savedOrder.getId();
         orderMenuRequests.stream()

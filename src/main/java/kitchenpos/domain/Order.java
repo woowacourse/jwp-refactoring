@@ -13,17 +13,15 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long tableId) {
-        this.tableId = tableId;
-        this.orderStatus = OrderStatus.COOKING;
-        this.orderedTime = LocalDateTime.now();
-    }
-
     public Order(Long id, Long tableId, OrderStatus orderStatus, LocalDateTime orderedTime) {
         this.id = id;
         this.tableId = tableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public static Order start(Long tableId) {
+        return new Order(null, tableId, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
