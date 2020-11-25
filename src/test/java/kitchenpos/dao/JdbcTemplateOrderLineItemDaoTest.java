@@ -9,17 +9,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.OrderLineItem;
 
 @SuppressWarnings("NonAsciiCharacters")
-@JdbcTest
 @Import(JdbcTemplateOrderLineItemDao.class)
-@Sql("/data-for-dao.sql")
-class JdbcTemplateOrderLineItemDaoTest {
+class JdbcTemplateOrderLineItemDaoTest extends JdbcDaoTest {
 
     @Autowired
     private OrderLineItemDao orderLineItemDao;

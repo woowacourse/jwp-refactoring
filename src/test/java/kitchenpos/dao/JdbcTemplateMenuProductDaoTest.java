@@ -9,17 +9,13 @@ import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.MenuProduct;
 
 @SuppressWarnings("NonAsciiCharacters")
-@JdbcTest
 @Import(JdbcTemplateMenuProductDao.class)
-@Sql("/data-for-dao.sql")
-class JdbcTemplateMenuProductDaoTest {
+class JdbcTemplateMenuProductDaoTest extends JdbcDaoTest {
 
     @Autowired
     MenuProductDao menuProductDao;

@@ -14,18 +14,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 
 @SuppressWarnings("NonAsciiCharacters")
-@JdbcTest
 @Import(JdbcTemplateOrderDao.class)
-@Sql("/data-for-dao.sql")
-class JdbcTemplateOrderDaoTest {
+class JdbcTemplateOrderDaoTest extends JdbcDaoTest {
 
     @Autowired
     private OrderDao orderDao;
