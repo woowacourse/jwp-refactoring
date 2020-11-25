@@ -6,11 +6,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProductServiceTest extends AbstractServiceTest {
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -67,13 +68,15 @@ public class ProductServiceTest extends AbstractServiceTest {
     @Test
     void list() {
         List<ProductResponse> savedProducts = ProductResponse.listOf(Arrays.asList(
-            productDao.save(createProduct(null, "치킨1", 10000L)),
-            productDao.save(createProduct(null, "치킨2", 10000L)),
-            productDao.save(createProduct(null, "치킨3", 10000L))
+            productRepository.save(createProduct(null, "치킨1", 10000L)),
+            productRepository.save(createProduct(null, "치킨2", 10000L)),
+            productRepository.save(createProduct(null, "치킨3", 10000L))
         ));
 
         List<ProductResponse> allProducts = productService.list();
 
-        assertThat(allProducts).usingFieldByFieldElementComparator().containsAll(savedProducts);
+        assertThat(allProducts).usingFieldByFieldElementComparator()
+            .usingComparatorForType(BigDecimal::compareTo, BigDecimal.class)
+            .containsAll(savedProducts);
     }
 }

@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.repository;
 
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
@@ -18,20 +18,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DaoTest
-public class MenuProductDaoTest {
+@DataJpaTest
+public class MenuProductRepositoryTest {
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private MenuDao menuDao;
+    private MenuProductRepository menuProductRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private MenuGroup menuGroup;
     private Product product;
@@ -39,9 +40,9 @@ public class MenuProductDaoTest {
 
     @BeforeEach
     void setup() {
-        menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        product = productDao.save(createProduct(null, "상품", 1000L));
-        menu = menuDao.save(createMenu(null, "메뉴", 3000L, menuGroup.getId()));
+        menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        product = productRepository.save(createProduct(null, "상품", 1000L));
+        menu = menuRepository.save(createMenu(null, "메뉴", 3000L, menuGroup.getId()));
     }
 
     @DisplayName("메뉴 상품을 저장할 수 있다.")
@@ -49,7 +50,7 @@ public class MenuProductDaoTest {
     void save() {
         MenuProduct menuProduct = createMenuProduct(null, menu.getId(), product.getId(), 3L);
 
-        MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
+        MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
 
         assertAll(
             () -> assertThat(savedMenuProduct.getSeq()).isNotNull(),
@@ -60,10 +61,10 @@ public class MenuProductDaoTest {
     @DisplayName("메뉴 상품 아이디로 메뉴 상품을 조회할 수 있다.")
     @Test
     void findById() {
-        MenuProduct menuProduct = menuProductDao
+        MenuProduct menuProduct = menuProductRepository
             .save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
 
-        Optional<MenuProduct> foundMenuProduct = menuProductDao.findById(menuProduct.getSeq());
+        Optional<MenuProduct> foundMenuProduct = menuProductRepository.findById(menuProduct.getSeq());
 
         assertThat(foundMenuProduct.get()).isEqualToComparingFieldByField(menuProduct);
     }
@@ -72,12 +73,12 @@ public class MenuProductDaoTest {
     @Test
     void findAll() {
         List<MenuProduct> savedMenuProducts = Arrays.asList(
-            menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L)),
-            menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L)),
-            menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L))
+            menuProductRepository.save(createMenuProduct(null, menu.getId(), product.getId(), 3L)),
+            menuProductRepository.save(createMenuProduct(null, menu.getId(), product.getId(), 3L)),
+            menuProductRepository.save(createMenuProduct(null, menu.getId(), product.getId(), 3L))
         );
 
-        List<MenuProduct> allMenuProducts = menuProductDao.findAll();
+        List<MenuProduct> allMenuProducts = menuProductRepository.findAll();
 
         assertThat(allMenuProducts).usingFieldByFieldElementComparator()
             .containsAll(savedMenuProducts);
@@ -86,14 +87,14 @@ public class MenuProductDaoTest {
     @DisplayName("메뉴에 속하는 메뉴 상품 목록을 조회할 수 있다.")
     @Test
     void findAllByMenuId() {
-        Menu secondMenu = menuDao
+        Menu secondMenu = menuRepository
             .save(createMenu(null, "메뉴", 3000L, menuGroup.getId()));
-        MenuProduct menuProduct = menuProductDao
+        MenuProduct menuProduct = menuProductRepository
             .save(createMenuProduct(null, secondMenu.getId(), product.getId(), 3L));
-        menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
-        menuProductDao.save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
+        menuProductRepository.save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
+        menuProductRepository.save(createMenuProduct(null, menu.getId(), product.getId(), 3L));
 
-        List<MenuProduct> menuProductsByMenuId = menuProductDao.findAllByMenuId(secondMenu.getId());
+        List<MenuProduct> menuProductsByMenuId = menuProductRepository.findAllByMenuId(secondMenu.getId());
 
         assertAll(
             () -> assertThat(menuProductsByMenuId).hasSize(1),

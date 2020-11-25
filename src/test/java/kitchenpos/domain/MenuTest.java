@@ -26,13 +26,15 @@ public class MenuTest {
     @Test
     void constructor_throws_exception() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> new Menu(1L, "메뉴", null, 1L));
+            .isThrownBy(() -> new Menu(1L, "메뉴", null, 1L))
+            .withMessage("메뉴 가격은 0원 이상이어야 합니다.");
     }
 
     @DisplayName("메뉴 가격이 0원 미만인 경우 생성할 수 없다.")
     @Test
     void constructor_throws_exception2() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> new Menu(1L, "메뉴", BigDecimal.valueOf(-1), 1L));
+            .isThrownBy(() -> new Menu(1L, "메뉴", BigDecimal.valueOf(-1), 1L))
+            .withMessage("메뉴 가격은 0원 이상이어야 합니다.");
     }
 }

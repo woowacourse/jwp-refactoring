@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.TableGroupCreateRequest;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,17 +25,17 @@ import org.springframework.http.MediaType;
 
 public class TableGroupRestControllerTest extends AbstractControllerTest {
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @DisplayName("단체 지정을 생성할 수 있다.")
     @Test
     void create() throws Exception {
         List<OrderTable> orderTables = Arrays.asList(
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null))
+            orderTableRepository.save(createOrderTable(null, true, 0, null)),
+            orderTableRepository.save(createOrderTable(null, true, 0, null))
         );
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(orderTables);
 
@@ -53,16 +53,16 @@ public class TableGroupRestControllerTest extends AbstractControllerTest {
     @DisplayName("단체 지정을 해제할 수 있다.")
     @Test
     void ungroup() throws Exception {
-        TableGroup tableGroup = tableGroupDao
+        TableGroup tableGroup = tableGroupRepository
             .save(createTableGroup(null, LocalDateTime.now()));
 
-        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
-        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
+        orderTableRepository.save(createOrderTable(null, false, 0, tableGroup.getId()));
+        orderTableRepository.save(createOrderTable(null, false, 0, tableGroup.getId()));
 
         mockMvc.perform(delete("/api/table-groups/{id}", tableGroup.getId()))
             .andDo(print())
             .andExpect(status().isNoContent());
 
-        assertThat(orderTableDao.findAllByTableGroupId(tableGroup.getId())).isEmpty();
+        assertThat(orderTableRepository.findAllByTableGroupId(tableGroup.getId())).isEmpty();
     }
 }

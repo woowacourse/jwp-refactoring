@@ -18,7 +18,7 @@ public class OrderFixture {
         return new Order(
             id,
             orderTableId,
-            orderStatus.name(),
+            orderStatus,
             orderedTime
         );
     }

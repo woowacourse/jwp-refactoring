@@ -18,13 +18,13 @@ import kitchenpos.application.dto.OrderTableChangeEmptyRequest;
 import kitchenpos.application.dto.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.application.dto.OrderTableCreateRequest;
 import kitchenpos.application.dto.OrderTableResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,13 +37,13 @@ public class TableServiceTest extends AbstractServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
@@ -64,9 +64,9 @@ public class TableServiceTest extends AbstractServiceTest {
     @Test
     void list() {
         List<OrderTableResponse> orderTables = OrderTableResponse.listOf(Arrays.asList(
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null))
+            orderTableRepository.save(createOrderTable(null, true, 0, null)),
+            orderTableRepository.save(createOrderTable(null, true, 0, null)),
+            orderTableRepository.save(createOrderTable(null, true, 0, null))
         ));
 
         List<OrderTableResponse> allOrderTables = tableService.list();
@@ -78,7 +78,7 @@ public class TableServiceTest extends AbstractServiceTest {
     @MethodSource("provideEmpty")
     @ParameterizedTest
     void changeEmpty(boolean oldEmpty, boolean newEmpty) {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, oldEmpty, 0, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, oldEmpty, 0, null));
         OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(
             newEmpty
         );
@@ -101,9 +101,9 @@ public class TableServiceTest extends AbstractServiceTest {
     @DisplayName("단체 지정한 주문 테이블은 빈 테이블 여부를 변경할 수 없다.")
     @Test
     void changeEmpty_throws_exception() {
-        TableGroup tableGroup = tableGroupDao
+        TableGroup tableGroup = tableGroupRepository
             .save(createTableGroup(null, LocalDateTime.now()));
-        OrderTable orderTable = orderTableDao
+        OrderTable orderTable = orderTableRepository
             .save(createOrderTable(null, true, 0, tableGroup.getId()));
         OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
@@ -115,13 +115,14 @@ public class TableServiceTest extends AbstractServiceTest {
     @MethodSource("provideOrderStatus")
     @ParameterizedTest
     void changeEmpty_throws_exception2(OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
-        Order order = orderDao
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
+        Order order = orderRepository
             .save(createOrder(null, LocalDateTime.now(), orderStatus, orderTable.getId()));
         OrderTableChangeEmptyRequest orderTableRequest = createOrderTableChangeEmptyRequest(false);
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tableService
-            .changeEmpty(orderTable.getId(), orderTableRequest));
+            .changeEmpty(orderTable.getId(), orderTableRequest))
+            .withMessage("완료되지 않은 주문이 존재하지 않아야 합니다.");
     }
 
     private static Stream<Arguments> provideOrderStatus() {
@@ -134,7 +135,7 @@ public class TableServiceTest extends AbstractServiceTest {
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, false, 0, null));
         OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
             1
         );
@@ -149,7 +150,7 @@ public class TableServiceTest extends AbstractServiceTest {
     @DisplayName("손님 수가 0 미만이면 변경할 수 없다.")
     @Test
     void changeNumberOfGuests_throws_exception() {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, false, 0, null));
         OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
             -1
         );
@@ -161,7 +162,7 @@ public class TableServiceTest extends AbstractServiceTest {
     @DisplayName("빈 테이블은 손님 수를 변경할 수 없다.")
     @Test
     void changeNumberOfGuests_throws_exception2() {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
         OrderTableChangeNumberOfGuestsRequest orderTableRequest = createOrderTableChangeNumberOfGuestsRequest(
             1
         );

@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.List;
 import kitchenpos.application.dto.ProductCreateRequest;
 import kitchenpos.application.dto.ProductResponse;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.http.MediaType;
 
 public class ProductRestControllerTest extends AbstractControllerTest {
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 생성할 수 있다.")
     @Test
@@ -41,7 +41,7 @@ public class ProductRestControllerTest extends AbstractControllerTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<ProductResponse> products = ProductResponse.listOf(productDao.findAll());
+        List<ProductResponse> products = ProductResponse.listOf(productRepository.findAll());
 
         String json = mockMvc.perform(get("/api/products"))
             .andDo(print())

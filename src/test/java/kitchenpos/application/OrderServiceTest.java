@@ -21,16 +21,16 @@ import java.util.stream.Stream;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
 import kitchenpos.application.dto.OrderResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,19 +41,19 @@ public class OrderServiceTest extends AbstractServiceTest {
     private OrderService orderService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     OrderTable orderTable;
 
@@ -63,9 +63,9 @@ public class OrderServiceTest extends AbstractServiceTest {
 
     @BeforeEach
     void setup() {
-        orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
-        menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        orderTable = orderTableRepository.save(createOrderTable(null, false, 0, null));
+        menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        menu = menuRepository.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
     }
 
     @DisplayName("주문을 생성할 수 있다.")
@@ -83,7 +83,7 @@ public class OrderServiceTest extends AbstractServiceTest {
             () -> assertThat(savedOrder.getOrderTableId())
                 .isEqualTo(orderCreateRequest.getOrderTableId()),
             () -> assertThat(savedOrder.getOrderedTime()).isNotNull(),
-            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+            () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING),
             () -> assertThat(savedOrder.getOrderLineItems())
                 .usingElementComparatorIgnoringFields("seq", "orderId")
                 .isEqualTo(orderCreateRequest.getOrderLineItems())
@@ -96,7 +96,8 @@ public class OrderServiceTest extends AbstractServiceTest {
         OrderCreateRequest orderCreateRequest = createOrderRequest(orderTable.getId(), emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("주문 항목이 존재해야 합니다.");
     }
 
     @DisplayName("주문 항목과 메뉴의 개수가 같지 않으면 주문을 생성할 수 없다.")
@@ -111,7 +112,8 @@ public class OrderServiceTest extends AbstractServiceTest {
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("주문 항목 개수와 메뉴 개수는 같아야 합니다.");
     }
 
     @DisplayName("주문 테이블이 존재하지 않으면 주문을 생성할 수 없다.")
@@ -129,33 +131,34 @@ public class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("빈 테이블은 주문을 생성할 수 없다.")
     @Test
     void create_throws_exception4() {
-        orderTable = orderTableDao.save(createOrderTable(null, true, 0, null));
+        orderTable = orderTableRepository.save(createOrderTable(null, true, 0, null));
         OrderCreateRequest orderCreateRequest = createOrderRequest(
             orderTable.getId(),
             Collections.singletonList(createOrderLineItemRequest(menu.getId(), 1))
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> orderService.create(orderCreateRequest));
+            .isThrownBy(() -> orderService.create(orderCreateRequest))
+            .withMessage("빈 테이블은 주문할 수 없습니다.");
     }
 
     @DisplayName("주문 목록을 조회할 수 있다.")
     @Test
     void list() {
         List<OrderResponse> savedOrders = Stream.of(
-            orderDao.save(createOrder(
+            orderRepository.save(createOrder(
                 null,
                 LocalDateTime.now(),
                 OrderStatus.COOKING,
                 orderTable.getId())
             ),
-            orderDao.save(createOrder(
+            orderRepository.save(createOrder(
                 null,
                 LocalDateTime.now(),
                 OrderStatus.COOKING,
                 orderTable.getId())
             ),
-            orderDao.save(createOrder(
+            orderRepository.save(createOrder(
                 null,
                 LocalDateTime.now(),
                 OrderStatus.COOKING,
@@ -174,7 +177,7 @@ public class OrderServiceTest extends AbstractServiceTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() {
-        Order order = orderDao.save(createOrder(
+        Order order = orderRepository.save(createOrder(
             null,
             LocalDateTime.now(),
             OrderStatus.COOKING,
@@ -186,13 +189,13 @@ public class OrderServiceTest extends AbstractServiceTest {
 
         OrderResponse changedOrder = orderService.changeOrderStatus(order.getId(), orderRequest);
 
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus().name());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
     }
 
     @DisplayName("완료된 주문의 상태를 변경할 수 없다.")
     @Test
     void changeOrderStatus_throws_exception() {
-        Order order = orderDao.save(createOrder(
+        Order order = orderRepository.save(createOrder(
             null,
             LocalDateTime.now(),
             OrderStatus.COMPLETION,

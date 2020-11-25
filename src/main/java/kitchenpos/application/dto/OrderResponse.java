@@ -4,15 +4,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderResponse {
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(Long id, Long orderTableId, String orderStatus,
+    public OrderResponse(Long id, Long orderTableId, OrderStatus orderStatus,
         LocalDateTime orderedTime,
         List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
@@ -40,7 +41,7 @@ public class OrderResponse {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

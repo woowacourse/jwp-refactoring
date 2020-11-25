@@ -21,15 +21,15 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.application.dto.OrderChangeOrderStatusRequest;
 import kitchenpos.application.dto.OrderCreateRequest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,24 +37,24 @@ import org.springframework.http.MediaType;
 
 public class OrderRestControllerTest extends AbstractControllerTest {
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
 
     @DisplayName("주문을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = orderTableDao.save(createOrderTable(null, false, 0, null));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        Menu menu = menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        OrderTable orderTable = orderTableRepository.save(createOrderTable(null, false, 0, null));
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        Menu menu = menuRepository.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
         OrderCreateRequest orderRequest = createOrderRequest(
             orderTable.getId(),
             Collections.singletonList(createOrderLineItemRequest(menu.getId(), 1))
@@ -78,7 +78,7 @@ public class OrderRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<Order> orders = orderDao.findAll();
+        List<Order> orders = orderRepository.findAll();
 
         String json = mockMvc.perform(get("/api/orders"))
             .andDo(print())
@@ -97,11 +97,11 @@ public class OrderRestControllerTest extends AbstractControllerTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() throws Exception {
-        OrderTable orderTable = orderTableDao
-            .save(orderTableDao.save(createOrderTable(null, false, 0, null)));
-        MenuGroup menuGroup = menuGroupDao.save(createMenuGroup(null, "메뉴그룹"));
-        menuDao.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
-        Order order = orderDao
+        OrderTable orderTable = orderTableRepository
+            .save(orderTableRepository.save(createOrderTable(null, false, 0, null)));
+        MenuGroup menuGroup = menuGroupRepository.save(createMenuGroup(null, "메뉴그룹"));
+        menuRepository.save(createMenu(null, "메뉴", 0L, menuGroup.getId()));
+        Order order = orderRepository
             .save(createOrder(null, LocalDateTime.now(), OrderStatus.COOKING, orderTable.getId()));
 
         OrderChangeOrderStatusRequest orderRequest = createOrderRequestChangeOrderStatus(

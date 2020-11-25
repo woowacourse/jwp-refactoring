@@ -17,13 +17,13 @@ import java.util.stream.Stream;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.application.dto.TableGroupCreateRequest;
 import kitchenpos.application.dto.TableGroupResponse;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,13 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class TableGroupServiceTest extends AbstractServiceTest {
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
     private TableGroupService tableGroupService;
@@ -48,8 +48,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
     @Test
     void create() {
         List<OrderTable> orderTables = Arrays.asList(
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null))
+            orderTableRepository.save(createOrderTable(null, true, 0, null)),
+            orderTableRepository.save(createOrderTable(null, true, 0, null))
         );
 
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(orderTables);
@@ -69,8 +69,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
     @Test
     void create_throws_exception() {
         List<OrderTable> orderTables = Arrays.asList(
-            orderTableDao.save(createOrderTable(null, false, 0, null)),
-            orderTableDao.save(createOrderTable(null, false, 0, null))
+            orderTableRepository.save(createOrderTable(null, false, 0, null)),
+            orderTableRepository.save(createOrderTable(null, false, 0, null))
         );
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(orderTables);
 
@@ -84,18 +84,21 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("단체 지정할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     @DisplayName("주문 테이블이 2개 미만인 경우 단체 지정할 수 없다.")
     @Test
     void create_throws_exception3() {
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(
-            Collections.singletonList(orderTableDao.save(createOrderTable(null, false, 0, null)))
+            Collections.singletonList(
+                orderTableRepository.save(createOrderTable(null, false, 0, null)))
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("단체 지정할 주문 테이블은 2개 이상이어야 합니다.");
     }
 
     @DisplayName("실제 주문 테이블 수보다 많은 테이블을 선택한 경우 단체 지정할 수 없다.")
@@ -104,24 +107,25 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         TableGroupCreateRequest tableGroupCreateRequest = createTableGroupRequest(
             Arrays.asList(
                 createOrderTable(null, false, 0, null),
-                orderTableDao.save(createOrderTable(null, false, 0, null))
+                orderTableRepository.save(createOrderTable(null, false, 0, null))
             )
         );
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest));
+            .isThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
+            .withMessage("존재하지 않는 주문 테이블은 단체 지정할 수 없습니다.");
     }
 
     @DisplayName("단체 지정을 해제할 수 있다.")
     @Test
     void ungroup() {
-        TableGroup tableGroup = tableGroupDao.save(createTableGroup(null, LocalDateTime.now()));
-        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
-        orderTableDao.save(createOrderTable(null, false, 0, tableGroup.getId()));
+        TableGroup tableGroup = tableGroupRepository.save(createTableGroup(null, LocalDateTime.now()));
+        orderTableRepository.save(createOrderTable(null, false, 0, tableGroup.getId()));
+        orderTableRepository.save(createOrderTable(null, false, 0, tableGroup.getId()));
 
         tableGroupService.ungroup(tableGroup.getId());
 
-        List<OrderTable> foundOrderTables = orderTableDao.findAllByTableGroupId(tableGroup.getId());
+        List<OrderTable> foundOrderTables = orderTableRepository.findAllByTableGroupId(tableGroup.getId());
 
         assertThat(foundOrderTables).isEmpty();
     }
@@ -131,13 +135,13 @@ public class TableGroupServiceTest extends AbstractServiceTest {
     @MethodSource("provideOrderStatus")
     void ungroup_throws_exception(OrderStatus orderStatus) {
         List<OrderTable> orderTables = Arrays.asList(
-            orderTableDao.save(createOrderTable(null, true, 0, null)),
-            orderTableDao.save(createOrderTable(null, true, 0, null))
+            orderTableRepository.save(createOrderTable(null, true, 0, null)),
+            orderTableRepository.save(createOrderTable(null, true, 0, null))
         );
         TableGroupResponse tableGroup = tableGroupService
             .create(createTableGroupRequest(orderTables));
 
-        Order order = orderDao.save(createOrder(
+        Order order = orderRepository.save(createOrder(
             null,
             LocalDateTime.now(),
             orderStatus,
@@ -145,7 +149,8 @@ public class TableGroupServiceTest extends AbstractServiceTest {
         ));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+            .isThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+            .withMessage("완료되지 않은 주문이 존재하지 않아야 합니다.");
     }
 
     private static Stream<Arguments> provideOrderStatus() {
