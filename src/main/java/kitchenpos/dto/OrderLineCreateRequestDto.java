@@ -25,4 +25,8 @@ public class OrderLineCreateRequestDto {
     public OrderLineItem toEntity(Long orderId) {
         return new OrderLineItem(null, orderId, menuId, quantity);
     }
+
+    public OrderLineItem toEntity() {
+        return new OrderLineItem(null, null, menuId, quantity);
+    }
 }

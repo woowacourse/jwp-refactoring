@@ -5,7 +5,6 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
@@ -58,7 +57,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
 
         final List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
-        OrderVerifier.validateOrderStatus(orders);
+        OrderVerifier.validateNotCompleteOrderStatus(orders);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();

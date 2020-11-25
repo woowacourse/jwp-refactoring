@@ -10,5 +10,5 @@ import kitchenpos.domain.Menu;
 
 public interface MenuRepository extends JpaRepository<Menu, Long> {
     @Query("SELECT COUNT(m) FROM Menu m WHERE m.id IN :ids")
-    Long countAllByIds(@Param("ids") List<Long> ids);
+    int countAllByIds(@Param("ids") List<Long> ids);
 }

@@ -19,10 +19,6 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    protected OrderTable(Long id) {
-        this.id = id;
-    }
-
     public OrderTable() {
         this.numberOfGuests = 0;
         this.empty = true;
