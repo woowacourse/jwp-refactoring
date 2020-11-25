@@ -58,6 +58,18 @@ class TableRestControllerTest {
     }
 
     @Test
+    void create_emptyBody_exception() throws Exception {
+        TableCreateRequest request = null;
+
+        mockMvc.perform(post("/api/tables")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void list() throws Exception {
         TableResponse savedTable = tableService.create(new TableCreateRequest(false, 4));
         TableResponse savedTable2 = tableService.create(new TableCreateRequest(false, 5));
@@ -101,6 +113,20 @@ class TableRestControllerTest {
     }
 
     @Test
+    void changeEmpty_emptyParam_exception() throws Exception {
+        String url = String.format("/api/tables/%d/empty", null);
+
+        TableChangeRequest request = null;
+
+        mockMvc.perform(put(url)
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void changeNumberOfGuests() throws Exception {
         TableResponse savedTable = tableService.create(new TableCreateRequest(false, 10));
         String url = String.format("/api/tables/%d/number-of-guests", savedTable.getId());
@@ -120,5 +146,19 @@ class TableRestControllerTest {
         TableResponse responseTable = mapper.readValue(response, TableResponse.class);
 
         assertThat(responseTable).isEqualToComparingOnlyGivenFields(request, "numberOfGuests");
+    }
+
+    @Test
+    void changeNumberOfGuests_emptyParam_exception() throws Exception {
+        String url = String.format("/api/tables/%d/number-of-guests", null);
+
+        TableChangeRequest request = null;
+
+        mockMvc.perform(put(url)
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
     }
 }
