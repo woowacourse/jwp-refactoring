@@ -1,7 +1,8 @@
 package kitchenpos.order.service;
 
+import static java.util.stream.Collectors.*;
+
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequest;
 import kitchenpos.order.dto.OrderEditRequest;
+import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.order.dto.OrderResponses;
 import kitchenpos.table.domain.Table;
 import kitchenpos.table.domain.TableRepository;
@@ -47,18 +49,21 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
         OrderLineItems orderLineItems = new OrderLineItems(order, request.getOrderLineItemDtos());
 
-        List<OrderLineItem> savedOrderLineItems = orderLineItems.stream()
-            .map(orderLineItemRepository::save)
-            .collect(Collectors.toList());
-        
-        savedOrder.changeOrderLineItems(savedOrderLineItems);
-
+        for (OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
+            orderLineItemRepository.save(orderLineItem);
+        }
         return savedOrder.getId();
     }
 
     public OrderResponses list() {
-        List<Order> orders = orderRepository.findAllWithOrderLineItemsAndTable();
-        return OrderResponses.from(orders);
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+            .map(order -> OrderResponse.from(order, findOrderLineItem(order)))
+            .collect(collectingAndThen(toList(), OrderResponses::from));
+    }
+
+    private List<OrderLineItem> findOrderLineItem(Order order) {
+        return orderLineItemRepository.findAllByOrder(order);
     }
 
     @Transactional

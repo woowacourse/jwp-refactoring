@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -103,7 +102,7 @@ class TableServiceTest {
         Table table = createTable(null, false, null, 1);
         Table savedTable = tableRepository.save(table);
 
-        Order order = createOrder(null, Collections.emptyList(), OrderStatus.COOKING,
+        Order order = createOrder(null, OrderStatus.COOKING,
             savedTable);
         orderRepository.save(order);
 
@@ -118,7 +117,7 @@ class TableServiceTest {
         Table savedTable = tableRepository.save(table);
         boolean expect = false;
 
-        Order order = createOrder(null, Collections.emptyList(), OrderStatus.COMPLETION, savedTable);
+        Order order = createOrder(null, OrderStatus.COMPLETION, savedTable);
         orderRepository.save(order);
 
         tableService.editEmpty(savedTable.getId(), new TableEmptyEditRequest(expect));

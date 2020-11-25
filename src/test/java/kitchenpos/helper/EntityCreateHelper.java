@@ -44,8 +44,7 @@ public class EntityCreateHelper {
         return new TableGroup(id, tables);
     }
 
-    public static Order createOrder(Long id, List<OrderLineItem> orderLineItems,
-        OrderStatus orderStatus, Table table) {
-        return new Order(id, table, orderStatus, orderLineItems);
+    public static Order createOrder(Long id, OrderStatus orderStatus, Table table) {
+        return new Order(id, table, orderStatus);
     }
 }

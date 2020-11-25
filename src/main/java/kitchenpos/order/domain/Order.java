@@ -1,8 +1,7 @@
 package kitchenpos.order.domain;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -11,7 +10,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -39,22 +37,18 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
     public Order() {
     }
 
-    public Order(Long id, Table table, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(Long id, Table table, OrderStatus orderStatus) {
         validate(table);
         this.id = id;
         this.table = table;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
     }
 
     public Order(Table table, OrderStatus orderStatus) {
-        this(null, table, orderStatus, Collections.emptyList());
+        this(null, table, orderStatus);
     }
 
     private void validate(Table table) {
@@ -79,10 +73,6 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (orderStatus.isCompletion()) {
             throw new IllegalOrderStatusException("OrderStatus를 바꿀 수 없는 상태입니다.");
@@ -90,11 +80,22 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void changeOrderLineItems(List<OrderLineItem> savedOrderLineItems) {
-        this.orderLineItems = savedOrderLineItems;
-    }
-
     public boolean isNotCompletion() {
         return this.getOrderStatus().isNotCompletion();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        Order order = (Order)o;
+        return Objects.equals(id, order.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

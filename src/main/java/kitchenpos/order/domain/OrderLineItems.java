@@ -2,7 +2,6 @@ package kitchenpos.order.domain;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import kitchenpos.order.dto.OrderLineItemDto;
 
@@ -32,7 +31,7 @@ public class OrderLineItems {
         return new OrderLineItem(order, orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity());
     }
 
-    public Stream<OrderLineItem> stream() {
-        return orderLineItems.stream();
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
