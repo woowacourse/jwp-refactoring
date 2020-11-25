@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.OrderService;
@@ -113,6 +114,37 @@ class OrderRestControllerTest {
             () -> assertThat(responseOrder.getOrderLineItems().get(0).getQuantity())
                 .isEqualTo(request.getOrderLineItems().get(0).getQuantity())
         );
+    }
+
+    @Test
+    void create_emptyBody_exception() throws Exception {
+        mockMvc.perform(post("/api/orders")
+            .content(mapper.writeValueAsString(null))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void create_emptyOrderLineItems_exception() throws Exception {
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
+
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
+
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
+        tableGroupDao.save(tableGroup);
+
+        OrderCreateRequest request = new OrderCreateRequest(persistTable.getId(), new ArrayList<>());
+
+        mockMvc.perform(post("/api/orders")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
     }
 
     @Test
