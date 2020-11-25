@@ -133,12 +133,13 @@
     - [x] OrderTable에 setter 없애기
     - [x] TableGroup에 setter 없애기
 
-- [ ] Jpa 사용
+- [x] Jpa 사용
     - [x] ProductDao 대신 ProductRepository 사용
     - [x] MenuDao 대신 MenuRepository 사용 
     - [x] MenuProductDao 대신 MenuProductRepository 사용
     - [x] MenuGroupDao 대신 MenuGroupRepository 사용 
     - [x] OrderDao 대신 OrderRepository 사용 
+    - [x] OrderLineItemDao 대신 OrderLineItemRepository 사용 
     - [x] OrderTableDao 대신 OrderTableRepository 사용 
     - [x] TableGroupDao 대신 TableGroupRepository 사용 
  
