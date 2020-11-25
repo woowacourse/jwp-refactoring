@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupCreateRequestDto;
+import kitchenpos.dto.MenuGroupResponseDto;
 
 class MenuGroupServiceTest extends ServiceTest {
     @Autowired
@@ -23,13 +25,13 @@ class MenuGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         String name = "치킨";
-        MenuGroup menuGroup = createMenuGroup(null, name);
+        MenuGroupCreateRequestDto menuGroupCreateRequest = new MenuGroupCreateRequestDto(name);
 
-        MenuGroup saved = menuGroupService.create(menuGroup);
+        MenuGroupResponseDto menuGroupResponse = menuGroupService.create(menuGroupCreateRequest);
 
         assertAll(
-            () -> assertThat(saved.getId()).isNotNull(),
-            () -> assertThat(saved.getName()).isEqualTo(name)
+            () -> assertThat(menuGroupResponse.getId()).isNotNull(),
+            () -> assertThat(menuGroupResponse.getName()).isEqualTo(name)
         );
     }
 
@@ -39,8 +41,8 @@ class MenuGroupServiceTest extends ServiceTest {
         MenuGroup menuGroup = createMenuGroup(null, "치킨");
         menuGroupDao.save(menuGroup);
 
-        List<MenuGroup> menuGroups = menuGroupService.list();
+        List<MenuGroupResponseDto> menuGroups = menuGroupService.list();
 
-        assertThat(menuGroups).hasSizeGreaterThanOrEqualTo(1);
+        assertThat(menuGroups).hasSize(1);
     }
 }

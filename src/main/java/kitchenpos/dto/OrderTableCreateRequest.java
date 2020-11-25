@@ -1,7 +1,5 @@
 package kitchenpos.dto;
 
-import kitchenpos.domain.OrderTable;
-
 public class OrderTableCreateRequest {
     private int numberOfGuests;
     private boolean empty;
