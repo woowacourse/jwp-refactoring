@@ -117,11 +117,11 @@
 ### 2단계
 - [x] JPA 사용시 ddl-auto의 값을 validate로 설정한다.
 
-- [ ] 테스트하기 쉬운 부분과 어려운 부분을 분리
+- [x] 테스트하기 쉬운 부분과 어려운 부분을 분리
     - [x] ProductService의 로직을 Product로 이동
     - [x] MenuService의 로직을 Menu로 이동
     - [x] MenuGroupService의 로직을 MenuGroup으로 이동
-    - [ ] OrderService의 로직을 Order로 이동
+    - [x] OrderService의 로직을 Order로 이동
     - [x] OrderTableService의 로직을 OrderTable로 이동
     - [x] TableGroupService의 로직을 TableGroup으로 이동
     

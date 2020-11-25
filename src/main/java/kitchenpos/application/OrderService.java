@@ -7,12 +7,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderVerifier;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
@@ -42,44 +42,41 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto create(final OrderCreateRequestDto orderCreateRequest) {
-        final List<OrderLineCreateRequestDto> orderLineCreateRequests = orderCreateRequest.getOrderLineCreateRequests();
-
-        if (CollectionUtils.isEmpty(orderLineCreateRequests)) {
-            throw new IllegalArgumentException("주문은 1개 이상의 메뉴를 포함해야 합니다.");
-        }
-
-        final List<Long> menuIds = orderLineCreateRequests.stream()
-            .map(OrderLineCreateRequestDto::getMenuId)
+        final List<OrderLineItem> orderLineItems = orderCreateRequest.getOrderLineCreateRequests().stream()
+            .map(OrderLineCreateRequestDto::toEntity)
             .collect(Collectors.toList());
 
-        if (orderLineCreateRequests.size() != menuRepository.countAllByIds(menuIds)) {
-            throw new IllegalArgumentException("존재하지 않는 메뉴로 주문할 수 없습니다.");
-        }
+        final List<Long> menuIds = orderLineItems.stream()
+            .map(OrderLineItem::getMenuId)
+            .collect(Collectors.toList());
 
-        if (Objects.isNull(orderCreateRequest.getOrderTableId())) {
+        final int savedMenuCount = menuRepository.countAllByIds(menuIds);
+        final Long orderTableId = orderCreateRequest.getOrderTableId();
+        final OrderTable orderTable = findBy(orderTableId);
+
+        OrderVerifier.validateOrderCreation(orderLineItems, savedMenuCount, orderTable);
+
+        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity());
+        final Long orderId = savedOrder.getId();
+        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+        for (final OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.changeOrderId(orderId);
+        }
+        orderLineItemRepository.saveAll(orderLineItems);
+
+        return OrderResponseDto.from(savedOrder, savedOrderLineItems);
+    }
+
+    private OrderTable findBy(Long orderTableId) {
+        if (Objects.isNull(orderTableId)) {
             throw new IllegalArgumentException("존재하지 않는 테이블에 주문할 수 없습니다.");
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(orderCreateRequest.getOrderTableId())
+        return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블에 주문할 수 없습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("비어있는 테이블에는 주문할 수 없습니다.k");
-        }
-
-        final Order savedOrder = orderRepository.save(orderCreateRequest.toEntity());
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineCreateRequestDto orderLineCreateRequest : orderLineCreateRequests) {
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineCreateRequest.toEntity(orderId)));
-        }
-
-        OrderResponseDto orderResponseDto = OrderResponseDto.from(savedOrder, savedOrderLineItems);
-
-        return orderResponseDto;
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponseDto> list() {
         final List<Order> orders = orderRepository.findAll();
 

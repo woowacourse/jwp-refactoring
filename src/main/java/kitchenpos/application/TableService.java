@@ -40,7 +40,7 @@ public class TableService {
         final OrderTable savedOrderTable = findBy(orderTableId);
 
         final List<Order> savedOrders = orderRepository.findAllByOrderTableId(orderTableId);
-        OrderVerifier.validateOrderStatus(savedOrders);
+        OrderVerifier.validateNotCompleteOrderStatus(savedOrders);
 
         savedOrderTable.changeEmpty(isEmpty);
         OrderTable saved = orderTableRepository.save(savedOrderTable);
