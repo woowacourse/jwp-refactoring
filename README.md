@@ -107,3 +107,23 @@
     - [x] TableGroupService 테스트 코드 작성
     - [x] OrderService 테스트 코드 작성
     
+### 2단계
+- [ ] 테스트하기 쉬운 부분과 어려운 부분을 분리
+    - [ ] ProductService의 로직을 Product로 이동
+    - [ ] MenuService의 로직을 Menu로 이동
+    - [ ] MenuGroupService의 로직을 MenGroup으로 이동
+    - [ ] OderTableService의 로직을 OrderTable로 이동
+    - [ ] TableGroupService의 로직을 TableGroup으로 이동
+    
+- [ ] 모델에 setter 메서드 사용하지 않기
+    - [ ] Product에 setter 없애기
+    - [ ] Menu에 setter 없애기
+    - [ ] MenuGroup에 setter 없애기
+    - [ ] OrderTable에 setter 없애기
+    - [ ] TableGroup에 setter 없애기
+
+ 
+ 
+ 
+ 
+ 
