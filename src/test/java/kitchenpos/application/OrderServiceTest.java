@@ -149,9 +149,9 @@ class OrderServiceTest extends ServiceTest {
             orderLineCreateRequests);
         orderService.create(orderCreateRequest);
 
-        List<Order> list = orderService.list();
+        List<OrderResponseDto> orderResponses = orderService.list();
 
-        assertThat(list).hasSize(1);
+        assertThat(orderResponses).hasSize(1);
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")

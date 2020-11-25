@@ -19,6 +19,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
+import kitchenpos.dto.OrderLineItemResponseDto;
 import kitchenpos.dto.OrderResponseDto;
 
 @Service
@@ -76,14 +77,16 @@ public class OrderService {
         return orderResponseDto;
     }
 
-    public List<Order> list() {
+    public List<OrderResponseDto> list() {
         final List<Order> orders = orderDao.findAll();
 
+        List<OrderResponseDto> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
+            List<OrderLineItem> orderLineItems = orderLineItemDao.findAllByOrderId(order.getId());
+            orderResponses.add(OrderResponseDto.from(order, orderLineItems));
         }
 
-        return orders;
+        return orderResponses;
     }
 
     @Transactional
