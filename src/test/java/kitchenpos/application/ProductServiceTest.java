@@ -10,16 +10,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequestDto;
 import kitchenpos.dto.ProductResponseDto;
+import kitchenpos.repository.ProductRepository;
 
 class ProductServiceTest extends ServiceTest {
     @Autowired
     private ProductService productService;
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
@@ -42,7 +42,7 @@ class ProductServiceTest extends ServiceTest {
     void list() {
         BigDecimal price = BigDecimal.valueOf(18_000);
         Product productRequest = new Product(null, "고추마요 치킨", price);
-        productDao.save(productRequest);
+        productRepository.save(productRequest);
 
         List<ProductResponseDto> actual = productService.list();
 

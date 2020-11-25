@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -25,6 +24,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuProductCreateRequestDto;
 import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.repository.ProductRepository;
 
 class MenuServiceTest extends ServiceTest {
     @Autowired
@@ -34,7 +34,7 @@ class MenuServiceTest extends ServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -46,7 +46,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
-        Product product = productDao.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(product.getId(), 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_000),
             menuGroup.getId(),
@@ -69,7 +69,7 @@ class MenuServiceTest extends ServiceTest {
     @ValueSource(longs = 1)
     @NullSource
     void create_NonExistingMenuGroup_ThrownException(Long menuGroupId) {
-        Product product = productDao.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(product.getId(), 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_000),
             menuGroupId, Collections.singletonList(menuProductCreateRequest));
@@ -82,7 +82,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create_OverSumOfProductsPrice_ThrownException() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
-        Product product = productDao.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         MenuProductCreateRequestDto menuProductCreateRequest = new MenuProductCreateRequestDto(product.getId(), 1);
         MenuCreateRequestDto menuCreateRequest = new MenuCreateRequestDto("양념치킨", BigDecimal.valueOf(18_001),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
@@ -109,7 +109,7 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "백마리치킨"));
-        Product product = productDao.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "양념치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuDao.save(new Menu(null, "양념치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
 

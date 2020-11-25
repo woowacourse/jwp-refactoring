@@ -18,7 +18,6 @@ import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -28,6 +27,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
+import kitchenpos.repository.ProductRepository;
 
 class OrderServiceTest extends ServiceTest {
     @Autowired
@@ -37,7 +37,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuDao menuDao;
@@ -53,7 +53,7 @@ class OrderServiceTest extends ServiceTest {
     void create() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
-        Product product = productDao.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         MenuProduct menuProduct = new MenuProduct(null, menu.getId(), product.getId(), 1);
         menuProductDao.save(menuProduct);
@@ -87,7 +87,7 @@ class OrderServiceTest extends ServiceTest {
     void create_WithEmptyTable_ThrownException() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
-        Product product = productDao.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
@@ -130,7 +130,7 @@ class OrderServiceTest extends ServiceTest {
     void list() {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
-        Product product = productDao.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
@@ -150,7 +150,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus(OrderStatus orderStatus) {
         OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupDao.save(new MenuGroup(null, "한마리치킨"));
-        Product product = productDao.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
+        Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuDao.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
         menuProductDao.save(new MenuProduct(null, menu.getId(), product.getId(), 1));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
