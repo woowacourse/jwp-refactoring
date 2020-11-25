@@ -9,7 +9,9 @@ import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderVerifier;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupVerifier;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
 import kitchenpos.repository.OrderRepository;
@@ -32,24 +34,17 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponseDto create(final TableGroupCreateRequestDto tableGroupCreateRequestDto) {
         final List<Long> orderTableIds = tableGroupCreateRequestDto.getOrderTableIds();
-
-        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException("그룹 지정은 테이블의 수가 2보다 커야 합니다.");
-        }
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
 
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("존재하지 않는 테이블은 그룹지정할 수 없습니다.");
-        }
+        TableGroupVerifier.validate(orderTableIds, savedOrderTables.size());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         final Long tableGroupId = savedTableGroup.getId();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.group(tableGroupId);
-            orderTableRepository.save(savedOrderTable);
         }
+        orderTableRepository.saveAll(savedOrderTables);
 
         return TableGroupResponseDto.from(savedTableGroup, savedOrderTables);
     }
@@ -63,12 +58,7 @@ public class TableGroupService {
             .collect(Collectors.toList());
 
         final List<Order> orders = orderRepository.findAllByOrderTableIdIn(orderTableIds);
-
-        for (Order order : orders) {
-            if (!order.isComplete()) {
-                throw new IllegalArgumentException("테이블의 주문이 아직 결제되지 않았습니다.");
-            }
-        }
+        OrderVerifier.validateOrderStatus(orders);
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
