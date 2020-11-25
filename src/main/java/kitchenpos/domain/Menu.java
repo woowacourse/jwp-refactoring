@@ -3,13 +3,28 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class Menu {
-    public static final BigDecimal MINIMUM_PRICE = BigDecimal.ZERO;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
+public class Menu {
+    private static final BigDecimal MINIMUM_PRICE = BigDecimal.ZERO;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private BigDecimal price;
+    @Column(nullable = false)
     private Long menuGroupId;
+
+    protected Menu() {
+    }
 
     public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         this.id = id;
