@@ -12,7 +12,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -20,12 +19,13 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponseDto;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 class TableServiceTest extends ServiceTest {
     @Autowired
     private TableService tableService;
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
     @Autowired
     private TableGroupDao tableGroupDao;
     @Autowired
@@ -43,7 +43,7 @@ class TableServiceTest extends ServiceTest {
     @Test
     void list() {
         TableGroup tableGroup = tableGroupDao.save(new TableGroup());
-        orderTableDao.save(new OrderTable(null, tableGroup.getId(), 2, false));
+        orderTableRepository.save(new OrderTable(null, tableGroup.getId(), 2, false));
 
         List<OrderTableResponseDto> orderTables = tableService.list();
 
@@ -65,7 +65,7 @@ class TableServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource({"COOKING", "MEAL"})
     void changeEmpty_WithInvalidOrderState_ThrownException(OrderStatus status) {
-        OrderTable table = orderTableDao.save(new OrderTable(null, null, 0, false));
+        OrderTable table = orderTableRepository.save(new OrderTable(null, null, 0, false));
         orderRepository.save(new Order(null, table.getId(), status, LocalDateTime.now()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(table.getId(), true))
@@ -75,7 +75,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블의 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 1, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 1, false));
 
         OrderTableResponseDto changedOrderTable = tableService.changeNumberOfGuests(orderTable.getId(), 3);
 

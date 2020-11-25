@@ -6,36 +6,36 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableResponseDto;
 import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 
 @Service
 public class TableService {
     private final OrderRepository orderRepository;
-    private final OrderTableDao orderTableDao;
+    private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableDao orderTableDao) {
+    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableDao = orderTableDao;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderTableResponseDto create() {
-        OrderTable saved = orderTableDao.save(new OrderTable());
+        OrderTable saved = orderTableRepository.save(new OrderTable());
         return OrderTableResponseDto.from(saved);
     }
 
     public List<OrderTableResponseDto> list() {
-        List<OrderTable> orderTables = orderTableDao.findAll();
+        List<OrderTable> orderTables = orderTableRepository.findAll();
         return OrderTableResponseDto.listOf(orderTables);
     }
 
     @Transactional
     public OrderTableResponseDto changeEmpty(final Long orderTableId, final boolean isEmpty) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태이블입니다."));
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
@@ -44,17 +44,17 @@ public class TableService {
         }
 
         savedOrderTable.changeEmpty(isEmpty);
-        OrderTable saved = orderTableDao.save(savedOrderTable);
+        OrderTable saved = orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponseDto.from(saved);
     }
 
     @Transactional
     public OrderTableResponseDto changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
+        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        OrderTable saved = orderTableDao.save(savedOrderTable);
+        OrderTable saved = orderTableRepository.save(savedOrderTable);
         return OrderTableResponseDto.from(saved);
     }
 }

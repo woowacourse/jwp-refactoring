@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -27,6 +26,7 @@ import kitchenpos.dto.OrderResponseDto;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 
 class OrderServiceTest extends ServiceTest {
@@ -43,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private MenuProductRepository menuProductRepository;
@@ -51,7 +51,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문을 등록할 수 있다.")
     @Test
     void create() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
@@ -85,7 +85,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("빈 테이블은 주문할 수 없다.")
     @Test
     void create_WithEmptyTable_ThrownException() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 0, true));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 0, true));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
@@ -102,7 +102,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 목록은 하나 이상이어야 한다.")
     @Test
     void create_WithZeroOrderList_ThrownException() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 2, false));
         OrderCreateRequestDto orderCreateRequest = new OrderCreateRequestDto(orderTable.getId(),
             Collections.EMPTY_LIST);
 
@@ -115,7 +115,7 @@ class OrderServiceTest extends ServiceTest {
     @ValueSource(longs = 1)
     @NullSource
     void create__ThrownException(Long menuId) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 2, false));
         List<OrderLineCreateRequestDto> orderLineCreateRequests = Collections.singletonList(
             new OrderLineCreateRequestDto(menuId, 1));
         OrderCreateRequestDto orderCreateRequest = new OrderCreateRequestDto(orderTable.getId(),
@@ -128,7 +128,7 @@ class OrderServiceTest extends ServiceTest {
     @DisplayName("주문의 목록을 조회할 수 있다.")
     @Test
     void list() {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
@@ -148,7 +148,7 @@ class OrderServiceTest extends ServiceTest {
     @ParameterizedTest
     @CsvSource({"MEAL", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) {
-        OrderTable orderTable = orderTableDao.save(new OrderTable(null, null, 2, false));
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(null, null, 2, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup(null, "한마리치킨"));
         Product product = productRepository.save(new Product(null, "후라이드치킨", BigDecimal.valueOf(18_000)));
         Menu menu = menuRepository.save(new Menu(null, "후라이드치킨", BigDecimal.valueOf(18_000), menuGroup.getId()));
