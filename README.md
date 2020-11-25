@@ -123,13 +123,13 @@
     - [x] OrderTableService의 로직을 OrderTable로 이동
     - [x] TableGroupService의 로직을 TableGroup으로 이동
     
-- [ ] 모델에 setter 메서드 사용하지 않기
+- [x] 모델에 setter 메서드 사용하지 않기
     - [x] Product에 setter 없애기
     - [x] Menu에 setter 없애기
     - [x] MenuGroup에 setter 없애기
     - [x] Order에 setter 없애기
     - [x] OrderTable에 setter 없애기
-    - [ ] TableGroup에 setter 없애기
+    - [x] TableGroup에 setter 없애기
 
  
  
