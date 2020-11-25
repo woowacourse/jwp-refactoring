@@ -57,4 +57,33 @@ class OrderTableTest {
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("비어있는 테이블에는 손님 수를 설정할 수 없습니다.");
     }
+
+    @DisplayName("단체 지정을 할 수 있다.")
+    @Test
+    void group() {
+        OrderTable orderTable = new OrderTable(null, null, 0, true);
+        orderTable.group(1L);
+
+        assertThat(orderTable.getTableGroupId()).isEqualTo(1L);
+    }
+
+    @DisplayName("단체 지정시, 테이블이 비어있지 않으면 예외가 발생한다.")
+    @Test
+    void group_WithNotEmpty_ThrownException() {
+        OrderTable orderTable = new OrderTable(null, null, 2, false);
+
+        assertThatThrownBy(() -> orderTable.group(1L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("비어있지 않은 테이블은 그룹지정을 할 수 없습니다.");
+    }
+
+    @DisplayName("단체 지정시, 이미 그룹지정이 되어 있으면 예외가 발생한다.")
+    @Test
+    void group_WithAlreadyInGroup_ThrownException() {
+        OrderTable orderTable = new OrderTable(null, 1L, 0, false);
+
+        assertThatThrownBy(() -> orderTable.group(2L))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이미 그룹 지정이 된 테이블입니다.");
+    }
 }
