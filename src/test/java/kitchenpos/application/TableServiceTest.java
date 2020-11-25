@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static java.util.Collections.*;
 import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,38 +8,41 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.inmemory.InmemoryOrderDao;
+import kitchenpos.dao.inmemory.InmemoryOrderTableDao;
+import kitchenpos.dao.inmemory.InmemoryTableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-@Transactional
 class TableServiceTest {
 
-    @Autowired
     private TableService tableService;
 
-    @Autowired
     private OrderTableDao orderTableDao;
 
-    @Autowired
     private OrderDao orderDao;
 
-    @Autowired
     private TableGroupDao tableGroupDao;
+
+    @BeforeEach
+    void setUp() {
+        orderTableDao = new InmemoryOrderTableDao();
+        orderDao = new InmemoryOrderDao();
+        tableGroupDao = new InmemoryTableGroupDao();
+        tableService = new TableService(orderDao, orderTableDao);
+    }
 
     @DisplayName("create: 테이블의 수용 인원, 빈 테이블 여부를 입력 받아, 새로운 테이블 entity를 생성한다.")
     @ParameterizedTest
@@ -72,7 +76,7 @@ class TableServiceTest {
         OrderTable 그루핑되지않는테이블 = orderTableDao.save(createTable(null, 10, false));
         Long 테이블식별자 = 그루핑되지않는테이블.getId();
         Order 완료된주문 = createOrder(테이블식별자, LocalDateTime.of(2020, 8, 20, 20, 20), OrderStatus.COMPLETION,
-                null);
+                emptyList());
         orderDao.save(완료된주문);
         OrderTable 빈테이블 = createTable(null, 0, true);
 
@@ -90,7 +94,7 @@ class TableServiceTest {
     @Test
     void changeEmpty_fail_if_table_contains_group_table() {
         TableGroup 테이블그룹 = tableGroupDao.save(
-                createTableGroup(LocalDateTime.of(2020, 10, 15, 23, 50), null));
+                createTableGroup(LocalDateTime.of(2020, 10, 15, 23, 50), emptyList()));
         OrderTable 그루핑된테이블 = orderTableDao.save(createTable(테이블그룹.getId(), 10, false));
         OrderTable 빈테이블 = createTable(null, 0, true);
 
@@ -106,7 +110,7 @@ class TableServiceTest {
         OrderTable 테이블 = orderTableDao.save(createTable(null, 10, false));
         Long 테이블의식별자 = 테이블.getId();
         Order 테이블의_완료상태가아닌_주문 = orderDao.save(createOrder(테이블의식별자, LocalDateTime.of(2020, 8, 20, 20, 20),
-                OrderStatus.COOKING, null));
+                OrderStatus.COOKING, emptyList()));
         OrderTable 빈테이블 = createTable(null, 0, true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(테이블의식별자, 빈테이블))

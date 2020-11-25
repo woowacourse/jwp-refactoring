@@ -8,32 +8,34 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.inmemory.InmemoryMenuDao;
+import kitchenpos.dao.inmemory.InmemoryMenuGroupDao;
+import kitchenpos.dao.inmemory.InmemoryMenuProductDao;
+import kitchenpos.dao.inmemory.InmemoryProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-@Transactional
 class MenuServiceTest {
 
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
     private MenuGroupDao menuGroupDao;
-
-    @Autowired
+    private MenuService menuService;
     private ProductDao productDao;
+
+    @BeforeEach
+    void setUp() {
+        menuGroupDao = new InmemoryMenuGroupDao();
+        productDao = new InmemoryProductDao();
+        menuService = new MenuService(new InmemoryMenuDao(), menuGroupDao, new InmemoryMenuProductDao(), productDao);
+    }
 
     @DisplayName("list: 전체 메뉴 목록을 조회한다.")
     @Test

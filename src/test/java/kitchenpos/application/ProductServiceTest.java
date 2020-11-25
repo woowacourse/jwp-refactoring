@@ -7,21 +7,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.inmemory.InmemoryProductDao;
 import kitchenpos.domain.Product;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-@Transactional
 class ProductServiceTest {
 
-    @Autowired
     private ProductService productService;
+
+    @BeforeEach
+    void setUp() {
+        productService = new ProductService(new InmemoryProductDao());
+    }
 
     @DisplayName("create: 이름과 가격을 입력 받아, 제품을 생성 요청 시, 입력 값을 기반으로  ID와 제품이 생성된다.")
     @Test

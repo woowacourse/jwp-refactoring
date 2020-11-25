@@ -1,39 +1,42 @@
 package kitchenpos.application;
 
+import static java.util.Collections.*;
 import static kitchenpos.utils.TestObjects.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-
-import javax.transaction.Transactional;
 
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.inmemory.InmemoryOrderDao;
+import kitchenpos.dao.inmemory.InmemoryOrderTableDao;
+import kitchenpos.dao.inmemory.InmemoryTableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-@Transactional
 class TableGroupServiceTest {
 
-    @Autowired
     private TableGroupService tableGroupService;
 
-    @Autowired
     private OrderTableDao orderTableDao;
 
-    @Autowired
     private OrderDao orderDao;
+
+    @BeforeEach
+    void setUp() {
+        orderTableDao = new InmemoryOrderTableDao();
+        orderDao = new InmemoryOrderDao();
+        tableGroupService = new TableGroupService(orderDao, orderTableDao,
+                new InmemoryTableGroupDao());
+    }
 
     @DisplayName("create: 2개 이상의 중복 없이 존재, 비어있고, 그룹 지정 되지 않은 테이블 목록 그룹 지정시, 그룹 지정 후, 해당 객체를 반환한다.")
     @Test
@@ -64,7 +67,7 @@ class TableGroupServiceTest {
     @DisplayName("create: 그룹 지정 대상 테이블이 없는 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_does_not_exist() {
-        TableGroup 그룹지정대상이없는_테이블그룹 = createTableGroup(null, Collections.emptyList());
+        TableGroup 그룹지정대상이없는_테이블그룹 = createTableGroup(null, emptyList());
 
         assertThatThrownBy(() -> tableGroupService.create(그룹지정대상이없는_테이블그룹))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -73,7 +76,7 @@ class TableGroupServiceTest {
     @DisplayName("create: 그룹 지정 대상 테이블이 null인 경우, 그룹 지정 실패, IllegalArgumentException 발생한다.")
     @Test
     void create_fail_if_target_table_is_null() {
-        TableGroup 그룹지정_테이블이_null인_그룹 = createTableGroup(null, null);
+        TableGroup 그룹지정_테이블이_null인_그룹 = createTableGroup(null, emptyList());
 
         assertThatThrownBy(() -> tableGroupService.create(그룹지정_테이블이_null인_그룹))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -135,10 +138,10 @@ class TableGroupServiceTest {
 
         orderDao.save(
                 createOrder(첫번째테이블.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.COMPLETION,
-                        null));
+                        emptyList()));
         orderDao.save(
                 createOrder(두번째테이블.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
-                        null));
+                        emptyList()));
 
         TableGroup 주문이완료된그룹 = tableGroupService.create(
                 createTableGroup(null, Lists.list(첫번째테이블, 두번째테이블)));
@@ -163,10 +166,11 @@ class TableGroupServiceTest {
                 createTableGroup(null, Lists.list(주문완료상태가아닌테이블, 주문완료된테이블)));
 
         orderDao.save(
-                createOrder(주문완료상태가아닌테이블.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.MEAL, null));
+                createOrder(주문완료상태가아닌테이블.getId(), LocalDateTime.of(2020, 10, 20, 20, 40), OrderStatus.MEAL,
+                        emptyList()));
         orderDao.save(
                 createOrder(주문완료된테이블.getId(), LocalDateTime.of(2020, 10, 20, 21, 44), OrderStatus.COMPLETION,
-                        null));
+                        emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(테이블그룹.getId()))
                 .isInstanceOf(IllegalArgumentException.class);

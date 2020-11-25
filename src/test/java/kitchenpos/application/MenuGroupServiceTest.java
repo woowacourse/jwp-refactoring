@@ -6,21 +6,22 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.dao.inmemory.InmemoryMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 @SuppressWarnings("NonAsciiCharacters")
-@SpringBootTest
-@Transactional
 class MenuGroupServiceTest {
 
-    @Autowired
     private MenuGroupService menuGroupService;
+
+    @BeforeEach
+    void setUp() {
+        menuGroupService = new MenuGroupService(new InmemoryMenuGroupDao());
+    }
 
     @DisplayName("create: 메뉴 그룹 생성 요청시, 입력 받은 이름을 기반으로 생성 하면, ID 생성 및 입력 값을 통해 생성된다.")
     @Test
