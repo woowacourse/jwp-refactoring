@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderVerifier;
 import kitchenpos.dto.OrderTableResponseDto;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -28,6 +29,7 @@ public class TableService {
         return OrderTableResponseDto.from(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderTableResponseDto> list() {
         List<OrderTable> orderTables = orderTableRepository.findAll();
         return OrderTableResponseDto.listOf(orderTables);
@@ -35,13 +37,10 @@ public class TableService {
 
     @Transactional
     public OrderTableResponseDto changeEmpty(final Long orderTableId, final boolean isEmpty) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 태이블입니다."));
+        final OrderTable savedOrderTable = findBy(orderTableId);
 
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException("테이블에 들어간 주문 중 '조리' 또는 '식사 중' 상태인 주문이 남아있습니다.");
-        }
+        final List<Order> savedOrders = orderRepository.findAllByOrderTableId(orderTableId);
+        OrderVerifier.validateOrderStatus(savedOrders);
 
         savedOrderTable.changeEmpty(isEmpty);
         OrderTable saved = orderTableRepository.save(savedOrderTable);
@@ -51,10 +50,17 @@ public class TableService {
 
     @Transactional
     public OrderTableResponseDto changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
-        final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+        final OrderTable savedOrderTable = findBy(orderTableId);
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-        OrderTable saved = orderTableRepository.save(savedOrderTable);
+        final OrderTable saved = orderTableRepository.save(savedOrderTable);
         return OrderTableResponseDto.from(saved);
+    }
+
+    private OrderTable findBy(Long orderTableId) {
+        if (Objects.nonNull(orderTableId)) {
+            return orderTableRepository.findById(orderTableId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
+        }
+        throw new IllegalArgumentException("존재하지 않는 테이블입니다.");
     }
 }
