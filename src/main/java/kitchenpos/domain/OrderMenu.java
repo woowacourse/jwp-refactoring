@@ -10,9 +10,7 @@ public class OrderMenu {
     }
 
     public OrderMenu(Long orderId, Long menuId, long quantity) {
-        this.orderId = orderId;
-        this.menuId = menuId;
-        this.quantity = quantity;
+        this(null, orderId, menuId, quantity);
     }
 
     public OrderMenu(Long seq, Long orderId, Long menuId, long quantity) {
