@@ -59,7 +59,7 @@ class ProductServiceTest extends TestFixture {
     @Test
     void createTest() {
         ProductCreateRequest productCreateRequest =
-            new ProductCreateRequest(PRODUCT_NAME_1, PRODUCT_PRICE_1.longValue());
+            new ProductCreateRequest(PRODUCT_NAME_1, PRODUCT_PRICE_1.getValue().longValue());
 
         given(productDao.save(any())).willReturn(PRODUCT_1);
 

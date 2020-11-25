@@ -1,11 +1,20 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
@@ -13,12 +22,6 @@ import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.exception.MenuGroupNotExistException;
 import kitchenpos.exception.NullRequestException;
 import kitchenpos.exception.ProductNotExistException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -44,7 +47,7 @@ public class MenuService {
         validateMenuCreateRequest(menuCreateRequest);
 
         String name = menuCreateRequest.getName();
-        BigDecimal price = new BigDecimal(menuCreateRequest.getPrice());
+        Price price = Price.of(new BigDecimal(menuCreateRequest.getPrice()));
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         List<MenuProductRequest> menuProductRequests = menuCreateRequest.getMenuProductRequests();
 
@@ -58,7 +61,7 @@ public class MenuService {
     }
 
     private void validateMenuCreateRequest(MenuCreateRequest menuCreateRequest) {
-        BigDecimal price = new BigDecimal(menuCreateRequest.getPrice());
+        Price price = Price.of(new BigDecimal(menuCreateRequest.getPrice()));
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         List<MenuProductRequest> menuProductRequests = menuCreateRequest.getMenuProductRequests();
 
@@ -92,17 +95,22 @@ public class MenuService {
         }
     }
 
-    private void validatePriceSum(BigDecimal price, List<MenuProductRequest> menuProductRequests) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            Product product = productDao.findById(menuProductRequest.getProductId())
-                .orElseThrow(ProductNotExistException::new);
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity())));
-        }
+    private void validatePriceSum(Price price, List<MenuProductRequest> menuProductRequests) {
+        Price sum = menuProductRequests.stream()
+            .map(this::calculateQuantityPrice)
+            .collect(Collectors.collectingAndThen(Collectors.toList(), Price::sumOf));
 
-        if (price.compareTo(sum) > 0) {
+        if (price.isLargerThan(sum)) {
             throw new InvalidPriceException();
         }
+    }
+
+    private Price calculateQuantityPrice(MenuProductRequest menuProductRequest) {
+        Product product = productDao.findById(menuProductRequest.getProductId())
+            .orElseThrow(ProductNotExistException::new);
+
+        Price priceOfOne = product.getPrice();
+        return priceOfOne.multiply(menuProductRequest.getQuantity());
     }
 
     public List<Menu> list() {

@@ -1,11 +1,20 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderMenu;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
+import kitchenpos.domain.TableGroup;
 
 public abstract class TestFixture {
 
@@ -29,8 +38,8 @@ public abstract class TestFixture {
 
     public static final String MENU_NAME_1 = "메뉴이름1";
     public static final String MENU_NAME_2 = "메뉴이름2";
-    public static final BigDecimal MENU_PRICE_1 = BigDecimal.valueOf(1L, 2);
-    public static final BigDecimal MENU_PRICE_2 = BigDecimal.valueOf(2L, 2);
+    public static final Price MENU_PRICE_1 = Price.of(BigDecimal.valueOf(1L, 2));
+    public static final Price MENU_PRICE_2 = Price.of(BigDecimal.valueOf(2L, 2));
     public static final Menu MENU_1 = new Menu(MENU_ID_1, MENU_NAME_1, MENU_PRICE_1, MENU_GROUP_ID_1);
     public static final Menu MENU_2 = new Menu(MENU_ID_2, MENU_NAME_2, MENU_PRICE_2, MENU_GROUP_ID_2);
 
@@ -38,8 +47,8 @@ public abstract class TestFixture {
     public static final long PRODUCT_ID_2 = 2L;
     public static final String PRODUCT_NAME_1 = "제품이름1";
     public static final String PRODUCT_NAME_2 = "제품이름2";
-    public static final BigDecimal PRODUCT_PRICE_1 = BigDecimal.valueOf(1L, 2);
-    public static final BigDecimal PRODUCT_PRICE_2 = BigDecimal.valueOf(2L, 2);
+    public static final Price PRODUCT_PRICE_1 = Price.of(BigDecimal.valueOf(1L, 2));
+    public static final Price PRODUCT_PRICE_2 = Price.of(BigDecimal.valueOf(2L, 2));
     public static final Product PRODUCT_1 = new Product(PRODUCT_ID_1, PRODUCT_NAME_1, PRODUCT_PRICE_1);
     public static final Product PRODUCT_2 = new Product(PRODUCT_ID_2, PRODUCT_NAME_2, PRODUCT_PRICE_2);
 

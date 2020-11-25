@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
 import kitchenpos.exception.NullRequestException;
@@ -25,7 +26,7 @@ public class ProductService {
         validateProductCreateRequest(productCreateRequest);
 
         String name = productCreateRequest.getName();
-        BigDecimal price = new BigDecimal(productCreateRequest.getPrice());
+        Price price = Price.of(new BigDecimal(productCreateRequest.getPrice()));
         return productDao.save(new Product(name, price));
     }
 

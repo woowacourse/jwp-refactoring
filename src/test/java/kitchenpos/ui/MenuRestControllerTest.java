@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.dto.MenuCreateRequest;
+import kitchenpos.dto.MenuProductRequest;
 
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends MvcTest {
@@ -29,7 +31,13 @@ class MenuRestControllerTest extends MvcTest {
     void createTest() throws Exception {
         given(menuService.create(any())).willReturn(MENU_1);
 
-        String inputJson = objectMapper.writeValueAsString(MENU_1);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest(
+                MENU_NAME_1,
+                MENU_PRICE_1.getValue().longValue(),
+                MENU_GROUP_ID_1,
+                Arrays.asList(new MenuProductRequest(PRODUCT_ID_1, MENU_PRODUCT_QUANTITY_1))
+            );
+        String inputJson = objectMapper.writeValueAsString(menuCreateRequest);
         MvcResult mvcResult = postAction("/api/menus", inputJson)
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", String.format("/api/menus/%d", MENU_ID_1)))

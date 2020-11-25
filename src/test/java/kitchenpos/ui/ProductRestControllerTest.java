@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.core.type.TypeReference;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
 
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends MvcTest {
@@ -29,7 +30,10 @@ class ProductRestControllerTest extends MvcTest {
     void createTest() throws Exception {
         given(productService.create(any())).willReturn(PRODUCT_1);
 
-        String inputJson = objectMapper.writeValueAsString(PRODUCT_1);
+        ProductCreateRequest productCreateRequest =
+            new ProductCreateRequest(PRODUCT_NAME_1, PRODUCT_PRICE_1.getValue().longValue());
+
+        String inputJson = objectMapper.writeValueAsString(productCreateRequest);
         MvcResult mvcResult = postAction("/api/products", inputJson)
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", String.format("/api/products/%d", PRODUCT_ID_1)))
