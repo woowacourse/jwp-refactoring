@@ -1,16 +1,13 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menu.MenuGroup;
 
 public class MenuGroupFixture {
 
     private static final String MENU_GROUP_NAME = "후라이드그룹";
 
     public static MenuGroup createMenuGroupWitId(Long id) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(id);
-        menuGroup.setName(MENU_GROUP_NAME);
-        return menuGroup;
+        return new MenuGroup(id, MENU_GROUP_NAME);
     }
 
     public static MenuGroup createMenuGroupWithoutId() {

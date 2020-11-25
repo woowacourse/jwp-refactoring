@@ -1,7 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.application.product.ProductService;
+import kitchenpos.domain.product.Product;
+import kitchenpos.repository.product.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,11 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.List;
 
 import static kitchenpos.fixture.ProductFixture.createProduct;
 import static kitchenpos.fixture.ProductFixture.createProductWithPrice;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,33 +27,32 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("Product 생성 테스트")
     @Test
-    void create() {
-        Product product = createProductWithPrice(BigDecimal.ONE);
-        given(productDao.save(product)).willReturn(createProduct(1L, BigDecimal.ONE));
+    void createOrderLineItems() {
+        BigDecimal price = BigDecimal.ONE;
+        Product product = createProductWithPrice(price);
+        given(productRepository.save(product)).willReturn(createProduct(1L, price));
 
         Product actual = productService.create(product);
-        Product expect = createProduct(1L, BigDecimal.ONE);
+        Product expect = createProduct(1L, price);
 
         assertThat(actual).isEqualToComparingFieldByField(expect);
-    }
-
-    @DisplayName("price가 0보다 작을 경우 예외 테스트")
-    @Test
-    void createPriceLessThanZero() {
-        Product product = createProductWithPrice(new BigDecimal(-1));
-
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("product 전체 조회")
     @Test
     void list() {
-        given(productDao.findAll()).willReturn(Arrays.asList(createProduct(1L, BigDecimal.ONE)));
+        Product product = createProduct(1L, BigDecimal.ONE);
+        given(productRepository.findAll()).willReturn(Arrays.asList(product));
 
-        assertThat(productService.list()).hasSize(1);
+        List<Product> actual = productService.list();
+        assertAll(() -> {
+            assertThat(actual).hasSize(1);
+            assertThat(actual.get(0)).isEqualToComparingFieldByField(product);
+        });
     }
+
 }

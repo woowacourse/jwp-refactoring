@@ -1,8 +1,10 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.application.table.TableGroupService;
+import kitchenpos.dto.table.request.OrderTableRequest;
+import kitchenpos.dto.table.request.TableGroupRequest;
+import kitchenpos.ui.table.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupWithId;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,9 +39,11 @@ class TableGroupRestControllerTest {
 
     @DisplayName("TableGroup 생성 요청")
     @Test
-    void create() throws Exception {
-        TableGroup tableGroup = createTableGroupWithId(null);
-        String content = new ObjectMapper().writeValueAsString(tableGroup);
+    void createOrderLineItems() throws Exception {
+        List<OrderTableRequest> orderTables = Arrays.asList(
+                new OrderTableRequest(1L), new OrderTableRequest(2L));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(orderTables);
+        String content = new ObjectMapper().writeValueAsString(tableGroupRequest);
         given(tableGroupService.create(any())).willReturn(createTableGroupWithId(1L));
 
         mockMvc.perform(post("/api/table-groups")

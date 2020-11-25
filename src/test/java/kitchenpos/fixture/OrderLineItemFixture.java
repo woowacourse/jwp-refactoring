@@ -1,20 +1,28 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderLineItem;
+
+import static kitchenpos.fixture.MenuFixture.createMenuWithId;
+import static kitchenpos.fixture.OrderFixture.createOrderWithId;
 
 public class OrderLineItemFixture {
 
-    public static OrderLineItem createOrderLineItem(Long seq, Long menuId, Long orderId, Long quantity) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+    private static OrderLineItem createOrderLineItem(Long seq, Order order, Menu menu, Long quantity) {
+        return new OrderLineItem(seq, order, menu, quantity);
     }
 
-    public static OrderLineItem createOrderLineItemWithMenuId(Long menuId) {
-        return createOrderLineItem(null, menuId, null, 1L);
+    public static OrderLineItem createOrderLineItemWithoutId(Order order, Menu menu, Long quantity) {
+        return createOrderLineItem(null, order, menu, quantity);
+    }
+
+    public static OrderLineItem createOrderLineItemWithId(Long id) {
+        return createOrderLineItem(id, createOrderWithId(2L), createMenuWithId(2L), 3L);
+    }
+
+    public static OrderLineItem createOrderLineItemWithOrderAndMenu(Order order, Menu menu) {
+        return createOrderLineItem(null, order, menu, 1L);
     }
 
 }

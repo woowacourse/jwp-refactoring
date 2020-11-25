@@ -1,8 +1,12 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import kitchenpos.application.table.TableService;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.dto.table.response.OrderTableResponse;
+import kitchenpos.fixture.OrderTableFixture;
+import kitchenpos.ui.table.TableRestController;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,9 +45,11 @@ class TableRestControllerTest {
 
     @DisplayName("Table 생성 요청")
     @Test
-    void create() throws Exception {
+    void createOrderLineItems() throws Exception {
         OrderTable orderTable = createOrderTableWithId(null);
-        String content = new ObjectMapper().writeValueAsString(orderTable);
+        String content = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(orderTable);
         given(tableService.create(any())).willReturn(createOrderTableWithId(1L));
 
         mockMvc.perform(post("/api/tables")
@@ -57,8 +63,10 @@ class TableRestControllerTest {
     @DisplayName("Table 전체 조회 요청")
     @Test
     void list() throws Exception {
+        OrderTable orderTable = OrderTableFixture.createOrderTableWithId(1L);
+        OrderTableResponse orderTableResponse = OrderTableResponse.from(orderTable);
         given(tableService.list())
-                .willReturn(Arrays.asList(createOrderTableWithId(1L)));
+                .willReturn(Arrays.asList(orderTableResponse));
 
         mockMvc.perform(get("/api/tables")
                 .accept(MediaType.APPLICATION_JSON))
