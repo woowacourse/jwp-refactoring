@@ -19,9 +19,9 @@ public class EntityCreateHelper {
         return new MenuGroup(id, name);
     }
 
-    public static Menu createMenu(Long id, MenuGroup menuGroup, List<MenuProduct> menuProducts, String name,
+    public static Menu createMenu(Long id, MenuGroup menuGroup, String name,
         BigDecimal price) {
-        return new Menu(id, name, price, menuGroup, menuProducts);
+        return new Menu(id, name, price, menuGroup);
     }
 
     public static MenuProduct createMenuProduct(Long seq, Menu menu, Product product, long quantity) {
