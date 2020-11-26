@@ -14,13 +14,13 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.ServiceTest;
+import kitchenpos.ServiceTest;
 import kitchenpos.menu.model.Menu;
 import kitchenpos.menugroup.model.MenuGroup;
 import kitchenpos.menuproduct.model.MenuProduct;
 import kitchenpos.order.model.OrderStatus;
 import kitchenpos.ordertable.model.OrderTable;
-import kitchenpos.domain.Product;
+import kitchenpos.product.model.Product;
 import kitchenpos.order.application.dto.OrderCreateRequestDto;
 import kitchenpos.orderline.application.dto.OrderLineCreateRequestDto;
 import kitchenpos.order.application.dto.OrderResponseDto;
@@ -28,7 +28,7 @@ import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menuproduct.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.repository.ProductRepository;
 
 class OrderServiceTest extends ServiceTest {
     @Autowired

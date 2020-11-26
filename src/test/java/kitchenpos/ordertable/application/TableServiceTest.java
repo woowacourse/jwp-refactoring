@@ -12,7 +12,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.ServiceTest;
+import kitchenpos.ServiceTest;
 import kitchenpos.order.model.Order;
 import kitchenpos.order.model.OrderStatus;
 import kitchenpos.ordertable.model.OrderTable;

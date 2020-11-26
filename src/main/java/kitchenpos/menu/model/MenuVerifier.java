@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.model.Product;
 import kitchenpos.menuproduct.model.MenuProduct;
 
 public class MenuVerifier {

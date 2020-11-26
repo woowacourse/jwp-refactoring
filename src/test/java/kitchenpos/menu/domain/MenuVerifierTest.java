@@ -8,7 +8,7 @@ import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.model.Product;
 import kitchenpos.menuproduct.model.MenuProduct;
 import kitchenpos.menu.model.MenuVerifier;
 

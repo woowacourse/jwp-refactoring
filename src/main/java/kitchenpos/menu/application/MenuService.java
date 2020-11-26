@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.model.Product;
 import kitchenpos.menu.application.dto.MenuCreateRequestDto;
 import kitchenpos.menuproduct.application.dto.MenuProductCreateRequestDto;
 import kitchenpos.menu.application.dto.MenuResponseDto;
@@ -18,7 +18,7 @@ import kitchenpos.menu.model.MenuVerifier;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menuproduct.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.repository.ProductRepository;
 
 @Service
 public class MenuService {

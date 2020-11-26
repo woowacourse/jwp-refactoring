@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.product.ui;
 
 import java.net.URI;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.ProductService;
-import kitchenpos.dto.ProductCreateRequestDto;
-import kitchenpos.dto.ProductResponseDto;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.application.dto.ProductCreateRequestDto;
+import kitchenpos.product.application.dto.ProductResponseDto;
 
 @RestController
 public class ProductRestController {

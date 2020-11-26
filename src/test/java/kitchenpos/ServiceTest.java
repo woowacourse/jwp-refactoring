@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos;
 
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;

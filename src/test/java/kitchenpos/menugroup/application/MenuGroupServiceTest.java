@@ -9,7 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.application.ServiceTest;
+import kitchenpos.ServiceTest;
 import kitchenpos.menugroup.application.dto.MenuGroupCreateRequestDto;
 import kitchenpos.menugroup.application.dto.MenuGroupResponseDto;
 import kitchenpos.menugroup.model.MenuGroup;

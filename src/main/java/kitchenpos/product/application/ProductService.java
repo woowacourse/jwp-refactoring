@@ -1,14 +1,14 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequestDto;
-import kitchenpos.dto.ProductResponseDto;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.product.model.Product;
+import kitchenpos.product.application.dto.ProductCreateRequestDto;
+import kitchenpos.product.application.dto.ProductResponseDto;
+import kitchenpos.product.repository.ProductRepository;
 
 @Service
 public class ProductService {

@@ -145,7 +145,7 @@
  
  ### 3단계 - 양방향을 단방향
  > 클래스 간의 방향도 중요하다. 패키지 간의 방향도 중요하다.
- - [ ] 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
+ - [x] 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
     - [x] MenuGroup
     - [x] Menu
     - [x] MenuProduct
@@ -153,7 +153,7 @@
     - [x] OrderLineItem
     - [x] OrderTable
     - [x] TableGroup
-    - [ ] Product
+    - [x] Product
     
  
  

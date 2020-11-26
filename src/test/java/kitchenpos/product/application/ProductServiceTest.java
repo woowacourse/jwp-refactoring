@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.product.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,10 +10,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequestDto;
-import kitchenpos.dto.ProductResponseDto;
-import kitchenpos.repository.ProductRepository;
+import kitchenpos.ServiceTest;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.model.Product;
+import kitchenpos.product.application.dto.ProductCreateRequestDto;
+import kitchenpos.product.application.dto.ProductResponseDto;
+import kitchenpos.product.repository.ProductRepository;
 
 class ProductServiceTest extends ServiceTest {
     @Autowired

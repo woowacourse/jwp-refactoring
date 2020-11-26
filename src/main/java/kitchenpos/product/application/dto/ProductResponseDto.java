@@ -1,10 +1,10 @@
-package kitchenpos.dto;
+package kitchenpos.product.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.Product;
+import kitchenpos.product.model.Product;
 
 public class ProductResponseDto {
     private final Long id;
