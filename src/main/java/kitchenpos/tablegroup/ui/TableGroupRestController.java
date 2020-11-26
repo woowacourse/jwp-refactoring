@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.tablegroup.ui;
 
 import java.net.URI;
 
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.TableGroupService;
-import kitchenpos.dto.TableGroupCreateRequestDto;
-import kitchenpos.dto.TableGroupResponseDto;
+import kitchenpos.tablegroup.application.TableGroupService;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequestDto;
+import kitchenpos.tablegroup.application.dto.TableGroupResponseDto;
 
 @RestController
 public class TableGroupRestController {

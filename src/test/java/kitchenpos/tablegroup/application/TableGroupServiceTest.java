@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,13 +16,15 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.application.ServiceTest;
 import kitchenpos.order.model.Order;
 import kitchenpos.order.model.OrderStatus;
 import kitchenpos.ordertable.model.OrderTable;
-import kitchenpos.dto.TableGroupCreateRequestDto;
-import kitchenpos.dto.TableGroupResponseDto;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequestDto;
+import kitchenpos.tablegroup.application.dto.TableGroupResponseDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.tablegroup.application.TableGroupService;
 
 class TableGroupServiceTest extends ServiceTest {
     @Autowired

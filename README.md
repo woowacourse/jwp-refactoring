@@ -152,7 +152,8 @@
     - [x] Order
     - [x] OrderLineItem
     - [x] OrderTable
-    - [ ] TableGroup
+    - [x] TableGroup
+    - [ ] Product
     
  
  

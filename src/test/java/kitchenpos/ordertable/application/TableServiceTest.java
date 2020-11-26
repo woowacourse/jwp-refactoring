@@ -16,11 +16,11 @@ import kitchenpos.application.ServiceTest;
 import kitchenpos.order.model.Order;
 import kitchenpos.order.model.OrderStatus;
 import kitchenpos.ordertable.model.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.tablegroup.model.TableGroup;
 import kitchenpos.ordertable.application.dto.OrderTableResponseDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
 
 class TableServiceTest extends ServiceTest {
     @Autowired

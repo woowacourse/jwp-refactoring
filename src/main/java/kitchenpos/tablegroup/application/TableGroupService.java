@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.tablegroup.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.order.model.Order;
 import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.order.model.OrderVerifier;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.TableGroupVerifier;
-import kitchenpos.dto.TableGroupCreateRequestDto;
-import kitchenpos.dto.TableGroupResponseDto;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
+import kitchenpos.tablegroup.repository.TableGroupRepository;
+import kitchenpos.tablegroup.model.TableGroup;
+import kitchenpos.tablegroup.model.TableGroupVerifier;
+import kitchenpos.tablegroup.application.dto.TableGroupCreateRequestDto;
+import kitchenpos.tablegroup.application.dto.TableGroupResponseDto;
 
 @Service
 public class TableGroupService {
