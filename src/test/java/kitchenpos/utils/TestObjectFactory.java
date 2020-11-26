@@ -34,9 +34,9 @@ public class TestObjectFactory {
 
     public static MenuCreateRequest createMenuCreateRequest(String name, BigDecimal price,
         MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu(name, Price.of(price), menuGroup, menuProducts);
+        Menu menu = new Menu(name, Price.of(price), menuGroup);
 
-        return MenuCreateRequest.of(menu);
+        return MenuCreateRequest.of(menu, menuProducts);
     }
 
     public static ProductCreateRequest createProductCreateRequest(String name, BigDecimal price) {

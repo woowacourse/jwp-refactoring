@@ -25,11 +25,10 @@ public class MenuCreateRequest {
         this.menuProductRequest = menuProductRequest;
     }
 
-    public static MenuCreateRequest of(Menu menu) {
+    public static MenuCreateRequest of(Menu menu, List<MenuProduct> menuProducts) {
         String name = menu.getName();
         Price price = menu.getPrice();
         MenuGroup menuGroup = menu.getMenuGroup();
-        List<MenuProduct> menuProducts = menu.getMenuProducts();
 
         return new MenuCreateRequest(name, price.getPrice(), menuGroup.getId(),
             MenuProductRequest.toRequestList(menuProducts));
