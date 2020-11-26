@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -31,58 +29,42 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
-
     public Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus,
+        LocalDateTime orderedTime) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-    }
-
-    public static Order of(OrderTable orderTable, OrderStatus orderStatus,
-        LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
-        return new Order(null, orderTable, orderStatus, orderedTime, orderLineItems);
     }
 
     public static Order of(OrderTable orderTable, OrderStatus orderStatus,
         LocalDateTime orderedTime) {
-        validateOrderTable(orderTable);
-        return new Order(null, orderTable, orderStatus, orderedTime, null);
+        return new Order(null, orderTable, orderStatus, orderedTime);
     }
 
-    private static void validateOrderTable(OrderTable orderTable) {
+    public void validateOrderTable() {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("OrderTable이 비어있습니다.");
         }
     }
 
-    public void updateOrder(Order savedOrder, OrderStatus orderStatus,
-        List<OrderLineItem> orderLineItems) {
-        validateStatus(savedOrder.orderStatus);
+    public void updateOrder(Long id, OrderTable orderTable, OrderStatus orderStatus,
+        LocalDateTime orderedTime) {
+        validateStatus();
 
-        this.id = savedOrder.getId();
-        this.orderTable = savedOrder.getOrderTable();
+        this.id = id;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderedTime = savedOrder.getOrderedTime();
-        this.orderLineItems = orderLineItems;
+        this.orderedTime = orderedTime;
     }
 
-    private void validateStatus(OrderStatus orderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
+    private void validateStatus() {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
             throw new IllegalArgumentException("완료된 주문입니다.");
         }
-    }
-
-    public void updateOrder(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {
@@ -99,9 +81,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 }

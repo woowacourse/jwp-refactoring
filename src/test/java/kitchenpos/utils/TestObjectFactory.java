@@ -47,10 +47,9 @@ public class TestObjectFactory {
 
     public static OrderCreateRequest createOrderCreateRequest(OrderTable orderTable,
         String orderStatus, List<OrderLineItem> orderLineItems) {
-        Order order = Order.of(orderTable, OrderStatus.valueOf(orderStatus),
-            LocalDateTime.now(), orderLineItems);
+        Order order = Order.of(orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now());
 
-        return OrderCreateRequest.of(order);
+        return OrderCreateRequest.of(order, orderLineItems);
     }
 
     public static OrderChangeRequest createOrderChangeRequest(String orderStatus) {

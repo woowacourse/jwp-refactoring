@@ -19,9 +19,8 @@ public class OrderCreateRequest {
         this.orderLineItemRequests = orderLineItemRequests;
     }
 
-    public static OrderCreateRequest of(Order order) {
+    public static OrderCreateRequest of(Order order, List<OrderLineItem> orderLineItems) {
         OrderTable orderTable = order.getOrderTable();
-        List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         return new OrderCreateRequest(orderTable.getId(), orderLineItems);
     }
