@@ -17,7 +17,4 @@ public class Menus {
                 .orElseThrow(() -> new IllegalArgumentException(String.format("%d번 메뉴: 존재하지 않는 메뉴입니다.", menuId)));
     }
 
-    public int size() {
-        return this.menus.size();
-    }
 }
