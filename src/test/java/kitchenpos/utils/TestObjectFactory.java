@@ -13,7 +13,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuGroupCreateRequest;
 import kitchenpos.dto.OrderChangeRequest;
@@ -74,9 +73,7 @@ public class TestObjectFactory {
             orderTables.add(new OrderTable(id, null, numberOfGuests, empty));
         }
 
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-
-        return TableGroupCreateRequest.of(tableGroup);
+        return TableGroupCreateRequest.of(orderTables);
     }
 
     public static OrderTableCreateRequest createOrderTableCreateRequest(int numberOfGuests,

@@ -45,17 +45,16 @@ public class TableGroupService {
         orderTables.validateWithSaved(savedOrderTables);
 
         final TableGroup savedTableGroup
-            = saveTableGroup(tableGroupCreateRequest, savedOrderTables);
+            = saveTableGroup(tableGroupCreateRequest);
         saveNewOrderTable(savedOrderTables, savedTableGroup);
 
         return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
     private TableGroup saveTableGroup(
-        TableGroupCreateRequest tableGroupCreateRequest,
-        List<OrderTable> savedOrderTables) {
+        TableGroupCreateRequest tableGroupCreateRequest) {
         TableGroup tableGroup
-            = tableGroupCreateRequest.toEntity(LocalDateTime.now(), savedOrderTables);
+            = tableGroupCreateRequest.toEntity(LocalDateTime.now());
         return tableGroupRepository.save(tableGroup);
     }
 

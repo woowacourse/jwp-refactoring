@@ -17,8 +17,7 @@ public class TableGroupCreateRequest {
         this.orderTableIds = orderTableIds;
     }
 
-    public static TableGroupCreateRequest of(TableGroup tableGroup) {
-        List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public static TableGroupCreateRequest of(List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
             .map(OrderTable::getId)
             .collect(Collectors.toList());
@@ -30,7 +29,7 @@ public class TableGroupCreateRequest {
         return orderTableIds;
     }
 
-    public TableGroup toEntity(LocalDateTime createDate, List<OrderTable> orderTables) {
-        return new TableGroup(createDate, orderTables);
+    public TableGroup toEntity(LocalDateTime createDate) {
+        return new TableGroup(createDate);
     }
 }
