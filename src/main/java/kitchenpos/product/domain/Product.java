@@ -3,6 +3,7 @@ package kitchenpos.product.domain;
 import kitchenpos.generic.Price;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,6 +18,7 @@ public class Product {
 
     private String name;
 
+    @Embedded
     private Price price;
 
     public Product() {

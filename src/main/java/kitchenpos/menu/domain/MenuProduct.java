@@ -3,7 +3,9 @@ package kitchenpos.menu.domain;
 import kitchenpos.generic.Price;
 import kitchenpos.product.domain.Product;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,7 +21,7 @@ public class MenuProduct {
 
     private Long quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Menu menu;
 
     @OneToOne
