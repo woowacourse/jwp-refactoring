@@ -45,7 +45,6 @@ public class OrderService {
     public Order changeOrderStatus(Long orderId, Order order) {
         Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("찾을 수 없는 order id 입니다."));
-        Order changedOrder = savedOrder.changeOrderStatus(order.getOrderStatus());
-        return orderRepository.save(changedOrder);
+        return savedOrder.changeOrderStatus(order.getOrderStatus());
     }
 }

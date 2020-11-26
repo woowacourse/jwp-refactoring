@@ -49,8 +49,7 @@ public class TableService {
     public OrderTable changeNumberOfGuests(Long orderTableId, OrderTable expectedTable) {
         int replacedNumberOfGuests = expectedTable.getNumberOfGuests();
         OrderTable savedOrderTable = findOrderTableById(orderTableId);
-        OrderTable changedTable = savedOrderTable.changeNumberOfGuests(replacedNumberOfGuests);
-        return orderTableRepository.save(changedTable);
+        return savedOrderTable.changeNumberOfGuests(replacedNumberOfGuests);
     }
 
     private OrderTable findOrderTableById(Long orderTableId) {
