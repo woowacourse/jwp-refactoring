@@ -63,8 +63,6 @@ public class TableGroupService {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.updateOrderTable(savedOrderTable.getId(), savedTableGroup,
                 savedOrderTable.getNumberOfGuests(), false);
-
-            orderTableRepository.save(savedOrderTable);
         }
     }
 
@@ -89,8 +87,6 @@ public class TableGroupService {
         for (final OrderTable orderTable : orderTables) {
             orderTable.updateOrderTable(orderTable.getId(), null,
                 orderTable.getNumberOfGuests(), false);
-
-            orderTableRepository.save(orderTable);
         }
     }
 }

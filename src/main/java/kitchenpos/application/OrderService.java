@@ -111,7 +111,6 @@ public class OrderService {
 
         savedOrder.updateOrder(savedOrder.getId(), savedOrder.getOrderTable(), orderStatus,
             savedOrder.getOrderedTime());
-        orderRepository.save(savedOrder);
 
         return OrderResponse.of(savedOrder, OrderLineItemResponse.toResponseList(orderLineItems));
     }
