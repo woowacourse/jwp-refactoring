@@ -16,7 +16,7 @@ import kitchenpos.domain.OrderVerifier;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderLineCreateRequestDto;
 import kitchenpos.dto.OrderResponseDto;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;

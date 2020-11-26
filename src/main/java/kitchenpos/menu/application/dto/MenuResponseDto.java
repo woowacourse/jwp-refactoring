@@ -1,10 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.menu.application.dto;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menu.model.Menu;
+import kitchenpos.menuproduct.application.dto.MenuProductResponseDto;
+import kitchenpos.menuproduct.model.MenuProduct;
 
 public class MenuResponseDto {
     private final Long id;

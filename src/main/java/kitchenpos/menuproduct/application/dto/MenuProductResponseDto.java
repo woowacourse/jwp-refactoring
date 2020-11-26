@@ -1,9 +1,9 @@
-package kitchenpos.dto;
+package kitchenpos.menuproduct.application.dto;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.menuproduct.model.MenuProduct;
 
 public class MenuProductResponseDto {
     private final Long seq;

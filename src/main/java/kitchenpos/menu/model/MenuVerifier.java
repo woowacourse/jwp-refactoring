@@ -1,9 +1,12 @@
-package kitchenpos.domain;
+package kitchenpos.menu.model;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import kitchenpos.domain.Product;
+import kitchenpos.menuproduct.model.MenuProduct;
 
 public class MenuVerifier {
     public static void validateMenuPrice(BigDecimal price, List<MenuProduct> menuProducts, List<Product> products) {

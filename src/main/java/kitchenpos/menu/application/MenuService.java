@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.menu.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,16 +8,16 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuVerifier;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuCreateRequestDto;
-import kitchenpos.dto.MenuProductCreateRequestDto;
-import kitchenpos.dto.MenuResponseDto;
+import kitchenpos.menu.application.dto.MenuCreateRequestDto;
+import kitchenpos.menuproduct.application.dto.MenuProductCreateRequestDto;
+import kitchenpos.menu.application.dto.MenuResponseDto;
+import kitchenpos.menu.model.Menu;
+import kitchenpos.menuproduct.model.MenuProduct;
+import kitchenpos.menu.model.MenuVerifier;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
+import kitchenpos.menuproduct.repository.MenuProductRepository;
+import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 
 @Service

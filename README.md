@@ -147,7 +147,8 @@
  > 클래스 간의 방향도 중요하다. 패키지 간의 방향도 중요하다.
  - [ ] 패키지 사이의 의존 관계는 단방향이 되도록 해야 한다.
     - [x] MenuGroup
-    - [ ] Menu
+    - [x] Menu
+    - [x] MenuProduct
     - [ ] Order
     - [ ] OrderTable
     - [ ] TableGroup

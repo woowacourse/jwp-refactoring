@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.menu.domain;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
+
+import kitchenpos.menu.model.Menu;
 
 class MenuTest {
     @DisplayName("메뉴를 생성할 수 있다.")
