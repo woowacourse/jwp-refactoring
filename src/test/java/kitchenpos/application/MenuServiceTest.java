@@ -19,13 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +58,8 @@ public class MenuServiceTest {
 
     private MenuService menuService;
     private List<ProductQuantityRequest> productQuantityRequests;
-    private List<Product> products;
+    private Product product1;
+    private Product product2;
     private MenuGroup menuGroup;
 
     @BeforeEach
@@ -69,10 +70,8 @@ public class MenuServiceTest {
                 new ProductQuantityRequest(상품_ID_1, 상품_1개),
                 new ProductQuantityRequest(상품_ID_2, 상품_2개)
         );
-        products = Arrays.asList(
-                new Product(상품_ID_1, 상품_후라이드_치킨, 상품_가격_15000원),
-                new Product(상품_ID_2, 상품_코카콜라, 상품_가격_1000원)
-        );
+        product1 = new Product(상품_ID_1, 상품_후라이드_치킨, 상품_가격_15000원);
+        product2 = new Product(상품_ID_2, 상품_코카콜라, 상품_가격_1000원);
         menuGroup = new MenuGroup(메뉴_그룹_ID_1, 메뉴_그룹_이름_후라이드_세트);
     }
 
@@ -82,7 +81,8 @@ public class MenuServiceTest {
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, 메뉴_그룹_ID_1, productQuantityRequests);
         Menu menu = new Menu(메뉴_ID_1, 메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, menuGroup);
         when(menuRepository.save(any(Menu.class))).thenReturn(menu);
-        when(productRepository.findAllById(anyList())).thenReturn(products);
+        when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
+        when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
         when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
 
         MenuResponse menuResponse = menuService.create(request);
@@ -104,8 +104,8 @@ public class MenuServiceTest {
         BigDecimal invalidPrice = BigDecimal.valueOf(-1);
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, invalidPrice, 메뉴_그룹_ID_1, productQuantityRequests);
 
-        when(productRepository.findAllById(anyList())).thenReturn(products);
-        when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
+        when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
+        when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -117,8 +117,8 @@ public class MenuServiceTest {
     void createWithNullPriceExceptionTest() {
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, null, 메뉴_그룹_ID_1, productQuantityRequests);
 
-        when(productRepository.findAllById(anyList())).thenReturn(products);
-        when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
+        when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
+        when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(NullPointerException.class);
@@ -130,7 +130,8 @@ public class MenuServiceTest {
         Long invalidMenuGroupId = -1L;
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, invalidMenuGroupId, productQuantityRequests);
 
-        when(productRepository.findAllById(anyList())).thenReturn(products);
+        when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
+        when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
         when(menuGroupRepository.findById(invalidMenuGroupId)).thenThrow(new IllegalArgumentException("해당 메뉴 그룹을 찾을 수 없습니다."));
 
         assertThatThrownBy(() -> menuService.create(request))
@@ -143,11 +144,11 @@ public class MenuServiceTest {
     void createWithInvalidProductExceptionTest() {
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, 메뉴_그룹_ID_1, productQuantityRequests);
 
-        when(productRepository.findAllById(anyList())).thenReturn(Collections.emptyList());
+        when(productRepository.findById(anyLong())).thenThrow(new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("상품 정보가 올바르지 않습니다.");
+                .hasMessage("상품을 찾을 수 없습니다.");
     }
 
     @DisplayName("예외 테스트 : Menu 생성 중 모든 상품 가격의 합이 메뉴 가격보다 낮은 경우, 예외가 발생한다.")
@@ -156,8 +157,8 @@ public class MenuServiceTest {
         BigDecimal invalidPrice = 메뉴_가격_16000원.add(BigDecimal.valueOf(10000L));
         MenuCreateRequest request = new MenuCreateRequest(메뉴_이름_후라이드_치킨, invalidPrice, 메뉴_그룹_ID_1, productQuantityRequests);
 
-        when(productRepository.findAllById(anyList())).thenReturn(products);
-        when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
+        when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
+        when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)

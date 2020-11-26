@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -32,18 +31,17 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
+        validatePrice(request);
         List<ProductQuantityRequest> productQuantityRequests = request.getMenuProducts();
-        final List<Long> productIds = productQuantityRequests.stream()
-                .map(ProductQuantityRequest::getProductId)
+        final List<Product> products = productQuantityRequests.stream()
+                .map(productQuantityRequest -> {
+                    Long productId = productQuantityRequest.getProductId();
+                    return productRepository.findById(productId)
+                            .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+                })
                 .collect(Collectors.toList());
-        final List<Product> products = productRepository.findAllById(productIds);
-        if (productIds.size() != products.size()) {
-            throw new IllegalArgumentException("상품 정보가 올바르지 않습니다.");
-        }
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 그룹을 찾을 수 없습니다."));
-
-        validatePrice(request, products);
 
         final Menu savedMenu = menuRepository.save(request.toMenu(menuGroup));
         menuProductService.createMenuProducts(savedMenu, productQuantityRequests);
@@ -54,17 +52,19 @@ public class MenuService {
         return new MenuResponse(savedMenu, productResponses);
     }
 
-    private void validatePrice(MenuCreateRequest request, List<Product> products) {
-        final List<ProductQuantityRequest> productQuantityRequests = request.getMenuProducts();
-        final Map<Long, Long> productQuantityMatcher = productQuantityRequests.stream()
-                .collect(Collectors.toMap(ProductQuantityRequest::getProductId, ProductQuantityRequest::getQuantity));
+    private void validatePrice(MenuCreateRequest request) {
+        BigDecimal sum = request.getMenuProducts()
+                .stream()
+                .map(dto -> {
+                    Long productId = dto.getProductId();
+                    Product product = productRepository.findById(productId)
+                            .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+                    BigDecimal quantity = BigDecimal.valueOf(dto.getQuantity());
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final Product product : products) {
-            Long quantity = productQuantityMatcher.get(product.getId());
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
-        }
-
+                    return quantity.multiply(product.getPrice());
+                })
+                .reduce(BigDecimal::add)
+                .orElseThrow(() -> new IllegalArgumentException("상품의 가격을 계산할 수 없습니다."));
         final BigDecimal price = request.getPrice();
         Objects.requireNonNull(price);
         if (price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(sum) > 0) {
