@@ -94,3 +94,7 @@
     - [x] 단체 지정 도메인
     - [x] 주문 도메인
 - [x] Spring Data JPA 사용 시 `spring.jpa.hibernate.ddl-auto=validate` 옵션을 필수로 준다.
+
+## 3단계 요구 사항
+
+- [x] 클래스간, 패키지간 의존성 사이클 제거하기
