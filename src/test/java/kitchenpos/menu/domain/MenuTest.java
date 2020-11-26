@@ -46,8 +46,8 @@ class MenuTest {
         Menu menu = createMenu(menuProducts, 10);
 
         assertAll(
-            () -> assertThat(menuProduct1.getMenu()).isEqualTo(menu),
-            () -> assertThat(menuProduct2.getMenu()).isEqualTo(menu)
+            () -> assertThat(menuProduct1.getMenuId()).isEqualTo(menu.getId()),
+            () -> assertThat(menuProduct2.getMenuId()).isEqualTo(menu.getId())
         );
     }
 

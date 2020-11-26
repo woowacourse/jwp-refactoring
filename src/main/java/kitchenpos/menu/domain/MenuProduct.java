@@ -21,9 +21,7 @@ public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+    private Long menuId;
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
@@ -35,9 +33,9 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    public void setMenu(final Menu menu) {
+    public void setMenuId(final Menu menu) {
         validateAccessThroughMenu(menu);
-        this.menu = menu;
+        this.menuId = menu.getId();
     }
 
     private void validateAccessThroughMenu(final Menu menu) {

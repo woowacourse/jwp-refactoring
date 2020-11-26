@@ -33,7 +33,7 @@ class MenuProductTest {
         MenuProduct menuProduct = new MenuProduct();
 
         assertThatThrownBy(
-            () -> menuProduct.setMenu(menu)
+            () -> menuProduct.setMenuId(menu)
         ).isInstanceOf(IllegalStateException.class);
     }
 

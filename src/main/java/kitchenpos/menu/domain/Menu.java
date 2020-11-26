@@ -30,7 +30,7 @@ public class Menu {
     @ManyToOne
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
-    @OneToMany(mappedBy = "menu", cascade= CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "menuId", cascade= CascadeType.PERSIST, orphanRemoval = true)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     @Builder
@@ -62,7 +62,7 @@ public class Menu {
 
     public void addMenuProduct(final MenuProduct menuProduct) {
         menuProducts.add(menuProduct);
-        menuProduct.setMenu(this);
+        menuProduct.setMenuId(this);
     }
 
     private void validateMenuProductsPrice() {
