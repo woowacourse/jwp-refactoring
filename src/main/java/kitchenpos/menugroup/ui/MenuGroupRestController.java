@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.menugroup.ui;
 
 import java.net.URI;
 import java.util.List;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.dto.MenuGroupCreateRequestDto;
-import kitchenpos.dto.MenuGroupResponseDto;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menugroup.application.dto.MenuGroupCreateRequestDto;
+import kitchenpos.menugroup.application.dto.MenuGroupResponseDto;
 
 @RestController
 public class MenuGroupRestController {

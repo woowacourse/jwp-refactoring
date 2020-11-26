@@ -1,6 +1,6 @@
-package kitchenpos.dto;
+package kitchenpos.menugroup.application.dto;
 
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.menugroup.model.MenuGroup;
 
 public class MenuGroupCreateRequestDto {
     private String name;
