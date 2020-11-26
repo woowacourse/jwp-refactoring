@@ -4,7 +4,6 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.domain.order.repository.OrderRepository;
@@ -53,7 +52,7 @@ public class MenuRepositoryTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(테이블_사람_2명, 테이블_비어있음));
         menu1 = menuRepository.save(new Menu(메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, menuGroup));
         menu2 = menuRepository.save(new Menu(메뉴_이름_양념_치킨, 메뉴_가격_16000원, menuGroup));
-        order = orderRepository.save(new Order(orderTable, OrderStatus.COOKING));
+        order = orderRepository.save(Order.ofCooking(orderTable));
     }
 
     @DisplayName("특정 Order와 관계있는 Menu의 목록을 요청할 경우, 올바르게 수행된다.")

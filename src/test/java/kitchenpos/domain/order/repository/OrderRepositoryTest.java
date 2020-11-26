@@ -31,8 +31,8 @@ public class OrderRepositoryTest {
     void existsByOrderTableIdAndOrderStatusInTest() {
         OrderTable orderTable1 = new OrderTable(테이블_사람_1명, 테이블_비어있음);
         OrderTable orderTable2 = new OrderTable(테이블_사람_2명, 테이블_비어있음);
-        Order order1 = new Order(orderTable1, OrderStatus.COOKING);
-        Order order2 = new Order(orderTable2, OrderStatus.COMPLETION);
+        Order order1 = Order.ofCooking(orderTable1);
+        Order order2 = Order.ofCompletion(orderTable2);
 
         OrderTable savedOrderTable1 = orderTableRepository.save(orderTable1);
         OrderTable savedOrderTable2 = orderTableRepository.save(orderTable2);

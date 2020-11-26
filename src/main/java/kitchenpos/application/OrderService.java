@@ -35,7 +35,7 @@ public class OrderService {
         if (orderTable.getEmpty()) {
             throw new IllegalArgumentException("해당 테이블이 비어있습니다.");
         }
-        final Order order = new Order(orderTable, OrderStatus.COOKING);
+        final Order order = Order.ofCooking(orderTable);
         final Order savedOrder = orderRepository.save(order);
 
         orderLineItemService.createOrderLineItems(order, orderLineItemRequests);

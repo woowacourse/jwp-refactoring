@@ -30,8 +30,16 @@ public class Order {
     @CreatedDate
     private LocalDateTime orderedTime;
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus) {
+    private Order(OrderTable orderTable, OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
+    }
+
+    public static Order ofCooking(OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COOKING);
+    }
+
+    public static Order ofCompletion(OrderTable orderTable) {
+        return new Order(orderTable, OrderStatus.COMPLETION);
     }
 }
