@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -14,25 +13,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest {
+class MenuGroupRestControllerTest extends KitchenPosControllerTest {
 
-    private static final Long MENU_GROUP_ID = 1L;
-    private static final String MENU_GROUP_NAME = "추천메뉴";
+    private static final MenuGroupResponse MENU_GROUP;
 
-    @Autowired
-    private MockMvc mockMvc;
+    static {
+        final Long id = 1L;
+        final String name = "추천메뉴";
+        MENU_GROUP = MenuGroupResponse.of(id, name);
+    }
 
     @MockBean
     private MenuGroupService menuGroupService;
@@ -40,27 +40,21 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
-        menuGroup.setName(MENU_GROUP_NAME);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(MENU_GROUP.getName());
 
-        String requestBody = "{\n"
-            + "  \"name\": \"" + menuGroup.getName() + "\"\n"
-            + "}";
-
-        given(menuGroupService.create(any(MenuGroup.class)))
-            .willReturn(menuGroup);
+        given(menuGroupService.create(menuGroupRequest))
+            .willReturn(MENU_GROUP);
 
         final ResultActions resultActions = mockMvc.perform(post("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(menuGroupRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(menuGroup.getId().intValue())))
-            .andExpect(jsonPath("$.name", is(menuGroup.getName())))
+            .andExpect(jsonPath("$.id", is(MENU_GROUP.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(MENU_GROUP.getName())))
             .andExpect(header().exists(HttpHeaders.LOCATION))
             .andDo(print());
     }
@@ -68,11 +62,8 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() throws Exception {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(MENU_GROUP_ID);
-
         given(menuGroupService.list())
-            .willReturn(Collections.singletonList(menuGroup));
+            .willReturn(Collections.singletonList(MENU_GROUP));
 
         final ResultActions resultActions = mockMvc.perform(get("/api/menu-groups")
             .contentType(MediaType.APPLICATION_JSON))
@@ -82,7 +73,7 @@ class MenuGroupRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(menuGroup.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(MENU_GROUP.getId().intValue())))
             .andDo(print());
     }
 }

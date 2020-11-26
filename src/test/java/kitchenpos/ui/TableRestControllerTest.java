@@ -2,8 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,27 +14,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.TableChangeEmptyRequest;
+import kitchenpos.ui.dto.TableChangeNumberOfGuestsRequest;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableRestController.class)
-class TableRestControllerTest {
+class TableRestControllerTest extends KitchenPosControllerTest {
 
-    private static final long ORDER_TABLE_ID = 1L;
-    private static final int NUMBER_OF_GUESTS = 0;
+    private static final TableResponse EMPTY_TABLE;
 
-    @Autowired
-    private MockMvc mockMvc;
+    static {
+        final Long orderTableId = 1L;
+        final int numberOfGuests = 0;
+        final boolean empty = true;
+
+        EMPTY_TABLE = TableResponse.of(orderTableId, null, numberOfGuests, empty);
+    }
 
     @MockBean
     private TableService tableService;
@@ -44,44 +47,34 @@ class TableRestControllerTest {
     @DisplayName("테이블 추가")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(ORDER_TABLE_ID);
-        orderTable.setNumberOfGuests(NUMBER_OF_GUESTS);
-        orderTable.setEmpty(true);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            EMPTY_TABLE.getNumberOfGuests(), EMPTY_TABLE.isEmpty());
 
-        String requestBody = "{\n"
-            + "  \"numberOfGuests\": " + orderTable.getNumberOfGuests() + ",\n"
-            + "  \"empty\": " + orderTable.isEmpty() + "\n"
-            + "}";
+        given(tableService.create(tableCreateRequest))
+            .willReturn(EMPTY_TABLE);
 
-        given(tableService.create(any(OrderTable.class)))
-            .willReturn(orderTable);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(post("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(tableCreateRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(orderTable.getId().intValue())))
-            .andExpect(jsonPath("$.numberOfGuests", is(orderTable.getNumberOfGuests())))
-            .andExpect(jsonPath("$.empty", is(orderTable.isEmpty())))
+            .andExpect(jsonPath("$.id", is(EMPTY_TABLE.getId().intValue())))
+            .andExpect(jsonPath("$.numberOfGuests", is(EMPTY_TABLE.getNumberOfGuests())))
+            .andExpect(jsonPath("$.empty", is(EMPTY_TABLE.isEmpty())))
             .andDo(print());
     }
 
     @DisplayName("테이블 전체 조회")
     @Test
     void list() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(ORDER_TABLE_ID);
-
         given(tableService.list())
-            .willReturn(Collections.singletonList(orderTable));
+            .willReturn(Collections.singletonList(EMPTY_TABLE));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/tables")
+        final ResultActions resultActions = mockMvc.perform(get("/api/tables")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 
@@ -89,7 +82,7 @@ class TableRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(orderTable.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(EMPTY_TABLE.getId().intValue())))
             .andDo(print());
     }
 
@@ -97,56 +90,55 @@ class TableRestControllerTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     void changeEmpty(boolean empty) throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(ORDER_TABLE_ID);
-        orderTable.setEmpty(empty);
+        Long tableId = EMPTY_TABLE.getId();
+        TableChangeEmptyRequest tableChangeEmptyRequest = new TableChangeEmptyRequest(empty);
 
-        String requestBody = "{\n"
-            + "  \"empty\": " + orderTable.isEmpty() + "\n"
-            + "}";
+        TableResponse table = TableResponse
+            .of(tableId, EMPTY_TABLE.getTableGroupId(), EMPTY_TABLE.getNumberOfGuests(),
+                tableChangeEmptyRequest.isEmpty());
 
-        given(tableService.changeEmpty(anyLong(), any(OrderTable.class)))
-            .willReturn(orderTable);
+        given(tableService.changeEmpty(tableId, tableChangeEmptyRequest))
+            .willReturn(table);
 
-        ResultActions resultActions = mockMvc
-            .perform(put("/api/tables/" + orderTable.getId() + "/empty")
+        final ResultActions resultActions = mockMvc
+            .perform(put("/api/tables/" + tableId + "/empty")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content(objectMapper.writeValueAsBytes(tableChangeEmptyRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(orderTable.getId().intValue())))
-            .andExpect(jsonPath("$.empty", is(orderTable.isEmpty())))
+            .andExpect(jsonPath("$.id", is(table.getId().intValue())))
+            .andExpect(jsonPath("$.empty", is(table.isEmpty())))
             .andDo(print());
     }
 
     @DisplayName("테이블 손님 수 변경")
-    @Test
-    void changeNumberOfGuests() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(ORDER_TABLE_ID);
-        orderTable.setNumberOfGuests(NUMBER_OF_GUESTS);
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2, 3})
+    void changeNumberOfGuests(int numberOfGuests) throws Exception {
+        Long tableId = EMPTY_TABLE.getId();
+        TableChangeNumberOfGuestsRequest tableChangeNumberOfGuestsRequest
+            = new TableChangeNumberOfGuestsRequest(numberOfGuests);
 
-        String requestBody = "{\n"
-            + "  \"numberOfGuests\": " + orderTable.getNumberOfGuests() + "\n"
-            + "}";
+        TableResponse table = TableResponse.of(tableId, EMPTY_TABLE.getTableGroupId(),
+            tableChangeNumberOfGuestsRequest.getNumberOfGuests(), false);
 
-        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class)))
-            .willReturn(orderTable);
+        given(tableService.changeNumberOfGuests(tableId, tableChangeNumberOfGuestsRequest))
+            .willReturn(table);
 
-        ResultActions resultActions = mockMvc
-            .perform(put("/api/tables/" + orderTable.getId() + "/number-of-guests")
+        final ResultActions resultActions = mockMvc
+            .perform(put("/api/tables/" + table.getId() + "/number-of-guests")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content(objectMapper.writeValueAsBytes(tableChangeNumberOfGuestsRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id", is(orderTable.getId().intValue())))
-            .andExpect(jsonPath("$.numberOfGuests", is(orderTable.getNumberOfGuests())))
+            .andExpect(jsonPath("$.id", is(table.getId().intValue())))
+            .andExpect(jsonPath("$.numberOfGuests", is(table.getNumberOfGuests())))
             .andDo(print());
     }
 }

@@ -9,34 +9,25 @@ import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS;
 import static kitchenpos.constants.Constants.TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_NAME;
 import static kitchenpos.constants.Constants.TEST_PRODUCT_PRICE;
-import static kitchenpos.constants.Constants.TEST_TABLE_GROUP_CREATED_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.application.dao.MockMenuDao;
-import kitchenpos.application.dao.MockMenuGroupDao;
-import kitchenpos.application.dao.MockMenuProductDao;
-import kitchenpos.application.dao.MockOrderDao;
-import kitchenpos.application.dao.MockOrderLineItemDao;
-import kitchenpos.application.dao.MockOrderTableDao;
-import kitchenpos.application.dao.MockProductDao;
-import kitchenpos.application.dao.MockTableGroupDao;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.menu.MenuProduct;
+import kitchenpos.domain.product.Product;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.ProductRepository;
+import kitchenpos.repository.TableRepository;
+import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.ui.dto.MenuGroupResponse;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.ui.dto.TableCreateRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,84 +35,83 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public abstract class KitchenPosServiceTest {
 
-    protected OrderDao orderDao = new MockOrderDao();
-    protected OrderTableDao orderTableDao = new MockOrderTableDao();
-    protected ProductDao productDao = new MockProductDao();
-    protected TableService tableService = new TableService(orderDao, orderTableDao);
-    protected ProductService productService = new ProductService(productDao);
-    private TableGroupDao tableGroupDao = new MockTableGroupDao();
-    protected TableGroupService tableGroupService
-        = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-    private MenuGroupDao menuGroupDao = new MockMenuGroupDao();
-    protected MenuGroupService menuGroupService = new MenuGroupService(menuGroupDao);
-    private MenuDao menuDao = new MockMenuDao();
-    private MenuProductDao menuProductDao = new MockMenuProductDao();
-    protected MenuService menuService
-        = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-    private OrderLineItemDao orderLineItemDao = new MockOrderLineItemDao();
-    protected OrderService orderService
-        = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
+    @Autowired
+    protected TableService tableService;
 
-    protected void setCreatedTableGroup(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(TEST_TABLE_GROUP_CREATED_DATE);
-        tableGroup.setOrderTables(orderTables);
+    @Autowired
+    protected ProductService productService;
 
-        tableGroupService.create(tableGroup);
+    @Autowired
+    protected TableGroupService tableGroupService;
+
+    @Autowired
+    protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected MenuService menuService;
+
+    @Autowired
+    protected OrderService orderService;
+
+    @Autowired
+    protected ProductRepository productRepository;
+
+    @Autowired
+    protected TableRepository tableRepository;
+
+    @Autowired
+    protected OrderRepository orderRepository;
+
+    protected void setCreatedTableGroup(List<Long> tableIds) {
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+        tableGroupService.create(tableGroupRequest);
     }
 
     protected long getCreatedEmptyOrderTableId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_TRUE);
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS_EMPTY, TEST_ORDER_TABLE_EMPTY_TRUE);
+        TableResponse createdTable = tableService.create(tableCreateRequest);
 
-        Long createdOrderTableId = createdOrderTable.getId();
-        assertThat(createdOrderTable).isNotNull();
+        Long createdOrderTableId = createdTable.getId();
+        assertThat(createdTable).isNotNull();
         return createdOrderTableId;
     }
 
     protected long getCreatedNotEmptyOrderTableId() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(TEST_ORDER_TABLE_EMPTY_FALSE);
-        orderTable.setNumberOfGuests(TEST_ORDER_TABLE_NUMBER_OF_GUESTS);
-        OrderTable createdOrderTable = tableService.create(orderTable);
+        TableCreateRequest tableCreateRequest = new TableCreateRequest(
+            TEST_ORDER_TABLE_NUMBER_OF_GUESTS, TEST_ORDER_TABLE_EMPTY_FALSE);
+        TableResponse createdTable = tableService.create(tableCreateRequest);
 
-        Long createdOrderTableId = createdOrderTable.getId();
-        assertThat(createdOrderTable).isNotNull();
+        Long createdOrderTableId = createdTable.getId();
+        assertThat(createdTable).isNotNull();
         return createdOrderTableId;
     }
 
     protected long getCreatedMenuGroupId() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(TEST_MENU_GROUP_NAME);
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(TEST_MENU_GROUP_NAME);
+        MenuGroupResponse createdMenuGroup = menuGroupService.create(menuGroupRequest);
 
         Long createdMenuGroupId = createdMenuGroup.getId();
         assertThat(createdMenuGroupId).isNotNull();
         return createdMenuGroupId;
     }
 
-    protected long getCreatedProductId() {
-        Product product = new Product();
-        product.setName(TEST_PRODUCT_NAME);
-        product.setPrice(TEST_PRODUCT_PRICE);
-        Product createdProduct = productService.create(product);
+    protected Product getCreatedProduct() {
+        Product product = Product.entityOf(TEST_PRODUCT_NAME, TEST_PRODUCT_PRICE);
+        Product createdProduct = productRepository.save(product);
 
-        Long createdProductId = createdProduct.getId();
-        assertThat(createdProductId).isNotNull();
-        return createdProductId;
+        assertThat(createdProduct.getId()).isNotNull();
+        return createdProduct;
     }
 
     protected long getCreatedMenuId() {
         MenuProduct menuProduct = getMenuProduct();
 
-        Menu menu = new Menu();
-        menu.setName(TEST_MENU_NAME);
-        menu.setPrice(getMenuProductPrice(menuProduct));
-        menu.setMenuGroupId(getCreatedMenuGroupId());
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
-        Menu createdMenu = menuService.create(menu);
+        MenuRequest menuRequest = new MenuRequest(TEST_MENU_NAME, getMenuProductPrice(menuProduct),
+            getCreatedMenuGroupId(), Collections.singletonList(
+            new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity())));
+
+        MenuResponse createdMenu = menuService.create(menuRequest);
 
         Long createdMenuId = createdMenu.getId();
         assertThat(createdMenuId).isNotNull();
@@ -129,18 +119,15 @@ public abstract class KitchenPosServiceTest {
     }
 
     protected BigDecimal getMenuProductPrice(MenuProduct menuProduct) {
-        BigDecimal productPrice = productDao.findById(menuProduct.getProductId())
+        BigDecimal productPrice = productRepository.findById(menuProduct.getProduct().getId())
             .orElseThrow(() -> new IllegalArgumentException(
-                menuProduct.getMenuId() + "ID에 해당하는 Product가 없습니다."))
+                menuProduct.getProduct().getId() + "ID에 해당하는 Product가 없습니다."))
             .getPrice();
         BigDecimal quantity = BigDecimal.valueOf(menuProduct.getQuantity());
         return productPrice.multiply(quantity);
     }
 
     protected MenuProduct getMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(TEST_MENU_PRODUCT_QUANTITY);
-        menuProduct.setProductId(getCreatedProductId());
-        return menuProduct;
+        return MenuProduct.entityOf(getCreatedProduct(), TEST_MENU_PRODUCT_QUANTITY);
     }
 }

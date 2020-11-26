@@ -2,7 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,31 +14,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuProductResponse;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuRestController.class)
-class MenuRestControllerTest {
+class MenuRestControllerTest extends KitchenPosControllerTest {
 
-    private static final Long MENU_ID = 1L;
-    private static final String MENU_NAME = "후라이드+후라이드";
-    private static final BigDecimal MENU_PRICE = BigDecimal.valueOf(19_000);
-    private static final long MENU_GROUP_ID = 10L;
-    private static final long MENU_PRODUCT_SEQ = 100L;
-    private static final long MENU_PRODUCT_PRODUCT_ID = 1_000L;
-    private static final int MENU_PRODUCT_QUANTITY = 2;
+    private static final MenuResponse MENU;
 
-    @Autowired
-    private MockMvc mockMvc;
+    static {
+        final Long menuId = 1L;
+        final String menuName = "후라이드+후라이드";
+        final BigDecimal menuPrice = BigDecimal.valueOf(19_000);
+        final long menuGroupId = 10L;
+        final long menuProductSeq = 100L;
+        final long menuProductProductId = 1_000L;
+        final int menuProductQuantity = 2;
+
+        MenuProductResponse menuProduct = MenuProductResponse
+            .of(menuProductSeq, menuId, menuProductProductId, menuProductQuantity);
+        MENU = MenuResponse
+            .of(menuId, menuName, menuPrice, menuGroupId, Collections.singletonList(menuProduct));
+    }
 
     @MockBean
     private MenuService menuService;
@@ -47,66 +52,46 @@ class MenuRestControllerTest {
     @DisplayName("메뉴 추가")
     @Test
     void create() throws Exception {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(MENU_PRODUCT_SEQ);
-        menuProduct.setMenuId(MENU_ID);
-        menuProduct.setProductId(MENU_PRODUCT_PRODUCT_ID);
-        menuProduct.setQuantity(MENU_PRODUCT_QUANTITY);
+        MenuRequest menuRequest = new MenuRequest(MENU.getName(), MENU.getPrice(),
+            MENU.getMenuGroupId(), Collections
+            .singletonList(new MenuProductRequest(MENU.getMenuProducts().get(0).getProductId(),
+                MENU.getMenuProducts().get(0).getQuantity())));
 
-        Menu menu = new Menu();
-        menu.setId(MENU_ID);
-        menu.setName(MENU_NAME);
-        menu.setPrice(MENU_PRICE);
-        menu.setMenuGroupId(MENU_GROUP_ID);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+        given(menuService.create(menuRequest))
+            .willReturn(MENU);
 
-        String requestBody = "{\n"
-            + "  \"name\": \"" + menu.getName() + "\",\n"
-            + "  \"price\": " + menu.getPrice() + ",\n"
-            + "  \"menuGroupId\": " + menu.getMenuGroupId() + ",\n"
-            + "  \"menuProducts\": [\n"
-            + "    {\n"
-            + "      \"productId\": " + menuProduct.getProductId() + ",\n"
-            + "      \"quantity\": " + menuProduct.getQuantity() + "\n"
-            + "    }\n"
-            + "  ]\n"
-            + "}";
-
-        given(menuService.create(any(Menu.class)))
-            .willReturn(menu);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(post("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(menuRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(menu.getId().intValue())))
-            .andExpect(jsonPath("$.name", is(menu.getName())))
-            .andExpect(jsonPath("$.price", is(menu.getPrice().intValue())))
-            .andExpect(jsonPath("$.menuGroupId", is(menu.getMenuGroupId().intValue())))
+            .andExpect(jsonPath("$.id", is(MENU.getId().intValue())))
+            .andExpect(jsonPath("$.name", is(MENU.getName())))
+            .andExpect(jsonPath("$.price", is(MENU.getPrice().intValue())))
+            .andExpect(jsonPath("$.menuGroupId", is(MENU.getMenuGroupId().intValue())))
             .andExpect(jsonPath("$.menuProducts", hasSize(1)))
-            .andExpect(jsonPath("$.menuProducts[0].seq", is(menuProduct.getSeq().intValue())))
-            .andExpect(jsonPath("$.menuProducts[0].menuId", is(menuProduct.getMenuId().intValue())))
+            .andExpect(jsonPath("$.menuProducts[0].seq",
+                is(MENU.getMenuProducts().get(0).getSeq().intValue())))
+            .andExpect(jsonPath("$.menuProducts[0].menuId",
+                is(MENU.getMenuProducts().get(0).getMenuId().intValue())))
             .andExpect(jsonPath("$.menuProducts[0].productId",
-                is(menuProduct.getProductId().intValue())))
-            .andExpect(jsonPath("$.menuProducts[0].quantity", is((int) menuProduct.getQuantity())))
+                is(MENU.getMenuProducts().get(0).getProductId().intValue())))
+            .andExpect(jsonPath("$.menuProducts[0].quantity",
+                is((int) MENU.getMenuProducts().get(0).getQuantity())))
             .andDo(print());
     }
 
     @DisplayName("메뉴 그룹 전체 조회")
     @Test
     void list() throws Exception {
-        Menu menu = new Menu();
-        menu.setId(MENU_ID);
-
         given(menuService.list())
-            .willReturn(Collections.singletonList(menu));
+            .willReturn(Collections.singletonList(MENU));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/menus")
+        final ResultActions resultActions = mockMvc.perform(get("/api/menus")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 
@@ -114,7 +99,7 @@ class MenuRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(menu.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(MENU.getId().intValue())))
             .andDo(print());
     }
 }

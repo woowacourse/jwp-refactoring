@@ -2,8 +2,6 @@ package kitchenpos.ui;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -14,35 +12,46 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.ui.dto.OrderChangeStatusRequest;
+import kitchenpos.ui.dto.OrderCreateRequest;
+import kitchenpos.ui.dto.OrderLineItemResponse;
+import kitchenpos.ui.dto.OrderLineItemsRequest;
+import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
-class OrderRestControllerTest {
+class OrderRestControllerTest extends KitchenPosControllerTest {
 
-    private static final long ORDER_ID = 1_000L;
-    private static final long ORDER_LINE_ITEM_SEQ = 10L;
-    private static final long ORDER_LINE_ITEM_MENU_ID = 100L;
-    private static final long ORDER_LINE_QUANTITY = 10_000L;
-    private static final long ORDER_TABLE_ID = 1L;
-    private static final String ORDER_STATUS = OrderStatus.COOKING.name();
+    private static final OrderResponse ORDER;
 
-    @Autowired
-    private MockMvc mockMvc;
+    static {
+        final long orderId = 1L;
+        final long tableId = 10L;
+        final long orderLineItemSeq = 100L;
+        final long menuId = 1_000L;
+        final long orderLineItemQuantity = 10_000L;
+        final String orderStatus = OrderStatus.COOKING.name();
+        final LocalDateTime now = LocalDateTime.now();
+
+        List<OrderLineItemResponse> orderLineItems = Collections.singletonList(
+            OrderLineItemResponse.of(orderLineItemSeq, orderId, menuId, orderLineItemQuantity)
+        );
+
+        ORDER = OrderResponse.of(orderId, tableId, orderStatus, now, orderLineItems);
+    }
 
     @MockBean
     private OrderService orderService;
@@ -50,64 +59,48 @@ class OrderRestControllerTest {
     @DisplayName("주문 추가")
     @Test
     void create() throws Exception {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(ORDER_LINE_ITEM_SEQ);
-        orderLineItem.setOrderId(ORDER_ID);
-        orderLineItem.setMenuId(ORDER_LINE_ITEM_MENU_ID);
-        orderLineItem.setQuantity(ORDER_LINE_QUANTITY);
+        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(
+            ORDER.getOrderTableId(),
+            Collections.singletonList(new OrderLineItemsRequest(
+                ORDER.getOrderLineItems().get(0).getMenuId(),
+                ORDER.getOrderLineItems().get(0).getQuantity()
+            ))
+        );
 
-        Order order = new Order();
-        order.setId(ORDER_ID);
-        order.setOrderTableId(ORDER_TABLE_ID);
-        order.setOrderStatus(ORDER_STATUS);
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        given(orderService.create(orderCreateRequest))
+            .willReturn(ORDER);
 
-        String requestBody = "{\n"
-            + "  \"orderTableId\": " + order.getOrderTableId() + ",\n"
-            + "  \"orderLineItems\": [\n"
-            + "    {\n"
-            + "      \"menuId\": " + orderLineItem.getMenuId() + ",\n"
-            + "      \"quantity\": " + orderLineItem.getQuantity() + "\n"
-            + "    }\n"
-            + "  ]\n"
-            + "}";
-
-        given(orderService.create(any(Order.class)))
-            .willReturn(order);
-
-        ResultActions resultActions = mockMvc.perform(post("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(post("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody))
+            .content(objectMapper.writeValueAsBytes(orderCreateRequest)))
             .andDo(print());
 
         resultActions
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(header().exists(HttpHeaders.LOCATION))
-            .andExpect(jsonPath("$.id", is(order.getId().intValue())))
-            .andExpect(jsonPath("$.orderTableId", is(order.getOrderTableId().intValue())))
-            .andExpect(jsonPath("$.orderStatus", is(order.getOrderStatus())))
+            .andExpect(jsonPath("$.id", is(ORDER.getId().intValue())))
+            .andExpect(jsonPath("$.orderTableId", is(ORDER.getOrderTableId().intValue())))
+            .andExpect(jsonPath("$.orderStatus", is(ORDER.getOrderStatus())))
             .andExpect(jsonPath("$.orderLineItems", hasSize(1)))
-            .andExpect(jsonPath("$.orderLineItems[0].seq", is(orderLineItem.getSeq().intValue())))
+            .andExpect(jsonPath("$.orderLineItems[0].seq",
+                is(ORDER.getOrderLineItems().get(0).getSeq().intValue())))
             .andExpect(jsonPath("$.orderLineItems[0].orderId",
-                is(orderLineItem.getOrderId().intValue())))
+                is(ORDER.getOrderLineItems().get(0).getOrderId().intValue())))
             .andExpect(jsonPath("$.orderLineItems[0].menuId",
-                is(orderLineItem.getMenuId().intValue())))
+                is(ORDER.getOrderLineItems().get(0).getMenuId().intValue())))
             .andExpect(jsonPath("$.orderLineItems[0].quantity",
-                is((int) orderLineItem.getQuantity())))
+                is((int) ORDER.getOrderLineItems().get(0).getQuantity())))
             .andDo(print());
     }
 
     @DisplayName("주문 조회")
     @Test
     void list() throws Exception {
-        Order order = new Order();
-        order.setId(ORDER_ID);
-
         given(orderService.list())
-            .willReturn(Collections.singletonList(order));
+            .willReturn(Collections.singletonList(ORDER));
 
-        ResultActions resultActions = mockMvc.perform(get("/api/orders")
+        final ResultActions resultActions = mockMvc.perform(get("/api/orders")
             .contentType(MediaType.APPLICATION_JSON))
             .andDo(print());
 
@@ -115,7 +108,7 @@ class OrderRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].id", is(order.getId().intValue())))
+            .andExpect(jsonPath("$[0].id", is(ORDER.getId().intValue())))
             .andDo(print());
     }
 
@@ -123,22 +116,21 @@ class OrderRestControllerTest {
     @ParameterizedTest
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COMPLETION"})
     void changeOrderStatus(OrderStatus orderStatus) throws Exception {
-        Order order = new Order();
-        order.setId(ORDER_ID);
-        order.setOrderTableId(ORDER_TABLE_ID);
-        order.setOrderStatus(orderStatus.name());
+        Long orderId = ORDER.getId();
+        OrderChangeStatusRequest orderChangeStatusRequest = new OrderChangeStatusRequest(
+            orderStatus.name());
 
-        String requestBody = "{\n"
-            + "  \"orderStatus\": \"" + order.getOrderStatus() + "\"\n"
-            + "}";
+        OrderResponse order = OrderResponse
+            .of(orderId, ORDER.getOrderTableId(), orderChangeStatusRequest.getOrderStatus(),
+                ORDER.getOrderedTime(), ORDER.getOrderLineItems());
 
-        given(orderService.changeOrderStatus(anyLong(), any(Order.class)))
+        given(orderService.changeOrderStatus(orderId, orderChangeStatusRequest))
             .willReturn(order);
 
-        ResultActions resultActions = mockMvc
-            .perform(put("/api/orders/" + ORDER_ID + "/order-status")
+        final ResultActions resultActions = mockMvc
+            .perform(put("/api/orders/" + order.getId() + "/order-status")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                .content(objectMapper.writeValueAsBytes(orderChangeStatusRequest)))
             .andDo(print());
 
         resultActions
