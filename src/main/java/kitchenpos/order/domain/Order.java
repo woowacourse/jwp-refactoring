@@ -42,7 +42,7 @@ public class Order {
     private OrderStatus orderStatus = OrderStatus.COOKING;
     @CreatedDate
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order", cascade= CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "orderId", cascade= CascadeType.PERSIST, orphanRemoval = true)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
     @Version
     private int version;
@@ -80,7 +80,7 @@ public class Order {
 
     private void addOrderLineItem(final OrderLineItem orderLineItem) {
         orderLineItems.add(orderLineItem);
-        orderLineItem.setOrder(this);
+        orderLineItem.setOrderId(this);
     }
 
     public void changeOrderStatus(final OrderStatus orderStatus) {

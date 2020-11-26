@@ -14,7 +14,7 @@ class OrderLineItemTest {
         OrderLineItem orderLineItem = OrderLineItem.builder().build();
 
         assertThatThrownBy(
-            () -> orderLineItem.setOrder(order)
+            () -> orderLineItem.setOrderId(order)
         ).isInstanceOf(IllegalStateException.class);
     }
 }

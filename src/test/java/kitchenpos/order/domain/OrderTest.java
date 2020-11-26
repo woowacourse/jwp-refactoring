@@ -39,8 +39,8 @@ class OrderTest {
         Order order = createOrder(orderTable, orderLineItems);
 
         assertAll(
-            () -> assertThat(order.getOrderLineItems().get(0).getOrder()).isEqualTo(order),
-            () -> assertThat(order.getOrderLineItems().get(1).getOrder()).isEqualTo(order)
+            () -> assertThat(order.getOrderLineItems().get(0).getOrderId()).isEqualTo(order.getId()),
+            () -> assertThat(order.getOrderLineItems().get(1).getOrderId()).isEqualTo(order.getId())
         );
     }
 

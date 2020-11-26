@@ -4,8 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +16,7 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    private Long orderId;
     private Long menuId;
     private long quantity;
 
@@ -30,9 +26,9 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public void setOrder(final Order order) {
+    public void setOrderId(final Order order) {
         validateAccessThroughOrder(order);
-        this.order = order;
+        this.orderId = order.getId();
     }
 
     private void validateAccessThroughOrder(final Order order) {
