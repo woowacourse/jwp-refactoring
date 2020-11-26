@@ -3,9 +3,11 @@ package kitchenpos.order.domain;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.ordertable.domain.OrderTable;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,7 +27,7 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private OrderTable orderTable;
 
     public Order() {
