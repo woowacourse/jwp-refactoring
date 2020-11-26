@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.order.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.order.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.order.OrderTableCreateRequest;

@@ -1,6 +1,10 @@
-package kitchenpos.domain.menu;
+package kitchenpos.domain.menu.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.QMenuProduct;
+import kitchenpos.domain.menu.QProduct;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

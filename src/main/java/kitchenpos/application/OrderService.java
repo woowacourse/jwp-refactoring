@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.order.*;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +21,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final OrderLineItemService orderLineItemService;
+    private final MenuService menuService;
 
     @Transactional
     public OrderResponse create(final OrderCreateRequest request) {
@@ -62,7 +67,7 @@ public class OrderService {
     }
 
     private OrderResponse transferOrderResponse(Order order) {
-        List<MenuResponse> menuResponses = orderLineItemService.findMenusByOrder(order);
+        List<MenuResponse> menuResponses = menuService.findMenusByOrder(order);
 
         return new OrderResponse(order, menuResponses);
     }

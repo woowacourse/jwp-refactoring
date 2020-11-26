@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
-import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderLineItemRepository;
-import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.dto.order.OrderLineItemRequests;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,16 +36,5 @@ public class OrderLineItemService {
             OrderLineItem orderLineItem = new OrderLineItem(order, menu, quantity);
             orderLineItemRepository.save(orderLineItem);
         }
-    }
-
-    @Transactional(readOnly = true)
-    public List<MenuResponse> findMenusByOrder(Order order) {
-        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(order);
-        return orderLineItems.stream()
-                .map(orderLineItem -> {
-                    Menu menu = orderLineItem.getMenu();
-                    return new MenuResponse(menu, productService.findProductsByMenu(menu));
-                })
-                .collect(Collectors.toList());
     }
 }

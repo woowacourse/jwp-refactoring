@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuGroupRepository;
 import kitchenpos.dto.menu.MenuGroupCreateRequest;
 import kitchenpos.dto.menu.MenuGroupResponse;
 import lombok.RequiredArgsConstructor;
