@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,15 +14,17 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import kitchenpos.application.ServiceTest;
 import kitchenpos.menu.model.Menu;
 import kitchenpos.menugroup.model.MenuGroup;
 import kitchenpos.menuproduct.model.MenuProduct;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.model.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.OrderCreateRequestDto;
-import kitchenpos.dto.OrderLineCreateRequestDto;
-import kitchenpos.dto.OrderResponseDto;
+import kitchenpos.order.application.dto.OrderCreateRequestDto;
+import kitchenpos.orderline.application.dto.OrderLineCreateRequestDto;
+import kitchenpos.order.application.dto.OrderResponseDto;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menuproduct.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;

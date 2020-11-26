@@ -1,10 +1,11 @@
-package kitchenpos.dto;
+package kitchenpos.order.application.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.model.Order;
+import kitchenpos.orderline.model.OrderLineItem;
+import kitchenpos.orderline.application.dto.OrderLineItemResponseDto;
 
 public class OrderResponseDto {
     private final Long id;

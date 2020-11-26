@@ -6,14 +6,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Order;
+import kitchenpos.order.model.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderVerifier;
+import kitchenpos.order.model.OrderVerifier;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupVerifier;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.model;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,6 +7,9 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import kitchenpos.order.model.Order;
+import kitchenpos.order.model.OrderStatus;
 
 class OrderTest {
     @DisplayName("주문 상태를 변경할 수 있다.")

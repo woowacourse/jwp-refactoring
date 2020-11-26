@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.order.model;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -9,6 +9,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import kitchenpos.domain.OrderTable;
+import kitchenpos.order.model.Order;
+import kitchenpos.orderline.model.OrderLineItem;
+import kitchenpos.order.model.OrderStatus;
+import kitchenpos.order.model.OrderVerifier;
 
 class OrderVerifierTest {
     @DisplayName("결제 완료되지 않은 테이블이 존재하면 예외 발생")

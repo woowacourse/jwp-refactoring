@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.order.application;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,17 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.model.Order;
+import kitchenpos.orderline.model.OrderLineItem;
+import kitchenpos.order.model.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderVerifier;
-import kitchenpos.dto.OrderCreateRequestDto;
-import kitchenpos.dto.OrderLineCreateRequestDto;
-import kitchenpos.dto.OrderResponseDto;
+import kitchenpos.order.model.OrderVerifier;
+import kitchenpos.order.application.dto.OrderCreateRequestDto;
+import kitchenpos.orderline.application.dto.OrderLineCreateRequestDto;
+import kitchenpos.order.application.dto.OrderResponseDto;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderRepository;
+import kitchenpos.orderline.repository.OrderLineItemRepository;
+import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 
 @Service
