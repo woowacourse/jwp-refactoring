@@ -1,15 +1,21 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class MenuCreateRequest {
 
+    @NotNull
     private String name;
 
+    @NotNull
     private Long price;
 
+    @NotNull
     private Long menuGroupId;
 
+    @NotEmpty
     private List<MenuProductRequest> menuProductRequests;
 
     public MenuCreateRequest() {

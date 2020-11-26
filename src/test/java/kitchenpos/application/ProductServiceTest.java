@@ -1,12 +1,10 @@
 package kitchenpos.application;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-
-import java.util.Arrays;
-import java.util.List;
-
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
+import kitchenpos.exception.InvalidPriceException;
+import kitchenpos.fixture.TestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,12 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.exception.InvalidPriceException;
-import kitchenpos.exception.NullRequestException;
-import kitchenpos.fixture.TestFixture;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest extends TestFixture {
@@ -32,17 +32,6 @@ class ProductServiceTest extends TestFixture {
     @BeforeEach
     void setUp() {
         productService = new ProductService(productDao);
-    }
-
-    @DisplayName("상품 생성 예외 테스트: 비어있는 요청")
-    @Test
-    void createFailByNullValueTest() {
-        ProductCreateRequest negativeProductCreateRequest =
-            new ProductCreateRequest(null, 1L);
-
-        assertThatThrownBy(() -> productService.create(negativeProductCreateRequest))
-            .isInstanceOf(NullRequestException.class)
-            .hasMessage("값이 비어있는 요청입니다");
     }
 
     @DisplayName("상품 생성 예외 테스트: 가격이 음수일때")

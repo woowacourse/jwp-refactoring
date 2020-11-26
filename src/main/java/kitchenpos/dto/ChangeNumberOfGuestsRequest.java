@@ -1,7 +1,10 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.NotNull;
+
 public class ChangeNumberOfGuestsRequest {
 
+    @NotNull
     int numberOfGuests;
 
     public ChangeNumberOfGuestsRequest() {

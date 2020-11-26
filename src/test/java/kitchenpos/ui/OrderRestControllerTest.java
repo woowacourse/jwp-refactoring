@@ -28,6 +28,16 @@ class OrderRestControllerTest extends MvcTest {
     @MockBean
     private OrderService orderService;
 
+    @DisplayName("/api/orders로 POST요청 실패 테스트 (비어있는 요청)")
+    @Test
+    void createFailTest() throws Exception {
+        OrderCreateRequest emptyRequest = new OrderCreateRequest();
+
+        String inputJson = objectMapper.writeValueAsString(emptyRequest);
+        postAction("/api/orders", inputJson)
+            .andExpect(status().isBadRequest());
+    }
+
     @DisplayName("/api/orders로 POST요청 성공 테스트")
     @Test
     void createTest() throws Exception {

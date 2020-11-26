@@ -4,13 +4,26 @@ import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.fixture.TestFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MenuProductDaoTest extends DaoTest {
+
+    @DisplayName("전체저장 테스트")
+    @Test
+    void saveAllTest() {
+        List<MenuProduct> menuProducts = Arrays.asList(MENU_PRODUCT_1, MENU_PRODUCT_2);
+        menuProductDao.saveAll(menuProducts);
+
+        List<MenuProduct> savedMenuProducts = menuProductDao.findAll();
+
+        assertThat(savedMenuProducts).hasSize(4);
+    }
 
     @DisplayName("전체조회 테스트")
     @Test

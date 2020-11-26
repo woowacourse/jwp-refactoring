@@ -1,16 +1,13 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductCreateRequest;
-import kitchenpos.exception.NullRequestException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class ProductService {
@@ -22,20 +19,9 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductCreateRequest productCreateRequest) {
-        validateProductCreateRequest(productCreateRequest);
-
         String name = productCreateRequest.getName();
         BigDecimal price = new BigDecimal(productCreateRequest.getPrice());
         return productDao.save(new Product(name, price));
-    }
-
-    private void validateProductCreateRequest(ProductCreateRequest productCreateRequest) {
-        String name = productCreateRequest.getName();
-        Long price = productCreateRequest.getPrice();
-
-        if (Objects.isNull(price) || Objects.isNull(name)) {
-            throw new NullRequestException();
-        }
     }
 
     public List<Product> list() {

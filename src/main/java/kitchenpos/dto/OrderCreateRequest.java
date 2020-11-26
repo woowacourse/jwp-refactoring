@@ -1,11 +1,15 @@
 package kitchenpos.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 public class OrderCreateRequest {
 
+    @NotEmpty
     private List<OrderMenuRequest> orderMenuRequests;
 
+    @NotNull
     private Long tableId;
 
     public OrderCreateRequest() {

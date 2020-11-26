@@ -2,10 +2,7 @@ package kitchenpos.dao;
 
 import kitchenpos.domain.MenuProduct;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.*;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
@@ -36,6 +33,12 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
         final SqlParameterSource parameters = new BeanPropertySqlParameterSource(entity);
         final Number key = jdbcInsert.executeAndReturnKey(parameters);
         return select(key.longValue());
+    }
+
+    @Override
+    public void saveAll(List<MenuProduct> menuProducts) {
+        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(menuProducts.toArray());
+        jdbcInsert.executeBatch(batch);
     }
 
     @Override

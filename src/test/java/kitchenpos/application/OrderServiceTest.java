@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -49,15 +48,6 @@ class OrderServiceTest extends TestFixture {
     @BeforeEach
     void setUp() {
         orderService = new OrderService(menuDao, orderDao, orderMenuDao, tableDao);
-    }
-
-    @DisplayName("주문 생성 예외 테스트: 주문이 비었을 때")
-    @Test
-    void createFailByEmptyOrderMenu() {
-        OrderCreateRequest orderCreateRequest = new OrderCreateRequest(new ArrayList<>(), TABLE_ID_1);
-
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
-            .isInstanceOf(NullRequestException.class);
     }
 
     @DisplayName("주문 생성 예외 테스트: 중복 메뉴가 있을 때")

@@ -1,28 +1,41 @@
 package kitchenpos.ui;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.Arrays;
-import java.util.List;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import kitchenpos.application.ProductService;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MvcResult;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends MvcTest {
 
     @MockBean
     private ProductService productService;
+
+    @DisplayName("/api/products로 POST요청 실패 테스트 (비어있는 요청)")
+    @Test
+    void createFailTest() throws Exception {
+        ProductCreateRequest emptyRequest = new ProductCreateRequest();
+
+        String inputJson = objectMapper.writeValueAsString(emptyRequest);
+        postAction("/api/products", inputJson)
+            .andExpect(status().isBadRequest())
+            .andReturn();
+    }
 
     @DisplayName("/api/products로 POST요청 성공 테스트")
     @Test
