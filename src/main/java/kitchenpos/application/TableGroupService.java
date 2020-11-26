@@ -33,13 +33,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable orderTable : orderTables) {
-            OrderTable updatedOrderTable = new OrderTable(
-                    orderTable.getId(),
-                    orderTable.getNumberOfGuests(),
-                    orderTable.getEmpty(),
-                    tableGroup
-            );
-            orderTableRepository.save(updatedOrderTable);
+            orderTable.setTableGroup(tableGroup);
         }
 
         return new TableGroupResponse(savedTableGroup);
@@ -87,13 +81,7 @@ public class TableGroupService {
                     savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
                 throw new IllegalArgumentException("주문이 완료되지 않아, 테이블을 그룹 해제할 수 없습니다.");
             }
-            OrderTable updatedOrderTable = new OrderTable(
-                    savedOrderTable.getId(),
-                    savedOrderTable.getNumberOfGuests(),
-                    savedOrderTable.getEmpty(),
-                    null
-            );
-            orderTableRepository.save(updatedOrderTable);
+            savedOrderTable.setTableGroup(null);
         }
     }
 }

@@ -26,4 +26,8 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
+
+    public void setTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
 }

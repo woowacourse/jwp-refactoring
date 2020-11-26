@@ -66,7 +66,6 @@ public class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup(orderTables);
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableRequests);
         when(orderTableRepository.findAllById(anyList())).thenReturn(orderTables);
-        when(orderTableRepository.save(any(OrderTable.class))).thenReturn(null);
         when(tableGroupRepository.save(any(TableGroup.class))).thenReturn(tableGroup);
 
         TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupCreateRequest);
