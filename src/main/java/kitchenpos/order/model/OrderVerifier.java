@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.orderline.model.OrderLineItem;
 
 public class OrderVerifier {

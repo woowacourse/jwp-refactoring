@@ -18,9 +18,8 @@ import kitchenpos.application.ServiceTest;
 import kitchenpos.menu.model.Menu;
 import kitchenpos.menugroup.model.MenuGroup;
 import kitchenpos.menuproduct.model.MenuProduct;
-import kitchenpos.order.application.OrderService;
 import kitchenpos.order.model.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.order.application.dto.OrderCreateRequestDto;
 import kitchenpos.orderline.application.dto.OrderLineCreateRequestDto;
@@ -28,7 +27,7 @@ import kitchenpos.order.application.dto.OrderResponseDto;
 import kitchenpos.menugroup.repository.MenuGroupRepository;
 import kitchenpos.menuproduct.repository.MenuProductRepository;
 import kitchenpos.menu.repository.MenuRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 import kitchenpos.repository.ProductRepository;
 
 class OrderServiceTest extends ServiceTest {

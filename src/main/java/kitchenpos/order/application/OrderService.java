@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.order.model.Order;
 import kitchenpos.orderline.model.OrderLineItem;
 import kitchenpos.order.model.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.order.model.OrderVerifier;
 import kitchenpos.order.application.dto.OrderCreateRequestDto;
 import kitchenpos.orderline.application.dto.OrderLineCreateRequestDto;
@@ -19,7 +19,7 @@ import kitchenpos.order.application.dto.OrderResponseDto;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.orderline.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 
 @Service
 public class OrderService {

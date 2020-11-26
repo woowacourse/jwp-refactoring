@@ -18,11 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import kitchenpos.order.model.Order;
 import kitchenpos.order.model.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.dto.TableGroupCreateRequestDto;
 import kitchenpos.dto.TableGroupResponseDto;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 
 class TableGroupServiceTest extends ServiceTest {
     @Autowired

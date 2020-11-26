@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.ordertable.ui;
 
 import java.net.URI;
 import java.util.List;
@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableResponseDto;
+import kitchenpos.ordertable.application.TableService;
+import kitchenpos.ordertable.model.OrderTable;
+import kitchenpos.ordertable.application.dto.OrderTableResponseDto;
 
 @RestController
 public class TableRestController {

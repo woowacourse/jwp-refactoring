@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.ordertable.application;
 
 import java.util.List;
 import java.util.Objects;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.order.model.Order;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.order.model.OrderVerifier;
-import kitchenpos.dto.OrderTableResponseDto;
+import kitchenpos.ordertable.application.dto.OrderTableResponseDto;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ordertable.repository.OrderTableRepository;
 
 @Service
 public class TableService {

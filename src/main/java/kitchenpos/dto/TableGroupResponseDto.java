@@ -3,8 +3,9 @@ package kitchenpos.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ordertable.model.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ordertable.application.dto.OrderTableResponseDto;
 
 public class TableGroupResponseDto {
     private final Long id;
