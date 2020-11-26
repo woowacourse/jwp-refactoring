@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,9 +51,11 @@ public class MenuService {
 
         Menu savedMenu = menuDao.save(new Menu(name, price, menuGroupId));
 
-        menuProductRequests.stream()
-            .map(request -> new MenuProduct(savedMenu.getId(), request.getProductId(), request.getQuantity()))
-            .forEach(menuProductDao::save);
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (MenuProductRequest request : menuProductRequests) {
+            menuProducts.add(new MenuProduct(savedMenu.getId(), request.getProductId(), request.getQuantity()));
+        }
+        menuProductDao.saveAll(menuProducts);
 
         return savedMenu;
     }
