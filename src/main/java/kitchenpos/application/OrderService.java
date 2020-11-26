@@ -10,12 +10,14 @@ import kitchenpos.domain.Table;
 import kitchenpos.dto.OrderCreateRequest;
 import kitchenpos.dto.OrderMenuRequest;
 import kitchenpos.dto.OrderStatusChangeRequest;
-import kitchenpos.exception.*;
+import kitchenpos.exception.MenuNotExistException;
+import kitchenpos.exception.OrderNotExistException;
+import kitchenpos.exception.TableEmptyException;
+import kitchenpos.exception.TableNotExistenceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,27 +57,8 @@ public class OrderService {
     }
 
     private void validateOrderCreateRequest(OrderCreateRequest orderCreateRequest) {
-        validateEmpty(orderCreateRequest);
         validateMenuExistence(orderCreateRequest.getOrderMenuRequests());
         validateTable(orderCreateRequest.getTableId());
-    }
-
-    private void validateEmpty(OrderCreateRequest orderCreateRequest) {
-        List<OrderMenuRequest> orderMenuRequests = orderCreateRequest.getOrderMenuRequests();
-        Long tableId = orderCreateRequest.getTableId();
-
-        if (orderMenuRequests.isEmpty() || Objects.isNull(tableId)) {
-            throw new NullRequestException();
-        }
-
-        for (OrderMenuRequest orderMenuRequest : orderMenuRequests) {
-            Long menuId = orderMenuRequest.getMenuId();
-            Long quantity = orderMenuRequest.getQuantity();
-
-            if (Objects.isNull(menuId) || Objects.isNull(quantity)) {
-                throw new NullRequestException();
-            }
-        }
     }
 
     private void validateMenuExistence(List<OrderMenuRequest> orderMenuRequests) {

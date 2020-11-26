@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,12 +53,6 @@ public class TableGroupService {
     private void validateSize(List<Long> tableIds) {
         if (tableIds.size() < MIN_TABLE_NUMBER) {
             throw new NotEnoughTableException();
-        }
-
-        for (Long tableId : tableIds) {
-            if (Objects.isNull(tableId)) {
-                throw new NullRequestException();
-            }
         }
     }
 

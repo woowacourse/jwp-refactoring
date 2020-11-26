@@ -11,7 +11,6 @@ import kitchenpos.dto.MenuCreateRequest;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.exception.MenuGroupNotExistException;
-import kitchenpos.exception.NullRequestException;
 import kitchenpos.exception.ProductNotExistException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -65,28 +63,8 @@ public class MenuService {
         Long menuGroupId = menuCreateRequest.getMenuGroupId();
         List<MenuProductRequest> menuProductRequests = menuCreateRequest.getMenuProductRequests();
 
-        validateEmpty(menuCreateRequest);
         validateMenuGroupExistence(menuGroupId);
         validatePriceSum(price, menuProductRequests);
-    }
-
-    private void validateEmpty(MenuCreateRequest menuCreateRequest) {
-        String name = menuCreateRequest.getName();
-        Long price = menuCreateRequest.getPrice();
-        Long menuGroupId = menuCreateRequest.getMenuGroupId();
-        List<MenuProductRequest> menuProductRequests = menuCreateRequest.getMenuProductRequests();
-
-        if (Objects.isNull(name) || Objects.isNull(price) || Objects.isNull(menuGroupId) || menuProductRequests.isEmpty()) {
-            throw new NullRequestException();
-        }
-
-        for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            Long productId = menuProductRequest.getProductId();
-            Long quantity = menuProductRequest.getQuantity();
-            if (Objects.isNull(productId) || Objects.isNull(quantity)) {
-                throw new NullRequestException();
-            }
-        }
     }
 
     private void validateMenuGroupExistence(Long menuGroupId) {
