@@ -153,14 +153,8 @@ class TableServiceTest {
     @DisplayName("손님 수를 변경한다. - 손님의 수가 0 이하인 경우")
     @Test
     void changeNumberOfGuests_IfGuestIsNotPositive_Throw_Exception() {
-        OrderTableCreateRequest oldOrderTableCreateRequest
-            = TestObjectFactory.createOrderTableCreateRequest(1, false);
-        OrderTableChangeRequest newOrderTableCreateRequest
-            = TestObjectFactory.createOrderTableChangeRequest(-1, false);
-        OrderTableResponse savedTable = tableService.create(oldOrderTableCreateRequest);
-
         assertThatThrownBy(
-            () -> tableService.changeNumberOfGuests(savedTable.getId(), newOrderTableCreateRequest))
+            () -> TestObjectFactory.createOrderTableChangeRequest(-1, false))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

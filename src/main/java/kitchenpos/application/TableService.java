@@ -45,10 +45,9 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
 
-        savedOrderTable.validateGroupNotNull();
         validateStatus(orderTableId);
 
-        savedOrderTable.updateOrderTable(savedOrderTable.getId(),
+        savedOrderTable.clearOrderTable(savedOrderTable.getId(),
             savedOrderTable.getTableGroup(), savedOrderTable.getNumberOfGuests(),
             orderTableChangeRequest.isEmpty());
         OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
@@ -68,14 +67,12 @@ public class TableService {
         final OrderTableChangeRequest orderTableChangeRequest) {
         final int numberOfGuests = orderTableChangeRequest.getNumberOfGuests();
 
-        OrderTable orderTable = orderTableChangeRequest.toEntity(null);
-        orderTable.validateNumberOfGuests();
+        orderTableChangeRequest.toEntity(null);
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
-        savedOrderTable.validateEmpty();
 
-        savedOrderTable.updateOrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+        savedOrderTable.changeNumberOfGuests(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
             numberOfGuests, savedOrderTable.isEmpty());
         OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
 

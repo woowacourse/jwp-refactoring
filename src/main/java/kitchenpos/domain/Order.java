@@ -34,6 +34,8 @@ public class Order {
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus,
         LocalDateTime orderedTime) {
+        validateOrderTable(orderTable);
+
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -45,7 +47,7 @@ public class Order {
         return new Order(null, orderTable, orderStatus, orderedTime);
     }
 
-    public void validateOrderTable() {
+    private void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("OrderTable이 비어있습니다.");
         }

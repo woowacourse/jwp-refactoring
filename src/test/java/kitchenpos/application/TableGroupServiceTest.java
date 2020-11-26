@@ -14,6 +14,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderTableChangeRequest;
 import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupCreateRequest;
@@ -158,15 +160,20 @@ class TableGroupServiceTest {
     @Test
     void ungroup_IfStatusIsCookingOrMeal_ThrowException() {
         OrderTableCreateRequest orderTableCreateRequestA
-            = TestObjectFactory.createOrderTableCreateRequest(1, true);
+            = TestObjectFactory.createOrderTableCreateRequest(1, false);
         OrderTableCreateRequest orderTableCreateRequestB
-            = TestObjectFactory.createOrderTableCreateRequest(2, true);
+            = TestObjectFactory.createOrderTableCreateRequest(2, false);
         OrderTableResponse savedOrderTableA
             = tableService.create(orderTableCreateRequestA);
         OrderTableResponse savedOrderTableB
             = tableService.create(orderTableCreateRequestB);
         List<OrderTableResponse> orderTableResponses
             = Arrays.asList(savedOrderTableA, savedOrderTableB);
+
+        OrderTableChangeRequest newOrderTableCreateRequest =
+            TestObjectFactory.createOrderTableChangeRequest(1, true);
+        tableService.changeEmpty(savedOrderTableA.getId(), newOrderTableCreateRequest);
+        tableService.changeEmpty(savedOrderTableB.getId(), newOrderTableCreateRequest);
 
         TableGroupCreateRequest tableGroupCreateRequest
             = TestObjectFactory.createTableGroupCreateRequest(orderTableResponses);

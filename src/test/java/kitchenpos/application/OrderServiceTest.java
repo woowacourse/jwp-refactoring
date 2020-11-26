@@ -130,12 +130,10 @@ class OrderServiceTest {
         Menu menu = menuRepository.getOne(1L);
         List<OrderLineItem> orderLineItems
             = Collections.singletonList(TestObjectFactory.createOrderLineItem(menu, 1L));
-        OrderCreateRequest orderCreateRequest
-            = TestObjectFactory
-            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
-                orderLineItems);
 
-        assertThatThrownBy(() -> orderService.create(orderCreateRequest))
+        assertThatThrownBy(() -> TestObjectFactory
+            .createOrderCreateRequest(orderTableResponse.toEntity(tableGroup), COOKING.name(),
+                orderLineItems))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

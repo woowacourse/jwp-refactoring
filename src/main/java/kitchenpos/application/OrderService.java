@@ -66,7 +66,6 @@ public class OrderService {
 
     private Order saveOrder(OrderTable orderTable) {
         Order order = Order.of(orderTable, OrderStatus.COOKING, LocalDateTime.now());
-        order.validateOrderTable();
 
         return orderRepository.save(order);
     }

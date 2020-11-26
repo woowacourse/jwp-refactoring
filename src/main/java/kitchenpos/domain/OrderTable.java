@@ -26,6 +26,8 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -36,29 +38,49 @@ public class OrderTable {
         return new OrderTable(null, tableGroup, numberOfGuests, empty);
     }
 
-    public void validateGroupNotNull() {
-        if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException("TableGroup이 null이 아닙니다.");
-        }
-    }
-
-    public void validateNumberOfGuests() {
+    private void validateNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException("손님의 숫는 0 이상이어야 합니다.");
         }
     }
 
-    public void validateEmpty() {
-        if (empty) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public void updateOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public void updateOrderTable(Long id, TableGroup tableGroup, int numberOfGuests,
+        boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public void clearOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validateGroupNotNull(tableGroup);
+
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    private void validateGroupNotNull(TableGroup tableGroup) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("TableGroup이 null이 아닙니다.");
+        }
+    }
+
+    public void changeNumberOfGuests(Long id, TableGroup tableGroup, int numberOfGuests,
+        boolean empty) {
+        validateEmpty();
+
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    private void validateEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException("테이블이 비어있습니다.");
+        }
     }
 
     public Long getId() {
