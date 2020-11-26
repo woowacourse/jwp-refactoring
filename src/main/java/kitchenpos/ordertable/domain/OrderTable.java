@@ -1,6 +1,5 @@
 package kitchenpos.ordertable.domain;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -17,7 +16,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TABLE_GROUP_ID", foreignKey = @ForeignKey(name = "FK_ORDER_TABLE_TABLE_GROUP"))
     private TableGroup tableGroup;
 

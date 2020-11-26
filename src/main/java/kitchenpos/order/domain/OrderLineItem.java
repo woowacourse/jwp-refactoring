@@ -2,7 +2,6 @@ package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,10 +17,10 @@ public class OrderLineItem {
 
     private Long quantity;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
     public OrderLineItem() {
