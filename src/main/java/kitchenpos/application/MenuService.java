@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,8 +65,7 @@ public class MenuService {
                 .reduce(BigDecimal::add)
                 .orElseThrow(() -> new IllegalArgumentException("상품의 가격을 계산할 수 없습니다."));
         final BigDecimal price = request.getPrice();
-        Objects.requireNonNull(price);
-        if (price.compareTo(BigDecimal.ZERO) < 0 || price.compareTo(sum) > 0) {
+        if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("잘못된 메뉴 가격이 입력되었습니다.");
         }
     }

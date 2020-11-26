@@ -106,10 +106,11 @@ public class MenuServiceTest {
 
         when(productRepository.findById(상품_ID_1)).thenReturn(Optional.ofNullable(product1));
         when(productRepository.findById(상품_ID_2)).thenReturn(Optional.ofNullable(product2));
+        when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
 
         assertThatThrownBy(() -> menuService.create(request))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 메뉴 가격이 입력되었습니다.");
+                .hasMessage("잘못된 메뉴 가격입니다.");
     }
 
     @DisplayName("예외 테스트 : Menu 생성 중 가격이 NULL일 경우, 예외가 발생한다.")
