@@ -1,6 +1,4 @@
-package kitchenpos.domain.order;
-
-import kitchenpos.domain.table.TableGroup;
+package kitchenpos.domain.table;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;

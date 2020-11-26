@@ -1,6 +1,6 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.repository.order.OrderTableRepository;
 import kitchenpos.repository.table.TableGroupRepository;

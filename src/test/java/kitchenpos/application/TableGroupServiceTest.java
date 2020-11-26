@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.application.table.TableGroupService;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.domain.table.TableGroup;
 import kitchenpos.dto.table.request.OrderTableRequest;
 import kitchenpos.dto.table.request.TableGroupRequest;

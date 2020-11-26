@@ -3,7 +3,7 @@ package kitchenpos.application.order;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderLineItems;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.request.OrderRequest;
 import kitchenpos.dto.order.response.OrderResponse;
 import kitchenpos.repository.order.OrderRepository;

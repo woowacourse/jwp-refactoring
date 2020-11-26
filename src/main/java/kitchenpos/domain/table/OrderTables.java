@@ -1,7 +1,5 @@
 package kitchenpos.domain.table;
 
-import kitchenpos.domain.order.OrderTable;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

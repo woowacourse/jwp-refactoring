@@ -4,7 +4,7 @@ import kitchenpos.application.order.OrderLineItemService;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
-import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.table.OrderTable;
 import kitchenpos.dto.order.request.OrderLineItemRequest;
 import kitchenpos.repository.menu.MenuRepository;
 import kitchenpos.repository.order.OrderRepository;
