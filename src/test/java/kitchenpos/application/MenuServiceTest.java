@@ -6,7 +6,10 @@ import kitchenpos.domain.menu.Product;
 import kitchenpos.domain.menu.repository.MenuGroupRepository;
 import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.menu.repository.ProductRepository;
-import kitchenpos.dto.menu.*;
+import kitchenpos.dto.menu.MenuCreateRequest;
+import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.dto.menu.ProductQuantityRequest;
+import kitchenpos.dto.menu.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +26,6 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -82,7 +84,6 @@ public class MenuServiceTest {
         when(menuRepository.save(any(Menu.class))).thenReturn(menu);
         when(productRepository.findAllById(anyList())).thenReturn(products);
         when(menuGroupRepository.findById(anyLong())).thenReturn(Optional.of(menuGroup));
-        doNothing().when(menuProductService).createMenuProducts(any(Menu.class), any(ProductQuantityRequests.class));
 
         MenuResponse menuResponse = menuService.create(request);
 

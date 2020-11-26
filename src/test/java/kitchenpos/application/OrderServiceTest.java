@@ -8,7 +8,10 @@ import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.menu.MenuGroupResponse;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menu.ProductResponse;
-import kitchenpos.dto.order.*;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +26,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -95,7 +97,7 @@ public class OrderServiceTest {
 
         when(orderTableRepository.findById(anyLong())).thenReturn(java.util.Optional.of(orderTable));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
-        doNothing().when(orderLineItemService).createOrderLineItems(any(Order.class), any(OrderLineItemRequests.class));
+        doNothing().when(orderLineItemService).createOrderLineItems(any(Order.class), anyList());
         when(menuService.findMenusByOrder(any(Order.class))).thenReturn(menuResponses);
 
         OrderResponse orderResponse = orderService.create(orderCreateRequest);

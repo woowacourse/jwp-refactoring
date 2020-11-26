@@ -5,36 +5,42 @@ import kitchenpos.domain.menu.repository.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.repository.OrderLineItemRepository;
-import kitchenpos.dto.order.OrderLineItemRequests;
+import kitchenpos.dto.order.OrderLineItemRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OrderLineItemService {
     private final OrderLineItemRepository orderLineItemRepository;
     private final MenuRepository menuRepository;
-    private final ProductService productService;
 
     @Transactional
-    public void createOrderLineItems(Order order, OrderLineItemRequests orderLineItemRequests) {
-        final List<Long> menuIds = orderLineItemRequests.getMenuIds();
-        final Map<Long, Long> menuQuantityMatcher = orderLineItemRequests.getMenuQuantityMatcher();
-        final List<Menu> menus = menuRepository.findAllById(menuIds);
+    public void createOrderLineItems(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
+        validate(order, orderLineItemRequests);
+        final List<OrderLineItem> orderLineItems = orderLineItemRequests.stream()
+                .map(request -> {
+                    Long menuId = request.getMenuId();
+                    Long quantity = request.getQuantity();
+                    Menu menu = menuRepository.findById(menuId)
+                            .orElseThrow(() -> new IllegalArgumentException("주문 메뉴를 찾을 수 없습니다."));
+                    return new OrderLineItem(order, menu, quantity);
+                })
+                .collect(Collectors.toList());
+        orderLineItemRepository.saveAll(orderLineItems);
+    }
 
-        if (menus.isEmpty() || menus.size() != menuIds.size()) {
-            throw new IllegalArgumentException("주문 상품의 조회가 잘못되었습니다.");
+    private void validate(Order order, List<OrderLineItemRequest> orderLineItemRequests) {
+        if (Objects.isNull(order)) {
+            throw new IllegalArgumentException("잘못된 주문이 입력되었습니다.");
         }
-
-        for (final Menu menu : menus) {
-            Long menuId = menu.getId();
-            Long quantity = menuQuantityMatcher.get(menuId);
-            OrderLineItem orderLineItem = new OrderLineItem(order, menu, quantity);
-            orderLineItemRepository.save(orderLineItem);
+        if (Objects.isNull(orderLineItemRequests) || orderLineItemRequests.isEmpty()) {
+            throw new IllegalArgumentException("잘못된 메뉴가 입력되었습니다.");
         }
     }
 }

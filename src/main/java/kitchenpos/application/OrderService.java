@@ -6,7 +6,10 @@ import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.repository.OrderRepository;
 import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.order.*;
+import kitchenpos.dto.order.OrderCreateRequest;
+import kitchenpos.dto.order.OrderLineItemRequest;
+import kitchenpos.dto.order.OrderResponse;
+import kitchenpos.dto.order.OrderStatusRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +38,7 @@ public class OrderService {
         final Order order = new Order(orderTable, OrderStatus.COOKING);
         final Order savedOrder = orderRepository.save(order);
 
-        orderLineItemService.createOrderLineItems(order, new OrderLineItemRequests(orderLineItemRequests));
+        orderLineItemService.createOrderLineItems(order, orderLineItemRequests);
 
         return transferOrderResponse(savedOrder);
     }

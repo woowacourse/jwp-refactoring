@@ -9,7 +9,7 @@ import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.dto.menu.MenuCreateRequest;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.dto.menu.ProductQuantityRequests;
+import kitchenpos.dto.menu.ProductQuantityRequest;
 import kitchenpos.dto.menu.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,8 +32,10 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuCreateRequest request) {
-        ProductQuantityRequests productQuantityRequests = new ProductQuantityRequests(request.getMenuProducts());
-        final List<Long> productIds = productQuantityRequests.getProductIds();
+        List<ProductQuantityRequest> productQuantityRequests = request.getMenuProducts();
+        final List<Long> productIds = productQuantityRequests.stream()
+                .map(ProductQuantityRequest::getProductId)
+                .collect(Collectors.toList());
         final List<Product> products = productRepository.findAllById(productIds);
         if (productIds.size() != products.size()) {
             throw new IllegalArgumentException("상품 정보가 올바르지 않습니다.");
@@ -53,8 +55,9 @@ public class MenuService {
     }
 
     private void validatePrice(MenuCreateRequest request, List<Product> products) {
-        final ProductQuantityRequests productQuantityRequests = new ProductQuantityRequests(request.getMenuProducts());
-        final Map<Long, Long> productQuantityMatcher = productQuantityRequests.getProductQuantityMatcher();
+        final List<ProductQuantityRequest> productQuantityRequests = request.getMenuProducts();
+        final Map<Long, Long> productQuantityMatcher = productQuantityRequests.stream()
+                .collect(Collectors.toMap(ProductQuantityRequest::getProductId, ProductQuantityRequest::getQuantity));
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final Product product : products) {
