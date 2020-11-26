@@ -62,10 +62,10 @@ public class TableGroupService {
     private void saveNewOrderTable(List<OrderTable> savedOrderTables,
         TableGroup savedTableGroup) {
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            OrderTable newOrderTable = new OrderTable(savedOrderTable.getId(), savedTableGroup,
+            savedOrderTable.updateOrderTable(savedOrderTable.getId(), savedTableGroup,
                 savedOrderTable.getNumberOfGuests(), false);
 
-            orderTableRepository.save(newOrderTable);
+            orderTableRepository.save(savedOrderTable);
         }
     }
 
@@ -80,7 +80,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 상태가 요리, 식사인 경우 해제할 수 없습니다.");
         }
 
         saveChangedOrderTable(orderTables);
@@ -88,10 +88,10 @@ public class TableGroupService {
 
     private void saveChangedOrderTable(List<OrderTable> orderTables) {
         for (final OrderTable orderTable : orderTables) {
-            OrderTable changedOrderTable = new OrderTable(orderTable.getId(), null,
+            orderTable.updateOrderTable(orderTable.getId(), null,
                 orderTable.getNumberOfGuests(), false);
 
-            orderTableRepository.save(changedOrderTable);
+            orderTableRepository.save(orderTable);
         }
     }
 }

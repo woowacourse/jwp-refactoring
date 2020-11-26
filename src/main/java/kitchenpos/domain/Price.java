@@ -32,6 +32,10 @@ public class Price {
         }
     }
 
+    public BigDecimal add(BigDecimal value) {
+        return this.price.add(value);
+    }
+
     public BigDecimal multiply(BigDecimal value) {
         return this.price.multiply(value);
     }

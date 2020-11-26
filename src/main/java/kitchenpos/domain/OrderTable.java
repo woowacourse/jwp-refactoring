@@ -54,6 +54,13 @@ public class OrderTable {
         }
     }
 
+    public void updateOrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
     public Long getId() {
         return id;
     }

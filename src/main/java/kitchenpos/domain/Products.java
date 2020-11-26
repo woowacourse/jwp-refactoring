@@ -12,16 +12,16 @@ public class Products {
     }
 
     public void validate(Price menuPrice) {
-        BigDecimal sum = BigDecimal.ZERO;
+        Price sum = Price.of(BigDecimal.ZERO);
 
         for (Product product : productsAndQuantities.keySet()) {
             Price price = product.getPrice();
             BigDecimal quantity = BigDecimal.valueOf(productsAndQuantities.get(product));
-            sum = sum.add(price.multiply(quantity));
+            sum = Price.of(sum.add(price.multiply(quantity)));
         }
 
         if (menuPrice.getPrice()
-            .compareTo(sum) > 0) {
+            .compareTo(sum.getPrice()) > 0) {
             throw new IllegalArgumentException();
         }
     }

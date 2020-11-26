@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -53,14 +54,35 @@ public class Order {
 
     public static Order of(OrderTable orderTable, OrderStatus orderStatus,
         LocalDateTime orderedTime) {
-        validate(orderTable);
+        validateOrderTable(orderTable);
         return new Order(null, orderTable, orderStatus, orderedTime, null);
     }
 
-    private static void validate(OrderTable orderTable) {
+    private static void validateOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("OrderTable이 비어있습니다.");
         }
+    }
+
+    public void updateOrder(Order savedOrder, OrderStatus orderStatus,
+        List<OrderLineItem> orderLineItems) {
+        validateStatus(savedOrder.orderStatus);
+
+        this.id = savedOrder.getId();
+        this.orderTable = savedOrder.getOrderTable();
+        this.orderStatus = orderStatus;
+        this.orderedTime = savedOrder.getOrderedTime();
+        this.orderLineItems = orderLineItems;
+    }
+
+    private void validateStatus(OrderStatus orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
+            throw new IllegalArgumentException("완료된 주문입니다.");
+        }
+    }
+
+    public void updateOrder(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {

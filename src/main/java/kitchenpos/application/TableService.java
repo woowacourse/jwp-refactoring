@@ -9,7 +9,6 @@ import kitchenpos.dto.OrderTableCreateRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +19,8 @@ public class TableService {
     private final OrderTableRepository orderTableRepository;
 
     public TableService(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository,
-        final TableGroupRepository tableGroupRepository) {
+        final OrderTableRepository orderTableRepository
+    ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -44,15 +43,15 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
         final OrderTableChangeRequest orderTableChangeRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
 
         savedOrderTable.validateGroupNotNull();
         validateStatus(orderTableId);
 
-        OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
+        savedOrderTable.updateOrderTable(savedOrderTable.getId(),
             savedOrderTable.getTableGroup(), savedOrderTable.getNumberOfGuests(),
             orderTableChangeRequest.isEmpty());
-        OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
+        OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
     }
@@ -73,13 +72,12 @@ public class TableService {
         orderTable.validateNumberOfGuests();
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블을 찾을 수 없습니다."));
         savedOrderTable.validateEmpty();
 
-        OrderTable changedOrderTable = new OrderTable(savedOrderTable.getId(),
-            savedOrderTable.getTableGroup(), numberOfGuests,
-            savedOrderTable.isEmpty());
-        OrderTable changedSavedOrderTable = orderTableRepository.save(changedOrderTable);
+        savedOrderTable.updateOrderTable(savedOrderTable.getId(), savedOrderTable.getTableGroup(),
+            numberOfGuests, savedOrderTable.isEmpty());
+        OrderTable changedSavedOrderTable = orderTableRepository.save(savedOrderTable);
 
         return OrderTableResponse.of(changedSavedOrderTable);
     }

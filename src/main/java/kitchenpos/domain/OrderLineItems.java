@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class OrderLineItems {
 
-    List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItem> orderLineItems;
 
     public OrderLineItems(List<OrderLineItem> orderLineItems) {
         validate(orderLineItems);

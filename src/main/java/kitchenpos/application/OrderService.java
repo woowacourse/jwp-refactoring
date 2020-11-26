@@ -3,7 +3,6 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.domain.Menus;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -50,7 +49,7 @@ public class OrderService {
 
         final OrderTable orderTable = orderTableRepository
             .findById(orderCreateRequest.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
         final Order savedOrder = saveOrder(orderTable);
         List<OrderLineItemResponse> orderLineItemResponses
@@ -74,10 +73,8 @@ public class OrderService {
         OrderLineItems orderLineItems, Order savedOrder) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems.getOrderLineItems()) {
-            OrderLineItem newOrderLineItem
-                = new OrderLineItem(savedOrder.getId(), savedOrder, orderLineItem.getMenu(),
-                orderLineItem.getQuantity());
-            OrderLineItem savedOrderLineItem = orderLineItemRepository.save(newOrderLineItem);
+            orderLineItem.updateOrderLineItem(savedOrder);
+            OrderLineItem savedOrderLineItem = orderLineItemRepository.save(orderLineItem);
 
             savedOrderLineItems.add(savedOrderLineItem);
         }
@@ -90,12 +87,11 @@ public class OrderService {
         final List<Order> ordersWithLineItems = new ArrayList<>();
 
         for (final Order order : orders) {
-            Order orderWithLineItem
-                = new Order(order.getId(), order.getOrderTable(),
-                order.getOrderStatus(), order.getOrderedTime(),
-                orderLineItemRepository.findAllByOrderId(order.getId()));
+            List<OrderLineItem> orderLineItems
+                = orderLineItemRepository.findAllByOrderId(order.getId());
+            order.updateOrder(orderLineItems);
 
-            ordersWithLineItems.add(orderWithLineItem);
+            ordersWithLineItems.add(order);
         }
 
         return OrderResponse.toResponseList(ordersWithLineItems);
@@ -105,24 +101,14 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId,
         final OrderChangeRequest orderChangeRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
-
-        validateStatus(savedOrder);
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문입니다."));
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderChangeRequest.getOrderStatus());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrderId(orderId);
 
-        Order changedOrder
-            = new Order(savedOrder.getId(), savedOrder.getOrderTable(), orderStatus,
-            savedOrder.getOrderedTime(), orderLineItemRepository.findAllByOrderId(orderId));
+        savedOrder.updateOrder(savedOrder, orderStatus, orderLineItems);
+        orderRepository.save(savedOrder);
 
-        orderRepository.save(changedOrder);
-
-        return OrderResponse.of(changedOrder);
-    }
-
-    private void validateStatus(Order savedOrder) {
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
+        return OrderResponse.of(savedOrder);
     }
 }

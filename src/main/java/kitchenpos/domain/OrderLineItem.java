@@ -34,6 +34,11 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public void updateOrderLineItem(Order savedOrder) {
+        this.seq = savedOrder.getId();
+        this.order = savedOrder;
+    }
+
     public Long getSeq() {
         return seq;
     }

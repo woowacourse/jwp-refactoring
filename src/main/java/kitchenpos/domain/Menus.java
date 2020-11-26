@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class Menus {
 
-    List<Menu> menus;
+    private final List<Menu> menus;
 
     public Menus(List<Menu> menus) {
         this.menus = menus;

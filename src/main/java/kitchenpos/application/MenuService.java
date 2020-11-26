@@ -59,7 +59,7 @@ public class MenuService {
 
     private void validateMenuGroupIdExist(MenuCreateRequest menuCreateRequest) {
         if (!menuGroupRepository.existsById(menuCreateRequest.getMenuGroupId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Group Id가 존재하지 않습니다");
         }
     }
 

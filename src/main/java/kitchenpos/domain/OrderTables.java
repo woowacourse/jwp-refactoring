@@ -7,7 +7,7 @@ import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
 
-    List<OrderTable> orderTables;
+    private final List<OrderTable> orderTables;
 
     public OrderTables(List<OrderTable> orderTables) {
         validate(orderTables);
