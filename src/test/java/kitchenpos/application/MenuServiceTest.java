@@ -9,15 +9,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 
+@Sql("/truncate.sql")
 @SpringBootTest
 class MenuServiceTest {
 
@@ -30,49 +33,43 @@ class MenuServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
-    private Menu menu;
+    private MenuRequest request;
 
     @BeforeEach
     void setMenu() {
-        Product product = new Product();
-        product.setName("product1");
-        product.setPrice(BigDecimal.ONE);
+        Product product = new Product("product1", BigDecimal.ONE);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(persistProduct.getId());
-        menuProduct.setQuantity(10);
+        MenuProductRequest menuProduct = new MenuProductRequest(persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        menu = new Menu();
-        menu.setPrice(BigDecimal.TEN);
-        menu.setName("menu1");
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        request = new MenuRequest("menu1", BigDecimal.TEN, persistMenuGroup.getId(), Arrays.asList(menuProduct));
     }
 
     @Test
     void create() {
-        Menu persistMenu = menuService.create(menu);
+        MenuResponse response = menuService.create(request);
 
         assertAll(
-            () -> assertThat(persistMenu.getId()).isNotNull(),
-            () -> assertThat(persistMenu).isEqualToComparingOnlyGivenFields(menu, "name", "menuGroupId"),
-            () -> assertThat(persistMenu.getPrice().longValue()).isEqualTo(menu.getPrice().longValue()),
-            () -> assertThat(persistMenu.getMenuProducts()).usingElementComparatorIgnoringFields("seq")
-                .isEqualTo(menu.getMenuProducts())
+            () -> assertThat(response.getId()).isNotNull(),
+            () -> assertThat(response).isEqualToComparingOnlyGivenFields(request, "name", "menuGroupId"),
+            () -> assertThat(response.getPrice().longValue()).isEqualTo(request.getPrice().longValue()),
+            () -> assertThat(response.getMenuProducts().get(0).getMenuId()).isNotNull(),
+            () -> assertThat(response.getMenuProducts().get(0).getQuantity())
+                .isEqualTo(request.getMenuProducts().get(0).getQuantity()),
+            () -> assertThat(response.getMenuProducts().get(0).getProductId())
+                .isEqualTo(request.getMenuProducts().get(0).getProductId())
         );
     }
 
     @Test
     void list() {
-        Menu persistMenu = menuService.create(menu);
-        List<Menu> menus = menuService.list();
+        MenuResponse persistMenu = menuService.create(request);
+        List<MenuResponse> menus = menuService.list();
         List<String> menuNames = menus.stream()
-            .map(Menu::getName)
+            .map(MenuResponse::getName)
             .collect(Collectors.toList());
 
         assertThat(menuNames).contains(persistMenu.getName());

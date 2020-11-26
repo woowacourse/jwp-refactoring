@@ -11,22 +11,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.OrderService;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,7 +52,7 @@ class OrderRestControllerTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @Autowired
     private MenuDao menuDao;
@@ -60,51 +64,33 @@ class OrderRestControllerTest {
     private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderService orderService;
 
     @Test
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable.setNumberOfGuests(10);
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
 
-        OrderTable persistOrderTable = orderTableDao.save(orderTable);
-        OrderTable persistOrderTable2 = orderTableDao.save(orderTable2);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(persistOrderTable, persistOrderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
         tableGroupDao.save(tableGroup);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("product1");
+        Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(10);
-        menuProduct.setProductId(persistProduct.getId());
+        MenuProduct menuProduct = new MenuProduct(null, persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setName("menu1");
-        menu.setPrice(BigDecimal.TEN);
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = new Menu("menu1", new Price(BigDecimal.TEN), persistMenuGroup.getId(), Arrays.asList(menuProduct));
         Menu persistMenu = menuDao.save(menu);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1);
-        orderLineItem.setMenuId(persistMenu.getId());
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(persistMenu.getId(), 1L);
 
-        Order request = new Order();
-        request.setOrderTableId(persistOrderTable.getId());
-        request.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderCreateRequest request = new OrderCreateRequest(persistTable.getId(), Arrays.asList(orderLineItem));
 
         String response = mockMvc.perform(post("/api/orders")
             .content(mapper.writeValueAsString(request))
@@ -116,64 +102,77 @@ class OrderRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        Order responseOrder = mapper.readValue(response, Order.class);
+        OrderResponse responseOrder = mapper.readValue(response, OrderResponse.class);
 
         assertAll(
             () -> assertThat(responseOrder).isEqualToComparingOnlyGivenFields(request, "orderTableId"),
             () -> assertThat(responseOrder.getOrderStatus()).isEqualTo("COOKING"),
             () -> assertThat(responseOrder.getOrderedTime()).isNotNull(),
             () -> assertThat(responseOrder.getId()).isNotNull(),
-            () -> assertThat(responseOrder.getOrderLineItems()).usingElementComparatorIgnoringFields("seq", "orderId")
-                .containsAll(request.getOrderLineItems())
+            () -> assertThat(responseOrder.getOrderLineItems().get(0).getMenuId())
+                .isEqualTo(request.getOrderLineItems().get(0).getMenuId()),
+            () -> assertThat(responseOrder.getOrderLineItems().get(0).getQuantity())
+                .isEqualTo(request.getOrderLineItems().get(0).getQuantity())
         );
     }
 
     @Test
-    void list() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
+    void create_emptyBody_exception() throws Exception {
+        mockMvc.perform(post("/api/orders")
+            .content(mapper.writeValueAsString(null))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable.setNumberOfGuests(10);
+    @Test
+    void create_emptyOrderLineItems_exception() throws Exception {
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
 
-        OrderTable persistOrderTable = orderTableDao.save(orderTable);
-        OrderTable persistOrderTable2 = orderTableDao.save(orderTable2);
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(persistOrderTable, persistOrderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
         tableGroupDao.save(tableGroup);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("product1");
+        OrderCreateRequest request = new OrderCreateRequest(persistTable.getId(), new ArrayList<>());
+
+        mockMvc.perform(post("/api/orders")
+            .content(mapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON_VALUE))
+            .andDo(print())
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void list() throws Exception {
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
+
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
+
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
+        tableGroupDao.save(tableGroup);
+
+        Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(10);
-        menuProduct.setProductId(persistProduct.getId());
+        MenuProduct menuProduct = new MenuProduct(null, persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setName("menu1");
-        menu.setPrice(BigDecimal.TEN);
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = new Menu("menu1", new Price(BigDecimal.TEN), persistMenuGroup.getId(), Arrays.asList(menuProduct));
         Menu persistMenu = menuDao.save(menu);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1);
-        orderLineItem.setMenuId(persistMenu.getId());
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(persistMenu.getId(), 1L);
 
-        Order order = new Order();
-        order.setOrderStatus("COOKING");
-        order.setOrderedTime(LocalDateTime.of(2020, 1, 1, 1, 1));
-        order.setOrderTableId(persistOrderTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        Order persistOrder = orderDao.save(order);
+        OrderCreateRequest order = new OrderCreateRequest(persistTable.getId(), Arrays.asList(orderLineItem));
+        OrderResponse persistOrder = orderService.create(order);
 
         String response = mockMvc.perform(get("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
@@ -184,65 +183,45 @@ class OrderRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        List<Order> responseOrders = mapper.readValue(response, mapper.getTypeFactory()
-            .constructCollectionType(List.class, Order.class));
+        List<OrderResponse> responseOrders = mapper.readValue(response, mapper.getTypeFactory()
+            .constructCollectionType(List.class, OrderResponse.class));
 
         assertThat(responseOrders).usingElementComparatorIgnoringFields("orderLineItems").contains(persistOrder);
     }
 
     @Test
     void changeOrderStatus() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable.setNumberOfGuests(10);
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
 
-        OrderTable persistOrderTable = orderTableDao.save(orderTable);
-        OrderTable persistOrderTable2 = orderTableDao.save(orderTable2);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(persistOrderTable, persistOrderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
         tableGroupDao.save(tableGroup);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("product1");
+        Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(10);
-        menuProduct.setProductId(persistProduct.getId());
+        MenuProduct menuProduct = new MenuProduct(null, persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setName("menu1");
-        menu.setPrice(BigDecimal.TEN);
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = new Menu("menu1", new Price(BigDecimal.TEN), persistMenuGroup.getId(), Arrays.asList(menuProduct));
         Menu persistMenu = menuDao.save(menu);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1);
-        orderLineItem.setMenuId(persistMenu.getId());
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(persistMenu.getId(), 1L);
 
-        Order order = new Order();
-        order.setOrderStatus("COOKING");
-        order.setOrderedTime(LocalDateTime.of(2020, 1, 1, 1, 1));
-        order.setOrderTableId(persistOrderTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        Order persistOrder = orderDao.save(order);
+        OrderCreateRequest order = new OrderCreateRequest(persistTable.getId(), Arrays.asList(orderLineItem));
+        OrderResponse persistOrder = orderService.create(order);
 
-        order.setOrderStatus("MEAL");
+        OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
 
         String url = String.format("/api/orders/%d/order-status", persistOrder.getId());
 
         String response = mockMvc.perform(put(url)
-            .content(mapper.writeValueAsString(order))
+            .content(mapper.writeValueAsString(request))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON_VALUE))
             .andDo(print())
@@ -251,8 +230,8 @@ class OrderRestControllerTest {
             .getResponse()
             .getContentAsString();
 
-        Order responseOrder = mapper.readValue(response, Order.class);
+        OrderResponse responseOrder = mapper.readValue(response, OrderResponse.class);
 
-        assertThat(responseOrder.getOrderStatus()).isEqualTo(order.getOrderStatus());
+        assertThat(responseOrder.getOrderStatus()).isEqualTo(request.getOrderStatus());
     }
 }

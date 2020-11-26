@@ -59,7 +59,7 @@ class OrderDaoTest {
         orderDao.save(ORDER_FIXTURE_1);
         orderDao.save(ORDER_FIXTURE_2);
 
-        assertThat(orderDao.existsByOrderTableIdAndOrderStatusIn(ORDER_FIXTURE_1.getOrderTableId(),
+        assertThat(orderDao.existsByTableIdAndOrderStatusIn(ORDER_FIXTURE_1.getOrderTableId(),
             Arrays.asList("COOKING"))
         ).isTrue();
     }
@@ -69,7 +69,7 @@ class OrderDaoTest {
         orderDao.save(ORDER_FIXTURE_1);
         orderDao.save(ORDER_FIXTURE_2);
 
-        assertThat(orderDao.existsByOrderTableIdInAndOrderStatusIn(Arrays.asList(1L, 2L),
+        assertThat(orderDao.existsByTableIdInAndOrderStatusIn(Arrays.asList(1L, 2L),
             Arrays.asList("MEAL"))
         ).isTrue();
     }

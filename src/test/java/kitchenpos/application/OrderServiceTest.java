@@ -9,17 +9,20 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.Table;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequest;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderResponse;
+import kitchenpos.dto.OrderStatusChangeRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +40,7 @@ class OrderServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableDao tableDao;
 
     @Autowired
     private MenuDao menuDao;
@@ -48,69 +51,51 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupDao menuGroupDao;
 
-    private Order order;
+    private OrderCreateRequest order;
 
     @BeforeEach
     void setupOrder() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(5);
+        Table table = new Table(5, false);
+        Table table2 = new Table(10, false);
 
-        OrderTable orderTable2 = new OrderTable();
-        orderTable.setNumberOfGuests(10);
+        Table persistTable = tableDao.save(table);
+        Table persistTable2 = tableDao.save(table2);
 
-        OrderTable persistOrderTable = orderTableDao.save(orderTable);
-        OrderTable persistOrderTable2 = orderTableDao.save(orderTable2);
-
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(persistOrderTable, persistOrderTable2));
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), Arrays.asList(persistTable, persistTable2));
         tableGroupDao.save(tableGroup);
 
-        Product product = new Product();
-        product.setPrice(BigDecimal.TEN);
-        product.setName("product1");
+        Product product = new Product("product1", BigDecimal.TEN);
         Product persistProduct = productDao.save(product);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setQuantity(10);
-        menuProduct.setProductId(persistProduct.getId());
+        MenuProduct menuProduct = new MenuProduct(null, persistProduct.getId(), 10);
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("menuGroup1");
+        MenuGroup menuGroup = new MenuGroup("menuGroup1");
         MenuGroup persistMenuGroup = menuGroupDao.save(menuGroup);
 
-        Menu menu = new Menu();
-        menu.setName("menu1");
-        menu.setPrice(BigDecimal.TEN);
-        menu.setMenuGroupId(persistMenuGroup.getId());
-        menu.setMenuProducts(Arrays.asList(menuProduct));
+        Menu menu = new Menu("menu1", new Price(BigDecimal.TEN), persistMenuGroup.getId(), Arrays.asList(menuProduct));
         Menu persistMenu = menuDao.save(menu);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setQuantity(1);
-        orderLineItem.setMenuId(persistMenu.getId());
+        OrderLineItemRequest orderLineItem = new OrderLineItemRequest(persistMenu.getId(), 1L);
 
-        order = new Order();
-        order.setOrderTableId(persistOrderTable.getId());
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        order = new OrderCreateRequest(persistTable.getId(), Arrays.asList(orderLineItem));
     }
 
     @Test
     void create() {
-        Order persistOrder = orderService.create(order);
+        OrderResponse persistOrder = orderService.create(order);
 
         assertAll(
             () -> assertThat(persistOrder.getId()).isNotNull(),
-            () -> assertThat(persistOrder).isEqualToIgnoringGivenFields(order, "id", "orderLineItems")
+            () -> assertThat(persistOrder.getOrderStatus()).isEqualTo("COOKING"),
+            () -> assertThat(persistOrder.getOrderedTime()).isNotNull()
         );
     }
 
     @Test
     void list() {
-        Order persistOrder = orderService.create(order);
+        OrderResponse persistOrder = orderService.create(order);
 
-        List<Order> orders = orderService.list();
+        List<OrderResponse> orders = orderService.list();
 
         assertAll(
             () -> assertThat(orders).hasSize(1),
@@ -121,10 +106,10 @@ class OrderServiceTest {
 
     @Test
     void changeOrderStatus() {
-        Order persistOrder = orderService.create(order);
-        order.setOrderStatus("MEAL");
+        OrderResponse persistOrder = orderService.create(order);
+        OrderStatusChangeRequest request = new OrderStatusChangeRequest("MEAL");
 
-        Order changedOrder = orderService.changeOrderStatus(persistOrder.getId(), this.order);
+        OrderResponse changedOrder = orderService.changeOrderStatus(persistOrder.getId(), request);
 
         assertThat(changedOrder.getOrderStatus()).isEqualTo("MEAL");
     }
