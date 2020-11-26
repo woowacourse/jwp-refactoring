@@ -104,7 +104,4 @@ public class OrderTable {
         return empty;
     }
 
-    public boolean isNotEmpty() {
-        return !isEmpty();
-    }
 }
