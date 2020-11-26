@@ -97,6 +97,25 @@ public class TableGroupRestControllerTest {
                 andDo(print());
     }
 
+    @DisplayName("예외 테스트: 만약 TableGroup 생성 요청의 테이블 개수가 2개 미만이면, 예외를 반환한다.")
+    @Test
+    void createWithCreateRequestLowExceptionTest() throws Exception {
+        TableGroupCreateRequest invalidRequest = new TableGroupCreateRequest(
+                Arrays.asList(new OrderTableRequest(1L))
+        );
+        String requestAsString = OBJECT_MAPPER.writeValueAsString(invalidRequest);
+
+        this.mockMvc.perform(post(API + "/table-groups").
+                content(requestAsString).
+                contentType(MediaType.APPLICATION_JSON)).
+                andExpect(result -> {
+                    Exception exception = result.getResolvedException();
+                    Objects.requireNonNull(exception);
+                    assertTrue(exception.getClass().isAssignableFrom(MethodArgumentNotValidException.class));
+                }).
+                andDo(print());
+    }
+
     @DisplayName("예외 테스트: 만약 TableGroup 생성 요청이 유효하지 않으면, 예외를 반환한다.")
     @Test
     void createWithCreateRequestInvalidExceptionTest() throws Exception {

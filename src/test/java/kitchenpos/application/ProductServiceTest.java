@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.menu.Product;
-import kitchenpos.domain.menu.ProductRepository;
+import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.dto.menu.ProductCreateRequest;
 import kitchenpos.dto.menu.ProductResponse;
 import org.assertj.core.api.Assertions;

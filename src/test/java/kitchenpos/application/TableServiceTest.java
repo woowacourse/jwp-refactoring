@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTableRepository;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.order.OrderTableChangeEmptyRequest;
 import kitchenpos.dto.order.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.dto.order.OrderTableCreateRequest;
@@ -59,14 +59,6 @@ public class TableServiceTest {
         assertThat(orderTableResponse.getId()).isEqualTo(테이블_ID_1);
         assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(테이블_사람_1명);
         assertThat(orderTableResponse.getEmpty()).isEqualTo(테이블_비어있음);
-    }
-
-    @DisplayName("예외 테스트 : OrderTable을 생성할 때, Null인 요청을 전달하면 예외가 발생한다.")
-    @Test
-    void createWithNullRequestTest() {
-        assertThatThrownBy(() -> tableService.create(null))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 테이블 생성 요청이 전달되었습니다.");
     }
 
     @DisplayName("OrderTable 전체 목록 요청 시 올바른 값이 반환된다.")

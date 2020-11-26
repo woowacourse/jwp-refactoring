@@ -2,9 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
-import kitchenpos.domain.menu.MenuRepository;
-import kitchenpos.domain.order.*;
-import kitchenpos.dto.menu.MenuResponse;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderLineItemRepository;
 import kitchenpos.dto.order.OrderLineItemRequest;
 import kitchenpos.dto.order.OrderLineItemRequests;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +22,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -51,7 +52,7 @@ public class OrderLineItemServiceTest {
     @Mock
     private OrderLineItemRepository orderLineItemRepository;
     @Mock
-    private MenuProductService menuProductService;
+    private ProductService productService;
 
 
     private OrderLineItemService orderLineItemService;
@@ -60,7 +61,7 @@ public class OrderLineItemServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderLineItemService = new OrderLineItemService(orderLineItemRepository, menuRepository, menuProductService);
+        orderLineItemService = new OrderLineItemService(orderLineItemRepository, menuRepository, productService);
 
         orderTable = new OrderTable(테이블_ID_1, 테이블_사람_1명, 테이블_비어있지않음, null);
         menuGroup = new MenuGroup(메뉴_그룹_ID_1, 메뉴_그룹_이름_후라이드_세트);
@@ -113,25 +114,5 @@ public class OrderLineItemServiceTest {
         assertThatThrownBy(() -> orderLineItemService.createOrderLineItems(order, new OrderLineItemRequests(orderLineItemRequests)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상품의 조회가 잘못되었습니다.");
-    }
-
-    @DisplayName("Order로 해당하는 Menu를 조회할 경우 올바르게 수행된다.")
-    @Test
-    void findMenusByOrderTest() {
-        Order order = new Order(주문_ID_1, orderTable, OrderStatus.COOKING, 주문_시간);
-        Menu menu1 = new Menu(메뉴_ID_1, 메뉴_이름_후라이드_치킨, 메뉴_가격_16000원, menuGroup);
-        Menu menu2 = new Menu(메뉴_ID_2, 메뉴_이름_코카콜라, 메뉴_가격_1000원, menuGroup);
-        List<OrderLineItem> orderLineItems = Arrays.asList(
-                new OrderLineItem(order, menu1, 주문_메뉴_개수_1개),
-                new OrderLineItem(order, menu2, 주문_메뉴_개수_2개)
-        );
-        when(orderLineItemRepository.findAllByOrder(any(Order.class))).thenReturn(orderLineItems);
-
-        List<MenuResponse> foundMenus = orderLineItemService.findMenusByOrder(order);
-
-        assertThat(foundMenus).
-                hasSize(2).
-                extracting("name").
-                containsOnly(메뉴_이름_후라이드_치킨, 메뉴_이름_코카콜라);
     }
 }

@@ -1,6 +1,11 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.repository.MenuGroupRepository;
+import kitchenpos.domain.menu.repository.MenuRepository;
+import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.dto.menu.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,6 +50,8 @@ public class MenuServiceTest {
     @Mock
     private ProductRepository productRepository;
     @Mock
+    private ProductService productService;
+    @Mock
     private MenuProductService menuProductService;
 
     private MenuService menuService;
@@ -54,7 +61,7 @@ public class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuRepository, menuGroupRepository, productRepository, menuProductService);
+        menuService = new MenuService(menuRepository, menuGroupRepository, productRepository, productService, menuProductService);
 
         productQuantityRequests = Arrays.asList(
                 new ProductQuantityRequest(상품_ID_1, 상품_1개),
@@ -165,7 +172,7 @@ public class MenuServiceTest {
                 new ProductResponse(상품_ID_2, 상품_코카콜라, 상품_가격_1000원)
         );
         when(menuRepository.findAll()).thenReturn(menus);
-        when(menuProductService.findProductsByMenu(any(Menu.class))).thenReturn(productResponses);
+        when(productService.findProductsByMenu(any(Menu.class))).thenReturn(productResponses);
 
         List<MenuResponse> menuResponses = menuService.list();
 

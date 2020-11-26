@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
 import kitchenpos.dto.menu.MenuGroupResponse;
 import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.dto.menu.ProductResponse;
@@ -61,10 +65,12 @@ public class OrderServiceTest {
     private OrderRepository orderRepository;
     @Mock
     private OrderLineItemService orderLineItemService;
+    @Mock
+    private MenuService menuService;
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(orderRepository, orderTableRepository, orderLineItemService);
+        orderService = new OrderService(orderRepository, orderTableRepository, orderLineItemService, menuService);
 
         menuGroupResponse = new MenuGroupResponse(메뉴_그룹_ID_1, 메뉴_그룹_이름_후라이드_세트);
         productResponses = Arrays.asList(
@@ -90,7 +96,7 @@ public class OrderServiceTest {
         when(orderTableRepository.findById(anyLong())).thenReturn(java.util.Optional.of(orderTable));
         when(orderRepository.save(any(Order.class))).thenReturn(order);
         doNothing().when(orderLineItemService).createOrderLineItems(any(Order.class), any(OrderLineItemRequests.class));
-        when(orderLineItemService.findMenusByOrder(any(Order.class))).thenReturn(menuResponses);
+        when(menuService.findMenusByOrder(any(Order.class))).thenReturn(menuResponses);
 
         OrderResponse orderResponse = orderService.create(orderCreateRequest);
 

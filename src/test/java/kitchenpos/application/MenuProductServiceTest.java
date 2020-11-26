@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.menu.*;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuGroup;
+import kitchenpos.domain.menu.Product;
+import kitchenpos.domain.menu.repository.MenuProductRepository;
+import kitchenpos.domain.menu.repository.ProductRepository;
 import kitchenpos.dto.menu.ProductQuantityRequest;
 import kitchenpos.dto.menu.ProductQuantityRequests;
-import kitchenpos.dto.menu.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +18,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -88,22 +90,5 @@ public class MenuProductServiceTest {
         assertThatThrownBy(() -> menuProductService.createMenuProducts(menu, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("잘못된 상품이 입력되었습니다.");
-    }
-
-    @DisplayName("MenuProduct 조회가 올바르게 수행된다.")
-    @Test
-    void findProductsByMenuTest() {
-        List<MenuProduct> menuProducts = Arrays.asList(
-                new MenuProduct(메뉴_상품_SEQ_1, menu, new Product(상품_ID_1, 상품_후라이드_치킨, 상품_가격_15000원), 상품_1개),
-                new MenuProduct(메뉴_상품_SEQ_2, menu, new Product(상품_ID_2, 상품_코카콜라, 상품_가격_1000원), 상품_2개)
-        );
-        when(menuProductRepository.findAllByMenu(any(Menu.class))).thenReturn(menuProducts);
-
-        List<ProductResponse> productResponses = menuProductService.findProductsByMenu(menu);
-
-        assertThat(productResponses).
-                hasSize(2).
-                extracting("name").
-                containsOnly(상품_후라이드_치킨, 상품_코카콜라);
     }
 }

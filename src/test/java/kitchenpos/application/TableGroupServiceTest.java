@@ -1,6 +1,10 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.*;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.repository.OrderRepository;
+import kitchenpos.domain.order.repository.OrderTableRepository;
+import kitchenpos.domain.order.repository.TableGroupRepository;
 import kitchenpos.dto.order.OrderTableRequest;
 import kitchenpos.dto.order.TableGroupCreateRequest;
 import kitchenpos.dto.order.TableGroupResponse;
@@ -71,26 +75,6 @@ public class TableGroupServiceTest {
                 .hasSize(2)
                 .extracting("id")
                 .containsOnly(테이블_ID_1, 테이블_ID_2);
-    }
-
-    @DisplayName("예외 테스트 : TableGroup 생성 중 빈 테이블 목록을 보내면, 예외가 발생한다.")
-    @Test
-    void createWithEmptyTablesExceptionTest() {
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(Collections.emptyList());
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹화하려는 테이블의 상태가 유효하지 않습니다.");
-    }
-
-    @DisplayName("예외 테스트 : TableGroup 생성 중 2개 미만의 테이블 목록을 보내면, 예외가 발생한다.")
-    @Test
-    void createWithLowTablesExceptionTest() {
-        List<OrderTableRequest> orderTableRequests = Arrays.asList(new OrderTableRequest(테이블_ID_1));
-        TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(orderTableRequests);
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupCreateRequest))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("그룹화하려는 테이블의 상태가 유효하지 않습니다.");
     }
 
     @DisplayName("예외 테스트 : TableGroup 생성 중 DB에 없는 테이블 목록을 보내면, 예외가 발생한다.")
