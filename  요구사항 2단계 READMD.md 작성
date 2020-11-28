@@ -1,0 +1,458 @@
+[33mcommit 24a48eeb4ed1be3b0fef637acb2bbfbc3c621f0c[m[33m ([m[1;36mHEAD -> [m[1;32mstep3[m[33m, [m[1;31morigin/step3[m[33m)[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 18:33:50 2020 +0900
+
+    refactor : Product 패키지 구조 변경
+
+[33mcommit 648f173edee5c897dd85ad37deac3b8730938270[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 18:31:41 2020 +0900
+
+    refactor : TableGroup 패키지 구조 변경
+
+[33mcommit a2747276050231355b4b76a44ce29bc691d4ef63[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 18:27:53 2020 +0900
+
+    refactor : OrderTable 패키지 구조 변경
+
+[33mcommit 1473963b9a9359e6123d52e17289e08c1f44a245[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 18:23:33 2020 +0900
+
+    refactor : Order와 OrderLineItem 패키지 구조 변경
+
+[33mcommit d4770570c2699072c8dc2c14f9767a6355a4dbaa[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 18:19:06 2020 +0900
+
+    refactor : Menu와 MenuProduct 패키지 구조 변경
+
+[33mcommit a0678d1c2978a410376c54762e577b62557e9906[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 17:59:03 2020 +0900
+
+    refactor : MenuGroup 패키지 구조 변경
+
+[33mcommit 1418a011db12be1aebc7e7418eb1fbb9d40047eb[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 17:29:24 2020 +0900
+
+    docs : 3단계 기능 구현 목록 작성
+
+[33mcommit d8333ab7c1c4f93d8c2c70feed885365dc9ee3be[m[33m ([m[1;31morigin/step2[m[33m)[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 06:41:07 2020 +0900
+
+    refactor : OrderService의 로직을 OrderVerifier로 이동
+
+[33mcommit 98363fe6638f84837f06cfd33dd800ed25ec3e6b[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 06:00:50 2020 +0900
+
+    refactor : 조회 메서드에 readOnly 옵션 추가 및 사용하지 않는 메서드 제거
+
+[33mcommit 2a93da57736aaa82af9f787106acd75b9a073399[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 05:59:05 2020 +0900
+
+    refactor : OrderTableService의 로직을 TableGroupVerifier로 이동
+
+[33mcommit 1d1ad2343fb8d7064eab9b3c10190cea81f1705a[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 05:54:23 2020 +0900
+
+    refactor : TableGroupService의 로직을 TableGroupVerifier로 이동
+
+[33mcommit 497ddfdc92fc1820596c371329d29fb9d9757021[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 05:34:29 2020 +0900
+
+    test : MenuVerifier test 작성
+
+[33mcommit 374d1b65cf257c59370d387cf34ed0d1472dacf7[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 05:30:46 2020 +0900
+
+    refactor : MenuService의 로직을 MenuVerifier DomainService로 이동
+
+[33mcommit 8b12fc35a9893752366356a736f65e8d313656d2[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 04:57:16 2020 +0900
+
+    docs : 테스트하기 쉬운 부분과 어려운 부분을 분리하기 위해 문서 변경
+
+[33mcommit ede625fbcdc4f64db14da946730ff1a8fffaf0b1[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 04:40:47 2020 +0900
+
+    refactor : OrderLineItemDao 대신 OrderLineItemRepository 사용
+
+[33mcommit 859d55a15b1d6744cf19bb467a9a47a7e5042d6f[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 04:37:19 2020 +0900
+
+    refactor : TableGroupDao 대신 TableGroupRepository 사용
+
+[33mcommit 8a3b1e5391d64d6fb2e49cf37f79af01c66036cd[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 04:34:18 2020 +0900
+
+    refactor : OrderTableDao 대신 OrderTableRepository 사용
+
+[33mcommit ff09c9f553f135195155b722f1241350ac34f3de[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Thu Nov 26 04:24:36 2020 +0900
+
+    refactor : MenuGroupDao 대신 MenuGroupRepository 사용
+
+[33mcommit 3602325fcc667c128203e2a45d8a230e31fabc84[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 04:08:46 2020 +0900
+
+    refactor : OrderDao 대신 OrderRepository 사용
+
+[33mcommit 1d06b85f0fbf1bfa0f5fdbf6e5cc7a4bfd4132f8[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 03:47:38 2020 +0900
+
+    refactor : MenuProductDao 대신 MenuProductRepository 사용
+
+[33mcommit a9aa7e1ca6df969b90eb76a3ddce66c4f0f06af5[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 03:43:12 2020 +0900
+
+    refactor : MenuDao 대신 MenuRepository 사용
+
+[33mcommit a9e3a14c7429cdee4df65f7a6b8f5319f9fde4f5[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 02:43:56 2020 +0900
+
+    refactor : ProductDao 대신 ProductRepository 사용
+
+[33mcommit 1d1d41aba196802137ddee6d51d565dcc292bf1a[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Thu Nov 26 02:34:02 2020 +0900
+
+    refactor: jpa 사용을 위해 ddl-auto 설정을 validate로 설정
+
+[33mcommit de9bd241a0a4ef1ebb3aec1bde5fcb19a6b7e593[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 23:36:21 2020 +0900
+
+    refactor : TableGroup에 setter 없애기
+
+[33mcommit ef1ce4bc84d9924152f3842e3694d397e8bab4b8[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 23:34:33 2020 +0900
+
+    refactor : OrderTable에 setter 없애기
+
+[33mcommit 7bc00ff756275dbd5e08fc7d13ef478485581409[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 23:32:39 2020 +0900
+
+    refactor : Order에 setter 없애기
+
+[33mcommit 223c31683b730daf70fee2085dee13f2e829f521[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 23:30:42 2020 +0900
+
+    refactor : MenuGroup에 setter 없애기
+
+[33mcommit b8f45c0bdbc2956e26886ab697975bd330f2fb68[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 23:29:28 2020 +0900
+
+    refactor : Menu에 setter 없애기
+
+[33mcommit 57c984dd450eeadbdecc6016c2bddf604511fafe[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 23:25:16 2020 +0900
+
+    refactor : Product에 setter 없애기
+
+[33mcommit d7a36005205c696c2d1856e02c52f5ce68cad555[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 23:23:01 2020 +0900
+
+    refactor : 사용하지 않는 helper class 제거
+
+[33mcommit 9597e66bd49224f09d272c1f7f971586dfdeba50[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 23:03:39 2020 +0900
+
+    refactor : OrderService의 로직을 Order로 이동
+
+[33mcommit 9e4faf906584e48d6821050ac0e10bb42efcb0be[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 22:49:10 2020 +0900
+
+    refactor : OrderService의 list가 OrderResponse를 반환하도록 변경
+
+[33mcommit 294f837dface8684b1490d289e2f5d04ee604502[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 22:45:40 2020 +0900
+
+    refactor : OrderService의 create 관련 로직을 Order로 이동
+
+[33mcommit b213c134b6b5a7234678dc24c272b1d9a1bdb721[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 21:56:36 2020 +0900
+
+    refactor : MenuService의 list 관련 로직을 Menu로 이동
+
+[33mcommit 53ecee4e3958d85f0426195825ee821b0ee0713b[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 21:47:38 2020 +0900
+
+    refactor : MenuService의 create 관련 로직을 Menu로 이동
+
+[33mcommit e94cab501c1dfd5e28145a92ed3cbb6a274664e3[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 20:55:12 2020 +0900
+
+    refactor : MenuGroupService의 로직을 MenuGroup으로 이동
+
+[33mcommit e73bd35900aca1ce2cc5ca08536aa6058d0adce6[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 20:37:53 2020 +0900
+
+    docs : 2단계 기능 구현 목록 수정
+
+[33mcommit b2188a9f314f653c58e9a7ec9ddf79fe392ade56[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 17:57:05 2020 +0900
+
+    refactor : TableGroupService의 로직을 TableGroup으로 이동
+
+[33mcommit 867cfc619862f3701dbd874825ac8f338d0296d0[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 17:26:01 2020 +0900
+
+    refactor : TableGroup 생성에 관한 로직을 domain으로 이동
+
+[33mcommit 0493ee25387976fe447d2f77a3adc44eee6476ac[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 15:30:48 2020 +0900
+
+    refactor : OrderTableService의 로직을 OrderTable로 이동
+
+[33mcommit 611db4065050604049c14d930636a6cf428d9c0e[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 14:30:41 2020 +0900
+
+    refactor : ProductService의 로직을 Product로 이동
+
+[33mcommit a781f96c33862f5077faa2b4dcf5a5c5c16ccec6[m
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 14:06:53 2020 +0900
+
+    docs : 요구사항 2단계 READMD.md 작성
+
+[33mcommit 1643f1a038bef3f3864ea60e46ded28ba52331c5[m
+Merge: 0a8805b 1de9cb8
+Author: jaeju.jang <jjj0611@gmail.com>
+Date:   Wed Nov 25 13:54:38 2020 +0900
+
+    merge: pair와 코드 병합
+
+[33mcommit 1de9cb8d356712b7284e80c713649e326597c978[m[33m ([m[1;31morigin/step1[m[33m, [m[1;32mstep1[m[33m)[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 02:55:56 2020 +0900
+
+    test : 주문 상태 변경 기능 테스트 작성
+
+[33mcommit 7cef6fd68535b149d6407ba81f29389befc52098[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 02:48:06 2020 +0900
+
+    test : 주문의 목록을 조회하는 테스트 작성
+
+[33mcommit 87ce8c627da0522a8f31fd630b39e37ba6036003[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 02:46:06 2020 +0900
+
+    test : 주문 등록 시 존재하지 않는 테이블일 경우 예외 발생 테스트 작성
+
+[33mcommit 9fa66534dd927d7e6809e6d8374526c46759a50a[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 02:38:58 2020 +0900
+
+    test : 주문 등록 기능 예외 테스트 작성
+
+[33mcommit a72d63ee3563ce4924ed15b98258c9d4f99936a1[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 02:38:31 2020 +0900
+
+    test : 주문 등록 기능 테스트 작성
+
+[33mcommit 19f85c9b165408e6d6907012729586bfa27deacf[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 01:46:10 2020 +0900
+
+    test : 단체 지정 해제 기능 테스트 작성
+
+[33mcommit 50ae3d341e769a53799354c126cafb35c2b5cf0b[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 01:32:14 2020 +0900
+
+    test : 단체 지정 기능 테스트 작성
+
+[33mcommit c9c915b4ae1d75c028dc2cbd21b6ac2ecf5202a3[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 00:42:15 2020 +0900
+
+    test : 손님 수 변경 기능 테스트 작성
+
+[33mcommit 74802ad10b1932bdce42eed1b4a26f49ff891c5e[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Wed Nov 25 00:29:25 2020 +0900
+
+    test : 빈 테이블 변경 기능 테스트 작성
+
+[33mcommit 0e77d4b09d5f30fbdb191b718861f8d981984d01[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 23:46:33 2020 +0900
+
+    test : 주문 테이블의 목록 조회 기능 테스트 작성
+
+[33mcommit 4b939656e7584efb993cd129a4cac4a0a2e85d67[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 23:45:35 2020 +0900
+
+    test : TableServiceTest#create 테스트 작성
+
+[33mcommit 3f362842b0414ad85161583af25725405c60468d[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 23:26:23 2020 +0900
+
+    test : MenuServiceTest#list 테스트 작성
+
+[33mcommit 824ef92890ccac562fd139f9fd60165a61075e31[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 23:21:17 2020 +0900
+
+    test : MenuServiceTest#create 테스트 작성
+
+[33mcommit 8100f64e0076332d6d21ea9bbb580d7cbed1cce3[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 22:44:42 2020 +0900
+
+    refactor : 모든 Service 테스트의 상위 클래스 작성(ServiceTest)
+
+[33mcommit a981a95b9cfb3895a82e52eddfec78e916f1c58e[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 22:31:37 2020 +0900
+
+    refactor : KitchenposTestHelper 작성하여 테스트 코드 수정
+
+[33mcommit 9ef48e54d497c3cc7e56f4cafd6456c420faeb17[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 21:36:28 2020 +0900
+
+    test : list() 테스트에 대해 검증 코드 수정
+
+[33mcommit 43f126ec4c13ec4745e38dd9291ac65d0678dd51[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 20:47:05 2020 +0900
+
+    docs : 주문(order)에 대한 요구사항 수정
+
+[33mcommit c0a45ffb73ebcd866aaa95da7224ff827c34f258[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 19:26:04 2020 +0900
+
+    test : MenuGroupServiceTest 테스트 작성
+
+[33mcommit 27f97c06321591ab2d8fcc2f6af9f485dce9f4da[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 14:11:01 2020 +0900
+
+    test : ProductServiceTest#list 테스트 작성
+
+[33mcommit 3f41bddb8bb28ea6c060a8256de681845c0acdec[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 13:02:00 2020 +0900
+
+    test : ProductServiceTest#create 테스트 작성
+
+[33mcommit 3a426102a0138e65ed170f6978f12dd118cd54e1[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 12:25:12 2020 +0900
+
+    docs : 1단계 구현 목록 작성
+
+[33mcommit baf7f46c1a86da81dfb1c3a287027d9edb17ab6e[m
+Author: jnsorn <jnsorn@gmail.com>
+Date:   Tue Nov 24 12:15:49 2020 +0900
+
+    docs : 키친포스 요구사항 작성
+
+[33mcommit 0a8805bbb2cbcc94475dd0da4a99ec05fffc01cf[m[33m ([m[1;31mupstream/jjj0611[m[33m)[m
+Author: Jang Jaeju <44603719+jjj0611@users.noreply.github.com>
+Date:   Sun Nov 15 20:13:14 2020 +0900
+
+    [제이] 1단계 - 점진적인 리팩토링 미션 제출합니다. (#50)
+    
+    * docs: 기능 목록 추가
+    
+            - README.md에 기능 목록 추가
+    
+    * test: TableServiceTest 작성
+    
+            - TableService의 테스트 작성
+    
+    * test: TableGroupService test 작성
+    
+            - TableGroupService에 대한 테스트 작성
+    
+    * test: TableService test 보강
+    
+    * test: ProductServiceTest 작성
+    
+            - refactoring을 위해 productServiceTest 작성
+    
+    * test: MenuGroupService test 작성
+    
+            - refactoring을 위한 MenuGroupServiceTest 작성
+    
+    * test: MenuService test 작성
+    
+            - refactoring을 위한MenuServiceTest 작성
+    
+    * test: OrderService test 작성
+    
+            - refactoring을 위한 OrderServiceTest 작성
+    
+    * refactoring: test refactoring
+    
+            - integration test를 만들어 중복 제거
+    
+    * refactoring: table service를 integration test로 변경
+    
+            - table service를 slice test에서 integration test로 변경
+    
+    * refactoring: test refactoring
+    
+            - parameterized test의 source 변경
+    
+    * docs: README.md 변경
+    
+            - README.md에 ERD 추가
+    
+    * refactoring: test에서 저 수준 모듈을 사용하도록 refactoring
+    
+    * refactoring: 부모 test 이름 변경
+
+[33mcommit 6902546319a715b56063a02f1324027b09c2a120[m[33m ([m[1;31mupstream/taejinseok[m[33m, [m[1;31mupstream/ramen6315[m[33m, [m[1;31mupstream/master[m[33m, [m[1;31mupstream/kimhodol[m[33m, [m[1;31mupstream/hotheadfactory[m[33m, [m[1;31mupstream/chws[m[33m, [m[1;31morigin/yerincho[m[33m, [m[1;31morigin/yeonnseok[m[33m, [m[1;31morigin/yelimkim98[m[33m, [m[1;31morigin/yejiahn[m[33m, [m[1;31morigin/toneyparky[m[33m, [m[1;31morigin/taejinseok[m[33m, [m[1;31morigin/sujinemilycho[m[33m, [m[1;31morigin/ramen6315[m[33m, [m[1;31morigin/parkdoowon[m[33m, [m[1;31morigin/ordincode[m[33m, [m[1;31morigin/moonyoungchae[m[33m, [m[1;31morigin/minuyim[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/lxxjn0[m[33m, [m[1;31morigin/lttttte[m[33m, [m[1;31morigin/lowoon[m[33m, [m[1;31morigin/lalize[m[33m, [m[1;31morigin/kueniyam[m[33m, [m[1;31morigin/ksy90101[m[33m, [m[1;31morigin/ks-kim[m[33m, [m[1;31morigin/kouz95[m[33m, [m[1;31morigin/kimseonggyu1[m[33m, [m[1;31morigin/kimhodol[m[33m, [m[1;31morigin/kimevanjunseok[m[33m, [m[1;31morigin/khb1109[m[33m, [m[1;31morigin/joseph415[m[33m, [m[1;31morigin/jnsorn[m[33m, [m[1;31morigin/jjj0611[m[33m, [m[1;31morigin/jinjumoon[m[33m, [m[1;31morigin/jamie9504[m[33m, [m[1;31morigin/include42[m[33m, [m[1;31morigin/icymojito[m[33m, [m[1;31morigin/hwanghe159[m[33m, [m[1;31morigin/hotheadfactory[m[33m, [m[1;31morigin/hamliet[m[33m, [m[1;31morigin/chws[m[33m, [m[1;31morigin/aegis1920[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmaster[m[33m)[m
+Author: woowahan-pjs <jason@woowahan.com>
+Date:   Tue Sep 8 08:32:58 2020 +0900
+
+    feat(kitchenpos): set up the project
+
+[33mcommit a5662de6a7eefa717779356fae27b599416e4313[m
+Author: 박재성 <jason@woowahan.com>
+Date:   Fri Sep 4 14:12:57 2020 +0900
+
+    Initial commit

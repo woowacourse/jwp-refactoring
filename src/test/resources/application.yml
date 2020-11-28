@@ -1,0 +1,20 @@
+spring:
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+
+logging:
+  level:
+    org:
+      hinbernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
