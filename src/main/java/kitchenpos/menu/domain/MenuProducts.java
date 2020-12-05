@@ -2,33 +2,31 @@ package kitchenpos.menu.domain;
 
 import kitchenpos.generic.Price;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Embeddable
 public class MenuProducts {
-    private final List<MenuProduct> menuProducts;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MENU_ID")
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
-    public MenuProducts(List<MenuProduct> menuProducts, Menu menu) {
-        this.menuProducts = menuProducts;
-        this.addMenu(menu);
-        validate(menu.getPrice());
+    public MenuProducts() {
     }
 
-    private void validate(Price requestPrice) {
-        Price sum = calculateSum();
-        if (sum.isLessThan(requestPrice)) {
-            throw new IllegalArgumentException(String.format("상품 금액의 합(%d)이 메뉴의 가격(%d)보다 작습니다.", sum.longValue(), requestPrice.longValue()));
-        }
-    }
-
-    private Price calculateSum() {
+    public Price calculateSum() {
         return menuProducts.stream()
                 .map(MenuProduct::calculateSum)
                 .reduce(Price.of(0L), Price::add);
     }
 
-    private void addMenu(Menu menu) {
-        menuProducts.forEach(menuProduct -> menuProduct.placeMenu(menu));
+    public void addAll(List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
     }
 
     public List<MenuProduct> getMenuProducts() {
