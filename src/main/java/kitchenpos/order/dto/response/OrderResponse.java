@@ -21,9 +21,9 @@ public class OrderResponse {
         this.orderLineItemResponses = orderLineItemResponses;
     }
 
-    public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
+    public static OrderResponse of(Order order) {
         List<OrderLineItemResponse> orderLineItemResponses = new ArrayList<>();
-        for (OrderLineItem orderLineItem : orderLineItems) {
+        for (OrderLineItem orderLineItem : order.showOrderLineItems()) {
             orderLineItemResponses.add(OrderLineItemResponse.of(orderLineItem));
         }
         return new OrderResponse(order.getId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemResponses);

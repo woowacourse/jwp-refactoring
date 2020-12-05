@@ -1,7 +1,6 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.menu.domain.Menu;
-
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -10,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +24,8 @@ public class Order {
 
     private LocalDateTime orderedTime = LocalDateTime.now();
 
+    @Embedded
+    private final OrderLineItems orderLineItems = new OrderLineItems();
 
     public Order(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
@@ -48,8 +50,8 @@ public class Order {
         return this.orderStatus.isCookingOrMeal();
     }
 
-    public OrderLineItem createOrderLineItem(Long quantity, Menu menu) {
-        return new OrderLineItem(quantity, this, menu);
+    public void addOrderLineItem(OrderLineItem orderLineItem) {
+        this.orderLineItems.add(orderLineItem);
     }
 
     public Long getId() {
@@ -62,6 +64,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> showOrderLineItems() {
+        return orderLineItems.showAll();
     }
 
     @Override

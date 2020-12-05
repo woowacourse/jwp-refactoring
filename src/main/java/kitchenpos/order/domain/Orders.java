@@ -11,7 +11,7 @@ import java.util.List;
 public class Orders {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ORDER_TABLE_ID")
-    private List<Order> orders = new ArrayList<>();
+    private final List<Order> orders = new ArrayList<>();
 
     protected Orders() {
     }

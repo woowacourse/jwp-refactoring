@@ -18,17 +18,13 @@ public class OrderLineItem {
     private Long quantity;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Order order;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Long quantity, Order order, Menu menu) {
+    public OrderLineItem(Long quantity, Menu menu) {
         this.quantity = quantity;
-        this.order = order;
         this.menu = menu;
     }
 
@@ -36,19 +32,8 @@ public class OrderLineItem {
         return quantity;
     }
 
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
     public Menu getMenu() {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
 }

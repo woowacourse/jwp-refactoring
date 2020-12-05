@@ -54,16 +54,15 @@ class OrderTest {
     @Test
     void createOrderLineItem() {
         //given
-        Order order = new Order(OrderStatus.MEAL);
         Menu menu = new Menu("메뉴이름", 1000L, new MenuGroup("메뉴그룹"));
         Long quantity = 1L;
 
         //when
-        OrderLineItem orderLineItem = order.createOrderLineItem(quantity, menu);
+
+        OrderLineItem orderLineItem = new OrderLineItem(quantity, menu);
 
         //then
         assertThat(orderLineItem.getMenu()).isEqualTo(menu);
         assertThat(orderLineItem.getQuantity()).isEqualTo(quantity);
-        assertThat(orderLineItem.getOrder()).isEqualTo(order);
     }
 }

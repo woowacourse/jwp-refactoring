@@ -14,7 +14,6 @@ import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderStatusChangeRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.product.domain.Product;
@@ -55,9 +54,6 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
     private OrderTableRepository orderTableRepository;
 
     @DisplayName("1 개 이상의 등록된 메뉴로 주문을 등록할 수 있다.")
@@ -75,12 +71,8 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItemCreateRequest(1L, menu.getId()))));
 
         //then
-        Order findOrder = orderRepository.findById(orderResponse.getOrderId())
-                .orElseThrow(RuntimeException::new);
-        List<OrderLineItem> findOrderLineItems = orderLineItemRepository.findAllByOrderId(findOrder.getId());
-
-        assertThat(findOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-        assertThat(findOrderLineItems).hasSize(1);
+        assertThat(orderResponse.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
+        assertThat(orderResponse.getOrderLineItemResponses()).hasSize(1);
     }
 
     @DisplayName("존재하지 않는 테이블에 주문을 할 수 없다.")
@@ -135,7 +127,7 @@ class OrderServiceTest {
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
         Order order = orderRepository.save(new Order());
-        orderLineItemRepository.save(new OrderLineItem(1L, order, menu));
+        order.addOrderLineItem(new OrderLineItem(1L, menu));
 
         //when
         List<Order> orders = orderService.list();
@@ -185,7 +177,6 @@ class OrderServiceTest {
 
     @AfterEach
     void tearDown() {
-        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
         orderTableRepository.deleteAll();
         menuProductRepository.deleteAll();

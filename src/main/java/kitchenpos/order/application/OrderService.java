@@ -10,31 +10,26 @@ import kitchenpos.order.dto.request.OrderCreateRequest;
 import kitchenpos.order.dto.request.OrderLineItemCreateRequest;
 import kitchenpos.order.dto.request.OrderStatusChangeRequest;
 import kitchenpos.order.dto.response.OrderResponse;
-import kitchenpos.order.repository.OrderLineItemRepository;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -47,17 +42,14 @@ public class OrderService {
         orderTable.addOrder(order);
         Menus menus = new Menus(menuRepository.findAllById(request.getMenuIds()));
 
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-
         for (OrderLineItemCreateRequest orderLineItemRequest : request.getOrderLineItemCreateRequests()) {
             Menu menu = menus.findById(orderLineItemRequest.getMenuId());
-            orderLineItems.add(order.createOrderLineItem(orderLineItemRequest.getQuantity(), menu));
+            order.addOrderLineItem(new OrderLineItem(orderLineItemRequest.getQuantity(), menu));
         }
 
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
 
-        return OrderResponse.of(order, orderLineItems);
+        return OrderResponse.of(order);
     }
 
     public List<Order> list() {

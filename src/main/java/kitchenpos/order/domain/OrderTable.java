@@ -26,7 +26,7 @@ public class OrderTable {
     private TableGroup tableGroup;
 
     @Embedded
-    private Orders orders = new Orders();
+    private final Orders orders = new Orders();
 
     public OrderTable() {
     }
