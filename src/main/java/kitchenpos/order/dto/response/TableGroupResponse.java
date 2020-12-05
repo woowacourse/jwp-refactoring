@@ -1,6 +1,6 @@
-package kitchenpos.ordertable.dto;
+package kitchenpos.order.dto.response;
 
-import kitchenpos.ordertable.domain.TableGroup;
+import kitchenpos.order.domain.TableGroup;
 
 import java.time.LocalDateTime;
 

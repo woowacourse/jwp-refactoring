@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.ordertable.domain.OrderTables;
-
 import java.util.List;
 
 public class Orders {
