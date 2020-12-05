@@ -134,7 +134,7 @@ class OrderServiceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("한마리 메뉴"));
         Menu menu = menuRepository.save(new Menu("간장 치킨 두마리", 19000L, menuGroup));
 
-        Order order = orderRepository.save(new Order(orderTable));
+        Order order = orderRepository.save(new Order());
         orderLineItemRepository.save(new OrderLineItem(1L, order, menu));
 
         //when
@@ -150,7 +150,7 @@ class OrderServiceTest {
     void changeOrderStatus(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        Order order = orderRepository.save(new Order(orderTable));
+        Order order = orderRepository.save(new Order());
 
         //when
         orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name()));
@@ -167,7 +167,7 @@ class OrderServiceTest {
     void changeOrderStatusException1(OrderStatus orderStatus) {
         //given
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
-        Order order = orderRepository.save(new Order(orderTable, OrderStatus.COMPLETION));
+        Order order = orderRepository.save(new Order(OrderStatus.COMPLETION));
 
         //then
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusChangeRequest(orderStatus.name())))

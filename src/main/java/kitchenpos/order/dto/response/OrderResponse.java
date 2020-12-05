@@ -12,14 +12,12 @@ public class OrderResponse {
     private Long orderId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private Long orderTableId;
     private List<OrderLineItemResponse> orderLineItemResponses;
 
-    public OrderResponse(Long orderId, OrderStatus orderStatus, LocalDateTime orderedTime, Long orderTableId, List<OrderLineItemResponse> orderLineItemResponses) {
+    public OrderResponse(Long orderId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItemResponses) {
         this.orderId = orderId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderTableId = orderTableId;
         this.orderLineItemResponses = orderLineItemResponses;
     }
 
@@ -28,7 +26,7 @@ public class OrderResponse {
         for (OrderLineItem orderLineItem : orderLineItems) {
             orderLineItemResponses.add(OrderLineItemResponse.of(orderLineItem));
         }
-        return new OrderResponse(order.getId(), order.getOrderStatus(), order.getOrderedTime(), order.getOrderTable().getId(), orderLineItemResponses);
+        return new OrderResponse(order.getId(), order.getOrderStatus(), order.getOrderedTime(), orderLineItemResponses);
     }
 
     public Long getOrderId() {
@@ -41,10 +39,6 @@ public class OrderResponse {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public Long getOrderTableId() {
-        return orderTableId;
     }
 
     public List<OrderLineItemResponse> getOrderLineItemResponses() {

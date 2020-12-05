@@ -17,7 +17,7 @@ class OrderTest {
     @CsvSource(value = {"COMPLETION,true", "MEAL,false", "COOKING,false"})
     void isUngroupable(OrderStatus orderStatus, boolean expect) {
         //given
-        Order order = new Order(new OrderTable(1, false), orderStatus);
+        Order order = new Order(orderStatus);
 
         //when
         boolean result = order.isUngroupable();
@@ -31,7 +31,7 @@ class OrderTest {
     @CsvSource(value = {"MEAL,false", "COOKING,false"})
     void changeStatus(OrderStatus orderStatus, boolean expect) {
         //given
-        Order order = new Order(new OrderTable(1, false), orderStatus);
+        Order order = new Order(orderStatus);
 
         //when
         order.changeStatus("COMPLETION");
@@ -43,7 +43,7 @@ class OrderTest {
     @DisplayName("주문의 주문상태가 완료라면 변경할 수 없다.")
     @Test
     void changeStatusException() {
-        Order order = new Order(new OrderTable(1, false), OrderStatus.COMPLETION);
+        Order order = new Order(OrderStatus.COMPLETION);
 
         assertThatThrownBy(() -> order.changeStatus("COMPLETION"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -54,7 +54,7 @@ class OrderTest {
     @Test
     void createOrderLineItem() {
         //given
-        Order order = new Order(new OrderTable(1, false), OrderStatus.MEAL);
+        Order order = new Order(OrderStatus.MEAL);
         Menu menu = new Menu("메뉴이름", 1000L, new MenuGroup("메뉴그룹"));
         Long quantity = 1L;
 

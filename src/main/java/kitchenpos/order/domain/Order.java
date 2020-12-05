@@ -5,13 +5,12 @@ import kitchenpos.menu.domain.Menu;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "ORDERS")
@@ -21,31 +20,17 @@ public class Order {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus orderStatus = OrderStatus.COOKING;
 
-    private LocalDateTime orderedTime;
+    private LocalDateTime orderedTime = LocalDateTime.now();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OrderTable orderTable;
 
-    public Order() {
-    }
-
-    public Order(OrderTable orderTable, OrderStatus orderStatus) {
-        this.orderTable = orderTable;
+    public Order(OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
     }
 
-    public Order(OrderTable orderTable) {
-        this(orderTable, OrderStatus.COOKING);
-        validate();
-    }
-
-    private void validate() {
-        if (this.orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
-        }
+    public Order() {
     }
 
     public boolean isUngroupable() {
@@ -57,6 +42,10 @@ public class Order {
             throw new IllegalArgumentException("주문 상태가 계산 완료인 경우 변경할 수 없습니다.");
         }
         this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
+    public boolean isCookingOrMeal() {
+        return this.orderStatus.isCookingOrMeal();
     }
 
     public OrderLineItem createOrderLineItem(Long quantity, Menu menu) {
@@ -75,7 +64,18 @@ public class Order {
         return orderedTime;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Order order = (Order) o;
+        return Objects.equals(getId(), order.getId()) &&
+                getOrderStatus() == order.getOrderStatus() &&
+                Objects.equals(getOrderedTime(), order.getOrderedTime());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getOrderStatus(), getOrderedTime());
     }
 }

@@ -1,5 +1,6 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -16,13 +17,16 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int numberOfGuests;
+
+    private boolean empty;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TABLE_GROUP_ID", foreignKey = @ForeignKey(name = "FK_ORDER_TABLE_TABLE_GROUP"))
     private TableGroup tableGroup;
 
-    private int numberOfGuests;
-
-    private boolean empty;
+    @Embedded
+    private Orders orders = new Orders();
 
     public OrderTable() {
     }
@@ -77,8 +81,12 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
-        this.empty = false;
+        if (orders.isUngroupable()) {
+            this.tableGroup = null;
+            this.empty = false;
+            return;
+        }
+        throw new IllegalArgumentException("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없습니다.");
     }
 
     public boolean hasTableGroup() {
@@ -104,4 +112,14 @@ public class OrderTable {
         return empty;
     }
 
+    public void addOrder(Order order) {
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException("빈 테이블에는 주문을 등록할 수 없습니다.");
+        }
+        this.orders.add(order);
+    }
+
+    public boolean hasCookingOrMeal() {
+        return this.orders.hasCookingOrMeal();
+    }
 }

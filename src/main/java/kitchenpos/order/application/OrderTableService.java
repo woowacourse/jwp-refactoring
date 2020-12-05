@@ -1,27 +1,22 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.dto.request.OrderTableCreateRequest;
 import kitchenpos.order.dto.request.OrderTableEmptyChangeRequest;
 import kitchenpos.order.dto.request.OrderTableGuestsChangeRequest;
 import kitchenpos.order.dto.response.OrderTableResponse;
-import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
 
-    public OrderTableService(OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+    public OrderTableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -40,7 +35,7 @@ public class OrderTableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        boolean isCookingOrMeal = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
+        boolean isCookingOrMeal = savedOrderTable.hasCookingOrMeal();
 
         savedOrderTable.changeEmpty(request.isEmpty(), isCookingOrMeal);
 

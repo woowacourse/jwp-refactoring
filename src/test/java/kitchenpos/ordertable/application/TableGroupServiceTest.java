@@ -119,13 +119,12 @@ class TableGroupServiceTest {
     void ungroupException1(OrderStatus orderStatus) {
         //given
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable1 = new OrderTable(0, true);
-        OrderTable orderTable2 = new OrderTable(0, true);
+        OrderTable orderTable1 = new OrderTable(0, false);
+        orderTable1.addOrder(new Order(orderStatus));
+        OrderTable orderTable2 = new OrderTable(0, false);
         orderTable1.groupBy(tableGroup);
         orderTable2.groupBy(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
-
-        orderRepository.save(new Order(orderTable1, orderStatus));
 
         //then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))

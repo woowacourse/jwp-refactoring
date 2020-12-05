@@ -1,24 +1,35 @@
 package kitchenpos.order.domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
+@Embeddable
 public class Orders {
-    private final List<Order> orders;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ORDER_TABLE_ID")
+    private List<Order> orders = new ArrayList<>();
 
-    public Orders(List<Order> orders) {
-        this.orders = orders;
+    protected Orders() {
     }
 
-    public void ungroup(OrderTables orderTables) {
-        if (isUngroupable()) {
-            orderTables.ungroup();
-            return;
-        }
-        throw new IllegalArgumentException("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없습니다.");
-    }
-
-    private boolean isUngroupable() {
+    public boolean isUngroupable() {
         return this.orders.stream()
                 .allMatch(Order::isUngroupable);
+    }
+
+    public void add(Order order) {
+        if (orders.contains(order)) {
+            throw new IllegalArgumentException("이미 추가된 주문입니다.");
+        }
+        this.orders.add(order);
+    }
+
+    public boolean hasCookingOrMeal() {
+        return this.orders.stream()
+                .anyMatch(Order::isCookingOrMeal);
     }
 }

@@ -43,7 +43,8 @@ public class OrderService {
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블에 주문을 할 수 없습니다."));
 
-        Order order = new Order(orderTable);
+        Order order = new Order();
+        orderTable.addOrder(order);
         Menus menus = new Menus(menuRepository.findAllById(request.getMenuIds()));
 
         List<OrderLineItem> orderLineItems = new ArrayList<>();

@@ -113,14 +113,12 @@ class OrderTableServiceTest {
     @ParameterizedTest
     @CsvSource(value = {"COOKING,true", "MEAL,true", "COOKING,false", "MEAL,false"})
     void changeEmptyException2(OrderStatus orderStatus, boolean isEmpty) {
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(0, false);
+        Order order = new Order(orderStatus);
+        orderTable.addOrder(order);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order(savedOrderTable, orderStatus);
-        orderRepository.save(order);
-
         OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(isEmpty);
-
 
         assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)
