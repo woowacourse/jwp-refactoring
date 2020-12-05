@@ -9,7 +9,7 @@ import java.util.List;
 
 @Embeddable
 public class Orders {
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "ORDER_TABLE_ID")
     private final List<Order> orders = new ArrayList<>();
 
