@@ -1,16 +1,16 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.request.OrderTableCreateRequest;
+import kitchenpos.order.dto.request.OrderTableEmptyChangeRequest;
+import kitchenpos.order.dto.request.OrderTableGuestsChangeRequest;
+import kitchenpos.order.dto.response.OrderTableResponse;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableGroup;
-import kitchenpos.ordertable.dto.OrderTableCreateRequest;
-import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
-import kitchenpos.ordertable.dto.OrderTableGuestsChangeRequest;
-import kitchenpos.ordertable.dto.OrderTableResponse;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.ordertable.repository.TableGroupRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.order.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -112,14 +112,12 @@ class OrderTableServiceTest {
     @ParameterizedTest
     @CsvSource(value = {"COOKING,true", "MEAL,true", "COOKING,false", "MEAL,false"})
     void changeEmptyException2(OrderStatus orderStatus, boolean isEmpty) {
-        OrderTable orderTable = new OrderTable(0, true);
+        OrderTable orderTable = new OrderTable(0, false);
+        Order order = new Order(orderStatus);
+        orderTable.addOrder(order);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        Order order = new Order(savedOrderTable, orderStatus);
-        orderRepository.save(order);
-
         OrderTableEmptyChangeRequest request = new OrderTableEmptyChangeRequest(isEmpty);
-
 
         assertThatThrownBy(() -> orderTableService.changeEmpty(savedOrderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class)

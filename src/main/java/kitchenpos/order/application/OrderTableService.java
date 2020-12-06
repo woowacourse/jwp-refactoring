@@ -1,26 +1,21 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.application;
 
-import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.dto.OrderTableCreateRequest;
-import kitchenpos.ordertable.dto.OrderTableEmptyChangeRequest;
-import kitchenpos.ordertable.dto.OrderTableGuestsChangeRequest;
-import kitchenpos.ordertable.dto.OrderTableResponse;
-import kitchenpos.ordertable.repository.OrderTableRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.request.OrderTableCreateRequest;
+import kitchenpos.order.dto.request.OrderTableEmptyChangeRequest;
+import kitchenpos.order.dto.request.OrderTableGuestsChangeRequest;
+import kitchenpos.order.dto.response.OrderTableResponse;
+import kitchenpos.order.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class OrderTableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderTableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public OrderTableService(OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -40,7 +35,7 @@ public class OrderTableService {
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        boolean isCookingOrMeal = orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL));
+        boolean isCookingOrMeal = savedOrderTable.hasCookingOrMeal();
 
         savedOrderTable.changeEmpty(request.isEmpty(), isCookingOrMeal);
 

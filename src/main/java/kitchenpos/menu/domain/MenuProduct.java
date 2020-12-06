@@ -4,11 +4,11 @@ import kitchenpos.generic.Price;
 import kitchenpos.product.domain.Product;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import java.util.Objects;
 
 @Entity
@@ -19,10 +19,10 @@ public class MenuProduct {
 
     private Long quantity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Product product;
 
     public MenuProduct() {

@@ -1,6 +1,5 @@
-package kitchenpos.ordertable.domain;
+package kitchenpos.order.domain;
 
-import kitchenpos.order.domain.Orders;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -26,12 +25,8 @@ public class OrderTables {
         }
     }
 
-    public void ungroup(Orders orders) {
-        if (orders.isUngroupable()) {
-            orderTables.forEach(OrderTable::ungroup);
-            return;
-        }
-        throw new IllegalArgumentException("단체 지정된 주문 테이블의 주문 상태가 조리 또는 식사인 경우 단체 지정을 해지할 수 없습니다.");
+    public void ungroup() {
+        orderTables.forEach(OrderTable::ungroup);
     }
 
     public boolean isNotSameSizeWith(int size) {

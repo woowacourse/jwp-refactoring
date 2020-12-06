@@ -1,24 +1,20 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.application;
 
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTables;
-import kitchenpos.ordertable.domain.TableGroup;
-import kitchenpos.ordertable.dto.TableGroupCreateRequest;
-import kitchenpos.ordertable.dto.TableGroupResponse;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.ordertable.repository.TableGroupRepository;
+import kitchenpos.order.domain.OrderTables;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.request.TableGroupCreateRequest;
+import kitchenpos.order.dto.response.TableGroupResponse;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.order.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -40,8 +36,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        Orders orders = new Orders(orderRepository.findAllByOrderTableIdIn(orderTables.getOrderTableIds()));
-
-        orderTables.ungroup(orders);
+        orderTables.ungroup();
     }
 }

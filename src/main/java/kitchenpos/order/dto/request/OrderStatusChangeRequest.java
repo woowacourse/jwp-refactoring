@@ -1,4 +1,4 @@
-package kitchenpos.order.dto;
+package kitchenpos.order.dto.request;
 
 import com.sun.istack.NotNull;
 

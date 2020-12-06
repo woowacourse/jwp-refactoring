@@ -1,14 +1,14 @@
-package kitchenpos.ordertable.application;
+package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.dto.request.TableGroupCreateRequest;
+import kitchenpos.order.dto.response.TableGroupResponse;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.ordertable.domain.OrderTable;
-import kitchenpos.ordertable.domain.TableGroup;
-import kitchenpos.ordertable.dto.TableGroupCreateRequest;
-import kitchenpos.ordertable.dto.TableGroupResponse;
-import kitchenpos.ordertable.repository.OrderTableRepository;
-import kitchenpos.ordertable.repository.TableGroupRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.order.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -118,13 +118,12 @@ class TableGroupServiceTest {
     void ungroupException1(OrderStatus orderStatus) {
         //given
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup(LocalDateTime.now()));
-        OrderTable orderTable1 = new OrderTable(0, true);
-        OrderTable orderTable2 = new OrderTable(0, true);
+        OrderTable orderTable1 = new OrderTable(0, false);
+        orderTable1.addOrder(new Order(orderStatus));
+        OrderTable orderTable2 = new OrderTable(0, false);
         orderTable1.groupBy(tableGroup);
         orderTable2.groupBy(tableGroup);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));
-
-        orderRepository.save(new Order(orderTable1, orderStatus));
 
         //then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
