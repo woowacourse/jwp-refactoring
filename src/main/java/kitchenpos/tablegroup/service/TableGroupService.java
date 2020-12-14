@@ -49,7 +49,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setUpGroupTable(tableGroup);
+            savedOrderTable.changeEmpty(false);
             orderTableRepository.save(savedOrderTable);
         }
 
@@ -60,7 +60,9 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.findByIdWithOrderTables(tableGroupId)
+                .orElseThrow(IllegalArgumentException::new);
+        final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -71,9 +73,6 @@ public class TableGroupService {
             throw new IllegalArgumentException("요리중이거나 식사 중에는 테이블 그룹을 해제할 수 없습니다.");
         }
 
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setUpUnGroupTable();
-            orderTableRepository.save(orderTable);
-        }
+        tableGroupRepository.deleteById(tableGroup.getId());
     }
 }

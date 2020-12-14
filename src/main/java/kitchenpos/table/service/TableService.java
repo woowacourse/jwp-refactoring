@@ -41,8 +41,6 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 테이블을 찾을수가 없습니다."));
 
-        savedOrderTable.existTableGroupId();
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException("요리중이거나 식사중이면 상태를 변경할 수 없습니다.");

@@ -1,27 +1,15 @@
 package kitchenpos.table.domain;
 
-import java.util.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import kitchenpos.tablegroup.domain.TableGroup;
 
 @Entity
 public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JsonBackReference
-    @ManyToOne
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
 
     private int numberOfGuests;
 
@@ -30,27 +18,14 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(final Long id, final TableGroup tableGroup, final int numberOfGuests, final boolean empty) {
+    public OrderTable(final Long id, final int numberOfGuests, final boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
     public OrderTable(final int numberOfGuests, final boolean empty) {
-        this(null, null, numberOfGuests, empty);
-    }
-
-    public void existTableGroupId() {
-        if (tableGroup != null) {
-            throw new IllegalArgumentException("테이블 그룹이 존재합니다.");
-        }
-    }
-
-    private void validateByNotEmptyOrNonNullTableGroup() {
-        if (!empty || Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException("비어있거나 테이블그룹이 존재합니다.");
-        }
+        this(null, numberOfGuests, empty);
     }
 
     private void validateByNumberOfGuests(final int numberOfGuests) {
@@ -66,24 +41,9 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
     public void changeNumberOfGuests(final int numberOfGuests) {
         validateByNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public void setUpGroupTable(final TableGroup tableGroup) {
-        validateByNotEmptyOrNonNullTableGroup();
-        this.tableGroup = tableGroup;
-        this.empty = false;
-    }
-
-    public void setUpUnGroupTable() {
-        this.tableGroup = null;
-        this.empty = true;
     }
 
     public int getNumberOfGuests() {

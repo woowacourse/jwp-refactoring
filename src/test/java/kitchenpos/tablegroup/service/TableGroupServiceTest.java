@@ -71,17 +71,8 @@ class TableGroupServiceTest {
                 Arrays.asList(new TableRequest(orderTable1.getId()), new TableRequest(orderTable2.getId())));
 
         final TableGroupResponse tableGroupResponse = tableGroupService.create(tableGroupRequest);
-        tableGroupService.ungroup(tableGroupResponse.getId());
 
-        final OrderTable expected1 = orderTableRepository.findById(orderTable1.getId())
-                .orElseThrow(IllegalArgumentException::new);
-        final OrderTable expected2 = orderTableRepository.findById(orderTable2.getId())
-                .orElseThrow(IllegalArgumentException::new);
-
-        assertAll(
-                () -> assertThat(expected1.getTableGroup()).isNull(),
-                () -> assertThat(expected2.getTableGroup()).isNull()
-        );
+        assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroupResponse.getId()));
     }
 
     @DisplayName("ungroup: 테이블 상태가 Cocking이거나 Meal일 경우에는 예외처리")
