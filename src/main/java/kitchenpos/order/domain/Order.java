@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -17,7 +18,6 @@ import javax.persistence.Table;
 
 import org.springframework.util.CollectionUtils;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import kitchenpos.order.domain.enums.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 
@@ -28,7 +28,6 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "order_table_id")
     private OrderTable orderTable;
@@ -36,7 +35,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderLineItem> orderLineItems;
 
     private LocalDateTime orderedTime;

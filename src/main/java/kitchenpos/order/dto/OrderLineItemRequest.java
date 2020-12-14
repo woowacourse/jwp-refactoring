@@ -4,7 +4,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 
 public class OrderLineItemRequest {
@@ -20,8 +19,8 @@ public class OrderLineItemRequest {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toEntity(final Menu menu, final Order order) {
-        return new OrderLineItem(order, menu, quantity);
+    public OrderLineItem toEntity(final Menu menu) {
+        return new OrderLineItem(null, menu, quantity);
     }
 
     public Long getMenuId() {
