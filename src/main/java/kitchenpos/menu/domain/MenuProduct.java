@@ -24,22 +24,13 @@ public class MenuProduct {
 
     private long quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
-
     public MenuProduct() {
     }
 
-    public MenuProduct(final Long seq, final Product product, final long quantity, final Menu menu) {
+    public MenuProduct(final Long seq, final Product product, final long quantity) {
         this.seq = seq;
         this.product = product;
         this.quantity = quantity;
-        this.menu = menu;
-    }
-
-    public MenuProduct(final Long seq, final Product product, final long quantity) {
-        this(seq, product, quantity, null);
     }
 
     public MenuProduct(final Product product, final long quantity) {
@@ -52,14 +43,6 @@ public class MenuProduct {
 
     public Long getSeq() {
         return seq;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Product getProduct() {
