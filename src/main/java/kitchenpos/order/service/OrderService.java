@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.enums.OrderStatus;
@@ -18,16 +17,13 @@ import kitchenpos.table.domain.OrderTableRepository;
 @Service
 public class OrderService {
 
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository
     ) {
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -68,8 +64,9 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderChangeStatusRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus);
 
+        savedOrder.setOrderStatus(orderStatus);
+        
         orderRepository.save(savedOrder);
 
         return OrderResponse.of(savedOrder);

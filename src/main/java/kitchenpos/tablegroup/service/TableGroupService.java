@@ -33,11 +33,9 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<TableRequest> orderTables = tableGroupRequest.getOrderTables();
-
         final List<Long> orderTableIds = orderTables.stream()
                 .map(TableRequest::getId)
                 .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
@@ -45,12 +43,10 @@ public class TableGroupService {
         }
 
         final TableGroup tableGroup = tableGroupRequest.toEntity(savedOrderTables);
-
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.changeEmpty(false);
-            orderTableRepository.save(savedOrderTable);
         }
 
         savedTableGroup.setOrderTables(savedOrderTables);

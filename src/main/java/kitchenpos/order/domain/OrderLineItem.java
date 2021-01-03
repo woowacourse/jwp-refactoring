@@ -33,15 +33,7 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
     public Menu getMenu() {
         return menu;
-    }
-
-    public long getQuantity() {
-        return quantity;
     }
 }

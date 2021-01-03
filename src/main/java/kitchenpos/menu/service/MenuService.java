@@ -36,16 +36,13 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 메뉴그룹을 찾을수 없습니다."));
         final List<MenuProductRequest> menuProductDtos = menuRequest.getMenuProducts();
-
         final List<MenuProduct> menuProducts = menuProductDtos.stream()
                 .map(menuProductRequest -> {
                     final Product product = productRepository.findById(menuProductRequest.getProductId())
                             .orElseThrow(() -> new IllegalArgumentException("해당 메뉴 상품을 찾을수 없습니다."));
                     return menuProductRequest.toEntity(product);
                 }).collect(Collectors.toList());
-
         final Menu menu = menuRequest.toEntity(menuGroup, menuProducts);
-
         final Menu savedMenu = menuRepository.save(menu);
 
         savedMenu.validateByPriceWithMenuProductSum();
