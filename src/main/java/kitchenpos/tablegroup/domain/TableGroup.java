@@ -17,6 +17,7 @@ import kitchenpos.table.domain.OrderTable;
 @Entity
 public class TableGroup {
 
+    public static final int MIN_TABLE_NUMBER = 2;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,7 +43,7 @@ public class TableGroup {
     }
 
     private void validateByOrderTables(final List<OrderTable> orderTables) {
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < MIN_TABLE_NUMBER) {
             throw new IllegalArgumentException("테이블의 수가 2미만일수 없습니다.");
         }
     }
@@ -59,8 +60,13 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void group(final List<OrderTable> orderTables) {
         validateByOrderTables(orderTables);
+
+        for (final OrderTable savedOrderTable : orderTables) {
+            savedOrderTable.changeEmpty(false);
+        }
+
         this.orderTables = orderTables;
     }
 }

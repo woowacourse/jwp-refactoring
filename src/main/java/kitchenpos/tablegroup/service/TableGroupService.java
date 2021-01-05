@@ -45,11 +45,7 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRequest.toEntity(savedOrderTables);
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.changeEmpty(false);
-        }
-
-        savedTableGroup.setOrderTables(savedOrderTables);
+        savedTableGroup.group(savedOrderTables);
 
         return TableGroupResponse.of(savedTableGroup);
     }
@@ -57,9 +53,8 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findByIdWithOrderTables(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new IllegalArgumentException("해당 테이블 그룹을 찾을 수 없습니다."));
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
-
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
@@ -69,6 +64,11 @@ public class TableGroupService {
             throw new IllegalArgumentException("요리중이거나 식사 중에는 테이블 그룹을 해제할 수 없습니다.");
         }
 
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.changeEmpty(true);
+        }
+
         tableGroupRepository.deleteById(tableGroup.getId());
+
     }
 }
