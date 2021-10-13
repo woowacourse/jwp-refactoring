@@ -24,11 +24,13 @@ class MenuGroupRestControllerTest extends IntegrationTest {
             // given
             MenuGroup menuGroup = new MenuGroup();
             menuGroup.setName("분식류");
+            MenuGroup expected = new MenuGroup();
+            expected.setId(5L);
+            expected.setName("분식류");
 
             // when, then
             webTestClient.post()
                 .uri("/api/menu-groups")
-                .headers(httpHeaders -> httpHeaders.setBearerAuth("token"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .bodyValue(menuGroup)
@@ -36,11 +38,10 @@ class MenuGroupRestControllerTest extends IntegrationTest {
                 .expectStatus()
                 .isCreated()
                 .expectHeader()
-                .value("location", startsWith("/api/menu-groups/"))
+                .value("location", startsWith("/api/menu-groups/5"))
                 .expectBody(MenuGroup.class)
                 .value(response -> assertThat(response).usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(menuGroup)
+                    .isEqualTo(expected)
                 );
         }
     }
