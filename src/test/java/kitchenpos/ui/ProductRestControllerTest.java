@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.startsWith;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -68,7 +67,7 @@ class ProductRestControllerTest extends IntegrationTest {
             }
         }
 
-        @DisplayName("생성하려는 Product의 Price가 양수면")
+        @DisplayName("생성하려는 Product의 Price가 0 이상 양수면")
         @Nested
         class Context_price_positive {
 
@@ -78,7 +77,7 @@ class ProductRestControllerTest extends IntegrationTest {
                 // given
                 Product product = new Product();
                 product.setName("순대튀김");
-                product.setPrice(BigDecimal.valueOf(100));
+                product.setPrice(BigDecimal.valueOf(0));
                 Product expected = new Product();
                 expected.setId(7L);
                 expected.setName("순대튀김");
@@ -94,7 +93,7 @@ class ProductRestControllerTest extends IntegrationTest {
                     .expectStatus()
                     .isCreated()
                     .expectHeader()
-                    .value("location", startsWith("/api/products/7"))
+                    .valueEquals("location", "/api/products/7")
                     .expectBody(MenuGroup.class)
                     .value(response -> assertThat(response).usingRecursiveComparison()
                         .isEqualTo(expected)

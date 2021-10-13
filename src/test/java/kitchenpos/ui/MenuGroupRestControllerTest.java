@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.startsWith;
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
@@ -38,7 +37,7 @@ class MenuGroupRestControllerTest extends IntegrationTest {
                 .expectStatus()
                 .isCreated()
                 .expectHeader()
-                .value("location", startsWith("/api/menu-groups/5"))
+                .valueEquals("location", "/api/menu-groups/5")
                 .expectBody(MenuGroup.class)
                 .value(response -> assertThat(response).usingRecursiveComparison()
                     .isEqualTo(expected)

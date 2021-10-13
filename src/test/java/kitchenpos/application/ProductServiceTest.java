@@ -11,6 +11,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -65,17 +67,18 @@ class ProductServiceTest {
             }
         }
 
-        @DisplayName("생성하려는 Product의 Price가 양수면")
+        @DisplayName("생성하려는 Product의 Price가 0 이상 양수면")
         @Nested
         class Context_price_positive {
 
             @DisplayName("정상적으로 Product를 생성 및 저장한다.")
-            @Test
-            void it_saves_and_returns_product() {
+            @ParameterizedTest
+            @ValueSource(ints = {0, 300})
+            void it_saves_and_returns_product(int price) {
                 // given
                 Product product = new Product();
                 product.setName("참치마요");
-                product.setPrice(BigDecimal.valueOf(300));
+                product.setPrice(BigDecimal.valueOf(price));
                 Product expected = new Product();
                 expected.setId(1L);
                 expected.setName("참치마요");
