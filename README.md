@@ -54,6 +54,7 @@
 * 생성
     * Menu를 생성한다.
         * Menu를 등록하기 위해서는 Menu가 속한 MenuGroup이 선행 존재해야한다.
+        * Menu에 속한 MenuProduct와 연결된 Product를 ID로 조회하지 못하면 예외가 발생한다.  
         * Menu의 가격이 null이거나 음수면 예외가 발생한다.
         * Menu의 가격은 메뉴에 포함된 List\<MenuProduct(메뉴 상품)\>들의 누계 가격(각 MenuProduct 가격 * 수량)의 총합보다 크면 예외가 발생한다.
 * 조회
@@ -99,7 +100,7 @@
     * TableGroup을 생성한다.
         * TableGroup에 속한 List\<OrderTable\>들은 DB에 저장되어있어야한다.
         * TableGroup에 속한 List\<OrderTable\> 크기가 0이거나 2 미만이면 예외가 발생한다.
-        * TableGroup에 속한 List\<OrderTable\>의 개별 OrderTable이 비어있거나 이미 다른 TableGroup에 속한 경우 예외가 발생한다.
+        * TableGroup에 속한 List\<OrderTable\>의 개별 OrderTable이 비어있지 않거나 이미 다른 TableGroup에 속한 경우 예외가 발생한다.
         * TableGroup에 속한 List\<OrderTable\>의 개별 OrderTable empty 속성은 false다.
 * 삭제
     * TableGroup 단체 지정을 해지한다.
