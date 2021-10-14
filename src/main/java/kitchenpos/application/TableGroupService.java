@@ -33,7 +33,7 @@ public class TableGroupService {
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("TableGroup에 속한 OrderTable은 최소 2개 이상이어야합니다.");
         }
 
         final List<Long> orderTableIds = orderTables.stream()
@@ -43,12 +43,12 @@ public class TableGroupService {
         final List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
         if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("요청한 OrderTable이 저장되어있지 않습니다.");
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("OrderTable 일부가 비어있지 않거나 특정 TableGroup에 이미 속해있습니다.");
             }
         }
 
@@ -77,7 +77,7 @@ public class TableGroupService {
 
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("TableGroup에 속한 Order 중 일부가 조리중이거나 식사 중입니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {
