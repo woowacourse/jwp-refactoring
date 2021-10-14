@@ -13,6 +13,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -112,15 +114,16 @@ class TableRestControllerTest extends IntegrationTest {
     }
 
     @DisplayName("changeEmpty 메서드는 OrderTable에 속한 Order가 조리중 혹은 식사중이라면 예외가 발생한다.")
-    @Test
-    void changeEmpty_order_status_cooking_or_meal_exception_thrown() {
+    @ParameterizedTest
+    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
+    void changeEmpty_order_status_cooking_or_meal_exception_thrown(OrderStatus orderStatus) {
         // given
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(false);
         OrderTable requestBody = orderTableDao.save(orderTable);
         Order order = new Order();
         order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(orderStatus.name());
         order.setOrderTableId(requestBody.getId());
         orderDao.save(order);
 
