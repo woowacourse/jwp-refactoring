@@ -45,7 +45,8 @@ class ProductServiceTest {
 
                 // when, then
                 assertThatCode(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("유효하지 않은 Product 가격입니다.");
             }
         }
 
@@ -63,7 +64,8 @@ class ProductServiceTest {
 
                 // when, then
                 assertThatCode(() -> productService.create(product))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("유효하지 않은 Product 가격입니다.");
             }
         }
 

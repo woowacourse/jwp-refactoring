@@ -39,7 +39,11 @@ class ProductRestControllerTest extends IntegrationTest {
                     .bodyValue(product)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("유효하지 않은 Product 가격입니다.")
+                    );
             }
         }
 
@@ -63,7 +67,11 @@ class ProductRestControllerTest extends IntegrationTest {
                     .bodyValue(product)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("유효하지 않은 Product 가격입니다.")
+                    );
             }
         }
 
