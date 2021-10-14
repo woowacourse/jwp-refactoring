@@ -70,7 +70,8 @@ class MenuServiceTest {
 
                 // when, then
                 assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("유효하지 않은 Menu 가격입니다.");
             }
         }
 
@@ -90,7 +91,7 @@ class MenuServiceTest {
 
                 // when, then
                 assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .hasMessage("유효하지 않은 Menu 가격입니다.");
             }
         }
 
@@ -111,7 +112,8 @@ class MenuServiceTest {
 
                 // when, then
                 assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Menu가 속한 MenuGroup이 존재하지 않습니다.");
 
                 verify(menuGroupDao, times(1)).existsById(1L);
             }
@@ -139,7 +141,8 @@ class MenuServiceTest {
 
                 // when, then
                 assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Product가 존재하지 않습니다.");
 
                 verify(menuGroupDao, times(1)).existsById(1L);
                 verify(productDao, times(1)).findById(1L);
@@ -175,7 +178,8 @@ class MenuServiceTest {
 
                 // when, then
                 assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Menu 가격은 Product 가격 누계를 초과할 수 없습니다.");
 
                 verify(menuGroupDao, times(1)).existsById(1L);
                 verify(productDao, times(2)).findById(anyLong());

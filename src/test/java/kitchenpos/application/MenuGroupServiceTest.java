@@ -47,6 +47,7 @@ class MenuGroupServiceTest {
 
             // then
             assertThat(response).isEqualTo(expected);
+
             verify(menuGroupDao, times(1)).save(menuGroup);
         }
     }
@@ -73,6 +74,7 @@ class MenuGroupServiceTest {
 
             // then
             assertThat(response).isEqualTo(expected);
+
             verify(menuGroupDao, times(1)).findAll();
         }
     }

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,7 +44,11 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("유효하지 않은 Menu 가격입니다.")
+                    );
             }
         }
 
@@ -69,7 +74,11 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("유효하지 않은 Menu 가격입니다.")
+                    );
             }
         }
 
@@ -95,7 +104,11 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("Menu가 속한 MenuGroup이 존재하지 않습니다.")
+                    );
             }
         }
 
@@ -125,7 +138,11 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("Product가 존재하지 않습니다.")
+                    );
             }
         }
 
@@ -157,7 +174,11 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .is5xxServerError();
+                    .isBadRequest()
+                    .expectBody(String.class)
+                    .value(response ->
+                        assertThat(response).isEqualTo("Menu 가격은 Product 가격 누계를 초과할 수 없습니다.")
+                    );
             }
         }
 
@@ -189,7 +210,14 @@ class MenuRestControllerTest extends IntegrationTest {
                     .bodyValue(menu)
                     .exchange()
                     .expectStatus()
-                    .isCreated();
+                    .isCreated()
+                    .expectHeader()
+                    .valueEquals("location", "/api/menus/7")
+                    .expectBody(MenuGroup.class)
+                    .value(response -> assertThat(response).usingRecursiveComparison()
+                        .ignoringFields("id", "menuProducts")
+                        .isEqualTo(menu)
+                    );
             }
         }
     }
