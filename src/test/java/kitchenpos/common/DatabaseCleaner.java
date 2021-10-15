@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +55,6 @@ public class DatabaseCleaner implements InitializingBean {
         statement.executeUpdate("SET REFERENTIAL_INTEGRITY FALSE");
 
         for (String tableName : tableNames) {
-            if (tableName.toLowerCase().contains("flyway")) {
-                continue;
-            }
             String alterQuery = getAlterQuery(tableName);
             statement.executeUpdate("TRUNCATE TABLE " + tableName);
             statement.executeUpdate(alterQuery);
