@@ -151,7 +151,8 @@ class MenuServiceTest {
         menuService.create(input);
 
         List<Menu> menus = menuService.list();
-        assertThat(menus.size()).isEqualTo(1);
+
+        assertThat(menus).hasSize(1);
         assertThat(menus).allMatch(menu -> !menu.getMenuProducts().isEmpty());
     }
 }
