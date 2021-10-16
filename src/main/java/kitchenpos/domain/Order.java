@@ -13,6 +13,10 @@ public class Order {
     public Order() {
     }
 
+    public Order(String orderStatus) {
+        this(null, null, orderStatus, null, null);
+    }
+
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }

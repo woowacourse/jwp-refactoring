@@ -114,8 +114,8 @@ class TableServiceTest {
         OrderTable orderTable = tableService.create(new OrderTable(false));
         OrderTable negativeNumberRequest = new OrderTable(-3);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), negativeNumberRequest)).isInstanceOf(
-                IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), negativeNumberRequest))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -124,8 +124,8 @@ class TableServiceTest {
         Long notExistingTableId = Long.MAX_VALUE;
         OrderTable request = new OrderTable(3);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistingTableId, request)).isInstanceOf(
-                IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(notExistingTableId, request))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -134,7 +134,7 @@ class TableServiceTest {
         OrderTable orderTable = tableService.create(new OrderTable(true));
         OrderTable request = new OrderTable(3);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request)).isInstanceOf(
-                IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 }
