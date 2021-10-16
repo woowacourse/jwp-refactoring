@@ -8,6 +8,19 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    public TableGroup() {
+    }
+
+    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this(null, createdDate, orderTables);
+    }
+
+    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
     public Long getId() {
         return id;
     }
