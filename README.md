@@ -2,6 +2,34 @@
 
 ## 요구 사항
 
+### Menu Group `/api/menu-groups`
+- [ ] POST 메뉴 그룹 추가 
+- [ ] GET 메뉴 그룹 불러오기
+
+### Menu `/api/menus`
+- [ ] POST 메뉴 생성
+- [ ] GET 메뉴 불러오기
+
+### Order(주문) `/api/orders`
+- [ ] POST 주문 생성
+- [ ] GET 주문 불러오기
+- [ ] PUT `/{orderId}/order-status` 주문 수정하기
+
+### Products(상품) `/api/products`
+- [ ] POST 상품 생성
+- [ ] GET 상품 불러오기
+
+### Table Group(단체 지정) `/api/table-groups`
+- [ ] POST 테이블 그룹 생성
+- [ ] DELETE `/{tableGroupId}` 테이블 그룹 해제
+
+### Table `/api/tables`
+- [ ] POST 주문 테이블 생성 
+- [ ] GET 주문 테이블 불러오기
+- [ ] PUT `/{orderTableId}/empty` 주문 테이블 비우기
+- [ ] PUT `/{orderTableId}/number-of-guests` 손님 수 수정
+
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
