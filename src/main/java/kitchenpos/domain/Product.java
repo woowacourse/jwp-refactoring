@@ -7,6 +7,27 @@ public class Product {
     private String name;
     private BigDecimal price;
 
+    public Product() {
+    }
+
+    public Product(String name) {
+        this(null, name, null);
+    }
+
+    public Product(String name, int price) {
+        this(null, name, price);
+    }
+
+    public Product(Long id, String name, int price) {
+        this(id, name, BigDecimal.valueOf(price));
+    }
+
+    public Product(Long id, String name, BigDecimal price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }
