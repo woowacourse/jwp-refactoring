@@ -1,6 +1,125 @@
 # 키친포스
 
 ## 요구 사항
+### Order
+#### 주문 등록 기능
+* [ ] Order 를 받은 Table id와 Order 의 Menu 정보(Menu의 id와  Menu 의 수량)을 포함한 요청으로 Order 를 등록할 수 있다.
+```json
+{
+  "orderTableId": 1,
+  "orderLineItems": [
+    {
+      "menuId": 1,
+      "quantity": 1
+    }
+  ]
+}
+```
+#### 주문 전체 조회 기능
+* [ ] 전체 Order 를 조회할 수 있다.
+  
+#### 주문 상태 변경 기능 
+* [ ] Order의 상태를 변경할 수 있다.
+```json
+{
+  "orderStatus": "MEAL"
+}
+```
+
+```json
+{
+  "orderStatus": "COMPLETION"
+}
+```
+
+### Product
+#### 상품 등록 기능
+* [ ] Product name과 price로 Product를 등록할 수 있다.
+```json
+{
+  "name": "강정치킨",
+  "price": 17000
+}
+```
+#### 상품 전체 조회 기능
+* [ ] 전체 Product를 조회할 수 있다.
+
+### Menu
+#### 메뉴 생성 기능
+* [ ] Menu 이름, 가격, 속하는 메뉴 그룹, 메뉴 포함하는 Product 정보를 포함한 요청으로 Menu를 등록할 수 있다.
+```json
+{
+  "name": "후라이드+후라이드",
+  "price": 19000,
+  "menuGroupId": 1,
+  "menuProducts": [
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+  ]
+}
+```
+#### 메뉴 전체 조회 기능 - @GetMapping("/api/menus")
+* [ ] 전체 Menu를 조회할 수 있다.
+
+### MenuGroup
+#### 메뉴 그룹 생성 기능
+* [ ] MenuGroup name을 포함한 요청으로 Menu Group을 생성할 수 있다.
+```json
+{
+  "name": "추천메뉴"
+}
+```
+
+#### 메뉴 그룹 전체 조회 기능 - @GetMapping("/api/menu-groups")
+* [ ] 전체 MenuGroup을 조회할 수 있다.
+
+### Table
+#### 테이블 생성 기능
+* [ ] 테이블 정보(테이블 상태, 테이블 방문 손님 수)를 포함한 요청으로 Table을 등록할 수 있다.
+```json
+{
+  "numberOfGuests": 0,
+  "empty": true
+}
+```
+#### 테이블 전체 조회 기능
+* [ ] 전체 Table을 조회할 수 있다.
+
+#### 테이블 상태 비움 기능
+* [ ] 특정 테이블 상태를 변경할 수 있다.
+```json
+{
+  "empty": false
+}
+```
+#### 테이블 인원 변경 기능
+* [ ] 특정 테이블의 방문 손님 수를 변경할 수 있다.
+```json
+{
+  "numberOfGuests": 4
+}
+```
+
+### TableGroup
+#### 테이블 그룹 생성 기능
+* [ ] Table Group에 포함시킬 Table 리스트 정보를 포함한 요청으로 TableGroup을 등록할 수 있다.
+```json
+{
+  "orderTables": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ]
+}
+```
+
+#### 테이블 그룹 삭제 기능
+* [ ] 특정 테이블 그룹을 삭제할 수 있다.
 
 ## 용어 사전
 
