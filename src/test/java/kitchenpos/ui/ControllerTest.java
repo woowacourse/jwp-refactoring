@@ -14,10 +14,11 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import org.junit.jupiter.api.BeforeEach;
 
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.ProductService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest({MenuGroupRestController.class})
+@WebMvcTest({MenuGroupRestController.class, ProductRestController.class})
 public abstract class ControllerTest {
 
     @Autowired
@@ -31,6 +32,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected MenuGroupService menuGroupService;
+
+    @MockBean
+    protected ProductService productService;
 
     @BeforeEach
     void setUp() {
