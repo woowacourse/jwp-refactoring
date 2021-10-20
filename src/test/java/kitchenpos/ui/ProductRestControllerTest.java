@@ -46,7 +46,7 @@ class ProductRestControllerTest extends ControllerTest {
     void createWrongPriceNull() throws Exception {
         // given
         Product 강정치킨 = new Product("강정치킨");
-        willThrow(new IllegalArgumentException()).given(productService).create(any(Product.class));
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(Product.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -55,7 +55,8 @@ class ProductRestControllerTest extends ControllerTest {
 
         // then
         response.andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+                .andExpect(jsonPath("$.message").value("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다."));
     }
 
     @Test
@@ -63,7 +64,7 @@ class ProductRestControllerTest extends ControllerTest {
     void createWrongPriceUnderZero() throws Exception {
         // given
         Product 강정치킨 = new Product("강정치킨", -1);
-        willThrow(new IllegalArgumentException()).given(productService).create(any(Product.class));
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(Product.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -72,7 +73,8 @@ class ProductRestControllerTest extends ControllerTest {
 
         // then
         response.andExpect(status().isBadRequest())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException));
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+                .andExpect(jsonPath("$.message").value("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다."));
     }
 
     @Test
