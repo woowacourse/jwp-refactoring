@@ -16,10 +16,11 @@ import org.junit.jupiter.api.BeforeEach;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@WebMvcTest({MenuGroupRestController.class, ProductRestController.class, MenuRestController.class})
+@WebMvcTest({MenuGroupRestController.class, ProductRestController.class, MenuRestController.class, TableRestController.class})
 public abstract class ControllerTest {
 
     @Autowired
@@ -39,6 +40,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected MenuService menuService;
+
+    @MockBean
+    protected TableService tableService;
 
     @BeforeEach
     void setUp() {

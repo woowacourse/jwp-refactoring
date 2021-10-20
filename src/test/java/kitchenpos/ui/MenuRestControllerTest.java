@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@DisplayName("MenuRestControllerTest 단위 테스트")
+@DisplayName("MenuRestController 단위 테스트")
 class MenuRestControllerTest extends ControllerTest {
 
     private MenuProduct 후라이드치킨;
