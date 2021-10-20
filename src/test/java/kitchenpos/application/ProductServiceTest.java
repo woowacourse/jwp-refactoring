@@ -51,8 +51,9 @@ class ProductServiceTest {
         Product 강정치킨 = new Product("강정치킨");
 
         // when & then
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> productService.create(강정치킨));
+        assertEquals("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.", exception.getMessage());
     }
 
     @ParameterizedTest
@@ -63,8 +64,9 @@ class ProductServiceTest {
         Product 강정치킨 = new Product("강정치킨", price);
 
         // when & then
-        assertThrows(IllegalArgumentException.class,
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> productService.create(강정치킨));
+        assertEquals("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.", exception.getMessage());
     }
 
     @Test
