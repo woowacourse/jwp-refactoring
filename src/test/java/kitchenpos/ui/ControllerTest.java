@@ -22,7 +22,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
         ProductRestController.class,
         MenuRestController.class,
         TableRestController.class,
-        OrderRestController.class
+        OrderRestController.class,
+        TableGroupRestController.class
 })
 public abstract class ControllerTest {
 
@@ -49,6 +50,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected OrderService orderService;
+
+    @MockBean
+    protected TableGroupService tableGroupService;
 
     @BeforeEach
     void setUp() {
