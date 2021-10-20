@@ -140,11 +140,12 @@
 ## 통합 테스트
 ### OrderIntegrationTest
 #### 주문 등록
-* [ ] 주문 등록 완료
-* [ ] 요청에 `orderTableId`가 포함되지 않는  예외 발생
-* [ ] 요청에 `orderLineItems`가 빈 리스트인 경우 예외 발생
-* [ ] `orderTableId`를 가지는 테이블이 존재하지 않는 경우 예외 발생
-* [ ] `orderLineItems`에 정의된 메뉴 리스트 중에 존재하지 않는 메뉴가 있는 경우 예외 발생
+* [x] 주문 등록 완료
+* [x] 요청에 `orderTableId`가 포함되지 않는  예외 발생
+* [x] 요청에 `orderLineItems`가 빈 리스트인 경우 예외 발생
+* [x] `orderTableId`를 가지는 테이블이 존재하지 않는 경우 예외 발생
+* [x] `orderTableId`를 가지는 테이블이 empty 상태인 경우 예외 발생
+* [x] `orderLineItems`에 정의된 메뉴 리스트 중에 존재하지 않는 메뉴가 있는 경우 예외 발생
 
 #### 주문 조회
 * [ ] 전체 주문 조회 완료
