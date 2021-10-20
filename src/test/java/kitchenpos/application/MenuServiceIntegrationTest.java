@@ -81,5 +81,4 @@ class MenuServiceIntegrationTest {
     private Menu 메뉴_등록(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
         return menuService.create(new Menu(name, new BigDecimal(price), menuGroupId, menuProducts));
     }
-
 }
