@@ -25,6 +25,7 @@ class ProductServiceTest {
         // given
         Product product = new Product();
         product.setName("강정치킨");
+        product.setPrice(null);
 
         // when
         assertThatThrownBy(() -> productService.create(product))
