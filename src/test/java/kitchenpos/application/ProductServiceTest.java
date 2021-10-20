@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import org.assertj.core.api.Java6Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +41,11 @@ class ProductServiceTest {
         when(productDao.save(product)).thenReturn(savedProduct);
 
         final Product actual = productService.create(product);
-        assertThat(actual.getId()).isEqualTo(1L);
+        assertAll(
+                () -> Java6Assertions.assertThat(actual.getId()).isEqualTo(1L),
+                () -> Java6Assertions.assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
+                () -> Java6Assertions.assertThat(actual.getName()).isEqualTo("컵누들")
+        );
     }
 
     @DisplayName("상품의 가격은 0 원 이상이어야 한다")
