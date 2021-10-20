@@ -25,6 +25,10 @@ public class Order {
         this(null, orderTableId, null, null, orderLineItems);
     }
 
+    public Order(String orderStatus) {
+        this(null, null, orderStatus, null, null);
+    }
+
     public Long getId() {
         return id;
     }
