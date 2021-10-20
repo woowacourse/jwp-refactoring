@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -43,7 +45,7 @@ class MenuServiceIntegrationTest {
         List<MenuProduct> menuProducts = Arrays.asList(new MenuProduct(1L, 2));
 
         assertThatThrownBy(() -> 메뉴_등록(null, 18000, 1L, menuProducts))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(DataIntegrityViolationException.class);
     }
 
     @Test

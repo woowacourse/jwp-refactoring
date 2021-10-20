@@ -44,13 +44,6 @@ class TableGroupServiceIntegrationTest {
         assertThat(created.size()).isEqualTo(2);
     }
 
-    private List<OrderTable> getTablesInTableGroup(TableGroup tableGroup) {
-        return tableService.list()
-                           .stream()
-                           .filter(table -> table.getTableGroupId().equals(tableGroup.getId()))
-                           .collect(Collectors.toList());
-    }
-
     @Test
     void 테이블_그룹에_포함되는_테이블이_존재하지_않는_경우_예외_발생() {
         List<OrderTable> orderTables = Arrays.asList(
@@ -83,4 +76,10 @@ class TableGroupServiceIntegrationTest {
         return tableGroupService.create(new TableGroup(orderTables));
     }
 
+    private List<OrderTable> getTablesInTableGroup(TableGroup tableGroup) {
+        return tableService.list()
+                           .stream()
+                           .filter(table -> tableGroup.getId().equals(table.getTableGroupId()))
+                           .collect(Collectors.toList());
+    }
 }
