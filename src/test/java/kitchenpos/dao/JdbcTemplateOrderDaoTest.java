@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문Dao 테스트")
-class JdbcTemplateOrderDaoTest extends DaoTest {
+class JdbcTemplateOrderDaoTest extends DomainDaoTest {
 
     private OrderDao orderDao;
 
@@ -74,23 +74,5 @@ class JdbcTemplateOrderDaoTest extends DaoTest {
         // then
         // 초기화를 통해 등록된 메뉴 8개 + 새로 추가한 메뉴 1개
         assertThat(orders).hasSize(8 + 1);
-    }
-
-    private long SAVE_ORDER() {
-        // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
-
-        // when
-        Order savedOrder = orderDao.save(order);
-        return savedOrder.getId();
     }
 }
