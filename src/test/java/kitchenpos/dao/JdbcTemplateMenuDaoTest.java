@@ -22,12 +22,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("메뉴Dao 테스트")
-class JdbcTemplateMenuDaoTest extends DaoTest{
+class JdbcTemplateMenuDaoTest extends DomainDaoTest{
 
-    private static JdbcTemplateMenuDao menuDao;
-
-    @Autowired
-    private DataSource dataSource;
+    private MenuDao menuDao;
 
     @BeforeEach
     void setUp() {
@@ -85,7 +82,7 @@ class JdbcTemplateMenuDaoTest extends DaoTest{
         assertThat(menus).hasSize(6 + 1);
     }
 
-    @DisplayName("")
+    @DisplayName("Id에 해당하는 메뉴의 개수를 센다.")
     @Test
     void countByIdIn() {
         // given
@@ -96,21 +93,5 @@ class JdbcTemplateMenuDaoTest extends DaoTest{
 
         // then
         assertThat(count).isEqualTo(2);
-    }
-
-    private long SAVE_MENU() {
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
-
-        // when - then
-        Menu savedMenu = menuDao.save(menu);
-        return savedMenu.getId();
     }
 }

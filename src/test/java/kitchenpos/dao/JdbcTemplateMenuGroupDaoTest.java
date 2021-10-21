@@ -17,10 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("메뉴그룹Dao 테스트")
 class JdbcTemplateMenuGroupDaoTest extends DaoTest {
 
-    private static JdbcTemplateMenuGroupDao menuGroupDao;
-
-    @Autowired
-    private DataSource dataSource;
+    private JdbcTemplateMenuGroupDao menuGroupDao;
 
     @BeforeEach
     void setUp() {
