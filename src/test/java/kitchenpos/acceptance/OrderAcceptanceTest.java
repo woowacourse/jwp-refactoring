@@ -29,7 +29,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         orderLineItem.setQuantity(1);
 
         // orderTable 등록
-        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
 
         Map<String, Object> params = new HashMap<>();
         params.put("orderTableId", orderTableId);
@@ -95,7 +95,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);
 
-        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
 
         Map<String, Object> params = new HashMap<>();
         params.put("orderTableId", orderTableId);

@@ -61,7 +61,7 @@ public class TableAcceptanceTest extends AcceptanceTest{
     @Test
     void changeEmpty() {
         // given
-        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
 
         Map<String, Object> params = new HashMap<>();
         params.put("empty", true);
@@ -86,7 +86,7 @@ public class TableAcceptanceTest extends AcceptanceTest{
     @Test
     void changeNumberOfGuests() {
         // given
-        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
 
         Map<String, Object> params = new HashMap<>();
         params.put("numberOfGuests", "10");
@@ -107,10 +107,10 @@ public class TableAcceptanceTest extends AcceptanceTest{
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
     }
 
-    public static long POST_DEFAULT_ORDER_TABLE() {
+    public static long POST_DEFAULT_ORDER_TABLE(int numberOfGuests, boolean empty) {
         Map<String, Object> params = new HashMap<>();
-        params.put("numberOfGuests", "1");
-        params.put("empty", false);
+        params.put("numberOfGuests", numberOfGuests);
+        params.put("empty", empty);
 
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()

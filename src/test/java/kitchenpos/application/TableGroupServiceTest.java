@@ -121,16 +121,16 @@ class TableGroupServiceTest {
                 .save(any(OrderTable.class));
     }
 
-    @DisplayName("새 테이블그룹을 생성한다. - 실패, 비어있는 주문 테이블을 포함한 경우")
+    @DisplayName("새 테이블그룹을 생성한다. - 실패, 비어있는 주문 테이블을 포함하지 않은 경우")
     @Test
     void createFailedWhenSavedOrderTableEmpty() {
         // given
         TableGroup tableGroup = new TableGroup();
 
-        // 비어있는 orderTable을 포함한다.
+        // 비어있지 않은 orderTable을 포함한다.
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
+        orderTable1.setEmpty(false);
         orderTable1.setTableGroupId(1L);
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
@@ -157,7 +157,7 @@ class TableGroupServiceTest {
                 .save(any(OrderTable.class));
     }
 
-    @DisplayName("새 테이블그룹을 생성한다. - 실패, 주문 테이블에 포함된 테이블그룹 Id가 null인 경우")
+    @DisplayName("새 테이블그룹을 생성한다. - 실패, 주문 테이블에 포함된 테이블그룹 Id가 null이 아닌 경우")
     @Test
     void createFailedWhenTableGroupIdNull() {
         // given
@@ -166,7 +166,7 @@ class TableGroupServiceTest {
         // tableGroupId가 null임을 포함한다.
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
-        orderTable1.setTableGroupId(null);
+        orderTable1.setTableGroupId(1L);
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         orderTable2.setTableGroupId(1L);
