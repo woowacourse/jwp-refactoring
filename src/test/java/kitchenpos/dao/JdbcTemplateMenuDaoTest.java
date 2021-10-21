@@ -32,7 +32,6 @@ class JdbcTemplateMenuDaoTest extends DaoTest{
     @BeforeEach
     void setUp() {
         menuDao = new JdbcTemplateMenuDao(dataSource);
-
     }
 
     @DisplayName("메뉴를 저장한다.")
@@ -99,7 +98,7 @@ class JdbcTemplateMenuDaoTest extends DaoTest{
         assertThat(count).isEqualTo(2);
     }
 
-    public static long SAVE_MENU() {
+    private long SAVE_MENU() {
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
         menu.setPrice(BigDecimal.valueOf(19000));
