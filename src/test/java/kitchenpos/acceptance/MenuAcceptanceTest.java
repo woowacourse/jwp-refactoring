@@ -3,7 +3,8 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -13,47 +14,56 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MenuGroupAcceptanceTest extends AcceptanceTest{
-    @DisplayName("POST /api/menu-groups")
+public class MenuAcceptanceTest extends AcceptanceTest {
+    @DisplayName("POST /api/menus")
     @Test
-    void createPost() {
+    void create() {
         // given
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setProductId(1L);
+        menuProduct.setQuantity(2);
 
         // when
-        Map<String, String> params = new HashMap<>();
-        params.put("name", "추천메뉴");
+        Map<String, Object> params = new HashMap<>();
+        params.put("name", "후라이드+후라이드");
+        params.put("price", "19000.00");
+        params.put("menuGroupId", "1");
+        params.put("menuProducts", singletonList(menuProduct));
 
         // then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(params)
-                .when().post("/api/menu-groups")
+                .when().post("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
         assertThat(response.header("Location")).isNotBlank();
+        assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("GET /api/menu-groups")
+    @DisplayName("GET /api/menus")
     @Test
-    void createGet() {
+    void list() {
         // given - when
+
         // then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
-                .when().get("/api/menu-groups")
+                .when().get("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        List<MenuGroup> menuGroups = convertBodyToList(response, MenuGroup.class);
+        List<Menu> menus = convertBodyToList(response, Menu.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(menuGroups).isNotNull();
-        assertThat(menuGroups).isNotEmpty();
+        assertThat(menus).isNotNull();
+        assertThat(menus).isNotEmpty();
     }
 }
