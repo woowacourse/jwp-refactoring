@@ -12,7 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문테이블Dao 테스트")
-class JdbcTemplateOrderTableDaoTest extends DaoTest {
+class JdbcTemplateOrderTableDaoTest extends DomainDaoTest {
 
     private OrderTableDao orderTableDao;
 
@@ -42,7 +42,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findById() {
         // given
-        long orderTableId = SAVE_ORDER_TABLE();
+        long orderTableId = SAVE_ORDER_TABLE_RETURN_ID();
 
         // when
         Optional<OrderTable> findOrderTable = orderTableDao.findById(orderTableId);
@@ -57,7 +57,7 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findAll() {
         // given
-        SAVE_ORDER_TABLE();
+        SAVE_ORDER_TABLE_RETURN_ID();
 
         // when
         List<OrderTable> orderTables = orderTableDao.findAll();
@@ -71,8 +71,8 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findAllByIdIn() {
         // given
-        long orderTableId1 = SAVE_ORDER_TABLE();
-        long orderTableId2 = SAVE_ORDER_TABLE();
+        long orderTableId1 = SAVE_ORDER_TABLE_RETURN_ID();
+        long orderTableId2 = SAVE_ORDER_TABLE_RETURN_ID();
 
         // when
         List<OrderTable> orderTables = orderTableDao.findAllByIdIn(Arrays.asList(orderTableId1, orderTableId2));
@@ -87,10 +87,10 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
     @Test
     void findAllByTableGroupId() {
         // given
-        long tableGroupId = 1L;
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(10);
         orderTable.setEmpty(false);
+        long tableGroupId = SAVE_TABLE_GROUP_RETURN_ID();
         orderTable.setTableGroupId(tableGroupId);
 
         orderTableDao.save(orderTable);
@@ -102,16 +102,5 @@ class JdbcTemplateOrderTableDaoTest extends DaoTest {
         assertThat(orderTables).hasSize(1);
         assertThat(orderTables).extracting("tableGroupId")
                 .containsExactly(tableGroupId);
-    }
-
-    private long SAVE_ORDER_TABLE() {
-        // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
-
-        // when
-        OrderTable savedOrderTable = orderTableDao.save(orderTable);
-        return savedOrderTable.getId();
     }
 }

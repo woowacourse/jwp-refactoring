@@ -51,7 +51,7 @@ class JdbcTemplateOrderDaoTest extends DomainDaoTest {
     @Test
     void findById() {
         // given
-        long orderId = SAVE_ORDER();
+        long orderId = SAVE_ORDER_RETURN_ID();
 
         // when
         Optional<Order> findOrder = orderDao.findById(orderId);
@@ -66,13 +66,12 @@ class JdbcTemplateOrderDaoTest extends DomainDaoTest {
     @Test
     void findAll() {
         // given
-        SAVE_ORDER();
+        SAVE_ORDER_RETURN_ID();
 
         // when
         List<Order> orders = orderDao.findAll();
 
         // then
-        // 초기화를 통해 등록된 메뉴 8개 + 새로 추가한 메뉴 1개
-        assertThat(orders).hasSize(8 + 1);
+        assertThat(orders).hasSize(1);
     }
 }

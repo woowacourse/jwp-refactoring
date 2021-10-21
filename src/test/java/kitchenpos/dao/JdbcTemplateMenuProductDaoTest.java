@@ -23,7 +23,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     @Test
     void save() {
         // given
-        long menuId = SAVE_MENU();
+        long menuId = SAVE_MENU_RETURN_ID();
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
@@ -44,7 +44,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     @Test
     void findById() {
         // given
-        long menuId = SAVE_MENU();
+        long menuId = SAVE_MENU_RETURN_ID();
         long menuProductId = SAVE_MENU_PRODUCT(menuId);
 
         // when
@@ -60,7 +60,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     @Test
     void findAll() {
         // given
-        long menuId = SAVE_MENU();
+        long menuId = SAVE_MENU_RETURN_ID();
         SAVE_MENU_PRODUCT(menuId);
 
         // when
@@ -75,7 +75,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     @Test
     void findAllByMenuId() {
         // given
-        long menuId = SAVE_MENU();
+        long menuId = SAVE_MENU_RETURN_ID();
         SAVE_MENU_PRODUCT(menuId);
 
         // when

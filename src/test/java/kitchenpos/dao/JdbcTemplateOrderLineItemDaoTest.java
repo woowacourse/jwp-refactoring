@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("주문항목Dao 테스트")
 class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
@@ -25,7 +24,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
     @Test
     void save() {
         // given
-        long orderId = SAVE_ORDER();
+        long orderId = SAVE_ORDER_RETURN_ID();
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);
@@ -45,7 +44,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
     @Test
     void findById() {
         // given
-        long orderId = SAVE_ORDER();
+        long orderId = SAVE_ORDER_RETURN_ID();
         long orderLineItemId = SAVE_ORDER_LINE_ITEM(orderId);
 
         // when
@@ -62,7 +61,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
     @Test
     void findAll() {
         // given
-        long orderId = SAVE_ORDER();
+        long orderId = SAVE_ORDER_RETURN_ID();
         SAVE_ORDER_LINE_ITEM(orderId);
 
         // when
@@ -76,7 +75,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
     @Test
     void findAllByOrderId() {
         // given
-        long orderId = SAVE_ORDER();
+        long orderId = SAVE_ORDER_RETURN_ID();
         SAVE_ORDER_LINE_ITEM(orderId);
 
         // when

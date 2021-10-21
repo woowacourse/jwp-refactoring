@@ -5,6 +5,8 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,8 +16,10 @@ public class DomainDaoTest extends DaoTest{
 
     private MenuDao menuDao;
     private OrderDao orderDao;
+    private OrderTableDao orderTableDao;
+    private TableGroupDao tableGroupDao;
 
-    protected long SAVE_MENU() {
+    protected long SAVE_MENU_RETURN_ID() {
         menuDao = new JdbcTemplateMenuDao(dataSource);
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
@@ -32,7 +36,7 @@ public class DomainDaoTest extends DaoTest{
         return savedMenu.getId();
     }
 
-    protected long SAVE_ORDER() {
+    protected long SAVE_ORDER_RETURN_ID() {
         // given
         orderDao = new JdbcTemplateOrderDao(dataSource);
         Order order = new Order();
@@ -49,5 +53,28 @@ public class DomainDaoTest extends DaoTest{
         // when
         Order savedOrder = orderDao.save(order);
         return savedOrder.getId();
+    }
+
+    protected long SAVE_ORDER_TABLE_RETURN_ID() {
+        // given
+        orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(10);
+        orderTable.setEmpty(false);
+
+        // when
+        OrderTable savedOrderTable = orderTableDao.save(orderTable);
+        return savedOrderTable.getId();
+    }
+
+    protected long SAVE_TABLE_GROUP_RETURN_ID() {
+        // given
+        tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
+        // when
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        return savedTableGroup.getId();
     }
 }

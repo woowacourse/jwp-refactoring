@@ -5,13 +5,7 @@ import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.test.annotation.DirtiesContext;
 
-import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
@@ -19,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("메뉴Dao 테스트")
 class JdbcTemplateMenuDaoTest extends DomainDaoTest{
@@ -57,7 +50,7 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest{
     @Test
     void findById() {
         // given
-        long id = SAVE_MENU();
+        long id = SAVE_MENU_RETURN_ID();
 
         // when
         Optional<Menu> findMenu = menuDao.findById(id);
@@ -72,7 +65,7 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest{
     @Test
     void findAll() {
         // given
-        SAVE_MENU();
+        SAVE_MENU_RETURN_ID();
 
         // when
         List<Menu> menus = menuDao.findAll();
@@ -86,7 +79,7 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest{
     @Test
     void countByIdIn() {
         // given
-        List<Long> ids = Arrays.asList(SAVE_MENU(), SAVE_MENU());
+        List<Long> ids = Arrays.asList(SAVE_MENU_RETURN_ID(), SAVE_MENU_RETURN_ID());
 
         // when
         long count = menuDao.countByIdIn(ids);
