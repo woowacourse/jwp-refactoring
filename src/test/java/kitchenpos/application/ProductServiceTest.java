@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.ProductDao;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,13 +14,20 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
 
 @DisplayName("상품 서비스 테스트")
-@SpringBootTest
+@MockitoSettings
 class ProductServiceTest {
 
-    @Autowired
+    @InjectMocks
     private ProductService productService;
+
+    @Mock
+    private ProductDao productDao;
 
     @DisplayName("상품을 생성한다. - 실패, price가 Null인 경우")
     @Test
@@ -30,6 +40,8 @@ class ProductServiceTest {
         // when
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(productDao).should(never())
+                .save(any(Product.class));
     }
 
     @DisplayName("상품을 생성한다. - 실패, price가 0보다 작은 경우")
@@ -43,6 +55,8 @@ class ProductServiceTest {
         // when
         assertThatThrownBy(() -> productService.create(product))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(productDao).should(never())
+                .save(any(Product.class));
     }
 
 }

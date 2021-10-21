@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -15,9 +16,14 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @DisplayName("메뉴 서비스 테스트")
 @MockitoSettings
@@ -32,6 +38,9 @@ class MenuServiceTest {
     @Mock
     private ProductDao productDao;
 
+    @Mock
+    private MenuDao menuDao;
+
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴의 가격이 null인 경우")
     @Test
     void createFailedWhenPriceIsNull() {
@@ -39,10 +48,17 @@ class MenuServiceTest {
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
         menu.setPrice(null);
+        menu.setMenuGroupId(1L);
 
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(never())
+                .existsById(anyLong());
+        then(productDao).should(never())
+                .findById(anyLong());
+        then(menuDao).should(never())
+                .save(menu);
     }
 
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴의 가격이 음수인 경우")
@@ -52,10 +68,17 @@ class MenuServiceTest {
         Menu menu = new Menu();
         menu.setName("후라이드+후라이드");
         menu.setPrice(BigDecimal.valueOf(-1));
+        menu.setMenuGroupId(1L);
 
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(never())
+                .existsById(anyLong());
+        then(productDao).should(never())
+                .findById(anyLong());
+        then(menuDao).should(never())
+                .save(menu);
     }
 
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴 그룹 Id가 존재하지 않는 경우")
@@ -72,6 +95,12 @@ class MenuServiceTest {
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(times(1))
+                .existsById(anyLong());
+        then(productDao).should(never())
+                .findById(anyLong());
+        then(menuDao).should(never())
+                .save(menu);
     }
 
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴 상품이 존재하지 않는 경우")
@@ -95,6 +124,12 @@ class MenuServiceTest {
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(times(1))
+                .existsById(1L);
+        then(productDao).should(times(1))
+                .findById(-1L);
+        then(menuDao).should(never())
+                .save(menu);
     }
 
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴 상품과 수량을 곱한 값보다 메뉴에 등록할 가격이 더 비싼 경우")
@@ -128,5 +163,11 @@ class MenuServiceTest {
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuGroupDao).should(times(1))
+                .existsById(1L);
+        then(productDao).should(times(1))
+                .findById(1L);
+        then(menuDao).should(never())
+                .save(menu);
     }
 }

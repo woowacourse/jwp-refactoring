@@ -26,7 +26,12 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @DisplayName("주문 서비스 테스트")
 @MockitoSettings
@@ -55,6 +60,14 @@ class OrderServiceTest {
         // when - then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(never())
+                .countByIdIn(anyList());
+        then(orderTableDao).should(never())
+                .findById(order.getOrderTableId());
+        then(orderDao).should(never())
+                .findById(any());
+        then(orderDao).should(never())
+                .save(any(Order.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문 항목이 null인 경우")
@@ -68,6 +81,14 @@ class OrderServiceTest {
         // when - then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(never())
+                .countByIdIn(anyList());
+        then(orderTableDao).should(never())
+                .findById(order.getOrderTableId());
+        then(orderDao).should(never())
+                .findById(any());
+        then(orderDao).should(never())
+                .save(any(Order.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문 항목의 개수와 주문 항목들의 메뉴 아이디로 조회한 개수가 다른 경우")
@@ -95,6 +116,14 @@ class OrderServiceTest {
         // menuIds는 1이지만, orderLineItems의 사이즈는 2인 경우
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(times(1))
+                .countByIdIn(menuIds);
+        then(orderTableDao).should(never())
+                .findById(order.getOrderTableId());
+        then(orderDao).should(never())
+                .findById(any());
+        then(orderDao).should(never())
+                .save(any(Order.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문에 등록된 TableId가 존재하지 않는 경우")
@@ -123,6 +152,14 @@ class OrderServiceTest {
         // when - then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(times(1))
+                .countByIdIn(menuIds);
+        then(orderTableDao).should(times(1))
+                .findById(order.getOrderTableId());
+        then(orderDao).should(never())
+                .findById(any());
+        then(orderDao).should(never())
+                .save(any(Order.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문에 등록된 테이블이 비어있는 경우")
@@ -154,6 +191,14 @@ class OrderServiceTest {
         // when - then
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(menuDao).should(times(1))
+                .countByIdIn(menuIds);
+        then(orderTableDao).should(times(1))
+                .findById(order.getOrderTableId());
+        then(orderDao).should(never())
+                .findById(any());
+        then(orderDao).should(never())
+                .save(any(Order.class));
     }
 
     @DisplayName("주문 상태를 변경한다. - 실패, orderId에 해당하는 주문이 존재하지 않는 경우")
@@ -168,6 +213,10 @@ class OrderServiceTest {
         // when -  then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderDao).should(times(1))
+                .findById(orderId);
+        then(orderDao).should(never())
+                .save(any());
     }
 
     @DisplayName("주문 상태를 변경한다. - 실패, orderId에 해당하는 주문이 이미 COMPLETION 상태인 경우")
@@ -185,5 +234,9 @@ class OrderServiceTest {
         // when -  then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderDao).should(times(1))
+                .findById(orderId);
+        then(orderDao).should(never())
+                .save(savedOrder);
     }
 }

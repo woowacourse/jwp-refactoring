@@ -16,7 +16,12 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 
 @DisplayName("테이블 서비스 테스트")
 @MockitoSettings
@@ -42,6 +47,15 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(1))
+                .findById(orderTableId);
+        then(orderDao).should(never())
+                .existsByOrderTableIdAndOrderStatusIn(
+                        orderTableId,
+                        Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+                );
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 
     @DisplayName("테이블을 empty로 변경한다. - 실패, orderTable의 tableGroupId가 이미 등록되어있는 경우")
@@ -60,6 +74,15 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(1))
+                .findById(orderTableId);
+        then(orderDao).should(never())
+                .existsByOrderTableIdAndOrderStatusIn(
+                        orderTableId,
+                        Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+                );
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 
     @DisplayName("테이블을 empty로 변경한다. - 실패, COOKING, MEAL 상태인 주문이 포함된 orderTableId가 아닌 경우")
@@ -85,6 +108,15 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(1))
+                .findById(orderTableId);
+        then(orderDao).should(times(1))
+                .existsByOrderTableIdAndOrderStatusIn(
+                        orderTableId,
+                        Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+                );
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 
     @DisplayName("방문 손님 수를 변경한다. - 실패, 방문 손님 수가 음수인 경우")
@@ -98,6 +130,10 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(never())
+                .findById(orderTableId);
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 
     @DisplayName("방문 손님 수를 변경한다. - 실패, orderTableId가 존재하지 않는 경우")
@@ -113,6 +149,10 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(1))
+                .findById(orderTableId);
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 
     @DisplayName("방문 손님 수를 변경한다. - 실패, orderTableId로 조회한 테이블이 비어있는 경우")
@@ -132,5 +172,9 @@ class TableServiceTest {
         // when - then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+        then(orderTableDao).should(times(1))
+                .findById(orderTableId);
+        then(orderTableDao).should(never())
+                .save(any(OrderTable.class));
     }
 }
