@@ -40,6 +40,73 @@ public class TableAcceptanceTest extends AcceptanceTest{
         assertThat(response.body()).isNotNull();
     }
 
+    @DisplayName("GET /api/tables")
+    @Test
+    void list() {
+        // given
+
+        // when - then
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .when().get("/api/tables")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.body()).isNotNull();
+    }
+
+    @DisplayName("PUT /api/tables/{orderTableId}/empty")
+    @Test
+    void changeEmpty() {
+        // given
+        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("empty", true);
+
+        // when - then
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(params)
+                .when().put("/api/tables/" + orderTableId + "/empty")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.body()).isNotNull();
+        OrderTable orderTable = response.as(OrderTable.class);
+        assertThat(orderTable.isEmpty()).isTrue();
+    }
+
+    @DisplayName("PUT /api/tables/{orderTableId}/number-of-guests")
+    @Test
+    void changeNumberOfGuests() {
+        // given
+        long orderTableId = POST_DEFAULT_ORDER_TABLE();
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("numberOfGuests", "10");
+
+        // when - then
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(params)
+                .when().put("/api/tables/" + orderTableId + "/number-of-guests")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.body()).isNotNull();
+        OrderTable orderTable = response.as(OrderTable.class);
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
+    }
+
     public static long POST_DEFAULT_ORDER_TABLE() {
         Map<String, Object> params = new HashMap<>();
         params.put("numberOfGuests", "1");
