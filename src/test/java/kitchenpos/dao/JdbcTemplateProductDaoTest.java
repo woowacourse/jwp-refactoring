@@ -12,7 +12,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("상품Dao 테스트")
-public class JdbcTemplateProductDaoTest extends DaoTest{
+public class JdbcTemplateProductDaoTest extends DaoTest {
     private ProductDao productDao;
 
     @BeforeEach
@@ -67,7 +67,7 @@ public class JdbcTemplateProductDaoTest extends DaoTest{
 
     }
 
-    private long SAVE_PRODUCT_RETURN_ID(){
+    private long SAVE_PRODUCT_RETURN_ID() {
         Product product = new Product();
         product.setName("강정치킨");
         product.setPrice(BigDecimal.valueOf(17000.00));

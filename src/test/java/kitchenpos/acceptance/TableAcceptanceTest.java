@@ -15,7 +15,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 인수 테스트")
-public class TableAcceptanceTest extends AcceptanceTest{
+public class TableAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("POST /api/tables")
     @Test

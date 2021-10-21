@@ -11,7 +11,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문항목Dao 테스트")
-class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
+class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest {
 
     private OrderLineItemDao orderLineItemDao;
 
@@ -85,7 +85,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest{
         assertThat(orderLineItems).hasSize(1);
     }
 
-    private long SAVE_ORDER_LINE_ITEM(long orderId){
+    private long SAVE_ORDER_LINE_ITEM(long orderId) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);

@@ -15,7 +15,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴Dao 테스트")
-class JdbcTemplateMenuDaoTest extends DomainDaoTest{
+class JdbcTemplateMenuDaoTest extends DomainDaoTest {
 
     private MenuDao menuDao;
 

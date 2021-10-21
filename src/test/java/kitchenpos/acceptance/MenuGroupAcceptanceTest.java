@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 그룹 인수 테스트")
-public class MenuGroupAcceptanceTest extends AcceptanceTest{
+public class MenuGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("POST /api/menu-groups")
     @Test
     void createPost() {

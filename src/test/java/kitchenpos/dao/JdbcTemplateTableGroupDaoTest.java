@@ -6,15 +6,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("단체지정 테이블그룹Dao 테스트")
-class JdbcTemplateTableGroupDaoTest extends DomainDaoTest{
+class JdbcTemplateTableGroupDaoTest extends DomainDaoTest {
 
     private TableGroupDao tableGroupDao;
 

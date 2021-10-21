@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("상품 인수 테스트")
-public class ProductAcceptanceTest extends AcceptanceTest{
+public class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("POST /api/products")
     @Test
     void create() {
