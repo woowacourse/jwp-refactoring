@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Assertions;
@@ -29,26 +28,22 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest extends TestFixture {
 
-    @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
-    private TableGroupDao tableGroupDao;
-
-    @InjectMocks
-    private TableGroupService tableGroupService;
-
     OrderTable firstOrderTable;
     OrderTable secondOrderTable;
     TableGroup tableGroup;
+    @Mock
+    private OrderDao orderDao;
+    @Mock
+    private OrderTableDao orderTableDao;
+    @Mock
+    private TableGroupDao tableGroupDao;
+    @InjectMocks
+    private TableGroupService tableGroupService;
 
     @BeforeEach
     void setUp() {
-        firstOrderTable = 주문_테이블을_저장한다(1L, 3, true);
-        secondOrderTable = 주문_테이블을_저장한다(2L, 2, true);
+        firstOrderTable = 주문_테이블을_저장한다(1L, null, 3, true);
+        secondOrderTable = 주문_테이블을_저장한다(2L, null, 2, true);
 
         tableGroup = new TableGroup();
         tableGroup.setCreatedDate(LocalDateTime.now());
@@ -59,9 +54,8 @@ class TableGroupServiceTest extends TestFixture {
     @Test
     void create() {
         // given
-        given(orderTableDao.findAllByIdIn(
-                Arrays.asList(firstOrderTable.getId(), secondOrderTable.getId())))
-                .willReturn(Arrays.asList(firstOrderTable, secondOrderTable));
+        List<Long> orderTableIds = Arrays.asList(firstOrderTable.getId(), secondOrderTable.getId());
+        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Arrays.asList(firstOrderTable, secondOrderTable));
         given(tableGroupDao.save(tableGroup)).willReturn(tableGroup);
         given(orderTableDao.save(any(OrderTable.class))).willReturn(null);
 
@@ -106,11 +100,12 @@ class TableGroupServiceTest extends TestFixture {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(주문_테이블을_저장한다(3L, 1, false)));
+        // when
+        // then
+        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(주문_테이블을_저장한다(3L, null, 1, false)));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
 
-        OrderTable orderTable = 주문_테이블을_저장한다(3L, 1, true);
-        orderTable.setTableGroupId(3L);
+        OrderTable orderTable = 주문_테이블을_저장한다(3L, 3L, 1, true);
         given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(orderTable));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -119,12 +114,11 @@ class TableGroupServiceTest extends TestFixture {
     @Test
     void ungroup() {
         // given
-        given(orderTableDao.findAllByTableGroupId(1L))
-                .willReturn(Arrays.asList(firstOrderTable, secondOrderTable));
+        List<OrderTable> orderTables = Arrays.asList(firstOrderTable, secondOrderTable);
+        given(orderTableDao.findAllByTableGroupId(1L)).willReturn(orderTables);
+
         List<Long> orderTableIds = Arrays.asList(1L, 2L);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                .willReturn(false);
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, COOKING_OR_MEAL_STATUS)).willReturn(false);
         given(orderTableDao.save(any(OrderTable.class))).willReturn(null);
 
         // when
@@ -138,9 +132,7 @@ class TableGroupServiceTest extends TestFixture {
         // given
         given(orderTableDao.findAllByTableGroupId(1L)).willReturn(Arrays.asList(firstOrderTable, secondOrderTable));
         List<Long> orderTableIds = Arrays.asList(1L, 2L);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
-        )).willReturn(true);
+        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, COOKING_OR_MEAL_STATUS)).willReturn(true);
 
         // when
         // then

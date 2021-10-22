@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,9 +45,8 @@ class TableServiceTest extends TestFixture {
     @Test
     void create() {
         // given
-        OrderTable savedOrderTable = new OrderTable();
-        savedOrderTable.setNumberOfGuests(0);
-        savedOrderTable.setEmpty(true);
+
+        OrderTable savedOrderTable = 주문_테이블을_저장한다(null, null, 0, true);
         given(orderTableDao.save(orderTable)).willReturn(savedOrderTable);
 
         // when
@@ -63,7 +60,7 @@ class TableServiceTest extends TestFixture {
     @Test
     void list() {
         // given
-        orderTable.setId(1L);
+        orderTable = 주문_테이블을_저장한다(1L, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
         given(orderTableDao.findAll()).willReturn(Collections.singletonList(orderTable));
 
         // when
@@ -77,13 +74,11 @@ class TableServiceTest extends TestFixture {
     @Test
     void changeEmpty() {
         // given
-        orderTable.setId(1L);
-        given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-                .willReturn(false);
+        orderTable = 주문_테이블을_저장한다(1L, null, orderTable.getNumberOfGuests(), orderTable.isEmpty());
+        given(orderTableDao.findById(1L)).willReturn(java.util.Optional.of(orderTable));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, COOKING_OR_MEAL_STATUS)).willReturn(false);
 
-
-        OrderTable changedOrderTable = 주문_테이블을_저장한다(null, 0, false);
+        OrderTable changedOrderTable = 주문_테이블을_저장한다(null, null, 0, false);
         given(orderTableDao.save(any(OrderTable.class))).willReturn(changedOrderTable);
 
         // when
@@ -97,8 +92,7 @@ class TableServiceTest extends TestFixture {
     @Test
     void validTableGroupId() {
         // given
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
+        orderTable = 주문_테이블을_저장한다(1L, 1L, orderTable.getNumberOfGuests(), orderTable.isEmpty());
         given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
 
         // when
@@ -112,8 +106,7 @@ class TableServiceTest extends TestFixture {
         // given
         orderTable.setId(1L);
         given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(
-                1L, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, COOKING_OR_MEAL_STATUS)).willReturn(true);
 
         // when
         // then
@@ -124,14 +117,14 @@ class TableServiceTest extends TestFixture {
     @Test
     void changeNumberOfGuests() {
         // given
-        orderTable = 주문_테이블을_저장한다(1L, orderTable.getNumberOfGuests(), false);
+        orderTable = 주문_테이블을_저장한다(1L, null, orderTable.getNumberOfGuests(), false);
         given(orderTableDao.findById(1L)).willReturn(java.util.Optional.ofNullable(orderTable));
 
         OrderTable changedOrderTable = new OrderTable();
         changedOrderTable.setNumberOfGuests(10);
         changedOrderTable.setEmpty(false);
 
-        OrderTable expected = 주문_테이블을_저장한다(orderTable.getId(), orderTable.getNumberOfGuests(), false);
+        OrderTable expected = 주문_테이블을_저장한다(orderTable.getId(), null, orderTable.getNumberOfGuests(), false);
         given(orderTableDao.save(any(OrderTable.class))).willReturn(expected);
 
         // when
@@ -145,7 +138,7 @@ class TableServiceTest extends TestFixture {
     @Test
     void validNumberOfGuests() {
         // given
-        OrderTable changedOrderTable = 주문_테이블을_저장한다(orderTable.getId(), -1, orderTable.isEmpty());
+        OrderTable changedOrderTable = 주문_테이블을_저장한다(orderTable.getId(), null, -1, orderTable.isEmpty());
 
         // when
         // then
