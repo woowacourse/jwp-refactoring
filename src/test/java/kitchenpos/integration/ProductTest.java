@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -47,11 +46,11 @@ class ProductTest extends IntegrationTest {
                 .content(toJson(params)))
             .andExpect(status().isCreated())
             .andExpect(header().exists(LOCATION))
-            .andExpect(header().string(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))
             .andExpect(jsonPath("$.id").isNumber())
             .andExpect(jsonPath("$.name").value(productName))
             .andExpect(jsonPath("$.price").value(productPriceValue))
-            .andDo(print());
+        ;
 
         final List<Product> foundProducts = productDao.findAll();
         assertThat(foundProducts).hasSize(1);
@@ -77,7 +76,6 @@ class ProductTest extends IntegrationTest {
             mockMvc.perform(post(API_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(params)))
-                .andDo(print())
         ).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
 
         final List<Product> foundProducts = productDao.findAll();
@@ -101,7 +99,6 @@ class ProductTest extends IntegrationTest {
             mockMvc.perform(post(API_PATH)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(toJson(params)))
-                .andDo(print())
         ).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
 
         final List<Product> foundProducts = productDao.findAll();
@@ -129,13 +126,13 @@ class ProductTest extends IntegrationTest {
         // then
         mockMvc.perform(get(API_PATH))
             .andExpect(status().isOk())
-            .andExpect(header().string(CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))
             .andExpect(jsonPath("$[0].id").isNumber())
             .andExpect(jsonPath("$[0].name").value(product1.getName()))
             .andExpect(jsonPath("$[0].price").value(product1PriceValue))
             .andExpect(jsonPath("$[1].id").isNumber())
             .andExpect(jsonPath("$[1].name").value(product2.getName()))
             .andExpect(jsonPath("$[1].price").value(product2PriceValue))
-            .andDo(print());
+        ;
     }
 }
