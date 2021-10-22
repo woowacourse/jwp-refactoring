@@ -354,8 +354,8 @@ class OrderIntegrationTest extends IntegrationTest {
         // when
         // then
         mockMvc.perform(put(API_PATH + "/" + savedOrder.getId() + "/order-status")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(params)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(params)))
             .andExpect(status().isOk())
             .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))
             .andExpect(jsonPath("$.id").isNumber())

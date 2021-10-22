@@ -36,8 +36,8 @@ class MenuGroupIntegrationTest extends IntegrationTest {
         // when
         // then
         mockMvc.perform(post(API_PATH)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(toJson(params)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(params)))
             .andExpect(status().isCreated())
             .andExpect(header().exists(LOCATION))
             .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))

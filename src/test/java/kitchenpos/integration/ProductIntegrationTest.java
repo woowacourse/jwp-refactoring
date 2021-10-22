@@ -74,8 +74,8 @@ class ProductIntegrationTest extends IntegrationTest {
         // then
         assertThatThrownBy(() ->
             mockMvc.perform(post(API_PATH)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(toJson(params)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(params)))
         ).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
 
         final List<Product> foundProducts = productDao.findAll();
@@ -97,8 +97,8 @@ class ProductIntegrationTest extends IntegrationTest {
         // then
         assertThatThrownBy(() ->
             mockMvc.perform(post(API_PATH)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(toJson(params)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(params)))
         ).hasRootCauseExactlyInstanceOf(IllegalArgumentException.class);
 
         final List<Product> foundProducts = productDao.findAll();
@@ -127,6 +127,7 @@ class ProductIntegrationTest extends IntegrationTest {
         mockMvc.perform(get(API_PATH))
             .andExpect(status().isOk())
             .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))
+            .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").isNumber())
             .andExpect(jsonPath("$[0].name").value(product1.getName()))
             .andExpect(jsonPath("$[0].price").value(product1PriceValue))
