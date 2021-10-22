@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest {
+class TableServiceTest extends TestFixture {
 
     @Mock
     private OrderDao orderDao;
@@ -174,13 +174,5 @@ class TableServiceTest {
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private OrderTable 주문_테이블을_저장한다(Long id, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(this.orderTable.getId());
-        orderTable.setNumberOfGuests(this.orderTable.getNumberOfGuests());
-        orderTable.setEmpty(empty);
-        return orderTable;
     }
 }
