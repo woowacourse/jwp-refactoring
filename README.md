@@ -25,9 +25,8 @@
   - [ ] 새로운 Order를 생성해 DB에 저장한다.
     - [ ] Order의 OrderLineItems가 null이면 예외를 발생시킨다.
     - [ ] Order의 모든 OrderLineItems의 Menu의 Id들을 취합한다.
-    - [ ] Order의 OrderLineItems의 size가 DB에 있는 OrderLineItems의 Menu의 개수와 같아야 한다.
-      - [ ] OrderLineItem들은 Menu의 Id들로 찾는다.
-      - [ ] 다르면 예외를 발생시킨다.
+    - [ ] Order의 OrderLineItems의 Menu들이 모두 DB에 존재해야 한다.
+      - [ ] 그렇지 않으면 예외를 발생시킨다.
     - [ ] Order의 Id를 null로 세팅한다.
     - [ ] Order의 OrderTableId로 DB에서 OrderTable을 가져온다.
       - [ ] 존재하지 않으면 예외를 발생시킨다.
@@ -53,7 +52,7 @@
     - [ ] DB에서 꺼내온 Order를 DB에 다시 저장한다.
     - [ ] Order의 Id로 DB에서 Order의 모든 OrderLineItem들을 가져온다.
     - [ ] OrderLineItem들을 포함한 Order를 반환한다.
-  
+
 - [ ] Product
   - [ ] 새로운 Product를 생성해 DB에 저장한다.
     - [ ] 새로운 Product의 가격이 null이거나 0보다 작으면, 예외를 발생시킨다.
