@@ -9,11 +9,11 @@
 - [ ] Menu
   - [ ] 새로운 Menu를 생성해 DB에 저장한다.
     - [ ] Menu의 가격이 null이거나 0보다 작으면 예외를 발생시킨다.
-    - [ ] Menu의 MenuGroup의 Id가 DB에 존재하지 않으면 예외를 발생시킨다.
-    - [ ] Menu에 있는 모든 Product들을 DB에서 조회해 가격을 더한다.
+    - [ ] Menu의 MenuGroupId가 DB에 존재하지 않으면 예외를 발생시킨다.
+    - [ ] MenuProduct들에 있는 모든 Product들을 DB에서 조회해 가격을 더한다.
       - [ ] 모든 Product들의 Id는 DB에 존재해야 한다.
         - [ ] 하나라도 존재하지 않으면 예외를 발생시킨다.
-    - [ ] 요청 매개변수 Menu의 가격이 Menu에 있는 모든 Product들의 가격의 합보다 크면, 예외를 발생시킨다.
+    - [ ] 요청 매개변수 Menu의 가격이 MenuProduct들에 있는 모든 Product들의 가격의 합보다 크면, 예외를 발생시킨다.
     - [ ] Menu를 DB에 저장한다.
     - [ ] Menu의 모든 MenuProduct들에 Menu의 Id를 할당해 DB에 저장한다.
     - [ ] Id를 갖고있는 Menu를 반환한다.
