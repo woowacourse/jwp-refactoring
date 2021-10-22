@@ -94,8 +94,8 @@
   - [ ] OrderTable의 Empty상태를 바꾼다.
     - [ ] DB에서 OrderTableId로 OrderTable을 조회한다.
       - [ ] 존재하지 않으면 예외를 발생시킨다.
-    - [ ] OrderTable의 TableGroupId가 null이 아니면 예외를 발생시킨다. !!!!!!!!!!!!!!!!!
-    - [ ] OrderTable의 Id가 DB에 존재하고, 각 OrderTable의 OrderStatus값이 COOKING, MEAL중 하나여야 한다.
+    - [ ] OrderTable의 TableGroupId가 null이 아니면 예외를 발생시킨다.
+    - [ ] OrderTable의 Order의 OrderStatus값이 COOKING또는 MEAL이면 안 된다.
       - [ ] 그렇지 않으면 예외를 발생시킨다.
     - [ ] DB에서 조회한 OrderTable의 empty값을 요청 매개변수 OrderTable의 empty값으로 세팅한다.
     - [ ] DB에서 조회한 OrderTable을 DB에 저장한다.
