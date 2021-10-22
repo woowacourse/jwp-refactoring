@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @DisplayName("MenuGroup 통합테스트")
-class MenuGroupTest extends IntegrationTest {
+class MenuGroupIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/menu-groups";
 

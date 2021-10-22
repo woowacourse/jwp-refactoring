@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @DisplayName("Menu 통합테스트")
-class MenuTest extends IntegrationTest {
+class MenuIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/menus";
 

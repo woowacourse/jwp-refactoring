@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @DisplayName("Product 통합테스트")
-class ProductTest extends IntegrationTest {
+class ProductIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/products";
 
