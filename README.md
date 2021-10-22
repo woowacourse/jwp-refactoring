@@ -80,7 +80,7 @@
   - [ ] TableGroup를 해제한다.
     - [ ] TableGroupId로 DB에서 OrderTable들을 조회한다.
     - [ ] OrderTable들의 Id를 추출한다.
-    - [ ] OrderTable들의 Id가 모두 DB에 존재하고, 각 OrderTable에 해당하는 Order의 OrderStatus값이 COOKING, MEAL중 하나여야 한다.
+    - [ ] OrderTable들의 Id가 모두 DB에 존재하고, 각 OrderTable에 해당하는 Order의 OrderStatus값이 COOKING또는 MEAL이면 안 된다.
       - [ ] 그렇지 않으면 예외를 발생시킨다.
     - [ ] OrderTable들의 TableGroupId를 모두 null로 세팅한다.
     - [ ] OrderTable들의 empty값을 false로 세팅한다.
