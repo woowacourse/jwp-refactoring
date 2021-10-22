@@ -67,4 +67,23 @@ public class TestFixture {
         menuProduct.setQuantity(quantity);
         return menuProduct;
     }
+
+    public static Order 주문을_저장한다(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        Order order = new Order();
+        order.setId(id);
+        order.setOrderTableId(orderTableId);
+        order.setOrderStatus(orderStatus);
+        order.setOrderedTime(orderedTime);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
+
+    public static OrderLineItem 주문_항목을_저장한다(Long id, Long orderId, Long menuId, Long quantity) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(id);
+        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(quantity);
+        return orderLineItem;
+    }
 }
