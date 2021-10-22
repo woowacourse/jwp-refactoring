@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.generator.ProductGenerator;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,37 +19,28 @@ import org.springframework.http.ResponseEntity;
 
 public class ProductApiTest extends ApiTest {
 
-    private static final String baseUrl = "/api/products";
+    private static final String BASE_URL = "/api/products";
 
     private List<Product> products;
 
     @Autowired
-    private JdbcTemplateProductDao jdbcTemplateProductDao;
+    private JdbcTemplateProductDao productDao;
 
     @Override
     @BeforeEach
     void setUp() throws SQLException {
         super.setUp();
         products = new ArrayList<>();
-        products.add(saveProduct("후라이드", 16000));
-        products.add(saveProduct("양념치킨", 16000));
+        products.add(productDao.save(ProductGenerator.newInstance("후라이드", 16000)));
+        products.add(productDao.save(ProductGenerator.newInstance("양념치킨", 16000)));
     }
 
-    private Product saveProduct(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-        return jdbcTemplateProductDao.save(product);
-    }
-
-    @DisplayName("상품을 등록할 수 있다.")
+    @DisplayName("상품 등록")
     @Test
     void postProduct() {
-        Product request = new Product();
-        request.setName("강정치킨");
-        request.setPrice(BigDecimal.valueOf(17000));
+        Product request = ProductGenerator.newInstance("강정치킨", 17000);
 
-        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(baseUrl, request, Product.class);
+        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, Product.class);
         Product response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -59,10 +51,10 @@ public class ProductApiTest extends ApiTest {
             .isEqualTo(request);
     }
 
-    @DisplayName("상품들을 조회할 수 있다.")
+    @DisplayName("상품 목록 조회")
     @Test
     void getProducts() {
-        ResponseEntity<Product[]> responseEntity = testRestTemplate.getForEntity(baseUrl, Product[].class);
+        ResponseEntity<Product[]> responseEntity = testRestTemplate.getForEntity(BASE_URL, Product[].class);
         Product[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);

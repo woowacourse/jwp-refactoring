@@ -7,11 +7,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.generator.ProductGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,11 +31,9 @@ public class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {0, 1, 17000})
     @ParameterizedTest
     void create(int price) {
-        when(productDao.save(any(Product.class))).thenAnswer(invocation -> invocation.getArguments()[0]);
+        when(productDao.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = ProductGenerator.newInstance("강정치킨", price);
         Product actual = productService.create(product);
 
         verify(productDao, times(1)).save(product);
@@ -46,9 +44,7 @@ public class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {-1, -2, -123456789})
     @ParameterizedTest
     void createWithInvalidPrice(int price) {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(price));
+        Product product = ProductGenerator.newInstance("강정치킨", price);
 
         assertThatThrownBy(() -> productService.create(product)).isExactlyInstanceOf(IllegalArgumentException.class);
         verify(productDao, times(0)).save(any(Product.class));
@@ -63,6 +59,7 @@ public class ProductServiceTest extends ServiceTest {
         List<Product> actual = productService.list();
 
         verify(productDao, times(1)).findAll();
-        assertThat(actual).hasSameSizeAs(expected).containsExactlyElementsOf(expected);
+        assertThat(actual).hasSameSizeAs(expected)
+            .containsExactlyElementsOf(expected);
     }
 }

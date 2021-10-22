@@ -31,8 +31,8 @@
 
 ### 메뉴 그룹
 
-- [] 메뉴 그룹을 등록할 수 있다. (`POST /api/menu-groups`)
-- [] 메뉴 그룹들을 조회할 수 있다. (`GET /api/menu-groups`)
+- [x] 메뉴 그룹을 등록할 수 있다. (`POST /api/menu-groups`)
+- [x] 메뉴 그룹들을 조회할 수 있다. (`GET /api/menu-groups`)
 
 ### 메뉴
 
