@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends TestFixture {
 
     @Mock
     private MenuDao menuDao;
@@ -48,16 +48,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000));
-
-        menuProduct = new MenuProduct();
-        menuProduct.setSeq(1L);
-        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(2L);
-
+        product = 상품을_저장한다(1L, "강정치킨", BigDecimal.valueOf(17000));
+        menuProduct = 메뉴_상품을_저장한다(1L, null, product.getId(), 2L);
         menu = 메뉴를_저장한다(null, "후라이드+후라이드", BigDecimal.valueOf(19000), 1L, Collections.singletonList(menuProduct));
     }
 
@@ -112,19 +104,5 @@ class MenuServiceTest {
 
         // then
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    private Menu 메뉴를_저장한다(long id, Menu menu) {
-        return 메뉴를_저장한다(id, menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
-    }
-
-    private Menu 메뉴를_저장한다(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu savedMenu = new Menu();
-        savedMenu.setId(id);
-        savedMenu.setName(name);
-        savedMenu.setPrice(price);
-        savedMenu.setMenuGroupId(menuGroupId);
-        savedMenu.setMenuProducts(menuProducts);
-        return savedMenu;
     }
 }

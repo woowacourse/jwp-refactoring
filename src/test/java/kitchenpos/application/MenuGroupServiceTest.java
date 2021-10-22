@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends TestFixture {
 
     @Mock
     private MenuGroupDao menuGroupDao;
@@ -29,8 +29,7 @@ class MenuGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
+        menuGroup = 메뉴_그룹을_저장한다(null, "추천 메뉴");
     }
 
     @DisplayName("메뉴 분류를 위한 그룹을 등록할 수 있다.")
@@ -60,12 +59,5 @@ class MenuGroupServiceTest {
 
         // then
         assertThat(result).containsExactly(savedMenuGroup1, savedMenuGroup2);
-    }
-
-    private MenuGroup 메뉴_그룹을_저장한다(long id, String groupName) {
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setId(id);
-        savedMenuGroup.setName(groupName);
-        return savedMenuGroup;
     }
 }

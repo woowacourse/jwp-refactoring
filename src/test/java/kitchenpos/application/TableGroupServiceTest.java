@@ -44,10 +44,7 @@ class TableGroupServiceTest extends TestFixture {
     void setUp() {
         firstOrderTable = 주문_테이블을_저장한다(1L, null, 3, true);
         secondOrderTable = 주문_테이블을_저장한다(2L, null, 2, true);
-
-        tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroup.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
+        tableGroup = 테이블_그룹을_저장한다(null, LocalDateTime.now(), Arrays.asList(firstOrderTable, secondOrderTable));
     }
 
     @DisplayName("주문 테이블 그룹을 등록한다.")
@@ -102,11 +99,12 @@ class TableGroupServiceTest extends TestFixture {
 
         // when
         // then
-        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(주문_테이블을_저장한다(3L, null, 1, false)));
+        OrderTable findOrderTable = 주문_테이블을_저장한다(3L, null, 1, false);
+        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(findOrderTable));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
 
-        OrderTable orderTable = 주문_테이블을_저장한다(3L, 3L, 1, true);
-        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(orderTable));
+        findOrderTable = 주문_테이블을_저장한다(3L, 3L, 1, true);
+        given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(findOrderTable));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
 
