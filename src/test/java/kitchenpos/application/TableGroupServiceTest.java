@@ -56,7 +56,6 @@ class TableGroupServiceTest extends TestFixture {
         List<Long> orderTableIds = Arrays.asList(firstOrderTable.getId(), secondOrderTable.getId());
         given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Arrays.asList(firstOrderTable, secondOrderTable));
         given(tableGroupDao.save(tableGroup)).willReturn(tableGroup);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(null);
 
         // when
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
@@ -125,7 +124,6 @@ class TableGroupServiceTest extends TestFixture {
 
         List<Long> orderTableIds = Arrays.asList(1L, 2L);
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, COOKING_OR_MEAL_STATUS)).willReturn(false);
-        given(orderTableDao.save(any(OrderTable.class))).willReturn(null);
 
         // when
         // then

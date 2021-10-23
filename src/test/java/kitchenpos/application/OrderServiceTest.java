@@ -168,7 +168,6 @@ class OrderServiceTest extends TestFixture {
         );
 
         given(orderDao.findById(saveOrder.getId())).willReturn(Optional.of(saveOrder));
-        given(orderDao.save(saveOrder)).willReturn(null);
         given(orderLineItemDao.findAllByOrderId(saveOrder.getId())).willReturn(saveOrder.getOrderLineItems());
 
         Order expected = 주문을_저장한다(
