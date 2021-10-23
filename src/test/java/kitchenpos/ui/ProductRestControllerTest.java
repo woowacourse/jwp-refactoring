@@ -60,6 +60,5 @@ class ProductRestControllerTest {
                 .getResponse();
 
         assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
-
     }
 }
