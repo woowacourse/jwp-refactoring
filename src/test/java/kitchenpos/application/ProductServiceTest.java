@@ -17,6 +17,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest extends TestFixture {
@@ -48,6 +50,7 @@ class ProductServiceTest extends TestFixture {
 
         // then
         assertThat(savedProduct).isEqualTo(강정치킨);
+        verify(productDao, times(1)).save(product);
     }
 
     @DisplayName("1자 이상의 문자로 구성된 상품명을 등록한다.")
@@ -86,5 +89,6 @@ class ProductServiceTest extends TestFixture {
 
         // then
         assertThat(result).containsExactly(강정치킨, 튀김소보로);
+        verify(productDao, times(1)).findAll();
     }
 }

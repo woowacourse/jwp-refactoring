@@ -23,6 +23,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest extends TestFixture {
@@ -89,6 +91,9 @@ class MenuServiceTest extends TestFixture {
 
         // then
         assertThat(savedMenu).isEqualTo(expected);
+        verify(menuGroupDao, times(1)).existsById(menu.getMenuGroupId());
+        verify(productDao, times(1)).findById(menuProduct.getProductId());
+        verify(menuDao, times(1)).save(menu);
     }
 
     @DisplayName("메뉴를 조회할 수 있다.")
@@ -105,6 +110,8 @@ class MenuServiceTest extends TestFixture {
 
         // then
         assertThat(findMenus).isEqualTo(Collections.singletonList(savedMenu));
+        verify(menuDao, times(1)).findAll();
+        verify(menuProductDao, times(1)).findAllByMenuId(savedMenu.getId());
     }
 
     @DisplayName("메뉴 가격은 0원 이상이어야한다.")

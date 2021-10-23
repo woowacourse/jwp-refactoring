@@ -19,6 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest extends TestFixture {
@@ -51,6 +53,8 @@ class TableServiceTest extends TestFixture {
 
         // then
         assertThat(result).isEqualTo(savedOrderTable);
+
+        verify(orderTableDao, times(1)).save(orderTable);
     }
 
     @DisplayName("전체 테이블을 조회한다.")
@@ -65,6 +69,7 @@ class TableServiceTest extends TestFixture {
 
         // then
         assertThat(orderTables).containsExactly(orderTable);
+        verify(orderTableDao, times(1)).findAll();
     }
 
     @DisplayName("테이블의 공석 유무를 변경한다.")
@@ -88,6 +93,10 @@ class TableServiceTest extends TestFixture {
 
         // then
         assertThat(result).isEqualTo(changedOrderTable);
+
+        verify(orderTableDao, times(1)).findById(1L);
+        verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(1L, COOKING_OR_MEAL_STATUS);
+        verify(orderTableDao, times(1)).save(any(OrderTable.class));
     }
 
     @DisplayName("단체 손님인 경우 변경할 수 없다.")
@@ -105,6 +114,8 @@ class TableServiceTest extends TestFixture {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(1)).findById(1L);
     }
 
     @DisplayName("조리/식사중인 경우 변경할 수 없다.")
@@ -123,6 +134,9 @@ class TableServiceTest extends TestFixture {
         // when
         // then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(1)).findById(1L);
+        verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(1L, COOKING_OR_MEAL_STATUS);
     }
 
     @DisplayName("테이블의 손님 인원을 변경한다.")
@@ -156,6 +170,9 @@ class TableServiceTest extends TestFixture {
 
         // then
         assertThat(result).isEqualTo(expected);
+
+        verify(orderTableDao, times(1)).findById(1L);
+        verify(orderTableDao, times(1)).save(any(OrderTable.class));
     }
 
     @DisplayName("테이블의 손님 인원은 0이상이어야한다.")
@@ -185,6 +202,8 @@ class TableServiceTest extends TestFixture {
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(1)).findById(1L);
     }
 
     @DisplayName("테이블이 공석인 경우 변경할 수 없다.")
@@ -196,5 +215,7 @@ class TableServiceTest extends TestFixture {
         // then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(1)).findById(1L);
     }
 }

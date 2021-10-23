@@ -23,6 +23,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest extends TestFixture {
@@ -116,6 +118,9 @@ class OrderServiceTest extends TestFixture {
 
         // then
         assertThat(savedOrder).isEqualTo(expected);
+        verify(menuDao, times(1)).countByIdIn(Collections.singletonList(menuProduct.getProductId()));
+        verify(orderTableDao, times(1)).findById(order.getOrderTableId());
+        verify(orderDao, times(1)).save(order);
     }
 
     @DisplayName("주문 내역을 조회할 수 있다.")
@@ -145,6 +150,9 @@ class OrderServiceTest extends TestFixture {
 
         // then
         assertThat(results).containsExactly(saveOrder1, saveOrder2);
+
+        verify(orderDao, times(1)).findAll();
+        verify(orderLineItemDao, times(2)).findAllByOrderId(any(Long.class));
     }
 
     @DisplayName("주문 상태를 변경할 수 있다.")
@@ -176,5 +184,9 @@ class OrderServiceTest extends TestFixture {
 
         // then
         assertThat(changedOrder).usingRecursiveComparison().isEqualTo(expected);
+
+        verify(orderDao, times(1)).findById(saveOrder.getId());
+        verify(orderDao, times(1)).save(saveOrder);
+        verify(orderLineItemDao, times(1)).findAllByOrderId(saveOrder.getId());
     }
 }

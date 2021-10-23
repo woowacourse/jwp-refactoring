@@ -24,6 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest extends TestFixture {
@@ -61,6 +63,9 @@ class TableGroupServiceTest extends TestFixture {
 
         // then
         assertThat(savedTableGroup).isEqualTo(tableGroup);
+        verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
+        verify(tableGroupDao, times(1)).save(tableGroup);
+        verify(orderTableDao, times(orderTableIds.size())).save(any(OrderTable.class));
     }
 
     @DisplayName("주문 테이블이 없거나 주문 테이블 크기가 2 미만 작은 경우 등록할 수 없다.")
@@ -86,6 +91,7 @@ class TableGroupServiceTest extends TestFixture {
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
     }
 
     @DisplayName("저장된 주문 테이블이 비어있거나 주문 테이블 그룹이 이미 등록되어있다면 등록할 수 없다.")
@@ -106,6 +112,8 @@ class TableGroupServiceTest extends TestFixture {
         findOrderTable = 주문_테이블을_저장한다(3L, 3L, 1, true);
         given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(Collections.singletonList(findOrderTable));
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(orderTableIds.size())).findAllByIdIn(orderTableIds);
     }
 
     @DisplayName("주문받을 테이블을 제거한다.")
@@ -122,6 +130,10 @@ class TableGroupServiceTest extends TestFixture {
         // when
         // then
         Assertions.assertDoesNotThrow(() -> tableGroupService.ungroup(1L));
+
+        verify(orderTableDao, times(1)).findAllByTableGroupId(1L);
+        verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(orderTableIds, COOKING_OR_MEAL_STATUS);
+        verify(orderTableDao, times(orderTables.size())).save(any(OrderTable.class));
     }
 
     @DisplayName("주문 테이블의 상태가 조리중/식사중인 경우 제거할 수 없다.")
@@ -135,5 +147,8 @@ class TableGroupServiceTest extends TestFixture {
         // when
         // then
         assertThatThrownBy(() -> tableGroupService.ungroup(1L)).isInstanceOf(IllegalArgumentException.class);
+
+        verify(orderTableDao, times(1)).findAllByTableGroupId(1L);
+        verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(orderTableIds, COOKING_OR_MEAL_STATUS);
     }
 }

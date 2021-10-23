@@ -15,6 +15,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest extends TestFixture {
@@ -44,6 +46,7 @@ class MenuGroupServiceTest extends TestFixture {
 
         // then
         assertThat(result).isEqualTo(savedMenuGroup);
+        verify(menuGroupDao, times(1)).save(menuGroup);
     }
 
     @DisplayName("메뉴 분류를 위한 그룹을 조회할 수 있다.")
@@ -61,5 +64,6 @@ class MenuGroupServiceTest extends TestFixture {
 
         // then
         assertThat(result).containsExactly(savedMenuGroup1, savedMenuGroup2);
+        verify(menuGroupDao, times(1)).findAll();
     }
 }
