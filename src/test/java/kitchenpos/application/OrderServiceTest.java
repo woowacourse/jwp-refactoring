@@ -54,11 +54,36 @@ class OrderServiceTest extends TestFixture {
 
     @BeforeEach
     void setUp() {
-        product = 상품을_저장한다(1L, "강정치킨", BigDecimal.valueOf(17000));
-        menuProduct = 메뉴_상품을_저장한다(1L, MENU_ID, product.getId(), 2L);
-        menu = 메뉴를_저장한다(MENU_ID, "후라이드+후라이드", BigDecimal.valueOf(2000), null, Collections.singletonList(menuProduct));
-        orderTable = 주문_테이블을_저장한다(1L, null, 2, false);
-        orderLineItem = 주문_항목을_저장한다(1L, orderTable.getId(), menu.getId(), menuProduct.getQuantity());
+        product = 상품을_저장한다(
+                1L,
+                "강정치킨",
+                BigDecimal.valueOf(17000)
+        );
+        menuProduct = 메뉴_상품을_저장한다(
+                1L,
+                MENU_ID,
+                product.getId(),
+                2L
+        );
+        menu = 메뉴를_저장한다(
+                MENU_ID,
+                "후라이드+후라이드",
+                BigDecimal.valueOf(2000),
+                null,
+                Collections.singletonList(menuProduct)
+        );
+        orderTable = 주문_테이블을_저장한다(
+                1L,
+                null,
+                2,
+                false
+        );
+        orderLineItem = 주문_항목을_저장한다(
+                1L,
+                orderTable.getId(),
+                menu.getId(),
+                menuProduct.getQuantity()
+        );
         orderLineItems = Collections.singletonList(orderLineItem);
     }
 
@@ -66,11 +91,24 @@ class OrderServiceTest extends TestFixture {
     @Test
     void create() {
         // given
-        Order order = 주문을_저장한다(null, orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        Order order = 주문을_저장한다(
+                null,
+                orderTable.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+
         given(menuDao.countByIdIn(Collections.singletonList(menu.getId()))).willReturn(1L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
 
-        Order expected = 주문을_저장한다(1L, orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        Order expected = 주문을_저장한다(
+                1L,
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                order.getOrderLineItems()
+        );
         given(orderDao.save(order)).willReturn(expected);
 
         // when
@@ -84,8 +122,21 @@ class OrderServiceTest extends TestFixture {
     @Test
     void list() {
         // given
-        Order saveOrder1 = 주문을_저장한다(1L, orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
-        Order saveOrder2 = 주문을_저장한다(2L, orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+        Order saveOrder1 = 주문을_저장한다(
+                1L,
+                orderTable.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+        Order saveOrder2 = 주문을_저장한다(
+                2L,
+                orderTable.getId(),
+                OrderStatus.MEAL.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+
         given(orderDao.findAll()).willReturn(Arrays.asList(saveOrder1, saveOrder2));
         given(orderLineItemDao.findAllByOrderId(any(Long.class))).willReturn(orderLineItems);
 
@@ -100,7 +151,14 @@ class OrderServiceTest extends TestFixture {
     @Test
     void changeOrderStatus() {
         // given
-        Order saveOrder = 주문을_저장한다(1L, orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now(), orderLineItems);
+        Order saveOrder = 주문을_저장한다(
+                1L,
+                orderTable.getId(),
+                OrderStatus.MEAL.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+
         given(orderDao.findById(saveOrder.getId())).willReturn(Optional.of(saveOrder));
         given(orderDao.save(saveOrder)).willReturn(null);
         given(orderLineItemDao.findAllByOrderId(saveOrder.getId())).willReturn(saveOrder.getOrderLineItems());
@@ -110,7 +168,8 @@ class OrderServiceTest extends TestFixture {
                 saveOrder.getOrderTableId(),
                 OrderStatus.COOKING.name(),
                 saveOrder.getOrderedTime(),
-                saveOrder.getOrderLineItems());
+                saveOrder.getOrderLineItems()
+        );
 
         // when
         Order changedOrder = orderService.changeOrderStatus(saveOrder.getId(), expected);

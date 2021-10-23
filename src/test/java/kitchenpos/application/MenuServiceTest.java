@@ -48,9 +48,24 @@ class MenuServiceTest extends TestFixture {
 
     @BeforeEach
     void setUp() {
-        product = 상품을_저장한다(1L, "강정치킨", BigDecimal.valueOf(17000));
-        menuProduct = 메뉴_상품을_저장한다(1L, null, product.getId(), 2L);
-        menu = 메뉴를_저장한다(null, "후라이드+후라이드", BigDecimal.valueOf(19000), 1L, Collections.singletonList(menuProduct));
+        product = 상품을_저장한다(
+                1L,
+                "강정치킨",
+                BigDecimal.valueOf(17000)
+        );
+        menuProduct = 메뉴_상품을_저장한다(
+                1L,
+                null,
+                product.getId(),
+                2L
+        );
+        menu = 메뉴를_저장한다(
+                null,
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                1L,
+                Collections.singletonList(menuProduct)
+        );
     }
 
     @DisplayName("메뉴를 등록할 수 있다.")
@@ -60,7 +75,13 @@ class MenuServiceTest extends TestFixture {
         given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
 
-        Menu expected = 메뉴를_저장한다(1L, "후라이드+후라이드", BigDecimal.valueOf(19000), 1L, Collections.singletonList(menuProduct));
+        Menu expected = 메뉴를_저장한다(
+                1L,
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000),
+                1L,
+                Collections.singletonList(menuProduct)
+        );
         given(menuDao.save(menu)).willReturn(expected);
 
         // when
@@ -96,7 +117,7 @@ class MenuServiceTest extends TestFixture {
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 제품 번호를 등록할 수 있다.")
+    @DisplayName("메뉴 제품 양은 0 이상이어야한다.")
     @Test
     void validateMenuProduct() {
         // when

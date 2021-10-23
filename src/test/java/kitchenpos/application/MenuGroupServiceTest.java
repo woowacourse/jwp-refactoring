@@ -54,7 +54,9 @@ class MenuGroupServiceTest extends TestFixture {
         MenuGroup savedMenuGroup2 = 메뉴_그룹을_저장한다(2L, menuGroup.getName());
 
         // when
-        given(menuGroupDao.findAll()).willReturn(Arrays.asList(savedMenuGroup1, savedMenuGroup2));
+        given(menuGroupDao.findAll()).willReturn(
+                Arrays.asList(savedMenuGroup1, savedMenuGroup2)
+        );
         List<MenuGroup> result = menuGroupService.list();
 
         // then
