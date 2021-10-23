@@ -36,12 +36,12 @@ public class MockMvcRequest {
     }
 
     public MockMvcRequest put(String url, Object ... pathVariables) {
-        this.builder = MockMvcRequestBuilders.post(url, pathVariables);
+        this.builder = MockMvcRequestBuilders.put(url, pathVariables);
         return this;
     }
 
     public MockMvcRequest delete(String url, Object ... pathVariables) {
-        this.builder = MockMvcRequestBuilders.post(url, pathVariables);
+        this.builder = MockMvcRequestBuilders.delete(url, pathVariables);
         return this;
     }
 
