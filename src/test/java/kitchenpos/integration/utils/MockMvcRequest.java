@@ -58,6 +58,7 @@ public class MockMvcRequest {
     public <T> MockMvcResponse<T> asSingleResult(Class<T> returnType) {
         return executeRequest(json -> {
             try {
+                if(json == null || json.isEmpty()) return null;
                 return objectMapper.readValue(json, returnType);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
