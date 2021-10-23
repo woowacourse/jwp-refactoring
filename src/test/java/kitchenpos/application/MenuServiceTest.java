@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@DisplayName("메뉴")
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
     @Mock

@@ -21,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@DisplayName("단체 지정")
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
     @Mock

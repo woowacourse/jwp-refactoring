@@ -20,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@DisplayName("주문 테이블")
 @ExtendWith(MockitoExtension.class)
 public class TableServiceTest {
     @Mock
