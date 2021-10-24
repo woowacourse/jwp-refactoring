@@ -86,7 +86,7 @@ public class OrderTable {
 
     private void validateOrderStatus() {
         getOrders().stream()
-            .filter(order -> order.getOrderStatus() != OrderStatus.COMPLETION)
+            .filter(Order::isNotCompleted)
             .findAny()
             .ifPresent(order -> {
                 throw new IllegalArgumentException("OrderTable에 속한 Order 중 일부가 조리 혹은 식사 중입니다.");
