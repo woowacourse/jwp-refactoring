@@ -63,7 +63,7 @@ class OrderServiceTest {
             void it_throws_exception() {
                 // given
                 OrderCreateRequestDto orderCreateRequestDto =
-                    new OrderCreateRequestDto(1L, "COOKING", Collections.emptyList());
+                    new OrderCreateRequestDto(1L, Collections.emptyList());
                 given(orderTableRepository.findById(1L)).willReturn(Optional.empty());
 
                 // when. then
@@ -84,7 +84,7 @@ class OrderServiceTest {
             void it_throws_exception() {
                 // given
                 OrderCreateRequestDto orderCreateRequestDto =
-                    new OrderCreateRequestDto(1L, "COOKING", Collections.emptyList());
+                    new OrderCreateRequestDto(1L, Collections.emptyList());
                 OrderTable orderTable = new OrderTable(10, true);
                 given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
@@ -111,7 +111,7 @@ class OrderServiceTest {
                 );
                 Menu menu1 = new Menu("m1", BigDecimal.valueOf(10), new MenuGroup(1L, "mg1"));
                 OrderCreateRequestDto orderCreateRequestDto =
-                    new OrderCreateRequestDto(1L, "COOKING", orderLineItemRequestDtos);
+                    new OrderCreateRequestDto(1L, orderLineItemRequestDtos);
                 OrderTable orderTable = new OrderTable(10, false);
                 given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
                 given(menuRepository.findById(1L)).willReturn(Optional.of(menu1));
@@ -136,7 +136,7 @@ class OrderServiceTest {
             void it_throws_exception() {
                 // given
                 OrderCreateRequestDto orderCreateRequestDto =
-                    new OrderCreateRequestDto(1L, "COOKING", Collections.emptyList());
+                    new OrderCreateRequestDto(1L,  Collections.emptyList());
                 OrderTable orderTable = new OrderTable(10, false);
                 given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
@@ -164,7 +164,7 @@ class OrderServiceTest {
                 Menu menu1 = new Menu("m1", BigDecimal.valueOf(10), new MenuGroup(1L, "mg1"));
                 Menu menu2 = new Menu("m2", BigDecimal.valueOf(10), new MenuGroup(1L, "mg1"));
                 OrderCreateRequestDto orderCreateRequestDto =
-                    new OrderCreateRequestDto(1L, "COOKING", orderLineItemRequestDtos);
+                    new OrderCreateRequestDto(1L, orderLineItemRequestDtos);
                 OrderTable orderTable = new OrderTable(10, false);
                 Order order = new Order(1L, new OrderTable(10, false), OrderStatus.COOKING, new ArrayList<>());
                 given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));

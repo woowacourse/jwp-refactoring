@@ -15,7 +15,7 @@ public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
 
-    public MenuGroupService(final MenuGroupRepository menuGroupRepository) {
+    public MenuGroupService(MenuGroupRepository menuGroupRepository) {
         this.menuGroupRepository = menuGroupRepository;
     }
 
