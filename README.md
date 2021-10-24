@@ -2,6 +2,24 @@
 
 ## 요구 사항
 
+- `POST /api/menu-groups` 요청을 통해 메뉴 그룹을 추가할 수 있다.
+- `GET /api/menu-groups` 요청을 통해 메뉴 그룹 목록을 조회할 수 있다.
+- `POST /api/menus` 요청을 통해 메뉴를 추가할 수 있다.
+- `GET /api/menus` 요청을 통해 메뉴 목록을 조회할 수 있다.
+- `POST /api/orders` 요청을 통해 매장 주문을 추가할 수 있다.
+- `GET /api/orders` 요청을 통해 매장 주문 목록을 조회할 수 있다.
+- `PUT /api/orders/{orderId}/order-status` 요청을 통해 매장 주문 상태를 수정할 수 있다.
+- `POST /api/products` 요청을 통해 상품을 추가할 수 있다.
+- `GET /api/products` 요청을 통해 상품 목록을 조회할 수 있다.
+- `POST /api/table-groups` 요청을 통해 주문 테이블 그룹화 할 수 있다.
+- `DELETE /api/table-groups/{tableGroupId}` 요청을 통해 주문 테이블 그룹화를 해제할 수 있다.
+- `POST /api/tables` 요청을 통해 주문 테이블을 추가할 수 있다.
+- `GET /api/tables` 요청을 통해 주문 테이블 목록을 조회할 수 있다.
+- `PUT /api/tables/{orderTableId}/empty` 요청을 통해 주문 테이블을 주문 불가 테이블(빈 테이블)로 바꿀 수 있다.
+- `PUT /api/tables/{orderTableId}/number-of-guests` 요청을 통해 주문 테이블의 손님 수를 바꿀 수 있다.
+
+<br>
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
