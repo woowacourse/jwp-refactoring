@@ -2,17 +2,23 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.request.OrderTableChangeRequestDto;
+import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
+import kitchenpos.application.dto.response.OrderTableResponseDto;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,10 +35,7 @@ class TableServiceTest {
     private TableService tableService;
 
     @Mock
-    private OrderDao orderDao;
-
-    @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @DisplayName("create 메서드는")
     @Nested
@@ -42,19 +45,20 @@ class TableServiceTest {
         @Test
         void it_saves_and_returns_order_table() {
             // given
-            OrderTable orderTable = new OrderTable();
-            OrderTable expected = new OrderTable();
-            expected.setId(1L);
-            given(orderTableDao.save(orderTable)).willReturn(expected);
+            OrderTableCreateRequestDto orderTableCreateRequestDto =
+                new OrderTableCreateRequestDto(10, false);
+            OrderTable expected = new OrderTable(1L, new TableGroup(), 10, false, new ArrayList<>());
+            given(orderTableRepository.save(any(OrderTable.class))).willReturn(expected);
 
             // when
-            OrderTable response = tableService.create(orderTable);
+            OrderTableResponseDto response = tableService.create(orderTableCreateRequestDto);
 
             // then
             assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expected);
+                .ignoringFields("tableGroupResponseDto")
+                .isEqualTo(new OrderTableResponseDto(1L, 10, null, false));
 
-            verify(orderTableDao, times(1)).save(orderTable);
+            verify(orderTableRepository, times(1)).save(any(OrderTable.class));
         }
     }
 
@@ -66,17 +70,19 @@ class TableServiceTest {
         @Test
         void it_returns_order_table_list() {
             // given
-            OrderTable orderTable = new OrderTable();
-            OrderTable orderTable2 = new OrderTable();
-            given(orderTableDao.findAll()).willReturn(Arrays.asList(orderTable, orderTable2));
+            OrderTable orderTable1 =
+                new OrderTable(1L, new TableGroup(), 10, false, new ArrayList<>());
+            OrderTable orderTable2 =
+                new OrderTable(2L, new TableGroup(), 10, false, new ArrayList<>());
+            given(orderTableRepository.findAll()).willReturn(Arrays.asList(orderTable1, orderTable2));
 
             // when
-            List<OrderTable> list = tableService.list();
+            List<OrderTableResponseDto> list = tableService.list();
 
             // then
             assertThat(list).hasSize(2);
 
-            verify(orderTableDao, times(1)).findAll();
+            verify(orderTableRepository, times(1)).findAll();
         }
     }
 
@@ -92,15 +98,16 @@ class TableServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                given(orderTableDao.findById(1L)).willReturn(Optional.empty());
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, false);
+                given(orderTableRepository.findById(1L)).willReturn(Optional.empty());
 
                 // when, then
-                assertThatCode(() -> tableService.changeEmpty(1L, orderTable))
+                assertThatCode(() -> tableService.changeEmpty(orderTableChangeRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("OrderTable이 존재하지 않습니다.");
 
-                verify(orderTableDao, times(1)).findById(1L);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
 
@@ -112,17 +119,18 @@ class TableServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable savedOrderTable = new OrderTable();
-                savedOrderTable.setTableGroupId(1L);
-                given(orderTableDao.findById(1L)).willReturn(Optional.of(savedOrderTable));
+                OrderTable orderTable =
+                    new OrderTable(1L, new TableGroup(), 10, false, new ArrayList<>());
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, false);
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
                 // when, then
-                assertThatCode(() -> tableService.changeEmpty(1L, orderTable))
+                assertThatCode(() -> tableService.changeEmpty(orderTableChangeRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("OrderTable이 속한 TableGroup이 존재합니다.");
 
-                verify(orderTableDao, times(1)).findById(1L);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
 
@@ -134,20 +142,19 @@ class TableServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable savedOrderTable = new OrderTable();
-                List<String> orderStatuses = Arrays
-                    .asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-                given(orderTableDao.findById(1L)).willReturn(Optional.of(savedOrderTable));
-                given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, orderStatuses)).willReturn(true);
+                List<Order> orders = Arrays.asList(new Order(new OrderTable(10, false), OrderStatus.COOKING));
+                OrderTable orderTable =
+                    new OrderTable(1L, null, 10, false, orders);
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, false);
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
                 // when, then
-                assertThatCode(() -> tableService.changeEmpty(1L, orderTable))
+                assertThatCode(() -> tableService.changeEmpty(orderTableChangeRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("OrderTable에 속한 Order 중 일부가 조리 혹은 식사 중입니다.");
 
-                verify(orderTableDao, times(1)).findById(1L);
-                verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(1L, orderStatuses);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
 
@@ -159,23 +166,20 @@ class TableServiceTest {
             @Test
             void it_changes_and_returns_order_table_status() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                orderTable.setEmpty(true);
-                OrderTable savedOrderTable = new OrderTable();
-                List<String> orderStatuses = Arrays
-                    .asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name());
-                given(orderTableDao.findById(1L)).willReturn(Optional.of(savedOrderTable));
-                given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L, orderStatuses)).willReturn(false);
-                given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
+                List<Order> orders = Arrays.asList(
+                    new Order(new OrderTable(10, false), OrderStatus.COMPLETION));
+                OrderTable orderTable =
+                    new OrderTable(1L, null, 10, false, orders);
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, true);
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
                 // when
-                OrderTable response = tableService.changeEmpty(1L, orderTable);
+                OrderTableResponseDto response = tableService.changeEmpty(orderTableChangeRequestDto);
 
                 assertThat(response.isEmpty()).isTrue();
 
-                verify(orderTableDao, times(1)).findById(1L);
-                verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(1L, orderStatuses);
-                verify(orderTableDao, times(1)).save(savedOrderTable);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
     }
@@ -183,24 +187,6 @@ class TableServiceTest {
     @DisplayName("changeNumberOfGuest 메서드는")
     @Nested
     class Describe_changeNumberOfGuest {
-
-        @DisplayName("변경하려는 손님 숫자가 음수인 경우")
-        @Nested
-        class Context_number_of_guests_negative {
-
-            @DisplayName("예외가 발생한다.")
-            @Test
-            void it_throws_exception() {
-                // given
-                OrderTable orderTable = new OrderTable();
-                orderTable.setNumberOfGuests(-1);
-
-                // when, then
-                assertThatCode(() -> tableService.changeNumberOfGuests(1L, orderTable))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("변경하려는 손님 수는 음수일 수 없습니다.");
-            }
-        }
 
         @DisplayName("OrderTable을 조회할 수 없는 경우")
         @Nested
@@ -210,16 +196,39 @@ class TableServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                orderTable.setNumberOfGuests(0);
-                given(orderTableDao.findById(1L)).willReturn(Optional.empty());
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, false);
+                given(orderTableRepository.findById(1L)).willReturn(Optional.empty());
 
                 // when, then
-                assertThatCode(() -> tableService.changeNumberOfGuests(1L, orderTable))
+                assertThatCode(() -> tableService.changeNumberOfGuests(orderTableChangeRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("OrderTable이 존재하지 않습니다.");
 
-                verify(orderTableDao, times(1)).findById(1L);
+                verify(orderTableRepository, times(1)).findById(1L);
+            }
+        }
+
+        @DisplayName("변경하려는 손님 숫자가 음수인 경우")
+        @Nested
+        class Context_number_of_guests_negative {
+
+            @DisplayName("예외가 발생한다.")
+            @Test
+            void it_throws_exception() {
+                // given
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, -10, false);
+                OrderTable orderTable =
+                    new OrderTable(1L, new TableGroup(), 10, false, new ArrayList<>());
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
+
+                // when, then
+                assertThatCode(() -> tableService.changeNumberOfGuests(orderTableChangeRequestDto))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("변경하려는 손님 수는 음수일 수 없습니다.");
+
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
 
@@ -231,18 +240,18 @@ class TableServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable savedOrderTable = new OrderTable();
-                orderTable.setNumberOfGuests(0);
-                savedOrderTable.setEmpty(true);
-                given(orderTableDao.findById(1L)).willReturn(Optional.of(savedOrderTable));
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 10, false);
+                OrderTable orderTable =
+                    new OrderTable(1L, new TableGroup(), 10, true, new ArrayList<>());
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
                 // when, then
-                assertThatCode(() -> tableService.changeNumberOfGuests(1L, orderTable))
+                assertThatCode(() -> tableService.changeNumberOfGuests(orderTableChangeRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("OrderTable이 비어있는 상태입니다.");
 
-                verify(orderTableDao, times(1)).findById(1L);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
 
@@ -254,22 +263,19 @@ class TableServiceTest {
             @Test
             void it_changes_and_returns_order_table() {
                 // given
-                OrderTable orderTable = new OrderTable();
-                OrderTable savedOrderTable = new OrderTable();
-                orderTable.setNumberOfGuests(369);
-                savedOrderTable.setEmpty(false);
-                savedOrderTable.setNumberOfGuests(10);
-                given(orderTableDao.findById(1L)).willReturn(Optional.of(savedOrderTable));
-                given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
+                OrderTableChangeRequestDto orderTableChangeRequestDto =
+                    new OrderTableChangeRequestDto(1L, 369, false);
+                OrderTable orderTable =
+                    new OrderTable(1L, new TableGroup(), 10, false, new ArrayList<>());
+                given(orderTableRepository.findById(1L)).willReturn(Optional.of(orderTable));
 
                 // when
-                OrderTable response = tableService.changeNumberOfGuests(1L, orderTable);
+                OrderTableResponseDto response = tableService.changeNumberOfGuests(orderTableChangeRequestDto);
 
                 // then
                 assertThat(response.getNumberOfGuests()).isEqualTo(369);
 
-                verify(orderTableDao, times(1)).findById(1L);
-                verify(orderTableDao, times(1)).save(savedOrderTable);
+                verify(orderTableRepository, times(1)).findById(1L);
             }
         }
     }

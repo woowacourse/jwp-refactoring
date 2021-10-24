@@ -10,15 +10,19 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.request.MenuProductRequestDto;
+import kitchenpos.application.dto.request.MenuRequestDto;
+import kitchenpos.application.dto.response.MenuResponseDto;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -39,20 +43,38 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
-
-    @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("create 메서드는")
     @Nested
     class Describe_create {
+
+        @DisplayName("Menu가 속한 MenuGroup이 존재하지 않는다면")
+        @Nested
+        class Context_menu_group_not_found {
+
+            @DisplayName("예외가 발생한다.")
+            @Test
+            void it_throws_exception() {
+                // given
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", BigDecimal.valueOf(-1), 1L, Collections.emptyList());
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.empty());
+
+                // when, then
+                assertThatCode(() -> menuService.create(menuRequestDto))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessage("Menu가 속한 MenuGroup이 존재하지 않습니다.");
+
+                verify(menuGroupRepository, times(1)).findById(1L);
+            }
+        }
 
         @DisplayName("Menu 가격이 null이면")
         @Nested
@@ -62,16 +84,17 @@ class MenuServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Menu menu = new Menu();
-                menu.setPrice(null);
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Collections.emptyList());
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", null, 1L, Collections.emptyList());
+                MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.of(menuGroup));
 
                 // when, then
-                assertThatCode(() -> menuService.create(menu))
+                assertThatCode(() -> menuService.create(menuRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("유효하지 않은 Menu 가격입니다.");
+
+                verify(menuGroupRepository, times(1)).findById(1L);
             }
         }
 
@@ -83,39 +106,17 @@ class MenuServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Menu menu = new Menu();
-                menu.setPrice(BigDecimal.valueOf(-1));
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Collections.emptyList());
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", BigDecimal.valueOf(-1), 1L, Collections.emptyList());
+                MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.of(menuGroup));
 
                 // when, then
-                assertThatCode(() -> menuService.create(menu))
+                assertThatCode(() -> menuService.create(menuRequestDto))
                     .hasMessage("유효하지 않은 Menu 가격입니다.");
-            }
-        }
 
-        @DisplayName("Menu가 속한 MenuGroup이 존재하지 않는다면")
-        @Nested
-        class Context_menu_group_not_found {
+                verify(menuGroupRepository, times(1)).findById(1L);
 
-            @DisplayName("예외가 발생한다.")
-            @Test
-            void it_throws_exception() {
-                // given
-                Menu menu = new Menu();
-                menu.setPrice(BigDecimal.valueOf(100));
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Collections.emptyList());
-                given(menuGroupDao.existsById(1L)).willReturn(false);
-
-                // when, then
-                assertThatCode(() -> menuService.create(menu))
-                    .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("Menu가 속한 MenuGroup이 존재하지 않습니다.");
-
-                verify(menuGroupDao, times(1)).existsById(1L);
             }
         }
 
@@ -127,25 +128,22 @@ class MenuServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Menu menu = new Menu();
-                MenuProduct menuProduct1 = new MenuProduct();
-                MenuProduct menuProduct2 = new MenuProduct();
-                menu.setPrice(BigDecimal.valueOf(100));
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-                menuProduct1.setProductId(1L);
-                menuProduct2.setProductId(2L);
-                given(menuGroupDao.existsById(1L)).willReturn(true);
-                given(productDao.findById(1L)).willReturn(Optional.empty());
+                List<MenuProductRequestDto> menuProductRequestDtos = Arrays.asList(
+                    new MenuProductRequestDto(1L, 10L),
+                    new MenuProductRequestDto(2L, 10L)
+                );
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", BigDecimal.valueOf(300), 1L, menuProductRequestDtos);
+                MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.of(menuGroup));
 
                 // when, then
-                assertThatCode(() -> menuService.create(menu))
+                assertThatCode(() -> menuService.create(menuRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Product가 존재하지 않습니다.");
 
-                verify(menuGroupDao, times(1)).existsById(1L);
-                verify(productDao, times(1)).findById(1L);
+                verify(menuGroupRepository, times(1)).findById(1L);
+                verify(productRepository, times(1)).findById(1L);
             }
         }
 
@@ -157,35 +155,30 @@ class MenuServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Menu menu = new Menu();
-                MenuProduct menuProduct1 = new MenuProduct();
-                MenuProduct menuProduct2 = new MenuProduct();
-                Product product1 = new Product();
-                Product product2 = new Product();
-                menu.setPrice(BigDecimal.valueOf(61));
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-                menuProduct1.setProductId(1L);
-                menuProduct1.setQuantity(3);
-                menuProduct2.setProductId(2L);
-                menuProduct2.setQuantity(2);
-                product1.setPrice(BigDecimal.valueOf(10));
-                product2.setPrice(BigDecimal.valueOf(15));
-                given(menuGroupDao.existsById(1L)).willReturn(true);
-                given(productDao.findById(1L)).willReturn(Optional.of(product1));
-                given(productDao.findById(2L)).willReturn(Optional.of(product2));
+                List<MenuProductRequestDto> menuProductRequestDtos = Arrays.asList(
+                    new MenuProductRequestDto(1L, 3L),
+                    new MenuProductRequestDto(2L, 2L)
+                );
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", BigDecimal.valueOf(61), 1L, menuProductRequestDtos);
+                MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+                Product product1 = new Product(1L, "김밥", BigDecimal.valueOf(10));
+                Product product2 = new Product(2L, "누룽지", BigDecimal.valueOf(15));
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.of(menuGroup));
+                given(productRepository.findById(1L)).willReturn(Optional.of(product1));
+                given(productRepository.findById(2L)).willReturn(Optional.of(product2));
 
                 // when, then
-                assertThatCode(() -> menuService.create(menu))
+                assertThatCode(() -> menuService.create(menuRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("Menu 가격은 Product 가격 누계를 초과할 수 없습니다.");
 
-                verify(menuGroupDao, times(1)).existsById(1L);
-                verify(productDao, times(2)).findById(anyLong());
+                verify(menuGroupRepository, times(1)).findById(1L);
+                verify(productRepository, times(2)).findById(anyLong());
             }
         }
 
+        //
         @DisplayName("Menu 가격이 0 이상 양수 및 MemberProduct 누계 이하이고 MenuGroup이 존재하면")
         @Nested
         class Context_other_valid_case {
@@ -195,45 +188,40 @@ class MenuServiceTest {
             @ValueSource(ints = {59, 60})
             void it_saves_and_returns_menu(int price) {
                 // given
-                Menu menu = new Menu();
-                Menu savedMenu = new Menu();
-                MenuProduct menuProduct1 = new MenuProduct();
-                MenuProduct menuProduct2 = new MenuProduct();
-                Product product1 = new Product();
-                Product product2 = new Product();
-                menu.setPrice(BigDecimal.valueOf(price));
-                menu.setName("kevin");
-                menu.setMenuGroupId(1L);
-                menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-                savedMenu.setId(1L);
-                savedMenu.setName("kevin");
-                savedMenu.setMenuGroupId(1L);
-                menuProduct1.setProductId(1L);
-                menuProduct1.setQuantity(3);
-                menuProduct2.setProductId(2L);
-                menuProduct2.setQuantity(2);
-                product1.setPrice(BigDecimal.valueOf(10));
-                product2.setPrice(BigDecimal.valueOf(15));
-                given(menuGroupDao.existsById(1L)).willReturn(true);
-                given(productDao.findById(1L)).willReturn(Optional.of(product1));
-                given(productDao.findById(2L)).willReturn(Optional.of(product2));
-                given(menuDao.save(menu)).willReturn(savedMenu);
-                given(menuProductDao.save(menuProduct1)).willReturn(menuProduct1);
-                given(menuProductDao.save(menuProduct2)).willReturn(menuProduct2);
+                List<MenuProductRequestDto> menuProductRequestDtos = Arrays.asList(
+                    new MenuProductRequestDto(1L, 3L),
+                    new MenuProductRequestDto(2L, 2L)
+                );
+                MenuRequestDto menuRequestDto =
+                    new MenuRequestDto("kevin", BigDecimal.valueOf(price), 1L, menuProductRequestDtos);
+                MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+                Product product1 = new Product(1L, "김밥", BigDecimal.valueOf(10));
+                Product product2 = new Product(2L, "누룽지", BigDecimal.valueOf(15));
+                Menu expected =
+                    new Menu(1L, "kevin", BigDecimal.valueOf(price), menuGroup, new ArrayList<>());
+                List<MenuProduct> menuProducts = Arrays.asList(
+                    new MenuProduct(1L, expected, product1, 3),
+                    new MenuProduct(2L, expected, product2, 2)
+                );
+                expected.updateMenuProducts(menuProducts);
+                given(menuGroupRepository.findById(1L)).willReturn(Optional.of(menuGroup));
+                given(productRepository.findById(1L)).willReturn(Optional.of(product1));
+                given(productRepository.findById(2L)).willReturn(Optional.of(product2));
+                given(menuRepository.save(any(Menu.class)))
+                    .willReturn(expected);
 
                 // when
-                Menu response = menuService.create(menu);
+                MenuResponseDto response = menuService.create(menuRequestDto);
 
                 // then
                 assertThat(response.getId()).isOne();
-                assertThat(response.getMenuProducts()).hasSize(2)
-                    .extracting("productId", "quantity")
+                assertThat(response.getMenuProductResponseDtos()).hasSize(2)
+                    .extracting("id", "quantity")
                     .containsExactly(tuple(1L, 3L), tuple(2L, 2L));
 
-                verify(menuGroupDao, times(1)).existsById(1L);
-                verify(productDao, times(2)).findById(anyLong());
-                verify(menuDao, times(1)).save(menu);
-                verify(menuProductDao, times(2)).save(any(MenuProduct.class));
+                verify(menuGroupRepository, times(1)).findById(1L);
+                verify(productRepository, times(2)).findById(anyLong());
+                verify(menuRepository, times(1)).save(any(Menu.class));
             }
         }
     }
@@ -246,26 +234,25 @@ class MenuServiceTest {
         @Test
         void it_returns_menu_list() {
             // given
-            Menu menu = new Menu();
-            Menu menu2 = new Menu();
-            MenuProduct menuProduct1 = new MenuProduct();
-            MenuProduct menuProduct2 = new MenuProduct();
-            menu.setId(1L);
-            menu2.setId(2L);
-            menuProduct1.setQuantity(1L);
-            menuProduct2.setQuantity(2L);
-            given(menuDao.findAll()).willReturn(Arrays.asList(menu, menu2));
-            given(menuProductDao.findAllByMenuId(1L)).willReturn(Arrays.asList(menuProduct1));
-            given(menuProductDao.findAllByMenuId(2L)).willReturn(Arrays.asList(menuProduct2));
+            MenuGroup menuGroup = new MenuGroup(1L, "kevin group");
+            Product product1 = new Product(1L, "김밥", BigDecimal.valueOf(10));
+            Product product2 = new Product(2L, "누룽지", BigDecimal.valueOf(15));
+            Menu expected =
+                new Menu(1L, "kevin", BigDecimal.valueOf(10L), menuGroup, new ArrayList<>());
+            List<MenuProduct> menuProducts = Arrays.asList(
+                new MenuProduct(1L, expected, product1, 3),
+                new MenuProduct(2L, expected, product2, 2)
+            );
+            expected.updateMenuProducts(menuProducts);
+            given(menuRepository.findAll()).willReturn(Arrays.asList(expected));
 
             // when
-            List<Menu> response = menuService.list();
+            List<MenuResponseDto> response = menuService.list();
 
             // then
-            assertThat(response).hasSize(2);
+            assertThat(response).hasSize(1);
 
-            verify(menuDao, times(1)).findAll();
-            verify(menuProductDao, times(2)).findAllByMenuId(anyLong());
+            verify(menuRepository, times(1)).findAll();
         }
     }
 }

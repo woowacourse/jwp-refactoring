@@ -2,10 +2,13 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dto.request.ProductRequestDto;
+import kitchenpos.application.dto.response.ProductResponseDto;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,7 +28,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("create 메서드는")
     @Nested
@@ -39,12 +42,10 @@ class ProductServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Product product = new Product();
-                product.setName("참치마요");
-                product.setPrice(null);
+                ProductRequestDto productRequestDto = new ProductRequestDto("참치마요", null);
 
                 // when, then
-                assertThatCode(() -> productService.create(product))
+                assertThatCode(() -> productService.create(productRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("유효하지 않은 Product 가격입니다.");
             }
@@ -58,12 +59,10 @@ class ProductServiceTest {
             @Test
             void it_throws_exception() {
                 // given
-                Product product = new Product();
-                product.setName("참치마요");
-                product.setPrice(BigDecimal.valueOf(-1));
+                ProductRequestDto productRequestDto = new ProductRequestDto("참치마요", BigDecimal.valueOf(-1));
 
                 // when, then
-                assertThatCode(() -> productService.create(product))
+                assertThatCode(() -> productService.create(productRequestDto))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessage("유효하지 않은 Product 가격입니다.");
             }
@@ -78,20 +77,16 @@ class ProductServiceTest {
             @ValueSource(ints = {0, 300})
             void it_saves_and_returns_product(int price) {
                 // given
-                Product product = new Product();
-                product.setName("참치마요");
-                product.setPrice(BigDecimal.valueOf(price));
-                Product expected = new Product();
-                expected.setId(1L);
-                expected.setName("참치마요");
-                given(productDao.save(product)).willReturn(expected);
+                ProductRequestDto productRequestDto = new ProductRequestDto("참치마요", BigDecimal.valueOf(price));
+                Product expected = new Product(1L, "참치마요", BigDecimal.valueOf(price));
+                given(productRepository.save(any(Product.class))).willReturn(expected);
 
                 // when
-                Product response = productService.create(product);
+                ProductResponseDto response = productService.create(productRequestDto);
 
                 // then
                 assertThat(response).usingRecursiveComparison()
-                    .isEqualTo(expected);
+                    .isEqualTo(new ProductResponseDto(1L, "참치마요", BigDecimal.valueOf(price)));
             }
         }
     }
