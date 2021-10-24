@@ -14,7 +14,7 @@ import java.util.Optional;
 import kitchenpos.application.dto.request.OrderTableChangeRequestDto;
 import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
 import kitchenpos.application.dto.response.OrderTableResponseDto;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;

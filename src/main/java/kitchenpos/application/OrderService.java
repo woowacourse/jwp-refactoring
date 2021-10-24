@@ -6,9 +6,9 @@ import kitchenpos.application.dto.request.OrderChangeRequestDto;
 import kitchenpos.application.dto.request.OrderCreateRequestDto;
 import kitchenpos.application.dto.request.OrderLineItemRequestDto;
 import kitchenpos.application.dto.response.OrderResponseDto;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
@@ -26,9 +26,9 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+        MenuRepository menuRepository,
+        OrderRepository orderRepository,
+        OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -37,7 +37,8 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto create(OrderCreateRequestDto orderCreateRequestDto) {
-        OrderTable orderTable = orderTableRepository.findById(orderCreateRequestDto.getOrderTableId())
+        OrderTable orderTable = orderTableRepository
+            .findById(orderCreateRequestDto.getOrderTableId())
             .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 OrderTable ID입니다."));
         Order order = new Order(orderTable, OrderStatus.COOKING);
 
@@ -66,7 +67,7 @@ public class OrderService {
     @Transactional
     public OrderResponseDto changeOrderStatus(OrderChangeRequestDto orderChangeRequestDto) {
         Order order = orderRepository.findById(orderChangeRequestDto.getOrderId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Order입니다."));
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 Order입니다."));
         OrderStatus orderStatus = OrderStatus.valueOf(orderChangeRequestDto.getOrderStatus());
         order.changeOrderStatus(orderStatus);
         return OrderResponseDto.from(order);

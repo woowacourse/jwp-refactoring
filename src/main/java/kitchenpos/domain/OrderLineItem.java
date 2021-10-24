@@ -56,12 +56,4 @@ public class OrderLineItem {
     public long getQuantity() {
         return quantity;
     }
-
-    public Long getMenuId() {
-        return menu.getId();
-    }
-
-    public void toOrder(Order order) {
-        this.order = order;
-    }
 }

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -160,7 +160,7 @@ class TableGroupRestControllerTest extends IntegrationTest {
             .isBadRequest()
             .expectBody(String.class)
             .value(response ->
-                assertThat(response).isEqualTo("TableGroup에 속한 Order 중 일부가 조리중이거나 식사 중입니다.")
+                assertThat(response).isEqualTo("OrderTable에 속한 Order 중 일부가 조리 혹은 식사 중입니다.")
             );
     }
 

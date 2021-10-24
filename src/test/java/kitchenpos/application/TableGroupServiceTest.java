@@ -13,8 +13,8 @@ import java.util.Arrays;
 import java.util.Optional;
 import kitchenpos.application.dto.request.TableGroupRequestDto;
 import kitchenpos.application.dto.response.TableGroupResponseDto;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -187,7 +187,7 @@ class TableGroupServiceTest {
                 // when, then
                 assertThatCode(() -> tableGroupService.ungroup(1L))
                     .isInstanceOf(IllegalArgumentException.class)
-                    .hasMessage("TableGroup에 속한 Order 중 일부가 조리중이거나 식사 중입니다.");
+                    .hasMessage("OrderTable에 속한 Order 중 일부가 조리 혹은 식사 중입니다.");
 
                 verify(tableGroupRepository, times(1)).findById(1L);
             }

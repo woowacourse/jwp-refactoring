@@ -40,18 +40,6 @@ public class TableGroup {
         this.orderTables = orderTables;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
     public void updateOrderTables(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("TableGroup에 속한 OrderTable은 최소 2개 이상이어야합니다.");
@@ -63,5 +51,17 @@ public class TableGroup {
         for (OrderTable orderTable : orderTables) {
             orderTable.ungroup();
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables;
     }
 }

@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.OrderTableChangeRequestDto;
 import kitchenpos.application.dto.request.OrderTableCreateRequestDto;
 import kitchenpos.application.dto.response.OrderTableResponseDto;
-import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

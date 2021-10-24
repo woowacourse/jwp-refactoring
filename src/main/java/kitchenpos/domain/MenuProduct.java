@@ -43,7 +43,7 @@ public class MenuProduct {
     }
 
     public BigDecimal calculatePrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+        return product.calculate(quantity);
     }
 
     public Long getSeq() {
@@ -60,9 +60,5 @@ public class MenuProduct {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public Long getProductId() {
-        return product.getId();
     }
 }

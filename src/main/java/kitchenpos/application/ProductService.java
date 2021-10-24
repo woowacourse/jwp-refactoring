@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.ProductRequestDto;
 import kitchenpos.application.dto.response.ProductResponseDto;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

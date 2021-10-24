@@ -5,9 +5,9 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.request.MenuProductRequestDto;
 import kitchenpos.application.dto.request.MenuRequestDto;
 import kitchenpos.application.dto.response.MenuResponseDto;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -24,9 +24,9 @@ public class MenuService {
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final ProductRepository productRepository
+        MenuRepository menuRepository,
+        MenuGroupRepository menuGroupRepository,
+        ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;

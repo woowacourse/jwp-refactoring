@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dto.request.MenuGroupRequestDto;
 import kitchenpos.application.dto.response.MenuGroupResponseDto;
-import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
