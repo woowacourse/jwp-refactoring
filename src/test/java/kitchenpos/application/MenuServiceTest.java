@@ -44,15 +44,15 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 수 있다")
     @Test
     void create() {
-        final Menu menu = new Menu();
-        menu.setName("분짜와 스프링롤");
-        menu.setPrice(BigDecimal.valueOf(16000));
-        menu.setMenuGroupId(1L);
-        final Menu savedMenu = new Menu();
-        savedMenu.setId(1L);
-        savedMenu.setName("분짜와 스프링롤");
-        savedMenu.setPrice(BigDecimal.valueOf(16000));
-        savedMenu.setMenuGroupId(1L);
+        final Menu menu = Menu.builder()
+                .name("분짜와 스프링롤")
+                .price(BigDecimal.valueOf(16000))
+                .menuGroupId(1L)
+                .build();
+        final Menu savedMenu = Menu.builder()
+                .of(menu)
+                .id(1L)
+                .build();
         final MenuProduct menuProduct1 = new MenuProduct();
         menuProduct1.setSeq(1L);
         menuProduct1.setProductId(1L);
@@ -87,10 +87,11 @@ class MenuServiceTest {
     @DisplayName("메뉴의 가격은 0 원 이상이어야 한다")
     @Test
     void createExceptionPriceUnderZero() {
-        final Menu menu = new Menu();
-        menu.setName("분짜와 스프링롤");
-        menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setMenuGroupId(1L);
+        final Menu menu = Menu.builder()
+                .name("분짜와 스프링롤")
+                .price(BigDecimal.valueOf(-1))
+                .menuGroupId(1L)
+                .build();
 
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -98,10 +99,11 @@ class MenuServiceTest {
     @DisplayName("메뉴가 속한 메뉴 그룹이 존재해야 한다")
     @Test
     void createExceptionMenuGroup() {
-        final Menu menu = new Menu();
-        menu.setName("분짜와 스프링롤");
-        menu.setPrice(BigDecimal.valueOf(16000));
-        menu.setMenuGroupId(1L);
+        final Menu menu = Menu.builder()
+                .name("분짜와 스프링롤")
+                .price(BigDecimal.valueOf(16000))
+                .menuGroupId(1L)
+                .build();
 
         when(menuGroupDao.existsById(1L)).thenReturn(false);
 
@@ -111,10 +113,11 @@ class MenuServiceTest {
     @DisplayName("메뉴 상품 목록에서 (상품의 가격 * 메뉴 상품의 갯수) 의 합이 0 원 이상이어야 한다")
     @Test
     void createExceptionSum() {
-        final Menu menu = new Menu();
-        menu.setName("분짜와 스프링롤");
-        menu.setPrice(BigDecimal.valueOf(16000));
-        menu.setMenuGroupId(1L);
+        final Menu menu =  Menu.builder()
+                .name("분짜와 스프링롤")
+                .price(BigDecimal.valueOf(16000))
+                .menuGroupId(1L)
+                .build();
         final MenuProduct menuProduct1 = new MenuProduct();
         menuProduct1.setSeq(1L);
         menuProduct1.setProductId(1L);
@@ -143,10 +146,12 @@ class MenuServiceTest {
     @DisplayName("메뉴의 목록을 조회할 수 있다")
     @Test
     void list() {
-        final Menu menu1 = new Menu();
-        menu1.setId(1L);
-        final Menu menu2 = new Menu();
-        menu2.setId(2L);
+        final Menu menu1 = Menu.builder()
+                .id(1L)
+                .build();
+        final Menu menu2 = Menu.builder()
+                .id(2L)
+                .build();
         final List<Menu> menus = Arrays.asList(menu1, menu2);
         final MenuProduct menuProduct1 = new MenuProduct();
         final MenuProduct menuProduct2 = new MenuProduct();

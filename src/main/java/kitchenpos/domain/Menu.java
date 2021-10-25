@@ -10,36 +10,80 @@ public class Menu {
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
 
-    public Long getId() {
-        return id;
+    public Menu() {
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    private Menu(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.price = builder.price;
+        this.menuGroupId = builder.menuGroupId;
+        this.menuProducts = builder.menuProducts;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private String name;
+        private BigDecimal price;
+        private Long menuGroupId;
+        private List<MenuProduct> menuProducts;
+
+        private Builder() {
+        }
+
+        public Builder of(Menu menu) {
+            this.id = menu.id;
+            this.name = menu.name;
+            this.price = menu.price;
+            this.menuGroupId = menu.menuGroupId;
+            this.menuProducts = menu.menuProducts;
+            return this;
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder price(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder menuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
+            return this;
+        }
+
+        public Menu build() {
+            return new Menu(this);
+        }
+
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
