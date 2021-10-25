@@ -1,12 +1,10 @@
 package kitchenpos.acceptance;
 
 
-import kitchenpos.dao.*;
 import kitchenpos.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -19,31 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("주문 관련 기능")
 class OrderAcceptanceTest extends AcceptanceTest {
 
-    @Autowired
-    OrderDao orderDao;
+    OrderTable 주문_테이블 = new OrderTable();
 
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
-
-    @Autowired
-    MenuDao menuDao;
-
-    @Autowired
-    MenuGroupDao menuGroupDao;
-
-    @Autowired
-    ProductDao productDao;
-
-    TableGroup 테이블_그룹_1 = new TableGroup();
-
-    OrderTable 주문_테이블_1 = new OrderTable();
-    OrderTable 주문_테이블_2 = new OrderTable();
-
-    Order 주문_1 = new Order();
-    Order 주문_2 = new Order();
+    Order 주문 = new Order();
 
     MenuGroup 한마리메뉴 = new MenuGroup();
     MenuGroup 두마리메뉴 = new MenuGroup();
@@ -57,28 +33,14 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        테이블_그룹_1.setCreatedDate(LocalDateTime.now());
-        테이블_그룹_1 = tableGroupDao.save(테이블_그룹_1);
+        주문_테이블.setNumberOfGuests(4);
+        주문_테이블.setEmpty(false);
+        주문_테이블 = orderTableDao.save(주문_테이블);
 
-        주문_테이블_1.setTableGroupId(테이블_그룹_1.getId());
-        주문_테이블_1.setNumberOfGuests(4);
-        주문_테이블_1.setEmpty(false);
-        주문_테이블_1 = orderTableDao.save(주문_테이블_1);
-
-        주문_테이블_2.setTableGroupId(테이블_그룹_1.getId());
-        주문_테이블_2.setNumberOfGuests(2);
-        주문_테이블_2.setEmpty(true);
-        주문_테이블_2 = orderTableDao.save(주문_테이블_2);
-
-        주문_1.setOrderTableId(주문_테이블_1.getId());
-        주문_1.setOrderStatus(OrderStatus.COOKING.name());
-        주문_1.setOrderedTime(LocalDateTime.now());
-        주문_1 = orderDao.save(주문_1);
-
-        주문_2.setOrderTableId(주문_테이블_1.getId());
-        주문_2.setOrderStatus(OrderStatus.COOKING.name());
-        주문_2.setOrderedTime(LocalDateTime.now());
-        주문_2 = orderDao.save(주문_2);
+        주문.setOrderTableId(주문_테이블.getId());
+        주문.setOrderStatus(OrderStatus.COOKING.name());
+        주문.setOrderedTime(LocalDateTime.now());
+        주문 = orderDao.save(주문);
 
         한마리메뉴.setName("한마리메뉴");
         한마리메뉴 = menuGroupDao.save(한마리메뉴);
@@ -117,49 +79,50 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2);
+        assertThat(responseEntity.getBody()).hasSize(1);
     }
 
     @DisplayName("매장에서 발생한 주문 정보를 생성한다")
     @Test
     void createOrder() {
         // given
-        Order 주문_3 = new Order();
-        주문_3.setOrderTableId(주문_테이블_1.getId());
+        Order 주문3 = new Order();
+        주문3.setOrderTableId(주문_테이블.getId());
 
-        OrderLineItem 주문_3_아이템_1 = new OrderLineItem();
-        주문_3_아이템_1.setMenuId(한마리메뉴_후라이드치킨.getId());
-        주문_3_아이템_1.setQuantity(1L);
-        OrderLineItem 주문_3_아이템_2 = new OrderLineItem();
-        주문_3_아이템_2.setMenuId(두마리메뉴_양념_간장치킨.getId());
-        주문_3_아이템_2.setQuantity(1L);
-        주문_3.setOrderLineItems(Arrays.asList(주문_3_아이템_1, 주문_3_아이템_2));
+        OrderLineItem 주문3_아이템1 = new OrderLineItem();
+        주문3_아이템1.setMenuId(한마리메뉴_후라이드치킨.getId());
+        주문3_아이템1.setQuantity(1L);
+
+        OrderLineItem 주문3_아이템2 = new OrderLineItem();
+        주문3_아이템2.setMenuId(두마리메뉴_양념_간장치킨.getId());
+        주문3_아이템2.setQuantity(1L);
+        주문3.setOrderLineItems(Arrays.asList(주문3_아이템1, 주문3_아이템2));
 
         // when
-        ResponseEntity<Order> response = testRestTemplate.postForEntity("/api/orders", 주문_3, Order.class);
+        ResponseEntity<Order> response = testRestTemplate.postForEntity("/api/orders", 주문3, Order.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Order 응답된_Order = response.getBody();
-        assertThat(응답된_Order.getOrderTableId()).isEqualTo(주문_테이블_1.getId());
-        assertThat(응답된_Order.getOrderLineItems()).hasSize(2);
+        Order 응답된_주문 = response.getBody();
+        assertThat(응답된_주문.getOrderTableId()).isEqualTo(주문_테이블.getId());
+        assertThat(응답된_주문.getOrderLineItems()).hasSize(2);
     }
 
-    @DisplayName("매장에서 발생한 orderId에 해당하는 주문 정보를 수정한다\n")
+    @DisplayName("매장에서 발생한 orderId에 해당하는 주문 정보를 수정한다")
     @Test
     void changeOrderStatus() {
         // given
         Order 변경할_주문 = new Order();
         변경할_주문.setOrderStatus(OrderStatus.MEAL.name());
-        Long 주문_2_ID = 주문_2.getId();
+        Long 주문_ID = 주문.getId();
 
         // when
-        testRestTemplate.put("/api/orders/" + 주문_2_ID + "/order-status", 변경할_주문);
+        testRestTemplate.put("/api/orders/" + 주문_ID + "/order-status", 변경할_주문);
 
         // then
-        Order 변경된_주문_2 = orderDao.findById(주문_2_ID).get();
-        assertThat(변경된_주문_2.getId()).isEqualTo(주문_2.getId());
-        assertThat(변경된_주문_2.getOrderTableId()).isEqualTo(주문_2.getOrderTableId());
-        assertThat(변경된_주문_2.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        Order 변경된_주문 = orderDao.findById(주문_ID).get();
+        assertThat(변경된_주문.getId()).isEqualTo(주문.getId());
+        assertThat(변경된_주문.getOrderTableId()).isEqualTo(주문.getOrderTableId());
+        assertThat(변경된_주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 }

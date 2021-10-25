@@ -1,8 +1,5 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -10,7 +7,6 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -22,21 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("테이블 그룹 관련 기능")
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    @Autowired
-    OrderTableDao orderTableDao;
-
-    @Autowired
-    TableGroupDao tableGroupDao;
-
-    @Autowired
-    OrderDao orderDao;
-
     TableGroup 테이블_그룹1 = new TableGroup();
     OrderTable 주문_테이블1 = new OrderTable();
     OrderTable 주문_테이블2 = new OrderTable();
 
-    Order 주문_1 = new Order();
-    Order 주문_2 = new Order();
+    Order 주문1 = new Order();
+    Order 주문2 = new Order();
 
     @BeforeEach
     void setUp() {
@@ -54,15 +41,15 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         주문_테이블2.setTableGroupId(테이블_그룹1.getId());
         주문_테이블2 = orderTableDao.save(주문_테이블2);
 
-        주문_1.setOrderTableId(주문_테이블1.getId());
-        주문_1.setOrderStatus(OrderStatus.COMPLETION.name());
-        주문_1.setOrderedTime(LocalDateTime.now());
-        주문_1 = orderDao.save(주문_1);
+        주문1.setOrderTableId(주문_테이블1.getId());
+        주문1.setOrderStatus(OrderStatus.COMPLETION.name());
+        주문1.setOrderedTime(LocalDateTime.now());
+        주문1 = orderDao.save(주문1);
 
-        주문_2.setOrderTableId(주문_테이블2.getId());
-        주문_2.setOrderStatus(OrderStatus.COMPLETION.name());
-        주문_2.setOrderedTime(LocalDateTime.now());
-        주문_2 = orderDao.save(주문_2);
+        주문2.setOrderTableId(주문_테이블2.getId());
+        주문2.setOrderStatus(OrderStatus.COMPLETION.name());
+        주문2.setOrderedTime(LocalDateTime.now());
+        주문2 = orderDao.save(주문2);
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 생성한다")

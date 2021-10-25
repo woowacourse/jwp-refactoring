@@ -1,11 +1,9 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,9 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 그룹 관련 기능")
 class MenuGroupAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    MenuGroupDao menuGroupDao;
 
     MenuGroup 한마리메뉴 = new MenuGroup();
     MenuGroup 두마리메뉴 = new MenuGroup();
@@ -52,7 +47,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        MenuGroup 응답_Menu_Group = responseEntity.getBody();
-        assertThat(응답_Menu_Group.getName()).isEqualTo("세마리메뉴");
+        MenuGroup 응답된_메뉴_그룹 = responseEntity.getBody();
+        assertThat(응답된_메뉴_그룹.getName()).isEqualTo("세마리메뉴");
     }
 }

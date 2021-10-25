@@ -1,11 +1,9 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -13,9 +11,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 관련 기능")
 class TableAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    OrderTableDao orderTableDao;
 
     OrderTable 주문_테이블1 = new OrderTable();
     OrderTable 주문_테이블2 = new OrderTable();
@@ -55,9 +50,9 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        OrderTable 응답_주문_테이블 = response.getBody();
-        assertThat(응답_주문_테이블.getNumberOfGuests()).isZero();
-        assertThat(응답_주문_테이블.isEmpty()).isTrue();
+        OrderTable 응답된_주문_테이블 = response.getBody();
+        assertThat(응답된_주문_테이블.getNumberOfGuests()).isZero();
+        assertThat(응답된_주문_테이블.isEmpty()).isTrue();
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경한다")

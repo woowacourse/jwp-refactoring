@@ -1,11 +1,9 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,9 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("상품 관련 기능")
 class ProductAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    ProductDao productDao;
 
     Product 후라이드치킨 = new Product();
     Product 양념치킨 = new Product();
@@ -57,8 +52,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Product 응답_Product = responseEntity.getBody();
-        assertThat(응답_Product.getName()).isEqualTo("강정치킨");
-        assertThat(응답_Product.getPrice().compareTo(BigDecimal.valueOf(17000))).isZero();
+        Product 응답된_상품 = responseEntity.getBody();
+        assertThat(응답된_상품.getName()).isEqualTo("강정치킨");
+        assertThat(응답된_상품.getPrice().compareTo(BigDecimal.valueOf(17000))).isZero();
     }
 }
