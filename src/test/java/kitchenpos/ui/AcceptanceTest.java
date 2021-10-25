@@ -40,7 +40,8 @@ public class AcceptanceTest {
         return makeResponse(url, testMethod, null);
     }
 
-    protected ExtractableResponse<Response> makeResponse(String url, TestMethod testMethod, Object requestBody) {
+    protected ExtractableResponse<Response> makeResponse(String url, TestMethod testMethod,
+        Object requestBody) {
         RequestSpecification request = RestAssured.given()
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 

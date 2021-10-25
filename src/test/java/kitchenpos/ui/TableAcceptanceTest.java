@@ -53,7 +53,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         created.setNumberOfGuests(3);
         OrderTable changed = makeResponse(
-            "/api/tables/" + String.valueOf(created.getId()) + "/number-of-guests", TestMethod.PUT,
+            "/api/tables/" + created.getId() + "/number-of-guests", TestMethod.PUT,
             created)
             .as(OrderTable.class);
 

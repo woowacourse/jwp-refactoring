@@ -1,15 +1,12 @@
 package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 

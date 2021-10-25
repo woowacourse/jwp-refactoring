@@ -7,7 +7,8 @@ import io.restassured.specification.RequestSpecification;
 public enum TestMethod {
     GET {
         @Override
-        public ExtractableResponse<Response> extractedResponse(RequestSpecification request, String url) {
+        public ExtractableResponse<Response> extractedResponse(RequestSpecification request,
+            String url) {
             return request.when().get(url)
                 .then()
                 .extract();
@@ -15,7 +16,8 @@ public enum TestMethod {
     },
     POST {
         @Override
-        public ExtractableResponse<Response> extractedResponse(RequestSpecification request, String url) {
+        public ExtractableResponse<Response> extractedResponse(RequestSpecification request,
+            String url) {
             return request.when().post(url)
                 .then()
                 .extract();
@@ -23,7 +25,8 @@ public enum TestMethod {
     },
     PUT {
         @Override
-        public ExtractableResponse<Response> extractedResponse(RequestSpecification request, String url) {
+        public ExtractableResponse<Response> extractedResponse(RequestSpecification request,
+            String url) {
             return request.when().put(url)
                 .then()
                 .extract();
@@ -31,12 +34,14 @@ public enum TestMethod {
     },
     DELETE {
         @Override
-        public ExtractableResponse<Response> extractedResponse(RequestSpecification request, String url) {
+        public ExtractableResponse<Response> extractedResponse(RequestSpecification request,
+            String url) {
             return request.when().delete(url)
                 .then()
                 .extract();
         }
     };
 
-    public abstract ExtractableResponse<Response> extractedResponse(RequestSpecification request, String url);
+    public abstract ExtractableResponse<Response> extractedResponse(RequestSpecification request,
+        String url);
 }
