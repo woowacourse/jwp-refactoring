@@ -3,11 +3,11 @@
 ## 요구 사항
 
 ### 상품 (products)
-#### POST /api/products : 상품 등록
+#### POST /api/products : 상품 등록 - [통합테스트 O] 
 - 상품을 등록한다. 
   - 가격(price)이 null이거나 0보다 작을 경우 예외를 발생시킨다. 
 
-#### GET /api/products : 상품 조회
+#### GET /api/products : 상품 조회 - [통합테스트 O]
 - 상품 목록을 조회한다.
 
 ### 메뉴 그룹 (menu-groups)
