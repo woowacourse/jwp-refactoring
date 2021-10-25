@@ -8,6 +8,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.KitchenposException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static kitchenpos.exception.KitchenposException.*;
 
 @Service
 public class OrderService {
@@ -42,7 +45,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new KitchenposException(EMPTY_ORDER_LINE_ITEMS);
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,16 +53,16 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new KitchenposException(ILLEGAL_ITEM_SIZE);
         }
 
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new KitchenposException(ILLEGAL_ORDER_TABLE_ID));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new KitchenposException(EMPTY_ORDER_TABLE);
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -92,10 +95,10 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new KitchenposException(ILLEGAL_ORDER_ID));
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new KitchenposException(SAME_ORDER_STATUS);
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());

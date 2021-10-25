@@ -13,6 +13,10 @@ public class KitchenposException extends IllegalArgumentException{
     public static final String ILLEGAL_TABLE_SIZE_MINIMUM = "테이블 그룹에 테이블은 2대 이상이어야 합니다.";
     public static final String ILLEGAL_TABLE_SIZE = "테이블 그룹 내 테이블 수가 올바르지 않습니다.";
     public static final String NOT_EMPTY_TABLE_TO_CREATE = "테이블이 비어있지 않습니다.";
+    public static final String EMPTY_ORDER_LINE_ITEMS = "주문 항목이 비어있습니다.";
+    public static final String ILLEGAL_ITEM_SIZE = "주문 항목의 개수가 올바르지 않습니다.";
+    public static final String ILLEGAL_ORDER_ID = "존재하지 않는 주문입니다.";
+    public static final String SAME_ORDER_STATUS = "변경하고자 하는 상태와 현 상태가 동일합니다.";
 
     public KitchenposException(String message) {
         super(message);
