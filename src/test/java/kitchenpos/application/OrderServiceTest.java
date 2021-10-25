@@ -7,15 +7,11 @@ import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.KitchenposException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,8 +25,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
+class OrderServiceTest extends ServiceTest {
     @InjectMocks
     private OrderService orderService;
 
@@ -45,36 +40,6 @@ class OrderServiceTest {
 
     @Mock
     private OrderTableDao orderTableDao;
-
-    private Order order;
-    private OrderLineItem orderLineItem;
-    private List<OrderLineItem> orderLineItems;
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(10);
-
-        orderLineItems = new ArrayList<>();
-        orderLineItems.add(orderLineItem);
-
-        order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(orderLineItems);
-
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
-        orderTable.setTableGroupId(1L);
-        orderTable.setNumberOfGuests(3);
-    }
 
     @Test
     @DisplayName("주문을 생성한다.")

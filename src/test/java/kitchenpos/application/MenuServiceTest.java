@@ -5,21 +5,16 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.exception.KitchenposException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -34,8 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class MenuServiceTest {
+class MenuServiceTest extends ServiceTest {
     @InjectMocks
     private MenuService menuService;
 
@@ -50,39 +44,6 @@ class MenuServiceTest {
 
     @Mock
     private ProductDao productDao;
-
-    private MenuGroup menuGroup;
-    private Menu menu;
-    private MenuProduct menuProduct;
-    private Product product;
-    private final List<MenuProduct> menuProducts = new ArrayList<>();
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = new MenuGroup();
-        menuGroup.setName("분식");
-        menuGroup.setId(1L);
-
-        product = new Product();
-        product.setPrice(BigDecimal.valueOf(1000L));
-        product.setName("어묵");
-        product.setId(1L);
-
-        menu = new Menu();
-        menu.setName("떡볶이");
-        menu.setId(1L);
-
-        menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menu.getId());
-        menuProduct.setProductId(product.getId());
-        menuProduct.setSeq(1L);
-        menuProduct.setQuantity(100);
-        menuProducts.add(menuProduct);
-
-        menu.setMenuProducts(menuProducts);
-        menu.setPrice(BigDecimal.valueOf(2000.0));
-        menu.setMenuGroupId(menuGroup.getId());
-    }
 
     @Test
     @DisplayName("올바르게 메뉴 생성 요청이 들어오면 수행된다.")

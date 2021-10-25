@@ -9,10 +9,8 @@ import kitchenpos.exception.KitchenposException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,8 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest {
+class TableGroupServiceTest extends ServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
@@ -40,9 +37,7 @@ class TableGroupServiceTest {
     private TableGroupDao tableGroupDao;
 
     private TableGroup tableGroup;
-    private OrderTable orderTable;
-    private OrderTable orderTable2;
-    private List<OrderTable> orderTables = new ArrayList<>();
+    private final List<OrderTable> orderTables = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
@@ -85,12 +80,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 내 테이블이 비어있거나 2개 미만이면 에러가 발생한다.")
     void createExceptionTableLessThanTwo() {
         tableGroup.setOrderTables(Collections.emptyList());
-        assertThatThrownBy(()-> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(KitchenposException.class)
                 .hasMessage(ILLEGAL_TABLE_SIZE_MINIMUM);
 
         tableGroup.setOrderTables(Collections.singletonList(orderTable));
-        assertThatThrownBy(()-> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(KitchenposException.class)
                 .hasMessage(ILLEGAL_TABLE_SIZE_MINIMUM);
     }
@@ -105,7 +100,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(anyList()))
                 .thenReturn(anotherOrderTables);
 
-        assertThatThrownBy(()-> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(KitchenposException.class)
                 .hasMessage(ILLEGAL_TABLE_SIZE);
     }
@@ -117,7 +112,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(anyList()))
                 .thenReturn(orderTables);
 
-        assertThatThrownBy(()-> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(KitchenposException.class)
                 .hasMessage(NOT_EMPTY_TABLE_TO_CREATE);
     }
@@ -129,7 +124,7 @@ class TableGroupServiceTest {
         when(orderTableDao.findAllByIdIn(anyList()))
                 .thenReturn(orderTables);
 
-        assertThatThrownBy(()-> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isInstanceOf(KitchenposException.class)
                 .hasMessage(NOT_EMPTY_TABLE_TO_CREATE);
     }

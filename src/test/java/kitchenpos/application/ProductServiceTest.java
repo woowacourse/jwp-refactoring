@@ -1,18 +1,15 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.*;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.exception.KitchenposException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,27 +18,15 @@ import java.util.List;
 import static kitchenpos.exception.KitchenposException.ILLEGAL_PRICE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class ProductServiceTest {
+class ProductServiceTest extends ServiceTest {
     @InjectMocks
     private ProductService productService;
 
     @Mock
     private ProductDao productDao;
-
-    private Product product;
-
-    @BeforeEach
-    void setUp() {
-        product = new Product();
-        product.setId(1L);
-        product.setName("음료수");
-        product.setPrice(BigDecimal.valueOf(1000));
-    }
 
     @Test
     @DisplayName("상품을 생성한다.")
