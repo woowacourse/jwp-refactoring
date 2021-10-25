@@ -148,11 +148,13 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("매장에서 발생한 orderId에 해당하는 주문 정보를 수정한다\n")
     @Test
     void changeOrderStatus() {
-        // when
-        Order 변경된_주문 = new Order();
-        변경된_주문.setOrderStatus(OrderStatus.MEAL.name());
+        // given
+        Order 변경할_주문 = new Order();
+        변경할_주문.setOrderStatus(OrderStatus.MEAL.name());
         Long 주문_2_ID = 주문_2.getId();
-        testRestTemplate.put("/api/orders/" + 주문_2_ID + "/order-status", 변경된_주문);
+
+        // when
+        testRestTemplate.put("/api/orders/" + 주문_2_ID + "/order-status", 변경할_주문);
 
         // then
         Order 변경된_주문_2 = orderDao.findById(주문_2_ID).get();
