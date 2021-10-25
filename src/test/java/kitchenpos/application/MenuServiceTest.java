@@ -18,12 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class MenuServiceTest extends ServiceTest {
 
     @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
     private MenuService menuService;
 
     @DisplayName("메뉴를 생성한다.")
@@ -45,16 +39,5 @@ class MenuServiceTest extends ServiceTest {
 
         List<Menu> menus = menuService.list();
         assertThat(menus.size()).isEqualTo(1);
-    }
-
-    public Menu menu() {
-        MenuGroup menuGroup = new MenuGroup("menuGroup");
-        MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
-        Product product = new Product("product", BigDecimal.valueOf(1000));
-        Product createdProduct = productService.create(product);
-        MenuProduct menuProduct = new MenuProduct(createdProduct.getId(), 10);
-        List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
-
-        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup.getId(), menuProducts);
     }
 }
