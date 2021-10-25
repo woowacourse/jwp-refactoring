@@ -25,7 +25,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @MethodSource("getParametersForCreate")
     void create(String name) {
         MenuGroup menuGroup = TMenuGroup.builder()
-            .create(name)
+            .name(name)
             .build();
 
         assertThatCode(() -> menuGroupService.create(menuGroup))
@@ -36,7 +36,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void create_duplicate() {
         MenuGroup menuGroup = TMenuGroup.builder()
-            .createRandom()
+            .randomName()
             .build();
 
         menuGroupService.create(menuGroup);
@@ -64,7 +64,7 @@ class MenuGroupServiceTest extends IntegrationTest {
         }
 
         MenuGroup menuGroup = TMenuGroup.builder()
-            .create(sb.toString())
+            .name(sb.toString())
             .build();
         assertThatThrownBy(() -> menuGroupService.create(menuGroup))
             .isInstanceOf(DataIntegrityViolationException.class);
@@ -74,7 +74,7 @@ class MenuGroupServiceTest extends IntegrationTest {
     @Test
     void list() {
         List<MenuGroup> menuGroups = TMenuGroup.multiBuilder()
-            .createRandom(50)
+            .randomName(50)
             .build();
 
         menuGroups.forEach(menuGroupService::create);

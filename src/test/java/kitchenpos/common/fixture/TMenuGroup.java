@@ -23,27 +23,27 @@ public class TMenuGroup {
             this.menuGroups = new ArrayList<>();
         }
 
-        public MultiBuilder create(String name) {
+        public MultiBuilder name(String name) {
             this.menuGroups.add(generate(name));
             return this;
         }
 
-        public MultiBuilder create(String name, int repeat) {
+        public MultiBuilder name(String name, int repeat) {
             for (int i = 0; i < repeat; i++) {
                 this.menuGroups.add(generate(name));
             }
             return this;
         }
 
-        public MultiBuilder createRandom() {
-            this.menuGroups.add(generate(UUID.randomUUID().toString()));
-            return this;
-        }
-
-        public MultiBuilder createRandom(int repeat) {
+        public MultiBuilder randomName(int repeat) {
             for (int i = 0; i < repeat; i++) {
                 this.menuGroups.add(generate(UUID.randomUUID().toString()));
             }
+            return this;
+        }
+
+        public MultiBuilder randomName() {
+            this.menuGroups.add(generate(UUID.randomUUID().toString()));
             return this;
         }
 
@@ -62,12 +62,12 @@ public class TMenuGroup {
 
         private String name;
 
-        public Builder create(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
 
-        public Builder createRandom() {
+        public Builder randomName() {
             this.name = UUID.randomUUID().toString();
             return this;
         }
