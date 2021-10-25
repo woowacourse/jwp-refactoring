@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import org.h2.jdbc.JdbcSQLIntegrityConstraintViolationException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
