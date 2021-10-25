@@ -1,4 +1,8 @@
 # 키친포스
+치킨 포스기를 리랙토링 해보자!!
+
+## 테이블 연관관계 
+![image](https://user-images.githubusercontent.com/48986787/138720712-c7aa5ed6-900e-4449-b36d-d3794936a556.png)
 
 ## 요구 사항
 
