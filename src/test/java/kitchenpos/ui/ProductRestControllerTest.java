@@ -37,8 +37,11 @@ class ProductRestControllerTest {
     void create() throws Exception {
         final Product productDto = new Product();
         final String content = objectMapper.writeValueAsString(productDto);
-        final Product product = new Product();
-        product.setId(1L);
+        final Product product = Product
+                .builder()
+                .id(1L)
+                .build();
+
         when(productService.create(any())).thenReturn(product);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/products")

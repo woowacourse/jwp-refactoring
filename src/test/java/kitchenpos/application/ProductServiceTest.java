@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Java6Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,40 +29,41 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다")
     @Test
     void create() {
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1500));
-        product.setName("컵누들");
-        final Product savedProduct = new Product();
-        savedProduct.setId(1L);
-        savedProduct.setPrice(BigDecimal.valueOf(1500));
-        savedProduct.setName("컵누들");
+        final Product product = Product.builder()
+                .name("컵누들")
+                .price(BigDecimal.valueOf(1500))
+                .build();
+        final Product savedProduct = Product.builder()
+                .product(product)
+                .id(1L)
+                .build();
 
         when(productDao.save(product)).thenReturn(savedProduct);
 
         final Product actual = productService.create(product);
         assertAll(
-                () -> Java6Assertions.assertThat(actual.getId()).isEqualTo(1L),
-                () -> Java6Assertions.assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
-                () -> Java6Assertions.assertThat(actual.getName()).isEqualTo("컵누들")
+                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
+                () -> assertThat(actual.getName()).isEqualTo("컵누들")
         );
     }
 
     @DisplayName("상품의 가격은 0 원 이상이어야 한다")
     @Test
     void createExceptionPriceUnderZero() {
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1));
-        product.setName("컵누들");
-
+        final Product product = Product.builder()
+                .name("컵누들")
+                .price(BigDecimal.valueOf(-1))
+                .build();
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 가격이 비어있어서는 안 된다")
     @Test
     void createExceptionPriceNull() {
-        final Product product = new Product();
-        product.setPrice(null);
-        product.setName("컵누들");
+        final Product product = Product.builder()
+                .name("컵누들")
+                .build();
 
         assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
     }

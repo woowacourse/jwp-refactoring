@@ -57,18 +57,20 @@ class MenuServiceTest {
         menuProduct1.setSeq(1L);
         menuProduct1.setProductId(1L);
         menuProduct1.setQuantity(1);
-        final Product product1 = new Product();
-        product1.setId(1L);
-        product1.setName("분짜");
-        product1.setPrice(BigDecimal.valueOf(13000));
+        final Product product1 = Product.builder()
+                .name("분짜")
+                .price(BigDecimal.valueOf(13000))
+                .id(1L)
+                .build();
         final MenuProduct menuProduct2 = new MenuProduct();
         menuProduct2.setSeq(2L);
         menuProduct2.setProductId(2L);
         menuProduct2.setQuantity(1);
-        final Product product2 = new Product();
-        product2.setId(2L);
-        product2.setName("스프링롤");
-        product2.setPrice(BigDecimal.valueOf(3000));
+        final Product product2 = Product.builder()
+                .name("스프링롤")
+                .price(BigDecimal.valueOf(3000))
+                .id(2L)
+                .build();
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
@@ -117,18 +119,18 @@ class MenuServiceTest {
         menuProduct1.setSeq(1L);
         menuProduct1.setProductId(1L);
         menuProduct1.setQuantity(1);
-        final Product product1 = new Product();
-        product1.setId(1L);
-        product1.setName("분짜");
-        product1.setPrice(BigDecimal.valueOf(13000));
+        final Product product1 = Product.builder()
+                .name("분짜")
+                .price(BigDecimal.valueOf(13000))
+                .id(1L).build();
         final MenuProduct menuProduct2 = new MenuProduct();
         menuProduct2.setSeq(2L);
         menuProduct2.setProductId(2L);
         menuProduct2.setQuantity(1);
-        final Product product2 = new Product();
-        product2.setId(2L);
-        product2.setName("스프링롤");
-        product2.setPrice(BigDecimal.valueOf(2000));
+        final Product product2 = Product.builder()
+                .name("스프링롤")
+                .price(BigDecimal.valueOf(2000))
+                .id(2L).build();
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
