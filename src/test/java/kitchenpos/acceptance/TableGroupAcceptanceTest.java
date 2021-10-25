@@ -7,6 +7,8 @@ import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -81,6 +83,27 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         assertThat(응답_테이블_그룹.getOrderTables().get(1).getId()).isEqualTo(주문_테이블4.getId());
     }
 
+    @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 생성 시, 테이블이 최소 2개가 안되면 예외가 발생한다.")
+    @Test
+    void cannotCreateTableGroupWithSingleTable() {
+        // given
+        OrderTable 단일_주문_테이블 = new OrderTable();
+
+        단일_주문_테이블.setNumberOfGuests(100);
+        단일_주문_테이블.setEmpty(true);
+        단일_주문_테이블 = orderTableDao.save(단일_주문_테이블);
+
+        TableGroup 유효하지_않은_테이블_그룹 = new TableGroup();
+        유효하지_않은_테이블_그룹.setCreatedDate(LocalDateTime.now());
+        유효하지_않은_테이블_그룹.setOrderTables(Arrays.asList(단일_주문_테이블));
+
+        // when
+        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹, TableGroup.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제한다")
     @Test
     void deleteTableGroup() {
@@ -94,5 +117,25 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         OrderTable 변경된_주문_테이블2 = orderTableDao.findById(주문_테이블2.getId()).get();
         assertThat(변경된_주문_테이블2.getTableGroupId()).isNull();
+    }
+
+    @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제할 때, 테이블 그룹의 테이블들의 주문 상태가 COMPLETION이 아니면 에러가 발생한다.")
+    @Test
+    void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
+        // when
+        Order 주문3 = new Order();
+        주문3.setOrderTableId(주문_테이블1.getId());
+        주문3.setOrderStatus(OrderStatus.COOKING.name());
+        주문3.setOrderedTime(LocalDateTime.now());
+        orderDao.save(주문3);
+
+        Long 테이블_그룹1_ID = 테이블_그룹1.getId();
+
+        // when
+        ResponseEntity<Void> response = testRestTemplate.exchange("/api/table-groups/" + 테이블_그룹1_ID,
+                HttpMethod.DELETE, HttpEntity.EMPTY, Void.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

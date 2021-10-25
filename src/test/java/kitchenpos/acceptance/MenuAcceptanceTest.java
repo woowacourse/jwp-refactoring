@@ -97,4 +97,29 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThat(응답된_메뉴.getName()).isEqualTo("두마리메뉴_후라이드_양념치킨");
         assertThat(응답된_메뉴.getMenuProducts()).hasSize(2);
     }
+
+    @DisplayName("메뉴 그룹 카테고리를 생성 시, 메뉴 그룹의 가격 총합이 개별 메뉴 가격의 총합보다 크다면 예외가 발생한다.")
+    @Test
+    void cannotCreateMenuWhenMenuProductIsMoreExpensive() {
+        // given
+        MenuProduct 두마리메뉴_후라이드_양념치킨_중_후라이드 = new MenuProduct();
+        두마리메뉴_후라이드_양념치킨_중_후라이드.setProductId(후라이드치킨.getId());
+        두마리메뉴_후라이드_양념치킨_중_후라이드.setQuantity(1);
+
+        MenuProduct 두마리메뉴_후라이드_양념치킨_중_양념 = new MenuProduct();
+        두마리메뉴_후라이드_양념치킨_중_양념.setProductId(양념치킨.getId());
+        두마리메뉴_후라이드_양념치킨_중_양념.setQuantity(1);
+
+        Menu 두마리메뉴_후라이드_양념치킨 = new Menu();
+        두마리메뉴_후라이드_양념치킨.setName("두마리메뉴_후라이드_양념치킨");
+        두마리메뉴_후라이드_양념치킨.setPrice(BigDecimal.valueOf(9999999));
+        두마리메뉴_후라이드_양념치킨.setMenuGroupId(두마리메뉴.getId());
+        두마리메뉴_후라이드_양념치킨.setMenuProducts(Arrays.asList(두마리메뉴_후라이드_양념치킨_중_후라이드, 두마리메뉴_후라이드_양념치킨_중_양념));
+
+        // when
+        ResponseEntity<Menu> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, Menu.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
