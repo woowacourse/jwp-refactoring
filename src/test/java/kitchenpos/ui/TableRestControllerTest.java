@@ -36,10 +36,10 @@ class TableRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final OrderTable orderTableDto = new OrderTable();
-        final String content = objectMapper.writeValueAsString(orderTableDto);
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final String content = objectMapper.writeValueAsString(new OrderTable());
+        final OrderTable orderTable = OrderTable.builder()
+                .id(1L)
+                .build();
         when(tableService.create(any())).thenReturn(orderTable);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/tables")

@@ -47,6 +47,7 @@ class OrderServiceTest {
     private OrderLineItem orderLineItem1;
     private OrderLineItem orderLineItem2;
     private Order order;
+    private OrderTable orderTable;
 
     @BeforeEach
     void setUp() {
@@ -65,6 +66,10 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.COMPLETION.name())
                 .orderLineItems(Arrays.asList(orderLineItem1, orderLineItem2))
                 .build();
+        orderTable = OrderTable.builder()
+                .id(1L)
+                .empty(false)
+                .build();
     }
 
     @DisplayName("주문을 등록할 수 있다")
@@ -79,9 +84,6 @@ class OrderServiceTest {
                 .seq(2L)
                 .build();
         final List<Long> menuIds = Arrays.asList(1L, 2L);
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(false);
         final Order savedOrder = Order.builder()
                 .of(order)
                 .id(1L)
@@ -139,12 +141,13 @@ class OrderServiceTest {
         final List<Long> menuIds = order.getOrderLineItems().stream()
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
+        final OrderTable savedOrderTable = OrderTable.builder()
+                .of(orderTable)
+                .empty(true)
+                .build();
 
         when(menuDao.countByIdIn(menuIds)).thenReturn(2L);
-        when(orderTableDao.findById(order.getOrderTableId())).thenReturn(Optional.of(orderTable));
+        when(orderTableDao.findById(order.getOrderTableId())).thenReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }

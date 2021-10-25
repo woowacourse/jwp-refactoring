@@ -9,11 +9,13 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,19 +38,33 @@ class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
+    private OrderTable orderTable;
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
+    private List<OrderTable> orderTables;
+
+    @BeforeEach
+    void setUp() {
+        orderTable = OrderTable.builder()
+                .empty(true)
+                .build();
+        orderTable1 = OrderTable.builder()
+                .of(orderTable)
+                .id(1L)
+                .build();
+        orderTable2 = OrderTable.builder()
+                .of(orderTable)
+                .id(2L)
+                .build();
+        orderTables = Arrays.asList(orderTable1, orderTable2);
+    }
+
     @DisplayName("단체 지정을 등록할 수 있다")
     @Test
     void create() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        final List<Long> orderTableIds = Arrays.asList(1L, 2L);
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
         final TableGroup savedTableGroup = new TableGroup();
@@ -67,15 +83,15 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블이 비어있으면 안 된다")
     @Test
     void createExceptionEmpty() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        final OrderTable wrongOrderTable = OrderTable.builder()
+                .id(1L)
+                .empty(false)
+                .build();
+        final OrderTable normalOrderTable = OrderTable.builder()
+                .of(orderTable)
+                .id(2L)
+                .build();
+        final List<OrderTable> orderTables = Arrays.asList(wrongOrderTable, normalOrderTable);
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
 
@@ -85,10 +101,6 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블의 목록이 2 보다 작으면 안 된다")
     @Test
     void createExceptionUnderTwo() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
         final List<OrderTable> orderTables = Collections.singletonList(orderTable1);
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
@@ -99,21 +111,15 @@ class TableGroupServiceTest {
     @DisplayName("주문 테이블로 등록되어 있는 목록과 단체 주문에 있는 주문 테이블 목록과 크기가 같아야 한다")
     @Test
     void createExceptionTablesSize() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final OrderTable orderTable3 = new OrderTable();
-        orderTable3.setId(3L);
-        orderTable3.setEmpty(true);
-        orderTable3.setTableGroupId(null);
+        final OrderTable orderTable3 = OrderTable.builder()
+                .of(orderTable)
+                .id(3L)
+                .build();
         final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final List<OrderTable> savedOrderTables = Arrays.asList(orderTable1, orderTable2, orderTable3);
-        final List<Long> orderTableIds = Arrays.asList(1L, 2L);
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
 
@@ -125,27 +131,16 @@ class TableGroupServiceTest {
     @DisplayName("등록되어 있는 주문 테이블이 비어 있지 않으면 예외가 발생한다")
     @Test
     void createExceptionSavedEmpty() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        final List<Long> orderTableIds = Arrays.asList(1L, 2L);
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
-        final OrderTable savedOrderTable1 = new OrderTable();
-        savedOrderTable1.setId(1L);
-        savedOrderTable1.setEmpty(false);
-        savedOrderTable1.setTableGroupId(1L);
-        final OrderTable savedOrderTable2 = new OrderTable();
-        savedOrderTable2.setId(2L);
-        savedOrderTable2.setEmpty(true);
-        savedOrderTable2.setTableGroupId(1L);
-        final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
+        final OrderTable savedOrderTable1 = OrderTable.builder()
+                .of(orderTable1)
+                .empty(false)
+                .build();
+        final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, orderTable2);
 
         when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
@@ -155,26 +150,17 @@ class TableGroupServiceTest {
     @DisplayName("등록되어 있는 주문 테이블의 그룹 지정이 없으면 예외를 발생한다")
     @Test
     void createExceptionEmptyAndGroup() {
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
         final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final List<Long> orderTableIds = Arrays.asList(1L, 2L);
         final TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(orderTables);
-        final OrderTable savedOrderTable1 = new OrderTable();
-        savedOrderTable1.setId(1L);
-        savedOrderTable1.setEmpty(true);
-        savedOrderTable1.setTableGroupId(null);
-        final OrderTable savedOrderTable2 = new OrderTable();
-        savedOrderTable2.setId(2L);
-        savedOrderTable2.setEmpty(true);
-        savedOrderTable2.setTableGroupId(1L);
+        final OrderTable savedOrderTable1 = OrderTable.builder()
+                .of(orderTable1)
+                .build();
+        final OrderTable savedOrderTable2 =  OrderTable.builder()
+                .of(orderTable2)
+                .tableGroupId(1L)
+                .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
         when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
@@ -186,15 +172,6 @@ class TableGroupServiceTest {
     @Test
     void ungroup() {
         final Long tableGroupId = 1L;
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
@@ -206,15 +183,6 @@ class TableGroupServiceTest {
     @Test
     void ungroupExceptionExistsAndStatus() {
         final Long tableGroupId = 1L;
-        final OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(null);
-        final OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setTableGroupId(null);
-        final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
         when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
