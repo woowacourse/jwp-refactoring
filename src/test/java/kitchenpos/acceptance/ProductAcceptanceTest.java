@@ -24,12 +24,10 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        후라이드치킨.setId(1L);
         후라이드치킨.setName("후라이드치킨");
         후라이드치킨.setPrice(BigDecimal.valueOf(15000));
         productDao.save(후라이드치킨);
 
-        양념치킨.setId(2L);
         양념치킨.setName("양념치킨");
         양념치킨.setPrice(BigDecimal.valueOf(16000));
         productDao.save(양념치킨);
