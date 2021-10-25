@@ -13,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class ProductIntegrationTest {
-    @Autowired
-    private WebTestClient webTestClient;
+public class ProductIntegrationTest extends IntegrationTest {
 
     @DisplayName("상품 목록을 조회한다.")
     @Test
