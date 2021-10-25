@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.KitchenException;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ProductService {
         final BigDecimal price = product.getPrice();
 
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new KitchenException("상품 가격은 1원 이상입니다.");
         }
 
         return productDao.save(product);
