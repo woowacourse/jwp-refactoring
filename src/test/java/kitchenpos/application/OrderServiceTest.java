@@ -16,6 +16,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,27 +42,34 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
+    private OrderLineItem orderLineItem1;
+    private OrderLineItem orderLineItem2;
+
+    @BeforeEach
+    void setUp() {
+        orderLineItem1 = OrderLineItem.builder()
+                .orderId(1L)
+                .menuId(1L)
+                .quantity(1L)
+                .build();
+        orderLineItem2 = OrderLineItem.builder()
+                .orderId(2L)
+                .menuId(2L)
+                .quantity(2L)
+                .build();
+    }
+
     @DisplayName("주문을 등록할 수 있다")
     @Test
     void create() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setQuantity(1L);
-        final OrderLineItem savedOrderLineItem1 = new OrderLineItem();
-        savedOrderLineItem1.setSeq(1L);
-        savedOrderLineItem1.setOrderId(1L);
-        savedOrderLineItem1.setMenuId(1L);
-        savedOrderLineItem1.setQuantity(1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setQuantity(2L);
-        final OrderLineItem savedOrderLineItem2 = new OrderLineItem();
-        savedOrderLineItem2.setSeq(2L);
-        savedOrderLineItem2.setOrderId(2L);
-        savedOrderLineItem2.setMenuId(2L);
-        savedOrderLineItem2.setQuantity(2L);
+        final OrderLineItem savedOrderLineItem1 = OrderLineItem.builder()
+                .of(orderLineItem1)
+                .seq(1L)
+                .build();
+        final OrderLineItem savedOrderLineItem2 = OrderLineItem.builder()
+                .of(orderLineItem2)
+                .seq(2L)
+                .build();
         final Order order = new Order();
         order.setOrderTableId(1L);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
@@ -97,14 +105,6 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 갯수와 메뉴 id의 갯수가 일치하여야 한다")
     @Test
     void createExceptionVerifySize() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setQuantity(1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setQuantity(2L);
         final Order order = new Order();
         order.setOrderTableId(1L);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
@@ -118,14 +118,6 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 존재해야 한다")
     @Test
     void createExceptionTableExists() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setQuantity(1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setQuantity(2L);
         final Order order = new Order();
         order.setOrderTableId(1L);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
@@ -140,14 +132,6 @@ class OrderServiceTest {
     @DisplayName("주문 테이블이 비어있으면 안 된다")
     @Test
     void createExceptionTableEmpty() {
-        final OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setQuantity(1L);
-        final OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setOrderId(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setQuantity(2L);
         final Order order = new Order();
         order.setOrderTableId(1L);
         order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
