@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +35,19 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
+    private Order savedOrder;
+
+    @BeforeEach
+    void setUp() {
+        savedOrder = Order.builder()
+                .id(1L)
+                .build();
+    }
+
     @Test
     void create() throws Exception {
-        final Order orderDto = new Order();
-        final String content = objectMapper.writeValueAsString(orderDto);
-        final Order order = new Order();
-        order.setId(1L);
-        when(orderService.create(any())).thenReturn(order);
+        final String content = objectMapper.writeValueAsString(new Order());
+        when(orderService.create(any())).thenReturn(savedOrder);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/orders")
                         .content(content)
@@ -67,9 +74,8 @@ class OrderRestControllerTest {
 
     @Test
     void changeOrderStatus() throws Exception {
-        final Order orderDto = new Order();
-        final String content = objectMapper.writeValueAsString(orderDto);
-        when(orderService.changeOrderStatus(any(), any())).thenReturn(new Order());
+        final String content = objectMapper.writeValueAsString(new Order());
+        when(orderService.changeOrderStatus(any(), any())).thenReturn(savedOrder);
 
         final MockHttpServletResponse response = mockMvc.perform(put("/api/orders/1/order-status")
                         .content(content)
