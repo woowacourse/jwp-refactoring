@@ -14,7 +14,7 @@ public class KitchenposException extends IllegalArgumentException{
     public static final String ILLEGAL_TABLE_SIZE = "테이블 그룹 내 테이블 수가 올바르지 않습니다.";
     public static final String NOT_EMPTY_TABLE_TO_CREATE = "테이블이 비어있지 않습니다.";
 
-    public KitchenposException(String s) {
-        super(s);
+    public KitchenposException(String message) {
+        super(message);
     }
 }
