@@ -9,6 +9,7 @@ Content-Type: application/json
 
 ###
 GET {{host}}/api/tables
+Content-Type: application/json
 
 ###
 PUT {{host}}/api/tables/1/empty

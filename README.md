@@ -32,19 +32,19 @@
 
 ### 테이블 (tables)
 
-#### POST /api/tables : 테이블 등록
+#### POST /api/tables : 테이블 등록 - [통합테스트 O]
 - 테이블을 등록한다.
 
-#### GET /api/tables : 테이블 조회
+#### GET /api/tables : 테이블 조회 - [통합테스트 O]
 - 테이블 목록을 조회한다.
 
-#### PUT /api/tables/{orderTableId}/empty : 테이블이 비어있는 지 여부를 수정
+#### PUT /api/tables/{orderTableId}/empty : 테이블이 비어있는 지 여부를 수정 - [통합테스트 O]
 - 테이블이 비어있는 지 여부를 수정한다.
 - table 객체가 들고 있는 empty의 상태(boolean)에 따라 테이블의 비어있는 지 여부를 수정 
     - 존재하지 않는 테이블일 경우 예외를 발생시킨다.
     - 해당 테이블의 상태가 COOKING이거나 MEAL일 경우 예외를 발생시킨다.
 
-#### PUT /api/tables/{orderTableId}/number-of-guests : 테이블 할당 가능 인원 수 수정
+#### PUT /api/tables/{orderTableId}/number-of-guests : 테이블 할당 가능 인원 수 수정 - [통합테스트 O]
 - 테이블 할당 가능 인원 수를 수정한다.
 - numberOfGuests 에 인원 수를 주어 수정한다.
     - 인원 수가 0보다 작다면 예외를 발생시킨다.
