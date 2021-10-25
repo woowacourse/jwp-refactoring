@@ -34,7 +34,7 @@ class ProductServiceTest {
                 .price(BigDecimal.valueOf(1500))
                 .build();
         final Product savedProduct = Product.builder()
-                .product(product)
+                .of(product)
                 .id(1L)
                 .build();
 

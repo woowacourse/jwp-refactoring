@@ -36,11 +36,13 @@ class MenuGroupRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final MenuGroup menuGroupDto = new MenuGroup();
-        menuGroupDto.setName("메뉴그룹이름");
+        final MenuGroup menuGroupDto =  MenuGroup.builder()
+                .name("메뉴그룹이름")
+                .build();
         final String content = objectMapper.writeValueAsString(menuGroupDto);
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
+        final MenuGroup menuGroup = MenuGroup.builder()
+                .id(1L)
+                .build();
         when(menuGroupService.create(any())).thenReturn(menuGroup);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menu-groups")

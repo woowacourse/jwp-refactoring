@@ -28,7 +28,7 @@ public class Product {
         private Builder() {
         }
 
-        public Builder product(Product product) {
+        public Builder of(Product product) {
             this.id = product.id;
             this.name = product.name;
             this.price = product.price;

@@ -27,11 +27,14 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다")
     @Test
     void create() {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("하노이 아침메뉴 셋트");
-        final MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setId(1L);
-        savedMenuGroup.setName("하노이 아침메뉴 셋트");
+        final MenuGroup menuGroup = MenuGroup.builder()
+                .name("하노이 아침메뉴 셋트")
+                .build();
+        final MenuGroup savedMenuGroup = MenuGroup.builder()
+                .of(menuGroup)
+                .id(1L)
+                .build();
+                new MenuGroup();
 
         when(menuGroupDao.save(menuGroup)).thenReturn(savedMenuGroup);
 
