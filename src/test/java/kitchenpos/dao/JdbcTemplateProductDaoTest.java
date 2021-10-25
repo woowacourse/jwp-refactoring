@@ -56,6 +56,7 @@ public class JdbcTemplateProductDaoTest extends DaoTest {
     @Test
     void findAll() {
         // given
+        List<Product> existProducts = productDao.findAll();
         SAVE_PRODUCT_RETURN_ID();
 
         // when
@@ -63,7 +64,7 @@ public class JdbcTemplateProductDaoTest extends DaoTest {
 
         // then
         // 초기화를 통해 등록된 메뉴 6개 + 새로 추가한 메뉴 1개
-        assertThat(products).hasSize(6 + 1);
+        assertThat(products).hasSize(existProducts.size() + 1);
 
     }
 

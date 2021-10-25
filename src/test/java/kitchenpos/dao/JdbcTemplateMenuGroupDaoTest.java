@@ -54,6 +54,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
     @Test
     void findAll() {
         // given
+        List<MenuGroup> existMenuGroups = menuGroupDao.findAll();
         SAVE_MENU_GROUP();
 
         // when
@@ -61,7 +62,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
 
         // then
         // 초기화를 통해 등록된 메뉴 4개 + 새로 추가한 메뉴 1개
-        assertThat(menuGroups).hasSize(4 + 1);
+        assertThat(menuGroups).hasSize(existMenuGroups.size() + 1);
     }
 
     @DisplayName("id에 해당하는 메뉴 그룹이 존재하는지 확인한다.")

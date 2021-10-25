@@ -57,6 +57,7 @@ class JdbcTemplateOrderTableDaoTest extends DomainDaoTest {
     @Test
     void findAll() {
         // given
+        List<OrderTable> existOrderTables = orderTableDao.findAll();
         SAVE_ORDER_TABLE_RETURN_ID();
 
         // when
@@ -64,7 +65,7 @@ class JdbcTemplateOrderTableDaoTest extends DomainDaoTest {
 
         // then
         // 초기화를 통해 등록된 메뉴 8개 + 새로 추가한 메뉴 1개
-        assertThat(orderTables).hasSize(8 + 1);
+        assertThat(orderTables).hasSize(existOrderTables.size() + 1);
     }
 
     @DisplayName("id에 속하는 주문테이블을 조회한다.")

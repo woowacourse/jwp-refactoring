@@ -65,6 +65,7 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest {
     @Test
     void findAll() {
         // given
+        List<Menu> existMenus = menuDao.findAll();
         SAVE_MENU_RETURN_ID();
 
         // when
@@ -72,7 +73,7 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest {
 
         // then
         // 초기화를 통해 등록된 메뉴 6개 + 새로 추가한 메뉴 1개
-        assertThat(menus).hasSize(6 + 1);
+        assertThat(menus).hasSize(existMenus.size() + 1);
     }
 
     @DisplayName("Id에 해당하는 메뉴의 개수를 센다.")
