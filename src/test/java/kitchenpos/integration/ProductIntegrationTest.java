@@ -44,6 +44,4 @@ public class ProductIntegrationTest extends IntegrationTest {
                 assertThat(responseProduct.getPrice().toBigInteger()).isEqualTo(product.getPrice().toBigInteger());
             });
     }
-
-
 }

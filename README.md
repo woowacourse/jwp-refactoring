@@ -12,10 +12,10 @@
 
 ### 메뉴 그룹 (menu-groups)
 
-#### POST /api/menu-groups : 메뉴 그룹 등록
+#### POST /api/menu-groups : 메뉴 그룹 등록 - [통합테스트 O]
 - 메뉴 그룹을 등록한다.
 
-#### GET /api/menu-groups : 메뉴 그룹 조회
+#### GET /api/menu-groups : 메뉴 그룹 조회 - [통합테스트 O]
 - 메뉴 그룹 목록을 조회한다.
 
 ### 메뉴 (menus)

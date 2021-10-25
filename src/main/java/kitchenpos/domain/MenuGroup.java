@@ -4,6 +4,13 @@ public class MenuGroup {
     private Long id;
     private String name;
 
+    public MenuGroup(String name) {
+        this.name = name;
+    }
+
+    public MenuGroup() {
+    }
+
     public Long getId() {
         return id;
     }
