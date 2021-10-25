@@ -40,7 +40,6 @@ class TableGroupServiceIntegrationTest {
         TableGroup tableGroup = 테이블_그룹_등록(orderTables);
 
         List<OrderTable> created = getTablesInTableGroup(tableGroup);
-
         assertThat(created.size()).isEqualTo(2);
     }
 
@@ -65,7 +64,6 @@ class TableGroupServiceIntegrationTest {
         List<OrderTable> created = getTablesInTableGroup(tableGroup);
 
         tableGroupService.ungroup(tableGroup.getId());
-
         List<OrderTable> deleted = getTablesInTableGroup(tableGroup);
 
         assertThat(created.size()).isEqualTo(2);
