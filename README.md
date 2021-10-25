@@ -1,6 +1,125 @@
 # 키친포스
 
 ## 요구 사항
+#### [상품 API]
+- **GET: /api/products**
+    - 등록된 전체 상품들을 반환한다
+
+- **POST: /api/products**
+    - 새로운 상품을 등록한다
+    ```json
+    {
+      "name": "강정치킨",
+      "price": 17000
+    }
+    ```
+----
+#### [메뉴 그룹 API]
+- **GET: /api/menu-groups**
+    - 등록된 전체 메뉴 그룹 카테코리를 반환한다
+
+- **POST: /api/menu-groups**
+    - 메뉴 그룹 카테고리를 생성한다
+    ```json
+    {
+      "name": "추천메뉴"
+    }
+    ```
+----
+#### [메뉴 API]
+- **GET: /api/menus**
+    - 등록된 전체 메뉴에 대한 정보를 반환한다
+
+- **POST: /api/menus**
+    - 새로운 메뉴를 생성한다
+    ```json
+    {
+      "name": "후라이드+후라이드",
+      "price": 19000,
+      "menuGroupId": 1,
+      "menuProducts": [
+        {
+          "productId": 1,
+          "quantity": 2
+        }
+      ]
+    }
+    ```
+----
+#### [주문 API]
+- **GET: /api/orders**
+    - 매장에서 발생한 주문들에 대한 정보를 반환한다
+
+- **POST: /api/orders**
+    - 매장에서 발생한 주문 정보를 생성한다
+    ```json
+    {
+      "orderTableId": 1,
+      "orderLineItems": [
+        {
+          "menuId": 1,
+          "quantity": 1
+        }
+      ]
+    }
+    ```
+
+- **PUT: /api/orders/{orderId}/order-status**
+    - 매장에서 발생한 orderId에 해당하는 주문 정보를 수정한다
+    ```json
+    {
+      "orderStatus": "MEAL"
+    }
+    ```
+----
+#### [테이블 API]
+- **GET: /api/tables**
+    - 매장에서 주문이 발생하는 테이블들에 대한 정보를 반환한다. 
+
+- **POST: /api/tables**
+    - 매장에서 주문이 발생하는 테이블에 대한 정보를 추가한다. 
+    ```json
+    {
+      "numberOfGuests": 0,
+      "empty": true
+    }
+    ```
+
+- **PUT: /api/tables/{tableId}/empty**
+    - 매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경한다. 
+    ```json
+    {
+      "empty": true
+    }
+    ```
+
+- **PUT: /api/tables/{tableId}/number-of-guests**
+    - 매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 number-of-guest를 변경한다.
+    ```json
+    {
+      "numberOfGuests": 4
+    }
+    ```
+----
+#### [테이블 그룹 API]
+- **POST: /api/table-groups**
+    - 통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 생성한다. 
+    ```json
+    {
+      "orderTables": [
+        {
+          "id": 1
+        },
+        {
+          "id": 2
+        }
+      ]
+    }
+    ```
+
+- **DELETE: /api/table-groups/1**
+    - 통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 삭제한다.
+----
 
 ## 용어 사전
 
