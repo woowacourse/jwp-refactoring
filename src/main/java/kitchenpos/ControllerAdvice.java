@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ControllerAdvice {
 
-    @ExceptionHandler
+    @ExceptionHandler(KitchenException.class)
     public ResponseEntity<String> handleKitchenException(KitchenException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(e.getMessage());
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRunTimeException(RuntimeException e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(e.getMessage());
