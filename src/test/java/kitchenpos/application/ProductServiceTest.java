@@ -3,11 +3,13 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dtos.ProductRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -29,18 +31,17 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다")
     @Test
     void create() {
-        final Product product = Product.builder()
+        final ProductRequest request = new ProductRequest("컵누들", 1500L);
+
+        final Product savedProduct = Product.builder()
                 .name("컵누들")
                 .price(BigDecimal.valueOf(1500))
-                .build();
-        final Product savedProduct = Product.builder()
-                .of(product)
                 .id(1L)
                 .build();
 
-        when(productDao.save(product)).thenReturn(savedProduct);
+        when(productDao.save(any())).thenReturn(savedProduct);
 
-        final Product actual = productService.create(product);
+        final Product actual = productService.create(request);
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
                 () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
@@ -51,21 +52,17 @@ class ProductServiceTest {
     @DisplayName("상품의 가격은 0 원 이상이어야 한다")
     @Test
     void createExceptionPriceUnderZero() {
-        final Product product = Product.builder()
-                .name("컵누들")
-                .price(BigDecimal.valueOf(-1))
-                .build();
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        final ProductRequest request = new ProductRequest("컵누들", -1L);
+
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 가격이 비어있어서는 안 된다")
     @Test
     void createExceptionPriceNull() {
-        final Product product = Product.builder()
-                .name("컵누들")
-                .build();
+        final ProductRequest request = new ProductRequest("컵누들", null);
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 목록을 조회할 수 있다")

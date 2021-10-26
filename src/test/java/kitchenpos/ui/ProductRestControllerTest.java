@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import kitchenpos.application.dtos.ProductRequest;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -35,8 +36,7 @@ class ProductRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final Product productDto = new Product();
-        final String content = objectMapper.writeValueAsString(productDto);
+        final String content = objectMapper.writeValueAsString(new ProductRequest());
         final Product product = Product
                 .builder()
                 .id(1L)
