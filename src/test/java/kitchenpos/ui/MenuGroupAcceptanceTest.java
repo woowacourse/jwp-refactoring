@@ -6,8 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("MenuGroup 인수 테스트")
 class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
@@ -20,8 +22,6 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
             () -> assertThat(created.getId()).isNotNull(),
             () -> assertThat(created.getName()).isEqualTo(menuGroup.getName())
         );
-
-        System.out.println(created.getId());
     }
 
     @Test

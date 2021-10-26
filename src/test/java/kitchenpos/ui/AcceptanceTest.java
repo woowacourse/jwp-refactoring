@@ -16,6 +16,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -51,6 +52,20 @@ public class AcceptanceTest {
             request = request.body(requestBody);
         }
         return testMethod.extractedResponse(request, url);
+    }
+
+    protected TableGroup tableGroup() {
+        OrderTable orderTable1 = OrderTable.EMPTY_TABLE;
+        OrderTable orderTable2 = OrderTable.EMPTY_TABLE;
+        makeResponse("/api/tables", TestMethod.POST, orderTable1)
+            .as(OrderTable.class);
+        makeResponse("/api/tables", TestMethod.POST, orderTable2)
+            .as(OrderTable.class);
+
+        List<OrderTable> orderTables = makeResponse("/api/tables", TestMethod.GET).jsonPath()
+            .getList(".", OrderTable.class);
+
+        return new TableGroup(orderTables);
     }
 
     protected Order order() {
