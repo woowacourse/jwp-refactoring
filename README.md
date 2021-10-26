@@ -42,17 +42,16 @@
 
 ### TableGroup
 
-* [ ] TableGroup을 등록할 수 있다.
-* [ ] 올바른 order_table 값을 요청해야 한다.
-    * 주어지는 order_table 은 비어있어서는 안된다.
-    * 2개 미만의 order_table 요청이어서는 안된다.
-    * 중복된 order_table 요청이어서는 안된다.
-    * 등록되어있는 order_table 이어야 한다.
-    * 다른 table_group에 속한 order_table이 있어서는 안된다.
-* [ ] TableGroup 생성 후에 해당 group에 속한 order_table들의 table_group_id에 생성된 TableGroup의 id가 할당되어야 하고, empty 필드가 false로 변경되어야 한다.
-* [ ] TableGroup 생성 후에 TableGroup의 List<OrderTable> orderTables 필드에 OrderTable들이 들어가 있어야 한다.
-* [ ] TableGroup을 해제할 수 있다.
-* [ ] TableGroup에 속한 order_table이 현재 이용 중이면(COMPLETION이 아니면) 해제할 수 없다.
+* [x] TableGroup을 등록할 수 있다.
+* [x] 올바른 order_table 값을 요청해야 한다.
+    * [x] 주어지는 order_table 은 비어있어서는 안된다.
+    * [x] 2개 미만의 order_table 요청이어서는 안된다.
+    * [x] 중복된 order_table 요청이어서는 안된다.
+    * [x] empty 상태가 order_table 이어서는 안된다.
+    * [x] 다른 table_group에 속한 order_table이 있어서는 안된다.
+* [x] TableGroup 생성 후에 해당 group에 속한 order_table들의 table_group_id에 생성된 TableGroup의 id가 할당되어야 하고, empty 필드가 false로 변경되어야 한다.
+* [x] TableGroup을 해제할 수 있다.
+* [x] TableGroup에 속한 order_table이 현재 이용 중이면(COMPLETION이 아니면) 해제할 수 없다.
 
 ### OrderTable
 
