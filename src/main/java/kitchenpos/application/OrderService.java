@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.KitchenException;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -42,7 +43,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
+            throw new KitchenException("주문 항목이 비어있습니다.");
         }
 
         final List<Long> menuIds = orderLineItems.stream()
@@ -50,16 +51,16 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new KitchenException("존재하지 않는 메뉴가 포함되어 있습니다.");
         }
 
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new KitchenException("존재하지 않는 테이블에 배정되어 있습니다."));
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new KitchenException("배정된 테이블은 빈 테이블입니다.");
         }
 
         order.setOrderTableId(orderTable.getId());
@@ -92,10 +93,10 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new KitchenException("존재하지 않는 주문입니다."));
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new KitchenException("이미 완료된 주문입니다.");
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
 public enum OrderStatus {
-    COOKING, MEAL, COMPLETION
+    COOKING,
+    MEAL,
+    COMPLETION;
 }
