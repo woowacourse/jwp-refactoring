@@ -54,3 +54,33 @@ include::{snippets}/product-create/http-response.adoc[]
 include::{snippets}/product-findAll/http-request.adoc[]
 ===== Response
 include::{snippets}/product-findAll/http-response.adoc[]
+
+
+== 테이블
+=== 테이블 저장
+==== 성공
+===== Request
+include::{snippets}/table-create/http-request.adoc[]
+===== Response
+include::{snippets}/table-create/http-response.adoc[]
+
+=== 테이블 조회
+==== 성공
+===== Request
+include::{snippets}/table-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/table-findAll/http-response.adoc[]
+
+=== 테이블 상태 변경
+==== 성공
+===== Request
+include::{snippets}/table-change-status/http-request.adoc[]
+===== Response
+include::{snippets}/table-change-status/http-response.adoc[]
+
+=== 테이블 손님 수 변경
+==== 성공
+===== Request
+include::{snippets}/table-change-quest-number/http-request.adoc[]
+===== Response
+include::{snippets}/table-change-quest-number/http-response.adoc[]
