@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
+import static java.util.Collections.singletonList;
+
 public class DomainDaoTest extends DaoTest {
 
     private MenuDao menuDao;
@@ -21,15 +23,11 @@ public class DomainDaoTest extends DaoTest {
 
     protected long SAVE_MENU_RETURN_ID() {
         menuDao = new JdbcTemplateMenuDao(dataSource);
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
         menuProduct.setQuantity(2);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+
+        Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 
         // when - then
         Menu savedMenu = menuDao.save(menu);

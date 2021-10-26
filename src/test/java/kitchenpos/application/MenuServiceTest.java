@@ -39,34 +39,11 @@ class MenuServiceTest {
     @Mock
     private MenuDao menuDao;
 
-    @DisplayName("메뉴를 생성한다. - 실패, 메뉴의 가격이 null인 경우")
-    @Test
-    void createFailedWhenPriceIsNull() {
-        // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(null);
-        menu.setMenuGroupId(1L);
-
-        // when - then
-        assertThatThrownBy(() -> menuService.create(menu))
-                .isInstanceOf(IllegalArgumentException.class);
-        then(menuGroupDao).should(never())
-                .existsById(anyLong());
-        then(productDao).should(never())
-                .findById(anyLong());
-        then(menuDao).should(never())
-                .save(menu);
-    }
-
     @DisplayName("메뉴를 생성한다. - 실패, 메뉴의 가격이 음수인 경우")
     @Test
     void createFailedWhenPriceIsNegative() {
         // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(-1));
-        menu.setMenuGroupId(1L);
+        Menu menu = new Menu("후라이드+후라이드", -1, 1L);
 
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -83,12 +60,9 @@ class MenuServiceTest {
     @Test
     void createFailedWhenMenuGroupIdNotFound() {
         // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(-1L);
+        Menu menu = new Menu("후라이드+후라이드", 19000, 1L);
 
-        given(menuGroupDao.existsById(-1L)).willReturn(false);
+        given(menuGroupDao.existsById(1L)).willReturn(false);
 
         // when - then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -105,16 +79,11 @@ class MenuServiceTest {
     @Test
     void createFailedWhenMenuProductNotFound() {
         // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(-1L);
         menuProduct.setQuantity(2);
 
-        menu.setMenuProducts(singletonList(menuProduct));
+        Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 
         given(menuGroupDao.existsById(1L)).willReturn(true);
         given(productDao.findById(-1L)).willThrow(IllegalArgumentException.class);
@@ -134,16 +103,11 @@ class MenuServiceTest {
     @Test
     void createFailedWhenPriceIsBigger() {
         // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
         menuProduct.setQuantity(2);
 
-        menu.setMenuProducts(singletonList(menuProduct));
+        Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 
         given(menuGroupDao.existsById(1L)).willReturn(true);
 

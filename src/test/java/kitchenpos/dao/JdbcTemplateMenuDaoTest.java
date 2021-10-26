@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴Dao 테스트")
@@ -28,15 +29,11 @@ class JdbcTemplateMenuDaoTest extends DomainDaoTest {
     @Test
     void save() {
         // given
-        Menu menu = new Menu();
-        menu.setName("후라이드+후라이드");
-        menu.setPrice(BigDecimal.valueOf(19000));
-        menu.setMenuGroupId(1L);
-
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
         menuProduct.setQuantity(2);
-        menu.setMenuProducts(Collections.singletonList(menuProduct));
+
+        Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 
         // when - then
         Menu savedMenu = menuDao.save(menu);
