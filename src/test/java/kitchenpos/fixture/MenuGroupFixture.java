@@ -1,6 +1,10 @@
 package kitchenpos.fixture;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MenuGroupFixture {
     public static final MenuGroup 두마리메뉴;
@@ -13,6 +17,10 @@ public class MenuGroupFixture {
         한마리메뉴 = newInstance(2L, "한마리메뉴");
         순살파닭두마리메뉴 = newInstance(3L, "순살파닭두마리메뉴");
         신메뉴 = newInstance(4L, "신메뉴");
+    }
+
+    public static List<MenuGroup> menuGroups() {
+        return Arrays.asList(두마리메뉴, 한마리메뉴, 순살파닭두마리메뉴, 신메뉴);
     }
 
     private static MenuGroup newInstance(Long id, String name) {
