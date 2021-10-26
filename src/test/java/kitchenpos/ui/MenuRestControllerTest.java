@@ -1,7 +1,6 @@
 package kitchenpos.ui;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixture.MenuFixture;
 import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.MenuProductFixture;
@@ -18,7 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.willReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("메뉴 문서화 테스트")
@@ -50,10 +48,11 @@ class MenuRestControllerTest extends ApiDocument {
         메뉴_조회_성공함(result, MenuFixture.menus());
     }
 
-    private void 메뉴_조회_성공함(ResultActions result, List<Menu> menus) throws Exception {
-        result.andExpect(status().isOk())
-                .andExpect(content().json(toJson(menus)))
-                .andDo(toDocument("menu-findAll"));
+    private ResultActions 메뉴_저장_요청(Menu requestMenu) throws Exception {
+        return mockMvc.perform(post("/api/menus")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(requestMenu))
+        );
     }
 
     private ResultActions 메뉴_조회_요청() throws Exception {
@@ -62,16 +61,15 @@ class MenuRestControllerTest extends ApiDocument {
         );
     }
 
-    private ResultActions 메뉴_저장_요청(Menu requestMenu) throws Exception {
-        return mockMvc.perform(post("/api/menus")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(requestMenu))
-        );
-    }
-
     private void 메뉴_저장_성공함(ResultActions result, Menu responseMenu) throws Exception {
         result.andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/menus/" + responseMenu.getId()))
                 .andDo(toDocument("menu-create"));
+    }
+
+    private void 메뉴_조회_성공함(ResultActions result, List<Menu> menus) throws Exception {
+        result.andExpect(status().isOk())
+                .andExpect(content().json(toJson(menus)))
+                .andDo(toDocument("menu-findAll"));
     }
 }

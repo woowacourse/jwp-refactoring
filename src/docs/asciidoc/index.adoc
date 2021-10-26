@@ -39,3 +39,18 @@ include::{snippets}/menu-create/http-response.adoc[]
 include::{snippets}/menu-findAll/http-request.adoc[]
 ===== Response
 include::{snippets}/menu-findAll/http-response.adoc[]
+
+== 상품
+=== 상품 저장
+==== 성공
+===== Request
+include::{snippets}/product-create/http-request.adoc[]
+===== Response
+include::{snippets}/product-create/http-response.adoc[]
+
+=== 상품 조회
+==== 성공
+===== Request
+include::{snippets}/product-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/product-findAll/http-response.adoc[]

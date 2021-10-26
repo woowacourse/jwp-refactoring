@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +17,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
 @AutoConfigureRestDocs
-@WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class})
+@WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class, ProductRestController.class})
 public abstract class ApiDocument {
     @Autowired
     protected MockMvc mockMvc;
@@ -26,6 +27,9 @@ public abstract class ApiDocument {
 
     @MockBean
     protected MenuService menuService;
+
+    @MockBean
+    protected ProductService productService;
 
     protected static RestDocumentationResultHandler toDocument(String title) {
         return document(title, getDocumentRequest(), preprocessResponse(prettyPrint()));

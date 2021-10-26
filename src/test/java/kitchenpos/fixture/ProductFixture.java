@@ -3,6 +3,8 @@ package kitchenpos.fixture;
 import kitchenpos.domain.Product;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 public class ProductFixture {
     public static final Product 후라이드치킨;
@@ -21,6 +23,10 @@ public class ProductFixture {
         간장치킨 = newInstance(5L, "간장치킨", new BigDecimal(17000));
         순살치킨 = newInstance(6L, "순살치킨", new BigDecimal(17000));
         강정치킨 = newInstance(7L, "강정치킨", new BigDecimal(17000));
+    }
+
+    public static List<Product> products() {
+        return Arrays.asList(후라이드치킨, 양념치킨, 반반치킨, 통구이, 간장치킨, 순살치킨, 강정치킨);
     }
 
     private static Product newInstance(Long id, String name, BigDecimal price) {
