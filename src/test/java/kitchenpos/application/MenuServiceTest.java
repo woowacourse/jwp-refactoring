@@ -26,13 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class MenuServiceTest {
 
     @Autowired
-    MenuService menuService;
-
-    @Autowired
-    MenuDao menuDao;
-
-    @Autowired
-    MenuGroupDao menuGroupDao;
+    private MenuService menuService;
 
     private final static Long VALID_MENU_GROUP_ID = 1L;
     private final static Long INVALID_MENU_GROUP_ID = 1000L;
