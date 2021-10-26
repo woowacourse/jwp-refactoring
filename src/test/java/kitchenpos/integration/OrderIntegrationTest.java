@@ -28,7 +28,7 @@ public class OrderIntegrationTest extends IntegrationTest {
     @DisplayName("주문을 생성한다.")
     @Test
     public void create() {
-        OrderTable orderTable = fixtureMaker.createOrderTable();
+        OrderTable orderTable = fixtureMaker.createOrderTableForNotEmpty();
         List<OrderLineItem> orderLineItems = fixtureMaker.createOrderLineItems();
         Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
         webTestClient.post().uri("/api/orders")

@@ -15,10 +15,11 @@ public class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     public void create() {
         List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, 1L, 10, false),
-            new OrderTable(2L, 2L, 10, false)
+            fixtureMaker.createOrderTableForEmpty(),
+            fixtureMaker.createOrderTableForEmpty()
         );
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
+
         webTestClient.post().uri("/api/table-groups")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -32,26 +33,11 @@ public class TableGroupIntegrationTest extends IntegrationTest {
     @DisplayName("테이블 그룹을 삭제한다.")
     @Test
     public void ungroup() {
-        List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(7L, 1L, 10, false),
-            new OrderTable(8L, 2L, 10, false)
-        );
-        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-        TableGroup createdTableGroup = webTestClient.post().uri("/api/table-groups")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(tableGroup), TableGroup.class)
-            .exchange()
-            .expectStatus().isCreated()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody(TableGroup.class)
-            .returnResult()
-            .getResponseBody();
-
+        TableGroup tableGroup = fixtureMaker.createTableGroup();
         webTestClient.delete()
             .uri(uriBuilder -> uriBuilder
                 .path("/api/table-groups/{tableGroupId}")
-                .build(createdTableGroup.getId())
+                .build(tableGroup.getId())
             )
             .accept(MediaType.APPLICATION_JSON)
             .exchange()

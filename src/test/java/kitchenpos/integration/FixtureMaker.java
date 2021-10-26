@@ -74,9 +74,14 @@ public class FixtureMaker {
         return menuGroupDao.save(new MenuGroup("메뉴 그룹"));
     }
 
-    public OrderTable createOrderTable() {
+    public OrderTable createOrderTableForNotEmpty() {
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         return orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
+    }
+
+    public OrderTable createOrderTableForEmpty() {
+//        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        return orderTableDao.save(new OrderTable(10, true));
     }
 
     public List<OrderLineItem> createOrderLineItems() {
@@ -92,7 +97,11 @@ public class FixtureMaker {
     }
 
     public Order createOrder() {
-        OrderTable orderTable = createOrderTable();
+        OrderTable orderTable = createOrderTableForNotEmpty();
         return orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
+    }
+
+    public TableGroup createTableGroup() {
+        return tableGroupDao.save(new TableGroup(LocalDateTime.now()));
     }
 }
