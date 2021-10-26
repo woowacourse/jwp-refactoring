@@ -37,13 +37,13 @@ public class ServiceTest {
 
     protected Order order() {
         Menu menu = menuService.create(menu());
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
         List<OrderLineItem> items = new ArrayList<>();
         items.add(orderLineItem);
         OrderTable orderTable = new OrderTable(2, false);
         OrderTable createdOrderTable = tableService.create(orderTable);
 
-        return new Order(createdOrderTable.getId(), items);
+        return new Order(createdOrderTable, items);
     }
 
     protected Menu menu() {
@@ -51,10 +51,10 @@ public class ServiceTest {
         MenuGroup createdMenuGroup = menuGroupService.create(menuGroup);
         Product product = new Product("product", BigDecimal.valueOf(1000));
         Product createdProduct = productService.create(product);
-        MenuProduct menuProduct = new MenuProduct(createdProduct.getId(), 10);
+        MenuProduct menuProduct = new MenuProduct(createdProduct, 10);
         List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
 
-        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup.getId(), menuProducts);
+        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup, menuProducts);
     }
 
 }

@@ -9,7 +9,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -45,7 +47,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_menu_group_non_exist() {
         Menu menu = menu();
-        menu.setMenuGroupId(999L);
+        menu.setMenuGroup(new MenuGroup(999L, "menuGroup"));
         ExtractableResponse<Response> response = makeResponse("/api/menus", TestMethod.POST, menu);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -55,7 +57,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_menu_product_non_exist() {
         Menu menu = menu();
-        menu.setMenuProducts(Arrays.asList(new MenuProduct(1L, null, 999L, 10)));
+        menu.setMenuProducts(Arrays.asList(
+            new MenuProduct(1L, null, new Product(999L, "product", BigDecimal.valueOf(500)), 10)));
         ExtractableResponse<Response> response = makeResponse("/api/menus", TestMethod.POST, menu);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

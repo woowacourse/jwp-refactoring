@@ -48,21 +48,21 @@ class TableAcceptanceTest extends AcceptanceTest {
         makeResponse("/api/orders/" + order.getId() + "/order-status",
             TestMethod.PUT, order).as(Order.class);
 
-        OrderTable changed = makeResponse("/api/tables/" + order.getOrderTableId() + "/empty",
+        OrderTable changed = makeResponse("/api/tables/" + order.getOrderTable().getId() + "/empty",
             TestMethod.PUT, OrderTable.EMPTY_TABLE).as(OrderTable.class);
 
         assertThat(changed.isEmpty()).isTrue();
-        makeResponse("/api/tables/" + order.getOrderTableId() + "/empty",
+        makeResponse("/api/tables/" + order.getOrderTable().getId() + "/empty",
             TestMethod.PUT, OrderTable.EMPTY_TABLE);
     }
-    
+
     @DisplayName("빈 테이블 유무 변경 실패 - 테이블이 존재하지 않습니다")
     @Test
     void change_empty_fail_table_non_exist() {
         Order order = makeResponse("/api/orders", TestMethod.POST, order()).as(Order.class);
-        order.setOrderTableId(999L);
+        order.setOrderTable(new OrderTable(999L, null, 1, false));
         ExtractableResponse<Response> response = makeResponse(
-            "/api/tables/" + order.getOrderTableId() + "/empty",
+            "/api/tables/" + order.getOrderTable().getId() + "/empty",
             TestMethod.PUT, OrderTable.EMPTY_TABLE);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -72,15 +72,16 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void change_empty_fail_group_exist() {
         TableGroup tableGroup = tableGroup();
-        TableGroup createdTableGroup = makeResponse("/api/table-groups", TestMethod.POST, tableGroup)
+        TableGroup createdTableGroup = makeResponse("/api/table-groups", TestMethod.POST,
+            tableGroup)
             .as(TableGroup.class);
         OrderTable orderTable = createdTableGroup.getOrderTables().get(0);
         Order order = order();
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTable(orderTable);
         Order createdOrder = makeResponse("/api/orders", TestMethod.POST, order).as(Order.class);
 
         ExtractableResponse<Response> response = makeResponse(
-            "/api/tables/" + createdOrder.getOrderTableId() + "/empty",
+            "/api/tables/" + createdOrder.getOrderTable().getId() + "/empty",
             TestMethod.PUT, OrderTable.EMPTY_TABLE);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -91,12 +92,12 @@ class TableAcceptanceTest extends AcceptanceTest {
     void change_empty_fail_status_completed() {
         Order order = makeResponse("/api/orders", TestMethod.POST, order()).as(Order.class);
         ExtractableResponse<Response> response = makeResponse(
-            "/api/tables/" + order.getOrderTableId() + "/empty",
+            "/api/tables/" + order.getOrderTable().getId() + "/empty",
             TestMethod.PUT, OrderTable.EMPTY_TABLE);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
-    
+
     @DisplayName("손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {

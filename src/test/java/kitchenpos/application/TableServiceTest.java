@@ -48,7 +48,7 @@ class TableServiceTest extends ServiceTest {
         orderService.changeOrderStatus(order.getId(), order);
 
         OrderTable changed = tableService
-            .changeEmpty(order.getOrderTableId(), OrderTable.EMPTY_TABLE);
+            .changeEmpty(order.getOrderTable().getId(), OrderTable.EMPTY_TABLE);
 
         assertThat(changed.isEmpty()).isTrue();
     }

@@ -8,6 +8,7 @@ import io.restassured.response.Response;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -47,7 +48,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_menu_non_exist() {
         Order order = order();
-        order.setOrderLineItems(Collections.singletonList(new OrderLineItem(999L, 10)));
+        order.setOrderLineItems(Collections.singletonList(new OrderLineItem(new Menu(), 10)));
         ExtractableResponse<Response> response = makeResponse("/api/orders", TestMethod.POST,
             order);
 
@@ -58,7 +59,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_table_non_exist() {
         Order order = order();
-        order.setOrderTableId(999L);
+        order.setOrderTable(new OrderTable(999L, null, 1, false));
         ExtractableResponse<Response> response = makeResponse("/api/orders", TestMethod.POST,
             order);
 
@@ -72,7 +73,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         OrderTable orderTable = OrderTable.EMPTY_TABLE;
         OrderTable createdOrderTable = makeResponse("/api/tables", TestMethod.POST, orderTable)
             .as(OrderTable.class);
-        order.setOrderTableId(createdOrderTable.getId());
+        order.setOrderTable(createdOrderTable);
         ExtractableResponse<Response> response = makeResponse("/api/orders", TestMethod.POST,
             order);
 
@@ -110,7 +111,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
             order()).as(Order.class);
         order.setId(999L);
 
-        ExtractableResponse<Response> response = makeResponse("/api/orders/" + order.getId() + "/order-status",
+        ExtractableResponse<Response> response = makeResponse(
+            "/api/orders/" + order.getId() + "/order-status",
             TestMethod.PUT, order);
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

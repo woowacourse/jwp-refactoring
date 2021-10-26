@@ -82,7 +82,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         List<OrderTable> ungroupedTables = makeResponse("/api/tables", TestMethod.GET).jsonPath()
             .getList(".", OrderTable.class);
         boolean actual = ungroupedTables.stream()
-            .noneMatch(table -> created.getId().equals(table.getTableGroupId()));
+            .noneMatch(table -> created.getId().equals(table.getTableGroup().getId()));
         assertThat(actual).isTrue();
     }
 
@@ -90,11 +90,12 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void ungroup_fail_unable_order_status() {
         TableGroup tableGroup = tableGroup();
-        TableGroup createdTableGroup = makeResponse("/api/table-groups", TestMethod.POST, tableGroup)
+        TableGroup createdTableGroup = makeResponse("/api/table-groups", TestMethod.POST,
+            tableGroup)
             .as(TableGroup.class);
         OrderTable orderTable = createdTableGroup.getOrderTables().get(0);
         Order order = order();
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTable(orderTable);
         makeResponse("/api/orders", TestMethod.POST, order).as(Order.class);
 
         ExtractableResponse<Response> response = makeResponse(

@@ -71,14 +71,14 @@ public class AcceptanceTest {
     protected Order order() {
         Menu menu = makeResponse("/api/menus", TestMethod.POST, menu())
             .as(Menu.class);
-        OrderLineItem orderLineItem = new OrderLineItem(menu.getId(), 2);
+        OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
         List<OrderLineItem> items = new ArrayList<>();
         items.add(orderLineItem);
         OrderTable orderTable = new OrderTable(2, false);
         OrderTable createdOrderTable = makeResponse("/api/tables", TestMethod.POST, orderTable)
             .as(OrderTable.class);
 
-        return new Order(createdOrderTable.getId(), items);
+        return new Order(createdOrderTable, items);
     }
 
     protected Menu menu() {
@@ -88,9 +88,9 @@ public class AcceptanceTest {
         Product product = new Product("product", BigDecimal.valueOf(1000));
         Product createdProduct = makeResponse("/api/products", TestMethod.POST, product)
             .as(Product.class);
-        MenuProduct menuProduct = new MenuProduct(createdProduct.getId(), 10);
+        MenuProduct menuProduct = new MenuProduct(createdProduct, 10);
         List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
 
-        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup.getId(), menuProducts);
+        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup, menuProducts);
     }
 }

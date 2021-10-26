@@ -48,7 +48,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         tableGroupService.ungroup(created.getId());
         boolean actual = tableService.list().stream()
-            .noneMatch(table -> created.getId().equals(table.getTableGroupId()));
+            .noneMatch(table -> created.getId().equals(table.getTableGroup().getId()));
         assertThat(actual).isTrue();
     }
 }

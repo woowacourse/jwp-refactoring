@@ -1,23 +1,24 @@
 package kitchenpos.application;
 
-import kitchenpos.exception.KitchenException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.KitchenException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class TableService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
+    public TableService(final OrderRepository orderRepository,
+        final OrderTableRepository orderTableRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
     }
@@ -25,7 +26,7 @@ public class TableService {
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        orderTable.setTableGroup(null);
 
         return orderTableRepository.save(orderTable);
     }
@@ -37,14 +38,14 @@ public class TableService {
     @Transactional
     public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
+            .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new KitchenException("테이블이 속한 단체가 존재합니다.");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new KitchenException("식사가 완료되지 않은 테이블입니다.");
         }
 
@@ -62,7 +63,7 @@ public class TableService {
         }
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
+            .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
 
         if (savedOrderTable.isEmpty()) {
             throw new KitchenException("손님이 있는 테이블은 비어있을 수 없습니다.");
