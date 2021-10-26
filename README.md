@@ -55,10 +55,13 @@
 
 - [ ] Product
   - [ ] 새로운 Product를 생성해 DB에 저장한다.
-    - [ ] 새로운 Product의 가격이 null이거나 0보다 작으면, 예외를 발생시킨다.
     - [ ] DB에 새로운 Product를 저장한다.
-    - [ ] DB에 저장한 Product를 반환한다.
-  - [ ] DB에 저장되어있는 모든 Product들을 반환한다.
+    - [ ] DB에 저장한 Product를 ProductResponse로 변환해 반환한다.
+  - [ ] DB에 저장되어있는 모든 Product들을 조회해 ProductResponse로 변환해서 반환한다.
+  - [ ] 예외
+    - [ ] ProductRequest
+      - [ ] price = null
+      - [ ] price < 0
 
 - [ ] TableGroup
   - [ ] 새로운 TableGroup을 생성해 DB에 저장한다.
