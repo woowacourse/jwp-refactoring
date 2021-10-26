@@ -6,23 +6,25 @@ import java.util.Arrays;
 import java.util.List;
 
 public class OrderTableFixture {
-    public static OrderTable FIRST;
-    public static OrderTable FIRST_EMPTY_FALSE;
-    public static OrderTable FIRST_EMPTY_FALSE_HAVE_GUEST;
-    public static OrderTable SECOND;
-    public static OrderTable THIRD;
-    public static OrderTable FOURTH;
-    public static OrderTable FIFTH;
-    public static OrderTable SIXTH;
-    public static OrderTable SEVENTH;
-    public static OrderTable EIGHT;
-    public static OrderTable NINTH;
+    public static final OrderTable FIRST;
+    public static final OrderTable FIRST_EMPTY_FALSE;
+    public static final OrderTable FIRST_EMPTY_FALSE_HAVE_GUEST;
+    public static final OrderTable SECOND;
+    public static final OrderTable SECOND_EMPTY_FALSE;
+    public static final OrderTable THIRD;
+    public static final OrderTable FOURTH;
+    public static final OrderTable FIFTH;
+    public static final OrderTable SIXTH;
+    public static final OrderTable SEVENTH;
+    public static final OrderTable EIGHT;
+    public static final OrderTable NINTH;
 
     static {
         FIRST = newInstance(1L, true);
         FIRST_EMPTY_FALSE = newInstance(1L, false);
         FIRST_EMPTY_FALSE_HAVE_GUEST = newInstance(1L, false, 4);
         SECOND = newInstance(2L, true);
+        SECOND_EMPTY_FALSE = newInstance(2L, false);
         THIRD = newInstance(3L, true);
         FOURTH = newInstance(4L, true);
         FIFTH = newInstance(5L, true);
