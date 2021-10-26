@@ -235,7 +235,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         OrderTable table = new OrderTable();
         table.setNumberOfGuests(0);
         table.setEmpty(false);
-        OrderTable savedTable = orderTableDao.save(table);
+        orderTableDao.save(table);
 
         OrderTable table2 = new OrderTable();
         table2.setNumberOfGuests(10);
