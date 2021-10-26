@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -13,7 +14,7 @@ public class ProductTest {
     public void validateProduct_nullPrice() {
         Product product = new Product("상품명", null);
         assertThatThrownBy(() -> {
-            product.validateProduct();
+            product.validateProductPrice();
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -22,7 +23,15 @@ public class ProductTest {
     public void validateProduct_negativePrice() {
         Product product = new Product("상품명", new BigDecimal(-100));
         assertThatThrownBy(() -> {
-            product.validateProduct();
+            product.validateProductPrice();
         }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("가격의 배수를 구해준다.")
+    @Test
+    public void multiplyPrice() {
+        Product product = new Product("상품명", new BigDecimal(100));
+        BigDecimal actual = product.multiplyPrice(new BigDecimal(5));
+        assertThat(actual).isEqualTo(new BigDecimal(100 * 5));
     }
 }

@@ -17,7 +17,7 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-        product.validateProduct();
+        product.validateProductPrice();
         return productDao.save(product);
     }
 

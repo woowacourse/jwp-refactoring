@@ -47,9 +47,13 @@ public class Product {
         this.price = price;
     }
 
-    public void validateProduct() {
+    public void validateProductPrice() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("상품의 가격을 입력하지 않으셨거나, 적절하지 않은 상품의 가격을 입력하셨습니다.");
         }
+    }
+
+    public BigDecimal multiplyPrice(BigDecimal multiplicand) {
+        return price.multiply(multiplicand);
     }
 }
