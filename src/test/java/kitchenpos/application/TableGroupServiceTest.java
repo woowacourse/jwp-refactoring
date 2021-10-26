@@ -42,6 +42,7 @@ class TableGroupServiceTest {
     private OrderTable orderTable1;
     private OrderTable orderTable2;
     private List<OrderTable> orderTables;
+    private TableGroup tableGroup;
 
     @BeforeEach
     void setUp() {
@@ -57,6 +58,9 @@ class TableGroupServiceTest {
                 .id(2L)
                 .build();
         orderTables = Arrays.asList(orderTable1, orderTable2);
+        tableGroup = TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
     }
 
     @DisplayName("단체 지정을 등록할 수 있다")
@@ -65,12 +69,10 @@ class TableGroupServiceTest {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
-        final TableGroup savedTableGroup = new TableGroup();
-        savedTableGroup.setId(1L);
-        savedTableGroup.setOrderTables(orderTables);
-
+        final TableGroup savedTableGroup = TableGroup.builder()
+                .of(tableGroup)
+                .id(1L)
+                .build();
         when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
         when(tableGroupDao.save(tableGroup)).thenReturn(savedTableGroup);
         when(orderTableDao.save(orderTable1)).thenReturn(orderTable1);
@@ -80,7 +82,7 @@ class TableGroupServiceTest {
         assertThat(actual).isEqualTo(savedTableGroup);
     }
 
-    @DisplayName("주문 테이블이 비어있으면 안 된다")
+    @DisplayName("주문 테이블이 비어있지 않아야 된다")
     @Test
     void createExceptionEmpty() {
         final OrderTable wrongOrderTable = OrderTable.builder()
@@ -91,9 +93,12 @@ class TableGroupServiceTest {
                 .of(orderTable)
                 .id(2L)
                 .build();
+        List<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
         final List<OrderTable> orderTables = Arrays.asList(wrongOrderTable, normalOrderTable);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
+
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -102,8 +107,9 @@ class TableGroupServiceTest {
     @Test
     void createExceptionUnderTwo() {
         final List<OrderTable> orderTables = Collections.singletonList(orderTable1);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -120,8 +126,9 @@ class TableGroupServiceTest {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
 
         when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
@@ -134,8 +141,9 @@ class TableGroupServiceTest {
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
         final OrderTable savedOrderTable1 = OrderTable.builder()
                 .of(orderTable1)
                 .empty(false)
@@ -152,12 +160,13 @@ class TableGroupServiceTest {
     void createExceptionEmptyAndGroup() {
         final List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         final List<Long> orderTableIds = Arrays.asList(1L, 2L);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        final TableGroup tableGroup = TableGroup.builder()
+                .orderTables(orderTables)
+                .build();
         final OrderTable savedOrderTable1 = OrderTable.builder()
                 .of(orderTable1)
                 .build();
-        final OrderTable savedOrderTable2 =  OrderTable.builder()
+        final OrderTable savedOrderTable2 = OrderTable.builder()
                 .of(orderTable2)
                 .tableGroupId(1L)
                 .build();
@@ -171,22 +180,18 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정을 해제할 수 있다")
     @Test
     void ungroup() {
-        final Long tableGroupId = 1L;
-
-        when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(orderTables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
 
-        assertThatCode(() -> tableGroupService.ungroup(tableGroupId)).doesNotThrowAnyException();
+        assertThatCode(() -> tableGroupService.ungroup(any())).doesNotThrowAnyException();
     }
 
     @DisplayName("단체 지정의 주문 테이블의 주문이 있고, 주문 상태가 `COOKING`, `MEAL`이라면 예외가 발생한다")
     @Test
     void ungroupExceptionExistsAndStatus() {
-        final Long tableGroupId = 1L;
-
-        when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(orderTables);
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.ungroup(any())).isInstanceOf(IllegalArgumentException.class);
     }
 }

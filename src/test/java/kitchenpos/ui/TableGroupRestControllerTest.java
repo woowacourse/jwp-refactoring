@@ -36,8 +36,9 @@ class TableGroupRestControllerTest {
     void create() throws Exception {
         final TableGroup tableGroupDto = new TableGroup();
         final String content = objectMapper.writeValueAsString(tableGroupDto);
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
+        final TableGroup tableGroup = TableGroup.builder()
+                .id(1L)
+                .build();
         when(tableGroupService.create(any())).thenReturn(tableGroup);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/table-groups")
