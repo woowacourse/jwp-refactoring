@@ -1,15 +1,25 @@
 package kitchenpos.integration;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import kitchenpos.dao.JdbcTemplateOrderDao;
+import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
+import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.JdbcTemplateProductDao;
+import kitchenpos.dao.JdbcTemplateTableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +33,18 @@ public class FixtureMaker {
 
     @Autowired
     private JdbcTemplateProductDao productDao;
+
+    @Autowired
+    private JdbcTemplateTableGroupDao tableGroupDao;
+
+    @Autowired
+    private JdbcTemplateOrderDao orderDao;
+
+    @Autowired
+    private JdbcTemplateOrderTableDao orderTableDao;
+
+    @Autowired
+    private JdbcTemplateOrderLineItemDao orderLineItemDao;
 
     public List<MenuProduct> createMenuProducts() {
         // 상품 생성
@@ -50,5 +72,27 @@ public class FixtureMaker {
 
     public MenuGroup createMenuGroup() {
         return menuGroupDao.save(new MenuGroup("메뉴 그룹"));
+    }
+
+    public OrderTable createOrderTable() {
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
+        return orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
+    }
+
+    public List<OrderLineItem> createOrderLineItems() {
+        Order order = createOrder();
+        Menu menu = createMenu();
+        OrderLineItem orderLineItem = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        return Arrays.asList(orderLineItem);
+    }
+
+    public Menu createMenu() {
+        MenuGroup menuGroup = createMenuGroup();
+        return menuDao.save(new Menu("메뉴", new BigDecimal(1000), menuGroup.getId()));
+    }
+
+    public Order createOrder() {
+        OrderTable orderTable = createOrderTable();
+        return orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
     }
 }

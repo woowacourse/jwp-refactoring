@@ -1,11 +1,12 @@
 package kitchenpos.integration;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -26,25 +27,10 @@ public class OrderIntegrationTest extends IntegrationTest {
 
     @DisplayName("주문을 생성한다.")
     @Test
-    public void create() throws Exception {
-        List<OrderLineItem> orderLineItems = Arrays.asList(
-            new OrderLineItem(999L, 1L, 1L, 1)
-        );
-        OrderTable orderTable = new OrderTable(999L, 10, false);
-        OrderTable createdOrderTable = webTestClient.post().uri("/api/tables")
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(orderTable), OrderTable.class)
-            .exchange()
-            .expectStatus().isCreated()
-            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .returnResult(OrderTable.class)
-            .getResponseBody()
-            .toStream()
-            .findFirst()
-            .orElseThrow(() -> new Exception());
-        Order order = new Order(createdOrderTable.getId(), "COMPLETION", LocalDateTime.now(), orderLineItems);
-
+    public void create() {
+        OrderTable orderTable = fixtureMaker.createOrderTable();
+        List<OrderLineItem> orderLineItems = fixtureMaker.createOrderLineItems();
+        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
         webTestClient.post().uri("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -55,33 +41,20 @@ public class OrderIntegrationTest extends IntegrationTest {
             .expectBody(Order.class);
     }
 
-//    @DisplayName("주문 상태를 수정한다.")
-//    @Test
-//    public void changeOrderStatus() {
-//        List<OrderLineItem> orderLineItems = Arrays.asList(
-//            new OrderLineItem(999L, 1L, 1L, 1)
-//        );
-//        Order order = new Order(5L, "COMPLETE", LocalDateTime.now(), orderLineItems);
-//        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
-//        TableGroup createdTableGroup = webTestClient.post().uri("/api/table-groups")
-//            .contentType(MediaType.APPLICATION_JSON)
-//            .accept(MediaType.APPLICATION_JSON)
-//            .body(Mono.just(tableGroup), TableGroup.class)
-//            .exchange()
-//            .expectStatus().isCreated()
-//            .expectHeader().contentType(MediaType.APPLICATION_JSON)
-//            .expectBody(TableGroup.class)
-//            .returnResult()
-//            .getResponseBody();
-//
-//        webTestClient.delete()
-//            .uri(uriBuilder -> uriBuilder
-//                .path("/api/table-groups/{tableGroupId}")
-//                .build(createdTableGroup.getId())
-//            )
-//            .accept(MediaType.APPLICATION_JSON)
-//            .exchange()
-//            .expectStatus().isNoContent()
-//            .expectBody(TableGroup.class);
-//    }
+    @DisplayName("주문 상태를 수정한다.")
+    @Test
+    public void changeOrderStatus() {
+        Order order = fixtureMaker.createOrder();
+        order.setOrderStatus(OrderStatus.COOKING.name());
+        webTestClient.put()
+            .uri(uriBuilder -> uriBuilder
+                .path("/api/orders/{orderId}/order-status")
+                .build(order.getId())
+            )
+            .accept(MediaType.APPLICATION_JSON)
+            .body(Mono.just(order), Order.class)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody(TableGroup.class);
+    }
 }

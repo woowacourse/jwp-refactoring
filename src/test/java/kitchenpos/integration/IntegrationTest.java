@@ -15,6 +15,9 @@ public class IntegrationTest {
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    protected FixtureMaker fixtureMaker;
+
     @BeforeEach
     public void setUp() {
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");

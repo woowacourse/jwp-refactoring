@@ -7,13 +7,10 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 
 public class MenuIntegrationTest extends IntegrationTest {
-    @Autowired
-    private FixtureMaker fixtureMaker;
 
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
