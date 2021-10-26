@@ -33,8 +33,8 @@ public class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     public void ungroup() {
         List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, 1L, 10, false),
-            new OrderTable(2L, 2L, 10, false)
+            new OrderTable(7L, 1L, 10, false),
+            new OrderTable(8L, 2L, 10, false)
         );
         TableGroup tableGroup = new TableGroup(LocalDateTime.now(), orderTables);
         TableGroup createdTableGroup = webTestClient.post().uri("/api/table-groups")

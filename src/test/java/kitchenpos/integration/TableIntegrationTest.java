@@ -38,7 +38,7 @@ public class TableIntegrationTest extends IntegrationTest {
     public void changeEmpty() throws Exception {
         boolean expectedEmpty = false;
 
-        OrderTable orderTable = new OrderTable(1L, 10, true);
+        OrderTable orderTable = new OrderTable(8L, 10, true);
         OrderTable createdOrderTable = webTestClient.post().uri("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
