@@ -3,8 +3,8 @@
 ## 요구 사항
 ### MenuGroup
 
-* MenuGroup을 등록할 수 있다.
-* 존재하는 MenuGroup 조회를 할 수 있다.
+* [ ] MenuGroup을 등록할 수 있다.
+* [ ] 존재하는 MenuGroup 조회를 할 수 있다.
 
 ### Menu
 
