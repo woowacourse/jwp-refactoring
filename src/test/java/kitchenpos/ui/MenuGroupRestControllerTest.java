@@ -1,16 +1,14 @@
 package kitchenpos.ui;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.factory.MenuGroupFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
@@ -26,42 +24,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest {
-
-    @Autowired
-    MockMvc mvc;
-
-    @Autowired
-    ObjectMapper objectMapper;
+class MenuGroupRestControllerTest extends BaseWebMvcTest {
 
     @MockBean
     MenuGroupService service;
 
-    public MenuGroup menuGroup1 = new MenuGroup();
-    public MenuGroup menuGroup2 = new MenuGroup();
+    MenuGroup menuGroup1;
+    MenuGroup menuGroup2;
 
     @BeforeEach
     void setUp() {
-        menuGroup1.setId(1L);
-        menuGroup1.setName("추천 메뉴");
-        menuGroup2.setId(2L);
-        menuGroup2.setName("사이드 메뉴");
+        this.menuGroup1 = MenuGroupFactory.create(1L, "추천 메뉴");
+        this.menuGroup2 = MenuGroupFactory.create(2L, "사이드 메뉴");
     }
 
     @DisplayName("POST /api/menu-groups -> 메뉴 그룹을 생성한다.")
     @Test
     void create() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천 메뉴");
-        String content = objectMapper.writeValueAsString(menuGroup);
-
-        MenuGroup testObject = new MenuGroup();
-        testObject.setId(1L);
-        testObject.setName("추천 메뉴");
+        MenuGroup requestMenuGroup = MenuGroupFactory.create(null, "추천 메뉴");
+        String content = super.parseJson(requestMenuGroup);
 
         given(service.create(any(MenuGroup.class)))
-                .willReturn(testObject);
+                .willReturn(menuGroup1);
 
         // when
         ResultActions actions = mvc.perform(post("/api/menu-groups")
