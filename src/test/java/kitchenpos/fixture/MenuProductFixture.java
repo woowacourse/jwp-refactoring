@@ -10,6 +10,7 @@ public class MenuProductFixture {
     public static final MenuProduct 간장치킨_간장치킨;
     public static final MenuProduct 순살치킨_순살치킨;
     public static final MenuProduct 후라이드후라이드_후라이드치킨;
+    public static final MenuProduct 후라이드후라이드_후라이드치킨_NO_KEY;
 
     static {
         후라이드치킨_후라이드치킨 = newInstance(1L, 1L, 1L, 1);
@@ -18,7 +19,8 @@ public class MenuProductFixture {
         통구이_통구이 = newInstance(4L, 4L, 4L, 1);
         간장치킨_간장치킨 = newInstance(5L, 5L, 5L, 1);
         순살치킨_순살치킨 = newInstance(6L, 6L, 6L, 1);
-        후라이드후라이드_후라이드치킨 = newInstance(7L, 1L, 1L, 2);
+        후라이드후라이드_후라이드치킨 = newInstance(7L, 7L, 1L, 2);
+        후라이드후라이드_후라이드치킨_NO_KEY =  newInstance(null, null, 1L, 2);
     }
 
     private static MenuProduct newInstance(Long seq, Long menuId, Long productId, long quantity) {

@@ -23,3 +23,19 @@ include::{snippets}/menu-group-create/http-response.adoc[]
 include::{snippets}/menu-group-findAll/http-request.adoc[]
 ===== Response
 include::{snippets}/menu-group-findAll/http-response.adoc[]
+
+
+== 메뉴
+=== 메뉴 저장
+==== 성공
+===== Request
+include::{snippets}/menu-create/http-request.adoc[]
+===== Response
+include::{snippets}/menu-create/http-response.adoc[]
+
+=== 메뉴 조회
+==== 성공
+===== Request
+include::{snippets}/menu-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/menu-findAll/http-response.adoc[]

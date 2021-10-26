@@ -59,14 +59,12 @@ class MenuGroupRestControllerTest extends ApiDocument {
         return result.andExpect(status().isCreated())
                 .andExpect(content().json(toJson(responseMenuGroup)))
                 .andExpect(header().string("Location", "/api/menu-groups/" + responseMenuGroup.getId()))
-                .andDo(print())
                 .andDo(toDocument("menu-group-create"));
     }
 
     private void 메뉴_그룹_조회_성공함(ResultActions result, List<MenuGroup> responseMenuGroup) throws Exception {
         result.andExpect(status().isOk())
                 .andExpect(content().json(toJson(responseMenuGroup)))
-                .andDo(print())
                 .andDo(toDocument("menu-group-findAll"));
     }
 }

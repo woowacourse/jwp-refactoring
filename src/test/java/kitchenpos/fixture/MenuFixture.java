@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,11 @@ public class MenuFixture {
         통구이 = newInstance(4L, "통구이", new BigDecimal(17000), MenuGroupFixture.한마리메뉴.getId(), Collections.singletonList(MenuProductFixture.통구이_통구이));
         간장치킨 = newInstance(5L, "간장치킨", new BigDecimal(17000), MenuGroupFixture.한마리메뉴.getId(), Collections.singletonList(MenuProductFixture.간장치킨_간장치킨));
         순살치킨 = newInstance(6L, "순살치킨", new BigDecimal(17000), MenuGroupFixture.한마리메뉴.getId(), Collections.singletonList(MenuProductFixture.순살치킨_순살치킨));
-        후라이드_후라이드 = newInstance(7L, "후라이드_후라이드", new BigDecimal(19000), MenuGroupFixture.두마리메뉴.getId(), Collections.singletonList(MenuProductFixture.후라이드후라이드_후라이드치킨));
+        후라이드_후라이드 = newInstance(7L, "후라이드+후라이드", new BigDecimal(19000), MenuGroupFixture.두마리메뉴.getId(), Collections.singletonList(MenuProductFixture.후라이드후라이드_후라이드치킨));
+    }
+
+    public static List<Menu> menus() {
+        return Arrays.asList(후라이드치킨, 양념치킨, 반반치킨, 통구이, 간장치킨, 순살치킨, 후라이드_후라이드);
     }
 
     private static Menu newInstance(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
