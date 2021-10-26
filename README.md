@@ -1,6 +1,111 @@
 # 키친포스
 
 ## 요구 사항
+### MenuGroup
+- [ ] MenuGroup을 만들어 저장한다.
+- [ ] 모든 MenuGroup을 불러와 반환한다.
+
+### Menu
+- [ ] Menu는 name과 price, menuGroup, menuProducts를 갖고 있다.
+  
+- [ ] Menu를 만들어 저장한다.
+    - [ ] menu의 가격이 null이거나 0보다 작은 경우 예외를 던진다.
+    - [ ] menu의 menuGroup을 찾을 수 없는 경우 예외를 던진다.
+    - [ ] menuProducts를 찾을 수 없는 경우 예외를 던진다.
+    - [ ] menu의 모든 Product를 가격과 수량을 곱해 더한다.
+      - [ ] 존재하지 않는 product가 있다면 예외를 던진다.
+    - [ ] menu의 가격이 menuProducts 가격의 총합을 넘는 경우 예외를 던진다.
+  - [ ] menu를 저장한다.
+    - [ ] menuproduct를 저장한다
+    - [ ] 저장된 menu에 저장된 menuProducts를 저장한다.
+  
+- [ ] 모든 menu를 불러와 반환한다.
+  - [ ] 모든 menu에는 menuProduct가 존재한다.
+
+### Order
+- [ ] Order를 만든다.
+  - [ ] orderLineItems를 불러온다
+    - [ ] 존재하지 않는 경우 예외를 던진다.
+  - [ ] orderLineItems의 갯수와 저장된 menuIds의 갯수가 다른경우 예외를 던진다.
+  - [ ] order의 orderTableId를 이용해 orderTable을 불러온다.
+    - [ ] 존재하지 않는 경우 예외를 던진다.
+  - [ ] orderTable이 비어있는 경우 예외를 던진다.
+  - [ ] order는 orderTableId를 가진다.
+  - [ ] order의 OrderStatus는 Cooking으로 설정한다.
+  - [ ] order는 orderTime을 현재로 설정한다.
+- [ ] order를 저장한다.
+  - [ ] orderLineItem은 저장된 orderId를 갖고 있다.
+  - [ ] orderLineItem을 저장한 후 새로운 orderLineItems에 더한다.
+- [ ] 저장된 order는 저장된 orderLineItems를 가진다.
+  
+- [ ] Order를 반환한다.
+  - [ ] 모든 order를 불러와 반환한다.
+  - [ ] 모든 order에는 orderLineItem이 존재한다.
+  
+- [ ] OrderStatus를 변경한다.
+  - [ ] 기존 order를 불러온다.
+    - [ ] 존재하지 않는 경우 예외를 던진다.
+    - [ ] orderStatus가 완성인 경우 예외를 던진다.
+    - [ ] 기존 order의 orderStatus를 넘겨받은 order의 상태로 변경한다.
+    - [ ] orderStatus가 변경된 order를 저장한다.
+    - [ ] 저장된 order는 orderLineItems를 갖고 있다.
+  
+### Product
+- [ ] Product를 만든다.
+  - [ ] product의 가격이 null이거나 0보다 작은 경우 예외를 던진다
+  - [ ] product를 저장한다.
+
+- [ ] 모든 Product를 반환한다.
+  - [ ] 모든 product를 찾아 반환한다.
+  
+###  TableGroup
+- [ ] tableGroup을 만든다.
+  - [ ] orderTable를 불러온다.
+  - [ ] 불러온 orderTables가 비어있거나 사이즈가 1이하인 경우 예외를 던진다.
+  - [ ] orderTables에서 orderTableIds를 모아 orderTables 사이즈와 비교해 다른 경우 예외를 던진다.
+  - [ ] orderTableIds를 이용해 저장된 orderTables를 불러온다.
+  - [ ] 저장된 orderTable 중 비어있거나, orderTable의 TableGroupId가 존재하는 경우 예외를 던진다.
+  - [ ] tableGroup에 현재 날짜를 설정한다.
+  - [ ] tableGroup을 저장한다.
+    - [ ] 저장된 orderTable은 tableGroupId를 지닌다.
+    - [ ] 저장된 orderTable은 비어있지 않다.
+    - [ ] orderTable을 저장한다.
+  - [ ] 저장된 tableGroup은 orderTable를 갖고있다.
+
+- [ ] tableGroup을 해체한다.
+  - [ ] tableGroupId에 해당하는 모든 orderTable을 불러온다.
+  - [ ] 불러온 orderTables의 아이디를 모아 리스트로 만든다.
+  - [ ] ordertablesIds에 속하고, orderStatus가 {cooking, meal}에 속한 경우 예외를 던진다.
+  - [ ] 모든 orderTable을 다음 상태로 만든다.
+    - [ ] tableGroupId가 null
+    - [ ] orderTable은 비어있지 않음
+  - [ ] 변경된 상태의 orderTable을 저장
+  
+### Table
+- [ ] table을 만든다.
+  - [ ] orderTable의 id를 null로 지정한다.
+  - [ ] orderTable의 TableGroupId를 null로 지정한다.
+  - [ ] orderTable을 저장한다.
+  
+- [ ] 저장된 table을 반환한다.
+  
+- [ ] table을 비어있는 상태로 만든다.
+  - [ ] orderTable을 불러온다
+    - [ ] 존재하지 않는 경우 예외를 던진다.
+    - [ ] tableGroupId가 존재하는 경우 예외를 던진다.
+  - [ ] 변경하려는 orderTableId의 orderStatus가 {cooking, meal}인 경우 예외를 던진다.
+  - [ ] 불러온 orderTable을 전달받은 orderTable의 empty값으로 변경한다.
+  - [ ] 불러온 orderTable을 저장한다.
+  
+- [ ] table의 게스트 숫자를 변경한다.
+  - [ ] orderTable의 numberOfGuests를 불러온다.
+    - [ ] numberOfGuests가 0 이하인 경우 예외를 던진다.
+  - [ ] 전달받은 orderTableId로 저장된 orderTable을 불러온다.
+    - [ ] 존재하지 않는 경우 예외를 던진다.
+    - [ ] 저장된 orderTable이 비어있는 경우 예외를 던진다.
+  - [ ] 저장된 orderTable에 numberOfGuests를 지정한다.
+  - [ ] 저장된 orderTable을 저장한다.
+
 
 ## 용어 사전
 
