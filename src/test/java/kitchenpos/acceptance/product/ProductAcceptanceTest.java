@@ -44,7 +44,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @DisplayName("상품 등록 실패 - 가격 0 이하")
+    @DisplayName("상품 등록 실패 - 가격 0 미만")
     @Test
     void createByNegativePrice() {
         Product chicken = new Product();
