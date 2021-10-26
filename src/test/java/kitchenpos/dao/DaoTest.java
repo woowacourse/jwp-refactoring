@@ -21,6 +21,7 @@ public class DaoTest {
     public void setUp() {
         jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
         jdbcTemplate.execute("TRUNCATE TABLE orders");
+        jdbcTemplate.execute("TRUNCATE TABLE product");
         jdbcTemplate.execute("TRUNCATE TABLE order_line_item");
         jdbcTemplate.execute("TRUNCATE TABLE menu");
         jdbcTemplate.execute("TRUNCATE TABLE menu_group");
