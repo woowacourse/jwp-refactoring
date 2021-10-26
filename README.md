@@ -53,15 +53,15 @@
     - [ ] Order의 Id로 DB에서 Order의 모든 OrderLineItem들을 가져온다.
     - [ ] OrderLineItem들을 포함한 Order를 반환한다.
 
-- [ ] Product
-  - [ ] 새로운 Product를 생성해 DB에 저장한다.
-    - [ ] DB에 새로운 Product를 저장한다.
-    - [ ] DB에 저장한 Product를 ProductResponse로 변환해 반환한다.
-  - [ ] DB에 저장되어있는 모든 Product들을 조회해 ProductResponse로 변환해서 반환한다.
-  - [ ] 예외
-    - [ ] ProductRequest
-      - [ ] price = null
-      - [ ] price < 0
+- [x] Product
+  - [x] 새로운 Product를 생성해 DB에 저장한다.
+    - [x] DB에 새로운 Product를 저장한다.
+    - [x] DB에 저장한 Product를 ProductResponse로 변환해 반환한다.
+  - [x] DB에 저장되어있는 모든 Product들을 조회해 ProductResponse로 변환해서 반환한다.
+  - [x] 예외
+    - [x] ProductRequest
+      - [x] price = null
+      - [x] price < 0
 
 - [ ] TableGroup
   - [ ] 새로운 TableGroup을 생성해 DB에 저장한다.

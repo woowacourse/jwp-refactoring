@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-@Transactional
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc
 class IntegrationTest {
 

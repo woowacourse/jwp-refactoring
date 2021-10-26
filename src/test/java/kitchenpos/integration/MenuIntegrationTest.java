@@ -10,17 +10,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ class MenuIntegrationTest extends IntegrationTest {
     private MenuProductDao menuProductDao;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("생성 - 성공")
     @Test
@@ -51,11 +52,8 @@ class MenuIntegrationTest extends IntegrationTest {
         menuGroup.setName("추천메뉴");
         menuGroup = menuGroupDao.save(menuGroup);
 
-        Product product = new Product();
-        product.setName("후라이드");
-        final int productPriceValue = 10_000;
-        product.setPrice(BigDecimal.valueOf(productPriceValue));
-        product = productDao.save(product);
+        final Product product = new Product("후라이드", 10_000);
+        productRepository.save(product);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -117,11 +115,8 @@ class MenuIntegrationTest extends IntegrationTest {
         menuGroup.setName("추천메뉴");
         menuGroup = menuGroupDao.save(menuGroup);
 
-        Product product = new Product();
-        product.setName("후라이드");
-        final int productPriceValue = 10_000;
-        product.setPrice(BigDecimal.valueOf(productPriceValue));
-        product = productDao.save(product);
+        final Product product = new Product("후라이드", 10_000);
+        productRepository.save(product);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -162,11 +157,8 @@ class MenuIntegrationTest extends IntegrationTest {
         menuGroup.setName("추천메뉴");
         menuGroup = menuGroupDao.save(menuGroup);
 
-        Product product = new Product();
-        product.setName("후라이드");
-        final int productPriceValue = 10_000;
-        product.setPrice(BigDecimal.valueOf(productPriceValue));
-        product = productDao.save(product);
+        final Product product = new Product("후라이드", 10_000);
+        productRepository.save(product);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -203,11 +195,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_MenuGroupIdNotExistsInDB() {
         // given
-        Product product = new Product();
-        product.setName("후라이드");
-        final int productPriceValue = 10_000;
-        product.setPrice(BigDecimal.valueOf(productPriceValue));
-        product = productDao.save(product);
+        final Product product = new Product("후라이드", 10_000);
+        productRepository.save(product);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -287,11 +276,8 @@ class MenuIntegrationTest extends IntegrationTest {
         menuGroup.setName("추천메뉴");
         menuGroup = menuGroupDao.save(menuGroup);
 
-        Product product = new Product();
-        product.setName("후라이드");
-        final int productPriceValue = 10_000;
-        product.setPrice(BigDecimal.valueOf(productPriceValue));
-        product = productDao.save(product);
+        final Product product = new Product("후라이드", 10_000);
+        productRepository.save(product);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -333,17 +319,9 @@ class MenuIntegrationTest extends IntegrationTest {
         menuGroup.setName("추천메뉴");
         menuGroup = menuGroupDao.save(menuGroup);
 
-        Product product1 = new Product();
-        product1.setName("후라이드치킨상품");
-        final int product1PriceValue = 16_000;
-        product1.setPrice(BigDecimal.valueOf(product1PriceValue));
-        product1 = productDao.save(product1);
-
-        Product product2 = new Product();
-        product2.setName("양념치킨상품");
-        final int product2PriceValue = 17_000;
-        product2.setPrice(BigDecimal.valueOf(product2PriceValue));
-        product2 = productDao.save(product2);
+        final Product product1 = new Product("후라이드치킨상품", 16_000);
+        final Product product2 = new Product("양념치킨상품", 17_000);
+        productRepository.saveAll(Arrays.asList(product1, product2));
 
         final Menu menu1 = new Menu();
         final int menu1PriceValue = 16_000;
