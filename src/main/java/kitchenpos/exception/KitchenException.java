@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.exception;
 
 public class KitchenException extends RuntimeException {
 
