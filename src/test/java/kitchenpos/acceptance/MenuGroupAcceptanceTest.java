@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -52,7 +53,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        List<MenuGroup> menuGroups = convertBodyToList(response, MenuGroup.class);
+        List<MenuGroupResponse> menuGroups = convertBodyToList(response, MenuGroupResponse.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(menuGroups).isNotNull();
         assertThat(menuGroups).isNotEmpty();

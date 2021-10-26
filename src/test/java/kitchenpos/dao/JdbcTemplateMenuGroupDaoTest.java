@@ -26,8 +26,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
     @Test
     void save() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
 
         // when - then
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
@@ -93,8 +92,7 @@ class JdbcTemplateMenuGroupDaoTest extends DaoTest {
 
     private long SAVE_MENU_GROUP() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
 
         // when - then
         MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
