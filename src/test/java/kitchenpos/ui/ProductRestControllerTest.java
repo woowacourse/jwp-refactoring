@@ -9,8 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
-import kitchenpos.application.dtos.ProductRequest;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.dtos.ProductRequest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,11 +38,7 @@ class ProductRestControllerTest {
     @Test
     void create() throws Exception {
         final String content = objectMapper.writeValueAsString(new ProductRequest());
-        final Product product = Product
-                .builder()
-                .id(1L)
-                .build();
-
+        final Product product = TestFixtures.createProduct();
         when(productService.create(any())).thenReturn(product);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/products")
@@ -52,13 +49,13 @@ class ProductRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/products/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/products/" + product.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        when(productService.list()).thenReturn(Collections.singletonList(new Product()));
+        when(productService.list()).thenReturn(Collections.singletonList(TestFixtures.createProduct()));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/products"))
                 .andReturn()
