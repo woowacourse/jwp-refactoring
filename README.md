@@ -2,10 +2,12 @@
 
 ## 요구 사항
 
-- [ ] MenuGroup
-  - [ ] 새로운 MenuGroup을 생성해 DB에 저장한다.
-  - [ ] 모든 MenuGroup들을 DB에서 찾아 반환한다.
-
+- [x] MenuGroup
+  - [x] 새로운 MenuGroup을 생성해 DB에 저장한다.
+    - [x] DB에 새로운 MenuGroup을 저장한다.
+    - [x] DB에 저장한 MenuGroup을 MenuGroupResponse로 변환해 반환한다.
+  - [x] DB에 저장되어있는 모든 MenuGroup들을 조회해 MenuGroupResponse로 변환해서 반환한다.
+  
 - [ ] Menu
   - [ ] 새로운 Menu를 생성해 DB에 저장한다.
     - [ ] Menu의 가격이 null이거나 0보다 작으면 예외를 발생시킨다.
