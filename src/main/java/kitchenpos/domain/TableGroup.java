@@ -25,12 +25,12 @@ public class TableGroup {
     public static class Builder {
         private Long id;
         private LocalDateTime createdDate;
-        private List<OrderTable> orderTables;
+        private List<OrderTable> orderTables = new ArrayList<>();
 
         private Builder() {
         }
 
-        public Builder of(TableGroup tableGroup){
+        public Builder of(TableGroup tableGroup) {
             this.id = tableGroup.id;
             this.createdDate = tableGroup.createdDate;
             this.orderTables = new ArrayList<>(tableGroup.orderTables);

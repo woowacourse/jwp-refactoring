@@ -31,7 +31,7 @@ public class Order {
         private Long orderTableId;
         private String orderStatus;
         private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems;
+        private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         private Builder() {
         }
