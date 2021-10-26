@@ -42,8 +42,8 @@ public class MenuDaoTest extends DaoTest {
     void findAll() {
         menuDao.save(new Menu("메뉴명1", new BigDecimal(100), 1L));
         menuDao.save(new Menu("메뉴명2", new BigDecimal(200), 2L));
-        List<Menu> all = menuDao.findAll();
-        assertThat(all).hasSize(2);
+        List<Menu> menus = menuDao.findAll();
+        assertThat(menus).hasSize(2);
     }
 
     @Test
