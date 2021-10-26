@@ -73,4 +73,6 @@ public class Menu {
             throw new IllegalArgumentException("메뉴의 가격을 입력하지 않으셨거나, 적절하지 않은 가격을 입력하셨습니다.");
         }
     }
+
+
 }
