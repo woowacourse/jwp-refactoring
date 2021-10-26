@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,4 +10,7 @@ public abstract class IntegrationTest {
 
     @Autowired
     protected ProductService productService;
+
+    @Autowired
+    protected MenuGroupService menuGroupService;
 }
