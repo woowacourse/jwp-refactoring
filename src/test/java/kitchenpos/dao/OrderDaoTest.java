@@ -14,15 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class OrderDaoTest extends DaoTest {
 
     @Autowired
-    private MenuProductDao menuProductDao;
-
-    @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private ProductDao productDao;
-
-    @Autowired
     private OrderDao orderDao;
 
     @Autowired
