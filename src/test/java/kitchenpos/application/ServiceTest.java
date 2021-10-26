@@ -13,11 +13,13 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Sql("classpath:truncate.sql")
+@ActiveProfiles("test")
 @Transactional
 public class ServiceTest {
 
