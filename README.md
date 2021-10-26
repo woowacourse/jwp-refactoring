@@ -55,16 +55,16 @@
 
 ### OrderTable
 
-* [ ] OrderTable을 추가할 수 있다.
-* [ ] 등록된 OrderTable을 조회할 수 있다.
-* [ ] OrderTable의 Empty 여부를 수정할 수 있다.
-    * 존재하지않은 OrderTable Id가 주어져서는 안된다.
-    * TableGroup에 속한 OrderTable의 Empty는 수정할 수 없다.
-    * OrderTable이 현재 이용 중이면(COMPLETION이 아니면) 상태를 변경할 수 없다.
-* [ ] OrderTable의 NumberOfGuests를 수정할 수 있다.
-    * 0 미만의 값으로 수정할 수 없다.
-    * 존재하지않은 OrderTable Id가 주어져서는 안된다.
-    * empty가 true인 OrderTable이어서는 안된다.
+* [x] OrderTable을 추가할 수 있다.
+* [x] 등록된 OrderTable을 조회할 수 있다.
+* [x] OrderTable의 Empty 여부를 수정할 수 있다.
+    * [x] 존재하지않은 OrderTable Id가 주어져서는 안된다.
+    * [x] TableGroup에 속한 OrderTable의 Empty는 수정할 수 없다.
+    * [x] OrderTable이 현재 이용 중이면(COMPLETION이 아니면) 상태를 변경할 수 없다.
+* [x] OrderTable의 NumberOfGuests를 수정할 수 있다.
+    * [x] 0 미만의 값으로 수정할 수 없다.
+    * [x] 존재하지않은 OrderTable Id가 주어져서는 안된다.
+    * [x] empty가 true인 OrderTable이어서는 안된다.
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
