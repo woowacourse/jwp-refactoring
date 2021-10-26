@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 
 import java.util.Arrays;

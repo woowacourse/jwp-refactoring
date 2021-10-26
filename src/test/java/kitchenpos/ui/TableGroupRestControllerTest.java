@@ -21,7 +21,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @DisplayName("테이블 그룹 문서화 테스트")
 class TableGroupRestControllerTest extends ApiDocument {
-
     @DisplayName("테이블 그룹 생성 - 성공")
     @Test
     void table_group_create() throws Exception {
