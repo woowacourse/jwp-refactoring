@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -28,6 +27,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundException;
+import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -49,7 +49,7 @@ class OrderIntegrationTest extends IntegrationTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -63,9 +63,8 @@ class OrderIntegrationTest extends IntegrationTest {
         savedOrderTable.setEmpty(false);
         savedOrderTable = orderTableDao.save(savedOrderTable);
 
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(savedMenuGroup);
+        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
 
         Menu savedMenu = new Menu();
         savedMenu.setName("양념치킨");
@@ -187,9 +186,8 @@ class OrderIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_RequestOrderTableIdOfOrderNotExistsInDB() {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(savedMenuGroup);
+        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
 
         Menu savedMenu = new Menu();
         savedMenu.setName("양념치킨");
@@ -232,9 +230,8 @@ class OrderIntegrationTest extends IntegrationTest {
         savedOrderTable.setEmpty(true);
         savedOrderTable = orderTableDao.save(savedOrderTable);
 
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(savedMenuGroup);
+        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
 
         Menu savedMenu = new Menu();
         savedMenu.setName("양념치킨");
@@ -272,9 +269,8 @@ class OrderIntegrationTest extends IntegrationTest {
     @Test
     void findAll_Success() throws Exception {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(savedMenuGroup);
+        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
 
         Menu savedMenu = new Menu();
         savedMenu.setName("양념치킨");
@@ -321,9 +317,8 @@ class OrderIntegrationTest extends IntegrationTest {
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COMPLETION"})
     void changeOrderStatus_Success(OrderStatus newOrderStatus) throws Exception {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup();
-        savedMenuGroup.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(savedMenuGroup);
+        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
 
         Menu savedMenu = new Menu();
         savedMenu.setName("양념치킨");

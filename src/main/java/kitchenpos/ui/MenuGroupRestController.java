@@ -1,37 +1,40 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.menugroup.request.MenuGroupRequest;
+import kitchenpos.dto.menugroup.response.MenuGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.URI;
-import java.util.List;
-
 @RestController
+@RequestMapping("/api/menu-groups")
 public class MenuGroupRestController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupRestController(final MenuGroupService menuGroupService) {
         this.menuGroupService = menuGroupService;
     }
 
-    @PostMapping("/api/menu-groups")
-    public ResponseEntity<MenuGroup> create(@RequestBody final MenuGroup menuGroup) {
-        final MenuGroup created = menuGroupService.create(menuGroup);
-        final URI uri = URI.create("/api/menu-groups/" + created.getId());
+    @PostMapping
+    public ResponseEntity<MenuGroupResponse> create(@RequestBody final MenuGroupRequest menuGroupRequest) {
+        final MenuGroupResponse menuGroupResponse = menuGroupService.create(menuGroupRequest);
+        final URI uri = URI.create("/api/menu-groups/" + menuGroupResponse.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(menuGroupResponse)
                 ;
     }
 
-    @GetMapping("/api/menu-groups")
-    public ResponseEntity<List<MenuGroup>> list() {
+    @GetMapping
+    public ResponseEntity<List<MenuGroupResponse>> findAll() {
         return ResponseEntity.ok()
-                .body(menuGroupService.list())
+                .body(menuGroupService.findAll())
                 ;
     }
 }

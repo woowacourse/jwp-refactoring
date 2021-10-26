@@ -15,12 +15,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class MenuIntegrationTest extends IntegrationTest {
     private MenuDao menuDao;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private MenuProductDao menuProductDao;
@@ -48,9 +48,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Success() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Product product = new Product("후라이드", 10_000);
         productRepository.save(product);
@@ -111,9 +110,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_PriceIsNull() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Product product = new Product("후라이드", 10_000);
         productRepository.save(product);
@@ -153,9 +151,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_PriceIsLessThanZero() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Product product = new Product("후라이드", 10_000);
         productRepository.save(product);
@@ -233,9 +230,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_ProductNotExistsInDB() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Map<String, Object> params = new HashMap<>();
         final String menuName = "후라이드+후라이드";
@@ -272,9 +268,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_MenuPriceIsGreaterThanPriceSumOfProductsOfMenuProducts() {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Product product = new Product("후라이드", 10_000);
         productRepository.save(product);
@@ -315,9 +310,8 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void findAll_Success() throws Exception {
         // given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("추천메뉴");
-        menuGroup = menuGroupDao.save(menuGroup);
+        MenuGroup menuGroup = new MenuGroup("추천메뉴");
+        menuGroup = menuGroupRepository.save(menuGroup);
 
         final Product product1 = new Product("후라이드치킨상품", 16_000);
         final Product product2 = new Product("양념치킨상품", 17_000);
