@@ -2,10 +2,12 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dtos.MenuGroupRequest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -27,22 +29,20 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 등록할 수 있다")
     @Test
     void create() {
-        final MenuGroup menuGroup = MenuGroup.builder()
-                .name("하노이 아침메뉴 셋트")
-                .build();
+        final MenuGroupRequest request = new MenuGroupRequest("하노이 아침메뉴 세트");
         final MenuGroup savedMenuGroup = MenuGroup.builder()
-                .of(menuGroup)
+                .name(request.getName())
                 .id(1L)
                 .build();
-                new MenuGroup();
+        new MenuGroup();
 
-        when(menuGroupDao.save(menuGroup)).thenReturn(savedMenuGroup);
+        when(menuGroupDao.save(any())).thenReturn(savedMenuGroup);
 
-        final MenuGroup actual = menuGroupService.create(menuGroup);
+        final MenuGroup actual = menuGroupService.create(request);
         assertThat(actual.getId()).isEqualTo(1L);
         assertAll(
                 () -> assertThat(actual.getId()).isEqualTo(1L),
-                () -> assertThat(actual.getName()).isEqualTo("하노이 아침메뉴 셋트")
+                () -> assertThat(actual.getName()).isEqualTo(request.getName())
         );
     }
 

@@ -10,7 +10,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.dtos.MenuGroupRequest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,13 +38,8 @@ class MenuGroupRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final MenuGroup menuGroupDto =  MenuGroup.builder()
-                .name("메뉴그룹이름")
-                .build();
-        final String content = objectMapper.writeValueAsString(menuGroupDto);
-        final MenuGroup menuGroup = MenuGroup.builder()
-                .id(1L)
-                .build();
+        final String content = objectMapper.writeValueAsString(new MenuGroupRequest("메뉴그룹이름"));
+        final MenuGroup menuGroup = TestFixtures.createMenuGroup();
         when(menuGroupService.create(any())).thenReturn(menuGroup);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menu-groups")
@@ -53,13 +50,13 @@ class MenuGroupRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menu-groups/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menu-groups/" + menuGroup.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        when(menuGroupService.list()).thenReturn(Collections.singletonList(new MenuGroup()));
+        when(menuGroupService.list()).thenReturn(Collections.singletonList(TestFixtures.createMenuGroup()));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/menu-groups"))
                 .andReturn()
