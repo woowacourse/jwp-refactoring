@@ -1,4 +1,4 @@
-package kitchenpos.ui.factory;
+package kitchenpos.builder;
 
 import kitchenpos.domain.Product;
 

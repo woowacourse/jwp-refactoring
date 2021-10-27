@@ -2,8 +2,8 @@ package kitchenpos.ui;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.factory.OrderTableBuilder;
-import kitchenpos.ui.factory.TableGroupBuilder;
+import kitchenpos.builder.OrderTableBuilder;
+import kitchenpos.builder.TableGroupBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -78,7 +78,6 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
         actions.andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/table-groups/1"))
                 .andExpect(jsonPath("$.id", is(1)))
-                .andExpect(jsonPath("$.createdDate", is(tableGroup1.getCreatedDate().toString())))
                 .andExpect(jsonPath("$.orderTables[0].id", is(1)))
                 .andExpect(jsonPath("$.orderTables[0].tableGroupId", is(1)))
                 .andExpect(jsonPath("$.orderTables[0].numberOfGuests", is(4)))

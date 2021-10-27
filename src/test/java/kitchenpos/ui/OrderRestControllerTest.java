@@ -2,8 +2,8 @@ package kitchenpos.ui;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.ui.factory.OrderBuilder;
-import kitchenpos.ui.factory.OrderLineItemBuilder;
+import kitchenpos.builder.OrderBuilder;
+import kitchenpos.builder.OrderLineItemBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -124,7 +124,6 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .andExpect(jsonPath("$[0].id", is(1)))
                 .andExpect(jsonPath("$[0].orderTableId", is(1)))
                 .andExpect(jsonPath("$[0].orderStatus", is("COOKING")))
-                .andExpect(jsonPath("$[0].orderedTime", is(order1.getOrderedTime().toString())))
                 .andExpect(jsonPath("$[0].orderLineItems[0].seq", is(1)))
                 .andExpect(jsonPath("$[0].orderLineItems[0].orderId", is(1)))
                 .andExpect(jsonPath("$[0].orderLineItems[0].menuId", is(1)))
@@ -132,7 +131,6 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .andExpect(jsonPath("$[1].id", is(2)))
                 .andExpect(jsonPath("$[1].orderTableId", is(2)))
                 .andExpect(jsonPath("$[1].orderStatus", is("COOKING")))
-                .andExpect(jsonPath("$[1].orderedTime", is(order2.getOrderedTime().toString())))
                 .andExpect(jsonPath("$[1].orderLineItems[0].seq", is(2)))
                 .andExpect(jsonPath("$[1].orderLineItems[0].orderId", is(2)))
                 .andExpect(jsonPath("$[1].orderLineItems[0].menuId", is(1)))

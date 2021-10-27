@@ -1,11 +1,10 @@
 package kitchenpos.ui;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.factory.MenuGroupBuilder;
+import kitchenpos.builder.MenuGroupBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Arrays;
@@ -18,7 +17,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends BaseWebMvcTest {
 
     MenuGroup menuGroup1;

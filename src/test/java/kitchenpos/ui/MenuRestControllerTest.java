@@ -2,12 +2,11 @@ package kitchenpos.ui;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.ui.factory.MenuBuilder;
-import kitchenpos.ui.factory.MenuProductBuilder;
+import kitchenpos.builder.MenuBuilder;
+import kitchenpos.builder.MenuProductBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.math.BigDecimal;
@@ -20,7 +19,6 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends BaseWebMvcTest {
 
     Menu menu1;
