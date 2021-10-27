@@ -126,7 +126,7 @@ class OrderServiceTest {
         // given
         OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
         OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2);
-        Order order = new Order(null, -1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
+        Order order = new Order(null, 1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
 
         final List<Long> menuIds = order.getOrderLineItems().stream()
                 .map(OrderLineItem::getMenuId)
@@ -134,8 +134,7 @@ class OrderServiceTest {
 
         given(menuDao.countByIdIn(menuIds)).willReturn(2L);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(1L, null, 10, true);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
 
         // when - then

@@ -25,9 +25,7 @@ class JdbcTemplateOrderTableDaoTest extends DomainDaoTest {
     @Test
     void save() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(10, false);
 
         // when
         OrderTable savedOrderTable = orderTableDao.save(orderTable);
@@ -88,11 +86,9 @@ class JdbcTemplateOrderTableDaoTest extends DomainDaoTest {
     @Test
     void findAllByTableGroupId() {
         // given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(10, false);
         long tableGroupId = SAVE_TABLE_GROUP_RETURN_ID();
-        orderTable.setTableGroupId(tableGroupId);
+        orderTable.addTableGroupId(tableGroupId);
 
         orderTableDao.save(orderTable);
 

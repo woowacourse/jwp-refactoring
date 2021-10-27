@@ -48,11 +48,8 @@ class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L);
+        OrderTable orderTable2 = new OrderTable(2L);
 
         orderTables = Arrays.asList(orderTable1, orderTable2);
     }
@@ -80,8 +77,7 @@ class TableGroupServiceTest {
     void createFailedWhenOrderTableLessThan2() {
         // given
         TableGroup tableGroup = new TableGroup();
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        OrderTable orderTable = new OrderTable(1L);
 
         tableGroup.setOrderTables(singletonList(orderTable));
 
@@ -107,7 +103,7 @@ class TableGroupServiceTest {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
-        List<OrderTable> savedOrderTables = singletonList(new OrderTable());
+        List<OrderTable> savedOrderTables = singletonList(new OrderTable(1L));
         given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
         // when - then
@@ -128,13 +124,8 @@ class TableGroupServiceTest {
         TableGroup tableGroup = new TableGroup();
 
         // 비어있지 않은 orderTable을 포함한다.
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        orderTable1.setTableGroupId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(1L);
+        OrderTable orderTable1 = new OrderTable(1L, null, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
 
         orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
@@ -163,13 +154,8 @@ class TableGroupServiceTest {
         // given
         TableGroup tableGroup = new TableGroup();
 
-        // tableGroupId가 null임을 포함한다.
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(1L);
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
 
         orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
@@ -197,15 +183,11 @@ class TableGroupServiceTest {
     void ungroupFailedWhenOrderStatusNotSatisfied() {
         // given
         long tableGroupId = 1L;
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
+        OrderTable orderTable1 = new OrderTable(1L, 1L, 10, false);
 
         // meal 상태의 주문을 포함한다.
         Order order = new Order(1L, OrderStatus.MEAL.name());
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setTableGroupId(1L);
+        OrderTable orderTable2 = new OrderTable(2L, 1L, 10, false);
         orderTables = Arrays.asList(orderTable1, orderTable2);
 
         given(orderTableDao.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);

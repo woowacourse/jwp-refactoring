@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -78,8 +79,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.body()).isNotNull();
-        OrderTable orderTable = response.as(OrderTable.class);
-        assertThat(orderTable.isEmpty()).isTrue();
+        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
+        assertThat(orderTableResponse.isEmpty()).isTrue();
     }
 
     @DisplayName("PUT /api/tables/{orderTableId}/number-of-guests")
@@ -103,8 +104,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.body()).isNotNull();
-        OrderTable orderTable = response.as(OrderTable.class);
-        assertThat(orderTable.getNumberOfGuests()).isEqualTo(10);
+        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
+        assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(10);
     }
 
     public static long POST_DEFAULT_ORDER_TABLE(int numberOfGuests, boolean empty) {
@@ -121,7 +122,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
 
-        OrderTable orderTable = response.as(OrderTable.class);
-        return orderTable.getId();
+        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
+        return orderTableResponse.getId();
     }
 }

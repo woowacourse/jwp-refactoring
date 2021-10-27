@@ -49,9 +49,7 @@ public class DomainDaoTest extends DaoTest {
     protected long SAVE_ORDER_TABLE_RETURN_ID() {
         // given
         orderTableDao = new JdbcTemplateOrderTableDao(dataSource);
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(10, false);
 
         // when
         OrderTable savedOrderTable = orderTableDao.save(orderTable);

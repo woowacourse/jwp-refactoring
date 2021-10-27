@@ -39,7 +39,7 @@ class TableServiceTest {
     void changeEmptyFailedWhenOrderTableIdNotFound() {
         // given
         long orderTableId = -1L;
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = new OrderTable(orderTableId);
         given(orderTableDao.findById(orderTableId)).willThrow(IllegalArgumentException.class);
 
         // when - then
@@ -61,12 +61,9 @@ class TableServiceTest {
     void changeEmptyFailedWhenTableGroupIdIsNull() {
         // given
         long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = new OrderTable(null);
 
-        OrderTable savedOrderTable = new OrderTable();
-        savedOrderTable.setId(1L);
-        savedOrderTable.setTableGroupId(1L);
-
+        OrderTable savedOrderTable = new OrderTable(orderTableId, 1L, 10, false);
         given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
         // when - then
@@ -88,9 +85,8 @@ class TableServiceTest {
     void changeEmptyFailedWhenStatusNotSatisfied() {
         // given
         long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
-        OrderTable savedOrderTable = new OrderTable();
-        savedOrderTable.setId(1L);
+        OrderTable orderTable = new OrderTable(null);
+        OrderTable savedOrderTable = new OrderTable(orderTableId);
 
         // savedOrderTable에 포함된 order가 COMPLETION 상태임을 나타내기 위함.
         Order order = new Order(1L, OrderStatus.COMPLETION.name());
@@ -120,9 +116,7 @@ class TableServiceTest {
     void changeNumberOfGuestsFailedWhenNegative() {
         // given
         long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(-1);
-
+        OrderTable orderTable = new OrderTable(orderTableId, null, -1, false);
         // when - then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -137,9 +131,7 @@ class TableServiceTest {
     void changeNumberOfGuestsFailedWhenOrderTableIdNotFound() {
         // given
         long orderTableId = -1L;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
-
+        OrderTable orderTable = new OrderTable(orderTableId);
         given(orderTableDao.findById(orderTableId)).willThrow(IllegalArgumentException.class);
 
         // when - then
@@ -155,13 +147,10 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsFailedWhenTableIsEmpty() {
         // given
-        long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(10);
+        OrderTable orderTable = new OrderTable(null, null, 10, false);
 
-        OrderTable savedOrderTable = new OrderTable();
-        savedOrderTable.setNumberOfGuests(10);
-        savedOrderTable.setEmpty(true);
+        long orderTableId = 1L;
+        OrderTable savedOrderTable = new OrderTable(1L, null, 10, true);
 
         given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
