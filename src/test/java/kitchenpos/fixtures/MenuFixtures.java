@@ -9,13 +9,13 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuFixtures {
 
-    private static final Long MENU_ID = 1L;
-    private static final Long PRODUCT_ID = 1L;
+    private static final long MENU_ID = 1L;
+    private static final long PRODUCT_ID = 1L;
     private static final long QUANTITY = 1L;
     private static final String MENU_NAME = "기본 메뉴";
     private static final String MENU_GROUP_NAME = "기본 메뉴 그룹";
     private static final long PRICE = 10000;
-    private static final Long MENU_GROUP_ID = 1L;
+    private static final long MENU_GROUP_ID = 1L;
 
     public static Menu createMenu(
         String name,

@@ -18,6 +18,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.ProductFixtures;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -39,7 +40,12 @@ public class MenuServiceTest extends ServiceTest {
     @InjectMocks
     private MenuService menuService;
 
-    private final Menu menu = MenuFixtures.createMenu();
+    private Menu menu;
+
+    @BeforeEach
+    void setUp() {
+        menu = MenuFixtures.createMenu();
+    }
 
     @Test
     void 메뉴를_생성한다() {
@@ -57,18 +63,12 @@ public class MenuServiceTest extends ServiceTest {
     void 메뉴_그룹이_존재하지_않을_경우_예외를_반환한다() {
         given(menuGroupDao.existsById(any())).willReturn(false);
 
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> menuService.create(menu)
-        );
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
     }
 
     @Test
     void 생성_시_가격이_음수이면_예외를_반환한다() {
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> menuService.create(MenuFixtures.createMenu(-1000))
-        );
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(-1000)));
     }
 
     @Test
@@ -76,10 +76,7 @@ public class MenuServiceTest extends ServiceTest {
         given(menuGroupDao.existsById(any())).willReturn(true);
         given(productDao.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
 
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> menuService.create(MenuFixtures.createMenu(100000))
-        );
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(100000)));
     }
 
     @Test

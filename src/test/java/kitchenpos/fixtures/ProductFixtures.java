@@ -12,7 +12,7 @@ public class ProductFixtures {
         Product product = new Product();
         product.setId(1L);
         product.setName(PRODUCT_NAME);
-        product.setPrice(BigDecimal.valueOf(PRICE *100, 2));
+        product.setPrice(BigDecimal.valueOf(PRICE * 100, 2));
         return product;
     }
 

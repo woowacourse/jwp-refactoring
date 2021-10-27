@@ -9,6 +9,7 @@ import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixtures.MenuFixtures;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -21,7 +22,12 @@ class MenuGroupServiceTest extends ServiceTest {
     @InjectMocks
     private MenuGroupService menuGroupService;
 
-    private final MenuGroup menuGroup = MenuFixtures.createMenuGroup();
+    private MenuGroup menuGroup;
+
+    @BeforeEach
+    void setUp() {
+        menuGroup = MenuFixtures.createMenuGroup();
+    }
 
     @Test
     void 메뉴_그룹을_생성한다() {
