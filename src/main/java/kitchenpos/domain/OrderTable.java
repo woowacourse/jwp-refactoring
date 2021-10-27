@@ -6,35 +6,47 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    public Long getId() {
-        return id;
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
-    public void setId(final Long id) {
+    public OrderTable(Long id) {
+        this(id, null, 0, true);
+    }
+
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
+        this.tableGroupId = tableGroupId;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getTableGroupId() {
         return tableGroupId;
     }
 
-    public void setTableGroupId(final Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
-    }
-
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    // TODO add 로직 다 없애기
+    public void addEmpty(boolean empty) {
         this.empty = empty;
+    }
+
+    public void addNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void addTableGroupId(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 }
