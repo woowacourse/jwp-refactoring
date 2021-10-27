@@ -20,6 +20,9 @@
 | 주문 항목 | order line item | 주문에 속하는 수량이 있는 메뉴 |
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
 
+## TODO
+- [ ] 요구 사항 가독성 있게 변경
+
 ## 요구 사항
 - [ ] Menu 테스트
   - [ ] /api/menus POST success
@@ -31,9 +34,9 @@
     - [ ] menu 가 모든 product 의 총 금액보다 큰 경우
   - [ ] /api/menus GET success
 
-- [ ] MenuGroup 테스트
-  - [ ] /api/menu-groups POST success
-  - [ ] /api/menu-groups GET success
+- [x] MenuGroup 테스트
+  - [x] /api/menu-groups POST success
+  - [x] /api/menu-groups GET success
 
 - [ ] Order 테스트
   - [ ] /api/orders POST success

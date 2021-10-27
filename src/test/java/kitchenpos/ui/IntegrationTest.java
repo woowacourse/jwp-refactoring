@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import kitchenpos.dao.MenuGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -13,4 +14,7 @@ public class IntegrationTest {
 
     @Autowired
     protected TestRestTemplate testRestTemplate;
+
+    @Autowired
+    protected MenuGroupDao menuGroupDao;
 }
