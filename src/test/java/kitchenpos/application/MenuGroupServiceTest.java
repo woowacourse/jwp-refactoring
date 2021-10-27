@@ -10,6 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("메뉴 그룹 서비스 테스트")
 @IntegrationTest
 class MenuGroupServiceTest {
 
