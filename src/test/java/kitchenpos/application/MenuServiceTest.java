@@ -13,7 +13,7 @@ import java.util.Optional;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
@@ -34,7 +34,7 @@ class MenuServiceTest {
     private MenuDao menuDao;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private MenuProductDao menuProductDao;
@@ -81,16 +81,16 @@ class MenuServiceTest {
                 .id(2L)
                 .build();
         menuProduct1 = MenuProduct.builder()
-                .seq(1L)
+                .id(1L)
                 .menuId(savedMenu1.getId())
                 .productId(savedProduct1.getId())
-                .quantity(1)
+                .quantity(1L)
                 .build();
         menuProduct2 = MenuProduct.builder()
-                .seq(2L)
+                .id(2L)
                 .menuId(savedMenu2.getId())
                 .productId(savedProduct2.getId())
-                .quantity(1)
+                .quantity(1L)
                 .build();
     }
 
@@ -105,7 +105,7 @@ class MenuServiceTest {
                 menuRequest.getMenuGroupId(), menuProductsRequest);
 
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        when(menuGroupDao.existsById(any())).thenReturn(true);
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productDao.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
         when(menuDao.save(any())).thenReturn(savedMenu1);
@@ -125,7 +125,7 @@ class MenuServiceTest {
     @DisplayName("메뉴가 속한 메뉴 그룹이 존재해야 한다")
     @Test
     void createExceptionMenuGroup() {
-        when(menuGroupDao.existsById(1L)).thenReturn(false);
+        when(menuGroupRepository.existsById(1L)).thenReturn(false);
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -147,7 +147,7 @@ class MenuServiceTest {
         final MenuRequest menuRequest = new MenuRequest("메뉴이름", 16000L, 1L,
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
 
-        when(menuGroupDao.existsById(1L)).thenReturn(true);
+        when(menuGroupRepository.existsById(1L)).thenReturn(true);
         when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productDao.findById(weirdSavedProduct.getId())).thenReturn(Optional.of(weirdSavedProduct));
 

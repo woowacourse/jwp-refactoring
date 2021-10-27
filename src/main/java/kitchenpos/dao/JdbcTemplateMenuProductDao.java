@@ -69,7 +69,7 @@ public class JdbcTemplateMenuProductDao implements MenuProductDao {
 
     private MenuProduct toEntity(final ResultSet resultSet) throws SQLException {
         return MenuProduct.builder()
-                .seq(resultSet.getLong(KEY_COLUMN_NAME))
+                .id(resultSet.getLong(KEY_COLUMN_NAME))
                 .menuId(resultSet.getLong("menu_id"))
                 .productId(resultSet.getLong("product_id"))
                 .quantity(resultSet.getLong("quantity"))

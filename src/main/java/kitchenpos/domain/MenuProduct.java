@@ -1,16 +1,28 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class MenuProduct {
-    private Long seq;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false)
     private Long menuId;
+    @Column(nullable = false)
     private Long productId;
-    private long quantity;
+    @Column(nullable = false)
+    private Long quantity;
 
     public MenuProduct() {
     }
 
     private MenuProduct(Builder builder) {
-        this.seq = builder.seq;
+        this.id = builder.id;
         this.menuId = builder.menuId;
         this.productId = builder.productId;
         this.quantity = builder.quantity;
@@ -21,7 +33,7 @@ public class MenuProduct {
     }
 
     public static class Builder {
-        private Long seq;
+        private Long id;
         private Long menuId;
         private Long productId;
         private long quantity;
@@ -30,15 +42,15 @@ public class MenuProduct {
         }
 
         public Builder of(MenuProduct menuProduct) {
-            this.seq = menuProduct.seq;
+            this.id = menuProduct.id;
             this.menuId = menuProduct.menuId;
             this.productId = menuProduct.productId;
             this.quantity = menuProduct.quantity;
             return this;
         }
 
-        public Builder seq(Long seq) {
-            this.seq = seq;
+        public Builder id(Long id) {
+            this.id = id;
             return this;
         }
 
@@ -52,7 +64,7 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder quantity(long quantity) {
+        public Builder quantity(Long quantity) {
             this.quantity = quantity;
             return this;
         }
@@ -62,8 +74,8 @@ public class MenuProduct {
         }
     }
 
-    public Long getSeq() {
-        return seq;
+    public Long getId() {
+        return id;
     }
 
     public Long getMenuId() {
@@ -78,7 +90,7 @@ public class MenuProduct {
         return productId;
     }
 
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
     }
 }
