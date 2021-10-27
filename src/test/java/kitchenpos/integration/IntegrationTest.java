@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.integration;
 
 import kitchenpos.dao.MenuGroupDao;
 import org.springframework.beans.factory.annotation.Autowired;

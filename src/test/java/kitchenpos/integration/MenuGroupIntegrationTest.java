@@ -1,4 +1,4 @@
-package kitchenpos.ui;
+package kitchenpos.integration;
 
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
