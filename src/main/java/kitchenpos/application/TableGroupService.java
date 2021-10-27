@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.TableGroupRequestDto;
-import kitchenpos.application.dto.response.TableGroupResponseDto;
+import kitchenpos.application.dto.request.tablegroup.TableGroupRequestDto;
+import kitchenpos.application.dto.response.table.TableGroupResponseDto;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
@@ -29,9 +29,9 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponseDto create(TableGroupRequestDto tableGroupRequestDto) {
         TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = tableGroupRequestDto.getOrderTableIds()
+        List<OrderTable> orderTables = tableGroupRequestDto.getOrderTables()
             .stream()
-            .map(orderTableId -> convert(orderTableId, tableGroup))
+            .map(orderTable -> convert(orderTable.getId(), tableGroup))
             .collect(Collectors.toList());
         tableGroup.updateOrderTables(orderTables);
         return TableGroupResponseDto.from(tableGroupRepository.save(tableGroup));

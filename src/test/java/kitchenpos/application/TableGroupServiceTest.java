@@ -11,8 +11,9 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
-import kitchenpos.application.dto.request.TableGroupRequestDto;
-import kitchenpos.application.dto.response.TableGroupResponseDto;
+import kitchenpos.application.dto.request.tablegroup.OrderTableGroupRequestDto;
+import kitchenpos.application.dto.request.tablegroup.TableGroupRequestDto;
+import kitchenpos.application.dto.response.table.TableGroupResponseDto;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
@@ -53,7 +54,7 @@ class TableGroupServiceTest {
             void it_throws_exception() {
                 // given
                 TableGroupRequestDto tableGroupRequestDto =
-                    new TableGroupRequestDto(Arrays.asList(1L, 2L));
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
                 given(orderTableRepository.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, true)));
                 given(orderTableRepository.findById(2L)).willReturn(Optional.empty());
@@ -76,7 +77,7 @@ class TableGroupServiceTest {
             void it_throws_exception() {
                 // given
                 TableGroupRequestDto tableGroupRequestDto =
-                    new TableGroupRequestDto(Arrays.asList(1L, 2L));
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
                 given(orderTableRepository.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, true)));
                 given(orderTableRepository.findById(2L))
@@ -100,7 +101,7 @@ class TableGroupServiceTest {
             void it_throws_exception() {
                 // given
                 TableGroupRequestDto tableGroupRequestDto =
-                    new TableGroupRequestDto(Arrays.asList(1L, 2L));
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
                 given(orderTableRepository.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, true)));
                 given(orderTableRepository.findById(2L))
@@ -124,7 +125,7 @@ class TableGroupServiceTest {
             void it_throws_exception() {
                 // given
                 TableGroupRequestDto tableGroupRequestDto =
-                    new TableGroupRequestDto(Arrays.asList(1L));
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L)));
                 given(orderTableRepository.findById(1L))
                     .willReturn(Optional.of(new OrderTable(10, true)));
 
@@ -147,7 +148,7 @@ class TableGroupServiceTest {
             void it_saves_and_returns_table_group() {
                 // given
                 TableGroupRequestDto tableGroupRequestDto =
-                    new TableGroupRequestDto(Arrays.asList(1L, 2L));
+                    new TableGroupRequestDto(Arrays.asList(new OrderTableGroupRequestDto(1L), new OrderTableGroupRequestDto(2L)));
                 TableGroup tableGroup = new TableGroup(1L, new ArrayList<>());
 
                 given(orderTableRepository.findById(1L))

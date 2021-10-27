@@ -4,15 +4,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.request.TableGroupRequest;
-import kitchenpos.ui.dto.response.TableGroupResponse;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.tablegroup.OrderTableGroupRequest;
+import kitchenpos.ui.dto.request.tablegroup.TableGroupRequest;
+import kitchenpos.ui.dto.response.tablegroup.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,9 @@ class TableGroupRestControllerTest extends IntegrationTest {
     @Test
     void create_order_table_not_persisted_exception_thrown() {
         // given
-        TableGroupRequest request = new TableGroupRequest(Arrays.asList(399L, 999L));
+        TableGroupRequest request = new TableGroupRequest(
+            Arrays.asList(new OrderTableGroupRequest(399L), new OrderTableGroupRequest(999L))
+        );
 
         // when, then
         webTestClient.post()
@@ -76,8 +79,9 @@ class TableGroupRestControllerTest extends IntegrationTest {
     @Test
     void create_order_table_not_empty_exception_thrown() {
         // given
-        TableGroupRequest request = new TableGroupRequest(Arrays.asList(7L, 8L));
-
+        TableGroupRequest request = new TableGroupRequest(
+            Arrays.asList(new OrderTableGroupRequest(7L), new OrderTableGroupRequest(8L))
+        );
         // when, then
         webTestClient.post()
             .uri("/api/table-groups")
@@ -97,7 +101,9 @@ class TableGroupRestControllerTest extends IntegrationTest {
     @Test
     void create_order_table_already_in_table_group_exception_thrown() {
         // given
-        TableGroupRequest request = new TableGroupRequest(Arrays.asList(9L, 10L));
+        TableGroupRequest request = new TableGroupRequest(
+            Arrays.asList(new OrderTableGroupRequest(9L), new OrderTableGroupRequest(10L))
+        );
         OrderTable orderTable1 = new OrderTable(10, true);
         OrderTable orderTable2 = new OrderTable(10, true);
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
@@ -123,7 +129,9 @@ class TableGroupRestControllerTest extends IntegrationTest {
     @Test
     void create_valid_condition_returns_table_group() {
         // given
-        TableGroupRequest request = new TableGroupRequest(Arrays.asList(9L, 10L));
+        TableGroupRequest request = new TableGroupRequest(
+            Arrays.asList(new OrderTableGroupRequest(9L), new OrderTableGroupRequest(10L))
+        );
         OrderTable orderTable1 = new OrderTable(10, true);
         OrderTable orderTable2 = new OrderTable(10, true);
         orderTableRepository.saveAll(Arrays.asList(orderTable1, orderTable2));

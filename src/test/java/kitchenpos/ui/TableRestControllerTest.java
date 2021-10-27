@@ -3,15 +3,17 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.request.OrderTableRequest;
-import kitchenpos.ui.dto.response.OrderTableResponse;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.ui.dto.request.table.OrderTableEmptyRequest;
+import kitchenpos.ui.dto.request.table.OrderTableGuestRequest;
+import kitchenpos.ui.dto.request.table.OrderTableCreateRequest;
+import kitchenpos.ui.dto.response.table.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +38,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void create_saves_and_returns_order_table() {
         // given
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        OrderTableCreateRequest request = new OrderTableCreateRequest(10, true);
 
         // when, then
         webTestClient.post()
@@ -69,7 +71,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeEmpty_order_table_not_found_exception_thrown() {
         // given
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // given, when, then
         webTestClient.put()
@@ -93,7 +95,7 @@ class TableRestControllerTest extends IntegrationTest {
         TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
         OrderTable orderTable = new OrderTable(savedTableGroup, 10, false);
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // given, when, then
         webTestClient.put()
@@ -119,7 +121,7 @@ class TableRestControllerTest extends IntegrationTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         Order order = new Order(orderTable, orderStatus);
         orderRepository.save(order);
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // when, then
         webTestClient.put()
@@ -144,7 +146,7 @@ class TableRestControllerTest extends IntegrationTest {
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
         Order order = new Order(orderTable, OrderStatus.COMPLETION);
         orderRepository.save(order);
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
 
         // when, then
         webTestClient.put()
@@ -163,7 +165,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_number_of_guests_negative_exception_thrown() {
         // given
-        OrderTableRequest request = new OrderTableRequest(-1, true);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(-1);
 
         // when, then
         webTestClient.put()
@@ -184,7 +186,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_order_table_not_found_exception_thrown() {
         // given
-        OrderTableRequest request = new OrderTableRequest(1, true);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(1);
 
         // when, then
         webTestClient.put()
@@ -205,7 +207,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_saved_order_table_is_empty_exception_thrown() {
         // given
-        OrderTableRequest request = new OrderTableRequest(1, true);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(1);
 
         // when, then
         webTestClient.put()
@@ -226,7 +228,7 @@ class TableRestControllerTest extends IntegrationTest {
     @Test
     void changeNumberOfGuest_valid_condition_number_of_guests_changed() {
         // given
-        OrderTableRequest request = new OrderTableRequest(13, true);
+        OrderTableGuestRequest request = new OrderTableGuestRequest(13);
 
         // when, then
         webTestClient.put()
