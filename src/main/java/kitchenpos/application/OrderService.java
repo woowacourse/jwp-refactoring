@@ -13,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderCreateResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -38,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
+    public OrderCreateResponseDto create(final Order order) {
         final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
@@ -71,12 +72,12 @@ public class OrderService {
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+            orderLineItem.setOrder(savedOrder);
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);
 
-        return savedOrder;
+        return new OrderCreateResponseDto(savedOrder);
     }
 
     public List<Order> list() {

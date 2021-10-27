@@ -82,7 +82,7 @@ public class FixtureMaker {
     public List<OrderLineItem> createOrderLineItems() {
         Order order = createOrder();
         Menu menu = createMenu();
-        OrderLineItem orderLineItem = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        OrderLineItem orderLineItem = orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
         return Arrays.asList(orderLineItem);
     }
 

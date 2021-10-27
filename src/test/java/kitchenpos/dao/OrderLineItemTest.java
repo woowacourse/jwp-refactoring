@@ -31,7 +31,7 @@ public class OrderLineItemTest extends DaoTest {
         OrderTable orderTable = orderTableDao.save(new OrderTable());
         Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(10000), 1L));
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
         OrderLineItem foundOrderLineItem = orderLineItemDao.findById(savedOrderLineItem.getSeq())
             .orElseThrow(() -> new Exception());
         assertThat(savedOrderLineItem.getSeq()).isEqualTo(foundOrderLineItem.getSeq());
@@ -45,7 +45,7 @@ public class OrderLineItemTest extends DaoTest {
         OrderTable orderTable = orderTableDao.save(new OrderTable());
         Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(10000), 1L));
-        OrderLineItem savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        OrderLineItem savedOrderLineItem = orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
         OrderLineItem foundOrderLineItem = orderLineItemDao.findById(savedOrderLineItem.getSeq())
             .orElseThrow(() -> new Exception());
         assertThat(savedOrderLineItem.getSeq()).isEqualTo(foundOrderLineItem.getSeq());
@@ -59,8 +59,8 @@ public class OrderLineItemTest extends DaoTest {
         OrderTable orderTable = orderTableDao.save(new OrderTable());
         Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(10000), 1L));
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
+        orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
         assertThat(orderLineItemDao.findAll()).hasSize(2);
     }
 
@@ -69,8 +69,8 @@ public class OrderLineItemTest extends DaoTest {
         OrderTable orderTable = orderTableDao.save(new OrderTable());
         Order order = orderDao.save(new Order(orderTable.getId(), OrderStatus.MEAL.name(), LocalDateTime.now()));
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(10000), 1L));
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
-        orderLineItemDao.save(new OrderLineItem(order.getId(), menu.getId(), 10));
+        orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
+        orderLineItemDao.save(new OrderLineItem(order, menu.getId(), 10));
         assertThat(orderLineItemDao.findAllByOrderId(order.getId())).hasSize(2);
     }
 }

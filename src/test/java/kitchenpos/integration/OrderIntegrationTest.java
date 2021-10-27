@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -38,7 +39,7 @@ public class OrderIntegrationTest extends IntegrationTest {
             .exchange()
             .expectStatus().isCreated()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody(Order.class);
+            .expectBody(OrderCreateResponseDto.class);
     }
 
     @DisplayName("주문 상태를 수정한다.")

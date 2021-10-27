@@ -17,7 +17,7 @@ public class OrderDaoTest extends DaoTest {
     private OrderDao orderDao;
 
     @Autowired
-    OrderTableDao orderTableDao;
+    private OrderTableDao orderTableDao;
 
     @Test
     void save() throws Exception {
