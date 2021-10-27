@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
-
-    int countByIdIn(List<Long> menuIds);
+    List<Menu> findAllByIdIn(List<Long> menuIds);
 }

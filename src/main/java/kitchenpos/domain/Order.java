@@ -12,9 +12,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import org.hibernate.annotations.CreationTimestamp;
+import javax.persistence.Table;
+import kitchenpos.exception.KitchenException;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
+@Table(name = "ORDERS")
 public class Order {
 
     @Id
@@ -26,9 +29,10 @@ public class Order {
     private OrderTable orderTable;
 
     @Column(nullable = false)
-    private String orderStatus;
+    private String orderStatus = OrderStatus.COOKING.name();
 
-    @CreationTimestamp
+    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.PERSIST)
@@ -38,8 +42,16 @@ public class Order {
     }
 
     public Order(OrderTable orderTable,
-        List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, orderLineItems);
+        LocalDateTime orderedTime) {
+        this.orderTable = orderTable;
+        this.orderedTime = orderedTime;
+        validate();
+    }
+
+    private void validate() {
+        if (orderTable.isEmpty()) {
+            throw new KitchenException("배정된 테이블은 빈 테이블입니다.");
+        }
     }
 
     public Order(Long id, OrderTable orderTable, String orderStatus,
@@ -51,9 +63,19 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public Order changeStatus(OrderStatus orderStatus) {
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (isCompleted()) {
+            throw new KitchenException("이미 완료된 주문입니다.");
+        }
         this.orderStatus = orderStatus.name();
-        return this;
+    }
+
+    public boolean hasCookingOrMeal() {
+        return !isCompleted();
+    }
+
+    public boolean isCompleted() {
+        return this.orderStatus.equals(OrderStatus.COMPLETION.name());
     }
 
     public Long getId() {

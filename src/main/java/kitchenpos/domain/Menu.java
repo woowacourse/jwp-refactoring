@@ -93,16 +93,4 @@ public class Menu {
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
-
-    public void updateMenuProducts(List<MenuProduct> menuProducts) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.calculateTotalPrice());
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new KitchenException("메뉴 가격은 메뉴에 속한 상품들의 가격 총액보다 낮아야 합니다.");
-        }
-        this.menuProducts = menuProducts;
-    }
 }
