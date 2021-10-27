@@ -10,6 +10,9 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuCreateRequestDto;
+import kitchenpos.dto.MenuCreateResponseDto;
+import kitchenpos.dto.MenuProductDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +37,14 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public MenuCreateResponseDto create(final MenuCreateRequestDto menuDto) {
+        List<MenuProduct> menuProductGroup = new ArrayList<>();
+        for (MenuProductDto menuProductDto : menuDto.getMenuProducts()) {
+            Menu menu = menuDao.findById(menuProductDto.getMenuId())
+                .orElseGet(null);
+            menuProductGroup.add(new MenuProduct(menuProductDto.getSeq(), menuProductDto.getProductId(), menuProductDto.getQuantity(), menu));
+        }
+        Menu menu = new Menu(menuDto.getId(), menuDto.getName(), menuDto.getPrice(), menuDto.getMenuGroupId(), menuProductGroup);
         menu.validateMenuPrice();
 
         if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
@@ -55,17 +65,19 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
+        // menu를 DB에 저장
         final Menu savedMenu = menuDao.save(menu);
 
-        final Long menuId = savedMenu.getId();
+        // menu에 있는 여러 MenuProduct들을 DB에 저장
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
+            menuProduct.setMenu(savedMenu);
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+
+        return new MenuCreateResponseDto(savedMenu);
     }
 
     public List<Menu> list() {

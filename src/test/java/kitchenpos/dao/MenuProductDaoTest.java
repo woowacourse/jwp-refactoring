@@ -24,7 +24,7 @@ public class MenuProductDaoTest extends DaoTest {
     void save() throws Exception {
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(100), 1L));
         Product product = productDao.save(new Product("상품명", new BigDecimal(100)));
-        MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
+        MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
         MenuProduct foundMenuProduct = menuProductDao
             .findById(savedMenuProduct.getSeq())
             .orElseThrow(() -> new Exception());
@@ -38,7 +38,7 @@ public class MenuProductDaoTest extends DaoTest {
     void findById() throws Exception {
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(100), 1L));
         Product product = productDao.save(new Product("상품명", new BigDecimal(100)));
-        MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
+        MenuProduct savedMenuProduct = menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
         MenuProduct foundMenuProduct = menuProductDao
             .findById(savedMenuProduct.getSeq())
             .orElseThrow(() -> new Exception());
@@ -52,8 +52,8 @@ public class MenuProductDaoTest extends DaoTest {
     void findAll() {
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(100), 1L));
         Product product = productDao.save(new Product("상품명", new BigDecimal(100)));
-        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
-        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
+        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
+        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
         List<MenuProduct> menuProducts = menuProductDao.findAll();
         assertThat(menuProducts).hasSize(2);
     }
@@ -62,9 +62,9 @@ public class MenuProductDaoTest extends DaoTest {
     void findAllByMenuId() {
         Menu menu = menuDao.save(new Menu("메뉴명", new BigDecimal(100), 1L));
         Product product = productDao.save(new Product("상품명", new BigDecimal(100)));
-        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
-        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
-        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), 10));
+        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
+        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
+        menuProductDao.save(new MenuProduct(menu.getId(), product.getId(), menu));
         List<MenuProduct> menuProducts = menuProductDao.findAllByMenuId(menu.getId());
         assertThat(menuProducts).hasSize(3);
     }

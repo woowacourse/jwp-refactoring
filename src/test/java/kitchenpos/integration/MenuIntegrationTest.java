@@ -27,7 +27,7 @@ public class MenuIntegrationTest extends IntegrationTest {
     @Test
     public void create() {
         MenuGroup menuGroup = fixtureMaker.createMenuGroup();
-        List<MenuProduct> menuProducts = fixtureMaker.createMenuProducts();
+        List<MenuProduct> menuProducts = fixtureMaker.createMenuProducts(menuGroup.getId());
         Menu menu = new Menu("메뉴", new BigDecimal(1000), menuGroup.getId(), menuProducts);
         webTestClient.post().uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)

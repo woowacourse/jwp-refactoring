@@ -4,13 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.asis.JdbcTemplateMenuDao;
-import kitchenpos.dao.asis.JdbcTemplateMenuGroupDao;
-import kitchenpos.dao.asis.JdbcTemplateOrderDao;
-import kitchenpos.dao.asis.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.asis.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.asis.JdbcTemplateProductDao;
-import kitchenpos.dao.asis.JdbcTemplateTableGroupDao;
+import kitchenpos.dao.MenuDao;
+import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -26,44 +27,42 @@ import org.springframework.stereotype.Component;
 @Component
 public class FixtureMaker {
     @Autowired
-    private JdbcTemplateMenuDao menuDao;
+    private MenuDao menuDao;
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupDao menuGroupDao;
 
     @Autowired
-    private JdbcTemplateProductDao productDao;
+    private ProductDao productDao;
 
     @Autowired
-    private JdbcTemplateTableGroupDao tableGroupDao;
+    private TableGroupDao tableGroupDao;
 
     @Autowired
-    private JdbcTemplateOrderDao orderDao;
+    private OrderDao orderDao;
 
     @Autowired
-    private JdbcTemplateOrderTableDao orderTableDao;
+    private OrderTableDao orderTableDao;
 
     @Autowired
-    private JdbcTemplateOrderLineItemDao orderLineItemDao;
+    private OrderLineItemDao orderLineItemDao;
 
-    public List<MenuProduct> createMenuProducts() {
+    @Autowired
+    private MenuProductDao menuProductDao;
+
+    public List<MenuProduct> createMenuProducts(Long menuGroupId) {
         // 상품 생성
         Product product1 = productDao.save(new Product("상품1", new BigDecimal(16_000)));
         Product product2 = productDao.save(new Product("상품2", new BigDecimal(17_000)));
         Product product3 = productDao.save(new Product("상품3", new BigDecimal(18_000)));
 
-        // 메뉴 그룹 생성
-        MenuGroup menuGroup = createMenuGroup();
-
         // 메뉴 생성
-        Menu menu1 = menuDao.save(new Menu("메뉴1", new BigDecimal(16_000), menuGroup.getId()));
-        Menu menu2 = menuDao.save(new Menu("메뉴2", new BigDecimal(17_000), menuGroup.getId()));
-        Menu menu3 = menuDao.save(new Menu("메뉴3", new BigDecimal(18_000), menuGroup.getId()));
+        Menu menu = menuDao.save(new Menu("메뉴1", new BigDecimal(16_000), menuGroupId));
 
         // 메뉴를 구성하는 상품 생성
-        MenuProduct menuProduct1 = new MenuProduct(menu1.getId(), product1.getId(), 1);
-        MenuProduct menuProduct2 = new MenuProduct(menu2.getId(), product2.getId(), 2);
-        MenuProduct menuProduct3 = new MenuProduct(menu3.getId(), product3.getId(), 3);
+        MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1, menu);
+        MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1, menu);
+        MenuProduct menuProduct3 = new MenuProduct(product3.getId(), 1, menu);
 
         return Arrays.asList(
             menuProduct1, menuProduct2, menuProduct3
@@ -80,7 +79,6 @@ public class FixtureMaker {
     }
 
     public OrderTable createOrderTableForEmpty() {
-//        TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
         return orderTableDao.save(new OrderTable(10, true));
     }
 
