@@ -28,11 +28,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(3);
 
             Menu menu = new Menu();
@@ -59,11 +59,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(3);
 
             Menu menu = new Menu();
@@ -85,11 +85,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(3);
 
             Menu menu = new Menu();
@@ -112,17 +112,17 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(3);
 
             Menu menu = new Menu();
             menu.setName("얌 프라이");
             menu.setPrice(BigDecimal.valueOf(-1000));
-            menu.setMenuGroupId(5L);
+            menu.setMenuGroupId(100L);
             menu.setMenuProducts(Collections.singletonList(menuProduct));
 
             // when
@@ -155,11 +155,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(0);
 
             Menu menu = new Menu();
@@ -182,11 +182,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(-2);
 
             Menu menu = new Menu();
@@ -214,11 +214,11 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             product.setName("얌 프라이");
             product.setPrice(BigDecimal.valueOf(8000, 2));
 
-            productService.create(product);
+            Product savedProduct = productService.create(product);
 
             MenuProduct menuProduct = new MenuProduct();
             menuProduct.setMenuId(7L);
-            menuProduct.setProductId(7L);
+            menuProduct.setProductId(savedProduct.getId());
             menuProduct.setQuantity(3);
 
             Menu menu = new Menu();
