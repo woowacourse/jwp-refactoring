@@ -11,9 +11,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.response.MenuProductResponse;
+import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("MenuRestController 단위 테스트")
 class MenuRestControllerTest extends ControllerTest {
 
+    private Product 후라이드치킨_정보;
+    private Product 양념치킨_정보;
     private MenuProduct 후라이드치킨;
     private MenuProduct 양념치킨;
 
@@ -33,8 +38,10 @@ class MenuRestControllerTest extends ControllerTest {
     @BeforeEach
     void setUp() {
         super.setUp();
-        후라이드치킨 = new MenuProduct(1L, 1);
-        양념치킨 = new MenuProduct(2L, 1);
+        후라이드치킨_정보 = new Product(1L, "후라이드 치킨", 16000);
+        양념치킨_정보 = new Product(2L, "양념 치킨", 16000);
+        후라이드치킨 = new MenuProduct(후라이드치킨_정보, 1);
+        양념치킨 = new MenuProduct(양념치킨_정보, 1);
     }
 
     @Test
@@ -42,9 +49,9 @@ class MenuRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        MenuProduct expected_후라이드치킨 = new MenuProduct(1L, 1L, 1L, 1);
-        MenuProduct expected_양념치킨 = new MenuProduct(2L, 1L, 2L, 1);
-        Menu expected = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(expected_후라이드치킨, expected_양념치킨));
+        MenuProductResponse expected_후라이드치킨 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
+        MenuProductResponse expected_양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
+        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(expected_후라이드치킨, expected_양념치킨));
         given(menuService.create(any(CreateMenuRequest.class))).willReturn(expected);
 
         // when
@@ -142,7 +149,7 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("목록에 포함된 데이터들이 존재하지 않으면 메뉴를 등록할 수 없다.")
     void createWrongProductNotExist() throws Exception {
         // given
-        MenuProduct 간장치킨 = new MenuProduct(10L, 1);
+        MenuProduct 간장치킨 = new MenuProduct(new Product(), 1);
         CreateMenuRequest 간장반_후라이드반 = new CreateMenuRequest("간장 반 + 후라이드 반", BigDecimal.valueOf(32000), 1L, Arrays.asList(후라이드치킨, 간장치킨));
         willThrow(new IllegalArgumentException("상품이 존재하지 않습니다.")).given(menuService)
                                                                  .create(any(CreateMenuRequest.class));
@@ -162,13 +169,14 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("전체 메뉴를 조회할 수 있다")
     void list() throws Exception {
         // given
-        MenuProduct 후라이드치킨1 = new MenuProduct(1L, 1L, 3L, 1);
-        MenuProduct 양념치킨 = new MenuProduct(2L, 1L, 3L, 1);
-        MenuProduct 후라이드치킨2 = new MenuProduct(3L, 2L, 3L, 1);
-        MenuProduct 간장치킨 = new MenuProduct(4L, 2L, 3L, 1);
-        Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨1, 양념치킨));
-        Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", 30000, 2L, Arrays.asList(후라이드치킨2, 간장치킨));
-        List<Menu> expected = Arrays.asList(양념반_후라이드반, 간장반_후라이드반);
+        Product 간장치킨_정보 = new Product(3L, "간장 치킨", 16000);
+        MenuProductResponse 후라이드치킨1 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
+        MenuProductResponse 양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
+        MenuProductResponse 후라이드치킨2 = new MenuProductResponse(3L, ProductResponse.from(후라이드치킨_정보), 1);
+        MenuProductResponse 간장치킨 = new MenuProductResponse(4L, ProductResponse.from(간장치킨_정보), 1);
+        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨1, 양념치킨));
+        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), 2L, Arrays.asList(후라이드치킨2, 간장치킨));
+        List<MenuResponse> expected = Arrays.asList(양념반_후라이드반, 간장반_후라이드반);
         given(menuService.list()).willReturn(expected);
 
         // when

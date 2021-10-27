@@ -12,16 +12,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProductRepository;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.response.MenuResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,7 +40,7 @@ class MenuServiceTest {
     private MenuGroupDao menuGroupDao;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
     private ProductDao productDao;
@@ -55,8 +57,8 @@ class MenuServiceTest {
     void setUp() {
         후라이드치킨정보 = new Product(1L, "후라이드 치킨", 16000);
         양념치킨정보 = new Product(2L, "양념 치킨", 16000);
-        후라이드치킨 = new MenuProduct(1L, 1);
-        양념치킨 = new MenuProduct(2L, 1);
+        후라이드치킨 = new MenuProduct(후라이드치킨정보, 1);
+        양념치킨 = new MenuProduct(양념치킨정보, 1);
     }
 
     @Test
@@ -64,21 +66,22 @@ class MenuServiceTest {
     void create() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        Menu expected = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        Menu menu = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
         given(menuGroupDao.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(후라이드치킨.getProductId())).willReturn(Optional.of(후라이드치킨정보));
-        given(productDao.findById(양념치킨.getProductId())).willReturn(Optional.of(양념치킨정보));
-        given(menuDao.save(any(Menu.class))).willReturn(expected);
-        MenuProduct expected_후라이드치킨 = new MenuProduct(1L, expected.getId(), 1L, 1);
-        MenuProduct expected_양념치킨 = new MenuProduct(2L, expected.getId(), 2L, 1);
-        given(menuProductDao.save(후라이드치킨)).willReturn(expected_후라이드치킨);
-        given(menuProductDao.save(양념치킨)).willReturn(expected_양념치킨);
+        given(productDao.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
+        given(productDao.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
+        given(menuDao.save(any(Menu.class))).willReturn(menu);
+        MenuProduct expected_후라이드치킨 = new MenuProduct(1L, menu, 후라이드치킨정보, 1);
+        MenuProduct expected_양념치킨 = new MenuProduct(2L, menu, 양념치킨정보, 1);
+        menu.setMenuProducts(Arrays.asList(expected_후라이드치킨, expected_양념치킨));
+        given(menuProductRepository.save(any(MenuProduct.class))).willReturn(expected_후라이드치킨, expected_양념치킨);
+        MenuResponse expected = MenuResponse.from(menu);
 
         // when
-        Menu actual = menuService.create(양념반_후라이드반);
+        MenuResponse actual = menuService.create(양념반_후라이드반);
 
         // then
-        assertEquals(expected, actual);
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
         assertEquals(2, actual.getMenuProducts().size());
     }
 
@@ -112,8 +115,8 @@ class MenuServiceTest {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32001), 1L, Arrays.asList(후라이드치킨, 양념치킨));
         given(menuGroupDao.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(후라이드치킨.getProductId())).willReturn(Optional.of(후라이드치킨정보));
-        given(productDao.findById(양념치킨.getProductId())).willReturn(Optional.of(양념치킨정보));
+        given(productDao.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
+        given(productDao.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -140,7 +143,7 @@ class MenuServiceTest {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
         given(menuGroupDao.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
-        given(productDao.findById(후라이드치킨.getProductId())).willReturn(Optional.empty());
+        given(productDao.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -152,26 +155,30 @@ class MenuServiceTest {
     @DisplayName("전체 메뉴를 조회할 수 있다")
     void list() {
         // given
-        MenuProduct 간장치킨 = new MenuProduct(3L, 1);
+        Product 간장치킨정보 = new Product(3L, "간장 치킨", 16000);
+        MenuProduct 간장치킨 = new MenuProduct(간장치킨정보, 1);
         Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
         Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", 30000, 2L, Arrays.asList(후라이드치킨, 간장치킨));
         given(menuDao.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 간장반_후라이드반));
 
-        MenuProduct expected_후라이드치킨_menu1 = new MenuProduct(1L, 양념반_후라이드반.getId(), 1L, 1);
-        MenuProduct expected_양념치킨 = new MenuProduct(2L, 양념반_후라이드반.getId(), 2L, 1);
-        MenuProduct expected_후라이드치킨_menu2 = new MenuProduct(3L, 간장반_후라이드반.getId(), 1L, 1);
-        MenuProduct expected_간장치킨 = new MenuProduct(4L, 간장반_후라이드반.getId(), 3L, 1);
-        given(menuProductDao.findAllByMenuId(양념반_후라이드반.getId())).willReturn(Arrays.asList(expected_후라이드치킨_menu1, expected_양념치킨));
-        given(menuProductDao.findAllByMenuId(간장반_후라이드반.getId())).willReturn(Arrays.asList(expected_후라이드치킨_menu2, expected_간장치킨));
+        MenuProduct expected_후라이드치킨_menu1 = new MenuProduct(1L, 양념반_후라이드반, 후라이드치킨정보, 1);
+        MenuProduct expected_양념치킨 = new MenuProduct(2L, 양념반_후라이드반, 양념치킨정보, 1);
+        MenuProduct expected_후라이드치킨_menu2 = new MenuProduct(3L, 간장반_후라이드반, 후라이드치킨정보, 1);
+        MenuProduct expected_간장치킨 = new MenuProduct(4L, 간장반_후라이드반, 간장치킨정보, 1);
+        양념반_후라이드반.setMenuProducts(Arrays.asList(expected_후라이드치킨_menu1, expected_양념치킨));
+        간장반_후라이드반.setMenuProducts(Arrays.asList(expected_후라이드치킨_menu2, expected_간장치킨));
+        given(menuProductRepository.findAllByMenu(양념반_후라이드반)).willReturn(Arrays.asList(expected_후라이드치킨_menu1, expected_양념치킨));
+        given(menuProductRepository.findAllByMenu(간장반_후라이드반)).willReturn(Arrays.asList(expected_후라이드치킨_menu2, expected_간장치킨));
+
+        MenuResponse expected_양념반_후라이드반 = MenuResponse.from(양념반_후라이드반);
+        MenuResponse expected_간장반_후라이드반 = MenuResponse.from(간장반_후라이드반);
 
         // when
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         // then
         assertEquals(2, actual.size());
-        assertEquals(양념반_후라이드반, actual.get(0));
-        assertEquals(간장반_후라이드반, actual.get(1));
-        assertEquals(2, 양념반_후라이드반.getMenuProducts().size());
-        assertEquals(2, 간장반_후라이드반.getMenuProducts().size());
+        assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected_양념반_후라이드반);
+        assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(expected_간장반_후라이드반);
     }
 }

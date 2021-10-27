@@ -16,8 +16,10 @@ class MenuTest {
     private final String name = "양념 반 + 후라이드 반";
     private final BigDecimal price = BigDecimal.valueOf(30000);
     private final Long menuGroupId = 1L;
-    private final MenuProduct 후라이드치킨 = new MenuProduct(1L, 1);
-    private final MenuProduct 양념치킨 = new MenuProduct(2L, 1);
+    private final Product 후라이드치킨_정보 = new Product(1L, "후라이드 치킨", 16000);
+    private final Product 양념치킨_정보 = new Product(2L, "양념 치킨", 16000);
+    private final MenuProduct 후라이드치킨 = new MenuProduct(후라이드치킨_정보, 1);
+    private final MenuProduct 양념치킨 = new MenuProduct(양념치킨_정보, 1);
     private final List<MenuProduct> menuProducts = Arrays.asList(후라이드치킨, 양념치킨);
 
     @Test
@@ -44,4 +46,13 @@ class MenuTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.");
     }
+
+//    @Test
+//    @DisplayName("메뉴의 가격이 메뉴를 구성하는 실제 제품들을 단품으로 주문하였을 때의 가격 합보다 크면 메뉴를 생성할 수 없다.")
+//    void expensivePrice() {
+//        // when & then
+//        assertThatThrownBy(() -> new Menu(name, BigDecimal.valueOf(50000), menuGroupId, menuProducts))
+//                .isInstanceOf(IllegalArgumentException.class)
+//                .hasMessage("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
+//    }
 }
