@@ -13,6 +13,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuCreateResponseDto;
 import kitchenpos.dto.MenuProductDto;
+import kitchenpos.dto.MenuReadResponseDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,11 +77,12 @@ public class MenuService {
         return menu;
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-        for (final Menu menu : menus) {
-            menu.insertMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+    public List<MenuReadResponseDto> list() {
+        List<Menu> menus = menuDao.findAll();
+        List<MenuReadResponseDto> result = new ArrayList<>();
+        for (Menu menu : menus) {
+            result.add(new MenuReadResponseDto(menu));
         }
-        return menus;
+        return result;
     }
 }

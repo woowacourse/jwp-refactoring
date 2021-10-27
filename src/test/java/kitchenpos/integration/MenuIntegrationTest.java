@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.dto.MenuCreateRequestDto;
 import kitchenpos.dto.MenuCreateResponseDto;
+import kitchenpos.dto.MenuReadResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -17,12 +18,13 @@ public class MenuIntegrationTest extends IntegrationTest {
     @DisplayName("메뉴 목록을 조회한다.")
     @Test
     public void list() {
+        fixtureMaker.createMenu();
         webTestClient.get().uri("/api/menus")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBodyList(Menu.class);
+            .expectBodyList(MenuReadResponseDto.class);
     }
 
     @DisplayName("메뉴를 등록한다.")

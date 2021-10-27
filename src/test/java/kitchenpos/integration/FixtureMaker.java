@@ -88,7 +88,8 @@ public class FixtureMaker {
 
     public Menu createMenu() {
         MenuGroup menuGroup = createMenuGroup();
-        return menuDao.save(new Menu("메뉴", new BigDecimal(1000), menuGroup.getId()));
+        List<MenuProduct> menuProducts = createMenuProducts(menuGroup.getId());
+        return menuDao.save(new Menu("메뉴", new BigDecimal(1000), menuGroup.getId(), menuProducts));
     }
 
     public Order createOrder() {
