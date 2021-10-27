@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.CreateMenuRequest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -39,11 +41,11 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴를 등록할 수 있다")
     void create() throws Exception {
         // given
-        Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
         MenuProduct expected_후라이드치킨 = new MenuProduct(1L, 1L, 1L, 1);
         MenuProduct expected_양념치킨 = new MenuProduct(2L, 1L, 2L, 1);
         Menu expected = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(expected_후라이드치킨, expected_양념치킨));
-        given(menuService.create(any(Menu.class))).willReturn(expected);
+        given(menuService.create(any(CreateMenuRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus")
@@ -60,9 +62,10 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 null이면 메뉴를 등록할 수 없다.")
     void createWrongPriceNull() throws Exception {
         // given
-        Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(menuService)
-                                                                                 .create(any(Menu.class));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", null, 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
+                .given(menuService)
+                .create(any(CreateMenuRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus/")
@@ -79,9 +82,10 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 음수면 메뉴를 등록할 수 없다.")
     void createWrongPriceUnderZero() throws Exception {
         // given
-        Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", -1, 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(menuService)
-                                                                                 .create(any(Menu.class));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(-1), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
+                .given(menuService)
+                .create(any(CreateMenuRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus/")
@@ -98,9 +102,10 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 메뉴를 구성하는 실제 제품들을 단품으로 주문하였을 때의 가격 합보다 크면 메뉴를 등록할 수 없다.")
     void createWrongPriceSumOfProducts() throws Exception {
         // given
-        Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", 32001, 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        willThrow(new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.")).given(menuService)
-                                                                               .create(any(Menu.class));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32001), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        willThrow(new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다."))
+                .given(menuService)
+                .create(any(CreateMenuRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus/")
@@ -117,8 +122,10 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹이 존재하지 않으면 메뉴를 등록할 수 없다.")
     void createWrongMenuGroupNotExist() throws Exception {
         // given
-        Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", 32000, 10L, Arrays.asList(후라이드치킨, 양념치킨));
-        willThrow(new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.")).given(menuService).create(any(Menu.class));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32000), 10L, Arrays.asList(후라이드치킨, 양념치킨));
+        willThrow(new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."))
+                .given(menuService)
+                .create(any(CreateMenuRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus/")
@@ -136,8 +143,9 @@ class MenuRestControllerTest extends ControllerTest {
     void createWrongProductNotExist() throws Exception {
         // given
         MenuProduct 간장치킨 = new MenuProduct(10L, 1);
-        Menu 간장반_후라이드반 = new Menu("간장 반 + 후라이드 반", 32000, 1L, Arrays.asList(후라이드치킨, 간장치킨));
-        willThrow(new IllegalArgumentException("상품이 존재하지 않습니다.")).given(menuService).create(any(Menu.class));
+        CreateMenuRequest 간장반_후라이드반 = new CreateMenuRequest("간장 반 + 후라이드 반", BigDecimal.valueOf(32000), 1L, Arrays.asList(후라이드치킨, 간장치킨));
+        willThrow(new IllegalArgumentException("상품이 존재하지 않습니다.")).given(menuService)
+                                                                 .create(any(CreateMenuRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menus/")
