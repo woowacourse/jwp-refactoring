@@ -72,7 +72,7 @@ public class FixtureMaker {
 
     public OrderTable createOrderTableForNotEmpty() {
         TableGroup tableGroup = tableGroupDao.save(new TableGroup(LocalDateTime.now()));
-        return orderTableDao.save(new OrderTable(tableGroup.getId(), 10, false));
+        return orderTableDao.save(new OrderTable(tableGroup, 10, false));
     }
 
     public OrderTable createOrderTableForEmpty() {

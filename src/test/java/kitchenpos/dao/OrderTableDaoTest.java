@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -48,8 +49,8 @@ public class OrderTableDaoTest extends DaoTest {
 
     @Test
     void findAllByTableGroupId() {
-        orderTableDao.save(new OrderTable(1L, 10, true));
-        orderTableDao.save(new OrderTable(1L, 10, true));
+        orderTableDao.save(new OrderTable(new TableGroup(), 10, true));
+        orderTableDao.save(new OrderTable(new TableGroup(), 10, true));
         assertThat(orderTableDao.findAllByTableGroupId(1L)).hasSize(2);
     }
 }
