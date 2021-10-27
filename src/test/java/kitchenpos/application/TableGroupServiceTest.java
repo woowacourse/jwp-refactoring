@@ -58,8 +58,7 @@ class TableGroupServiceTest {
     @Test
     void createFailedWhenOrderTablesEmpty() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(emptyList());
+        TableGroup tableGroup = new TableGroup(emptyList());
 
         // when - then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -76,10 +75,8 @@ class TableGroupServiceTest {
     @Test
     void createFailedWhenOrderTableLessThan2() {
         // given
-        TableGroup tableGroup = new TableGroup();
         OrderTable orderTable = new OrderTable(1L);
-
-        tableGroup.setOrderTables(singletonList(orderTable));
+        TableGroup tableGroup = new TableGroup(singletonList(orderTable));
 
         // when - then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -96,8 +93,7 @@ class TableGroupServiceTest {
     @Test
     void createFailedWhenSizeNotEqual() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(orderTables);
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -121,14 +117,12 @@ class TableGroupServiceTest {
     @Test
     void createFailedWhenSavedOrderTableEmpty() {
         // given
-        TableGroup tableGroup = new TableGroup();
-
         // 비어있지 않은 orderTable을 포함한다.
         OrderTable orderTable1 = new OrderTable(1L, null, 0, false);
         OrderTable orderTable2 = new OrderTable(2L, null, 0, false);
 
         orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(orderTables);
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -152,13 +146,11 @@ class TableGroupServiceTest {
     @Test
     void createFailedWhenTableGroupIdNull() {
         // given
-        TableGroup tableGroup = new TableGroup();
-
         OrderTable orderTable1 = new OrderTable(1L, 1L, 0, false);
         OrderTable orderTable2 = new OrderTable(2L, 1L, 0, false);
 
         orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup(orderTables);
 
         final List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)

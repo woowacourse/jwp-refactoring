@@ -6,9 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("단체지정 테이블그룹Dao 테스트")
@@ -25,8 +27,7 @@ class JdbcTemplateTableGroupDaoTest extends DomainDaoTest {
     @Test
     void save() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now(), emptyList());
 
         // when
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);

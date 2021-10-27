@@ -10,6 +10,7 @@ import kitchenpos.domain.TableGroup;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static java.util.Collections.singletonList;
@@ -59,8 +60,7 @@ public class DomainDaoTest extends DaoTest {
     protected long SAVE_TABLE_GROUP_RETURN_ID() {
         // given
         tableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(new ArrayList<>());
 
         // when
         TableGroup savedTableGroup = tableGroupDao.save(tableGroup);

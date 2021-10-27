@@ -4,6 +4,8 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -25,20 +27,14 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         long orderTableId1 = POST_DEFAULT_ORDER_TABLE(1, true);
         long orderTableId2 = POST_DEFAULT_ORDER_TABLE(1, true);
 
-        TableGroup tableGroup1 = new TableGroup();
-        tableGroup1.setId(orderTableId1);
-
-        TableGroup tableGroup2 = new TableGroup();
-        tableGroup2.setId(orderTableId2);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderTables", Arrays.asList(tableGroup1, tableGroup2));
+        TableGroupRequest tableGroupRequest =
+                TableGroupRequest.from(Arrays.asList(orderTableId1, orderTableId2));
 
         // when
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableGroupRequest)
                 .when().post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -73,26 +69,20 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         long orderTableId1 = POST_DEFAULT_ORDER_TABLE(1, true);
         long orderTableId2 = POST_DEFAULT_ORDER_TABLE(1, true);
 
-        TableGroup tableGroup1 = new TableGroup();
-        tableGroup1.setId(orderTableId1);
-
-        TableGroup tableGroup2 = new TableGroup();
-        tableGroup2.setId(orderTableId2);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderTables", Arrays.asList(tableGroup1, tableGroup2));
+        TableGroupRequest tableGroupRequest =
+                TableGroupRequest.from(Arrays.asList(orderTableId1, orderTableId2));
 
         // when
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableGroupRequest)
                 .when().post("/api/table-groups")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
 
-        TableGroup tableGroup = response.as(TableGroup.class);
-        return tableGroup.getId();
+        TableGroupResponse tableGroupResponse = response.as(TableGroupResponse.class);
+        return tableGroupResponse.getId();
     }
 }
