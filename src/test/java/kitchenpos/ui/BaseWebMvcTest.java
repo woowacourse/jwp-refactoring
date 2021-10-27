@@ -17,7 +17,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
         MenuRestController.class,
         ProductRestController.class,
         OrderRestController.class,
-        TableRestController.class
+        TableRestController.class,
+        TableGroupRestController.class
 })
 public class BaseWebMvcTest {
 
@@ -41,6 +42,9 @@ public class BaseWebMvcTest {
 
     @MockBean
     protected TableService tableService;
+
+    @MockBean
+    protected TableGroupService tableGroupService;
 
     protected String parseJson(Object object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
@@ -71,5 +75,11 @@ public class BaseWebMvcTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(content);
+    }
+
+    protected MockHttpServletRequestBuilder deleteRequest(String url, Object... pathVariables) {
+        return delete(url, pathVariables)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8");
     }
 }

@@ -38,7 +38,7 @@ class TableRestControllerTest extends BaseWebMvcTest {
                 .build();
     }
 
-    @DisplayName("POST /api/tables")
+    @DisplayName("POST /api/tables -> 테이블을 추가한다.")
     @Test
     void create() throws Exception {
 
