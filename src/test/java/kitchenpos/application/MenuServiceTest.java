@@ -107,9 +107,7 @@ class MenuServiceTest {
 
         given(menuGroupDao.existsById(1L)).willReturn(true);
 
-        Product product = new Product();
-        product.setId(1L);
-        product.setPrice(BigDecimal.valueOf(1000));
+        Product product = new Product(1L, "후라이드", BigDecimal.valueOf(1000));
         given(productDao.findById(1L)).willReturn(Optional.of(product));
 
 

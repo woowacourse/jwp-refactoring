@@ -24,9 +24,7 @@ public class JdbcTemplateProductDaoTest extends DaoTest {
     @Test
     void save() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000.00));
+        Product product = new Product("강정치킨", BigDecimal.valueOf(17000.00));
 
         // when
         Product savedProduct = productDao.save(product);
@@ -69,9 +67,7 @@ public class JdbcTemplateProductDaoTest extends DaoTest {
     }
 
     private long SAVE_PRODUCT_RETURN_ID() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(17000.00));
+        Product product = new Product("강정치킨", BigDecimal.valueOf(17000.00));
 
         // when
         Product savedProduct = productDao.save(product);

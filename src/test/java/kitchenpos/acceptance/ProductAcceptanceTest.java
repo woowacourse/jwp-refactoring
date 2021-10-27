@@ -4,11 +4,14 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,15 +24,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", "강정치킨");
-        params.put("price", 17000.0);
+        ProductRequest productRequest = ProductRequest.from("강정치킨", BigDecimal.valueOf(17000.0));
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(productRequest)
                 .when().post("/api/products")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -53,9 +54,9 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        List<Product> products = convertBodyToList(response, Product.class);
+        List<ProductResponse> productResponses = convertBodyToList(response, ProductResponse.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(products).isNotNull();
-        assertThat(products).isNotEmpty();
+        assertThat(productResponses).isNotNull();
+        assertThat(productResponses).isNotEmpty();
     }
 }

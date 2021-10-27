@@ -29,9 +29,7 @@ class ProductServiceTest {
     @Test
     void createFailedWhenPriceIsNull() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(null);
+        Product product = new Product("강정치킨", null);
 
         // when
         assertThatThrownBy(() -> productService.create(product))
@@ -44,9 +42,7 @@ class ProductServiceTest {
     @Test
     void createFailedWhenPriceLessThanZero() {
         // given
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(BigDecimal.valueOf(-1));
+        Product product = new Product("강정치킨", BigDecimal.valueOf(-1));
 
         // when
         assertThatThrownBy(() -> productService.create(product))
