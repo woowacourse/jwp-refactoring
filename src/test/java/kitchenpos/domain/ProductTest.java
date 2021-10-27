@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("Product 도메인 테스트")
+@DisplayName("Product 도메인 단위테스트")
 class ProductTest {
 
     @DisplayName("생성 - 성공 - price가 null 또는 음수가 아닐 때")
