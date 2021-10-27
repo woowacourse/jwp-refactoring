@@ -3,10 +3,12 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderResponse;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderStatusResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,20 +28,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-
         // orderTable 등록
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderTableId", orderTableId);
-        params.put("orderLineItems", singletonList(orderLineItem));
+        OrderRequest orderRequest = OrderRequest.of(
+                orderTableId,
+                singletonList(OrderLineItemRequest.of(1L, 1L))
+        );
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(orderRequest)
                 .when().post("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -72,14 +72,14 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     void changeOrderStatus() {
         // given
         long orderId = POST_DEFAULT_ORDER();
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderStatus", "COMPLETION");
+        OrderStatusRequest orderStatusRequest
+                = OrderStatusRequest.from("COMPLETION");
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(orderStatusRequest)
                 .when().put("/api/orders/" + orderId + "/order-status")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -91,18 +91,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     }
 
     public static long POST_DEFAULT_ORDER() {
-        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
-
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("orderTableId", orderTableId);
-        params.put("orderLineItems", singletonList(orderLineItem));
+        OrderRequest orderRequest = OrderRequest.of(
+                orderTableId,
+                singletonList(OrderLineItemRequest.of(1L, 1L))
+        );
 
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(orderRequest)
                 .when().post("/api/orders")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())

@@ -4,17 +4,29 @@ import kitchenpos.domain.OrderTable;
 
 import javax.validation.constraints.NotNull;
 
-public class OrderTableRequest {
+public class TableRequest {
     @NotNull
     private int numberOfGuests;
     @NotNull
     private boolean empty;
 
-    private OrderTableRequest() {}
+    private TableRequest() {}
 
-    private OrderTableRequest(int numberOfGuests, boolean empty) {
+    private TableRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public static TableRequest of(int numberOfGuests, boolean empty) {
+        return new TableRequest(numberOfGuests, empty);
+    }
+
+    public static TableRequest empty(boolean empty) {
+        return new TableRequest(0, empty);
+    }
+
+    public static TableRequest guests(int numberOfGuests) {
+        return new TableRequest(numberOfGuests, false);
     }
 
     public OrderTable toOrderTable() {

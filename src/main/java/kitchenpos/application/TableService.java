@@ -4,7 +4,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableResponse;
+import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,16 +23,16 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTableResponse create(final OrderTable orderTable) {
-        return OrderTableResponse.from(orderTableDao.save(orderTable));
+    public TableResponse create(final OrderTable orderTable) {
+        return TableResponse.from(orderTableDao.save(orderTable));
     }
 
-    public List<OrderTableResponse> list() {
-        return OrderTableResponse.from(orderTableDao.findAll());
+    public List<TableResponse> list() {
+        return TableResponse.from(orderTableDao.findAll());
     }
 
     @Transactional
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public TableResponse changeEmpty(final Long orderTableId, final OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -47,11 +47,11 @@ public class TableService {
 
         savedOrderTable.addEmpty(orderTable.isEmpty());
 
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return TableResponse.from(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
+    public TableResponse changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
         final int numberOfGuests = orderTable.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -67,6 +67,6 @@ public class TableService {
 
         savedOrderTable.addNumberOfGuests(numberOfGuests);
 
-        return OrderTableResponse.from(orderTableDao.save(savedOrderTable));
+        return TableResponse.from(orderTableDao.save(savedOrderTable));
     }
 }

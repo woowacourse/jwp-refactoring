@@ -22,6 +22,10 @@ public class OrderRequest {
         this.orderLineItems = orderLineItems;
     }
 
+    public static OrderRequest of(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderRequest(orderTableId, orderLineItemRequests);
+    }
+
     public Long getOrderTableId() {
         return orderTableId;
     }

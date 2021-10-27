@@ -5,24 +5,24 @@ import kitchenpos.domain.OrderTable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OrderTableResponse {
+public class TableResponse {
     private Long id;
     private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
-    private OrderTableResponse() {
+    private TableResponse() {
     }
 
-    private OrderTableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    private TableResponse(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public static OrderTableResponse from(OrderTable orderTable) {
-        return new OrderTableResponse(
+    public static TableResponse from(OrderTable orderTable) {
+        return new TableResponse(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),
                 orderTable.getNumberOfGuests(),
@@ -30,9 +30,9 @@ public class OrderTableResponse {
         );
     }
 
-    public static List<OrderTableResponse> from(List<OrderTable> orderTables) {
+    public static List<TableResponse> from(List<OrderTable> orderTables) {
         return orderTables.stream()
-                .map(OrderTableResponse::from)
+                .map(TableResponse::from)
                 .collect(Collectors.toList());
     }
 

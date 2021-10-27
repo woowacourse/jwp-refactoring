@@ -3,8 +3,8 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableResponse;
+import kitchenpos.ui.dto.TableRequest;
+import kitchenpos.ui.dto.TableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 @DisplayName("테이블 인수 테스트")
 public class TableAcceptanceTest extends AcceptanceTest {
@@ -22,15 +23,12 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        Map<String, Object> params = new HashMap<>();
-        params.put("numberOfGuests", "1");
-        params.put("empty", false);
-
+        TableRequest tableRequest = TableRequest.of(1, false);
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableRequest)
                 .when().post("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -63,15 +61,13 @@ public class TableAcceptanceTest extends AcceptanceTest {
     void changeEmpty() {
         // given
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("empty", true);
+        TableRequest tableRequest = TableRequest.empty(true);
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableRequest)
                 .when().put("/api/tables/" + orderTableId + "/empty")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -79,8 +75,8 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.body()).isNotNull();
-        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
-        assertThat(orderTableResponse.isEmpty()).isTrue();
+        TableResponse tableResponse = response.as(TableResponse.class);
+        assertThat(tableResponse.isEmpty()).isTrue();
     }
 
     @DisplayName("PUT /api/tables/{orderTableId}/number-of-guests")
@@ -88,15 +84,13 @@ public class TableAcceptanceTest extends AcceptanceTest {
     void changeNumberOfGuests() {
         // given
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("numberOfGuests", "10");
+        TableRequest tableRequest = TableRequest.guests(10);
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableRequest)
                 .when().put("/api/tables/" + orderTableId + "/number-of-guests")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
@@ -104,25 +98,23 @@ public class TableAcceptanceTest extends AcceptanceTest {
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.body()).isNotNull();
-        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
-        assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(10);
+        TableResponse tableResponse = response.as(TableResponse.class);
+        assertThat(tableResponse.getNumberOfGuests()).isEqualTo(10);
     }
 
     public static long POST_DEFAULT_ORDER_TABLE(int numberOfGuests, boolean empty) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("numberOfGuests", numberOfGuests);
-        params.put("empty", empty);
+        TableRequest tableRequest = TableRequest.of(numberOfGuests, empty);
 
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(tableRequest)
                 .when().post("/api/tables")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
 
-        OrderTableResponse orderTableResponse = response.as(OrderTableResponse.class);
-        return orderTableResponse.getId();
+        TableResponse tableResponse = response.as(TableResponse.class);
+        return tableResponse.getId();
     }
 }

@@ -8,12 +8,12 @@ import java.util.List;
 public class TableGroupResponse {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
+    private List<TableResponse> orderTables;
 
     public TableGroupResponse() {
     }
 
-    private TableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTables) {
+    private TableGroupResponse(Long id, LocalDateTime createdDate, List<TableResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -23,7 +23,7 @@ public class TableGroupResponse {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                OrderTableResponse.from(tableGroup.getOrderTables())
+                TableResponse.from(tableGroup.getOrderTables())
         );
     }
 
@@ -35,7 +35,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTables() {
+    public List<TableResponse> getOrderTables() {
         return orderTables;
     }
 }

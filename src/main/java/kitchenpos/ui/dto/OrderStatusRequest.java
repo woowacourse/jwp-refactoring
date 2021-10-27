@@ -12,6 +12,10 @@ public class OrderStatusRequest {
         this.orderStatus = orderStatus;
     }
 
+    public static OrderStatusRequest from(String orderStatus) {
+        return new OrderStatusRequest(orderStatus);
+    }
+
     public Order toOrder() {
         return new Order(null, orderStatus);
     }

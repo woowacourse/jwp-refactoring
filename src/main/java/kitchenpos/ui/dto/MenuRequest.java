@@ -20,6 +20,22 @@ public class MenuRequest {
     private MenuRequest() {
     }
 
+    private MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
+    }
+
+    public static MenuRequest of(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
+        return new MenuRequest(
+                name,
+                price,
+                menuGroupId,
+                menuProducts
+        );
+    }
+
     public String getName() {
         return name;
     }
