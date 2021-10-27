@@ -18,8 +18,10 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
 @AutoConfigureRestDocs
-@WebMvcTest(controllers = {MenuGroupRestController.class, MenuRestController.class, ProductRestController.class,
-        TableRestController.class, TableGroupRestController.class})
+@WebMvcTest(controllers = {
+        MenuGroupRestController.class, MenuRestController.class, ProductRestController.class,
+        TableRestController.class, TableGroupRestController.class, OrderRestController.class
+})
 public abstract class ApiDocument {
     @Autowired
     protected MockMvc mockMvc;
@@ -38,6 +40,9 @@ public abstract class ApiDocument {
 
     @MockBean
     protected TableGroupService tableGroupService;
+
+    @MockBean
+    protected OrderService orderService;
 
     protected static RestDocumentationResultHandler toDocument(String title) {
         return document(title, getDocumentRequest(), preprocessResponse(prettyPrint()));
