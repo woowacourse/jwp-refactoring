@@ -1,16 +1,12 @@
 package kitchenpos.ui;
 
-import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.factory.ProductFactory;
+import kitchenpos.ui.factory.ProductBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -20,40 +16,45 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends BaseWebMvcTest {
 
-    @MockBean
-    ProductService service;
-
     Product product1;
     Product product2;
 
     @BeforeEach
     void setUp() {
-        product1 = ProductFactory.create(1L, "강정 치킨", new BigDecimal(17000));
-        product2 = ProductFactory.create(2L, "100원 치킨", new BigDecimal(100));
+        product1 = new ProductBuilder()
+                .id(1L)
+                .name("강정 치킨")
+                .price(new BigDecimal(17000))
+                .build();
+        product2 = new ProductBuilder()
+                .id(2L)
+                .name("100원 치킨")
+                .price(new BigDecimal(100))
+                .build();
     }
 
     @DisplayName("POST /api/products -> 상품을 등록한다.")
     @Test
     void create() throws Exception {
         // given
-        Product requestProduct = ProductFactory.create(null, "강정 치킨", new BigDecimal(17000));
+        Product requestProduct = new ProductBuilder()
+                .id(null)
+                .name("강정 치킨")
+                .price(new BigDecimal(17000))
+                .build();
         String content = parseJson(requestProduct);
 
-        given(service.create(any(Product.class)))
+        given(productService.create(any(Product.class)))
                 .willReturn(product1);
 
         // when
-        ResultActions actions = mvc.perform(post("/api/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("utf-8")
-                .content(content));
+        ResultActions actions = mvc.perform(super.postMethodRequestBase("/api/products", content));
 
         // then
         actions.andExpect(status().isCreated())
@@ -70,12 +71,10 @@ class ProductRestControllerTest extends BaseWebMvcTest {
         // given
         List<Product> products = Arrays.asList(product1, product2);
 
-        given(service.list()).willReturn(products);
+        given(productService.list()).willReturn(products);
 
         // when
-        ResultActions actions = mvc.perform(get("/api/products")
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("utf-8"));
+        ResultActions actions = mvc.perform(super.getMethodRequestBase("/api/products"));
 
         // then
         actions.andExpect(status().isOk())
