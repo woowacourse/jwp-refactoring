@@ -11,14 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -33,7 +29,7 @@ import static org.mockito.BDDMockito.given;
 class OrderServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderDao orderDao;
@@ -71,7 +67,7 @@ class OrderServiceTest {
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         OrderTable table = new OrderTable(1L, null, 4, false);
         Order expected = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuDao.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(table));
         given(orderDao.save(order)).willReturn(expected);
         given(orderLineItemDao.save(후라이드치킨_2마리)).willReturn(후라이드치킨_2마리_주문1);
@@ -102,7 +98,7 @@ class OrderServiceTest {
     void createWrongOrderLineItemsNotRegister() {
         // given
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuDao.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(1L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(1L);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -115,7 +111,7 @@ class OrderServiceTest {
     void createWrongTableNotExist() {
         // given
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuDao.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
         // when & then
@@ -130,7 +126,7 @@ class OrderServiceTest {
         // given
         OrderTable table = new OrderTable(1L, null, 4, true);
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuDao.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(table));
 
         // when & then

@@ -8,25 +8,24 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.*;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 
 @Service
 public class MenuService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
@@ -54,7 +53,7 @@ public class MenuService {
             throw new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
         }
 
-        final Menu savedMenu = menuDao.save(menu);
+        final Menu savedMenu = menuRepository.save(menu);
 
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
@@ -67,7 +66,7 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuDao.findAll();
+        final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(menuProductRepository.findAllByMenu(menu));

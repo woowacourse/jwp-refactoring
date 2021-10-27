@@ -1,37 +1,34 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderLineItemDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.domain.*;
+
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
+    private final MenuRepository menuRepository;
     private final OrderDao orderDao;
     private final OrderLineItemDao orderLineItemDao;
     private final OrderTableDao orderTableDao;
 
     public OrderService(
-            final MenuDao menuDao,
+            final MenuRepository menuRepository,
             final OrderDao orderDao,
             final OrderLineItemDao orderLineItemDao,
             final OrderTableDao orderTableDao
     ) {
-        this.menuDao = menuDao;
+        this.menuRepository = menuRepository;
         this.orderDao = orderDao;
         this.orderLineItemDao = orderLineItemDao;
         this.orderTableDao = orderTableDao;
@@ -46,17 +43,17 @@ public class OrderService {
         }
 
         final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
+                                                 .map(OrderLineItem::getMenuId)
+                                                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다.");
         }
 
         order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
+                                                   .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
@@ -92,7 +89,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final Order order) {
         final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
+                                         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");

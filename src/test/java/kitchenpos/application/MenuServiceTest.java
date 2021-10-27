@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.MenuDao;
 import kitchenpos.domain.*;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
@@ -29,7 +28,7 @@ import static org.mockito.BDDMockito.given;
 class MenuServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private MenuGroupRepository menuGroupRepository;
@@ -65,7 +64,7 @@ class MenuServiceTest {
         given(menuGroupRepository.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
         given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
         given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
-        given(menuDao.save(any(Menu.class))).willReturn(menu);
+        given(menuRepository.save(any(Menu.class))).willReturn(menu);
         MenuProduct expected_후라이드치킨 = new MenuProduct(1L, menu, 후라이드치킨정보, 1);
         MenuProduct expected_양념치킨 = new MenuProduct(2L, menu, 양념치킨정보, 1);
         menu.setMenuProducts(Arrays.asList(expected_후라이드치킨, expected_양념치킨));
@@ -154,7 +153,7 @@ class MenuServiceTest {
         MenuProduct 간장치킨 = new MenuProduct(간장치킨정보, 1);
         Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
         Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", 30000, 2L, Arrays.asList(후라이드치킨, 간장치킨));
-        given(menuDao.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 간장반_후라이드반));
+        given(menuRepository.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 간장반_후라이드반));
 
         MenuProduct expected_후라이드치킨_menu1 = new MenuProduct(1L, 양념반_후라이드반, 후라이드치킨정보, 1);
         MenuProduct expected_양념치킨 = new MenuProduct(2L, 양념반_후라이드반, 양념치킨정보, 1);
