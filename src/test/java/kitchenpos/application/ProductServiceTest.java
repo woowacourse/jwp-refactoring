@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.CreateProductRequest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -36,7 +36,7 @@ class ProductServiceTest {
         // given
         CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
         Product expected = new Product(1L, "강정치킨", 17000);
-        given(productDao.save(any(Product.class))).willReturn(expected);
+        given(productRepository.save(any(Product.class))).willReturn(expected);
 
         // when
         Product actual = productService.create(강정치킨);
@@ -77,7 +77,7 @@ class ProductServiceTest {
         Product 강정치킨 = new Product(1L, "강정치킨", 17000);
         Product 구운치킨 = new Product(2L, "구운치킨", 14000);
         List<Product> expected = Arrays.asList(강정치킨, 구운치킨);
-        given(productDao.findAll()).willReturn(expected);
+        given(productRepository.findAll()).willReturn(expected);
 
         // when
         List<Product> actual = productService.list();

@@ -10,11 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.MenuProductRepository;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.*;
 import kitchenpos.dto.request.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 
@@ -23,18 +19,18 @@ public class MenuService {
     private final MenuDao menuDao;
     private final MenuGroupDao menuGroupDao;
     private final MenuProductRepository menuProductRepository;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuDao menuDao,
             final MenuGroupDao menuGroupDao,
             final MenuProductRepository menuProductRepository,
-            final ProductDao productDao
+            final ProductRepository productRepository
     ) {
         this.menuDao = menuDao;
         this.menuGroupDao = menuGroupDao;
         this.menuProductRepository = menuProductRepository;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -50,8 +46,8 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProduct().getId())
-                                              .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+            final Product product = productRepository.findById(menuProduct.getProduct().getId())
+                                                     .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
