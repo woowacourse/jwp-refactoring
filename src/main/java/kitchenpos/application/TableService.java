@@ -23,10 +23,14 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        OrderTable newOrderTable = new OrderTable.Builder()
+                .id(null)
+                .tableGroupId(null)
+                .numberOfGuests(orderTable.getNumberOfGuests())
+                .empty(orderTable.isEmpty())
+                .build();
 
-        return orderTableDao.save(orderTable);
+        return orderTableDao.save(newOrderTable);
     }
 
     public List<OrderTable> list() {

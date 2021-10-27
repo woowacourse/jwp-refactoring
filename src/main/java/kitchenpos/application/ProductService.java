@@ -19,13 +19,12 @@ public class ProductService {
 
     @Transactional
     public Product create(final Product product) {
-        final BigDecimal price = product.getPrice();
+        final Product newProduct = new Product.Builder()
+                .name(product.getName())
+                .price(product.getPrice())
+                .build();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        return productDao.save(product);
+        return productDao.save(newProduct);
     }
 
     public List<Product> list() {
