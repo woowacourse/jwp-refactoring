@@ -4,9 +4,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuRequest {
     @NotBlank
@@ -15,9 +15,10 @@ public class MenuRequest {
     private BigDecimal price;
     @NotBlank
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductRequest> menuProducts;
 
-    public MenuRequest() {}
+    public MenuRequest() {
+    }
 
     public String getName() {
         return name;
@@ -31,11 +32,20 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
 
     public Menu toMenu() {
-        return new Menu(name, price, menuGroupId, menuProducts);
+        List<MenuProduct> menuProducts = this.menuProducts.stream()
+                .map(MenuProductRequest::toMenuProduct)
+                .collect(Collectors.toList());
+
+        return new Menu(
+                name,
+                price,
+                menuGroupId,
+                menuProducts
+        );
     }
 }

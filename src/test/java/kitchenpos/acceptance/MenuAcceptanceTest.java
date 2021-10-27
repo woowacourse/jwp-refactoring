@@ -23,9 +23,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        MenuProduct menuProduct = new MenuProduct(1L, 2L);
 
         // when
         Map<String, Object> params = new HashMap<>();

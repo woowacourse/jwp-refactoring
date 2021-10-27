@@ -79,9 +79,7 @@ class MenuServiceTest {
     @Test
     void createFailedWhenMenuProductNotFound() {
         // given
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(-1L);
-        menuProduct.setQuantity(2);
+        MenuProduct menuProduct = new MenuProduct(-1L, 2L);
 
         Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 
@@ -103,9 +101,7 @@ class MenuServiceTest {
     @Test
     void createFailedWhenPriceIsBigger() {
         // given
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        MenuProduct menuProduct = new MenuProduct(1L, 2L);
 
         Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 

@@ -23,9 +23,7 @@ public class DomainDaoTest extends DaoTest {
 
     protected long SAVE_MENU_RETURN_ID() {
         menuDao = new JdbcTemplateMenuDao(dataSource);
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        MenuProduct menuProduct = new MenuProduct(1L, 2L);
 
         Menu menu = new Menu("후라이드+후라이드", 19000, 1L, singletonList(menuProduct));
 

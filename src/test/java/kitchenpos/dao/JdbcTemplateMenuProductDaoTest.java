@@ -24,12 +24,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     void save() {
         // given
         long menuId = SAVE_MENU_RETURN_ID();
-
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menuProduct.setMenuId(menuId);
-
+        MenuProduct menuProduct = new MenuProduct(menuId, 1L, 2L);
         // when
         MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
 
@@ -86,10 +81,7 @@ class JdbcTemplateMenuProductDaoTest extends DomainDaoTest {
     }
 
     private long SAVE_MENU_PRODUCT(long menuId) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
-        menuProduct.setMenuId(menuId);
+        MenuProduct menuProduct = new MenuProduct(menuId, 1L, 2L);
 
         // when
         MenuProduct savedMenuProduct = menuProductDao.save(menuProduct);
