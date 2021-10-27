@@ -13,6 +13,9 @@ public class MenuCreateResponseDto {
     private Long menuGroupId;
     private List<Long> menuProductIds;
 
+    public MenuCreateResponseDto() {
+    }
+
     public MenuCreateResponseDto(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();

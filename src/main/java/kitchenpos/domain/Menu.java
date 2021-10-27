@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -19,7 +20,7 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
@@ -30,60 +31,42 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
+        insertMenuProducts(menuProducts);
     }
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this.name = name;
-        this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(name, price, menuGroupId, new ArrayList<>());
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
-    }
-
     public Long getMenuGroupId() {
         return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void insertMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.defineMenu(this);
+        }
     }
 
     public void validateMenuPrice() {
@@ -92,5 +75,9 @@ public class Menu {
         }
     }
 
-
+    public void validateTotalMenuProductsPrice(BigDecimal totalMenuProductsPrice) {
+        if (price.compareTo(totalMenuProductsPrice) > 0) {
+            throw new IllegalArgumentException("메뉴 가격이, 해당 매뉴의 전체 구성 상품을 합친 가격이보다 낮아야 합니다.");
+        }
+    }
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuCreateRequestDto;
+import kitchenpos.dto.MenuCreateResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -29,13 +31,15 @@ public class MenuIntegrationTest extends IntegrationTest {
         MenuGroup menuGroup = fixtureMaker.createMenuGroup();
         List<MenuProduct> menuProducts = fixtureMaker.createMenuProducts(menuGroup.getId());
         Menu menu = new Menu("메뉴", new BigDecimal(1000), menuGroup.getId(), menuProducts);
+        MenuCreateRequestDto menuCreateRequestDto = new MenuCreateRequestDto(menu);
+
         webTestClient.post().uri("/api/menus")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(menu), Menu.class)
+            .body(Mono.just(menuCreateRequestDto), MenuCreateRequestDto.class)
             .exchange()
             .expectStatus().isCreated()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
-            .expectBody(Menu.class);
+            .expectBody(MenuCreateResponseDto.class);
     }
 }
