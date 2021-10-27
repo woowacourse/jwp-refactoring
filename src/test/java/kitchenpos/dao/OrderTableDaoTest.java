@@ -13,6 +13,9 @@ public class OrderTableDaoTest extends DaoTest {
     @Autowired
     private OrderTableDao orderTableDao;
 
+    @Autowired
+    private TableGroupDao tableGroupDao;
+
     @Test
     void save() throws Exception {
         OrderTable savedOrderTable = orderTableDao.save(new OrderTable(10, true));
@@ -49,8 +52,9 @@ public class OrderTableDaoTest extends DaoTest {
 
     @Test
     void findAllByTableGroupId() {
-        orderTableDao.save(new OrderTable(new TableGroup(), 10, true));
-        orderTableDao.save(new OrderTable(new TableGroup(), 10, true));
-        assertThat(orderTableDao.findAllByTableGroupId(1L)).hasSize(2);
+        TableGroup tableGroup = tableGroupDao.save(new TableGroup());
+        orderTableDao.save(new OrderTable(tableGroup, 10, true));
+        orderTableDao.save(new OrderTable(tableGroup, 10, true));
+        assertThat(orderTableDao.findAllByTableGroupId(tableGroup.getId())).hasSize(2);
     }
 }

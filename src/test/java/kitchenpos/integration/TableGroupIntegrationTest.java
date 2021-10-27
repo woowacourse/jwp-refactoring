@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import reactor.core.publisher.Mono;
 
 public class TableGroupIntegrationTest extends IntegrationTest {
+
     @DisplayName("테이블 그룹을 생성한다.")
     @Test
     public void create() {

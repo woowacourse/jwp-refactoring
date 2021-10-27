@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -24,7 +23,7 @@ public class TableService {
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
         orderTable.setId(null);
-        orderTable.setTableGroupId(null);
+        orderTable.setTableGroup(null);
 
         return orderTableDao.save(orderTable);
     }
@@ -38,9 +37,9 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
-            throw new IllegalArgumentException();
-        }
+//        if (Objects.nonNull(savedOrderTable.getId())) {
+//            throw new IllegalArgumentException();
+//        }
 
         if (orderDao.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {

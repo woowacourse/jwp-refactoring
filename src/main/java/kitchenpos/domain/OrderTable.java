@@ -51,12 +51,8 @@ public class OrderTable {
         this.id = id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroup.getId();
-    }
-
-    public void setTableGroupId(final Long tableGroupId) {
-        tableGroup.setId(tableGroupId);
+    public void setTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
     }
 
     public int getNumberOfGuests() {
