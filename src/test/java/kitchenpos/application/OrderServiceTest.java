@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,7 +29,7 @@ class OrderServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderLineItemRepository orderLineItemRepository;
@@ -53,9 +52,12 @@ class OrderServiceTest {
         후라이드치킨_2마리 = new OrderLineItem(1L, 2);
         양념치킨_1마리 = new OrderLineItem(2L, 1);
 
-        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 1L, 1L, 2);
-        양념치킨_1마리_주문1 = new OrderLineItem(2L, 1L, 2L, 1);
-        양념치킨_1마리_주문2 = new OrderLineItem(3L, 2L, 2L, 1);
+        Order 주문1 = new Order(1L);
+        Order 주문2 = new Order(2L);
+
+        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 1L, 2);
+        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 2L, 1);
+        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 2L, 1);
     }
 
     @Test
@@ -67,7 +69,7 @@ class OrderServiceTest {
         Order expected = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
         given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.of(table));
-        given(orderDao.save(order)).willReturn(expected);
+        given(orderRepository.save(order)).willReturn(expected);
         given(orderLineItemRepository.save(후라이드치킨_2마리)).willReturn(후라이드치킨_2마리_주문1);
         given(orderLineItemRepository.save(양념치킨_1마리)).willReturn(양념치킨_1마리_주문1);
 
@@ -140,7 +142,7 @@ class OrderServiceTest {
         Order order1 = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         Order order2 = new Order(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리));
         List<Order> expected = Arrays.asList(order1, order2);
-        given(orderDao.findAll()).willReturn(expected);
+        given(orderRepository.findAll()).willReturn(expected);
         given(orderLineItemRepository.findAllByOrderId(order1.getId())).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderLineItemRepository.findAllByOrderId(order2.getId())).willReturn(Collections.singletonList(양념치킨_1마리_주문2));
 
@@ -160,8 +162,8 @@ class OrderServiceTest {
         Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
         Order order = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         Order expected = new Order(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
-        given(orderDao.findById(orderId)).willReturn(Optional.of(order));
-        given(orderDao.save(order)).willReturn(order);
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
+        given(orderRepository.save(order)).willReturn(order);
         given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
 
         // when
@@ -178,7 +180,7 @@ class OrderServiceTest {
         // given
         Long orderId = 1L;
         Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
-        given(orderDao.findById(orderId)).willReturn(Optional.empty());
+        given(orderRepository.findById(orderId)).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -193,7 +195,7 @@ class OrderServiceTest {
         Long orderId = 1L;
         Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
         Order order = new Order(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(orderDao.findById(orderId)).willReturn(Optional.of(order));
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

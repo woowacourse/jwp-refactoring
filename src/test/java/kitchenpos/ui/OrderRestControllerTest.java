@@ -41,9 +41,12 @@ class OrderRestControllerTest extends ControllerTest {
         후라이드치킨_2마리 = new OrderLineItem(1L, 2);
         양념치킨_1마리 = new OrderLineItem(2L, 1);
 
-        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 1L, 1L, 2);
-        양념치킨_1마리_주문1 = new OrderLineItem(2L, 1L, 2L, 1);
-        양념치킨_1마리_주문2 = new OrderLineItem(3L, 2L, 2L, 1);
+        Order 주문1 = new Order(1L);
+        Order 주문2 = new Order(2L);
+
+        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 1L, 2);
+        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 2L, 1);
+        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 2L, 1);
     }
 
     @Test

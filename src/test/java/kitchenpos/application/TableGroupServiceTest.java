@@ -8,12 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -27,7 +23,7 @@ import static org.mockito.BDDMockito.given;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -146,7 +142,7 @@ class TableGroupServiceTest {
         OrderTable table1 = new OrderTable(1L, groupId, 3, true);
         OrderTable table2 = new OrderTable(2L, groupId, 5, true);
         given(orderTableRepository.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 Arrays.asList(table1.getId(), table2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
 
@@ -168,7 +164,7 @@ class TableGroupServiceTest {
         OrderTable table1 = new OrderTable(1L, groupId, 3, true);
         OrderTable table2 = new OrderTable(2L, groupId, 5, true);
         given(orderTableRepository.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 Arrays.asList(table1.getId(), table2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
 

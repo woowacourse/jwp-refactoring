@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.OrderDao;
+import kitchenpos.domain.OrderRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
@@ -25,7 +25,7 @@ import static org.mockito.BDDMockito.given;
 class TableServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -75,7 +75,7 @@ class TableServiceTest {
         OrderTable table = new OrderTable(1L, null, 0, true);
         OrderTable expected = new OrderTable(1L, null, 0, false);
         given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(tableId,
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(tableId,
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
         given(orderTableRepository.save(table)).willReturn(table);
 
@@ -124,7 +124,7 @@ class TableServiceTest {
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
         OrderTable table = new OrderTable(1L, null, 0, true);
         given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(tableId,
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(tableId,
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
 
         // when & then
