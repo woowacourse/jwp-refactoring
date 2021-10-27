@@ -6,8 +6,6 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -56,11 +54,11 @@ class ProductServiceTest {
         assertEquals("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.", exception.getMessage());
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {-100, -1})
+    @Test
     @DisplayName("상품 가격이 음수일 수 없다.")
-    void createWrongPriceUnderZero(int price) {
+    void createWrongPriceUnderZero() {
         // given
+        int price = -1;
         Product 강정치킨 = new Product("강정치킨", price);
 
         // when & then

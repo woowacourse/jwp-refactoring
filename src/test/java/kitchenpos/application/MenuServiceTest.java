@@ -8,8 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -93,11 +91,11 @@ class MenuServiceTest {
         assertEquals("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.", exception.getMessage());
     }
 
-    @ParameterizedTest
-    @ValueSource(ints = {-100, -1})
+    @Test
     @DisplayName("메뉴의 가격이 음수면 메뉴를 등록할 수 없다.")
-    void createWrongPriceUnderZero(int price) {
+    void createWrongPriceUnderZero() {
         // given
+        int price = -1;
         Menu 양념반_후라이드반 = new Menu("양념 반 + 후라이드 반", price, 1L, Arrays.asList(후라이드치킨, 양념치킨));
 
         // when & then
