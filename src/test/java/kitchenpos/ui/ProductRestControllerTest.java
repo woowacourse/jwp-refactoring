@@ -54,7 +54,7 @@ class ProductRestControllerTest extends BaseWebMvcTest {
                 .willReturn(product1);
 
         // when
-        ResultActions actions = mvc.perform(super.postMethodRequestBase("/api/products", content));
+        ResultActions actions = mvc.perform(super.postRequest("/api/products", content));
 
         // then
         actions.andExpect(status().isCreated())
@@ -74,7 +74,7 @@ class ProductRestControllerTest extends BaseWebMvcTest {
         given(productService.list()).willReturn(products);
 
         // when
-        ResultActions actions = mvc.perform(super.getMethodRequestBase("/api/products"));
+        ResultActions actions = mvc.perform(super.getRequest("/api/products"));
 
         // then
         actions.andExpect(status().isOk())

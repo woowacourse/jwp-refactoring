@@ -2,27 +2,22 @@ package kitchenpos.ui;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.OrderService;
-import kitchenpos.application.ProductService;
+import kitchenpos.application.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(controllers = {
         MenuGroupRestController.class,
         MenuRestController.class,
         ProductRestController.class,
-        OrderRestController.class
+        OrderRestController.class,
+        TableRestController.class
 })
 public class BaseWebMvcTest {
 
@@ -44,25 +39,35 @@ public class BaseWebMvcTest {
     @MockBean
     protected OrderService orderService;
 
+    @MockBean
+    protected TableService tableService;
+
     protected String parseJson(Object object) throws JsonProcessingException {
         return objectMapper.writeValueAsString(object);
     }
 
-    protected MockHttpServletRequestBuilder getMethodRequestBase(String url) {
+    protected MockHttpServletRequestBuilder getRequest(String url) {
         return get(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8");
     }
 
-    protected MockHttpServletRequestBuilder postMethodRequestBase(String url, String content) {
+    protected MockHttpServletRequestBuilder postRequest(String url, String content) {
         return post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(content);
     }
 
-    protected MockHttpServletRequestBuilder putMethodRequestBase(String url, String content) {
+    protected MockHttpServletRequestBuilder putRequest(String url, String content) {
         return put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(content);
+    }
+
+    protected MockHttpServletRequestBuilder putRequest(String url, String content, Object... pathVariables) {
+        return put(url, pathVariables)
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(content);

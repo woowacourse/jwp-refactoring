@@ -90,7 +90,7 @@ class MenuRestControllerTest extends BaseWebMvcTest {
         String content = parseJson(requestMenu);
 
         // when
-        ResultActions actions = mvc.perform(super.postMethodRequestBase("/api/menus", content));
+        ResultActions actions = mvc.perform(super.postRequest("/api/menus", content));
 
         // then
         actions.andExpect(status().isCreated())
@@ -114,7 +114,7 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .willReturn(Arrays.asList(menu1, menu2));
 
         // when
-        ResultActions actions = mvc.perform(super.getMethodRequestBase("/api/menus"));
+        ResultActions actions = mvc.perform(super.getRequest("/api/menus"));
 
         // then
         actions.andExpect(status().isOk())

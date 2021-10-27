@@ -91,7 +91,7 @@ class OrderRestControllerTest extends BaseWebMvcTest {
         String content = parseJson(requestOrder);
 
         // when
-        ResultActions actions = mvc.perform(postMethodRequestBase("/api/orders", content));
+        ResultActions actions = mvc.perform(postRequest("/api/orders", content));
 
         // then
         actions.andExpect(status().isCreated())
@@ -116,7 +116,7 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .willReturn(Arrays.asList(order1, order2));
 
         // when
-        ResultActions actions = mvc.perform(getMethodRequestBase("/api/orders"));
+        ResultActions actions = mvc.perform(getRequest("/api/orders"));
 
         // then
         actions.andExpect(status().isOk())
@@ -166,9 +166,10 @@ class OrderRestControllerTest extends BaseWebMvcTest {
                 .orderLineItems(null)
                 .build();
         String content = parseJson(requestOrder);
+        Long requestOrderId = 1L;
 
         // when
-        ResultActions actions = mvc.perform(putMethodRequestBase("/api/orders/1/order-status", content))
+        ResultActions actions = mvc.perform(putRequest("/api/orders/1/order-status", content, requestOrderId))
                 .andDo(print());
 
         // then

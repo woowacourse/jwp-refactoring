@@ -51,7 +51,7 @@ class MenuGroupRestControllerTest extends BaseWebMvcTest {
                 .willReturn(menuGroup1);
 
         // when
-        ResultActions actions = mvc.perform(postMethodRequestBase("/api/menu-groups", content));
+        ResultActions actions = mvc.perform(postRequest("/api/menu-groups", content));
 
         // then
         actions.andExpect(status().isCreated())
@@ -70,7 +70,7 @@ class MenuGroupRestControllerTest extends BaseWebMvcTest {
         given(menuGroupService.list()).willReturn(menuGroups);
 
         // when
-        ResultActions actions = mvc.perform(getMethodRequestBase("/api/menu-groups"));
+        ResultActions actions = mvc.perform(getRequest("/api/menu-groups"));
 
         // then
         actions.andExpect(status().isOk())
