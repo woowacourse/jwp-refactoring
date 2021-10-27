@@ -8,20 +8,26 @@
     - [x] DB에 저장한 MenuGroup을 MenuGroupResponse로 변환해 반환한다.
   - [x] DB에 저장되어있는 모든 MenuGroup들을 조회해 MenuGroupResponse로 변환해서 반환한다.
   
-- [ ] Menu
-  - [ ] 새로운 Menu를 생성해 DB에 저장한다.
-    - [ ] Menu의 가격이 null이거나 0보다 작으면 예외를 발생시킨다.
-    - [ ] Menu의 MenuGroupId가 DB에 존재하지 않으면 예외를 발생시킨다.
-    - [ ] MenuProduct들에 있는 모든 Product들을 DB에서 조회해 가격을 더한다.
-      - [ ] 모든 Product들의 Id는 DB에 존재해야 한다.
-        - [ ] 하나라도 존재하지 않으면 예외를 발생시킨다.
-    - [ ] 요청 매개변수 Menu의 가격이 MenuProduct들에 있는 모든 Product들의 가격의 합보다 크면, 예외를 발생시킨다.
-    - [ ] Menu를 DB에 저장한다.
-    - [ ] Menu의 모든 MenuProduct들에 Menu의 Id를 할당해 DB에 저장한다.
-    - [ ] Id를 갖고있는 Menu를 반환한다.
-      - [ ] Menu의 모든 MenuProduct들은 Id와 Menu의 Id를 갖고있다.
-  - [ ] 모든 Menu들을 DB에서 찾아 반환한다.
-    - [ ] 각 Menu는 MenuProduct들을 갖고있다.
+- [x] Menu
+  - [x] 새로운 Menu를 생성해 DB에 저장한다.
+    - [x] Menu를 생성해 DB에 저장한다.
+    - [x] Product들을 DB에서 조회한다.
+    - [x] MenuProduct들을 생성하고 Menu, Product를 할당해 DB에 저장한다.
+    - [x] Menu를 MenuResponse로 변환해서 반환한다.
+      - [x] MenuResponse는 MenuProductResponse들을 갖고있다.
+    - [x] 예외
+      - [x] MenuRequest
+        - [x] price = null
+        - [x] price < 0
+        - [x] menuGroupId
+          - [x] DB에 존재하지 않을 때
+        - [x] menuProducts
+          - [x] Product DB에서 조회
+            - [x] DB에 존재하지 않을 때
+            - [x] MenuProduct들의 price 합 < MenuRequest의 price
+  - [x] DB에 저장되어있는 모든 Menu들을 조회해 MenuResponse로 변환해서 반환한다.
+    - [x] Menu를 MenuResponse로 변환해서 반환한다.
+      - [x] MenuResponse는 MenuProductResponse들을 갖고있다.
 
 - [ ] Order
   - [ ] 새로운 Order를 생성해 DB에 저장한다.
@@ -113,6 +119,27 @@
     - [ ] DB에서 조회한 OrderTable의 NumberOfGuest값을 매개변수로 받은 OrderTable의 NumberOfGuest값으로 세팅한다.
     - [ ] DB에서 조회한 OrderTable을 DB에 저장한다.
     - [ ] DB에 저장한 OrderTable을 반환한다.
+
+<br/>
+
+## 리팩터링
+
+- [x] 도메인 엔티티
+  - [x] id 필드 기준으로 equals&hashCode 추가
+  - [x] protected 기본생성자 추가
+  - [x] 모든 필드를 매개변수로 갖는 생성자 추가
+  - [x] JPA 적용
+    - [x] DB 스키마 참고
+      - [x] nullable = true/false 적용
+      - [x] 모두 N : 1 단방향 매핑
+  - [x] setter 제거
+  - [x] 로직 내부로 이동
+    - [x] 단위 테스트
+- [x] Dao -> JPA 변경
+- [x] DTO 도입
+- [x] Controller 리팩터링
+- [x] Service 리팩터링
+- [x] 테스트 가독성 좋게 리팩터링
 
 <br/>
 
