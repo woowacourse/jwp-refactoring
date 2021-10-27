@@ -8,23 +8,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.menugroup.request.MenuGroupRequest;
-import kitchenpos.repository.MenuGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @DisplayName("MenuGroup 통합테스트")
 class MenuGroupIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/menu-groups";
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("생성 - 성공")
     @Test
@@ -56,9 +50,8 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     @Test
     void findAll_Success() throws Exception {
         // given
-        final MenuGroup menuGroup1 = new MenuGroup("두마리메뉴");
-        final MenuGroup menuGroup2 = new MenuGroup("한마리메뉴");
-        menuGroupRepository.saveAll(Arrays.asList(menuGroup1, menuGroup2));
+        final MenuGroup menuGroup1 = MenuGroup을_저장한다("한마리메뉴");
+        final MenuGroup menuGroup2 = MenuGroup을_저장한다("두마리메뉴");
 
         // when
         // then

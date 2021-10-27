@@ -9,14 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
@@ -27,7 +25,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.repository.MenuGroupRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -46,13 +44,17 @@ class OrderIntegrationTest extends IntegrationTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Autowired
-    private MenuDao menuDao;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
     private OrderDao orderDao;
+
+    private Menu menu;
+
+    @Override
+    @BeforeEach
+    void setUp() {
+        super.setUp();
+        final MenuGroup menuGroup = MenuGroup을_저장한다("추천메뉴");
+        menu = Menu를_저장한다("양념치킨", 17_000, menuGroup);
+    }
 
     @DisplayName("생성 - 성공")
     @Test
@@ -63,20 +65,11 @@ class OrderIntegrationTest extends IntegrationTest {
         savedOrderTable.setEmpty(false);
         savedOrderTable = orderTableDao.save(savedOrderTable);
 
-        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
-        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
-
-        Menu savedMenu = new Menu();
-        savedMenu.setName("양념치킨");
-        savedMenu.setPrice(BigDecimal.valueOf(17_000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(savedMenu);
-
         final Map<String, Object> params = new HashMap<>();
         params.put("orderTableId", savedOrderTable.getId());
 
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
+        orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(1L);
 
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
@@ -98,7 +91,7 @@ class OrderIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$.orderLineItems.length()").value(orderLineItems.size()))
             .andExpect(jsonPath("$.orderLineItems[0].seq").isNumber())
             .andExpect(jsonPath("$.orderLineItems[0].orderId").isNumber())
-            .andExpect(jsonPath("$.orderLineItems[0].menuId").value(savedMenu.getId()))
+            .andExpect(jsonPath("$.orderLineItems[0].menuId").value(menu.getId()))
             .andExpect(jsonPath("$.orderLineItems[0].quantity").value(orderLineItem.getQuantity()))
         ;
 
@@ -186,20 +179,12 @@ class OrderIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_RequestOrderTableIdOfOrderNotExistsInDB() {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
-        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
-
-        Menu savedMenu = new Menu();
-        savedMenu.setName("양념치킨");
-        savedMenu.setPrice(BigDecimal.valueOf(17_000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(savedMenu);
 
         final Map<String, Object> params = new HashMap<>();
         params.put("orderTableId", 0L);
 
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
+        orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(1L);
 
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
@@ -230,20 +215,11 @@ class OrderIntegrationTest extends IntegrationTest {
         savedOrderTable.setEmpty(true);
         savedOrderTable = orderTableDao.save(savedOrderTable);
 
-        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
-        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
-
-        Menu savedMenu = new Menu();
-        savedMenu.setName("양념치킨");
-        savedMenu.setPrice(BigDecimal.valueOf(17_000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(savedMenu);
-
         final Map<String, Object> params = new HashMap<>();
         params.put("orderTableId", savedOrderTable.getId());
 
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
+        orderLineItem.setMenuId(menu.getId());
         orderLineItem.setQuantity(1L);
 
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
@@ -269,14 +245,6 @@ class OrderIntegrationTest extends IntegrationTest {
     @Test
     void findAll_Success() throws Exception {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
-        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
-
-        Menu savedMenu = new Menu();
-        savedMenu.setName("양념치킨");
-        savedMenu.setPrice(BigDecimal.valueOf(17_000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(savedMenu);
 
         OrderTable savedOrderTable = new OrderTable();
         savedOrderTable.setNumberOfGuests(1);
@@ -291,7 +259,7 @@ class OrderIntegrationTest extends IntegrationTest {
 
         OrderLineItem savedOrderLineItem = new OrderLineItem();
         savedOrderLineItem.setOrderId(savedOrder.getId());
-        savedOrderLineItem.setMenuId(savedMenu.getId());
+        savedOrderLineItem.setMenuId(menu.getId());
         savedOrderLineItem.setQuantity(1L);
         savedOrderLineItem = orderLineItemDao.save(savedOrderLineItem);
 
@@ -307,7 +275,7 @@ class OrderIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[0].orderLineItems.length()").value(1))
             .andExpect(jsonPath("$[0].orderLineItems[0].seq").isNumber())
             .andExpect(jsonPath("$[0].orderLineItems[0].orderId").value(savedOrder.getId()))
-            .andExpect(jsonPath("$[0].orderLineItems[0].menuId").value(savedMenu.getId()))
+            .andExpect(jsonPath("$[0].orderLineItems[0].menuId").value(menu.getId()))
             .andExpect(jsonPath("$[0].orderLineItems[0].quantity").value(savedOrderLineItem.getQuantity()))
         ;
     }
@@ -317,14 +285,6 @@ class OrderIntegrationTest extends IntegrationTest {
     @EnumSource(value = OrderStatus.class, names = {"MEAL", "COMPLETION"})
     void changeOrderStatus_Success(OrderStatus newOrderStatus) throws Exception {
         // given
-        MenuGroup savedMenuGroup = new MenuGroup("추천메뉴");
-        savedMenuGroup = menuGroupRepository.save(savedMenuGroup);
-
-        Menu savedMenu = new Menu();
-        savedMenu.setName("양념치킨");
-        savedMenu.setPrice(BigDecimal.valueOf(17_000));
-        savedMenu.setMenuGroupId(savedMenuGroup.getId());
-        savedMenu = menuDao.save(savedMenu);
 
         OrderTable savedOrderTable = new OrderTable();
         savedOrderTable.setNumberOfGuests(1);
@@ -339,7 +299,7 @@ class OrderIntegrationTest extends IntegrationTest {
 
         OrderLineItem savedOrderLineItem = new OrderLineItem();
         savedOrderLineItem.setOrderId(savedOrder.getId());
-        savedOrderLineItem.setMenuId(savedMenu.getId());
+        savedOrderLineItem.setMenuId(menu.getId());
         savedOrderLineItem.setQuantity(1L);
         savedOrderLineItem = orderLineItemDao.save(savedOrderLineItem);
 
@@ -359,7 +319,7 @@ class OrderIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$.orderLineItems.length()").value(1))
             .andExpect(jsonPath("$.orderLineItems[0].seq").isNumber())
             .andExpect(jsonPath("$.orderLineItems[0].orderId").value(savedOrder.getId()))
-            .andExpect(jsonPath("$.orderLineItems[0].menuId").value(savedMenu.getId()))
+            .andExpect(jsonPath("$.orderLineItems[0].menuId").value(menu.getId()))
             .andExpect(jsonPath("$.orderLineItems[0].quantity").value(savedOrderLineItem.getQuantity()))
         ;
 

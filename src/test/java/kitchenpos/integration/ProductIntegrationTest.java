@@ -9,23 +9,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.product.request.ProductRequest;
-import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 
 @DisplayName("Product 통합테스트")
 class ProductIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/products";
-
-    @Autowired
-    private ProductRepository productRepository;
 
     @DisplayName("생성 - 성공")
     @Test
@@ -63,8 +57,8 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        생성을_요청하면_BadRequest를_응답한다(productRequest);
-        Product가_저장되지_않는다();
+        API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
+        Repository가_비어있다(productRepository);
     }
 
     @DisplayName("생성 - 실패 - 0보다 작을 때")
@@ -75,17 +69,16 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        생성을_요청하면_BadRequest를_응답한다(productRequest);
-        Product가_저장되지_않는다();
+        API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
+        Repository가_비어있다(productRepository);
     }
 
     @DisplayName("모든 Product들 조회 - 성공")
     @Test
     void findAll_Success() throws Exception {
         // given
-        final Product product1 = new Product("후라이드", BigDecimal.valueOf(16_000));
-        final Product product2 = new Product("양념치킨", BigDecimal.valueOf(17_000));
-        productRepository.saveAll(Arrays.asList(product1, product2));
+        final Product product1 = Product를_저장한다("후라이드", 16_000);
+        final Product product2 = Product를_저장한다("양념치킨", 17_000);
 
         // when
         // then
@@ -100,18 +93,5 @@ class ProductIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[1].name").value(product2.getName()))
             .andExpect(jsonPath("$[1].price").value(product2.getPrice()))
         ;
-    }
-
-    private void 생성을_요청하면_BadRequest를_응답한다(ProductRequest productRequest) throws Exception {
-        mockMvc.perform(post(API_PATH)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(productRequest)))
-            .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    private void Product가_저장되지_않는다() {
-        final List<Product> foundProducts = productRepository.findAll();
-        assertThat(foundProducts).isEmpty();
     }
 }

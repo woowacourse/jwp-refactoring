@@ -73,4 +73,8 @@ public class Product {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public boolean hasId(Long otherId) {
+        return id.equals(otherId);
+    }
 }
