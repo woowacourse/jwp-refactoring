@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
 import org.mockito.InjectMocks;
@@ -35,7 +34,7 @@ class OrderServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
     private OrderTableDao orderTableDao;
@@ -70,8 +69,8 @@ class OrderServiceTest {
         given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
         given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(table));
         given(orderDao.save(order)).willReturn(expected);
-        given(orderLineItemDao.save(후라이드치킨_2마리)).willReturn(후라이드치킨_2마리_주문1);
-        given(orderLineItemDao.save(양념치킨_1마리)).willReturn(양념치킨_1마리_주문1);
+        given(orderLineItemRepository.save(후라이드치킨_2마리)).willReturn(후라이드치킨_2마리_주문1);
+        given(orderLineItemRepository.save(양념치킨_1마리)).willReturn(양념치킨_1마리_주문1);
 
         // when
         Order actual = orderService.create(order);
@@ -143,8 +142,8 @@ class OrderServiceTest {
         Order order2 = new Order(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리));
         List<Order> expected = Arrays.asList(order1, order2);
         given(orderDao.findAll()).willReturn(expected);
-        given(orderLineItemDao.findAllByOrderId(order1.getId())).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
-        given(orderLineItemDao.findAllByOrderId(order2.getId())).willReturn(Collections.singletonList(양념치킨_1마리_주문2));
+        given(orderLineItemRepository.findAllByOrderId(order1.getId())).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        given(orderLineItemRepository.findAllByOrderId(order2.getId())).willReturn(Collections.singletonList(양념치킨_1마리_주문2));
 
         // when
         List<Order> actual = orderService.list();
@@ -164,7 +163,7 @@ class OrderServiceTest {
         Order expected = new Order(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderDao.findById(orderId)).willReturn(Optional.of(order));
         given(orderDao.save(order)).willReturn(order);
-        given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
 
         // when
         Order actual = orderService.changeOrderStatus(orderId, changeStatusOrder);
