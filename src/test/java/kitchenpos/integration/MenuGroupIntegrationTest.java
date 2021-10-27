@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.net.URI;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MenuGroupIntegrationTest extends IntegrationTest {
@@ -16,8 +18,9 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     @Test
     void create() {
         // given
+        String menuGroupName = "lunch";
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("Drinks");
+        menuGroup.setName(menuGroupName);
 
         // when
         ResponseEntity<MenuGroup> menuGroupResponseEntity = testRestTemplate.postForEntity(
@@ -25,43 +28,49 @@ class MenuGroupIntegrationTest extends IntegrationTest {
                 menuGroup,
                 MenuGroup.class
         );
+        HttpStatus statusCode = menuGroupResponseEntity.getStatusCode();
+        URI location = menuGroupResponseEntity.getHeaders().getLocation();
+        MenuGroup body = menuGroupResponseEntity.getBody();
 
         // then
-        assertThat(menuGroupResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
+        assertThat(location).isEqualTo(URI.create(MENU_GROUP_URL + "/1"));
 
-        MenuGroup body = menuGroupResponseEntity.getBody();
         assertThat(body).isNotNull();
-        assertThat(body.getId()).isNotNull();
-        assertThat(body.getName()).isEqualTo("Drinks");
+        assertThat(body.getId()).isEqualTo(1L);
+        assertThat(body.getName()).isEqualTo(menuGroupName);
     }
 
-    @DisplayName("menuGroup 을 조회한다")
+    @DisplayName("전체 menuGroup 을 조회한다")
     @Test
     void list() {
         // given
-        MenuGroup drinksMenuGroup = new MenuGroup();
-        drinksMenuGroup.setName("Drinks");
-        menuGroupDao.save(drinksMenuGroup);
+        String menuGroupName = "lunch";
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setName(menuGroupName);
+        menuGroupDao.save(menuGroup);
 
-        MenuGroup lunchMenuGroup = new MenuGroup();
-        lunchMenuGroup.setName("Lunch");
-        menuGroupDao.save(lunchMenuGroup);
+        String secondMenuGroupName = "dinner";
+        MenuGroup secondMenuGroup = new MenuGroup();
+        secondMenuGroup.setName(secondMenuGroupName);
+        menuGroupDao.save(secondMenuGroup);
 
         // when
-        ResponseEntity<MenuGroup[]> menuGroupResponseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<MenuGroup[]> menuGroupsResponseEntity = testRestTemplate.getForEntity(
                 MENU_GROUP_URL,
                 MenuGroup[].class
         );
+        HttpStatus statusCode = menuGroupsResponseEntity.getStatusCode();
+        MenuGroup[] body = menuGroupsResponseEntity.getBody();
 
         // then
-        assertThat(menuGroupResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(statusCode).isEqualTo(HttpStatus.OK);
 
-        MenuGroup[] body = menuGroupResponseEntity.getBody();
         assertThat(body)
                 .hasSize(2)
                 .extracting("name")
                 .containsExactlyInAnyOrder(
-                        "Drinks", "Lunch"
+                        menuGroupName, secondMenuGroupName
                 );
     }
 }
