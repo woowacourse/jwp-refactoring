@@ -47,10 +47,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public void setTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }

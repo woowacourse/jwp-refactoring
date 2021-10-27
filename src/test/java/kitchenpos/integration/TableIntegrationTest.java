@@ -1,7 +1,6 @@
 package kitchenpos.integration;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -23,7 +22,7 @@ public class TableIntegrationTest extends IntegrationTest {
     @DisplayName("테이블을 생성한다.")
     @Test
     public void create() {
-        OrderTable orderTable = new OrderTable(new TableGroup(), 10, true);
+        OrderTable orderTable = new OrderTable(10, true);
         webTestClient.post().uri("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -34,12 +33,12 @@ public class TableIntegrationTest extends IntegrationTest {
             .expectBody(OrderTable.class);
     }
 
-    @DisplayName("테이블의 비어있는 지 여부의 상태를 변경한다.")
+    @DisplayName("테이블이 비어있는 지 여부의 상태를 변경한다.")
     @Test
     public void changeEmpty() throws Exception {
         boolean expectedEmpty = false;
 
-        OrderTable orderTable = new OrderTable(new TableGroup(), 10, true);
+        OrderTable orderTable = new OrderTable(10, true);
         OrderTable createdOrderTable = webTestClient.post().uri("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
@@ -74,7 +73,7 @@ public class TableIntegrationTest extends IntegrationTest {
     public void changeNumberOfGuests() throws Exception {
         int expectedNumberOfGuests = 15;
 
-        OrderTable orderTable = new OrderTable(new TableGroup(), 10, false);
+        OrderTable orderTable = new OrderTable(10, false);
         OrderTable createdOrderTable = webTestClient.post().uri("/api/tables")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)

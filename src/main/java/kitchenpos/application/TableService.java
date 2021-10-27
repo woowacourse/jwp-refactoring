@@ -22,9 +22,6 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroup(null);
-
         return orderTableDao.save(orderTable);
     }
 
