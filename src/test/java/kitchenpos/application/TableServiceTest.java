@@ -8,10 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.OrderRepository;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,7 +42,7 @@ class TableServiceTest {
         OrderTable actual = tableService.create(table);
 
         // then
-        assertNull(actual.getTableGroupId());
+        assertNull(actual.getTableGroup());
         assertEquals(expected, actual);
     }
 
@@ -53,7 +50,8 @@ class TableServiceTest {
     @DisplayName("전체 테이블을 조회할 수 있다.")
     void list() {
         // given
-        OrderTable table1 = new OrderTable(1L, 1L, 5, true);
+        TableGroup group = new TableGroup(1L);
+        OrderTable table1 = new OrderTable(1L, group, 5, true);
         OrderTable table2 = new OrderTable(2L, null, 0, true);
         List<OrderTable> expected = Arrays.asList(table1, table2);
         given(orderTableRepository.findAll()).willReturn(expected);
@@ -105,14 +103,14 @@ class TableServiceTest {
     @DisplayName("빈 상태를 수정하려면 테이블은 그룹에 속해있지 않아야한다.")
     void changeEmptyWrongNotInGroup() {
         // given
-        Long tableId = 1L;
+        TableGroup group = new TableGroup(1L);
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        OrderTable table = new OrderTable(1L, 1L, 0, true);
-        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
+        OrderTable table = new OrderTable(1L, group, 0, true);
+        given(orderTableRepository.findById(group.getId())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableService.changeEmpty(tableId, changeEmptyTable));
+                () -> tableService.changeEmpty(group.getId(), changeEmptyTable));
         assertEquals("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요.", exception.getMessage());
     }
 

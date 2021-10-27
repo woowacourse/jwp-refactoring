@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -45,7 +46,8 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("전체 테이블을 조회할 수 있다.")
     void list() throws Exception {
         // given
-        OrderTable table1 = new OrderTable(1L, 1L, 3, false);
+        TableGroup group = new TableGroup(1L);
+        OrderTable table1 = new OrderTable(1L, group, 3, false);
         OrderTable table2 = new OrderTable(2L, null, 0, true);
         List<OrderTable> expected = Arrays.asList(table1, table2);
         given(tableService.list()).willReturn(expected);
@@ -100,7 +102,8 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("빈 상태를 수정하려면 테이블은 그룹에 속해있지 않아야한다.")
     void changeEmptyWrongNotInGroup() throws Exception {
         // given
-        OrderTable changeEmptyTable = new OrderTable(null, 1L, 0, false);
+        TableGroup group = new TableGroup(1L);
+        OrderTable changeEmptyTable = new OrderTable(null, group, 0, false);
         willThrow(new IllegalArgumentException("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요."))
                 .given(tableService).changeEmpty(anyLong(), any(OrderTable.class));
 

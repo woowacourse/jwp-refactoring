@@ -31,8 +31,8 @@ class TableGroupRestControllerTest extends ControllerTest {
         OrderTable table2Id = new OrderTable(2L, null, 0, false);
         TableGroup group = new TableGroup(Arrays.asList(table1Id, table2Id));
 
-        OrderTable table1 = new OrderTable(1L, 1L, 3, false);
-        OrderTable table2 = new OrderTable(2L, 1L, 5, false);
+        OrderTable table1 = new OrderTable(1L, group, 3, false);
+        OrderTable table2 = new OrderTable(2L, group, 5, false);
         TableGroup expected = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(table1, table2));
 
         given(tableGroupService.create(any(TableGroup.class))).willReturn(expected);
