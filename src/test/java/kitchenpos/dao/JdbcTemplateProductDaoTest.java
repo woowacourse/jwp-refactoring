@@ -6,22 +6,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import javax.sql.DataSource;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@JdbcTest
 @DisplayName("Product Dao 테스트")
-class JdbcTemplateProductDaoTest {
-
-    @Autowired
-    private DataSource dataSource;
+class JdbcTemplateProductDaoTest extends JdbcTemplateDaoTest {
 
     private JdbcTemplateProductDao jdbcTemplateProductDao;
 
