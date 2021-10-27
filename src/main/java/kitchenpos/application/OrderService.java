@@ -77,11 +77,6 @@ public class OrderService {
 
     public List<Order> list() {
         final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
         return orders;
     }
 
@@ -98,9 +93,6 @@ public class OrderService {
         savedOrder.changeOrderStatus(orderStatus.name());
 
         orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
         return savedOrder;
     }
 }
