@@ -51,15 +51,12 @@ public class FixtureMaker {
     private MenuProductDao menuProductDao;
 
     public List<MenuProduct> createMenuProducts(Long menuGroupId) {
-        // 상품 생성
         Product product1 = productDao.save(new Product("상품1", new BigDecimal(16_000)));
         Product product2 = productDao.save(new Product("상품2", new BigDecimal(17_000)));
         Product product3 = productDao.save(new Product("상품3", new BigDecimal(18_000)));
 
-        // 메뉴 생성
         Menu menu = menuDao.save(new Menu("메뉴1", new BigDecimal(16_000), menuGroupId));
 
-        // 메뉴를 구성하는 상품 생성
         MenuProduct menuProduct1 = new MenuProduct(product1.getId(), 1, menu);
         MenuProduct menuProduct2 = new MenuProduct(product2.getId(), 1, menu);
         MenuProduct menuProduct3 = new MenuProduct(product3.getId(), 1, menu);

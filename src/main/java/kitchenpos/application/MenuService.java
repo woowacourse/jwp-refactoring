@@ -65,10 +65,8 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        // menu를 DB에 저장
         final Menu savedMenu = menuDao.save(menu);
 
-        // menu에 있는 여러 MenuProduct들을 DB에 저장
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenu(savedMenu);
