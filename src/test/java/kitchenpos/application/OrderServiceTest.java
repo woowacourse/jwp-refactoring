@@ -47,30 +47,7 @@ class OrderServiceTest {
     @Test
     void createFailedWhenOrderLineItemsEmpty() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(emptyList());
-
-        // when - then
-        assertThatThrownBy(() -> orderService.create(order))
-                .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(never())
-                .countByIdIn(anyList());
-        then(orderTableDao).should(never())
-                .findById(order.getOrderTableId());
-        then(orderDao).should(never())
-                .findById(any());
-        then(orderDao).should(never())
-                .save(any(Order.class));
-    }
-
-    @DisplayName("주문을 생성한다. - 실패, 주문 항목이 null인 경우")
-    @Test
-    void createFailedWhenOrderLineItemsNull() {
-        // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderLineItems(null);
+        Order order = new Order(1L, emptyList());
 
         // when - then
         assertThatThrownBy(() -> orderService.create(order))
@@ -89,16 +66,10 @@ class OrderServiceTest {
     @Test
     void createFailedWhenSizeNotEqual() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
+        Order order = new Order(null, 1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
 
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setQuantity(1L);
-
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(1L);
-        orderLineItem2.setMenuId(1L); // menuId는 1L만 등록되어있음.
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
 
         final List<Long> menuIds = order.getOrderLineItems().stream()
                 .map(OrderLineItem::getMenuId)
@@ -124,17 +95,10 @@ class OrderServiceTest {
     @Test
     void createFailedWhenTableIdNotFound() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(-1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
+        Order order = new Order(null, -1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
 
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setQuantity(1L);
-        orderLineItem1.setMenuId(1L);
-
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(1L);
-        orderLineItem2.setMenuId(2L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
 
         final List<Long> menuIds = order.getOrderLineItems().stream()
                 .map(OrderLineItem::getMenuId)
@@ -160,17 +124,9 @@ class OrderServiceTest {
     @Test
     void createFailedWhenTableIsEmpty() {
         // given
-        Order order = new Order();
-        order.setOrderTableId(-1L);
-
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setQuantity(1L);
-        orderLineItem1.setMenuId(1L);
-
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setQuantity(1L);
-        orderLineItem2.setMenuId(2L);
-        order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
+        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
+        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2);
+        Order order = new Order(null, -1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
 
         final List<Long> menuIds = order.getOrderLineItems().stream()
                 .map(OrderLineItem::getMenuId)
@@ -200,8 +156,7 @@ class OrderServiceTest {
     void changeOrderStatusFailedWhenOrderIdNotFound() {
         // given
         Long orderId = -1L;
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        Order order = new Order(-1L, OrderStatus.COOKING.name());
         given(orderDao.findById(orderId)).willThrow(IllegalArgumentException.class);
 
         // when -  then
@@ -218,11 +173,9 @@ class OrderServiceTest {
     void changeOrderStatusFailedWhenStatusIsCompletion() {
         // given
         Long orderId = 1L;
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        Order order = new Order(1L, OrderStatus.COOKING.name());
 
-        Order savedOrder = new Order();
-        savedOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order savedOrder = new Order(1L,OrderStatus.COMPLETION.name() );
         given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
 
         // when -  then

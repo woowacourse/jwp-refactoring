@@ -93,9 +93,7 @@ class TableServiceTest {
         savedOrderTable.setId(1L);
 
         // savedOrderTable에 포함된 order가 COMPLETION 상태임을 나타내기 위함.
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order order = new Order(1L, OrderStatus.COMPLETION.name());
 
         given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(

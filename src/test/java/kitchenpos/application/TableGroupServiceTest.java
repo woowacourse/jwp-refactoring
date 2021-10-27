@@ -202,10 +202,7 @@ class TableGroupServiceTest {
         orderTable1.setTableGroupId(1L);
 
         // meal 상태의 주문을 포함한다.
-        Order order = new Order();
-        order.setOrderStatus(OrderStatus.MEAL.name());
-        order.setOrderTableId(1L);
-
+        Order order = new Order(1L, OrderStatus.MEAL.name());
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         orderTable2.setTableGroupId(1L);

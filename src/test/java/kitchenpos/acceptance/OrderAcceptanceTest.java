@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.dto.OrderResponse;
+import kitchenpos.ui.dto.OrderStatusResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -24,9 +26,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         // given
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
 
         // orderTable 등록
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
@@ -85,15 +85,13 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        Order order = response.as(Order.class);
+        OrderStatusResponse orderStatusResponse = response.as(OrderStatusResponse.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        assertThat(orderStatusResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     public static long POST_DEFAULT_ORDER() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
 
         long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
 
@@ -110,7 +108,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
 
-        Order order = response.as(Order.class);
-        return order.getId();
+        OrderResponse orderResponse = response.as(OrderResponse.class);
+        return orderResponse.getId();
     }
 }

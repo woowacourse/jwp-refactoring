@@ -35,14 +35,9 @@ public class DomainDaoTest extends DaoTest {
     protected long SAVE_ORDER_RETURN_ID() {
         // given
         orderDao = new JdbcTemplateOrderDao(dataSource);
-        Order order = new Order();
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = new Order(1L, OrderStatus.COOKING.name(), LocalDateTime.now());
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
+        OrderLineItem orderLineItem = new OrderLineItem(1L, 1);
 
         order.setOrderLineItems(Collections.singletonList(orderLineItem));
 

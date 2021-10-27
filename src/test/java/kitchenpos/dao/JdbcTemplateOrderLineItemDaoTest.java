@@ -25,10 +25,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest {
     void save() {
         // given
         long orderId = SAVE_ORDER_RETURN_ID();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-        orderLineItem.setOrderId(orderId);
+        OrderLineItem orderLineItem = new OrderLineItem(orderId, 1L, 1);
 
         // when
         OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
@@ -86,10 +83,7 @@ class JdbcTemplateOrderLineItemDaoTest extends DomainDaoTest {
     }
 
     private long SAVE_ORDER_LINE_ITEM(long orderId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-        orderLineItem.setOrderId(orderId);
+        OrderLineItem orderLineItem = new OrderLineItem(orderId, 1L, 1);
 
         // when
         OrderLineItem savedOrderLineItem = orderLineItemDao.save(orderLineItem);
