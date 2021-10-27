@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -17,46 +16,32 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("주문 서비스 테스트")
 @IntegrationTest
 class OrderServiceTest {
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private TableService tableService;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderDao orderDao; // todo: DAO를 살릴 것인가 말것인가...?
 
     @Autowired
     private OrderService orderService;
 
     private OrderTable orderTable;
-    private OrderTable invalidOrderTable;
     private OrderLineItem validOrderLineItem;
-    private OrderLineItem invalidOrderLineItem;
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(0);
-        this.orderTable = orderTableDao.save(orderTable);
-
-        invalidOrderTable = new OrderTable();
-        invalidOrderTable.setId(100L);
-        invalidOrderTable.setEmpty(false);
-        invalidOrderTable.setNumberOfGuests(0);
-
+        orderTable = registerOrderTable(false);
 
         validOrderLineItem = new OrderLineItem();
         validOrderLineItem.setMenuId(1L);
         validOrderLineItem.setQuantity(1);
-
-        invalidOrderLineItem = new OrderLineItem();
-        invalidOrderLineItem.setMenuId(100L);
-        invalidOrderLineItem.setQuantity(1);
     }
 
     @Nested
@@ -67,7 +52,7 @@ class OrderServiceTest {
         @Test
         void create() {
             //when
-            Order actual = testOrder();
+            Order actual = registerOrder();
 
             //then
             assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
@@ -82,7 +67,7 @@ class OrderServiceTest {
             List<OrderLineItem> emptyOrderLineItems = Collections.emptyList();
 
             //when //then
-            assertThatThrownBy(() -> testOrder(orderTable.getId(), emptyOrderLineItems))
+            assertThatThrownBy(() -> registerOrder(orderTable.getId(), emptyOrderLineItems))
                     .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -90,10 +75,13 @@ class OrderServiceTest {
         @Test
         void createWhenContainsNotExistOrderLineItem() {
             //given
+            OrderLineItem invalidOrderLineItem = new OrderLineItem();
+            invalidOrderLineItem.setMenuId(100L);
+            invalidOrderLineItem.setQuantity(1);
             List<OrderLineItem> invalidOrderLineItems = Collections.singletonList(invalidOrderLineItem);
 
             //when //then
-            assertThatThrownBy(() -> testOrder(orderTable.getId(), invalidOrderLineItems))
+            assertThatThrownBy(() -> registerOrder(orderTable.getId(), invalidOrderLineItems))
                     .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -101,10 +89,13 @@ class OrderServiceTest {
         @Test
         void createWhenNotExistOrderTable() {
             //given
-            Long invalidOrderTableId = invalidOrderTable.getId();
+            OrderTable notRegisteredOrderTable = new OrderTable();
+            notRegisteredOrderTable.setId(100L);
+
+            Long invalidOrderTableId = notRegisteredOrderTable.getId();
 
             //when //then
-            assertThatThrownBy(() -> testOrder(invalidOrderTableId))
+            assertThatThrownBy(() -> registerOrder(invalidOrderTableId))
                     .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -117,7 +108,7 @@ class OrderServiceTest {
         @Test
         void changeOrderStatus() {
             //given
-            Order savedOrder = testOrder();
+            Order savedOrder = registerOrder();
 
             Order changedOrder = new Order();
             changedOrder.setOrderStatus(OrderStatus.MEAL.name());
@@ -136,7 +127,7 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusWhenAlreadyOrderStatusIsCOMPLETION() {
             //given
-            Order completionOrder = testOrder();
+            Order completionOrder = registerOrder();
             completionOrder.setOrderStatus(OrderStatus.COMPLETION.name());
             orderDao.save(completionOrder);
 
@@ -153,7 +144,7 @@ class OrderServiceTest {
     @Test
     void list() {
         //given
-        Order order = testOrder();
+        Order order = registerOrder();
 
         //when
         List<Order> actual = orderService.list();
@@ -163,7 +154,7 @@ class OrderServiceTest {
         assertThat(actual).usingRecursiveFieldByFieldElementComparator().containsExactlyInAnyOrder(order);
     }
 
-    private Order testOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    private Order registerOrder(Long orderTableId, List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
@@ -173,11 +164,24 @@ class OrderServiceTest {
         return orderService.create(order);
     }
 
-    private Order testOrder(Long invalidOrderTableId) {
-        return testOrder(invalidOrderTableId, Collections.singletonList(validOrderLineItem));
+    private Order registerOrder(Long invalidOrderTableId) {
+        return registerOrder(invalidOrderTableId, Collections.singletonList(validOrderLineItem));
     }
 
-    private Order testOrder() {
-        return testOrder(orderTable.getId());
+    private Order registerOrder() {
+        return registerOrder(orderTable.getId());
+    }
+
+    public OrderTable registerOrderTable(Long id, boolean empty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setEmpty(empty);
+        orderTable.setNumberOfGuests(0);
+
+        return tableService.create(orderTable);
+    }
+
+    private OrderTable registerOrderTable(boolean empty) {
+        return registerOrderTable(null, empty);
     }
 }

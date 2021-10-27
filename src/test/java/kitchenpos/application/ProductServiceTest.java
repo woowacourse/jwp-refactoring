@@ -13,6 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+@DisplayName("상품 서비스 테스트")
 @IntegrationTest
 class ProductServiceTest {
 
@@ -30,7 +31,7 @@ class ProductServiceTest {
         @Test
         void create() {
             //given
-            Product savedProduct = testProduct();
+            Product savedProduct = registerProduct();
 
             //then
             assertThat(savedProduct).isNotNull();
@@ -45,7 +46,7 @@ class ProductServiceTest {
             BigDecimal invalidPrice = BigDecimal.valueOf(-1_000);
 
             // when //then
-            assertThatThrownBy(() -> testProduct(invalidPrice))
+            assertThatThrownBy(() -> registerProduct(invalidPrice))
                     .isExactlyInstanceOf(IllegalArgumentException.class);
 
         }
@@ -61,7 +62,7 @@ class ProductServiceTest {
         assertThat(actual).hasSize(6);
     }
 
-    private Product testProduct(BigDecimal price) {
+    private Product registerProduct(BigDecimal price) {
         Product product = new Product();
         product.setName(PRODUCT_NAME);
         product.setPrice(price);
@@ -69,7 +70,7 @@ class ProductServiceTest {
         return productService.create(product);
     }
 
-    private Product testProduct() {
-        return testProduct(PRODUCT_PRICE);
+    private Product registerProduct() {
+        return registerProduct(PRODUCT_PRICE);
     }
 }
