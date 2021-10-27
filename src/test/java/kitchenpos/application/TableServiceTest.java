@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -28,7 +28,7 @@ class TableServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -39,7 +39,7 @@ class TableServiceTest {
         // given
         OrderTable table = new OrderTable(0, true);
         OrderTable expected = new OrderTable(1L, null, 0, true);
-        given(orderTableDao.save(table)).willReturn(expected);
+        given(orderTableRepository.save(table)).willReturn(expected);
 
         // when
         OrderTable actual = tableService.create(table);
@@ -56,7 +56,7 @@ class TableServiceTest {
         OrderTable table1 = new OrderTable(1L, 1L, 5, true);
         OrderTable table2 = new OrderTable(2L, null, 0, true);
         List<OrderTable> expected = Arrays.asList(table1, table2);
-        given(orderTableDao.findAll()).willReturn(expected);
+        given(orderTableRepository.findAll()).willReturn(expected);
 
         // when
         List<OrderTable> actual = tableService.list();
@@ -74,10 +74,10 @@ class TableServiceTest {
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
         OrderTable table = new OrderTable(1L, null, 0, true);
         OrderTable expected = new OrderTable(1L, null, 0, false);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.of(table));
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(tableId,
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
-        given(orderTableDao.save(table)).willReturn(table);
+        given(orderTableRepository.save(table)).willReturn(table);
 
         // when
         OrderTable actual = tableService.changeEmpty(tableId, changeEmptyTable);
@@ -93,7 +93,7 @@ class TableServiceTest {
         // given
         Long tableId = 1L;
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.empty());
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -108,7 +108,7 @@ class TableServiceTest {
         Long tableId = 1L;
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
         OrderTable table = new OrderTable(1L, 1L, 0, true);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.of(table));
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -123,7 +123,7 @@ class TableServiceTest {
         Long tableId = 1L;
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
         OrderTable table = new OrderTable(1L, null, 0, true);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.of(table));
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(tableId,
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
 
@@ -141,8 +141,8 @@ class TableServiceTest {
         OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
         OrderTable table = new OrderTable(1L, null, 0, false);
         OrderTable expected = new OrderTable(1L, null, 5, false);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.of(table));
-        given(orderTableDao.save(table)).willReturn(table);
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
+        given(orderTableRepository.save(table)).willReturn(table);
 
         // when
         OrderTable actual = tableService.changeNumberOfGuests(tableId, changeNumberTable);
@@ -171,7 +171,7 @@ class TableServiceTest {
         // given
         Long tableId = 1L;
         OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.empty());
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -186,7 +186,7 @@ class TableServiceTest {
         Long tableId = 1L;
         OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
         OrderTable table = new OrderTable(1L, null, 0, true);
-        given(orderTableDao.findById(tableId)).willReturn(Optional.of(table));
+        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,7 +30,7 @@ class TableGroupServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
     private TableGroupDao tableGroupDao;
@@ -54,7 +54,7 @@ class TableGroupServiceTest {
         OrderTable expected_table2 = new OrderTable(2L, savedGroup.getId(), 5, false);
         TableGroup expected = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(expected_table1, expected_table2));
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
         given(tableGroupDao.save(group)).willReturn(savedGroup);
 
         // when
@@ -92,7 +92,7 @@ class TableGroupServiceTest {
 
         OrderTable table1 = new OrderTable(1L, null, 3, true);
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(table1));
+        given(orderTableRepository.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(table1));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -111,7 +111,7 @@ class TableGroupServiceTest {
         OrderTable table1 = new OrderTable(1L, null, 3, false);
         OrderTable table2 = new OrderTable(2L, null, 5, true);
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -130,7 +130,7 @@ class TableGroupServiceTest {
         OrderTable table1 = new OrderTable(1L, null, 3, true);
         OrderTable table2 = new OrderTable(2L, 1L, 5, true);
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -145,7 +145,7 @@ class TableGroupServiceTest {
         Long groupId = 1L;
         OrderTable table1 = new OrderTable(1L, groupId, 3, true);
         OrderTable table2 = new OrderTable(2L, groupId, 5, true);
-        given(orderTableDao.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 Arrays.asList(table1.getId(), table2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
@@ -167,7 +167,7 @@ class TableGroupServiceTest {
         Long groupId = 1L;
         OrderTable table1 = new OrderTable(1L, groupId, 3, true);
         OrderTable table2 = new OrderTable(2L, groupId, 5, true);
-        given(orderTableDao.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 Arrays.asList(table1.getId(), table2.getId()),
                 Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
