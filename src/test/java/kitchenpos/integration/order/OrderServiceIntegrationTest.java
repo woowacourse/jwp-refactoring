@@ -25,6 +25,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
     @Autowired
     private OrderDao orderDao;
 
+    private OrderTable savedOrderTable;
     private OrderLineItem orderLineItem;
 
     @BeforeEach
@@ -33,7 +34,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         orderTable.setNumberOfGuests(2);
         orderTable.setEmpty(false);
 
-        tableService.create(orderTable);
+        savedOrderTable = tableService.create(orderTable);
 
         orderLineItem = new OrderLineItem();
         orderLineItem.setOrderId(1L);
@@ -50,7 +51,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         void create_Valid_Success() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -70,7 +71,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         void create_NonExistingMenuInOrderLineItems_Fail() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.emptyList());
@@ -87,11 +88,11 @@ class OrderServiceIntegrationTest extends IntegrationTest {
             // given
             OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setOrderId(1L);
-            orderLineItem.setMenuId(8L);
+            orderLineItem.setMenuId(100L);
             orderLineItem.setQuantity(1);
 
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -140,15 +141,14 @@ class OrderServiceIntegrationTest extends IntegrationTest {
     class Read {
 
         /**
-         * 여기서 테스트 격리가 잘 안됨
-         * Update 클래스의 메소드들이 영향을 끼치는 상황
+         * 여기서 테스트 격리가 잘 안됨 Update 클래스의 메소드들이 영향을 끼치는 상황
          */
         @DisplayName("주문의 목록을 조회할 수 있다.")
         @Test
         void read_Valid_Success() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -172,7 +172,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         void changeOrderStatus_Valid_Success() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -195,7 +195,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         void changeOrderStatus_NonExistingOrder_Fail() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -217,7 +217,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
         void changeOrderStatus_InvalidOrderStatus_Fail() {
             // given
             Order order = new Order();
-            order.setOrderTableId(9L);
+            order.setOrderTableId(savedOrderTable.getId());
             order.setOrderStatus(COOKING.name());
             order.setOrderedTime(LocalDateTime.now());
             order.setOrderLineItems(Collections.singletonList(orderLineItem));
@@ -228,7 +228,7 @@ class OrderServiceIntegrationTest extends IntegrationTest {
                 .orElseThrow(IllegalArgumentException::new);
             findOrder1.setOrderStatus(COMPLETION.name());
 
-            orderService.changeOrderStatus(1L, findOrder1);
+            orderService.changeOrderStatus(savedOrder.getId(), findOrder1);
 
             Order findOrder2 = orderDao.findById(savedOrder.getId())
                 .orElseThrow(IllegalArgumentException::new);
