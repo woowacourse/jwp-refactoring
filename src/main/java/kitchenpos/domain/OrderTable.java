@@ -19,7 +19,7 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-    private int numberOfGuests;
+    private int numberOfGuests = 0;
     private boolean empty;
 
     public OrderTable() {
@@ -47,15 +47,18 @@ public class OrderTable {
         return id;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void ungroupTableGroup() {
+        this.tableGroup = null;
+        this.empty = false;
+        this.numberOfGuests = 0;
+        tableGroup.removeOrderTable(this);
     }
 
     public int getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void assignNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -63,7 +66,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
 

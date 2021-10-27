@@ -43,4 +43,8 @@ public class TableGroup {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
+
+    public void removeOrderTable(OrderTable orderTable) {
+        orderTables.remove(orderTable);
+    }
 }

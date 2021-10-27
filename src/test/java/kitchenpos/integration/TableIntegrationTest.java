@@ -52,7 +52,7 @@ public class TableIntegrationTest extends IntegrationTest {
             .findFirst()
             .orElseThrow(() -> new Exception());
 
-        createdOrderTable.setEmpty(expectedEmpty);
+        createdOrderTable.changeEmpty(expectedEmpty);
 
         webTestClient.put()
             .uri(uriBuilder -> uriBuilder
@@ -87,7 +87,7 @@ public class TableIntegrationTest extends IntegrationTest {
             .findFirst()
             .orElseThrow(() -> new Exception());
 
-        createdOrderTable.setNumberOfGuests(expectedNumberOfGuests);
+        createdOrderTable.assignNumberOfGuests(expectedNumberOfGuests);
 
         webTestClient.put()
             .uri(uriBuilder -> uriBuilder

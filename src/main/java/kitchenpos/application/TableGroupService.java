@@ -36,15 +36,19 @@ public class TableGroupService {
         List<Long> orderTableIds = parseOrderTableIds(orderTables);
         List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        validateOrderTableSize(orderTables, savedOrderTables);
 
         validateOrderTablesEmpty(savedOrderTables);
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         return new TableGroupCreateResponseDto(savedTableGroup);
+    }
+
+    private void validateOrderTableSize(List<OrderTable> orderTables, List<OrderTable> savedOrderTables) {
+        if (orderTables.size() != savedOrderTables.size()) {
+            throw new IllegalArgumentException();
+        }
     }
 
     private void validateOrderTablesEmpty(List<OrderTable> savedOrderTables) {
@@ -79,8 +83,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
+            orderTable.ungroupTableGroup();
             orderTableDao.save(orderTable);
         }
     }
