@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.CreateProductRequest;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,9 +28,9 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품을 등록할 수 있다.")
     void create() throws Exception {
         // given
-        Product 강정치킨 = new Product("강정치킨", 17000);
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
         Product expected = new Product(1L, "강정치킨", 17000);
-        given(productService.create(any(Product.class))).willReturn(expected);
+        given(productService.create(any(CreateProductRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -45,8 +47,8 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품 가격은 비어있을 수 없다.")
     void createWrongPriceNull() throws Exception {
         // given
-        Product 강정치킨 = new Product("강정치킨");
-        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(Product.class));
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", null);
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(CreateProductRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -63,8 +65,8 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품 가격이 음수일 수 없다.")
     void createWrongPriceUnderZero() throws Exception {
         // given
-        Product 강정치킨 = new Product("강정치킨", -1);
-        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(Product.class));
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(-1));
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(CreateProductRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")

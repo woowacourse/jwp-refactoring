@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
@@ -9,12 +10,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.request.CreateProductRequest;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("ProductService 단위 테스트")
@@ -31,9 +34,9 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다.")
     void create() {
         // given
-        Product 강정치킨 = new Product("강정치킨", 17000);
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
         Product expected = new Product(1L, "강정치킨", 17000);
-        given(productDao.save(강정치킨)).willReturn(expected);
+        given(productDao.save(any(Product.class))).willReturn(expected);
 
         // when
         Product actual = productService.create(강정치킨);
@@ -46,7 +49,7 @@ class ProductServiceTest {
     @DisplayName("상품 가격은 null이 아니어야한다.")
     void createWrongPriceNull() {
         // given
-        Product 강정치킨 = new Product("강정치킨");
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", null);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -58,8 +61,8 @@ class ProductServiceTest {
     @DisplayName("상품 가격이 음수일 수 없다.")
     void createWrongPriceUnderZero() {
         // given
-        int price = -1;
-        Product 강정치킨 = new Product("강정치킨", price);
+        BigDecimal price = BigDecimal.valueOf(-1);
+        CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", price);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
