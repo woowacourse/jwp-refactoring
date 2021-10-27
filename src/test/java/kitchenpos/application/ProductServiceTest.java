@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dtos.ProductRequest;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -39,7 +39,7 @@ class ProductServiceTest {
                 .id(1L)
                 .build();
 
-        when(productDao.save(any())).thenReturn(savedProduct);
+        when(productRepository.save(any())).thenReturn(savedProduct);
 
         final Product actual = productService.create(request);
         assertAll(
@@ -72,7 +72,7 @@ class ProductServiceTest {
         final Product product2 = new Product();
         final List<Product> products = Arrays.asList(product1, product2);
 
-        when(productDao.findAll()).thenReturn(products);
+        when(productRepository.findAll()).thenReturn(products);
 
         final List<Product> actual = productService.list();
         assertThat(actual).containsExactly(product1, product2);
