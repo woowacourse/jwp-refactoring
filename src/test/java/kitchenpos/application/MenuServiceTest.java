@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dtos.MenuProductRequest;
+import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -44,6 +46,7 @@ class MenuServiceTest {
     private MenuService menuService;
 
     private Menu menu;
+    private MenuRequest menuRequest;
     private Menu savedMenu1;
     private Menu savedMenu2;
     private Product savedProduct1;
@@ -58,6 +61,7 @@ class MenuServiceTest {
                 .price(BigDecimal.valueOf(16000))
                 .menuGroupId(1L)
                 .build();
+        menuRequest = new MenuRequest("분짜와 스프링롤", 16000L, 1L, Collections.emptyList());
         savedMenu1 = Menu.builder()
                 .of(menu)
                 .id(1L)
@@ -93,27 +97,29 @@ class MenuServiceTest {
     @DisplayName("메뉴를 등록할 수 있다")
     @Test
     void create() {
+        final List<MenuProductRequest> menuProductsRequest = Arrays.asList(
+                new MenuProductRequest(menuProduct1),
+                new MenuProductRequest(menuProduct2)
+        );
+        final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
+                menuRequest.getMenuGroupId(), menuProductsRequest);
+
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
         when(menuGroupDao.existsById(any())).thenReturn(true);
         when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productDao.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
-        when(menuDao.save(menu)).thenReturn(savedMenu1);
-        when(menuProductDao.save(menuProduct1)).thenReturn(menuProduct1);
-        when(menuProductDao.save(menuProduct2)).thenReturn(menuProduct2);
+        when(menuDao.save(any())).thenReturn(savedMenu1);
 
-        final Menu actual = menuService.create(menu);
+        final Menu actual = menuService.create(request);
         assertThat(actual).isEqualTo(savedMenu1);
     }
 
     @DisplayName("메뉴의 가격은 0 원 이상이어야 한다")
     @Test
     void createExceptionPriceUnderZero() {
-        final Menu newMenu = Menu.builder()
-                .of(menu)
-                .price(BigDecimal.valueOf(-1))
-                .build();
+        final MenuRequest request = new MenuRequest("분짜와 스프링롤", -1L, 1L, Collections.emptyList());
 
-        assertThatThrownBy(() -> menuService.create(newMenu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴가 속한 메뉴 그룹이 존재해야 한다")
@@ -121,13 +127,13 @@ class MenuServiceTest {
     void createExceptionMenuGroup() {
         when(menuGroupDao.existsById(1L)).thenReturn(false);
 
-        assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴 상품 목록에서 (상품의 가격 * 메뉴 상품의 갯수) 의 합과 메뉴 그룹의 가격을 비교했을 때, 메뉴 그룹의 가격이 더 크면 안 된다")
     @Test
     void createExceptionSum() {
-        Product weirdSavedProduct = Product.builder()
+        final Product weirdSavedProduct = Product.builder()
                 .name("스프링롤")
                 .price(BigDecimal.valueOf(2000))
                 .id(3L)
@@ -136,16 +142,16 @@ class MenuServiceTest {
                 .of(menuProduct2)
                 .productId(weirdSavedProduct.getId())
                 .build();
-        final Menu newMenu = Menu.builder()
-                .of(menu)
-                .menuProducts(Arrays.asList(menuProduct1, weirdMenuProduct))
-                .build();
+        final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(weirdMenuProduct.getProductId(),
+                weirdMenuProduct.getQuantity());
+        final MenuRequest menuRequest = new MenuRequest("메뉴이름", 16000L, 1L,
+                Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
 
         when(menuGroupDao.existsById(1L)).thenReturn(true);
         when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productDao.findById(weirdSavedProduct.getId())).thenReturn(Optional.of(weirdSavedProduct));
 
-        assertThatThrownBy(() -> menuService.create(newMenu)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("메뉴의 목록을 조회할 수 있다")

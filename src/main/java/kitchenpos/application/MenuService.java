@@ -1,5 +1,11 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -9,11 +15,6 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -35,14 +36,21 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
-        final BigDecimal price = menu.getPrice();
+    public Menu create(final MenuRequest request) {
+        final List<MenuProduct> menuProductsRequest = request.getMenuProducts().stream()
+                .map(menuProduct -> MenuProduct.builder()
+                        .productId(menuProduct.getProductId())
+                        .quantity(menuProduct.getQuantity())
+                        .build())
+                .collect(Collectors.toList());
+        final Menu menu = Menu.builder()
+                .name(request.getName())
+                .price(BigDecimal.valueOf(request.getPrice()))
+                .menuGroupId(request.getMenuGroupId())
+                .menuProducts(menuProductsRequest)
+                .build();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!menuGroupDao.existsById(menu.getMenuGroupId())) {
+        if (!menuGroupDao.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
 
@@ -55,7 +63,7 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
 
-        if (price.compareTo(sum) > 0) {
+        if (menu.getPrice().compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
 
