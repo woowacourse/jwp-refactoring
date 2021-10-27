@@ -1,4 +1,4 @@
-package kitchenpos.dao.tobe;
+package kitchenpos.dao;
 
 import java.util.List;
 import java.util.Optional;

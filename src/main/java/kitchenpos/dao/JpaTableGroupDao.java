@@ -1,8 +1,7 @@
-package kitchenpos.dao.tobe;
+package kitchenpos.dao;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.JpaTableGroupRepository;
 import org.springframework.context.annotation.Primary;
