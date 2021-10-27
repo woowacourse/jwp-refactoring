@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dtos.MenuGroupRequest;
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -36,7 +36,7 @@ class MenuGroupServiceTest {
                 .build();
         new MenuGroup();
 
-        when(menuGroupDao.save(any())).thenReturn(savedMenuGroup);
+        when(menuGroupRepository.save(any())).thenReturn(savedMenuGroup);
 
         final MenuGroup actual = menuGroupService.create(request);
         assertThat(actual.getId()).isEqualTo(1L);
@@ -53,7 +53,7 @@ class MenuGroupServiceTest {
         final MenuGroup menuGroup2 = new MenuGroup();
         final List<MenuGroup> menuGroups = Arrays.asList(menuGroup1, menuGroup2);
 
-        when(menuGroupDao.findAll()).thenReturn(menuGroups);
+        when(menuGroupRepository.findAll()).thenReturn(menuGroups);
 
         final List<MenuGroup> actual = menuGroupService.list();
         assertThat(actual).containsExactly(menuGroup1, menuGroup2);
