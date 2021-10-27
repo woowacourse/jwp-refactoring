@@ -8,7 +8,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -16,7 +15,6 @@ import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.generator.MenuGenerator;
 import kitchenpos.generator.ProductGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -43,13 +41,11 @@ public class MenuServiceTest extends ServiceTest {
         Menu menuToCreate = MenuGenerator.newInstance("후라이드+후라이드", 19000, 1L, Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2)));
         when(menuDao.save(menuToCreate)).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
-            menu.setId(2L);
-            return menu;
+            return MenuGenerator.newInstance(2L, menu.getName(), menu.getPrice().intValue(), menu.getMenuGroupId(), menu.getMenuProducts());
         });
         when(menuProductDao.save(any(MenuProduct.class))).thenAnswer(invocation -> {
             MenuProduct menuProduct = invocation.getArgument(0);
-            menuProduct.setSeq(3L);
-            return menuProduct;
+            return MenuGenerator.newMenuProduct(3L, menuProduct.getMenuId(), menuProduct.getProductId(), (int) menuProduct.getQuantity());
         });
         when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
         when(productDao.findById(1L)).thenAnswer(invocation -> Optional.of(ProductGenerator.newInstance(1L, "후라이드", 16000)));
@@ -75,7 +71,7 @@ public class MenuServiceTest extends ServiceTest {
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
-    
+
     @DisplayName("메뉴 가격이 메뉴 상품 가격 합보다 크면 예외 처리")
     @Test
     void createWhenPriceOfMenuIsGreaterThanTotalPriceOfMenuProduct() {

@@ -8,7 +8,12 @@ import kitchenpos.domain.MenuProduct;
 public class MenuGenerator {
 
     public static Menu newInstance(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return newInstance(null, name, price, menuGroupId, menuProducts);
+    }
+
+    public static Menu newInstance(Long id, String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
+        menu.setId(id);
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));
         menu.setMenuGroupId(menuGroupId);
@@ -16,6 +21,8 @@ public class MenuGenerator {
         menu.setMenuProducts(menuProducts);
         return menu;
     }
+
+
 
     public static MenuProduct newMenuProduct(Long productId, int quantity) {
         return newMenuProduct(null, productId, quantity);
