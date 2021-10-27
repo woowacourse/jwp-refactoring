@@ -1,7 +1,7 @@
 package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -16,7 +16,6 @@ public class MenuFixtures {
     private static final String MENU_GROUP_NAME = "기본 메뉴 그룹";
     private static final long PRICE = 10000;
     private static final Long MENU_GROUP_ID = 1L;
-    private static final List<MenuProduct> MENU_PRODUCTS = Collections.singletonList(createMenuProduct());
 
     public static Menu createMenu(
         String name,
@@ -33,7 +32,17 @@ public class MenuFixtures {
     }
 
     public static Menu createMenu() {
-        return createMenu(MENU_NAME, PRICE, MENU_GROUP_ID, MENU_PRODUCTS);
+        ArrayList<MenuProduct> menuProducts = new ArrayList<>();
+        menuProducts.add(createMenuProduct());
+        menuProducts.add(createMenuProduct());
+
+        return createMenu(MENU_NAME, PRICE, MENU_GROUP_ID, menuProducts);
+    }
+
+    public static Menu createMenu(int price) {
+        Menu menu = createMenu();
+        menu.setPrice(new BigDecimal(price));
+        return menu;
     }
 
     public static MenuProduct createMenuProduct(
