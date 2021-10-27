@@ -9,6 +9,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderCreateResponseDto;
+import kitchenpos.dto.OrderUpdateRequestDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -49,13 +50,14 @@ public class OrderIntegrationTest extends IntegrationTest {
     public void changeOrderStatus() {
         Order order = fixtureMaker.createOrder();
         order.changeOrderStatus(OrderStatus.COOKING.name());
+        OrderUpdateRequestDto orderUpdateRequestDto = new OrderUpdateRequestDto(order);
         webTestClient.put()
             .uri(uriBuilder -> uriBuilder
                 .path("/api/orders/{orderId}/order-status")
-                .build(order.getId())
+                .build(orderUpdateRequestDto.getId())
             )
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(order), Order.class)
+            .body(Mono.just(orderUpdateRequestDto), OrderUpdateRequestDto.class)
             .exchange()
             .expectStatus().isOk()
             .expectBody(TableGroup.class);

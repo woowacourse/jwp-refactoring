@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,26 +54,22 @@ public class OrderService {
 
         final List<Long> menuIds = order.getMenuIds();
 
-        validateExistingLineItems(orderLineItems, menuIds);
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTableId(orderTable.getId());
-        order.changeOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        shouldExistingLineItems(orderLineItems, menuIds);
+        shouldNotOrderTableEmpty(order);
 
         Order savedOrder = orderDao.save(order);
         return new OrderCreateResponseDto(savedOrder);
     }
 
-    private void validateExistingLineItems(List<OrderLineItem> orderLineItems, List<Long> menuIds) {
+    private void shouldNotOrderTableEmpty(Order order) {
+        OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+            .orElseThrow(IllegalArgumentException::new);
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void shouldExistingLineItems(List<OrderLineItem> orderLineItems, List<Long> menuIds) {
         if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }

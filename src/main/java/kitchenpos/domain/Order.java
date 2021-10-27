@@ -19,7 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private String orderStatus = OrderStatus.COOKING.name();
     private LocalDateTime orderedTime;
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
