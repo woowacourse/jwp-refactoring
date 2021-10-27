@@ -19,7 +19,6 @@ public class OrderLineItem {
     private Order order;
     private Long menuId;
     private long quantity;
-
     public OrderLineItem() {
     }
 
@@ -36,6 +35,11 @@ public class OrderLineItem {
         this.quantity = quantity;
     }
 
+    public OrderLineItem(Long menuId, long quantity) {
+        this.menuId = menuId;
+        this.quantity = quantity;
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -48,7 +52,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public void setOrder(Order order) {
+    public void defineOrder(Order order) {
+        order.addOrderLineItem(this);
         this.order = order;
     }
 

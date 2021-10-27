@@ -23,12 +23,6 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity, Menu menu) {
-        this.productId = productId;
-        this.quantity = quantity;
-        this.menu = menu;
-    }
-
     public MenuProduct(Long seq, Long productId, long quantity, Menu menu) {
         this.seq = seq;
         this.productId = productId;
@@ -36,9 +30,12 @@ public class MenuProduct {
         this.menu = menu;
     }
 
+    public MenuProduct(Long productId, long quantity, Menu menu) {
+        this(null, productId, quantity, menu);
+    }
+
     public MenuProduct(Long productId, long quantity) {
-        this.productId = productId;
-        this.quantity = quantity;
+        this(productId, quantity, null);
     }
 
     public Long getSeq() {

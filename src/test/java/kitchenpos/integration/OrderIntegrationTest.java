@@ -7,6 +7,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderCreateRequestDto;
 import kitchenpos.dto.OrderCreateResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,10 +33,11 @@ public class OrderIntegrationTest extends IntegrationTest {
         OrderTable orderTable = fixtureMaker.createOrderTableForNotEmpty();
         List<OrderLineItem> orderLineItems = fixtureMaker.createOrderLineItems();
         Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        OrderCreateRequestDto orderCreateRequestDto = new OrderCreateRequestDto(order);
         webTestClient.post().uri("/api/orders")
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .body(Mono.just(order), Order.class)
+            .body(Mono.just(orderCreateRequestDto), OrderCreateRequestDto.class)
             .exchange()
             .expectStatus().isCreated()
             .expectHeader().contentType(MediaType.APPLICATION_JSON)
@@ -46,7 +48,7 @@ public class OrderIntegrationTest extends IntegrationTest {
     @Test
     public void changeOrderStatus() {
         Order order = fixtureMaker.createOrder();
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.changeOrderStatus(OrderStatus.COOKING.name());
         webTestClient.put()
             .uri(uriBuilder -> uriBuilder
                 .path("/api/orders/{orderId}/order-status")
