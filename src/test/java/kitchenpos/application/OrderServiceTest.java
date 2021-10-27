@@ -101,7 +101,7 @@ class OrderServiceTest {
         void create_EmptyOrderTable_ExceptionThrown() {
             // given
             Order order = newOrder();
-            order.setOrderTableId(emptyOrNotOrderTable(true).getId());
+            order.setOrderTableId(saveAndReturnOrderTable(true).getId());
 
             // when
             // then
@@ -179,7 +179,7 @@ class OrderServiceTest {
 
     private Order newOrder() {
         Order order = new Order();
-        order.setOrderTableId(emptyOrNotOrderTable(false).getId());
+        order.setOrderTableId(saveAndReturnOrderTable(false).getId());
         order.setOrderLineItems(Collections.singletonList(newOrderLineItem()));
 
         return order;
@@ -193,7 +193,7 @@ class OrderServiceTest {
         return orderLineItem;
     }
 
-    private OrderTable emptyOrNotOrderTable(boolean empty) {
+    private OrderTable saveAndReturnOrderTable(boolean empty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setEmpty(empty);
 
