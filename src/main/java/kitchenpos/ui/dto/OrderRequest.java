@@ -15,7 +15,7 @@ public class OrderRequest {
     @NotEmpty
     private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest() {}
+    private OrderRequest() {}
 
     private OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;

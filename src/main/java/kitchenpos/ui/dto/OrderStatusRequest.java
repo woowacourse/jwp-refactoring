@@ -5,7 +5,7 @@ import kitchenpos.domain.Order;
 public class OrderStatusRequest {
     private String orderStatus;
 
-    public OrderStatusRequest() {
+    private OrderStatusRequest() {
     }
 
     private OrderStatusRequest(String orderStatus) {

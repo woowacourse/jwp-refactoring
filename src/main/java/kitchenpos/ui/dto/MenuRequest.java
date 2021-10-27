@@ -17,7 +17,7 @@ public class MenuRequest {
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
-    public MenuRequest() {
+    private MenuRequest() {
     }
 
     public String getName() {

@@ -5,7 +5,7 @@ import kitchenpos.domain.Order;
 public class OrderStatusResponse {
     private String orderStatus;
 
-    public OrderStatusResponse() {
+    private OrderStatusResponse() {
     }
 
     private OrderStatusResponse(String orderStatus) {

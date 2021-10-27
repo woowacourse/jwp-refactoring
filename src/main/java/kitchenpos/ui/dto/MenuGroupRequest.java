@@ -8,6 +8,8 @@ public class MenuGroupRequest {
     @NotNull
     private String name;
 
+    private MenuGroupRequest() {}
+
     public String getName() {
         return name;
     }
