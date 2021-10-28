@@ -85,7 +85,6 @@ public class MenuServiceTest extends ServiceTest {
         given(menuProductDao.findAllByMenuId(any()))
             .willReturn(Collections.singletonList(MenuFixtures.createMenuProduct()));
 
-
         List<Menu> menus = assertDoesNotThrow(() -> menuService.list());
         menus.stream()
             .map(Menu::getMenuProducts)

@@ -20,7 +20,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-public class TableServiceTest extends ServiceTest{
+public class TableServiceTest extends ServiceTest {
 
     @Mock
     private OrderDao orderDao;
