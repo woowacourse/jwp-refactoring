@@ -108,11 +108,24 @@ public class TestFixtures {
     }
 
     private static OrderTable createOrderTable(Long id, Long tableGroupId) {
-        return OrderTable.builder().
-                id(id)
+        return OrderTable.builder()
+                .id(id)
                 .tableGroupId(tableGroupId)
                 .numberOfGuests(1)
                 .empty(false)
                 .build();
+    }
+
+    public static OrderTable createOrderTable() {
+        return OrderTable.builder()
+                .id(1L)
+                .tableGroupId(1L)
+                .numberOfGuests(2)
+                .empty(false)
+                .build();
+    }
+
+    public static OrderTableRequest createOrderTableRequest(OrderTable orderTable) {
+        return new OrderTableRequest(orderTable.getId());
     }
 }
