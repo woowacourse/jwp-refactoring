@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.application.vo.ProductQuantity;
+import kitchenpos.domain.ProductQuantity;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
