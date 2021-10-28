@@ -10,8 +10,8 @@
   
 - [x] Menu
   - [x] 새로운 Menu를 생성해 DB에 저장한다.
-    - [x] Menu를 생성해 DB에 저장한다.
     - [x] Product들을 DB에서 조회한다.
+    - [x] Menu를 생성해 DB에 저장한다.
     - [x] MenuProduct들을 생성하고 Menu, Product를 할당해 DB에 저장한다.
     - [x] Menu를 MenuResponse로 변환해서 반환한다.
       - [x] MenuResponse는 MenuProductResponse들을 갖고있다.
