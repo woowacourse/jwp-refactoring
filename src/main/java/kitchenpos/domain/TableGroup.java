@@ -65,21 +65,13 @@ public class TableGroup {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
-    }
-
     public void updateOrderTablesTableGroup() {
         this.orderTables.forEach(orderTable -> {
-            orderTable.changeEmpty(false);
+            orderTable.updateEmpty(false);
             orderTable.updateTableGroup(this);
         });
     }

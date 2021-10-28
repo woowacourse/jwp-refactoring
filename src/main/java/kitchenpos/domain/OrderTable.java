@@ -34,7 +34,7 @@ public class OrderTable {
     @Column(nullable = false)
     private boolean empty;
 
-    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "order_table")
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "orderTable")
     private final List<Order> orders = new ArrayList<>();
 
     public OrderTable() {
@@ -63,14 +63,14 @@ public class OrderTable {
         if (Objects.nonNull(tableGroup)) {
             throw new KitchenException("테이블이 속한 단체가 존재합니다.");
         }
-        if(!hasCookingOrMeal()) {
+        if(hasCookingOrMeal()) {
             throw new KitchenException("식사가 완료되지 않은 테이블입니다.");
         }
         this.empty = empty;
     }
 
     public boolean hasCookingOrMeal() {
-        return orders.stream().allMatch(Order::hasCookingOrMeal);
+        return orders.stream().anyMatch(Order::hasCookingOrMeal);
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -93,10 +93,6 @@ public class OrderTable {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
     }
@@ -107,10 +103,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {

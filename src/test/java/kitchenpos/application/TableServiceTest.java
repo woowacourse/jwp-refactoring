@@ -62,7 +62,7 @@ class TableServiceTest extends ServiceTest {
     @DisplayName("테이블의 손님 수를 변경한다.")
     @Test
     void changeNumberOfGuests() {
-        TableCreateRequest orderTable = new TableCreateRequest(0, true);
+        TableCreateRequest orderTable = new TableCreateRequest(1, false);
         TableResponse savedOrderTable = tableService.create(orderTable);
 
         TableGuestChangeRequest request = new TableGuestChangeRequest(3);

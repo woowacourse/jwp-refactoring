@@ -1,5 +1,6 @@
 package kitchenpos.dto.response;
 
+import java.util.Objects;
 import kitchenpos.domain.OrderTable;
 
 public class TableResponse {
@@ -16,6 +17,10 @@ public class TableResponse {
     }
 
     public static TableResponse of(OrderTable orderTable) {
+        if(Objects.isNull(orderTable.getTableGroup())) {
+            return new TableResponse(orderTable.getId(), null, orderTable.getNumberOfGuests(),
+                orderTable.isEmpty());
+        }
         return new TableResponse(orderTable.getId(), orderTable.getTableGroup().getId(),
             orderTable.getNumberOfGuests(), orderTable.isEmpty());
     }

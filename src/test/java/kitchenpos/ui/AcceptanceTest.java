@@ -4,31 +4,17 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Sql("classpath:truncate.sql")
 @ActiveProfiles("test")
-@Transactional
+@Sql(scripts = "classpath:truncate.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class AcceptanceTest {
 
     @LocalServerPort
@@ -52,45 +38,5 @@ public class AcceptanceTest {
             request = request.body(requestBody);
         }
         return testMethod.extractedResponse(request, url);
-    }
-
-    protected TableGroup tableGroup() {
-        OrderTable orderTable1 = OrderTable.EMPTY_TABLE;
-        OrderTable orderTable2 = OrderTable.EMPTY_TABLE;
-        makeResponse("/api/tables", TestMethod.POST, orderTable1)
-            .as(OrderTable.class);
-        makeResponse("/api/tables", TestMethod.POST, orderTable2)
-            .as(OrderTable.class);
-
-        List<OrderTable> orderTables = makeResponse("/api/tables", TestMethod.GET).jsonPath()
-            .getList(".", OrderTable.class);
-
-        return new TableGroup(orderTables);
-    }
-
-    protected Order order() {
-        Menu menu = makeResponse("/api/menus", TestMethod.POST, menu())
-            .as(Menu.class);
-        OrderLineItem orderLineItem = new OrderLineItem(menu, 2);
-        List<OrderLineItem> items = new ArrayList<>();
-        items.add(orderLineItem);
-        OrderTable orderTable = new OrderTable(2, false);
-        OrderTable createdOrderTable = makeResponse("/api/tables", TestMethod.POST, orderTable)
-            .as(OrderTable.class);
-
-        return new Order(createdOrderTable, items);
-    }
-
-    protected Menu menu() {
-        MenuGroup menuGroup = new MenuGroup("menuGroup");
-        MenuGroup createdMenuGroup = makeResponse("/api/menu-groups", TestMethod.POST, menuGroup)
-            .as(MenuGroup.class);
-        Product product = new Product("product", BigDecimal.valueOf(1000));
-        Product createdProduct = makeResponse("/api/products", TestMethod.POST, product)
-            .as(Product.class);
-        MenuProduct menuProduct = new MenuProduct(createdProduct, 10);
-        List<MenuProduct> menuProducts = Collections.singletonList(menuProduct);
-
-        return new Menu("menu", BigDecimal.valueOf(5000), createdMenuGroup, menuProducts);
     }
 }

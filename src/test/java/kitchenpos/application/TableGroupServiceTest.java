@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -28,9 +29,10 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 생성한다.")
     @Test
     void create() {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
+        OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
         TableGroupCreateRequest request = new TableGroupCreateRequest(
-            Collections.singletonList(orderTable.getId()));
+            Arrays.asList(orderTable1.getId(), orderTable2.getId()));
 
         TableGroupResponse response = tableGroupService.create(request);
 
@@ -43,7 +45,7 @@ class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 해제한다.")
     @Test
     void ungroup() {
-        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(1, false));
+        OrderTable orderTable1 = orderTableRepository.save(new OrderTable(0, true));
         OrderTable orderTable2 = orderTableRepository.save(new OrderTable(0, true));
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(orderTable1.getId(), orderTable2.getId()));
@@ -52,7 +54,7 @@ class TableGroupServiceTest extends ServiceTest {
         tableGroupService.ungroup(response.getId());
 
         boolean actual = orderTableRepository.findAll().stream()
-            .noneMatch(table -> response.getId().equals(table.getTableGroup().getId()));
+            .allMatch(table -> Objects.isNull(table.getTableGroup()));
         assertThat(actual).isTrue();
     }
 }
