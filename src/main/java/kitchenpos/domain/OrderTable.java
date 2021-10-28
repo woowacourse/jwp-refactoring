@@ -60,6 +60,9 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
+        if (Objects.equals(this.empty, empty)) {
+            throw new IllegalArgumentException("변경하려는 테이블 비어있음의 유무가 이미 일치합니다.");
+        }
         this.empty = empty;
     }
 
@@ -71,6 +74,9 @@ public class OrderTable {
     }
 
     public void addTableGroup(TableGroup tableGroup) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("tableGroup이 이미 등록되어있습니다.");
+        }
         this.tableGroup = tableGroup;
     }
 

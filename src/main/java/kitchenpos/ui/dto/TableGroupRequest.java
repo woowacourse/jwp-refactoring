@@ -2,11 +2,15 @@ package kitchenpos.ui.dto;
 
 import kitchenpos.domain.TableGroup;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TableGroupRequest {
+    @NotEmpty(message = "주문 테이블이 비어있습니다.")
+    @Size(min = 2, message = "주문 테이블이 1테이블 이하입니다.")
     private List<OrderTableIdRequest> orderTables;
 
     private TableGroupRequest() {
