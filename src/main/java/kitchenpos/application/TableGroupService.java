@@ -82,6 +82,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
+            // setEmpty(true)가 맞는 거 같음
             orderTable.setEmpty(false);
             orderTableDao.save(orderTable);
         }
