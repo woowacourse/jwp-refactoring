@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.domain.productquantity.Quantity;
+import kitchenpos.domain.Quantity;
+import kitchenpos.exception.InvalidArgumentException;
 
 @Embeddable
 public class Price {
@@ -26,7 +27,7 @@ public class Price {
 
     private void validate(Integer value) {
         if (Objects.isNull(value) || value < 0) {
-            throw new IllegalArgumentException("Price는 null이거나 0보다 작을 수 없습니다.");
+            throw new InvalidArgumentException("Price는 null이거나 0보다 작을 수 없습니다.");
         }
     }
 
@@ -34,18 +35,18 @@ public class Price {
         return value.intValue();
     }
 
-    public Integer getValueAsInteger() {
-        return value.intValue();
+    public Price multiply(Quantity quantity) {
+        final BigDecimal quantityValue = BigDecimal.valueOf(quantity.getValue());
+        final BigDecimal result = value.multiply(quantityValue);
+        return new Price(result);
     }
 
     public boolean isGreaterOrEqualThan(Price otherPrice) {
         return value.compareTo(otherPrice.value) >= 0;
     }
 
-    public Price multiply(Quantity quantity) {
-        final BigDecimal quantityValue = BigDecimal.valueOf(quantity.getValue());
-        final BigDecimal result = value.multiply(quantityValue);
-        return new Price(result);
+    public Integer getValueAsInteger() {
+        return value.intValue();
     }
 
     @Override

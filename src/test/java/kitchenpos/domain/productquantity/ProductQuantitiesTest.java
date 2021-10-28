@@ -3,7 +3,10 @@ package kitchenpos.domain.productquantity;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import kitchenpos.domain.Product;
+import kitchenpos.domain.Quantity;
 import kitchenpos.domain.price.Price;
+import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,7 +42,7 @@ class ProductQuantitiesTest {
         // then
         assertThatThrownBy(() ->
             productQuantities.validateTotalPriceIsGreaterOrEqualThan(new Price(priceValue + 1))
-        ).isInstanceOf(IllegalArgumentException.class);
+        ).isInstanceOf(InvalidArgumentException.class);
     }
 
     private ProductQuantities 상품이_한_개만_존재하는_ProductQuantities를_생성한다(int priceValue) {

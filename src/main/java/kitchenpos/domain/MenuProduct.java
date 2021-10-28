@@ -4,12 +4,12 @@ import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.productquantity.Product;
-import kitchenpos.domain.productquantity.Quantity;
 
 @Entity
 public class MenuProduct {
@@ -18,9 +18,11 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_menu_product_menu"))
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Menu menu;
 
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_menu_product_product"))
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Product product;
 

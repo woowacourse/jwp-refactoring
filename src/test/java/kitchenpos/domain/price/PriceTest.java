@@ -6,7 +6,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.productquantity.Quantity;
+import kitchenpos.domain.Quantity;
+import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,7 +37,7 @@ class PriceTest {
         // when
         // then
         assertThatThrownBy(() -> new Price(value))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidArgumentException.class);
     }
 
     static Stream<Arguments> isGreaterOrEqualThan() {

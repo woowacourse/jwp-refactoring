@@ -7,14 +7,14 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.price.Price;
-import kitchenpos.domain.productquantity.Product;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.productquantity.ProductQuantities;
 import kitchenpos.domain.productquantity.ProductQuantity;
-import kitchenpos.domain.productquantity.Quantity;
-import kitchenpos.dto.menu.request.MenuProductRequest;
-import kitchenpos.dto.menu.request.MenuRequest;
-import kitchenpos.dto.menu.response.MenuProductResponse;
-import kitchenpos.dto.menu.response.MenuResponse;
+import kitchenpos.domain.Quantity;
+import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.dto.menu.MenuRequest;
+import kitchenpos.dto.menu.MenuProductResponse;
+import kitchenpos.dto.menu.MenuResponse;
 import kitchenpos.exception.InvalidRequestParamException;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
@@ -48,8 +48,8 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         final ProductQuantities productQuantities = getProductQuantities(menuRequest.getMenuProducts());
-        final Price menuPrice = createMenu(menuRequest.getPrice());
-        validatePrice(productQuantities, menuPrice);
+        final Price menuPrice = new Price(menuRequest.getPrice());
+        productQuantities.validateTotalPriceIsGreaterOrEqualThan(menuPrice);
 
         final MenuGroup foundMenuGroup = findMenuGroupById(menuRequest.getMenuGroupId());
         final Menu menu = convertRequestToEntity(menuRequest, foundMenuGroup);
@@ -69,22 +69,6 @@ public class MenuService {
             productQuantities.add(new ProductQuantity(foundProduct, quantity));
         }
         return productQuantities;
-    }
-
-    private Price createMenu(Integer priceValue) {
-        try {
-            return new Price(priceValue);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException("Menu의 price는 0보다 작거나 null일 수 없습니다.");
-        }
-    }
-
-    private void validatePrice(ProductQuantities productQuantities, Price menuPrice) {
-        try {
-            productQuantities.validateTotalPriceIsGreaterOrEqualThan(menuPrice);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException("Menu의 price는 MenuProduct들의 price 합보다 클 수 없습니다.");
-        }
     }
 
     private MenuGroup findMenuGroupById(Long id) {

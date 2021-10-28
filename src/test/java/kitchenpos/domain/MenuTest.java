@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.config.CustomParameterizedTest;
+import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class MenuTest {
         // when
         // then
         assertThatThrownBy(() -> new Menu("양념치킨메뉴", price, menuGroup))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidArgumentException.class);
     }
 
     @DisplayName("생성 - 실패 - price가 null일 때")
@@ -49,6 +50,6 @@ class MenuTest {
         // when
         // then
         assertThatThrownBy(() -> new Menu("양념치킨메뉴", null, menuGroup))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(InvalidArgumentException.class);
     }
 }

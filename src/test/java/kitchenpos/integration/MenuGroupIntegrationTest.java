@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.menugroup.request.MenuGroupRequest;
+import kitchenpos.dto.menugroup.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;

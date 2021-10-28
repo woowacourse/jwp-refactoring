@@ -5,10 +5,13 @@ import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.exception.InvalidArgumentException;
 
 @Entity
 public class Menu {
@@ -24,6 +27,7 @@ public class Menu {
     private BigDecimal price;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
     private MenuGroup menuGroup;
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
@@ -47,7 +51,7 @@ public class Menu {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Menu의 Price는 null이거나 0보다 작을 수 없습니다.");
+            throw new InvalidArgumentException("Menu의 Price는 null이거나 0보다 작을 수 없습니다.");
         }
     }
 

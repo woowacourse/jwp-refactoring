@@ -14,9 +14,9 @@ import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.productquantity.Product;
-import kitchenpos.dto.menu.request.MenuProductRequest;
-import kitchenpos.dto.menu.request.MenuRequest;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.dto.menu.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.NullSource;
@@ -92,7 +92,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
         Repository가_비어있다(menuRepository);
         Repository가_비어있다(menuProductRepository);
     }
@@ -116,7 +116,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
         Repository가_비어있다(menuRepository);
         Repository가_비어있다(menuProductRepository);
     }
@@ -137,7 +137,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
         Repository가_비어있다(menuRepository);
         Repository가_비어있다(menuProductRepository);
     }
@@ -158,7 +158,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
         Repository가_비어있다(menuRepository);
         Repository가_비어있다(menuProductRepository);
     }
@@ -180,7 +180,7 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, menuRequest);
         Repository가_비어있다(menuRepository);
         Repository가_비어있다(menuProductRepository);
     }

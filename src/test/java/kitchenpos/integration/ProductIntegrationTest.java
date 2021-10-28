@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
-import kitchenpos.domain.productquantity.Product;
-import kitchenpos.dto.product.request.ProductRequest;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.product.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -56,7 +56,7 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
         Repository가_비어있다(productRepository);
     }
 
@@ -68,7 +68,7 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // when
         // then
-        API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
+        POST_API를_요청하면_BadRequest를_응답한다(API_PATH, productRequest);
         Repository가_비어있다(productRepository);
     }
 
