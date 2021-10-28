@@ -38,7 +38,7 @@ class JdbcTemplateTableGroupDaoTest extends JdbcTemplateDaoTest {
             TableGroup savedTableGroup = jdbcTemplateTableGroupDao.save(tableGroup);
 
             // then
-            assertThat(savedTableGroup.getId()).isNotNull();
+            assertThat(jdbcTemplateTableGroupDao.findById(savedTableGroup.getId())).isPresent();
             assertThat(savedTableGroup.getCreatedDate()).isEqualTo(tableGroup.getCreatedDate());
         }
 

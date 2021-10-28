@@ -37,7 +37,7 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateDaoTest {
             Product savedProduct = jdbcTemplateProductDao.save(product);
 
             // then
-            assertThat(savedProduct.getId()).isNotNull();
+            assertThat(jdbcTemplateProductDao.findById(savedProduct.getId())).isPresent();
             assertThat(savedProduct.getName()).isEqualTo(product.getName());
             assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isEqualTo(0);
         }
