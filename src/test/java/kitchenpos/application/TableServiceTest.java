@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,10 +25,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class TableServiceTest {
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private TableService tableService;
@@ -53,7 +53,7 @@ public class TableServiceTest {
     @DisplayName("주문 테이블을 등록할 수 있다")
     @Test
     void create() {
-        when(orderTableDao.save(orderTable)).thenReturn(orderTable1);
+        when(orderTableRepository.save(orderTable)).thenReturn(orderTable1);
 
         final OrderTable actual = tableService.create(orderTable);
         assertThat(actual).isEqualTo(orderTable1);
@@ -62,7 +62,7 @@ public class TableServiceTest {
     @DisplayName("주문 테이블 목록을 조회할 수 있다")
     @Test
     void list() {
-        when(orderTableDao.findAll()).thenReturn(orderTables);
+        when(orderTableRepository.findAll()).thenReturn(orderTables);
 
         assertThat(tableService.list()).isEqualTo(orderTables);
     }
@@ -70,9 +70,9 @@ public class TableServiceTest {
     @DisplayName("주문 테이블을 비울 수 있다")
     @Test
     void changeEmpty() {
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable1));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(false);
-        when(orderTableDao.save(orderTable1)).thenReturn(orderTable1);
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
+        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(false);
+        when(orderTableRepository.save(orderTable1)).thenReturn(orderTable1);
 
         assertThatCode(() -> tableService.changeEmpty(anyLong(), orderTable1)).doesNotThrowAnyException();
     }
@@ -80,7 +80,7 @@ public class TableServiceTest {
     @DisplayName("등록되어 있는 주문 테이블이 존재하지 않으면 예외가 발생한다")
     @Test
     void clearExceptionExists() {
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeEmpty(anyLong(), orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -95,7 +95,7 @@ public class TableServiceTest {
                 .tableGroupId(1L)
                 .build();
 
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(savedOrderTable));
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, savedOrderTable))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -104,8 +104,8 @@ public class TableServiceTest {
     @DisplayName("주문 테이블의 주문이 있고, 주문 상태가 `COOKING`, `MEAL`인 것이 있다면 예외가 발생한다")
     @Test
     void clearExceptionExistsAndStatus() {
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable1));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).thenReturn(true);
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
+        when(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -119,7 +119,7 @@ public class TableServiceTest {
                 .numberOfGuests(0)
                 .build();
 
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(orderTable1));
 
         assertThatCode(() -> tableService.changeNumberOfGuests(anyLong(), newOrderTable)).doesNotThrowAnyException();
     }
@@ -139,7 +139,7 @@ public class TableServiceTest {
     @DisplayName("등록되어 있는 주문 테이블이 존재해야 한다")
     @Test
     void changeNumberOfGuestsExceptionExists() {
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.empty());
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(anyLong(), orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -153,7 +153,7 @@ public class TableServiceTest {
                 .empty(true)
                 .build();
 
-        when(orderTableDao.findById(anyLong())).thenReturn(Optional.of(savedOrderTable));
+        when(orderTableRepository.findById(anyLong())).thenReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(anyLong(), orderTable1))
                 .isInstanceOf(IllegalArgumentException.class);
