@@ -3,7 +3,8 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.repository.TableGroupDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

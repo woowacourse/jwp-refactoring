@@ -3,8 +3,10 @@ package kitchenpos.dao;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.table.repository.OrderTableDao;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.repository.TableGroupDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
