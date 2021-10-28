@@ -53,7 +53,7 @@ class OrderServiceTest extends ServiceTest {
     void 주문을_생성한다() {
         given(menuDao.countByIdIn(any()))
             .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(any())).willReturn(Optional.of(TableFixtures.createOrderTable()));
+        given(orderTableDao.findById(any())).willReturn(Optional.of(TableFixtures.createOrderTable(false)));
         given(orderDao.save(any())).willReturn(order);
         given(orderLineItemDao.save(any())).willReturn(OrderFixtures.createOrderLineItem());
 
@@ -90,7 +90,7 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 생성_시_주문_테이블이_빈_테이블이면_예외를_반환한다() {
-        OrderTable emptyTable = TableFixtures.createOrderTable(1L, 1L, 10, true);
+        OrderTable emptyTable = TableFixtures.createOrderTable(true);
         given(menuDao.countByIdIn(any()))
             .willReturn(Long.valueOf(order.getOrderLineItems().size()));
         given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
