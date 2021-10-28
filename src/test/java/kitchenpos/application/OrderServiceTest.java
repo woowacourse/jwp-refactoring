@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -30,16 +30,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -88,11 +88,11 @@ class OrderServiceTest {
                 .of(order)
                 .id(1L)
                 .build();
-        when(menuDao.countByIdIn(menuIds)).thenReturn(2L);
-        when(orderTableDao.findById(order.getOrderTableId())).thenReturn(Optional.of(orderTable));
-        when(orderDao.save(order)).thenReturn(savedOrder);
-        when(orderLineItemDao.save(orderLineItem1)).thenReturn(savedOrderLineItem1);
-        when(orderLineItemDao.save(orderLineItem2)).thenReturn(savedOrderLineItem2);
+        when(menuRepository.countByIdIn(menuIds)).thenReturn(2L);
+        when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.of(orderTable));
+        when(orderRepository.save(order)).thenReturn(savedOrder);
+        when(orderLineItemRepository.save(orderLineItem1)).thenReturn(savedOrderLineItem1);
+        when(orderLineItemRepository.save(orderLineItem2)).thenReturn(savedOrderLineItem2);
 
         final Order actual = orderService.create(order);
 
@@ -117,7 +117,7 @@ class OrderServiceTest {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        when(menuDao.countByIdIn(menuIds)).thenReturn(1L);
+        when(menuRepository.countByIdIn(menuIds)).thenReturn(1L);
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -129,8 +129,8 @@ class OrderServiceTest {
                 .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toList());
 
-        when(menuDao.countByIdIn(menuIds)).thenReturn(2L);
-        when(orderTableDao.findById(order.getOrderTableId())).thenReturn(Optional.empty());
+        when(menuRepository.countByIdIn(menuIds)).thenReturn(2L);
+        when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -146,8 +146,8 @@ class OrderServiceTest {
                 .empty(true)
                 .build();
 
-        when(menuDao.countByIdIn(menuIds)).thenReturn(2L);
-        when(orderTableDao.findById(order.getOrderTableId())).thenReturn(Optional.of(savedOrderTable));
+        when(menuRepository.countByIdIn(menuIds)).thenReturn(2L);
+        when(orderTableRepository.findById(order.getOrderTableId())).thenReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -165,9 +165,9 @@ class OrderServiceTest {
                 .build();
         final List<Order> orders = Arrays.asList(order1, order2);
 
-        when(orderDao.findAll()).thenReturn(orders);
-        when(orderLineItemDao.findAllByOrderId(order1.getId())).thenReturn(Collections.emptyList());
-        when(orderLineItemDao.findAllByOrderId(order2.getId())).thenReturn(Collections.emptyList());
+        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderLineItemRepository.findAllByOrderId(order1.getId())).thenReturn(Collections.emptyList());
+        when(orderLineItemRepository.findAllByOrderId(order2.getId())).thenReturn(Collections.emptyList());
 
         final List<Order> actual = orderService.list();
         assertThat(actual).isEqualTo(orders);
@@ -181,8 +181,8 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.MEAL.name())
                 .build();
 
-        when(orderDao.findById(any())).thenReturn(Optional.of(savedOrder));
-        when(orderLineItemDao.findAllByOrderId(any())).thenReturn(Collections.emptyList());
+        when(orderRepository.findById(any())).thenReturn(Optional.of(savedOrder));
+        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
 
         final Order actual = orderService.changeOrderStatus(any(), order);
         assertThat(actual).isEqualTo(savedOrder);
@@ -191,7 +191,7 @@ class OrderServiceTest {
     @DisplayName("기존에 저장되어 있는 주문이 있어야 한다")
     @Test
     void changeStatusExceptionOrderExists() {
-        when(orderDao.findById(any())).thenReturn(Optional.empty());
+        when(orderRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(any(), order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -205,7 +205,7 @@ class OrderServiceTest {
                 .orderStatus(OrderStatus.COMPLETION.name())
                 .build();
 
-        when(orderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+        when(orderRepository.findById(any())).thenReturn(Optional.of(savedOrder));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(any(), order))
                 .isInstanceOf(IllegalArgumentException.class);

@@ -1,16 +1,32 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderLineItem {
-    private Long seq;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "menu_id")
     private Long menuId;
-    private long quantity;
+    @Column(nullable = false)
+    private Long quantity;
 
     public OrderLineItem() {
     }
 
     private OrderLineItem(Builder builder) {
-        this.seq = builder.seq;
+        this.id = builder.id;
         this.orderId = builder.orderId;
         this.menuId = builder.menuId;
         this.quantity = builder.quantity;
@@ -21,7 +37,7 @@ public class OrderLineItem {
     }
 
     public static class Builder {
-        private Long seq;
+        private Long id;
         private Long orderId;
         private Long menuId;
         private long quantity;
@@ -30,7 +46,7 @@ public class OrderLineItem {
         }
 
         public Builder of(OrderLineItem orderLineItem) {
-            this.seq = orderLineItem.seq;
+            this.id = orderLineItem.id;
             this.orderId = orderLineItem.orderId;
             this.menuId = orderLineItem.menuId;
             this.quantity = orderLineItem.quantity;
@@ -38,7 +54,7 @@ public class OrderLineItem {
         }
 
         public Builder seq(Long seq) {
-            this.seq = seq;
+            this.id = seq;
             return this;
         }
 
@@ -63,8 +79,8 @@ public class OrderLineItem {
 
     }
 
-    public Long getSeq() {
-        return seq;
+    public Long getId() {
+        return id;
     }
 
     public Long getOrderId() {
