@@ -23,9 +23,9 @@
     - [ ] Order
         - [ ] OrderTable 
         - [x] OrderLineItem
-    - [] OrderLineItem
+    - [x] OrderLineItem
         - [x] Order 
-        - [ ] Menu
+        - [x] Menu
     - [x] OrderTable
         - [x] TableGroup
     - [x] TableGroup
@@ -34,12 +34,13 @@
 - [ ] DB 마이그레이션
 
 - [ ] 비즈니스 로직 도메인으로 옮기기
-    * TDD로 진행
-    - [x] Product
-    - [ ] Menu
-    - [ ] OrderTable
-    - [ ] Order
-    - [ ] TableGroup
+      * TDD로 진행
+      - [x] Product
+      - [ ] Menu
+      - [ ] OrderTable
+      - [ ] Order
+      - [ ] TableGroup
 
 - [ ] controller - service 사이 dto 사용  
 - [ ] 도메인에서 setter 제거
+- [ ] 테스트 Fixture 사용하여 중복 줄이기

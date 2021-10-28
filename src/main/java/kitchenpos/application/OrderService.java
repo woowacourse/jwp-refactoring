@@ -39,11 +39,11 @@ public class OrderService {
             throw new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다.");
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                                                 .map(OrderLineItem::getMenuId)
-                                                 .collect(Collectors.toList());
+        final List<Menu> menus = orderLineItems.stream()
+                                               .map(OrderLineItem::getMenu)
+                                               .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItems.size() != menuRepository.countByIdIn(menus)) {
             throw new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다.");
         }
 

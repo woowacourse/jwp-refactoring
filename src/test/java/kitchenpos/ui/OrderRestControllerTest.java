@@ -12,10 +12,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 
+import static kitchenpos.fixture.MenuFixture.양념_단품;
+import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -38,15 +41,15 @@ class OrderRestControllerTest extends ControllerTest {
     void setUp() {
         super.setUp();
         // given
-        후라이드치킨_2마리 = new OrderLineItem(1L, 2);
-        양념치킨_1마리 = new OrderLineItem(2L, 1);
+        후라이드치킨_2마리 = new OrderLineItem(후라이드_단품, 2);
+        양념치킨_1마리 = new OrderLineItem(양념_단품, 1);
 
         Order 주문1 = new Order(1L);
         Order 주문2 = new Order(2L);
 
-        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 1L, 2);
-        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 2L, 1);
-        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 2L, 1);
+        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 후라이드_단품, 2);
+        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 양념_단품, 1);
+        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 양념_단품, 1);
     }
 
     @Test
@@ -91,7 +94,7 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 목록에 포함된 메뉴들은 모두 등록된 메뉴여야한다.")
     void createWrongOrderLineItemsNotRegister() throws Exception {
         // given
-        OrderLineItem 간장치킨_1마리 = new OrderLineItem(11L, 1);
+        OrderLineItem 간장치킨_1마리 = new OrderLineItem(new Menu(), 1);
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 간장치킨_1마리));
         willThrow(new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다."))
                 .given(orderService).create(any(Order.class));

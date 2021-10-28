@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static kitchenpos.fixture.MenuFixture.양념_단품;
+import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,15 +52,15 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         // given
-        후라이드치킨_2마리 = new OrderLineItem(1L, 2);
-        양념치킨_1마리 = new OrderLineItem(2L, 1);
+        후라이드치킨_2마리 = new OrderLineItem(후라이드_단품, 2);
+        양념치킨_1마리 = new OrderLineItem(양념_단품, 1);
 
         Order 주문1 = new Order(1L);
         Order 주문2 = new Order(2L);
 
-        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 1L, 2);
-        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 2L, 1);
-        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 2L, 1);
+        후라이드치킨_2마리_주문1 = new OrderLineItem(1L, 주문1, 후라이드_단품, 2);
+        양념치킨_1마리_주문1 = new OrderLineItem(2L, 주문1, 양념_단품, 1);
+        양념치킨_1마리_주문2 = new OrderLineItem(3L, 주문2, 양념_단품, 1);
     }
 
     @Test
@@ -67,7 +70,7 @@ class OrderServiceTest {
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         OrderTable table = new OrderTable(1L, null, 4, false);
         Order expected = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenu(), 양념치킨_1마리.getMenu()))).willReturn(2L);
         given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.of(table));
         given(orderRepository.save(order)).willReturn(expected);
         given(orderLineItemRepository.save(후라이드치킨_2마리)).willReturn(후라이드치킨_2마리_주문1);
@@ -98,7 +101,7 @@ class OrderServiceTest {
     void createWrongOrderLineItemsNotRegister() {
         // given
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(1L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenu(), 양념치킨_1마리.getMenu()))).willReturn(1L);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -111,7 +114,7 @@ class OrderServiceTest {
     void createWrongTableNotExist() {
         // given
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenu(), 양념치킨_1마리.getMenu()))).willReturn(2L);
         given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
         // when & then
@@ -126,7 +129,7 @@ class OrderServiceTest {
         // given
         OrderTable table = new OrderTable(1L, null, 4, true);
         Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenuId(), 양념치킨_1마리.getMenuId()))).willReturn(2L);
+        given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenu(), 양념치킨_1마리.getMenu()))).willReturn(2L);
         given(orderTableRepository.findById(order.getOrderTableId())).willReturn(Optional.of(table));
 
         // when & then
