@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
+import kitchenpos.application.dtos.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -109,16 +110,17 @@ class MenuServiceTest {
         );
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
-
-        menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
+        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
         when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
-        final Menu actual = menuService.create(request);
-        assertThat(actual).isEqualTo(savedMenu1);
+        final MenuResponse actual = menuService.create(request);
+
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new MenuResponse(menu, Arrays.asList(menuProduct1, menuProduct2)));
     }
 
     @DisplayName("메뉴의 가격은 0 원 이상이어야 한다")
@@ -146,16 +148,19 @@ class MenuServiceTest {
                 .id(3L)
                 .build();
         final MenuProduct weirdMenuProduct = MenuProduct.builder()
-                .of(menuProduct2)
+                .menuId(savedMenu1.getId())
                 .productId(weirdSavedProduct.getId())
+                .quantity(1L)
                 .build();
-        final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(weirdMenuProduct.getProductId(),
-                weirdMenuProduct.getQuantity());
+        final MenuProductRequest weirdMenuProductRequest = new MenuProductRequest(
+                weirdMenuProduct.getProductId(), weirdMenuProduct.getQuantity()
+        );
         final MenuRequest menuRequest = new MenuRequest("메뉴이름", 16000L, 1L,
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
-
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
+        when(menuRepository.save(any())).thenReturn(savedMenu1);
+        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
         when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
         when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
 
@@ -166,14 +171,15 @@ class MenuServiceTest {
     @Test
     void list() {
         final List<Menu> menus = Arrays.asList(savedMenu1, savedMenu2);
-        final List<MenuProduct> menuProducts1 = Arrays.asList(menuProduct1, menuProduct2);
-        final List<MenuProduct> menuProducts2 = Collections.singletonList(new MenuProduct());
-
         when(menuRepository.findAll()).thenReturn(menus);
-        when(menuProductRepository.findAllByMenuId(1L)).thenReturn(menuProducts1);
-        when(menuProductRepository.findAllByMenuId(2L)).thenReturn(menuProducts2);
+        when(menuProductRepository.findAllByMenuIdIn(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
+        final List<MenuResponse> expected = Arrays.asList(
+                new MenuResponse(savedMenu1, Collections.singletonList(menuProduct1)),
+                new MenuResponse(savedMenu2, Collections.singletonList(menuProduct2))
+        );
 
-        final List<Menu> actual = menuService.list();
-        assertThat(actual).isEqualTo(menus);
+        final List<MenuResponse> actual = menuService.list();
+
+        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 }

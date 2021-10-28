@@ -2,10 +2,12 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
 import kitchenpos.application.dtos.MenuRequest;
+import kitchenpos.application.dtos.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -37,14 +39,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest request) {
-        final List<MenuProduct> menuProductsRequest = request.getMenuProducts().stream()
-                .map(menuProduct -> MenuProduct.builder()
-                        .productId(menuProduct.getProductId())
-                        .quantity(menuProduct.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
-
+    public MenuResponse create(final MenuRequest request) {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -53,10 +48,10 @@ public class MenuService {
                 .name(request.getName())
                 .price(BigDecimal.valueOf(request.getPrice()))
                 .menuGroup(menuGroup)
-                .menuProducts(menuProductsRequest)
                 .build();
 
-        final List<MenuProduct> menuProducts = menu.getMenuProducts();
+        final Menu savedMenu = menuRepository.save(menu);
+        final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(savedMenu.getId());
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
@@ -69,26 +64,24 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final Long menuId = savedMenu.getId();
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-        savedMenu.setMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return new MenuResponse(menu, menuProducts);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
+        final List<Long> menuIds = menus.stream()
+                .map(Menu::getId)
+                .collect(Collectors.toList());
+        final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuIdIn(menuIds);
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+        final Map<Long, List<MenuProduct>> mapper = new HashMap<>();
+        for (MenuProduct menuProduct : menuProducts) {
+            mapper.put(menuProduct.getMenuId(), mapper.getOrDefault(menuProduct.getMenuId(), new ArrayList<>()));
+            mapper.get(menuProduct.getMenuId()).add(menuProduct);
         }
 
-        return menus;
+        return menus.stream()
+                .map(menu -> new MenuResponse(menu, mapper.get(menu.getId())))
+                .collect(Collectors.toList());
     }
 }

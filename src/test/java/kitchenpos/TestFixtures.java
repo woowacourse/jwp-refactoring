@@ -6,8 +6,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
+import kitchenpos.application.dtos.MenuResponse;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
@@ -54,7 +56,6 @@ public class TestFixtures {
                 .name("메뉴이름")
                 .price(BigDecimal.valueOf(1000))
                 .menuGroup(createMenuGroup())
-                .menuProducts(Collections.singletonList(createMenuProduct()))
                 .build();
     }
 
@@ -78,10 +79,11 @@ public class TestFixtures {
     }
 
     public static MenuRequest createMenuRequest(Menu menu) {
-        final List<MenuProductRequest> menuProductRequests = menu.getMenuProducts().stream()
+        final List<MenuProductRequest> menuProductRequests = Stream.of(createMenuProduct())
                 .map(MenuProductRequest::new)
                 .collect(Collectors.toList());
-        return new MenuRequest(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroup().getId(), menuProductRequests);
+        return new MenuRequest(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroup().getId(),
+                menuProductRequests);
     }
 
     public static OrderRequest createOrderRequest(Order order) {
@@ -127,5 +129,12 @@ public class TestFixtures {
 
     public static OrderTableRequest createOrderTableRequest(OrderTable orderTable) {
         return new OrderTableRequest(orderTable.getId());
+    }
+
+    public static MenuResponse createMenuResponse(Menu menu) {
+        return new MenuResponse(menu, Collections.singletonList(createMenuProduct()));
+    }
+    public static MenuResponse createMenuResponse() {
+        return new MenuResponse(createMenu(), Collections.singletonList(createMenuProduct()));
     }
 }
