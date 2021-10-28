@@ -1,8 +1,10 @@
 package kitchenpos.application.dtos;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import kitchenpos.domain.Menu;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,5 +24,14 @@ public class MenuRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public MenuRequest(Menu menu){
+        this.name = menu.getName();
+        this.price = menu.getPrice().longValue();
+        this.menuGroupId = menu.getMenuGroupId();
+        this.menuProducts = menu.getMenuProducts().stream()
+                .map(MenuProductRequest::new)
+                .collect(Collectors.toList());
     }
 }

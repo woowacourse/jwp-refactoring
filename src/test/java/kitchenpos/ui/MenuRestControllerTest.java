@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.MenuService;
+import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.domain.Menu;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,11 +37,8 @@ class MenuRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final Menu menuDto = new Menu();
-        final String content = objectMapper.writeValueAsString(menuDto);
-        final Menu menu = Menu.builder()
-                .id(1L)
-                .build();
+        final Menu menu = TestFixtures.createMenu();
+        final String content = objectMapper.writeValueAsString(new MenuRequest(menu));
         when(menuService.create(any())).thenReturn(menu);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menus")
@@ -50,13 +49,13 @@ class MenuRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menus/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/menus/" + menu.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        when(menuService.list()).thenReturn(Collections.singletonList(new Menu()));
+        when(menuService.list()).thenReturn(Collections.singletonList(TestFixtures.createMenu()));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/menus"))
                 .andReturn()
