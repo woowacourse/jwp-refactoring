@@ -13,15 +13,15 @@
     - [x] Order
     - [x] TableGroup
   
-- [ ] 도메인 필드 DB의존적이지 않게 변경(id값이 아닌 객체를 가지도록)
+- [x] 도메인 필드 DB의존적이지 않게 변경(id값이 아닌 객체를 가지도록)
     - [x] MenuProduct
         - [x] Menu
         - [x] Product
     - [x] Menu
         - [x] MenuGroup
         - [x] MenuProduct
-    - [ ] Order
-        - [ ] OrderTable 
+    - [x] Order
+        - [x] OrderTable 
         - [x] OrderLineItem
     - [x] OrderLineItem
         - [x] Order 

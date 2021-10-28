@@ -12,13 +12,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.*;
 
 import static kitchenpos.fixture.MenuFixture.양념_단품;
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;
+import static kitchenpos.fixture.OrderTableFixture.그룹1_손님4_테이블;
+import static kitchenpos.fixture.OrderTableFixture.단일_손님2_테이블;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -56,8 +55,8 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문을 등록할 수 있다. - 해당 주문은 조리중(COOKING) 상태가 된다.")
     void create() throws Exception {
         // given
-        Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        Order expected = new Order(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order order = new Order(단일_손님2_테이블, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderService.create(any(Order.class))).willReturn(expected);
 
         // when
@@ -75,7 +74,7 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 목록은 하나이상 있어야한다.")
     void createWrongOrderLineItemsEmpty() throws Exception {
         // given
-        Order order = new Order(1L, Collections.emptyList());
+        Order order = new Order(단일_손님2_테이블, Collections.emptyList());
         willThrow(new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다."))
                 .given(orderService).create(any(Order.class));
 
@@ -95,7 +94,7 @@ class OrderRestControllerTest extends ControllerTest {
     void createWrongOrderLineItemsNotRegister() throws Exception {
         // given
         OrderLineItem 간장치킨_1마리 = new OrderLineItem(new Menu(), 1);
-        Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 간장치킨_1마리));
+        Order order = new Order(단일_손님2_테이블, Arrays.asList(후라이드치킨_2마리, 간장치킨_1마리));
         willThrow(new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다."))
                 .given(orderService).create(any(Order.class));
 
@@ -113,7 +112,7 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("주문하려는 테이블은 존재해야 한다.")
     void createWrongTableNotExist() throws Exception {
-        Order order = new Order(10L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order order = new Order(new OrderTable(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         willThrow(new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."))
                 .given(orderService).create(any(Order.class));
 
@@ -131,7 +130,7 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("주문하려는 테이블은 비어있지 않아야한다.")
     void createWrongTableEmpty() throws Exception {
-        Order order = new Order(1L, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order order = new Order(단일_손님2_테이블, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         willThrow(new IllegalArgumentException("빈 테이블은 주문할 수 없습니다."))
                 .given(orderService).create(any(Order.class));
 
@@ -150,8 +149,8 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("전체 주문을 조회할 수 있다.")
     void list() throws Exception {
         // given
-        Order order1 = new Order(1L, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
-        Order order2 = new Order(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리_주문2));
+        Order order1 = new Order(1L, 단일_손님2_테이블, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order order2 = new Order(2L, 그룹1_손님4_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리_주문2));
         List<Order> expected = Arrays.asList(order1, order2);
         given(orderService.list()).willReturn(expected);
 
@@ -169,7 +168,7 @@ class OrderRestControllerTest extends ControllerTest {
     void changeOrderStatus() throws Exception {
         // given
         Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION.name(), null, null);
-        Order expected = new Order(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(expected);
 
         // when

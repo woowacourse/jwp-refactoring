@@ -13,6 +13,7 @@ public class OrderTable {
     private TableGroup tableGroup;
 
     private int numberOfGuests;
+
     private boolean empty;
 
     public OrderTable() {

@@ -49,14 +49,14 @@ public class OrderService {
 
         order.setId(null);
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
                                                           .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
         }
 
-        order.setOrderTableId(orderTable.getId());
+        order.setOrderTable(orderTable);
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
 
