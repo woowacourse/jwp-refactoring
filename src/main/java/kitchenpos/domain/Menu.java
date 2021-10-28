@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
 
 @Entity
@@ -19,8 +21,9 @@ public class Menu {
     private String name;
     @Column(nullable = false)
     private BigDecimal price;
-    @Column(nullable = false)
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
     @Transient
     private List<MenuProduct> menuProducts;
 
@@ -31,7 +34,7 @@ public class Menu {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
-        this.menuGroupId = builder.menuGroupId;
+        this.menuGroup = builder.menuGroup;
         this.menuProducts = builder.menuProducts;
     }
 
@@ -43,7 +46,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private Long menuGroupId;
+        private MenuGroup menuGroup;
         private List<MenuProduct> menuProducts = new ArrayList<>();
 
         private Builder() {
@@ -53,7 +56,7 @@ public class Menu {
             this.id = menu.id;
             this.name = menu.name;
             this.price = menu.price;
-            this.menuGroupId = menu.menuGroupId;
+            this.menuGroup = menu.menuGroup;
             this.menuProducts = menu.menuProducts;
             return this;
         }
@@ -73,8 +76,8 @@ public class Menu {
             return this;
         }
 
-        public Builder menuGroupId(Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public Builder menuGroup(MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 
@@ -101,8 +104,8 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

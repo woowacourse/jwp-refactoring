@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-@Repository
+//@Repository
 public class JdbcTemplateMenuDao implements MenuDao {
     private static final String TABLE_NAME = "menu";
     private static final String KEY_COLUMN_NAME = "id";
@@ -72,7 +72,7 @@ public class JdbcTemplateMenuDao implements MenuDao {
                 .id(resultSet.getLong("id"))
                 .name(resultSet.getString("name"))
                 .price(resultSet.getBigDecimal("price"))
-                .menuGroupId(resultSet.getLong("menu_group_id"))
+//                .menuGroup(resultSet.getLong("menu_group_id"))
                 .build();
     }
 }

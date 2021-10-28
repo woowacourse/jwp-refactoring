@@ -17,6 +17,7 @@ import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,13 +54,18 @@ class MenuServiceTest {
     private Product savedProduct2;
     private MenuProduct menuProduct1;
     private MenuProduct menuProduct2;
+    private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
+        menuGroup = MenuGroup.builder()
+                .id(1L)
+                .name("메뉴그룹1")
+                .build();
         menu = Menu.builder()
                 .name("분짜와 스프링롤")
                 .price(BigDecimal.valueOf(16000))
-                .menuGroupId(1L)
+                .menuGroup(menuGroup)
                 .build();
         menuRequest = new MenuRequest("분짜와 스프링롤", 16000L, 1L, Collections.emptyList());
         savedMenu1 = Menu.builder()
@@ -106,6 +112,7 @@ class MenuServiceTest {
 
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
+        when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
         when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
         when(menuRepository.save(any())).thenReturn(savedMenu1);
@@ -147,9 +154,10 @@ class MenuServiceTest {
         final MenuRequest menuRequest = new MenuRequest("메뉴이름", 16000L, 1L,
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
 
-        when(menuGroupRepository.existsById(1L)).thenReturn(true);
-        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-        when(productRepository.findById(weirdSavedProduct.getId())).thenReturn(Optional.of(weirdSavedProduct));
+        when(menuGroupRepository.existsById(any())).thenReturn(true);
+        when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
+        when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
+        when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }

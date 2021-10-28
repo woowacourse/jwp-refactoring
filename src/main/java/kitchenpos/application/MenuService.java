@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.dao.MenuGroupRepository;
@@ -10,6 +11,7 @@ import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -42,16 +44,17 @@ public class MenuService {
                         .quantity(menuProduct.getQuantity())
                         .build())
                 .collect(Collectors.toList());
-        final Menu menu = Menu.builder()
-                .name(request.getName())
-                .price(BigDecimal.valueOf(request.getPrice()))
-                .menuGroupId(request.getMenuGroupId())
-                .menuProducts(menuProductsRequest)
-                .build();
 
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId()).get();
+        final Menu menu = Menu.builder()
+                .name(request.getName())
+                .price(BigDecimal.valueOf(request.getPrice()))
+                .menuGroup(menuGroup)
+                .menuProducts(menuProductsRequest)
+                .build();
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 
