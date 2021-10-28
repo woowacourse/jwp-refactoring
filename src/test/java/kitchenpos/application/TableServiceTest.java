@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
@@ -12,10 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Optional;
 
-import static kitchenpos.utils.RequestFactory.CREATE_TABLE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -24,7 +21,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("테이블 서비스 테스트")
-class TableServiceTest implements ServiceTest {
+class TableServiceTest extends ServiceTest {
 
     @InjectMocks
     private TableService tableService;

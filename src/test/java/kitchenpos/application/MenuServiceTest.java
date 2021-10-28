@@ -14,8 +14,6 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
-import static kitchenpos.utils.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
-import static kitchenpos.utils.RequestFactory.CREATE_MENU_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -24,7 +22,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("메뉴 서비스 테스트")
-class MenuServiceTest implements ServiceTest {
+class MenuServiceTest extends ServiceTest {
 
     @InjectMocks
     private MenuService menuService;

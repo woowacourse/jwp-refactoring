@@ -3,11 +3,12 @@ package kitchenpos.ui.dto;
 import kitchenpos.domain.Product;
 
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 public class ProductRequest {
-    @NotNull(message = "상품명이 null입니다.")
+    @NotBlank(message = "상품명이 null이거나 비어있습니다.")
     private String name;
 
     @NotNull(message = "상품의 가격이 null입니다.")

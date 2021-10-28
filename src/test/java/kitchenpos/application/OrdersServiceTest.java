@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -21,9 +21,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
-import static kitchenpos.utils.RequestFactory.CREATE_ORDER_LINE_ITEM_REQUEST;
-import static kitchenpos.utils.RequestFactory.CREATE_ORDER_REQUEST;
-import static kitchenpos.utils.RequestFactory.CREATE_ORDER_STATUS_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -33,7 +30,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("주문 서비스 테스트")
-class OrdersServiceTest implements ServiceTest {
+class OrdersServiceTest extends ServiceTest {
 
     @InjectMocks
     private OrderService orderService;

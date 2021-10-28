@@ -2,10 +2,11 @@ package kitchenpos.ui.dto;
 
 import kitchenpos.domain.MenuGroup;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class MenuGroupRequest {
-    @NotNull
+    @NotBlank(message = "메뉴 그룹명이 비어있거나, null입니다.")
     private String name;
 
     private MenuGroupRequest() {
