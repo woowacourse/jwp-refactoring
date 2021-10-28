@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.application.vo.ProductQuantity;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,6 +34,10 @@ public class MenuProduct {
 
     public MenuProduct(Product product, Long quantity) {
         this(null, null, product, quantity);
+    }
+
+    public MenuProduct(Menu menu, ProductQuantity productQuantity) {
+        this(null, menu, productQuantity.getProduct(), productQuantity.getQuantity());
     }
 
     public MenuProduct(Menu menu, Product product, Long quantity) {

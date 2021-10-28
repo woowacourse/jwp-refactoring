@@ -1,20 +1,23 @@
 package kitchenpos.ui.dto;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class MenuRequest {
-    @NotBlank
+    @NotBlank(message = "메뉴명이 null이거나 비어있습니다.")
     private String name;
-    @NotBlank
+    @NotNull(message = "메뉴의 가격이 null입니다.")
+    @DecimalMin(value = "0", message = "메뉴의 가격이 음수입니다.")
     private BigDecimal price;
-    @NotBlank
+    @NotNull(message = "메뉴 생성 시 메뉴 그룹의 아이디가 null입니다.")
     private Long menuGroupId;
+    @NotEmpty(message = "메뉴 생성 시 메뉴 상품이 비어있습니다.")
     private List<MenuProductRequest> menuProducts;
 
     private MenuRequest() {

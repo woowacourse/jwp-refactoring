@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.FieldNotValidException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Menu {
@@ -27,9 +30,6 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
-//    @OneToMany()
-//    private List<MenuProduct> menuProducts;
-
     protected Menu() {
     }
 
@@ -42,20 +42,41 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+        validate(name, price, menuGroup);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
     }
 
+    private void validate(String name, BigDecimal price, MenuGroup menuGroup) {
+        validateName(name);
+        validatePrice(price);
+        validateMenuGroup(menuGroup);
+    }
+
+    private void validateName(String name) {
+        if (Objects.isNull(name)){
+            throw new FieldNotValidException(this.getClass().getSimpleName(), "name");
+        }
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new FieldNotValidException(this.getClass().getSimpleName(), "price");
+        }
+    }
+
+    private void validateMenuGroup(MenuGroup menuGroup) {
+        if (Objects.isNull(menuGroup)){
+            throw new FieldNotValidException(this.getClass().getSimpleName(), "menuGroup");
+        }
+    }
+
     public Menu addMenuGroup(MenuGroup menuGroup) {
         this.menuGroup = menuGroup;
         return this;
     }
-
-//    public void addMenuProducts(List<MenuProduct> menuProducts) {
-//        this.menuProducts.addAll(menuProducts);
-//    }
 
     public Long getId() {
         return id;
@@ -75,5 +96,11 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroup.getId();
+    }
+
+    public void validateTotalPrice(BigDecimal sum) {
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("제품 가격에 비해 메뉴의 가격이 큽니다.");
+        }
     }
 }
