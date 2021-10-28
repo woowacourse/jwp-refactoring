@@ -18,9 +18,8 @@ public class Menu {
     private String name;
     @Column(nullable = false)
     private BigDecimal price;
-    @ManyToOne
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    @Column(nullable = false)
+    private Long menuGroupId;
 
     public Menu() {
     }
@@ -29,7 +28,7 @@ public class Menu {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
-        this.menuGroup = builder.menuGroup;
+        this.menuGroupId = builder.menuGroupId;
     }
 
     public static Builder builder() {
@@ -40,7 +39,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private MenuGroup menuGroup;
+        private Long menuGroupId;
 
         private Builder() {
         }
@@ -49,7 +48,7 @@ public class Menu {
             this.id = menu.id;
             this.name = menu.name;
             this.price = menu.price;
-            this.menuGroup = menu.menuGroup;
+            this.menuGroupId = menu.menuGroupId;
             return this;
         }
 
@@ -68,8 +67,8 @@ public class Menu {
             return this;
         }
 
-        public Builder menuGroup(MenuGroup menuGroup) {
-            this.menuGroup = menuGroup;
+        public Builder menuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
             return this;
         }
 
@@ -91,7 +90,7 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 }

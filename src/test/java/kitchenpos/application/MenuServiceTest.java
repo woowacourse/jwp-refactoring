@@ -55,18 +55,17 @@ class MenuServiceTest {
     private Product savedProduct2;
     private MenuProduct menuProduct1;
     private MenuProduct menuProduct2;
-    private MenuGroup menuGroup;
 
     @BeforeEach
     void setUp() {
-        menuGroup = MenuGroup.builder()
+        final MenuGroup menuGroup = MenuGroup.builder()
                 .id(1L)
                 .name("메뉴그룹1")
                 .build();
         menu = Menu.builder()
                 .name("분짜와 스프링롤")
                 .price(BigDecimal.valueOf(16000))
-                .menuGroup(menuGroup)
+                .menuGroupId(menuGroup.getId())
                 .build();
         menuRequest = new MenuRequest("분짜와 스프링롤", 16000L, 1L, Collections.emptyList());
         savedMenu1 = Menu.builder()
@@ -111,7 +110,6 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
         when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
         when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
@@ -158,7 +156,6 @@ class MenuServiceTest {
         final MenuRequest menuRequest = new MenuRequest("메뉴이름", 16000L, 1L,
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(menuGroupRepository.findById(any())).thenReturn(Optional.of(menuGroup));
         when(menuRepository.save(any())).thenReturn(savedMenu1);
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
         when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));

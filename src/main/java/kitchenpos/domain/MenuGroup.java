@@ -15,8 +15,6 @@ public class MenuGroup {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @OneToMany(mappedBy = "menuGroup")
-    private List<Menu> menus;
 
     public MenuGroup() {
     }

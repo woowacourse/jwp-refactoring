@@ -55,7 +55,7 @@ public class TestFixtures {
                 .id(1L)
                 .name("메뉴이름")
                 .price(BigDecimal.valueOf(1000))
-                .menuGroup(createMenuGroup())
+                .menuGroupId(createMenuGroup().getId())
                 .build();
     }
 
@@ -82,7 +82,7 @@ public class TestFixtures {
         final List<MenuProductRequest> menuProductRequests = Stream.of(createMenuProduct())
                 .map(MenuProductRequest::new)
                 .collect(Collectors.toList());
-        return new MenuRequest(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroup().getId(),
+        return new MenuRequest(menu.getName(), menu.getPrice().longValue(), menu.getMenuGroupId(),
                 menuProductRequests);
     }
 

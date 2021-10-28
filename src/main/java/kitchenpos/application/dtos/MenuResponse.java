@@ -18,7 +18,7 @@ public class MenuResponse {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice().longValue();
-        this.MenuGroupId = menu.getMenuGroup().getId();
+        this.MenuGroupId = menu.getMenuGroupId();
         this.menuProducts = menuProducts.stream()
                 .map(MenuProductResponse::new)
                 .collect(Collectors.toList());

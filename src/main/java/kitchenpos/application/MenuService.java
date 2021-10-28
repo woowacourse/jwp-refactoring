@@ -13,7 +13,6 @@ import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
@@ -43,11 +42,10 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId()).get();
         final Menu menu = Menu.builder()
                 .name(request.getName())
                 .price(BigDecimal.valueOf(request.getPrice()))
-                .menuGroup(menuGroup)
+                .menuGroupId(request.getMenuGroupId())
                 .build();
 
         final Menu savedMenu = menuRepository.save(menu);
