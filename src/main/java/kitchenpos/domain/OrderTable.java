@@ -69,7 +69,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    private boolean hasCookingOrMeal() {
+    public boolean hasCookingOrMeal() {
         return orders.stream().allMatch(Order::hasCookingOrMeal);
     }
 
@@ -84,6 +84,11 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void ungroup() {
+        updateTableGroup(null);
+        updateEmpty(false);
+    }
+
     public Long getId() {
         return id;
     }
@@ -96,7 +101,7 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void updateTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
@@ -112,7 +117,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 }

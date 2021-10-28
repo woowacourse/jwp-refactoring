@@ -2,14 +2,18 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import org.hibernate.annotations.CreationTimestamp;
+import kitchenpos.exception.KitchenException;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -18,17 +22,32 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @CreationTimestamp
+    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order_table", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup", cascade = CascadeType.PERSIST)
     private List<OrderTable> orderTables;
 
     public TableGroup() {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, orderTables);
+        this.createdDate = LocalDateTime.now();
+        this.orderTables = orderTables;
+        validate();
+    }
+
+    private void validate() {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new KitchenException("단체의 주문 테이블은 2개 이상이어야 합니다.");
+        }
+
+        for (final OrderTable orderTable : orderTables) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+                throw new KitchenException("단체의 주문 테이블은 비어있어야 합니다.");
+            }
+        }
     }
 
     public TableGroup(Long id, LocalDateTime createdDate,
@@ -40,10 +59,6 @@ public class TableGroup {
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -60,5 +75,12 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public void updateOrderTablesTableGroup() {
+        this.orderTables.forEach(orderTable -> {
+            orderTable.changeEmpty(false);
+            orderTable.updateTableGroup(this);
+        });
     }
 }
