@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.dtos.OrderLineItemRequest;
+import kitchenpos.application.dtos.OrderRequest;
+import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
@@ -38,8 +41,17 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderRequest request) {
+        final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
+                .map(orderLineItem -> OrderLineItem.builder()
+                        .menuId(orderLineItem.getMenuId())
+                        .quantity(orderLineItem.getQuantity())
+                        .build())
+                .collect(Collectors.toList());
+        final Order order = Order.builder()
+                .orderTableId(request.getOrderTableId())
+                .orderLineItems(orderLineItems)
+                .build();
 
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
@@ -53,9 +65,9 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
+//        order.setId(null);
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
@@ -90,7 +102,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -98,7 +110,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = OrderStatus.valueOf(request.getOrderStatus());
         savedOrder.setOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);

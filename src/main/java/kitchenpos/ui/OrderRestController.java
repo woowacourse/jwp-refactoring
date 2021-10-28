@@ -1,6 +1,10 @@
 package kitchenpos.ui;
 
+import java.util.stream.Collectors;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dtos.OrderRequest;
+import kitchenpos.application.dtos.OrderResponse;
+import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,26 +21,31 @@ public class OrderRestController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
+    public ResponseEntity<OrderResponse> create(@RequestBody final OrderRequest request) {
+        final Order created = orderService.create(request);
         final URI uri = URI.create("/api/orders/" + created.getId());
+        final OrderResponse response = new OrderResponse(created);
         return ResponseEntity.created(uri)
-                .body(created)
-                ;
+                .body(response);
     }
 
     @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    public ResponseEntity<List<OrderResponse>> list() {
+        final List<Order> orders = orderService.list();
+        final List<OrderResponse> response = orders.stream()
+                .map(OrderResponse::new)
+                .collect(Collectors.toList());
         return ResponseEntity.ok()
-                .body(orderService.list())
-                ;
+                .body(response);
     }
 
     @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    public ResponseEntity<OrderResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
+            @RequestBody final OrderStatusRequest request
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        final Order order = orderService.changeOrderStatus(orderId, request);
+        final OrderResponse response = new OrderResponse(order);
+        return ResponseEntity.ok(response);
     }
 }

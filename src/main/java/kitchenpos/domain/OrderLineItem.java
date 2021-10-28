@@ -53,8 +53,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder seq(Long seq) {
-            this.id = seq;
+        public Builder id(Long id) {
+            this.id = id;
             return this;
         }
 

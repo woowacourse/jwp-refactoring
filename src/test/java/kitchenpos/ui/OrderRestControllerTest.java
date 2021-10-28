@@ -10,8 +10,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.OrderService;
+import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,19 +38,11 @@ class OrderRestControllerTest {
     @MockBean
     private OrderService orderService;
 
-    private Order savedOrder;
-
-    @BeforeEach
-    void setUp() {
-        savedOrder = Order.builder()
-                .id(1L)
-                .build();
-    }
-
     @Test
     void create() throws Exception {
-        final String content = objectMapper.writeValueAsString(new Order());
-        when(orderService.create(any())).thenReturn(savedOrder);
+        final Order order = TestFixtures.createOrder();
+        final String content = objectMapper.writeValueAsString(TestFixtures.createOrderRequest(order));
+        when(orderService.create(any())).thenReturn(order);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/orders")
                         .content(content)
@@ -57,13 +52,13 @@ class OrderRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/orders/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/orders/" + order.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        when(orderService.list()).thenReturn(Collections.singletonList(new Order()));
+        when(orderService.list()).thenReturn(Collections.singletonList(TestFixtures.createOrder()));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/orders"))
                 .andReturn()
@@ -74,10 +69,11 @@ class OrderRestControllerTest {
 
     @Test
     void changeOrderStatus() throws Exception {
-        final String content = objectMapper.writeValueAsString(new Order());
-        when(orderService.changeOrderStatus(any(), any())).thenReturn(savedOrder);
+        final Order order = TestFixtures.createOrder();
+        final String content = objectMapper.writeValueAsString(new OrderStatusRequest(OrderStatus.MEAL.name()));
+        when(orderService.changeOrderStatus(any(), any())).thenReturn(order);
 
-        final MockHttpServletResponse response = mockMvc.perform(put("/api/orders/1/order-status")
+        final MockHttpServletResponse response = mockMvc.perform(put("/api/orders/" + order.getId() + "/order-status")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn()

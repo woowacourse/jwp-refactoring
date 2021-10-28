@@ -25,13 +25,4 @@ public class MenuRequest {
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
-
-    public MenuRequest(Menu menu){
-        this.name = menu.getName();
-        this.price = menu.getPrice().longValue();
-        this.menuGroupId = menu.getMenuGroupId();
-        this.menuProducts = menu.getMenuProducts().stream()
-                .map(MenuProductRequest::new)
-                .collect(Collectors.toList());
-    }
 }

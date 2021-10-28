@@ -69,7 +69,7 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
 
     private OrderLineItem toEntity(final ResultSet resultSet) throws SQLException {
         return OrderLineItem.builder()
-                .seq(resultSet.getLong(KEY_COLUMN_NAME))
+                .id(resultSet.getLong(KEY_COLUMN_NAME))
                 .orderId(resultSet.getLong("order_id"))
                 .menuId(resultSet.getLong("menu_id"))
                 .quantity(resultSet.getLong("quantity"))

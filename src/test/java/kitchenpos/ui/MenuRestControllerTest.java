@@ -38,7 +38,7 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         final Menu menu = TestFixtures.createMenu();
-        final String content = objectMapper.writeValueAsString(new MenuRequest(menu));
+        final String content = objectMapper.writeValueAsString(TestFixtures.createMenuRequest(menu));
         when(menuService.create(any())).thenReturn(menu);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menus")
