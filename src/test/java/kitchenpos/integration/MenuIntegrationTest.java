@@ -10,14 +10,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.productquantity.Product;
 import kitchenpos.dto.menu.request.MenuProductRequest;
 import kitchenpos.dto.menu.request.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
 @DisplayName("Menu 통합테스트")
@@ -69,7 +72,7 @@ class MenuIntegrationTest extends IntegrationTest {
         final MenuProduct foundMenuProduct = foundMenuProducts.get(0);
         assertThat(foundMenuProduct.getMenuId()).isEqualTo(foundMenu.getId());
         assertThat(foundMenuProduct.getProduct()).isEqualTo(product);
-        assertThat(foundMenuProduct.getQuantity()).isEqualTo(menuProductRequest.getQuantity());
+        assertThat(foundMenuProduct.getQuantityValue()).isEqualTo(menuProductRequest.getQuantity());
     }
 
     @DisplayName("생성 - 실패 - 가격이 null일 때")
@@ -94,9 +97,11 @@ class MenuIntegrationTest extends IntegrationTest {
         Repository가_비어있다(menuProductRepository);
     }
 
-    @DisplayName("생성 - 실패 - 가격이 0보다 작을 때")
-    @Test
-    void create_Fail_When_PriceIsLessThanZero() throws Exception {
+    @DisplayName("생성 - 실패 - 가격이 0보다 작거나 null일 때")
+    @CustomParameterizedTest
+    @ValueSource(ints = {-1_000_000, -1_000, -1})
+    @NullSource
+    void create_Fail_When_PriceIsLessThanZeroOrNull(Integer priceValue) throws Exception {
         // given
         final MenuGroup menuGroup = MenuGroup을_저장한다("추천메뉴");
         final Product product = Product를_저장한다("후라이드", 10_000);
@@ -104,7 +109,7 @@ class MenuIntegrationTest extends IntegrationTest {
         final MenuProductRequest menuProductRequest = new MenuProductRequest(product.getId(), 2L);
         final MenuRequest menuRequest = new MenuRequest(
             "후라이드+후라이드",
-            -1,
+            priceValue,
             menuGroup.getId(),
             Collections.singletonList(menuProductRequest)
         );
@@ -209,7 +214,7 @@ class MenuIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[0].menuProducts[0].seq").value(menu1MenuProduct.getSeq()))
             .andExpect(jsonPath("$[0].menuProducts[0].menuId").value(menu1.getId()))
             .andExpect(jsonPath("$[0].menuProducts[0].productId").value(product1.getId()))
-            .andExpect(jsonPath("$[0].menuProducts[0].quantity").value(menu1MenuProduct.getQuantity()))
+            .andExpect(jsonPath("$[0].menuProducts[0].quantity").value(menu1MenuProduct.getQuantityValue()))
             .andExpect(jsonPath("$[1].id").value(menu2.getId()))
             .andExpect(jsonPath("$[1].name").value(menu2.getName()))
             .andExpect(jsonPath("$[1].price").value(menu2.getPrice()))
@@ -218,7 +223,7 @@ class MenuIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[1].menuProducts[0].seq").value(menu2MenuProduct.getSeq()))
             .andExpect(jsonPath("$[1].menuProducts[0].menuId").value(menu2.getId()))
             .andExpect(jsonPath("$[1].menuProducts[0].productId").value(product2.getId()))
-            .andExpect(jsonPath("$[1].menuProducts[0].quantity").value(menu2MenuProduct.getQuantity()))
+            .andExpect(jsonPath("$[1].menuProducts[0].quantity").value(menu2MenuProduct.getQuantityValue()))
         ;
     }
 }

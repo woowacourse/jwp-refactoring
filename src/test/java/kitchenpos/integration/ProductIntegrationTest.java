@@ -8,9 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.productquantity.Product;
 import kitchenpos.dto.product.request.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void create_Success() throws Exception {
         // given
-        final ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(17_000));
+        final ProductRequest productRequest = new ProductRequest("강정치킨", 17_000);
 
         // when
         // then
@@ -46,7 +45,7 @@ class ProductIntegrationTest extends IntegrationTest {
 
         final Product foundProduct = foundProducts.get(0);
         assertThat(foundProduct.getName()).isEqualTo(productRequest.getName());
-        assertThat(foundProduct.getPrice()).isEqualByComparingTo(productRequest.getPrice());
+        assertThat(foundProduct.getPriceAsInt()).isEqualTo(productRequest.getPrice());
     }
 
     @DisplayName("생성 - 실패 - price가 null일 때")
@@ -65,7 +64,7 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void create_Fail_When_PriceIsLessThanZero() throws Exception {
         // given
-        final ProductRequest productRequest = new ProductRequest("강정치킨", BigDecimal.valueOf(-1));
+        final ProductRequest productRequest = new ProductRequest("강정치킨", -1);
 
         // when
         // then
@@ -88,10 +87,10 @@ class ProductIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$.length()").value(2))
             .andExpect(jsonPath("$[0].id").isNumber())
             .andExpect(jsonPath("$[0].name").value(product1.getName()))
-            .andExpect(jsonPath("$[0].price").value(product1.getPrice()))
+            .andExpect(jsonPath("$[0].price").value(product1.getPriceAsInt()))
             .andExpect(jsonPath("$[1].id").isNumber())
             .andExpect(jsonPath("$[1].name").value(product2.getName()))
-            .andExpect(jsonPath("$[1].price").value(product2.getPrice()))
+            .andExpect(jsonPath("$[1].price").value(product2.getPriceAsInt()))
         ;
     }
 }

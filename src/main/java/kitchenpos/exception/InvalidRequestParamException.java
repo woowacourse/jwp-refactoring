@@ -1,6 +1,6 @@
 package kitchenpos.exception;
 
-public class InvalidRequestParamException extends RuntimeException {
+public class InvalidRequestParamException extends BadRequestException {
 
     public InvalidRequestParamException(String message) {
         super(message);

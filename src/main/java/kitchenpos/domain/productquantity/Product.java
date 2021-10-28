@@ -1,12 +1,13 @@
-package kitchenpos.domain;
+package kitchenpos.domain.productquantity;
 
-import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import kitchenpos.domain.price.Price;
 
 @Entity
 public class Product {
@@ -18,31 +19,20 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
-    public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
+    public Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public Product(String name, BigDecimal price) {
-        this(null, name, price);
-    }
-
-    public Product(String name, int price) {
-        this(null, name, BigDecimal.valueOf(price));
+    public Product(String name, Integer priceValue) {
+        this(null, name, new Price(priceValue));
     }
 
     protected Product() {
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Product의 Price는 null이거나 0보다 작을 수 없습니다.");
-        }
     }
 
     public Long getId() {
@@ -53,8 +43,16 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
+    }
+
+    public int getPriceAsInt() {
+        return price.getValueAsInt();
+    }
+
+    public int getPriceAsInteger() {
+        return price.getValueAsInteger();
     }
 
     @Override
@@ -72,9 +70,5 @@ public class Product {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    public boolean hasId(Long otherId) {
-        return id.equals(otherId);
     }
 }

@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.productquantity.Product;
 import kitchenpos.dto.product.request.ProductRequest;
 import kitchenpos.dto.product.response.ProductResponse;
 import kitchenpos.exception.InvalidRequestParamException;
