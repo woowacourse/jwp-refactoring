@@ -23,6 +23,7 @@
     - [x] Order
         - [x] OrderTable 
         - [x] OrderLineItem
+        - [x] OrderStatus
     - [x] OrderLineItem
         - [x] Order 
         - [x] Menu

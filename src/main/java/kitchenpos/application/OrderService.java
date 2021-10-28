@@ -57,7 +57,7 @@ public class OrderService {
         }
 
         order.setOrderTable(orderTable);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        order.setOrderStatus(OrderStatus.COOKING);
         order.setOrderedTime(LocalDateTime.now());
 
         final Order savedOrder = orderRepository.save(order);
@@ -87,12 +87,12 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                                                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        final OrderStatus orderStatus = order.getOrderStatus();
+        savedOrder.setOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);
 

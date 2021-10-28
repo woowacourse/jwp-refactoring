@@ -56,7 +56,7 @@ class OrderRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         Order order = new Order(단일_손님2_테이블, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderService.create(any(Order.class))).willReturn(expected);
 
         // when
@@ -149,8 +149,8 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("전체 주문을 조회할 수 있다.")
     void list() throws Exception {
         // given
-        Order order1 = new Order(1L, 단일_손님2_테이블, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
-        Order order2 = new Order(2L, 그룹1_손님4_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리_주문2));
+        Order order1 = new Order(1L, 단일_손님2_테이블, OrderStatus.MEAL, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order order2 = new Order(2L, 그룹1_손님4_테이블, OrderStatus.COOKING, LocalDateTime.now(), Collections.singletonList(양념치킨_1마리_주문2));
         List<Order> expected = Arrays.asList(order1, order2);
         given(orderService.list()).willReturn(expected);
 
@@ -167,8 +167,8 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     void changeOrderStatus() throws Exception {
         // given
-        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION.name(), null, null);
-        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION, null, null);
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(expected);
 
         // when
@@ -184,7 +184,7 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("주문 상태를 변경하려면 주문은 존재해야 한다.")
     void changeOrderStatusWrongOrderNotExist() throws Exception {
-        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION.name(), null, null);
+        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION, null, null);
         willThrow(new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."))
                 .given(orderService).changeOrderStatus(anyLong(), any(Order.class));
 
@@ -202,7 +202,7 @@ class OrderRestControllerTest extends ControllerTest {
     @Test
     @DisplayName("주문 상태를 변경하려면 주문 상태는 조리중(COOKING)이나 식사중(MEAL)이어야한다.")
     void changeOrderStatusWrongOrderStatus() throws Exception {
-        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
+        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL, null, null);
         willThrow(new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다."))
                 .given(orderService).changeOrderStatus(anyLong(), any(Order.class));
 

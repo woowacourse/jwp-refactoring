@@ -71,7 +71,7 @@ class OrderServiceTest {
         // given
         Order order = new Order(단일_손님2_테이블, Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         OrderTable table = new OrderTable(1L, null, 4, false);
-        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         given(menuRepository.countByIdIn(Arrays.asList(후라이드치킨_2마리.getMenu(), 양념치킨_1마리.getMenu()))).willReturn(2L);
         given(orderTableRepository.findById(order.getOrderTable().getId())).willReturn(Optional.of(table));
         given(orderRepository.save(order)).willReturn(expected);
@@ -82,7 +82,7 @@ class OrderServiceTest {
         Order actual = orderService.create(order);
 
         // then
-        assertEquals(OrderStatus.COOKING.name(), actual.getOrderStatus());
+        assertEquals(OrderStatus.COOKING, actual.getOrderStatus());
         assertEquals(expected, actual);
     }
 
@@ -144,8 +144,8 @@ class OrderServiceTest {
     @DisplayName("전체 주문을 조회할 수 있다.")
     void list() {
         // given
-        Order order1 = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        Order order2 = new Order(2L, 그룹1_손님4_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(양념치킨_1마리));
+        Order order1 = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order order2 = new Order(2L, 그룹1_손님4_테이블, OrderStatus.COOKING, LocalDateTime.now(), Collections.singletonList(양념치킨_1마리));
         List<Order> expected = Arrays.asList(order1, order2);
         given(orderRepository.findAll()).willReturn(expected);
         given(orderLineItemRepository.findAllByOrderId(order1.getId())).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
@@ -164,9 +164,9 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         Long orderId = 1L;
-        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
-        Order order = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
-        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.MEAL.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
+        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL, null, null);
+        Order order = new Order(1L, 단일_손님2_테이블, OrderStatus.COOKING, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.MEAL, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
         given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
         given(orderRepository.save(order)).willReturn(order);
         given(orderLineItemRepository.findAllByOrderId(orderId)).willReturn(Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
@@ -175,7 +175,7 @@ class OrderServiceTest {
         Order actual = orderService.changeOrderStatus(orderId, changeStatusOrder);
 
         // then
-        assertEquals(OrderStatus.MEAL.name(), actual.getOrderStatus());
+        assertEquals(OrderStatus.MEAL, actual.getOrderStatus());
         assertThat(actual).usingRecursiveComparison().ignoringFields("orderedTime").isEqualTo(expected);
     }
 
@@ -184,7 +184,7 @@ class OrderServiceTest {
     void changeOrderStatusWrongOrderNotExist() {
         // given
         Long orderId = 1L;
-        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
+        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL, null, null);
         given(orderRepository.findById(orderId)).willReturn(Optional.empty());
 
         // when & then
@@ -198,8 +198,8 @@ class OrderServiceTest {
     void changeOrderStatusWrongOrderStatus() {
         // given
         Long orderId = 1L;
-        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL.name(), null, null);
-        Order order = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
+        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL, null, null);
+        Order order = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리, 양념치킨_1마리));
         given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         // when & then
