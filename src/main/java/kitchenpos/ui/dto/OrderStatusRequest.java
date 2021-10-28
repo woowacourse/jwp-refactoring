@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 
 public class OrderStatusRequest {
     private String orderStatus;
@@ -16,8 +16,8 @@ public class OrderStatusRequest {
         return new OrderStatusRequest(orderStatus);
     }
 
-    public Order toOrder() {
-        return new Order(null, orderStatus);
+    public Orders toOrder() {
+        return new Orders(null, orderStatus);
     }
 
     public String getOrderStatus() {

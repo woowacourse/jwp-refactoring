@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -68,27 +68,27 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order savedOrder = orderRepository.save(order);
+        Orders orders = new Orders(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        final Orders savedOrders = orderRepository.save(orders);
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu findMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
             OrderLineItem orderLineItem = new OrderLineItem(
-                    savedOrder,
+                    savedOrders,
                     findMenu,
                     orderLineItemRequest.getQuantity()
             );
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
-        return OrderResponse.of(savedOrder, savedOrderLineItems);
+        return OrderResponse.of(savedOrders, savedOrderLineItems);
     }
 
     public List<OrderResponse> list() {
-        Map<Order, List<OrderLineItem>> results = new HashMap<>();
+        Map<Orders, List<OrderLineItem>> results = new HashMap<>();
 
-        final List<Order> orders = orderRepository.findAll();
-        for (final Order order : orders) {
+        final List<Orders> orders = orderRepository.findAll();
+        for (final Orders order : orders) {
             results.put(order, orderLineItemRepository.findAllByOrderId(order.getId()));
         }
 
@@ -97,16 +97,16 @@ public class OrderService {
 
     @Transactional
     public OrderStatusResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
-        final Order updateOrder = orderRepository.findById(orderId)
+        final Orders updateOrders = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), updateOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), updateOrders.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
-        updateOrder.updateOrderStatus(orderStatus.name());
+        updateOrders.updateOrderStatus(orderStatus.name());
 
-        return OrderStatusResponse.from(updateOrder.getOrderStatus());
+        return OrderStatusResponse.from(updateOrders.getOrderStatus());
     }
 }

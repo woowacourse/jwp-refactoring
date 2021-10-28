@@ -18,16 +18,19 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 인수 테스트")
-public class MenuAcceptanceTest extends AcceptanceTest {
+public class MenuAcceptanceTest extends DomainAcceptanceTest {
     @DisplayName("POST /api/menus")
     @Test
     void create() {
         // given
-        MenuProductRequest menuProductRequest = MenuProductRequest.from(1L, 2L);
+        Long productId = POST_SAMPLE_PRODUCT();
+        Long menuGroupId = POST_SAMPLE_MENU_GROUP();
+
+        MenuProductRequest menuProductRequest = MenuProductRequest.from(productId, 2L);
         MenuRequest menuRequest = MenuRequest.of(
                 "후라이드+후라이드",
                 BigDecimal.valueOf(19000.00),
-                1L,
+                menuGroupId,
                 singletonList(menuProductRequest)
         );
 
@@ -50,6 +53,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // given - when
+        POST_SAMPLE_MENU();
 
         // then
         ExtractableResponse<Response> response = RestAssured

@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -92,7 +92,7 @@ class TableGroupServiceTest implements ServiceTest {
         // given
         TableGroupRequest tableGroupRequest = CREATE_TABLE_GROUP_REQUEST(orderTableIds);
 
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        final List<Long> orderTableIds = tableGroupRequest.orderTableIds();
 
         List<OrderTable> savedOrderTables = singletonList(new OrderTable(1L));
         given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
@@ -118,7 +118,7 @@ class TableGroupServiceTest implements ServiceTest {
 
         TableGroupRequest tableGroupRequest = CREATE_TABLE_GROUP_REQUEST(orderTableIds);
 
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        final List<Long> orderTableIds = tableGroupRequest.orderTableIds();
 
         List<OrderTable> savedOrderTables = Arrays.asList(orderTable1, orderTable2);
         given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
@@ -145,7 +145,7 @@ class TableGroupServiceTest implements ServiceTest {
         List<OrderTable> savedOrderTables = Arrays.asList(orderTable1, orderTable2);
 
         TableGroupRequest tableGroupRequest = CREATE_TABLE_GROUP_REQUEST(orderTableIds);
-        final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        final List<Long> orderTableIds = tableGroupRequest.orderTableIds();
 
         given(orderTableRepository.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
@@ -168,7 +168,7 @@ class TableGroupServiceTest implements ServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, new TableGroup(1L, LocalDateTime.MIN), 10, false);
 
         // meal 상태의 주문을 포함한다.
-        Order order = new Order(orderTable1, OrderStatus.MEAL.name());
+        Orders orders = new Orders(orderTable1, OrderStatus.MEAL.name());
         OrderTable orderTable2 = new OrderTable(2L, new TableGroup(2L, LocalDateTime.MIN), 10, false);
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 

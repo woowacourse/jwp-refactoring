@@ -15,13 +15,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 그룹 인수 테스트")
-public class MenuGroupAcceptanceTest extends AcceptanceTest {
+public class MenuGroupAcceptanceTest extends DomainAcceptanceTest {
     @DisplayName("POST /api/menu-groups")
     @Test
     void createPost() {
-        // given
-
-        // when
+        // given -  when
         MenuGroupRequest menuGroupRequest = MenuGroupRequest.from("추천메뉴");
 
         // then
@@ -42,6 +40,8 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void createGet() {
         // given - when
+        POST_SAMPLE_MENU_GROUP();
+
         // then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()

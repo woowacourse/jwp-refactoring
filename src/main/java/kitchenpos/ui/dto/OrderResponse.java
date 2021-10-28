@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderLineItem;
 
 import java.time.LocalDateTime;
@@ -26,17 +26,17 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
+    public static OrderResponse of(Orders orders, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
-                order.getId(),
-                order.getOrderTableId(),
-                order.getOrderStatus(),
-                order.getOrderedTime(),
+                orders.getId(),
+                orders.getOrderTableId(),
+                orders.getOrderStatus(),
+                orders.getOrderedTime(),
                 OrderLineItemResponse.from(orderLineItems)
         );
     }
 
-    public static List<OrderResponse> from(Map<Order, List<OrderLineItem>> results) {
+    public static List<OrderResponse> from(Map<Orders, List<OrderLineItem>> results) {
         List<OrderResponse> orderResponses = new ArrayList<>();
         results.forEach((key, value) -> orderResponses.add(
                 OrderResponse.of(key, value)

@@ -5,12 +5,14 @@ import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
+import kitchenpos.ui.dto.OrderTableIdRequest;
 import kitchenpos.ui.dto.ProductRequest;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RequestFactory {
     public static MenuRequest CREATE_MENU_REQUEST(String name,
@@ -42,7 +44,10 @@ public class RequestFactory {
     }
 
     public static TableGroupRequest CREATE_TABLE_GROUP_REQUEST(List<Long> orderTableIds) {
-        return TableGroupRequest.from(orderTableIds);
+        List<OrderTableIdRequest> orderTableIdRequests = orderTableIds.stream()
+                .map(OrderTableIdRequest::from)
+                .collect(Collectors.toList());
+        return TableGroupRequest.from(orderTableIdRequests);
     }
 
     public static TableRequest CREATE_TABLE_REQUEST(int numberOfGuests, boolean empty) {

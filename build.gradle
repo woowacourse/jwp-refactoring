@@ -17,6 +17,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.flywaydb:flyway-core'
+    implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
     testImplementation 'io.rest-assured:rest-assured:3.3.0'
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     runtimeOnly 'com.h2database:h2'

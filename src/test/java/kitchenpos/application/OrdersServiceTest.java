@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("주문 서비스 테스트")
-class OrderServiceTest implements ServiceTest {
+class OrdersServiceTest implements ServiceTest {
 
     @InjectMocks
     private OrderService orderService;
@@ -63,7 +63,7 @@ class OrderServiceTest implements ServiceTest {
         then(orderRepository).should(never())
                 .findById(any());
         then(orderRepository).should(never())
-                .save(any(Order.class));
+                .save(any(Orders.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문 항목의 개수와 주문 항목들의 메뉴 아이디로 조회한 개수가 다른 경우")
@@ -92,7 +92,7 @@ class OrderServiceTest implements ServiceTest {
         then(orderRepository).should(never())
                 .findById(any());
         then(orderRepository).should(never())
-                .save(any(Order.class));
+                .save(any(Orders.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문에 등록된 TableId가 존재하지 않는 경우")
@@ -122,7 +122,7 @@ class OrderServiceTest implements ServiceTest {
         then(orderRepository).should(never())
                 .findById(any());
         then(orderRepository).should(never())
-                .save(any(Order.class));
+                .save(any(Orders.class));
     }
 
     @DisplayName("주문을 생성한다. - 실패, 주문에 등록된 테이블이 비어있는 경우")
@@ -153,7 +153,7 @@ class OrderServiceTest implements ServiceTest {
         then(orderRepository).should(never())
                 .findById(any());
         then(orderRepository).should(never())
-                .save(any(Order.class));
+                .save(any(Orders.class));
     }
 
     @DisplayName("주문 상태를 변경한다. - 실패, orderId에 해당하는 주문이 존재하지 않는 경우")
@@ -181,8 +181,8 @@ class OrderServiceTest implements ServiceTest {
         Long orderId = 1L;
         OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.COMPLETION.name());
 
-        Order savedOrder = new Order(1L, null, OrderStatus.COMPLETION.name(), LocalDateTime.now());
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(savedOrder));
+        Orders savedOrders = new Orders(1L, null, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(savedOrders));
 
         // when -  then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderStatusRequest))
@@ -190,6 +190,6 @@ class OrderServiceTest implements ServiceTest {
         then(orderRepository).should(times(1))
                 .findById(orderId);
         then(orderRepository).should(never())
-                .save(savedOrder);
+                .save(savedOrders);
     }
 }

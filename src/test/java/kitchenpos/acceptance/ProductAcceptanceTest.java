@@ -16,7 +16,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("상품 인수 테스트")
-public class ProductAcceptanceTest extends AcceptanceTest {
+public class ProductAcceptanceTest extends DomainAcceptanceTest {
     @DisplayName("POST /api/products")
     @Test
     void create() {
@@ -42,6 +42,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // given
+        POST_SAMPLE_PRODUCT();
 
         // when - then
         ExtractableResponse<Response> response = RestAssured

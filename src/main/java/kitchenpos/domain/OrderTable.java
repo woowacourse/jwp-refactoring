@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -17,7 +18,6 @@ public class OrderTable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private TableGroup tableGroup;
-//    private Long tableGroupId;
 
     @Column(nullable = false)
     private int numberOfGuests;
@@ -73,6 +73,9 @@ public class OrderTable {
     }
 
     public Long getTableGroupId() {
+        if (Objects.isNull(tableGroup)) {
+            return null;
+        }
         return tableGroup.getId();
     }
 

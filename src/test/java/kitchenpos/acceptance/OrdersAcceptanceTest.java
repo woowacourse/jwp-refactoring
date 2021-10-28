@@ -6,7 +6,6 @@ import io.restassured.response.Response;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderResponse;
 import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderStatusResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -15,20 +14,22 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import static java.util.Collections.singletonList;
-import static kitchenpos.acceptance.TableAcceptanceTest.POST_DEFAULT_ORDER_TABLE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문 인수 테스트")
-public class OrderAcceptanceTest extends AcceptanceTest {
+public class OrdersAcceptanceTest extends DomainAcceptanceTest {
     @DisplayName("POST /api/orders")
     @Test
     void create() {
         // given
+        // menu 등록
+        Long menuId = POST_SAMPLE_MENU();
+
         // orderTable 등록
-        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
+        long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
         OrderRequest orderRequest = OrderRequest.of(
                 orderTableId,
-                singletonList(OrderLineItemRequest.of(1L, 1L))
+                singletonList(OrderLineItemRequest.of(menuId, 1L))
         );
 
         // when - then
@@ -50,6 +51,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // given
+        POST_SAMPLE_ORDER();
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
@@ -67,7 +69,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void changeOrderStatus() {
         // given
-        long orderId = POST_DEFAULT_ORDER();
+        long orderId = POST_SAMPLE_ORDER();
         OrderStatusRequest orderStatusRequest
                 = OrderStatusRequest.from("COMPLETION");
 
@@ -84,25 +86,5 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         OrderStatusResponse orderStatusResponse = response.as(OrderStatusResponse.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(orderStatusResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
-    }
-
-    public static long POST_DEFAULT_ORDER() {
-        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
-        OrderRequest orderRequest = OrderRequest.of(
-                orderTableId,
-                singletonList(OrderLineItemRequest.of(1L, 1L))
-        );
-
-        ExtractableResponse<Response> response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(orderRequest)
-                .when().post("/api/orders")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
-
-        OrderResponse orderResponse = response.as(OrderResponse.class);
-        return orderResponse.getId();
     }
 }

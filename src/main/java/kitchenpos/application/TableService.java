@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -10,7 +9,6 @@ import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -47,9 +45,9 @@ public class TableService {
 //            throw new IllegalArgumentException();
 //        }
 
-        List<Order> findOrders = orderRepository.findAllByOrderTableId(orderTableId);
+        List<Orders> findOrders = orderRepository.findAllByOrderTableId(orderTableId);
         findOrders.stream()
-                .filter(Order::isNotCompleted)
+                .filter(Orders::isNotCompleted)
                 .findAny()
                 .ifPresent(order -> {
                     throw new IllegalArgumentException("아직 조리 혹은 식사 중인 주문이 존재합니다.");

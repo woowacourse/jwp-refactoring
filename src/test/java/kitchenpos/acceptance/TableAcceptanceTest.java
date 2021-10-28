@@ -13,7 +13,7 @@ import org.springframework.http.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 인수 테스트")
-public class TableAcceptanceTest extends AcceptanceTest {
+public class TableAcceptanceTest extends DomainAcceptanceTest {
 
     @DisplayName("POST /api/tables")
     @Test
@@ -39,6 +39,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // given
+        POST_SAMPLE_ORDER_TABLE(1, false);
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
@@ -56,7 +57,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void changeEmpty() {
         // given
-        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
+        long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
         TableRequest tableRequest = TableRequest.empty(true);
 
         // when - then
@@ -79,7 +80,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        long orderTableId = POST_DEFAULT_ORDER_TABLE(1, false);
+        long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
         TableRequest tableRequest = TableRequest.guests(10);
 
         // when - then
@@ -96,21 +97,5 @@ public class TableAcceptanceTest extends AcceptanceTest {
         assertThat(response.body()).isNotNull();
         TableResponse tableResponse = response.as(TableResponse.class);
         assertThat(tableResponse.getNumberOfGuests()).isEqualTo(10);
-    }
-
-    public static long POST_DEFAULT_ORDER_TABLE(int numberOfGuests, boolean empty) {
-        TableRequest tableRequest = TableRequest.of(numberOfGuests, empty);
-
-        ExtractableResponse<Response> response = RestAssured
-                .given().log().all()
-                .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(tableRequest)
-                .when().post("/api/tables")
-                .then().log().all()
-                .statusCode(HttpStatus.CREATED.value())
-                .extract();
-
-        TableResponse tableResponse = response.as(TableResponse.class);
-        return tableResponse.getId();
     }
 }

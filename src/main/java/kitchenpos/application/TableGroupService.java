@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
@@ -32,13 +32,14 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
+        List<Long> orderTableIds = tableGroupRequest.orderTableIds();
 
         // TODO valid로 옮기기
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
+        List<OrderTable> all = orderTableRepository.findAll();
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
@@ -68,9 +69,9 @@ public class TableGroupService {
 
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable orderTable : orderTables) {
-            List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
+            List<Orders> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
             orders.stream()
-                    .filter(Order::isNotCompleted)
+                    .filter(Orders::isNotCompleted)
                     .findAny()
                     .ifPresent(order -> {
                         throw new IllegalArgumentException("아직 조리 혹은 식사 중인 주문이 존재합니다.");
