@@ -73,10 +73,8 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
-        assertThat(location).isEqualTo(URI.create(MENU_URL + "/1"));
-
         assertThat(body).isNotNull();
-        assertThat(body.getId()).isEqualTo(1L);
+        assertThat(body.getId()).isNotNull();
         assertThat(body.getName()).isEqualTo(menuName);
         assertThat(body.getPrice())
                 .usingComparator(BigDecimal::compareTo)
@@ -85,6 +83,7 @@ class MenuIntegrationTest extends IntegrationTest {
                 .usingRecursiveComparison()
                 .ignoringExpectedNullFields()
                 .isEqualTo(menuProduct);
+        assertThat(location).isEqualTo(URI.create(MENU_URL + "/1"));
     }
 
     @DisplayName("전체 menu 를 조회한다")
@@ -110,12 +109,9 @@ class MenuIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
-
         assertThat(body)
                 .hasSize(1)
                 .extracting("name")
-                .containsExactlyInAnyOrder(
-                        menuName
-                );
+                .contains(menuName);
     }
 }

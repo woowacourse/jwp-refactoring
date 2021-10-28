@@ -46,14 +46,13 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
-        assertThat(location).isEqualTo(URI.create(PRODUCT_URL + "/1"));
-
         assertThat(body).isNotNull();
-        assertThat(body.getId()).isEqualTo(1L);
+        assertThat(body.getId()).isNotNull();
         assertThat(body.getName()).isEqualTo(productName);
         assertThat(body.getPrice())
                 .usingComparator(BigDecimal::compareTo)
                 .isEqualTo(productPrice);
+        assertThat(location).isEqualTo(URI.create(PRODUCT_URL + "/" + body.getId()));
     }
 
     @DisplayName("전체 product 를 조회한다")
@@ -82,7 +81,6 @@ class ProductIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
-
         assertThat(body)
                 .hasSize(2)
                 .extracting("name")

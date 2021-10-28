@@ -18,7 +18,7 @@ class MenuGroupIntegrationTest extends IntegrationTest {
     @Test
     void create() {
         // given
-        String menuGroupName = "lunch";
+        String menuGroupName = "추천메뉴";
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(menuGroupName);
 
@@ -34,23 +34,22 @@ class MenuGroupIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
-        assertThat(location).isEqualTo(URI.create(MENU_GROUP_URL + "/1"));
-
         assertThat(body).isNotNull();
-        assertThat(body.getId()).isEqualTo(1L);
+        assertThat(body.getId()).isNotNull();
         assertThat(body.getName()).isEqualTo(menuGroupName);
+        assertThat(location).isEqualTo(URI.create(MENU_GROUP_URL + "/" + body.getId()));
     }
 
     @DisplayName("전체 menuGroup 을 조회한다")
     @Test
     void list() {
         // given
-        String menuGroupName = "lunch";
+        String menuGroupName = "추천메뉴";
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(menuGroupName);
         menuGroupDao.save(menuGroup);
 
-        String secondMenuGroupName = "dinner";
+        String secondMenuGroupName = "특선메뉴";
         MenuGroup secondMenuGroup = new MenuGroup();
         secondMenuGroup.setName(secondMenuGroupName);
         menuGroupDao.save(secondMenuGroup);
@@ -65,7 +64,6 @@ class MenuGroupIntegrationTest extends IntegrationTest {
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
-
         assertThat(body)
                 .hasSize(2)
                 .extracting("name")

@@ -39,14 +39,14 @@
   - [x] /api/menu-groups GET success
 
 - [ ] Order 테스트
-  - [ ] /api/orders POST success
+  - [x] /api/orders POST success
   - [ ] /api/orders POST failure
     - [ ] orderLineItem 이 없는 경우
     - [ ] orderLineItem 개수가 메뉴 수와 일치하지 않는 경우
     - [ ] orderTable 이 존재하지 않는 경우
     - [ ] orderTable 이 비어있는 경우
-  - [ ] /api/orders GET success
-  - [ ] /api/orders PUT success
+  - [x] /api/orders GET success
+  - [x] /api/orders PUT success
   - [ ] /api/orders PUT failure
     - [ ] order 가 존재하지 않는 경우
     - [ ] order 가 이미 완료된 order 인 경우
