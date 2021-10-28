@@ -56,7 +56,7 @@ public class TableGroupService {
         List<OrderTable> orderTables = new ArrayList<>();
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.addTableGroup(savedTableGroup);
-            savedOrderTable.addEmpty(false);
+            savedOrderTable.changeEmpty(false);
             orderTables.add(orderTableRepository.save(savedOrderTable));
         }
         return TableGroupResponse.of(savedTableGroup, orderTables);

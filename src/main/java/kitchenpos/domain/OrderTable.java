@@ -59,12 +59,14 @@ public class OrderTable {
         return empty;
     }
 
-    // TODO add 로직 다 없애기
-    public void addEmpty(boolean empty) {
+    public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
 
     public void addNumberOfGuests(int numberOfGuests) {
+        if (isEmpty()) {
+            throw new IllegalArgumentException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
+        }
         this.numberOfGuests = numberOfGuests;
     }
 

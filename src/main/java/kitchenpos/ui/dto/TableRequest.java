@@ -2,12 +2,15 @@ package kitchenpos.ui.dto;
 
 import kitchenpos.domain.OrderTable;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class TableRequest {
-    @NotNull
+    @NotNull(message = "방문한 손님 수가 null입니다.")
+    @Min(value = 0, message = "방문한 손님 수가 음수입니다.")
     private int numberOfGuests;
-    @NotNull
+
+    @NotNull(message = "빈 테이블 유무가 null입니다.")
     private boolean empty;
 
     private TableRequest() {
