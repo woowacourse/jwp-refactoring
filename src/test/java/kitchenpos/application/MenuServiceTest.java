@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -31,16 +31,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -106,9 +106,9 @@ class MenuServiceTest {
 
         menu.setMenuProducts(Arrays.asList(menuProduct1, menuProduct2));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-        when(productDao.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
-        when(menuDao.save(any())).thenReturn(savedMenu1);
+        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
+        when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
+        when(menuRepository.save(any())).thenReturn(savedMenu1);
 
         final Menu actual = menuService.create(request);
         assertThat(actual).isEqualTo(savedMenu1);
@@ -148,8 +148,8 @@ class MenuServiceTest {
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
 
         when(menuGroupRepository.existsById(1L)).thenReturn(true);
-        when(productDao.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-        when(productDao.findById(weirdSavedProduct.getId())).thenReturn(Optional.of(weirdSavedProduct));
+        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
+        when(productRepository.findById(weirdSavedProduct.getId())).thenReturn(Optional.of(weirdSavedProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -161,9 +161,9 @@ class MenuServiceTest {
         final List<MenuProduct> menuProducts1 = Arrays.asList(menuProduct1, menuProduct2);
         final List<MenuProduct> menuProducts2 = Collections.singletonList(new MenuProduct());
 
-        when(menuDao.findAll()).thenReturn(menus);
-        when(menuProductDao.findAllByMenuId(1L)).thenReturn(menuProducts1);
-        when(menuProductDao.findAllByMenuId(2L)).thenReturn(menuProducts2);
+        when(menuRepository.findAll()).thenReturn(menus);
+        when(menuProductRepository.findAllByMenuId(1L)).thenReturn(menuProducts1);
+        when(menuProductRepository.findAllByMenuId(2L)).thenReturn(menuProducts2);
 
         final List<Menu> actual = menuService.list();
         assertThat(actual).isEqualTo(menus);
