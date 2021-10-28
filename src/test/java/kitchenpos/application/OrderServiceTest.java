@@ -1,24 +1,29 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoSettings;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
+import static kitchenpos.utils.RequestFactory.CREATE_ORDER_LINE_ITEM_REQUEST;
+import static kitchenpos.utils.RequestFactory.CREATE_ORDER_REQUEST;
+import static kitchenpos.utils.RequestFactory.CREATE_ORDER_STATUS_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -28,36 +33,36 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("주문 서비스 테스트")
-class OrderServiceTest implements ServiceTest{
+class OrderServiceTest implements ServiceTest {
 
     @InjectMocks
     private OrderService orderService;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @DisplayName("주문을 생성한다. - 실패, 주문 항목이 비어있는 경우")
     @Test
     void createFailedWhenOrderLineItemsEmpty() {
         // given
-        Order order = new Order(1L, emptyList());
+        OrderRequest orderRequest = CREATE_ORDER_REQUEST(1L, emptyList());
 
         // when - then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(never())
+        then(menuRepository).should(never())
                 .countByIdIn(anyList());
-        then(orderTableDao).should(never())
-                .findById(order.getOrderTableId());
-        then(orderDao).should(never())
+        then(orderTableRepository).should(never())
+                .findById(orderRequest.getOrderTableId());
+        then(orderRepository).should(never())
                 .findById(any());
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(any(Order.class));
     }
 
@@ -65,28 +70,28 @@ class OrderServiceTest implements ServiceTest{
     @Test
     void createFailedWhenSizeNotEqual() {
         // given
-        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        Order order = new Order(null, 1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
+        OrderRequest orderRequest = CREATE_ORDER_REQUEST(1L, Arrays.asList(
+                CREATE_ORDER_LINE_ITEM_REQUEST(1L, 1L),
+                CREATE_ORDER_LINE_ITEM_REQUEST(2L, 1L)
+        ));
 
-
-        final List<Long> menuIds = order.getOrderLineItems().stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        given(menuDao.countByIdIn(menuIds)).willReturn(1L);
+        given(menuRepository.countByIdIn(menuIds)).willReturn(1L);
 
         // when - then
         // menuIds는 1이지만, orderLineItems의 사이즈는 2인 경우
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(times(1))
+        then(menuRepository).should(times(1))
                 .countByIdIn(menuIds);
-        then(orderTableDao).should(never())
-                .findById(order.getOrderTableId());
-        then(orderDao).should(never())
+        then(orderTableRepository).should(never())
+                .findById(orderRequest.getOrderTableId());
+        then(orderRepository).should(never())
                 .findById(any());
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(any(Order.class));
     }
 
@@ -94,28 +99,29 @@ class OrderServiceTest implements ServiceTest{
     @Test
     void createFailedWhenTableIdNotFound() {
         // given
-        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 1);
-        Order order = new Order(null, -1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
 
+        OrderRequest orderRequest = CREATE_ORDER_REQUEST(-1L, Arrays.asList(
+                CREATE_ORDER_LINE_ITEM_REQUEST(1L, 1L),
+                CREATE_ORDER_LINE_ITEM_REQUEST(2L, 1L)
+        ));
 
-        final List<Long> menuIds = order.getOrderLineItems().stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        given(menuDao.countByIdIn(menuIds)).willReturn(2L);
-        given(orderTableDao.findById(order.getOrderTableId())).willThrow(IllegalArgumentException.class);
+        given(menuRepository.countByIdIn(menuIds)).willReturn(2L);
+        given(orderTableRepository.findById(orderRequest.getOrderTableId())).willThrow(IllegalArgumentException.class);
 
         // when - then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(times(1))
+        then(menuRepository).should(times(1))
                 .countByIdIn(menuIds);
-        then(orderTableDao).should(times(1))
-                .findById(order.getOrderTableId());
-        then(orderDao).should(never())
+        then(orderTableRepository).should(times(1))
+                .findById(orderRequest.getOrderTableId());
+        then(orderRepository).should(never())
                 .findById(any());
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(any(Order.class));
     }
 
@@ -123,29 +129,30 @@ class OrderServiceTest implements ServiceTest{
     @Test
     void createFailedWhenTableIsEmpty() {
         // given
-        OrderLineItem orderLineItem1 = new OrderLineItem(1L, 1);
-        OrderLineItem orderLineItem2 = new OrderLineItem(2L, 2);
-        Order order = new Order(null, 1L, null, null, Arrays.asList(orderLineItem1, orderLineItem2));
+        OrderRequest orderRequest = CREATE_ORDER_REQUEST(1L, Arrays.asList(
+                CREATE_ORDER_LINE_ITEM_REQUEST(1L, 1L),
+                CREATE_ORDER_LINE_ITEM_REQUEST(2L, 2L)
+        ));
 
-        final List<Long> menuIds = order.getOrderLineItems().stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        given(menuDao.countByIdIn(menuIds)).willReturn(2L);
+        given(menuRepository.countByIdIn(menuIds)).willReturn(2L);
 
         OrderTable orderTable = new OrderTable(1L, null, 10, true);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
+        given(orderTableRepository.findById(orderRequest.getOrderTableId())).willReturn(Optional.of(orderTable));
 
         // when - then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(menuDao).should(times(1))
+        then(menuRepository).should(times(1))
                 .countByIdIn(menuIds);
-        then(orderTableDao).should(times(1))
-                .findById(order.getOrderTableId());
-        then(orderDao).should(never())
+        then(orderTableRepository).should(times(1))
+                .findById(orderRequest.getOrderTableId());
+        then(orderRepository).should(never())
                 .findById(any());
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(any(Order.class));
     }
 
@@ -154,15 +161,16 @@ class OrderServiceTest implements ServiceTest{
     void changeOrderStatusFailedWhenOrderIdNotFound() {
         // given
         Long orderId = -1L;
-        Order order = new Order(-1L, OrderStatus.COOKING.name());
-        given(orderDao.findById(orderId)).willThrow(IllegalArgumentException.class);
+        OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.MEAL.name());
+
+        given(orderRepository.findById(orderId)).willThrow(IllegalArgumentException.class);
 
         // when -  then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderStatusRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderDao).should(times(1))
+        then(orderRepository).should(times(1))
                 .findById(orderId);
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(any());
     }
 
@@ -171,17 +179,17 @@ class OrderServiceTest implements ServiceTest{
     void changeOrderStatusFailedWhenStatusIsCompletion() {
         // given
         Long orderId = 1L;
-        Order order = new Order(1L, OrderStatus.COOKING.name());
+        OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.COMPLETION.name());
 
-        Order savedOrder = new Order(1L,OrderStatus.COMPLETION.name() );
-        given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
+        Order savedOrder = new Order(1L, null, OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(savedOrder));
 
         // when -  then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderStatusRequest))
                 .isInstanceOf(IllegalArgumentException.class);
-        then(orderDao).should(times(1))
+        then(orderRepository).should(times(1))
                 .findById(orderId);
-        then(orderDao).should(never())
+        then(orderRepository).should(never())
                 .save(savedOrder);
     }
 }

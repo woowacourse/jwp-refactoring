@@ -4,7 +4,12 @@ import kitchenpos.application.TableService;
 import kitchenpos.ui.dto.TableRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -20,7 +25,7 @@ public class TableRestController {
 
     @PostMapping("/api/tables")
     public ResponseEntity<TableResponse> create(@RequestBody @Valid final TableRequest tableRequest) {
-        final TableResponse tableResponse = tableService.create(tableRequest.toOrderTable());
+        final TableResponse tableResponse = tableService.create(tableRequest);
         final URI uri = URI.create("/api/tables/" + tableResponse.getId());
         return ResponseEntity.created(uri)
                 .body(tableResponse)
@@ -40,7 +45,7 @@ public class TableRestController {
             @RequestBody @Valid final TableRequest tableRequest
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeEmpty(orderTableId, tableRequest.toOrderTable()))
+                .body(tableService.changeEmpty(orderTableId, tableRequest))
                 ;
     }
 
@@ -50,7 +55,7 @@ public class TableRestController {
             @RequestBody @Valid final TableRequest tableRequest
     ) {
         return ResponseEntity.ok()
-                .body(tableService.changeNumberOfGuests(orderTableId, tableRequest.toOrderTable()))
+                .body(tableService.changeNumberOfGuests(orderTableId, tableRequest))
                 ;
     }
 }

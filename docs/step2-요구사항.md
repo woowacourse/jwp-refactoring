@@ -11,6 +11,6 @@
   - [ ] 모든 원시값과 문자열을 포장한다.
   - [ ] 메서드 길이가 10라인을 넘어가지 않도록 구현한다.
   - [ ] 3개 이상의 인스턴스 변수를 가진 클래스를 쓰지 않는다.
-- [ ] Lombok을 사용하지 않는다.
-- [ ] JPA를 도입할 경우 `spring.jpa.hibernate.ddl-auto=validate` 옵션을 필수로 준다.
+- [x] Lombok을 사용하지 않는다.
+- [x] JPA를 도입할 경우 `spring.jpa.hibernate.ddl-auto=validate` 옵션을 필수로 준다.
   - [ ] DB 형상관리를 해보자.

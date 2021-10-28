@@ -6,7 +6,8 @@ public class MenuProductRequest {
     private Long productId;
     private Long quantity;
 
-    private MenuProductRequest() {}
+    private MenuProductRequest() {
+    }
 
     private MenuProductRequest(Long productId, Long quantity) {
         this.productId = productId;
@@ -25,10 +26,10 @@ public class MenuProductRequest {
         return quantity;
     }
 
-    public MenuProduct toMenuProduct() {
-        return new MenuProduct(
-          productId,
-          quantity
-        );
-    }
+//    public MenuProduct toMenuProduct() {
+//        return new MenuProduct(
+//                productId,
+//                quantity
+//        );
+//    }
 }

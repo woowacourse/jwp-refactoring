@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 public class TableGroupRequest {
     private List<OrderTableIdRequest> orderTables;
 
-    private TableGroupRequest() {}
+    private TableGroupRequest() {
+    }
 
     private TableGroupRequest(List<OrderTableIdRequest> orderTables) {
         this.orderTables = orderTables;
@@ -24,20 +25,21 @@ public class TableGroupRequest {
     }
 
     public TableGroup toTableGroup() {
-        List<OrderTable> orderTables = this.orderTables.stream()
-                .map(OrderTableIdRequest::toOrderTable)
+        return new TableGroup(null, LocalDateTime.now());
+    }
+
+    public List<Long> getOrderTableIds() {
+        return orderTables.stream()
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
-        return new TableGroup(LocalDateTime.now(), orderTables);
+
     }
 
-    public List<OrderTableIdRequest> getOrderTables() {
-        return orderTables;
-    }
-
-    static class OrderTableIdRequest {
+    public static class OrderTableIdRequest {
         private Long id;
 
-        private OrderTableIdRequest() {}
+        private OrderTableIdRequest() {
+        }
 
         public OrderTableIdRequest(Long id) {
             this.id = id;

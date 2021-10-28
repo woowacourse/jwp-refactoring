@@ -53,15 +53,9 @@ public class MenuRequest {
     }
 
     public Menu toMenu() {
-        List<MenuProduct> menuProducts = this.menuProducts.stream()
-                .map(MenuProductRequest::toMenuProduct)
-                .collect(Collectors.toList());
-
         return new Menu(
                 name,
-                price,
-                menuGroupId,
-                menuProducts
+                price
         );
     }
 }

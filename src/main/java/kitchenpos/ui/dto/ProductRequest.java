@@ -11,7 +11,8 @@ public class ProductRequest {
     @NotNull
     private BigDecimal price;
 
-    private ProductRequest() {}
+    private ProductRequest() {
+    }
 
     private ProductRequest(String name, BigDecimal price) {
         this.name = name;

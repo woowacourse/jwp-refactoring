@@ -8,7 +8,8 @@ public class MenuGroupRequest {
     @NotNull
     private String name;
 
-    private MenuGroupRequest() {}
+    private MenuGroupRequest() {
+    }
 
     private MenuGroupRequest(String name) {
         this.name = name;

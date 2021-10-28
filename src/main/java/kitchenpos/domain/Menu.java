@@ -1,47 +1,61 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-import static java.util.Collections.emptyList;
-
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
 
-    public Menu(String name, Integer price, Long menuGroupId) {
-        this(null, name, BigDecimal.valueOf(price), menuGroupId, new ArrayList<>());
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_group_id", nullable = false)
+    private MenuGroup menuGroup;
+
+//    @OneToMany()
+//    private List<MenuProduct> menuProducts;
+
+    protected Menu() {
     }
 
-    public Menu(String name, Integer price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
+    public Menu(String name, BigDecimal price) {
+        this(null, name, price, null);
     }
 
-    public Menu(long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, new ArrayList<>());
-    }
-
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuGroup = menuGroup;
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts.addAll(menuProducts);
+    public Menu addMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
+        return this;
     }
 
+//    public void addMenuProducts(List<MenuProduct> menuProducts) {
+//        this.menuProducts.addAll(menuProducts);
+//    }
 
     public Long getId() {
         return id;
@@ -55,11 +69,11 @@ public class Menu {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public Long getMenuGroupId() {
+        return menuGroup.getId();
     }
 }

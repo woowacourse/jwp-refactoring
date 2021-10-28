@@ -1,10 +1,12 @@
 package kitchenpos.ui.dto;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 public class MenuResponse {
     private Long id;
@@ -13,7 +15,8 @@ public class MenuResponse {
     private Long menuGroupId;
     private List<MenuProductResponse> menuProducts;
 
-    private MenuResponse(){}
+    private MenuResponse() {
+    }
 
     private MenuResponse(Long id,
                          String name,
@@ -28,20 +31,22 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse from(Menu menu) {
+    public static MenuResponse of(Menu menu, List<MenuProduct> menuProducts) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
                 menu.getMenuGroupId(),
-                MenuProductResponse.from(menu.getMenuProducts())
+                MenuProductResponse.from(menuProducts)
         );
     }
 
-    public static List<MenuResponse> from(List<Menu> menus) {
-        return menus.stream()
-                .map(MenuResponse::from)
-                .collect(Collectors.toList());
+    public static List<MenuResponse> from(Map<Menu, List<MenuProduct>> results) {
+        List<MenuResponse> menuResponses = new ArrayList<>();
+        results.forEach((key, value) -> menuResponses.add(
+                MenuResponse.of(key, value)
+        ));
+        return menuResponses;
     }
 
     public Long getId() {

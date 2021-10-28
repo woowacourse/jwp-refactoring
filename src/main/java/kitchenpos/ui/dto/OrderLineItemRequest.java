@@ -1,12 +1,11 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.OrderLineItem;
-
 public class OrderLineItemRequest {
     private Long menuId;
     private Long quantity;
 
-    private OrderLineItemRequest() {}
+    private OrderLineItemRequest() {
+    }
 
     private OrderLineItemRequest(Long menuId, Long quantity) {
         this.menuId = menuId;
@@ -15,10 +14,6 @@ public class OrderLineItemRequest {
 
     public static OrderLineItemRequest of(Long menuId, Long quantity) {
         return new OrderLineItemRequest(menuId, quantity);
-    }
-
-    public OrderLineItem toOrderLineItem() {
-        return new OrderLineItem(menuId, quantity);
     }
 
     public Long getMenuId() {

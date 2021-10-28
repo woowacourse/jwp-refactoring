@@ -10,7 +10,8 @@ public class TableRequest {
     @NotNull
     private boolean empty;
 
-    private TableRequest() {}
+    private TableRequest() {
+    }
 
     private TableRequest(int numberOfGuests, boolean empty) {
         this.numberOfGuests = numberOfGuests;

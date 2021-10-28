@@ -1,23 +1,44 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderLineItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
-    private Long orderId;
-    private Long menuId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Order order;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Menu menu;
+
+    @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem(Long menuId, long quantity) {
-        this(null, null, menuId, quantity);
+    protected OrderLineItem() {
     }
 
-    public OrderLineItem(Long orderId, Long menuId, long quantity) {
-        this(null, orderId, menuId, quantity);
+    public OrderLineItem(Menu menu, long quantity) {
+        this(null, null, menu, quantity);
     }
 
-    public OrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        this(null, order, menu, quantity);
+    }
+
+    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
         this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
+        this.order = order;
+        this.menu = menu;
         this.quantity = quantity;
     }
 
@@ -25,19 +46,27 @@ public class OrderLineItem {
         return seq;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Order getOrder() {
+        return order;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
     public long getQuantity() {
         return quantity;
     }
 
-    public void addOrderId(Long orderId) {
-        this.orderId = orderId;
+    public void addOrder(Order order) {
+        this.order = order;
+    }
+
+    public Long getOrderId() {
+        return order.getId();
+    }
+
+    public Long getMenuId() {
+        return menu.getId();
     }
 }

@@ -1,7 +1,5 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Order;
-
 public class OrderStatusResponse {
     private String orderStatus;
 
@@ -12,8 +10,8 @@ public class OrderStatusResponse {
         this.orderStatus = orderStatus;
     }
 
-    public static OrderStatusResponse from (Order order) {
-        return new OrderStatusResponse(order.getOrderStatus());
+    public static OrderStatusResponse from(String orderStatus) {
+        return new OrderStatusResponse(orderStatus);
     }
 
     public String getOrderStatus() {

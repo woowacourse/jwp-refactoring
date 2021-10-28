@@ -1,10 +1,32 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private TableGroup tableGroup;
+//    private Long tableGroupId;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
+
+    protected OrderTable() {
+    }
 
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
@@ -14,9 +36,9 @@ public class OrderTable {
         this(id, null, 0, true);
     }
 
-    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroupId = tableGroupId;
+        this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -25,8 +47,8 @@ public class OrderTable {
         return id;
     }
 
-    public Long getTableGroupId() {
-        return tableGroupId;
+    public TableGroup getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {
@@ -46,7 +68,16 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
-    public void addTableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public void addTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroup.getId();
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 }
