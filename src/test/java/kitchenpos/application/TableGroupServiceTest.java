@@ -10,9 +10,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,13 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -73,10 +73,10 @@ class TableGroupServiceTest {
                 .of(tableGroup)
                 .id(1L)
                 .build();
-        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
-        when(tableGroupDao.save(tableGroup)).thenReturn(savedTableGroup);
-        when(orderTableDao.save(orderTable1)).thenReturn(orderTable1);
-        when(orderTableDao.save(orderTable2)).thenReturn(orderTable2);
+        when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
+        when(tableGroupRepository.save(tableGroup)).thenReturn(savedTableGroup);
+        when(orderTableRepository.save(orderTable1)).thenReturn(orderTable1);
+        when(orderTableRepository.save(orderTable2)).thenReturn(orderTable2);
 
         final TableGroup actual = tableGroupService.create(tableGroup);
         assertThat(actual).isEqualTo(savedTableGroup);
@@ -97,8 +97,7 @@ class TableGroupServiceTest {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         final List<OrderTable> orderTables = Arrays.asList(wrongOrderTable, normalOrderTable);
-        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
-
+        when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -130,7 +129,7 @@ class TableGroupServiceTest {
                 .orderTables(orderTables)
                 .build();
 
-        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
+        when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -150,7 +149,7 @@ class TableGroupServiceTest {
                 .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, orderTable2);
 
-        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
+        when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -172,7 +171,7 @@ class TableGroupServiceTest {
                 .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
-        when(orderTableDao.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
+        when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -180,8 +179,8 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정을 해제할 수 있다")
     @Test
     void ungroup() {
-        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(orderTables);
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
+        when(orderTableRepository.findAllByTableGroupId(any())).thenReturn(orderTables);
+        when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(false);
 
         assertThatCode(() -> tableGroupService.ungroup(any())).doesNotThrowAnyException();
     }
@@ -189,8 +188,8 @@ class TableGroupServiceTest {
     @DisplayName("단체 지정의 주문 테이블의 주문이 있고, 주문 상태가 `COOKING`, `MEAL`이라면 예외가 발생한다")
     @Test
     void ungroupExceptionExistsAndStatus() {
-        when(orderTableDao.findAllByTableGroupId(any())).thenReturn(orderTables);
-        when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+        when(orderTableRepository.findAllByTableGroupId(any())).thenReturn(orderTables);
+        when(orderRepository.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(any())).isInstanceOf(IllegalArgumentException.class);
     }
