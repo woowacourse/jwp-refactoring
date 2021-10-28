@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 
 import static kitchenpos.application.Fixtures.*;
@@ -19,9 +18,6 @@ class TableServiceTest extends ServiceTest {
 
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private TableGroupDao tableGroupDao;
 
     @Autowired
     private OrderTableDao orderTableDao;

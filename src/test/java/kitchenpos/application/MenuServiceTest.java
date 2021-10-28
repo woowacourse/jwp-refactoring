@@ -39,10 +39,10 @@ class MenuServiceTest extends ServiceTest {
     void createTest() {
 
         // when
-        menuService.create(MENU);
+        final Menu menu = menuService.create(MENU);
 
         // then
-        assertThat(menuDao.findById(1L).get()).isEqualTo(MENU);
+        assertThat(menuDao.findById(1L).get()).isEqualTo(menu);
     }
 
     @Test
@@ -50,12 +50,12 @@ class MenuServiceTest extends ServiceTest {
     void listTest() {
 
         // given
-        menuService.create(MENU);
+        final Menu menu = menuService.create(MENU);
 
         // when
         final List<Menu> menus = menuService.list();
 
         // then
-        assertThat(menus).contains(MENU);
+        assertThat(menus).contains(menu);
     }
 }

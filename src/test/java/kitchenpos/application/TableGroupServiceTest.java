@@ -8,17 +8,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 import static kitchenpos.application.Fixtures.*;
-import static kitchenpos.application.Fixtures.TABLE_GROUP;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class TableGroupServiceTest extends ServiceTest {
+
+    @Autowired
+    private TableGroupService tableGroupService;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -27,16 +28,16 @@ class TableGroupServiceTest extends ServiceTest {
     private OrderTableDao orderTableDao;
 
     @Autowired
-    private MenuService menuService;
-
-    @Autowired
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private TableGroupService tableGroupService;
+    private ProductService productService;
 
     @Autowired
-    private ProductService productService;
+    private MenuService menuService;
+
+    @Autowired
+    private TableService tableService;
 
     @BeforeEach
     void setUp() {
@@ -44,8 +45,9 @@ class TableGroupServiceTest extends ServiceTest {
         productService.create(PRODUCT);
         menuService.create(MENU);
 
-        final OrderTable firstOrderTable = orderTableDao.save(FIRST_ORDER_TABLE);
-        final OrderTable secondOrderTable = orderTableDao.save(SECOND_ORDER_TABLE);
+        final OrderTable firstOrderTable = tableService.create(FIRST_ORDER_TABLE);
+        final OrderTable secondOrderTable = tableService.create(SECOND_ORDER_TABLE);
+
         TABLE_GROUP.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
     }
 

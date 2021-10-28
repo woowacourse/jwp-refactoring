@@ -26,10 +26,10 @@ class MenuGroupServiceTest extends ServiceTest {
     void createTest() {
 
         // when
-        menuGroupService.create(MENU_GROUP);
+        final MenuGroup menuGroup = menuGroupService.create(MENU_GROUP);
 
         // then
-        assertThat(menuGroupDao.findById(1L).get()).isEqualTo(MENU_GROUP);
+        assertThat(menuGroupDao.findById(1L).get()).isEqualTo(menuGroup);
     }
 
     @Test
@@ -37,12 +37,12 @@ class MenuGroupServiceTest extends ServiceTest {
     void listTest() {
 
         // given
-        menuGroupService.create(MENU_GROUP);
+        final MenuGroup menuGroup = menuGroupService.create(MENU_GROUP);
 
         // when
         final List<MenuGroup> menuGroups = menuGroupService.list();
 
         // then
-        assertThat(menuGroups).contains(MENU_GROUP);
+        assertThat(menuGroups).contains(menuGroup);
     }
 }

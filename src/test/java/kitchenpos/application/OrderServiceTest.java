@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -28,19 +27,20 @@ class OrderServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private MenuGroupService menuGroupService;
+
+    @Autowired
+    private ProductService productService;
 
     @Autowired
     private MenuService menuService;
 
     @Autowired
-    private MenuGroupService menuGroupService;
+    private TableService tableService;
 
     @Autowired
     private TableGroupService tableGroupService;
 
-    @Autowired
-    private ProductService productService;
 
     @Transactional
     @BeforeEach
@@ -49,8 +49,9 @@ class OrderServiceTest extends ServiceTest {
         productService.create(PRODUCT);
         menuService.create(MENU);
 
-        final OrderTable firstOrderTable = orderTableDao.save(FIRST_ORDER_TABLE);
-        final OrderTable secondOrderTable = orderTableDao.save(SECOND_ORDER_TABLE);
+        final OrderTable firstOrderTable = tableService.create(FIRST_ORDER_TABLE);
+        final OrderTable secondOrderTable = tableService.create(SECOND_ORDER_TABLE);
+
         TABLE_GROUP.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
         tableGroupService.create(TABLE_GROUP);
     }
