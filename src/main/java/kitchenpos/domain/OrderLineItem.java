@@ -58,10 +58,6 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void setMenu(Menu menu) {
-        this.menu = menu;
-    }
-
     public long getQuantity() {
         return quantity;
     }
