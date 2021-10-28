@@ -29,8 +29,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("테이블그룹 서비스 테스트")
-@MockitoSettings
-class TableGroupServiceTest {
+class TableGroupServiceTest implements ServiceTest{
 
     @InjectMocks
     private TableGroupService tableGroupService;

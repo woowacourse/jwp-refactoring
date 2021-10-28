@@ -16,8 +16,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 
 @DisplayName("상품 서비스 테스트")
-@MockitoSettings
-class ProductServiceTest {
+class ProductServiceTest implements ServiceTest{
 
     @InjectMocks
     private ProductService productService;

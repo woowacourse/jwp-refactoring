@@ -28,8 +28,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("주문 서비스 테스트")
-@MockitoSettings
-class OrderServiceTest {
+class OrderServiceTest implements ServiceTest{
 
     @InjectMocks
     private OrderService orderService;

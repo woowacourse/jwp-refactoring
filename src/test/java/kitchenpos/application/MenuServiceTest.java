@@ -24,8 +24,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("메뉴 서비스 테스트")
-@MockitoSettings
-class MenuServiceTest {
+class MenuServiceTest implements ServiceTest{
 
     @InjectMocks
     private MenuService menuService;
