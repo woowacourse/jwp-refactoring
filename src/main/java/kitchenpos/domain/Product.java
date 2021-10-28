@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import kitchenpos.exception.FieldNotValidException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

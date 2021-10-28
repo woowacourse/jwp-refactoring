@@ -20,7 +20,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
 @DisplayName("Menu 서비스 테스트")
-public class MenuServiceTest extends ServiceTest{
+public class MenuServiceTest extends ServiceTest {
     @InjectMocks
     private MenuService menuService;
 

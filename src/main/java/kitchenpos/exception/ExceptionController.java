@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class ExceptionController {
 
+    @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException e) {
         return ResponseEntity.badRequest().body(ErrorResponse.from(e.getMessage()));
     }

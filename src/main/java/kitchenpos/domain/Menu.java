@@ -56,7 +56,7 @@ public class Menu {
     }
 
     private void validateName(String name) {
-        if (Objects.isNull(name)){
+        if (Objects.isNull(name)) {
             throw new FieldNotValidException(this.getClass().getSimpleName(), "name");
         }
     }
@@ -68,7 +68,7 @@ public class Menu {
     }
 
     private void validateMenuGroup(MenuGroup menuGroup) {
-        if (Objects.isNull(menuGroup)){
+        if (Objects.isNull(menuGroup)) {
             throw new FieldNotValidException(this.getClass().getSimpleName(), "menuGroup");
         }
     }

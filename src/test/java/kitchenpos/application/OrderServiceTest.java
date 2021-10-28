@@ -8,7 +8,6 @@ import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
-import org.aspectj.weaver.ast.Not;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
