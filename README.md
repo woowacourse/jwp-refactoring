@@ -29,37 +29,36 @@
     - [x] Menu를 MenuResponse로 변환해서 반환한다.
       - [x] MenuResponse는 MenuProductResponse들을 갖고있다.
 
-- [ ] Order
-  - [ ] 새로운 Order를 생성해 DB에 저장한다.
-    - [ ] Order의 OrderLineItems가 null이면 예외를 발생시킨다.
-    - [ ] Order의 모든 OrderLineItems의 Menu의 Id들을 취합한다.
-    - [ ] Order의 OrderLineItems의 Menu들이 모두 DB에 존재해야 한다.
-      - [ ] 그렇지 않으면 예외를 발생시킨다.
-    - [ ] Order의 Id를 null로 세팅한다.
-    - [ ] Order의 OrderTableId로 DB에서 OrderTable을 가져온다.
-      - [ ] 존재하지 않으면 예외를 발생시킨다.
-    - [ ] OrderTable이 비어있으면 예외를 발생시킨다.
-    - [ ] Order의 OrderTableId를 DB에서 조회한 OrderTable의 Id로 세팅한다.
-    - [ ] Order의 OrderStatus를 COOKING으로 세팅한다.
-    - [ ] Order의 OrderTime을 현재시간으로 세팅한다.
-    - [ ] Order를 DB에 저장한다.
-    - [ ] Order의 모든 OrderLineItems에 Order의 Id를 세팅해서 DB에 저장한다.
-    - [ ] Id를 갖고있는 Order를 반환한다.
-      - [ ] Order의 모든 OrderLineItems들은 Id를 갖고있다.
-  - [ ] DB에 저장되어있는 모든 Order들을 반환한다.
-    - [ ] DB에서 모든 Order들을 조회해온다.
-      - [ ] DB에서 모든 Order들을 조회해온다.
-      - [ ] Order 각각의 Id로 DB에서 해당 Order의 모든 OrderLineItem들을 조회해 Order에 세팅한다.
-      - [ ] Order들을 반환한다.
-        - [ ] 모든 Order들은 각각의 모든 OrderLineItem들을 갖고 있다.
-  - [ ] Order의 OrderStatus를 변경한다.
-    - [ ] Order의 Id로 DB에서 Order를 가져온다.
-      - [ ] DB에 존재하지 않으면 예외를 발생시킨다.
-    - [ ] DB에서 조회한 Order의 OrderStatus가 COMPLETION이면, 예외를 발생시킨다.
-    - [ ] DB에서 꺼내온 Order의 OrderStatus를 매개변수 Order의 OrderStatus로 세팅한다.
-    - [ ] DB에서 꺼내온 Order를 DB에 다시 저장한다.
-    - [ ] Order의 Id로 DB에서 Order의 모든 OrderLineItem들을 가져온다.
-    - [ ] OrderLineItem들을 포함한 Order를 반환한다.
+- [x] Order
+  - [x] 새로운 Order를 생성해 DB에 저장한다.
+    - [x] orderTableId로 DB에서 OrderTable을 가져온다.
+    - [x] Order을 생성한다.
+      - [x] OrderTable을 할당한다.
+      - [x] OrderStatus를 COOKING으로 할당한다.
+    - [x] Order의 orderedTime을 현재시간으로 세팅한다.
+    - [x] Order를 DB에 저장한다.
+    - [x] OrderLineItems에 Order를 할당해서 DB에 저장한다.
+    - [x] Order, OrderLineItems를 Response로 변환해 반환한다.
+    - [x] 예외
+      - [x] OrderLineItems가 비어있을 때
+      - [x] OrderTable
+        - [x] DB에 존재하지 않을 때
+        - [x] empty = true
+  - [x] DB에 저장되어있는 모든 Order들을 반환한다.
+    - [x] DB에서 모든 Order들을 조회한다.
+      - [x] DB에서 모든 Order들을 조회한다.
+      - [x] DB에서 각 Order들의 OrderLineItem들을 조회한다.
+      - [x] Order들과 각 Order의 OrderLineItem들을 Response로 변환해서 반환한다.
+  - [x] Order의 OrderStatus를 변경한다.
+    - [x] orderId로 DB에서 Order를 가져온다.
+    - [x] Order의 orderStatus를 요청 파라미터 OrderStatus로 변경한다.
+    - [x] 변경사항을 DB에 반영한다.
+    - [x] DB에서 Order의 모든 OrderLineItem들을 가져온다.
+    - [x] Order와 OrderLineItem들을 Response로 변환해서 반환한다.
+    - [x] 예외
+      - [x] Order
+        - [x] DB에 존재하지 않을 때
+        - [x] OrderStatus = COMPLETION
 
 - [x] Product
   - [x] 새로운 Product를 생성해 DB에 저장한다.
@@ -71,54 +70,58 @@
       - [x] price = null
       - [x] price < 0
 
-- [ ] TableGroup
-  - [ ] 새로운 TableGroup을 생성해 DB에 저장한다.
-    - [ ] 요청 매개변수의 TableGroup에서 모든 OrderTable들을 꺼낸다.
-    - [ ] 꺼낸 모든 OrderTable들의 컬렉션이 null이거나 사이즈가 2보다 작으면 예외를 발생시킨다.
-    - [ ] 모든 OrderTable들의 Id들을 추출한다.
-    - [ ] 추출한 Id에 해당하는 OrderTable들을 DB에서 조회한다.
-    - [ ] 요청 매개변수 TableGroup의 OrderTables와 DB에서 조회한 OrderTables의 size가 다르면 예외를 발생시킨다.
-    - [ ] DB에서 조회한 OrderTable들은 각각 모두 empty 변수값이 true여야 하고, TableGroupId가 null이어야 한다.
-      - [ ] 조건에 맞지 않으면 예외를 발생시킨다.
-    - [ ] 요청 매개변수의 TableGroup에 현재 시간을 세팅한다.
-    - [ ] 요청 매개변수의 TableGroup을 DB에 저장한다.
-    - [ ] DB에서 조회한 OrderTable들의 TableGroupId를 DB에 저장한 TableGroup의 Id로 세팅한다.
-    - [ ] DB에서 조회한 OrderTable들의 empty값을 false로 세팅한다.
-    - [ ] DB에 OrderTable들을 저장한다.
-    - [ ] TableGroup에 OrderTable들을 세팅한다.
-    - [ ] TableGroup을 반환한다.
-  - [ ] TableGroup를 해제한다.
-    - [ ] TableGroupId로 DB에서 OrderTable들을 조회한다.
-    - [ ] OrderTable들의 Id를 추출한다.
-    - [ ] OrderTable들의 Id가 모두 DB에 존재하고, 각 OrderTable에 해당하는 Order의 OrderStatus값이 COOKING또는 MEAL이면 안 된다.
-      - [ ] 그렇지 않으면 예외를 발생시킨다.
-    - [ ] OrderTable들의 TableGroupId를 모두 null로 세팅한다.
-    - [ ] OrderTable들의 empty값을 false로 세팅한다.
-    - [ ] DB에 OrderTable들을 저장한다.
+- [x] TableGroup
+  - [x] 새로운 TableGroup을 생성해 DB에 저장한다.
+    - [x] 요청 매개변수의 id값들로 DB에서 OrderTable들을 조회한다.
+    - [x] TableGroup에 현재 시간을 설정하고 DB에 저장한다.
+    - [x] OrderTable들의 empty값을 false로 변경한다.
+    - [x] OrderTable들에 TableGroup을 할당한다.
+    - [x] 변경사항을 DB에 반영하고, TableGroupResonse로 변환해 반환한다.
+    - [x] 예외
+      - [x] TableGroupRequest
+        - [x] orderTableRequests
+          - [x] empty
+          - [x] size < 2
+          - [x] DB에서 조회한 OrderTable들
+            - [x] 존재하지 않을 때
+            - [x] empty = false
+            - [x] TableGroupId != null
+  - [x] TableGroup를 해제한다.
+    - [x] 요청 파라미터 tableGroupId로 DB에서 OrderTable들을 조회한다.
+    - [x] OrderTable들 값 변경
+      - [x] TableGroupId = null
+      - [x] empty = false
+    - [x] DB에 변경사항을 반영한다.
+    - [x] 예외
+      - [x] OrderTable들
+        - [x] OrderTable에 해당하는 Order들의 OrderStatus값이 모두 COMPLETION이 아닐 때
 
-- [ ] OrderTable
-  - [ ] 새로운 OrderTable을 생성해 DB에 저장한다.
-    - [ ] 요청 매개변수의 OrderTable의 Id와 TableGroupId를 null로 세팅한다.
-    - [ ] DB에 OrderTable을 저장한다.
-  - [ ] DB에 저장되어있는 모든 OrderTable들을 조회해 반환한다.
-  - [ ] OrderTable의 Empty상태를 바꾼다.
-    - [ ] DB에서 OrderTableId로 OrderTable을 조회한다.
-      - [ ] 존재하지 않으면 예외를 발생시킨다.
-    - [ ] OrderTable의 TableGroupId가 null이 아니면 예외를 발생시킨다.
-    - [ ] OrderTable의 Order의 OrderStatus값이 COOKING또는 MEAL이면 안 된다.
-      - [ ] 그렇지 않으면 예외를 발생시킨다.
-    - [ ] DB에서 조회한 OrderTable의 empty값을 요청 매개변수 OrderTable의 empty값으로 세팅한다.
-    - [ ] DB에서 조회한 OrderTable을 DB에 저장한다.
-    - [ ] DB에 저장한 OrderTable을 반환한다.
-  - [ ] OrderTable의 NumberOfGuest값을 변경한다.
-    - [ ] 요청 매개변수로 받은 OrderTable의 NumberOfGuest값을 꺼낸다.
-    - [ ] NumberOfGuest의 값이 0보다 작으면 예외를 발생시킨다.
-    - [ ] 요청 매개변수로 받은 OrderTableId로 DB에서 OrderTable을 조회한다.
-      - [ ] DB에 존재하지 않으면 예외를 발생시킨다.
-    - [ ] DB에서 조회한 OrderTable의 empty값이 true이면 예외를 발생시킨다.
-    - [ ] DB에서 조회한 OrderTable의 NumberOfGuest값을 매개변수로 받은 OrderTable의 NumberOfGuest값으로 세팅한다.
-    - [ ] DB에서 조회한 OrderTable을 DB에 저장한다.
-    - [ ] DB에 저장한 OrderTable을 반환한다.
+- [x] OrderTable
+  - [x] 새로운 OrderTable을 생성해 DB에 저장한다.
+    - [x] OrderTable의 Id와 tableGroupId를 null로 세팅한다.
+    - [x] DB에 OrderTable을 저장한다.
+    - [x] 저장한 OrderTable을 OrderTableResponse로 변환해 반환한다.
+  - [x] DB에 저장되어있는 모든 OrderTable들을 조회해 OrderTableResponse로 변환해서 반환한다.
+  - [x] OrderTable의 Empty상태를 바꾼다.
+    - [x] DB에서 orderTableId로 OrderTable을 조회한다.
+    - [x] OrderTable의 empty값을 OrderTableRequest의 empty값으로 세팅한다.
+    - [x] 변경사항을 DB에 반영하고, OrderTable을 OrderTableResponse로 변환해 반환한다.
+    - [x] 예외
+      - [x] orderTableId의 OrderTable이 DB에 존재하지 않을 때
+      - [x] OrderTable이 TableGroup에 포함되어있을 때
+      - [x] OrderTable에 COMPLETION상태가 아닌 Order가 존재할 때
+  - [x] OrderTable의 NumberOfGuest값을 변경한다.
+    - [x] 요청 매개변수로 받은 orderTableId로 DB에서 OrderTable을 조회한다.
+    - [x] DB에서 조회한 OrderTable의 numberOfGuest값을 매개변수로 받은 numberOfGuest값으로 변경한다.
+    - [x] DB에 변경사항을 반영한다.
+    - [x] OrderTable을 OrderTableResponse로 변환해 반환한다.
+    - [x] 예외
+      - [x] orderTableId
+        - [x] DB에 존재하지 않을 때
+        - [x] DB에서 조회한 OrderTable의 empty값이 true일 때
+      - [x] OrderTableRequest
+        - [x] numberOfGuest < 0 또는 numberOfGuest = null
+
 
 <br/>
 
