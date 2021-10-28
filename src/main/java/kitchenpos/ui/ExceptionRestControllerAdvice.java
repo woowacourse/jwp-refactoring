@@ -15,4 +15,10 @@ public class ExceptionRestControllerAdvice {
     public ExceptionMessage catchBadRequestExceptions(BadRequestException e) {
         return new ExceptionMessage(e.getMessage());
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ExceptionMessage catchExceptions(Exception e) {
+        return new ExceptionMessage(e.getMessage());
+    }
 }
