@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.exception.FieldNotValidException;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,7 @@ class ProductServiceTest implements ServiceTest {
 
         // when
         assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(FieldNotValidException.class);
         then(productRepository).should(never())
                 .save(any(Product.class));
     }
@@ -46,7 +47,7 @@ class ProductServiceTest implements ServiceTest {
 
         // when
         assertThatThrownBy(() -> productService.create(productRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(FieldNotValidException.class);
         then(productRepository).should(never())
                 .save(any(Product.class));
     }

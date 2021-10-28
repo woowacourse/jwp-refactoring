@@ -22,7 +22,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/api/products")
-    public ResponseEntity<ProductResponse> create(@RequestBody @Valid final ProductRequest productRequest) {
+    public ResponseEntity<ProductResponse> create(@RequestBody @Valid ProductRequest productRequest) {
         final ProductResponse productResponse = productService.create(productRequest);
         final URI uri = URI.create("/api/products/" + productResponse.getId());
         return ResponseEntity.created(uri)
