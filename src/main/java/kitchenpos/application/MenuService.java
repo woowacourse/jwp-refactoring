@@ -33,12 +33,10 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final CreateMenuRequest request) {
-        final Menu menu = request.toEntity();
+        final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
+                                                       .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
+        final Menu menu = request.toEntity(menuGroup);
         final BigDecimal price = menu.getPrice();
-
-        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
-            throw new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다.");
-        }
 
         final List<MenuProduct> menuProducts = menu.getMenuProducts();
 

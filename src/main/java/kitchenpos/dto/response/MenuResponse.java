@@ -10,24 +10,24 @@ public class MenuResponse {
     private Long id;
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
+    private MenuGroupResponse menuGroup;
     private List<MenuProductResponse> menuProducts;
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductResponse> menuProducts) {
+    public MenuResponse(Long id, String name, BigDecimal price, MenuGroupResponse menuGroup, List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
     public static MenuResponse from(Menu menu) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses(menu));
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), MenuGroupResponse.from(menu.getMenuGroup()), menuProductResponses(menu));
     }
 
     private static List<MenuProductResponse> menuProductResponses(Menu menu) {
         return menu.getMenuProducts().stream()
-                   .map(menuProduct -> MenuProductResponse.from(menuProduct))
+                   .map(MenuProductResponse::from)
                    .collect(Collectors.toList());
     }
 
@@ -43,8 +43,8 @@ public class MenuResponse {
         return price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroupResponse getMenuGroup() {
+        return menuGroup;
     }
 
     public List<MenuProductResponse> getMenuProducts() {

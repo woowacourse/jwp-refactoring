@@ -15,7 +15,7 @@ class MenuTest {
     // given
     private final String name = "양념 반 + 후라이드 반";
     private final BigDecimal price = BigDecimal.valueOf(30000);
-    private final Long menuGroupId = 1L;
+    private final MenuGroup 추천메뉴 = new MenuGroup(1L, "추천 메뉴");
     private final Product 후라이드치킨_정보 = new Product(1L, "후라이드 치킨", 16000);
     private final Product 양념치킨_정보 = new Product(2L, "양념 치킨", 16000);
     private final MenuProduct 후라이드치킨 = new MenuProduct(후라이드치킨_정보, 1);
@@ -26,14 +26,14 @@ class MenuTest {
     @DisplayName("메뉴의 이름, 가격, 메뉴 그룹, 메뉴에 포함된 제품이 조건을 만족한다면 메뉴를 생성한다.")
     void create() {
         // when & then
-        assertDoesNotThrow(() -> new Menu(name, price, menuGroupId, menuProducts));
+        assertDoesNotThrow(() -> new Menu(name, price, 추천메뉴, menuProducts));
     }
 
     @Test
     @DisplayName("메뉴의 가격이 null이면 메뉴를 생성할 수 없다.")
     void nullPrice() {
         // when & then
-        assertThatThrownBy(() -> new Menu(name, null, menuGroupId, menuProducts))
+        assertThatThrownBy(() -> new Menu(name, null, 추천메뉴, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.");
     }
@@ -42,7 +42,7 @@ class MenuTest {
     @DisplayName("메뉴의 가격이 음수면 메뉴를 생성할 수 없다.")
     void minusPrice() {
         // when & then
-        assertThatThrownBy(() -> new Menu(name, BigDecimal.valueOf(-1), menuGroupId, menuProducts))
+        assertThatThrownBy(() -> new Menu(name, BigDecimal.valueOf(-1), 추천메뉴, menuProducts))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.");
     }

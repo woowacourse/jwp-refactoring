@@ -11,9 +11,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.ProductResponse;
@@ -29,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("MenuRestController 단위 테스트")
 class MenuRestControllerTest extends ControllerTest {
 
+    private MenuGroup 추천메뉴;
+    private MenuGroup 할인메뉴;
     private Product 후라이드치킨_정보;
     private Product 양념치킨_정보;
     private MenuProduct 후라이드치킨;
@@ -38,6 +42,8 @@ class MenuRestControllerTest extends ControllerTest {
     @BeforeEach
     void setUp() {
         super.setUp();
+        추천메뉴 = new MenuGroup(1L, "추천 메뉴");
+        할인메뉴 = new MenuGroup(2L, "할인 메뉴");
         후라이드치킨_정보 = new Product(1L, "후라이드 치킨", 16000);
         양념치킨_정보 = new Product(2L, "양념 치킨", 16000);
         후라이드치킨 = new MenuProduct(후라이드치킨_정보, 1);
@@ -51,7 +57,7 @@ class MenuRestControllerTest extends ControllerTest {
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
         MenuProductResponse expected_후라이드치킨 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
         MenuProductResponse expected_양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
-        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(expected_후라이드치킨, expected_양념치킨));
+        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays.asList(expected_후라이드치킨, expected_양념치킨));
         given(menuService.create(any(CreateMenuRequest.class))).willReturn(expected);
 
         // when
@@ -174,8 +180,8 @@ class MenuRestControllerTest extends ControllerTest {
         MenuProductResponse 양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
         MenuProductResponse 후라이드치킨2 = new MenuProductResponse(3L, ProductResponse.from(후라이드치킨_정보), 1);
         MenuProductResponse 간장치킨 = new MenuProductResponse(4L, ProductResponse.from(간장치킨_정보), 1);
-        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨1, 양념치킨));
-        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), 2L, Arrays.asList(후라이드치킨2, 간장치킨));
+        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays.asList(후라이드치킨1, 양념치킨));
+        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(할인메뉴), Arrays.asList(후라이드치킨2, 간장치킨));
         List<MenuResponse> expected = Arrays.asList(양념반_후라이드반, 간장반_후라이드반);
         given(menuService.list()).willReturn(expected);
 

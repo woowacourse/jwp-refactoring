@@ -10,9 +10,14 @@ public class Menu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private BigDecimal price;
-    private Long menuGroupId;
+
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
@@ -20,28 +25,16 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, null, menuGroupId, menuProducts);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
-    public Menu(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu(Long id, String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(id, name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
-    }
-
-    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroupId, menuProducts);
-    }
-
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         validatesPrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
     }
 
@@ -75,12 +68,12 @@ public class Menu {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {

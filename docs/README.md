@@ -17,8 +17,8 @@
     - [x] MenuProduct
         - [x] Menu
         - [x] Product
-    - [ ] Menu
-        - [ ] MenuGroup
+    - [x] Menu
+        - [x] MenuGroup
         - [x] MenuProduct
     - [ ] Order
         - [ ] OrderTable 

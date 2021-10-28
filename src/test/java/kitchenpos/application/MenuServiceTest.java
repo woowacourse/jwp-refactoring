@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("MenuService 단위 테스트")
@@ -42,6 +43,8 @@ class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
+    private MenuGroup 추천메뉴;
+    private MenuGroup 할인메뉴;
     private Product 후라이드치킨정보;
     private Product 양념치킨정보;
     private MenuProduct 후라이드치킨;
@@ -49,6 +52,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
+        추천메뉴 = new MenuGroup(1L, "추천 메뉴");
+        할인메뉴 = new MenuGroup(2L, "할인 메뉴");
         후라이드치킨정보 = new Product(1L, "후라이드 치킨", 16000);
         양념치킨정보 = new Product(2L, "양념 치킨", 16000);
         후라이드치킨 = new MenuProduct(후라이드치킨정보, 1);
@@ -60,8 +65,8 @@ class MenuServiceTest {
     void create() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        Menu menu = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        given(menuGroupRepository.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
+        Menu menu = new Menu(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 추천메뉴, Arrays.asList(후라이드치킨, 양념치킨));
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
         given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
         given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
         given(menuRepository.save(any(Menu.class))).willReturn(menu);
@@ -84,6 +89,7 @@ class MenuServiceTest {
     void createWrongPriceNull() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", null, 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -96,6 +102,7 @@ class MenuServiceTest {
     void createWrongPriceUnderZero() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(-1), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -108,7 +115,7 @@ class MenuServiceTest {
     void createWrongPriceSumOfProducts() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32001), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        given(menuGroupRepository.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
         given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
         given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
 
@@ -123,7 +130,7 @@ class MenuServiceTest {
     void createWrongMenuGroupNotExist() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        given(menuGroupRepository.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(false);
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -136,7 +143,7 @@ class MenuServiceTest {
     void createWrongProductNotExist() {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        given(menuGroupRepository.existsById(양념반_후라이드반.getMenuGroupId())).willReturn(true);
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
         given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.empty());
 
         // when & then
@@ -151,8 +158,8 @@ class MenuServiceTest {
         // given
         Product 간장치킨정보 = new Product(3L, "간장 치킨", 16000);
         MenuProduct 간장치킨 = new MenuProduct(간장치킨정보, 1);
-        Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", 30000, 1L, Arrays.asList(후라이드치킨, 양념치킨));
-        Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", 30000, 2L, Arrays.asList(후라이드치킨, 간장치킨));
+        Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 추천메뉴, Arrays.asList(후라이드치킨, 양념치킨));
+        Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), 할인메뉴, Arrays.asList(후라이드치킨, 간장치킨));
         given(menuRepository.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 간장반_후라이드반));
 
         MenuProduct expected_후라이드치킨_menu1 = new MenuProduct(1L, 양념반_후라이드반, 후라이드치킨정보, 1);
