@@ -8,7 +8,7 @@ import kitchenpos.ui.dto.MenuGroupResponse;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
-import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import kitchenpos.ui.dto.OrderTableIdRequest;
@@ -76,7 +76,7 @@ public class DomainAcceptanceTest extends AcceptanceTest {
         long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
         OrderRequest orderRequest = OrderRequest.of(
                 orderTableId,
-                singletonList(OrderLineItemRequest.of(menuId, 1L))
+                singletonList(OrderItemRequest.of(menuId, 1L))
         );
 
         ExtractableResponse<Response> response = RestAssured

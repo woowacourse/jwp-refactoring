@@ -6,7 +6,7 @@ import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +73,7 @@ class OrdersServiceTest extends ServiceTest {
         ));
 
         final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
+                .map(OrderItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
         given(menuRepository.countByIdIn(menuIds)).willReturn(1L);
@@ -103,7 +103,7 @@ class OrdersServiceTest extends ServiceTest {
         ));
 
         final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
+                .map(OrderItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
         given(menuRepository.countByIdIn(menuIds)).willReturn(2L);
@@ -132,7 +132,7 @@ class OrdersServiceTest extends ServiceTest {
         ));
 
         final List<Long> menuIds = orderRequest.getOrderLineItems().stream()
-                .map(OrderLineItemRequest::getMenuId)
+                .map(OrderItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
         given(menuRepository.countByIdIn(menuIds)).willReturn(2L);

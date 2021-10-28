@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.FieldNotValidException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -43,10 +45,17 @@ public class Orders {
     }
 
     public Orders(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    private void validate(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new FieldNotValidException(this.getClass().getSimpleName(), "orderTable");
+        }
     }
 
     public Long getId() {

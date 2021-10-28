@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.ui.dto.MenuGroupRequest;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
-import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderTableIdRequest;
@@ -37,12 +37,12 @@ class ServiceTest {
         return MenuProductRequest.from(productId, quantity);
     }
 
-    protected static OrderRequest CREATE_ORDER_REQUEST(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
-        return OrderRequest.of(orderTableId, orderLineItemRequests);
+    protected static OrderRequest CREATE_ORDER_REQUEST(Long orderTableId, List<OrderItemRequest> orderItemRequests) {
+        return OrderRequest.of(orderTableId, orderItemRequests);
     }
 
-    protected static OrderLineItemRequest CREATE_ORDER_LINE_ITEM_REQUEST(Long menuId, Long quantity) {
-        return OrderLineItemRequest.of(menuId, quantity);
+    protected static OrderItemRequest CREATE_ORDER_LINE_ITEM_REQUEST(Long menuId, Long quantity) {
+        return OrderItemRequest.of(menuId, quantity);
     }
 
     protected static OrderStatusRequest CREATE_ORDER_STATUS_REQUEST(String orderStatus) {
