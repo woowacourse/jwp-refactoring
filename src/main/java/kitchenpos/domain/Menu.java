@@ -1,15 +1,28 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
 public class Menu {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private BigDecimal price;
-    private Long menuGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
+
+    @OneToMany(mappedBy = "menu")
+    private List<OrderLineItem> orderLineItems;
 
     public Menu() {
     }
@@ -18,7 +31,7 @@ public class Menu {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
-        this.menuGroupId = builder.menuGroupId;
+        this.menuGroup = builder.menuGroup;
         this.menuProducts = builder.menuProducts;
     }
 
@@ -38,8 +51,8 @@ public class Menu {
         this.price = price;
     }
 
-    public void setMenuGroupId(Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public void setMenuProducts(List<MenuProduct> menuProducts) {
@@ -55,7 +68,7 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
-        return menuGroupId;
+        return menuGroup.getId();
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -66,7 +79,7 @@ public class Menu {
         private Long id;
         private String name;
         private BigDecimal price;
-        private Long menuGroupId;
+        private MenuGroup menuGroup;
         private List<MenuProduct> menuProducts;
 
         public Builder() {
@@ -90,8 +103,8 @@ public class Menu {
             return this;
         }
 
-        public Builder menuGroupId(Long menuGroupId) {
-            this.menuGroupId = menuGroupId;
+        public Builder menuGroup(MenuGroup menuGroup) {
+            this.menuGroup = menuGroup;
             return this;
         }
 

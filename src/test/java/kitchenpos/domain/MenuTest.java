@@ -39,11 +39,14 @@ class MenuTest {
     @DisplayName("메뉴 빌더로 메뉴를 생성할 수 있다.")
     @Test
     void createMenuWithBuilder() {
+        MenuGroup menuGroup = new MenuGroup();
+        menuGroup.setId(2L);
+
         Menu chicken = new Menu.Builder()
                 .id(1L)
                 .name("chicken")
                 .price(BigDecimal.valueOf(10000))
-                .menuGroupId(2L)
+                .menuGroup(menuGroup)
                 .menuProducts(Arrays.asList(new MenuProduct(), new MenuProduct()))
                 .build();
 

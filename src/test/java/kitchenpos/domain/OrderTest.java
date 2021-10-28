@@ -24,17 +24,20 @@ class OrderTest {
     @DisplayName("주문 생성 시 빌더패턴을 사용할 수 있다")
     @Test
     void createOrderWithBuilder() {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(2L);
+
         final Order order = new Order.Builder()
                 .id(1L)
-                .orderTableId(2L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderTable(orderTable)
+                .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(new OrderLineItem(), new OrderLineItem()))
                 .build();
 
         assertThat(order.getId()).isEqualTo(1L);
         assertThat(order.getOrderTableId()).isEqualTo(2L);
-        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(order.getOrderedTime()).isEqualTo(LocalDateTime.MAX);
         assertThat(order.getOrderLineItems()).hasSize(2);
     }
@@ -43,7 +46,7 @@ class OrderTest {
     @Test
     void orderStatusCannotChangeToComplete() {
         final Order order = new Order.Builder()
-                .orderStatus(OrderStatus.COMPLETION.name())
+                .orderStatus(OrderStatus.COMPLETION)
                 .build();
 
         assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING))

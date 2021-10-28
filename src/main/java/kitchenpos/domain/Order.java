@@ -2,14 +2,26 @@ package kitchenpos.domain;
 
 import org.springframework.util.CollectionUtils;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private OrderTable orderTable;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
+
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
@@ -17,7 +29,7 @@ public class Order {
 
     public Order(Builder builder) {
         this.id = builder.id;
-        this.orderTableId = builder.orderTableId;
+        this.orderTable = builder.orderTable;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
         this.orderLineItems = builder.orderLineItems;
@@ -32,18 +44,18 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTableId;
+        return orderTable.getId();
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void setOrderStatus(final OrderStatus orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -64,16 +76,16 @@ public class Order {
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
-        if (this.orderStatus.equals(OrderStatus.COMPLETION.name())) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException();
         }
-        this.orderStatus = orderStatus.name();
+        this.orderStatus = orderStatus;
     }
 
     public static class Builder {
         private Long id;
-        private Long orderTableId;
-        private String orderStatus;
+        private OrderTable orderTable;
+        private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
 
@@ -85,12 +97,12 @@ public class Order {
             return this;
         }
 
-        public Builder orderTableId(Long orderTableId) {
-            this.orderTableId = orderTableId;
+        public Builder orderTable(OrderTable orderTable) {
+            this.orderTable = orderTable;
             return this;
         }
 
-        public Builder orderStatus(String orderStatus) {
+        public Builder orderStatus(OrderStatus orderStatus) {
             this.orderStatus = orderStatus;
             return this;
         }

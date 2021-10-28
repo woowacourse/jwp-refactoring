@@ -25,7 +25,7 @@ public class TableService {
     public OrderTable create(final OrderTable orderTable) {
         OrderTable newOrderTable = new OrderTable.Builder()
                 .id(null)
-                .tableGroupId(null)
+                .tableGroup(null)
                 .numberOfGuests(orderTable.getNumberOfGuests())
                 .empty(orderTable.isEmpty())
                 .build();
@@ -42,12 +42,12 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+        if (orderDao.existsByOrderTableAndOrderStatusIn(
+                savedOrderTable, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
 

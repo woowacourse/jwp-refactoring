@@ -1,16 +1,13 @@
 package kitchenpos.dao;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.OrderLineItem;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface MenuDao {
+public interface MenuDao extends JpaRepository<Menu, Long> {
     Menu save(Menu entity);
 
-    Optional<Menu> findById(Long id);
-
-    List<Menu> findAll();
-
-    long countByIdIn(List<Long> ids);
+    long countByOrderLineItemsIn(List<OrderLineItem> orderLineItems);
 }
