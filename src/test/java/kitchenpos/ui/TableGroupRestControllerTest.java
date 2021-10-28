@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +35,8 @@ class TableGroupRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final TableGroup tableGroupDto = new TableGroup();
-        final String content = objectMapper.writeValueAsString(tableGroupDto);
-        final TableGroup tableGroup = TableGroup.builder()
-                .id(1L)
-                .build();
+        final TableGroup tableGroup = TestFixtures.createTableGroup();
+        final String content = objectMapper.writeValueAsString(TestFixtures.createTableGroupRequest(tableGroup));
         when(tableGroupService.create(any())).thenReturn(tableGroup);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/table-groups")
@@ -49,7 +47,7 @@ class TableGroupRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/table-groups/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/table-groups/" + tableGroup.getId())
         );
     }
 

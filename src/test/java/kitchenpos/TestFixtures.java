@@ -10,13 +10,17 @@ import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
+import kitchenpos.application.dtos.OrderTableRequest;
+import kitchenpos.application.dtos.TableGroupRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class TestFixtures {
 
@@ -85,5 +89,30 @@ public class TestFixtures {
                 .map(OrderLineItemRequest::new)
                 .collect(Collectors.toList());
         return new OrderRequest(order.getOrderTableId(), orderLineItemRequests);
+    }
+
+    public static TableGroupRequest createTableGroupRequest(TableGroup tableGroup) {
+        final List<OrderTableRequest> orderTableRequests = tableGroup.getOrderTables().stream()
+                .map(orderTable -> new OrderTableRequest(orderTable.getId()))
+                .collect(Collectors.toList());
+        return new TableGroupRequest(orderTableRequests);
+    }
+
+    public static TableGroup createTableGroup() {
+        final Long tableGroupId = 1L;
+        return TableGroup.builder()
+                .id(tableGroupId)
+                .createdDate(LocalDateTime.now())
+                .orderTables(Arrays.asList(createOrderTable(1L, tableGroupId), createOrderTable(2L, tableGroupId)))
+                .build();
+    }
+
+    private static OrderTable createOrderTable(Long id, Long tableGroupId) {
+        return OrderTable.builder().
+                id(id)
+                .tableGroupId(tableGroupId)
+                .numberOfGuests(1)
+                .empty(false)
+                .build();
     }
 }
