@@ -76,7 +76,7 @@ class OrderIntegrationTest extends IntegrationTest {
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
         assertThat(body).isNotNull();
-        assertThat(body.getId()).isEqualTo(1L);
+        assertThat(body.getId()).isNotNull();
         assertThat(body.getOrderTableId()).isEqualTo(orderTableId);
         assertThat(body.getOrderLineItems().get(0))
                 .usingRecursiveComparison()
