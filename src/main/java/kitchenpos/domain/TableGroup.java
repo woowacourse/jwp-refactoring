@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 @Entity
 public class TableGroup {
@@ -17,7 +17,7 @@ public class TableGroup {
     private Long id;
     @Column(nullable = false)
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroup")
+    @Transient
     private List<OrderTable> orderTables;
 
     public TableGroup() {

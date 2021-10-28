@@ -8,9 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 @Entity
 public class Menu {
@@ -23,8 +21,7 @@ public class Menu {
     private BigDecimal price;
     @Column(nullable = false)
     private Long menuGroupId;
-    @OneToMany
-    @JoinColumn(name="menu_product_id")
+    @Transient
     private List<MenuProduct> menuProducts;
 
     public Menu() {
@@ -81,7 +78,7 @@ public class Menu {
             return this;
         }
 
-        public Builder menuProducts(List<MenuProduct> menuProducts){
+        public Builder menuProducts(List<MenuProduct> menuProducts) {
             this.menuProducts = new ArrayList<>(menuProducts);
             return this;
         }

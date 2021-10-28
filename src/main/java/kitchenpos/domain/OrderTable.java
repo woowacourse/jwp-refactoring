@@ -5,11 +5,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderTable {
-    @ManyToOne
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -70,7 +68,7 @@ public class OrderTable {
             return this;
         }
 
-        public OrderTable build(){
+        public OrderTable build() {
             return new OrderTable(this);
         }
     }

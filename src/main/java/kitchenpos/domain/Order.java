@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Transient;
 
 @Entity
@@ -22,7 +21,7 @@ public class Order {
     private String orderStatus;
     @Column(nullable = false)
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
+    @Transient
     private List<OrderLineItem> orderLineItems;
 
     public Order() {

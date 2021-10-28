@@ -5,19 +5,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "order_id")
+    @Column(nullable = false)
     private Long orderId;
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
+    @Column(nullable = false)
     private Long menuId;
     @Column(nullable = false)
     private Long quantity;
