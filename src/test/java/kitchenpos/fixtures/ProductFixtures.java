@@ -1,6 +1,7 @@
 package kitchenpos.fixtures;
 
 import java.math.BigDecimal;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 
 public class ProductFixtures {
@@ -14,19 +15,20 @@ public class ProductFixtures {
         String name,
         long price
     ) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price * 100, 2));
-        return product;
+        return new Product(id, name, BigDecimal.valueOf(price * 100, 2));
     }
 
     public static Product createProduct() {
         return createProduct(PRODUCT_ID, PRODUCT_NAME, PRICE);
     }
 
-    public static Product createProduct(long price) {
-        return createProduct(PRODUCT_ID, PRODUCT_NAME, price);
+    public static ProductRequest createProductRequest(long price) {
+        Product product = createProduct(PRODUCT_ID, PRODUCT_NAME, price);
+        return new ProductRequest(product.getName(), product.getPrice());
     }
 
+    public static ProductRequest createProductRequest() {
+        Product product = createProduct();
+        return new ProductRequest(product.getName(), product.getPrice());
+    }
 }

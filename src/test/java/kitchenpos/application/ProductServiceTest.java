@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
+import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.ProductFixtures;
@@ -35,15 +36,15 @@ class ProductServiceTest extends ServiceTest {
     void 상품을_생성한다() {
         given(productDao.save((any()))).willReturn(product);
 
-        assertDoesNotThrow(() -> productService.create(product));
+        assertDoesNotThrow(() -> productService.create(ProductFixtures.createProductRequest()));
         verify(productDao, times(1)).save(any());
     }
 
     @Test
     void 생성_시_가격이_음수이면_예외를_반환한다() {
-        Product invalidPriceProduct = ProductFixtures.createProduct(-1);
+        ProductRequest invalidRequest = ProductFixtures.createProductRequest(-1);
 
-        assertThrows(IllegalArgumentException.class, () -> productService.create(invalidPriceProduct));
+        assertThrows(IllegalArgumentException.class, () -> productService.create(invalidRequest));
     }
 
     @Test

@@ -3,17 +3,16 @@ package kitchenpos.fixtures;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuFixtures {
-
     private static final long MENU_ID = 1L;
     private static final long PRODUCT_ID = 1L;
     private static final long QUANTITY = 1L;
     private static final String MENU_NAME = "기본 메뉴";
-    private static final String MENU_GROUP_NAME = "기본 메뉴 그룹";
     private static final long PRICE = 10000;
     private static final long MENU_GROUP_ID = 1L;
 
@@ -59,15 +58,5 @@ public class MenuFixtures {
 
     public static MenuProduct createMenuProduct() {
         return createMenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
-    }
-
-    public static MenuGroup createMenuGroup(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return menuGroup;
-    }
-
-    public static MenuGroup createMenuGroup() {
-        return createMenuGroup(MENU_GROUP_NAME);
     }
 }
