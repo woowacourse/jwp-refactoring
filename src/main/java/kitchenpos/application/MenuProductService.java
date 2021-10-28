@@ -6,6 +6,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class MenuProductService {
         List<ProductQuantity> productQuantities = new ArrayList<>();
         menuProductRequests.forEach(menuProductRequest -> {
             Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(() -> new NotFoundException("상품을 찾을 수 없습니다."));
             productQuantities.add(new ProductQuantity(product, menuProductRequest.getQuantity()));
         });
         return productQuantities;

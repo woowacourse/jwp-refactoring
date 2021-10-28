@@ -49,6 +49,9 @@ public class Orders {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
+        if (Objects.isNull(this.orderStatus) || this.orderStatus.isEmpty()) {
+            this.orderStatus = OrderStatus.MEAL.name();
+        }
         this.orderedTime = orderedTime;
     }
 

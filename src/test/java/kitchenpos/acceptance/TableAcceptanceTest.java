@@ -81,7 +81,7 @@ public class TableAcceptanceTest extends DomainAcceptanceTest {
     void changeNumberOfGuests() {
         // given
         long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
-        TableRequest tableRequest = TableRequest.guests(10);
+        TableRequest tableRequest = TableRequest.guests(100);
 
         // when - then
         ExtractableResponse<Response> response = RestAssured
@@ -96,6 +96,6 @@ public class TableAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(response.body()).isNotNull();
         TableResponse tableResponse = response.as(TableResponse.class);
-        assertThat(tableResponse.getNumberOfGuests()).isEqualTo(10);
+        assertThat(tableResponse.getNumberOfGuests()).isEqualTo(100);
     }
 }

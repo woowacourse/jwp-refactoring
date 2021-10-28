@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.exception.NotFoundException;
 import kitchenpos.ui.dto.TableGroupRequest;
 import kitchenpos.ui.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         if (!tableGroupRepository.existsById(tableGroupId)) {
-            throw new IllegalArgumentException("요청한 TableGroup이 존재하지 않습니다.");
+            throw new NotFoundException("요청한 TableGroup이 존재하지 않습니다.");
         }
         orderTableService.ungroup(tableGroupId);
     }

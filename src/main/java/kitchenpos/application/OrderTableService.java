@@ -41,7 +41,7 @@ public class OrderTableService {
 
     private void validateOrderTables(List<Long> orderTableIds, List<OrderTable> orderTables) {
         if (orderTableIds.size() != orderTables.size()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("요청과 조회 값의 결과가 다릅니다.");
         }
     }
 
