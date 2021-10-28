@@ -25,14 +25,14 @@
 
 ## 요구 사항
 - [ ] Menu 테스트
-  - [ ] /api/menus POST success
+  - [x] /api/menus POST success
   - [ ] /api/menus POST failure
     - [ ] menu 의 price 가 null 인 경우
     - [ ] menu 의 price 가 0 보다 작은 경우
     - [ ] menuGroup 이 존재하지 않는 경우
     - [ ] menuProduct 의 product 가 존재하지 않는 경우
     - [ ] menu 가 모든 product 의 총 금액보다 큰 경우
-  - [ ] /api/menus GET success
+  - [x] /api/menus GET success
 
 - [x] MenuGroup 테스트
   - [x] /api/menu-groups POST success

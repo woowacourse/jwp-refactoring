@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class IntegrationTest {
 
     @Autowired
     protected TestRestTemplate testRestTemplate;
+
+    @Autowired
+    protected MenuDao menuDao;
 
     @Autowired
     protected MenuGroupDao menuGroupDao;
