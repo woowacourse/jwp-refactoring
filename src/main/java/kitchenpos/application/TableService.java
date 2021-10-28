@@ -1,12 +1,8 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.request.TableEmptyChangeRequest;
@@ -39,7 +35,8 @@ public class TableService {
     }
 
     @Transactional
-    public TableResponse changeEmpty(final Long orderTableId, final TableEmptyChangeRequest request) {
+    public TableResponse changeEmpty(final Long orderTableId,
+        final TableEmptyChangeRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
         savedOrderTable.changeEmpty(request.isEmpty());
@@ -47,7 +44,8 @@ public class TableService {
     }
 
     @Transactional
-    public TableResponse changeNumberOfGuests(final Long orderTableId, final TableGuestChangeRequest request) {
+    public TableResponse changeNumberOfGuests(final Long orderTableId,
+        final TableGuestChangeRequest request) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new KitchenException("존재하지 않는 테이블입니다."));
         savedOrderTable.changeNumberOfGuests(request.getNumberOfGuests());

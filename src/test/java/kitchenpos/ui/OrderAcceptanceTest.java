@@ -3,18 +3,11 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
@@ -51,10 +44,12 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_order_line_item_less_than_one() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
-        OrderCreateRequest request = new OrderCreateRequest(tableResponse.getId(), new ArrayList<>());
+        OrderCreateRequest request = new OrderCreateRequest(tableResponse.getId(),
+            new ArrayList<>());
 
         int actual = makeResponse("/api/orders", TestMethod.POST, request).statusCode();
 
@@ -65,7 +60,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_menu_non_exist() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             999L, 2L);
@@ -93,18 +89,23 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_empty_table() {
         MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menu-group");
-        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST, menuGroupRequest)
+        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
+            menuGroupRequest)
             .as(MenuGroupResponse.class);
         ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
-        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST, productRequest).as(
+        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
+            productRequest).as(
             ProductResponse.class);
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(productResponse.getId(), 10L);
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            productResponse.getId(), 10L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
+            BigDecimal.valueOf(5000),
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menuResponse.getId(), 2L);
@@ -137,7 +138,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
         OrderStatus meal = OrderStatus.MEAL;
         OrderStatusChangeRequest request = new OrderStatusChangeRequest(meal);
 
-        OrderResponse response = makeResponse("/api/orders/" + orderResponse.getId() + "/order-status",
+        OrderResponse response = makeResponse(
+            "/api/orders/" + orderResponse.getId() + "/order-status",
             TestMethod.PUT, request).as(OrderResponse.class);
 
         assertThat(response.getOrderStatus()).isEqualTo(meal.name());
@@ -160,7 +162,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
     void change_order_status_fail_completed_status() {
         OrderResponse orderResponse = createOrder();
         OrderStatus completion = OrderStatus.COMPLETION;
-        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(completion);
+        OrderStatusChangeRequest orderStatusChangeRequest = new OrderStatusChangeRequest(
+            completion);
         makeResponse("/api/orders/" + orderResponse.getId() + "/order-status",
             TestMethod.PUT, orderStatusChangeRequest);
 
@@ -174,18 +177,23 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     private OrderResponse createOrder() {
         MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menu-group");
-        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST, menuGroupRequest)
+        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
+            menuGroupRequest)
             .as(MenuGroupResponse.class);
         ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
-        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST, productRequest).as(
+        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
+            productRequest).as(
             ProductResponse.class);
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(productResponse.getId(), 10L);
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            productResponse.getId(), 10L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
+            BigDecimal.valueOf(5000),
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menuResponse.getId(), 2L);

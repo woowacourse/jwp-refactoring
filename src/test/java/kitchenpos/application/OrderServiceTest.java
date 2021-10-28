@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
@@ -12,7 +11,6 @@ import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.OrderCreateRequest;
@@ -47,7 +45,8 @@ class OrderServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menu.getId(), 2L);
+        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
+            menu.getId(), 2L);
 
         OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
             Collections.singletonList(orderLineItemCreateRequest));
@@ -66,7 +65,8 @@ class OrderServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menu.getId(), 2L);
+        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
+            menu.getId(), 2L);
 
         OrderCreateRequest request = new OrderCreateRequest(orderTable.getId(),
             Collections.singletonList(orderLineItemCreateRequest));
@@ -84,7 +84,8 @@ class OrderServiceTest extends ServiceTest {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
-        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(menu.getId(), 2L);
+        OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
+            menu.getId(), 2L);
 
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(orderTable.getId(),
             Collections.singletonList(orderLineItemCreateRequest));

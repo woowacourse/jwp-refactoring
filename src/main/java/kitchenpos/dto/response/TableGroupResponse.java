@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupResponse {
+
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<TableResponse> orderTables;
@@ -21,7 +22,8 @@ public class TableGroupResponse {
         List<TableResponse> tableResponses = tableGroup.getOrderTables().stream()
             .map(TableResponse::of)
             .collect(Collectors.toList());
-        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), tableResponses);
+        return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(),
+            tableResponses);
     }
 
     public Long getId() {

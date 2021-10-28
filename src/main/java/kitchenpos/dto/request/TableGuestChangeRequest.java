@@ -1,6 +1,7 @@
 package kitchenpos.dto.request;
 
 public class TableGuestChangeRequest {
+
     private int numberOfGuests;
 
     public TableGuestChangeRequest() {

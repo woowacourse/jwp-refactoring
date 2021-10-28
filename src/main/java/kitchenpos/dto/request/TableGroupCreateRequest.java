@@ -3,6 +3,7 @@ package kitchenpos.dto.request;
 import java.util.List;
 
 public class TableGroupCreateRequest {
+
     private List<Long> orderTableIds;
 
     public TableGroupCreateRequest() {

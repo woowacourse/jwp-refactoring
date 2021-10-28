@@ -2,16 +2,10 @@ package kitchenpos.ui;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
@@ -62,10 +56,11 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("빈 테이블 유무를 변경한다.")
     @ParameterizedTest
-    @CsvSource({"true,false" , "false, true"})
+    @CsvSource({"true,false", "false, true"})
     void changeEmpty(boolean input, boolean expected) {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, input);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableEmptyChangeRequest request = new TableEmptyChangeRequest(expected);
@@ -91,9 +86,11 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void change_empty_fail_group_exist() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
-        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
             Arrays.asList(tableResponse1.getId(), tableResponse2.getId()));
@@ -111,18 +108,23 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void change_empty_fail_status_completed() {
         MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menu-group");
-        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST, menuGroupRequest)
+        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
+            menuGroupRequest)
             .as(MenuGroupResponse.class);
         ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
-        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST, productRequest).as(
+        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
+            productRequest).as(
             ProductResponse.class);
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(productResponse.getId(), 10L);
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            productResponse.getId(), 10L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
+            BigDecimal.valueOf(5000),
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menuResponse.getId(), 2L);
@@ -141,7 +143,8 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void changeNumberOfGuests() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableGuestChangeRequest request = new TableGuestChangeRequest(3);
@@ -158,7 +161,8 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void change_guest_fail_less_than_zero() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(1, false);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableGuestChangeRequest request = new TableGuestChangeRequest(-3);
@@ -190,7 +194,8 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void change_guest_fail_unable_empty_table() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableGuestChangeRequest request = new TableGuestChangeRequest(4);

@@ -4,10 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.TableGroupCreateRequest;

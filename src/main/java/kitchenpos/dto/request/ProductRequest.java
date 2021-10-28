@@ -1,9 +1,9 @@
 package kitchenpos.dto.request;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
 
 public class ProductRequest {
+
     private String name;
     private BigDecimal price;
 

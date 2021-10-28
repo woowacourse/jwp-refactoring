@@ -32,9 +32,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
-        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableGroupCreateRequest request = new TableGroupCreateRequest(
@@ -53,7 +55,8 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_table_less_than_two() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Collections.singletonList(tableResponse.getId()));
@@ -68,7 +71,8 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_table_non_exist() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableResponse.getId(), 999L));
@@ -84,9 +88,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     void create_fail_table_not_empty() {
         TableCreateRequest tableCreateRequest1 = new TableCreateRequest(0, true);
         TableCreateRequest tableCreateRequest2 = new TableCreateRequest(1, false);
-        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest1)
+        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest1)
             .as(TableResponse.class);
-        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest2)
+        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest2)
             .as(TableResponse.class);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableResponse1.getId(), tableResponse2.getId()));
@@ -101,9 +107,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void ungroup() {
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
-        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
         TableGroupCreateRequest request = new TableGroupCreateRequest(
             Arrays.asList(tableResponse1.getId(), tableResponse2.getId()));
@@ -123,25 +131,32 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void ungroup_fail_unable_order_status() {
         MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menu-group");
-        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST, menuGroupRequest)
+        MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
+            menuGroupRequest)
             .as(MenuGroupResponse.class);
         ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
-        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST, productRequest).as(
+        ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
+            productRequest).as(
             ProductResponse.class);
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(productResponse.getId(), 10L);
-        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            productResponse.getId(), 10L);
+        MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
+            BigDecimal.valueOf(5000),
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);
         TableCreateRequest tableCreateRequest = new TableCreateRequest(0, true);
-        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse1 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
-        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST, tableCreateRequest)
+        TableResponse tableResponse2 = makeResponse("/api/tables", TestMethod.POST,
+            tableCreateRequest)
             .as(TableResponse.class);
 
         TableGroupCreateRequest tableGroupCreateRequest = new TableGroupCreateRequest(
             Arrays.asList(tableResponse1.getId(), tableResponse2.getId()));
-        TableGroupResponse tableGroupResponse = makeResponse("/api/table-groups", TestMethod.POST, tableGroupCreateRequest)
+        TableGroupResponse tableGroupResponse = makeResponse("/api/table-groups", TestMethod.POST,
+            tableGroupCreateRequest)
             .as(TableGroupResponse.class);
 
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
@@ -149,7 +164,6 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         OrderCreateRequest orderCreateRequest = new OrderCreateRequest(tableResponse1.getId(),
             Collections.singletonList(orderLineItemCreateRequest));
         makeResponse("/api/orders", TestMethod.POST, orderCreateRequest).as(OrderResponse.class);
-
 
         int actual = makeResponse(
             "/api/table-groups/" + tableGroupResponse.getId(), TestMethod.DELETE).statusCode();

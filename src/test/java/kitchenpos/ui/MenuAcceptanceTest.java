@@ -3,17 +3,12 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.ProductRepository;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.MenuCreateRequest;
 import kitchenpos.dto.request.MenuProductCreateRequest;
@@ -25,6 +20,7 @@ import org.springframework.http.HttpStatus;
 
 @DisplayName("Menu 인수 테스트")
 class MenuAcceptanceTest extends AcceptanceTest {
+
     @Autowired
     private MenuGroupRepository menuGroupRepository;
 
@@ -37,7 +33,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
 
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 10L);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
         MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
@@ -57,7 +54,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
 
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 10L);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
         MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(-500),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
@@ -71,7 +69,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
     void create_fail_menu_group_non_exist() {
         Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
 
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 10L);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
         MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(-500),
             999L, Collections.singletonList(menuProductCreateRequest));
 
@@ -100,7 +99,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
 
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 10L);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
         MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(200000),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
@@ -115,7 +115,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
         Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
 
-        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(product.getId(), 10L);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
         MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 

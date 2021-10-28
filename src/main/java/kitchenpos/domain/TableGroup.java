@@ -38,6 +38,13 @@ public class TableGroup {
         validate();
     }
 
+    public TableGroup(Long id, LocalDateTime createdDate,
+        List<OrderTable> orderTables) {
+        this.id = id;
+        this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
     private void validate() {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new KitchenException("단체의 주문 테이블은 2개 이상이어야 합니다.");
@@ -48,13 +55,6 @@ public class TableGroup {
                 throw new KitchenException("단체의 주문 테이블은 비어있어야 합니다.");
             }
         }
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate,
-        List<OrderTable> orderTables) {
-        this.id = id;
-        this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public Long getId() {

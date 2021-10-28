@@ -3,6 +3,7 @@ package kitchenpos.dto.request;
 import kitchenpos.domain.OrderStatus;
 
 public class OrderStatusChangeRequest {
+
     private OrderStatus orderStatus;
 
     public OrderStatusChangeRequest() {

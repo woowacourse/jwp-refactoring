@@ -1,6 +1,7 @@
 package kitchenpos.dto.request;
 
 public class OrderLineItemCreateRequest {
+
     private Long menuId;
     private Long quantity;
 

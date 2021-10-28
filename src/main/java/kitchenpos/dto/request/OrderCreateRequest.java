@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderCreateRequest {
+
     private Long orderTableId;
     private List<OrderLineItemCreateRequest> orderLineItems;
 

@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.request.MenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +33,8 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
         makeResponse("/api/menu-groups/", TestMethod.POST, request)
             .as(MenuGroupResponse.class);
 
-        List<MenuGroupResponse> responses = makeResponse("/api/menu-groups/", TestMethod.GET).jsonPath()
+        List<MenuGroupResponse> responses = makeResponse("/api/menu-groups/", TestMethod.GET)
+            .jsonPath()
             .getList(".", MenuGroupResponse.class);
 
         assertAll(

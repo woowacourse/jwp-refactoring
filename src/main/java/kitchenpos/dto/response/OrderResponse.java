@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import kitchenpos.domain.Order;
 
 public class OrderResponse {
+
     private final Long id;
     private final Long orderTableId;
     private final String orderStatus;

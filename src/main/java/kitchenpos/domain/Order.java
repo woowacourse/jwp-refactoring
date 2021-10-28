@@ -48,12 +48,6 @@ public class Order {
         validate();
     }
 
-    private void validate() {
-        if (orderTable.isEmpty()) {
-            throw new KitchenException("배정된 테이블은 빈 테이블입니다.");
-        }
-    }
-
     public Order(Long id, OrderTable orderTable, String orderStatus,
         LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
@@ -61,6 +55,12 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validate() {
+        if (orderTable.isEmpty()) {
+            throw new KitchenException("배정된 테이블은 빈 테이블입니다.");
+        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

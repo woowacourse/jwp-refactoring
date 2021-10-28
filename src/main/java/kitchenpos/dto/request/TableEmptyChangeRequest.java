@@ -1,6 +1,7 @@
 package kitchenpos.dto.request;
 
 public class TableEmptyChangeRequest {
+
     private boolean empty;
 
     public TableEmptyChangeRequest() {

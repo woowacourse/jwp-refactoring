@@ -1,6 +1,7 @@
 package kitchenpos.dto.request;
 
 public class TableCreateRequest {
+
     private int numberOfGuests;
     private boolean empty;
 

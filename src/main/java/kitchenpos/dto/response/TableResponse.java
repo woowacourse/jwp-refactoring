@@ -4,6 +4,7 @@ import java.util.Objects;
 import kitchenpos.domain.OrderTable;
 
 public class TableResponse {
+
     private final Long id;
     private final Long tableGroupId;
     private final int numberOfGuests;
@@ -17,7 +18,7 @@ public class TableResponse {
     }
 
     public static TableResponse of(OrderTable orderTable) {
-        if(Objects.isNull(orderTable.getTableGroup())) {
+        if (Objects.isNull(orderTable.getTableGroup())) {
             return new TableResponse(orderTable.getId(), null, orderTable.getNumberOfGuests(),
                 orderTable.isEmpty());
         }

@@ -4,10 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.TableCreateRequest;
 import kitchenpos.dto.request.TableEmptyChangeRequest;
 import kitchenpos.dto.request.TableGuestChangeRequest;
@@ -48,7 +44,7 @@ class TableServiceTest extends ServiceTest {
 
     @DisplayName("테이블이 비었는지 유무를 변경한다.")
     @ParameterizedTest
-    @CsvSource({"true,false" , "false, true"})
+    @CsvSource({"true,false", "false, true"})
     void changeEmpty(boolean input, boolean expected) {
         TableCreateRequest orderTable = new TableCreateRequest(0, input);
         TableResponse savedOrderTable = tableService.create(orderTable);
