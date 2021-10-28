@@ -163,11 +163,9 @@ class TableServiceTest {
     void changeWhenNumberOfGuestsEmptyTable() {
         //given
         Long orderTableId = 4L;
-        OrderTable changeNumberOfGuestTable = orderTableConstructor(3, true);
-        OrderTable before = orderTableConstructor(orderTableId, null, 5, false);
-        OrderTable afterExpected = orderTableConstructor(orderTableId, null, 8, false);
+        OrderTable changeNumberOfGuestTable = orderTableConstructor(3, false);
+        OrderTable before = orderTableConstructor(orderTableId, null, 5, true);
         given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(before));
-        given(tableService.changeNumberOfGuests(orderTableId, changeNumberOfGuestTable)).willReturn(afterExpected);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeNumberOfGuestTable))
