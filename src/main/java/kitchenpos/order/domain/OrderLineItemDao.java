@@ -1,8 +1,7 @@
-package kitchenpos.order.repository;
+package kitchenpos.order.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.order.domain.OrderLineItem;
 
 public interface OrderLineItemDao {
 

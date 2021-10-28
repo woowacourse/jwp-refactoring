@@ -7,9 +7,9 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.repository.OrderTableDao;
+import kitchenpos.table.domain.OrderTableDao;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.repository.OrderDao;
+import kitchenpos.order.domain.OrderDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import kitchenpos.product.domain.Product;
-import kitchenpos.product.repository.ProductDao;
+import kitchenpos.product.domain.ProductDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

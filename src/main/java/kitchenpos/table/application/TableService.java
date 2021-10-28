@@ -2,8 +2,8 @@ package kitchenpos.table.application;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.repository.OrderDao;
-import kitchenpos.table.repository.OrderTableDao;
+import kitchenpos.order.domain.OrderDao;
+import kitchenpos.table.domain.OrderTableDao;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import org.springframework.stereotype.Service;

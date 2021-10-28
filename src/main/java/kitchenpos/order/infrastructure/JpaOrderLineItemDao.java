@@ -1,9 +1,10 @@
-package kitchenpos.order.repository;
+package kitchenpos.order.infrastructure;
 
 
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItemDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 

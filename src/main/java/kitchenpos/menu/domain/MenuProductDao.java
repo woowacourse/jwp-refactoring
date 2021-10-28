@@ -1,8 +1,7 @@
-package kitchenpos.menu.repository;
+package kitchenpos.menu.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.menu.domain.MenuProduct;
 
 public interface MenuProductDao {
 

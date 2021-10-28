@@ -1,4 +1,4 @@
-package kitchenpos.table.repository;
+package kitchenpos.table.infrastructure;
 
 import kitchenpos.table.domain.TableGroup;
 import org.springframework.data.jpa.repository.JpaRepository;

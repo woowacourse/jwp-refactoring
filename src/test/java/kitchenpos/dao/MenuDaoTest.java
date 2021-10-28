@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.repository.MenuDao;
+import kitchenpos.menu.domain.MenuDao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,8 +1,9 @@
-package kitchenpos.menugroup.repository;
+package kitchenpos.menugroup.infrastructure;
 
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 

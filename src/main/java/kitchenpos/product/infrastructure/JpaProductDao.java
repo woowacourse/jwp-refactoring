@@ -1,8 +1,9 @@
-package kitchenpos.product.repository;
+package kitchenpos.product.infrastructure;
 
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
