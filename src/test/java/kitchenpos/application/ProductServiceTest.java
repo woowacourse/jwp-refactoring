@@ -1,48 +1,31 @@
 package kitchenpos.application;
 
-import java.util.List;
+import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 
-import static kitchenpos.application.Fixtures.PRODUCT;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ProductServiceTest extends ServiceTest {
 
-    @Autowired
-    private ProductService productService;
+    private final Product product = new Product(null, "당수육", BigDecimal.valueOf(10000));
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @Test
     @DisplayName("상품 등록")
     void createTest() {
 
         // when
-        final Product product = productService.create(PRODUCT);
+        final Product savedProduct = productService.create(product);
 
         // then
-        assertThat(productDao.findById(1L).get()).isEqualTo(product);
-    }
-
-    @Test
-    @DisplayName("상품 목록 조회")
-    void listTest() {
-
-        // given
-        final Product product = productService.create(PRODUCT);
-
-        // when
-        final List<Product> products = productService.list();
-
-        // then
-        assertThat(products).contains(product);
+        assertThat(productService.list()).contains(savedProduct);
     }
 }

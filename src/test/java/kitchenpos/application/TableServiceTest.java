@@ -1,66 +1,36 @@
 package kitchenpos.application;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
-import static kitchenpos.application.Fixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TableServiceTest extends ServiceTest {
 
+    private final OrderTable emptyOrderTable;
+    private final OrderTable nonEmptyOrderTable;
+
+    public TableServiceTest() {
+        this.emptyOrderTable = new OrderTable(1L, null, 1, true);
+        this.nonEmptyOrderTable = new OrderTable(2L, null, 1, false);
+    }
+
     @Autowired
     private TableService tableService;
-
-    @Autowired
-    private OrderTableDao orderTableDao;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @BeforeEach
-    void setUp() {
-        menuGroupService.create(MENU_GROUP);
-        productService.create(PRODUCT);
-        menuService.create(MENU);
-    }
 
     @Test
     @DisplayName("테이블 생성")
     void createTest() {
 
         // when
-        final OrderTable orderTable = tableService.create(FIRST_ORDER_TABLE);
+        final OrderTable orderTable = tableService.create(emptyOrderTable);
 
         // then
-        assertThat(orderTableDao.findById(1L).get()).isEqualTo(orderTable);
-    }
-
-    @Test
-    @DisplayName("테이블 목록 조회")
-    void listTest() {
-
-        // given
-        final OrderTable orderTable = tableService.create(FIRST_ORDER_TABLE);
-
-        // when
-        final List<OrderTable> tables = tableService.list();
-
-        // then
-        assertThat(tables).contains(orderTable);
+        assertThat(tableService.list()).contains(orderTable);
     }
 
     @Test
@@ -68,14 +38,12 @@ class TableServiceTest extends ServiceTest {
     void changeEmptyTest() {
 
         // given
-        final OrderTable fromOrderTable = tableService.create(FIRST_ORDER_TABLE);
-        final OrderTable toOrderTable = tableService.create(SECOND_ORDER_TABLE);
-        toOrderTable.setEmpty(!fromOrderTable.isEmpty());
+        final OrderTable fromOrderTable = tableService.create(emptyOrderTable);
 
         // when
-        final OrderTable changeOrderTable = tableService.changeEmpty(fromOrderTable.getId(), toOrderTable);
+        final OrderTable changeOrderTable = tableService.changeEmpty(fromOrderTable.getId(), nonEmptyOrderTable);
 
         // then
-        assertThat(changeOrderTable.isEmpty()).isEqualTo(toOrderTable.isEmpty());
+        assertThat(changeOrderTable.isEmpty()).isFalse();
     }
 }

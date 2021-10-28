@@ -1,84 +1,44 @@
 package kitchenpos.application;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderLineItem;
 
-import static kitchenpos.application.Fixtures.*;
+import static kitchenpos.domain.OrderStatus.COMPLETION;
+import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderServiceTest extends ServiceTest {
 
+    private final Order cookingOrder;
+    private final Order completionOrder;
+
+    public OrderServiceTest() {
+        final List<OrderLineItem> orderLineItems = Arrays.asList(new OrderLineItem(null, null, 1L, 1L));
+        this.cookingOrder = new Order(null, 1L, COOKING.name(), LocalDateTime.now(), orderLineItems);
+        this.completionOrder = new Order(null, 1L, COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+    }
+
     @Autowired
     private OrderService orderService;
-
-    @Autowired
-    private OrderDao orderDao;
-
-    @Autowired
-    private MenuGroupService menuGroupService;
-
-    @Autowired
-    private ProductService productService;
-
-    @Autowired
-    private MenuService menuService;
-
-    @Autowired
-    private TableService tableService;
-
-    @Autowired
-    private TableGroupService tableGroupService;
-
-
-    @Transactional
-    @BeforeEach
-    void setUp() {
-        menuGroupService.create(MENU_GROUP);
-        productService.create(PRODUCT);
-        menuService.create(MENU);
-
-        final OrderTable firstOrderTable = tableService.create(FIRST_ORDER_TABLE);
-        final OrderTable secondOrderTable = tableService.create(SECOND_ORDER_TABLE);
-
-        TABLE_GROUP.setOrderTables(Arrays.asList(firstOrderTable, secondOrderTable));
-        tableGroupService.create(TABLE_GROUP);
-    }
 
     @Test
     @DisplayName("주문 생성")
     void createTest() {
 
         // when
-        final Order order = orderService.create(COOKING_ORDER);
+        final Order savedOrder = orderService.create(cookingOrder);
 
         // then
-        assertThat(orderDao.findById(1L).get()).isEqualTo(order);
-    }
-
-    @Test
-    @DisplayName("주문 목록 조회")
-    void listTest() {
-
-        // given
-        final Order order = orderService.create(COOKING_ORDER);
-
-        // when
-        final List<Order> orders = orderService.list();
-
-        // then
-        assertThat(orders).contains(order);
+        assertThat(orderService.list()).contains(savedOrder);
     }
 
     @Test
@@ -86,14 +46,12 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatusTest() {
 
         // given
-        final Order cookingOrder = orderService.create(COOKING_ORDER);
-        final Order completionOrder = orderService.create(COMPLETION_ORDER);
-        completionOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        final Order savedCookingOrder = orderService.create(cookingOrder);
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(cookingOrder.getId(), completionOrder);
+        final Order changedOrder = orderService.changeOrderStatus(savedCookingOrder.getId(), completionOrder);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(completionOrder.getOrderStatus());
     }
 }
