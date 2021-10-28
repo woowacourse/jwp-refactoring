@@ -67,11 +67,6 @@ public class MenuProduct {
         return quantity;
     }
 
-    public MenuProduct addMenu(Menu menu) {
-        this.menu = menu;
-        return this;
-    }
-
     public Long getMenuId() {
         return menu.getId();
     }

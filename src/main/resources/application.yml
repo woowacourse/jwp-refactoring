@@ -13,7 +13,7 @@ spring:
     activate:
       on-profile: local
   flyway:
-    enabled: true
+    enabled: false
 
 logging:
   level:

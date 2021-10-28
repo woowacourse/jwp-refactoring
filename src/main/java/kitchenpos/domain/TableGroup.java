@@ -17,8 +17,6 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
 
-//    private List<OrderTable> orderTables;
-
     protected TableGroup() {
     }
 
@@ -34,12 +32,4 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
-
-//    public List<OrderTable> getOrderTables() {
-//        return orderTables;
-//    }
-
-//    public void addOrderTables(List<OrderTable> orderTables) {
-//        this.orderTables.addAll(orderTables);
-//    }
 }

@@ -58,10 +58,6 @@ public class OrderItem {
         return quantity;
     }
 
-    public void addOrder(Orders orders) {
-        this.orders = orders;
-    }
-
     public Long getOrderId() {
         return orders.getId();
     }

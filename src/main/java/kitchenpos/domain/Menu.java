@@ -73,9 +73,10 @@ public class Menu {
         }
     }
 
-    public Menu addMenuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-        return this;
+    public void validateTotalPrice(BigDecimal sum) {
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("제품 가격에 비해 메뉴의 가격이 큽니다.");
+        }
     }
 
     public Long getId() {
@@ -96,11 +97,5 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroup.getId();
-    }
-
-    public void validateTotalPrice(BigDecimal sum) {
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("제품 가격에 비해 메뉴의 가격이 큽니다.");
-        }
     }
 }

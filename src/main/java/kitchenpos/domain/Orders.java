@@ -58,6 +58,11 @@ public class Orders {
         }
     }
 
+    public boolean isNotCompleted() {
+        return Objects.equals(orderStatus, OrderStatus.MEAL.name()) ||
+                Objects.equals(orderStatus, OrderStatus.COOKING.name());
+    }
+
     public Long getId() {
         return id;
     }
@@ -80,10 +85,5 @@ public class Orders {
 
     public Long getOrderTableId() {
         return orderTable.getId();
-    }
-
-    public boolean isNotCompleted() {
-        return Objects.equals(orderStatus, OrderStatus.MEAL.name()) ||
-                Objects.equals(orderStatus, OrderStatus.COOKING.name());
     }
 }
