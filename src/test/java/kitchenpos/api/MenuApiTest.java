@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -49,7 +50,7 @@ public class MenuApiTest extends ApiTest {
 
     @Override
     @BeforeEach
-    void setUp() throws java.sql.SQLException {
+    void setUp() throws SQLException {
         super.setUp();
         products = new ArrayList<>();
         menus = new ArrayList<>();

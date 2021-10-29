@@ -7,7 +7,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -99,5 +102,41 @@ public class MenuServiceTest extends ServiceTest {
         when(productDao.findById(1L)).thenAnswer(invocation -> Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴 조회")
+    @Test
+    void list() {
+        Menu friedChicken = MenuGenerator.newInstance(1L, "후라이드치킨", 16000, 2L);
+        Menu seasonedSpicyChicken = MenuGenerator.newInstance(2L, "양념치킨", 16000, 2L);
+        List<Menu> menus = Arrays.asList(friedChicken, seasonedSpicyChicken);
+        when(menuDao.findAll()).thenReturn(menus);
+        List<MenuProduct> menuProductsOfFriedChicken = Collections.singletonList(MenuGenerator.newMenuProduct(1L, 1L, 1L, 1));
+        when(menuProductDao.findAllByMenuId(1L)).thenReturn(menuProductsOfFriedChicken);
+        List<MenuProduct> menuProductsOfSeasonedSpicyChicken = Collections.singletonList(MenuGenerator.newMenuProduct(2L, 2L, 2L, 1));
+        when(menuProductDao.findAllByMenuId(2L)).thenReturn(menuProductsOfSeasonedSpicyChicken);
+
+        List<Menu> actual = menuService.list();
+
+        List<Menu> expected = Arrays.asList(
+            MenuGenerator.newInstance(
+                friedChicken.getId(),
+                friedChicken.getName(),
+                friedChicken.getPrice().intValue(),
+                friedChicken.getMenuGroupId(),
+                menuProductsOfFriedChicken
+            ),
+            MenuGenerator.newInstance(
+                seasonedSpicyChicken.getId(),
+                seasonedSpicyChicken.getName(),
+                seasonedSpicyChicken.getPrice().intValue(),
+                seasonedSpicyChicken.getMenuGroupId(),
+                menuProductsOfSeasonedSpicyChicken
+            )
+        );
+        assertThat(actual).hasSameSizeAs(expected)
+            .usingRecursiveFieldByFieldElementComparator()
+            .isEqualTo(expected);
+
     }
 }
