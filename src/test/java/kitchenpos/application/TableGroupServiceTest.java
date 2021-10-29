@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.TestFixtures;
+import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableGroupRequest;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
@@ -41,8 +42,8 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     private OrderTable orderTable;
-    private OrderTable orderTable1;
-    private OrderTable orderTable2;
+    private OrderTable savedOrderTable1;
+    private OrderTable savedOrderTable2;
     private List<OrderTable> orderTables;
     private TableGroup tableGroup;
     private TableGroupRequest tableGroupRequest;
@@ -52,15 +53,15 @@ class TableGroupServiceTest {
         orderTable = OrderTable.builder()
                 .empty(true)
                 .build();
-        orderTable1 = OrderTable.builder()
+        savedOrderTable1 = OrderTable.builder()
                 .of(orderTable)
                 .id(1L)
                 .build();
-        orderTable2 = OrderTable.builder()
+        savedOrderTable2 = OrderTable.builder()
                 .of(orderTable)
                 .id(2L)
                 .build();
-        orderTables = Arrays.asList(orderTable1, orderTable2);
+        orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
         tableGroup = TableGroup.builder()
                 .orderTables(orderTables)
                 .build();
@@ -76,8 +77,8 @@ class TableGroupServiceTest {
                 .build();
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(orderTables);
         when(tableGroupRepository.save(any())).thenReturn(savedTableGroup);
-        when(orderTableRepository.save(any())).thenReturn(orderTable1);
-        when(orderTableRepository.save(any())).thenReturn(orderTable2);
+        when(orderTableRepository.save(any())).thenReturn(savedOrderTable1);
+        when(orderTableRepository.save(any())).thenReturn(savedOrderTable2);
 
         final TableGroup actual = tableGroupService.create(tableGroupRequest);
         assertThat(actual).isEqualTo(savedTableGroup);
@@ -100,16 +101,14 @@ class TableGroupServiceTest {
         final List<OrderTable> orderTables = Arrays.asList(wrongOrderTable, normalOrderTable);
         when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(orderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블의 목록이 2 보다 작으면 안 된다")
     @Test
     void createExceptionUnderTwo() {
-        final TableGroup wrongTableGroup = TableGroup.builder()
-                .orderTables( Collections.singletonList(orderTable1))
-                .build();
-        TableGroupRequest request = TestFixtures.createTableGroupRequest(wrongTableGroup);
+        final TableGroupRequest request = new TableGroupRequest(Collections.singletonList(new OrderTableRequest(1L)));
 
         assertThatThrownBy(() -> tableGroupService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -122,10 +121,10 @@ class TableGroupServiceTest {
                 .id(3L)
                 .build();
         final TableGroup wrongTableGroup = TableGroup.builder()
-                .orderTables(  Arrays.asList(orderTable1, orderTable2))
+                .orderTables(Arrays.asList(savedOrderTable1, savedOrderTable2))
                 .build();
         TableGroupRequest request = TestFixtures.createTableGroupRequest(wrongTableGroup);
-        final List<OrderTable> savedOrderTables = Arrays.asList(orderTable1, orderTable2, orderTable3);
+        final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2, orderTable3);
 
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(savedOrderTables);
 
@@ -139,31 +138,33 @@ class TableGroupServiceTest {
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         final OrderTable savedOrderTable1 = OrderTable.builder()
-                .of(orderTable1)
+                .of(this.savedOrderTable1)
                 .empty(false)
                 .build();
-        final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, orderTable2);
+        final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
         when(orderTableRepository.findAllByIdIn(orderTableIds)).thenReturn(savedOrderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("등록되어 있는 주문 테이블의 그룹 지정이 없으면 예외를 발생한다")
     @Test
     void createExceptionEmptyAndGroup() {
         final OrderTable savedOrderTable1 = OrderTable.builder()
-                .of(orderTable1)
+                .of(this.savedOrderTable1)
                 .build();
         final OrderTable savedOrderTable2 = OrderTable.builder()
-                .of(orderTable2)
+                .of(this.savedOrderTable2)
                 .tableGroupId(1L)
                 .build();
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
 
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(savedOrderTables);
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정을 해제할 수 있다")

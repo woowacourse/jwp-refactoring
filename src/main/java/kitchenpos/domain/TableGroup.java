@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +19,7 @@ public class TableGroup {
     @Column(nullable = false)
     private LocalDateTime createdDate;
     @Transient
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
@@ -26,7 +27,7 @@ public class TableGroup {
     private TableGroup(Builder builder) {
         this.id = builder.id;
         this.createdDate = builder.createdDate;
-        this.orderTables = new ArrayList<>(builder.orderTables);
+        this.orderTables = builder.orderTables;
     }
 
     public static Builder builder() {
@@ -36,7 +37,7 @@ public class TableGroup {
     public static class Builder {
         private Long id;
         private LocalDateTime createdDate;
-        private List<OrderTable> orderTables = new ArrayList<>();
+        private OrderTables orderTables;
 
         private Builder() {
         }
@@ -44,7 +45,7 @@ public class TableGroup {
         public Builder of(TableGroup tableGroup) {
             this.id = tableGroup.id;
             this.createdDate = tableGroup.createdDate;
-            this.orderTables = new ArrayList<>(tableGroup.orderTables);
+            this.orderTables = tableGroup.orderTables;
             return this;
         }
 
@@ -59,7 +60,7 @@ public class TableGroup {
         }
 
         public Builder orderTables(List<OrderTable> orderTables) {
-            this.orderTables = new ArrayList<>(orderTables);
+            this.orderTables = new OrderTables(orderTables);
             return this;
         }
 
@@ -81,10 +82,10 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
     public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
     }
 }

@@ -12,10 +12,10 @@ import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
@@ -33,21 +33,19 @@ public class TableGroupService {
 
     @Transactional
     public TableGroup create(final TableGroupRequest request) {
-        final List<OrderTableRequest> orderTableRequests = request.getOrderTables();
+        final List<OrderTable> orderTablesValue = request.getOrderTables().stream()
+                .map(it -> OrderTable.builder()
+                        .id(it.getId())
+                        .build())
+                .collect(Collectors.toList());
+        final OrderTables orderTables = new OrderTables(orderTablesValue);
 
-        if (CollectionUtils.isEmpty(orderTableRequests) || orderTableRequests.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTableRequests.stream()
+        final List<Long> orderTableIds = request.getOrderTables().stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableRequests.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        orderTables.checkSizeWith(savedOrderTables);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
