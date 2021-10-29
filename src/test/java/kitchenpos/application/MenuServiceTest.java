@@ -47,6 +47,22 @@ class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
+    @DisplayName("메뉴 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        Menu menu1 = createMenu();
+        Menu menu2 = createMenu();
+        when(menuDao.findAll()).thenReturn(Arrays.asList(menu1, menu2));
+
+        List<Menu> actual = menuService.list();
+
+        verify(menuDao).findAll();
+        assertAll(
+                () -> assertThat(actual).hasSize(2),
+                () -> assertThat(actual).containsExactly(menu1, menu2)
+        );
+    }
+
     @DisplayName("메뉴 생성은")
     @Nested
     class Create {
@@ -126,22 +142,5 @@ class MenuServiceTest {
                     () -> assertThat(actual.getMenuProducts()).hasSize(2)
             );
         }
-    }
-
-
-    @DisplayName("메뉴 목록을 조회할 수 있다.")
-    @Test
-    void list() {
-        Menu menu1 = createMenu();
-        Menu menu2 = createMenu();
-        when(menuDao.findAll()).thenReturn(Arrays.asList(menu1, menu2));
-
-        List<Menu> actual = menuService.list();
-
-        verify(menuDao).findAll();
-        assertAll(
-                () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual).containsExactly(menu1, menu2)
-        );
     }
 }

@@ -11,13 +11,11 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 public abstract class ControllerTest {
 
     @Autowired
-    private WebApplicationContext wac;
-
-    @Autowired
     protected MockMvc mockMvc;
-
     @Autowired
     protected ObjectMapper objectMapper;
+    @Autowired
+    private WebApplicationContext wac;
 
     @BeforeEach
     void setUp() {

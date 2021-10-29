@@ -16,8 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(MenuGroupRestController.class)
 class MenuGroupRestControllerTest extends ControllerTest {
@@ -28,8 +27,9 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     @Test
     void create() throws Exception {
+        Long menuGroupId = 1L;
         MenuGroup menuGroup = createMenuGroup();
-        MenuGroup savedMenuGroup = createMenuGroup(1L);
+        MenuGroup savedMenuGroup = createMenuGroup(menuGroupId);
 
         when(menuGroupService.create(any())).thenReturn(savedMenuGroup);
 
@@ -37,6 +37,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
                 .content(objectMapper.writeValueAsString(menuGroup))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/menu-groups/" + menuGroupId))
                 .andExpect(content().json(objectMapper.writeValueAsString(savedMenuGroup)));
     }
 

@@ -12,9 +12,9 @@ import static kitchenpos.TableFixture.createTableGroup;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TableGroupRestController.class)
 class TableGroupRestControllerTest extends ControllerTest {
@@ -25,8 +25,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("단체 지정을 생성할 수 있다.")
     @Test
     void create() throws Exception {
+        Long tableGroupId = 1L;
         TableGroup tableGroup = createTableGroup();
-        TableGroup savedTableGroup = createTableGroup(1L);
+        TableGroup savedTableGroup = createTableGroup(tableGroupId);
 
         when(tableGroupService.create(any())).thenReturn(savedTableGroup);
 
@@ -34,6 +35,7 @@ class TableGroupRestControllerTest extends ControllerTest {
                 .content(objectMapper.writeValueAsString(tableGroup))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/table-groups/" + tableGroupId))
                 .andExpect(content().json(objectMapper.writeValueAsString(savedTableGroup)));
     }
 

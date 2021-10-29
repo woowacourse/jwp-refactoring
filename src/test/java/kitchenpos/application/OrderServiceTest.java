@@ -50,6 +50,22 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
+    @DisplayName("주문 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        Order order1 = createOrder();
+        Order order2 = createOrder();
+        when(orderDao.findAll()).thenReturn(Arrays.asList(order1, order2));
+
+        List<Order> actual = orderService.list();
+
+        verify(orderDao).findAll();
+        assertAll(
+                () -> assertThat(actual).hasSize(2),
+                () -> assertThat(actual).containsExactly(order1, order2)
+        );
+    }
+
     @DisplayName("주문 생성은")
     @Nested
     class Create {
@@ -124,30 +140,14 @@ class OrderServiceTest {
         }
     }
 
-    @DisplayName("주문 목록을 조회할 수 있다.")
-    @Test
-    void list() {
-        Order order1 = createOrder();
-        Order order2 = createOrder();
-        when(orderDao.findAll()).thenReturn(Arrays.asList(order1, order2));
-
-        List<Order> actual = orderService.list();
-
-        verify(orderDao).findAll();
-        assertAll(
-                () -> assertThat(actual).hasSize(2),
-                () -> assertThat(actual).containsExactly(order1, order2)
-        );
-    }
-
     @DisplayName("주문 상태 변경은")
     @Nested
     class ChangeStatus {
 
+        private final Long orderId = 1L;
         private Order order;
         private OrderLineItem orderLineItem1;
         private OrderLineItem orderLineItem2;
-        private final Long orderId = 1L;
 
         @BeforeEach
         void setUp() {

@@ -15,8 +15,7 @@ import static kitchenpos.TableFixture.createOrderTable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends ControllerTest {
@@ -27,8 +26,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
     void create() throws Exception {
+        Long orderTableId = 1L;
         OrderTable orderTable = createOrderTable();
-        OrderTable savedOrderTable = createOrderTable(1L);
+        OrderTable savedOrderTable = createOrderTable(orderTableId);
 
         when(tableService.create(any())).thenReturn(savedOrderTable);
 
@@ -36,6 +36,7 @@ class TableRestControllerTest extends ControllerTest {
                 .content(objectMapper.writeValueAsString(orderTable))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/tables/" + orderTableId))
                 .andExpect(content().json(objectMapper.writeValueAsString(savedOrderTable)));
     }
 

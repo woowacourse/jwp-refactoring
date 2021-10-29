@@ -16,8 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ProductRestController.class)
 class ProductRestControllerTest extends ControllerTest {
@@ -28,14 +27,16 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() throws Exception {
+        Long productId = 1L;
         Product product = createProduct();
-        Product savedProduct = createProduct(1L);
+        Product savedProduct = createProduct(productId);
         when(productService.create(any())).thenReturn(savedProduct);
 
         mockMvc.perform(post("/api/products")
                 .content(objectMapper.writeValueAsString(product))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/products/" + productId))
                 .andExpect(content().json(objectMapper.writeValueAsString(savedProduct)));
     }
 

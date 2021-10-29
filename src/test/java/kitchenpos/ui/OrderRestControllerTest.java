@@ -16,8 +16,7 @@ import static kitchenpos.OrderFixture.createOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends ControllerTest {
@@ -28,8 +27,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문을 생성할 수 있다.")
     @Test
     void create() throws Exception {
+        Long orderId = 1L;
         Order order = createOrder();
-        Order savedOrder = createOrder(1L);
+        Order savedOrder = createOrder(orderId);
 
         when(orderService.create(any())).thenReturn(savedOrder);
 
@@ -37,6 +37,7 @@ class OrderRestControllerTest extends ControllerTest {
                 .content(objectMapper.writeValueAsString(order))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/orders/" + orderId))
                 .andExpect(content().json(objectMapper.writeValueAsString(savedOrder)));
     }
 
