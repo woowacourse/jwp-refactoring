@@ -15,7 +15,6 @@ import kitchenpos.application.OrderService;
 import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

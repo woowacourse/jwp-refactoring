@@ -3,10 +3,10 @@ package kitchenpos.application;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.application.dtos.MenuRequest;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
-import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
@@ -44,7 +44,8 @@ public class MenuService {
                 .build();
 
         final Menu savedMenu = menuRepository.save(menu);
-        final MenuProducts savedMenuProducts = new MenuProducts(menuProductRepository.findAllByMenuId(savedMenu.getId()));
+        final MenuProducts savedMenuProducts = new MenuProducts(
+                menuProductRepository.findAllByMenuId(savedMenu.getId()));
         final List<Product> savedProducts = productRepository.findAllByIdIn(savedMenuProducts.getProductIds());
         savedMenuProducts.checkValidityOfMenuPrice(savedProducts, savedMenu.getPrice());
         savedMenu.updateMenuProducts(savedMenuProducts);

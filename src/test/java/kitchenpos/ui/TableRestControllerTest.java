@@ -85,9 +85,10 @@ class TableRestControllerTest {
         final String content = objectMapper.writeValueAsString(TestFixtures.createOrderTableRequest(orderTable));
         when(tableService.changeNumberOfGuests(any(), any())).thenReturn(orderTable);
 
-        final MockHttpServletResponse response = mockMvc.perform(put("/api/tables/" + orderTable.getId() + "/number-of-guests")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON))
+        final MockHttpServletResponse response = mockMvc.perform(
+                        put("/api/tables/" + orderTable.getId() + "/number-of-guests")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
 

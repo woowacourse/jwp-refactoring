@@ -43,13 +43,13 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void checkTableGroupId(){
+    public void checkTableGroupId() {
         if (Objects.nonNull(this.tableGroupId)) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void checkValidity(){
+    public void checkValidity() {
         if (empty) {
             throw new IllegalArgumentException();
         }

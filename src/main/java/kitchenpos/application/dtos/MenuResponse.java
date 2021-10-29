@@ -3,7 +3,6 @@ package kitchenpos.application.dtos;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import lombok.Getter;
 
 @Getter

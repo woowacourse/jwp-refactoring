@@ -8,7 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.application.dtos.MenuGroupRequest;
-import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

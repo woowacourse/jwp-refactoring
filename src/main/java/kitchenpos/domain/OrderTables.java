@@ -34,7 +34,7 @@ public class OrderTables {
         orderTables.forEach(it -> it.update(tableGroupId, empty));
     }
 
-    public List<Long> getOrderTableIds (){
+    public List<Long> getOrderTableIds() {
         return orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
