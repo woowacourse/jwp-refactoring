@@ -100,8 +100,8 @@ class OrderServiceTest {
         when(menuRepository.countByIdIn(any())).thenReturn(2L);
         when(orderTableRepository.findById(any())).thenReturn(Optional.of(orderTable));
         when(orderRepository.save(any())).thenReturn(savedOrder);
-        when(orderLineItemRepository.save(any())).thenReturn(savedOrderLineItem1);
-        when(orderLineItemRepository.save(any())).thenReturn(savedOrderLineItem2);
+//        when(orderLineItemRepository.save(any())).thenReturn(savedOrderLineItem1);
+//        when(orderLineItemRepository.save(any())).thenReturn(savedOrderLineItem2);
 
         final Order actual = orderService.create(orderRequest);
 
@@ -161,8 +161,8 @@ class OrderServiceTest {
         final List<Order> orders = Arrays.asList(savedOrder1, savedOrder2);
 
         when(orderRepository.findAll()).thenReturn(orders);
-        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
-        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
+//        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
+//        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
 
         final List<Order> actual = orderService.list();
         assertThat(actual).isEqualTo(orders);
@@ -177,7 +177,7 @@ class OrderServiceTest {
                 .build();
 
         when(orderRepository.findById(any())).thenReturn(Optional.of(savedOrder));
-        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
+//        when(orderLineItemRepository.findAllByOrderId(any())).thenReturn(Collections.emptyList());
 
         final Order actual = orderService.changeOrderStatus(any(), orderStatusRequest);
         assertThat(actual).isEqualTo(savedOrder);

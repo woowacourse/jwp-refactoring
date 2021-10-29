@@ -11,7 +11,7 @@ public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, name = "order_id")
     private Long orderId;
     @Column(nullable = false)
     private Long menuId;

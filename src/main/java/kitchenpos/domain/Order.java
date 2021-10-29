@@ -1,15 +1,14 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Table(name = "orders")
 @Entity
@@ -23,8 +22,8 @@ public class Order {
     private String orderStatus;
     @Column(nullable = false)
     private LocalDateTime orderedTime;
-    @Transient
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -41,12 +40,16 @@ public class Order {
         return new Builder();
     }
 
+    public void updateOrderLineItems(OrderLineItems orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
     public static class Builder {
         private Long id;
         private Long orderTableId;
         private String orderStatus;
         private LocalDateTime orderedTime;
-        private List<OrderLineItem> orderLineItems = new ArrayList<>();
+        private OrderLineItems orderLineItems;
 
         private Builder() {
         }
@@ -56,7 +59,7 @@ public class Order {
             this.orderTableId = order.orderTableId;
             this.orderStatus = order.orderStatus;
             this.orderedTime = order.orderedTime;
-            this.orderLineItems = new ArrayList<>(order.orderLineItems);
+            this.orderLineItems = order.orderLineItems;
             return this;
         }
 
@@ -80,8 +83,13 @@ public class Order {
             return this;
         }
 
+        public Builder orderLineItems(OrderLineItems orderLineItems) {
+            this.orderLineItems = orderLineItems;
+            return this;
+        }
+
         public Builder orderLineItems(List<OrderLineItem> orderLineItems) {
-            this.orderLineItems = new ArrayList<>(orderLineItems);
+            this.orderLineItems = new OrderLineItems(orderLineItems);
             return this;
         }
 
@@ -110,7 +118,7 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final String orderStatus) {
+    public void updateOrderStatus(final String orderStatus) {
         this.orderStatus = orderStatus;
     }
 
@@ -123,10 +131,10 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
+//    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+//        this.orderLineItems = orderLineItems;
+//    }
 }
