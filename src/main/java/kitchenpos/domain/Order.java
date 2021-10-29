@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -83,11 +84,6 @@ public class Order {
             return this;
         }
 
-        public Builder orderLineItems(OrderLineItems orderLineItems) {
-            this.orderLineItems = orderLineItems;
-            return this;
-        }
-
         public Builder orderLineItems(List<OrderLineItem> orderLineItems) {
             this.orderLineItems = new OrderLineItems(orderLineItems);
             return this;
@@ -119,6 +115,9 @@ public class Order {
     }
 
     public void updateOrderStatus(final String orderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
         this.orderStatus = orderStatus;
     }
 
@@ -126,15 +125,7 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems.getOrderLineItems();
     }
-
-//    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-//        this.orderLineItems = orderLineItems;
-//    }
 }
