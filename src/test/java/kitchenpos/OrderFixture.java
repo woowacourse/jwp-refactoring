@@ -25,6 +25,10 @@ public class OrderFixture {
         return order;
     }
 
+    public static OrderLineItem createOrderLineItem() {
+        return createOrderLineItem(null);
+    }
+
     public static OrderLineItem createOrderLineItem(Long menuId) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(1L);
