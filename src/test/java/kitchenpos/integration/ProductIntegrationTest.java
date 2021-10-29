@@ -1,20 +1,26 @@
 package kitchenpos.integration;
 
 import kitchenpos.domain.Product;
+import kitchenpos.integration.annotation.IntegrationTest;
+import kitchenpos.integration.templates.ProductTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.net.URI;
 
+import static kitchenpos.integration.templates.ProductTemplate.PRODUCT_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ProductIntegrationTest extends IntegrationTest {
+@IntegrationTest
+class ProductIntegrationTest {
 
-    private static final String PRODUCT_URL = "/api/products";
+    @Autowired
+    private ProductTemplate productTemplate;
 
     private String productName;
 
@@ -29,17 +35,12 @@ class ProductIntegrationTest extends IntegrationTest {
     @DisplayName("product 를 생성한다")
     @Test
     void create() {
-        // given
-        Product product = new Product();
-        product.setName(productName);
-        product.setPrice(productPrice);
-
-        // when
-        ResponseEntity<Product> productResponseEntity = testRestTemplate.postForEntity(
-                PRODUCT_URL,
-                product,
-                Product.class
-        );
+        // given // when
+        ResponseEntity<Product> productResponseEntity = productTemplate
+                .create(
+                        productName,
+                        productPrice
+                );
         HttpStatus statusCode = productResponseEntity.getStatusCode();
         URI location = productResponseEntity.getHeaders().getLocation();
         Product body = productResponseEntity.getBody();
@@ -59,23 +60,22 @@ class ProductIntegrationTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        Product product = new Product();
-        product.setName(productName);
-        product.setPrice(productPrice);
-        productDao.save(product);
+        productTemplate
+                .create(
+                        productName,
+                        productPrice
+                );
 
         String secondProductName = "매콤치킨";
         BigDecimal secondProductPrice = new BigDecimal(18000);
-        Product secondProduct = new Product();
-        secondProduct.setName(secondProductName);
-        secondProduct.setPrice(secondProductPrice);
-        productDao.save(secondProduct);
+        productTemplate
+                .create(
+                        secondProductName,
+                        secondProductPrice
+                );
 
         // when
-        ResponseEntity<Product[]> productResponseEntity = testRestTemplate.getForEntity(
-                PRODUCT_URL,
-                Product[].class
-        );
+        ResponseEntity<Product[]> productResponseEntity = productTemplate.list();
         HttpStatus statusCode = productResponseEntity.getStatusCode();
         Product[] body = productResponseEntity.getBody();
 

@@ -4,21 +4,38 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.integration.annotation.IntegrationTest;
+import kitchenpos.integration.templates.MenuGroupTemplate;
+import kitchenpos.integration.templates.MenuTemplate;
+import kitchenpos.integration.templates.ProductTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
 
+import static kitchenpos.integration.templates.MenuTemplate.MENU_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MenuIntegrationTest extends IntegrationTest {
+@IntegrationTest
+class MenuIntegrationTest {
 
-    private static final String MENU_URL = "/api/menus";
+    @Autowired
+    private MenuTemplate menuTemplate;
+
+    @Autowired
+    private ProductTemplate productTemplate;
+
+    @Autowired
+    private MenuGroupTemplate menuGroupTemplate;
 
     private Long menuGroupId;
 
@@ -30,16 +47,22 @@ class MenuIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        Product product = new Product();
-        product.setName("강정치킨");
-        product.setPrice(new BigDecimal(17000));
-        Product savedProduct = productDao.save(product);
-        Long productId = savedProduct.getId();
+        Product product = productTemplate
+                .create(
+                        "강정치킨",
+                        new BigDecimal(17000)
+                )
+                .getBody();
+        assertThat(product).isNotNull();
+        Long productId = product.getId();
 
-        MenuGroup menuGroup = new MenuGroup();
+        MenuGroup menuGroup = menuGroupTemplate
+                .create("추천메뉴")
+                .getBody();
+        assertThat(menuGroup).isNotNull();
         menuGroup.setName("추천메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        menuGroupId = savedMenuGroup.getId();
+        assertThat(menuGroup).isNotNull();
+        menuGroupId = menuGroup.getId();
 
         menuName = "후라이드+후라이드";
         menuPrice = new BigDecimal(19000);
@@ -52,21 +75,14 @@ class MenuIntegrationTest extends IntegrationTest {
     @DisplayName("menu 를 생성한다")
     @Test
     void create() {
-        // given
-        Menu menu = new Menu();
-        menu.setName(menuName);
-        menu.setPrice(menuPrice);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(
-                Collections.singletonList(menuProduct)
-        );
-
-        // when
-        ResponseEntity<Menu> menuResponseEntity = testRestTemplate.postForEntity(
-                MENU_URL,
-                menu,
-                Menu.class
-        );
+        // given // when
+        ResponseEntity<Menu> menuResponseEntity = menuTemplate
+                .create(
+                        menuName,
+                        menuPrice,
+                        menuGroupId,
+                        Collections.singletonList(menuProduct)
+                );
         HttpStatus statusCode = menuResponseEntity.getStatusCode();
         URI location = menuResponseEntity.getHeaders().getLocation();
         Menu body = menuResponseEntity.getBody();
@@ -90,20 +106,16 @@ class MenuIntegrationTest extends IntegrationTest {
     @Test
     void list() {
         // given
-        Menu menu = new Menu();
-        menu.setName(menuName);
-        menu.setPrice(menuPrice);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(
-                Collections.singletonList(menuProduct)
-        );
-        menuDao.save(menu);
+        menuTemplate
+                .create(
+                        menuName,
+                        menuPrice,
+                        menuGroupId,
+                        Collections.singletonList(menuProduct)
+                );
 
         // when
-        ResponseEntity<Menu[]> menuResponseEntity = testRestTemplate.getForEntity(
-                MENU_URL,
-                Menu[].class
-        );
+        ResponseEntity<Menu[]> menuResponseEntity = menuTemplate.list();
         HttpStatus statusCode = menuResponseEntity.getStatusCode();
         Menu[] body = menuResponseEntity.getBody();
 

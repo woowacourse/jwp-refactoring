@@ -2,22 +2,29 @@ package kitchenpos.integration;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.integration.annotation.IntegrationTest;
+import kitchenpos.integration.templates.OrderTableTemplate;
+import kitchenpos.integration.templates.TableGroupTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
-import java.util.Arrays;
 
+import static kitchenpos.integration.templates.TableGroupTemplate.TABLE_GROUP_URL;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class TableGroupIntegrationTest extends IntegrationTest {
+@IntegrationTest
+class TableGroupIntegrationTest {
 
-    private static final String TABLE_GROUP_URL = "/api/table-groups";
+    @Autowired
+    TableGroupTemplate tableGroupTemplate;
+
+    @Autowired
+    OrderTableTemplate orderTableTemplate;
 
     private OrderTable orderTable;
 
@@ -25,32 +32,27 @@ class TableGroupIntegrationTest extends IntegrationTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable table = new OrderTable();
-        table.setNumberOfGuests(0);
-        table.setEmpty(true);
-        orderTable = orderTableDao.save(table);
-
-        OrderTable secondTable = new OrderTable();
-        secondTable.setNumberOfGuests(0);
-        secondTable.setEmpty(true);
-        secondOrderTable = orderTableDao.save(secondTable);
+        orderTable = orderTableTemplate
+                .create(
+                        0,
+                        true)
+                .getBody();
+        secondOrderTable = orderTableTemplate
+                .create(
+                        0,
+                        true)
+                .getBody();
     }
 
     @DisplayName("TableGroup 을 생성한다")
     @Test
     void create() {
-        // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(
-                Arrays.asList(orderTable, secondOrderTable)
-        );
-
-        // when
-        ResponseEntity<TableGroup> tableGroupResponseEntity = testRestTemplate.postForEntity(
-                TABLE_GROUP_URL,
-                tableGroup,
-                TableGroup.class
-        );
+        // given // when
+        ResponseEntity<TableGroup> tableGroupResponseEntity = tableGroupTemplate
+                .create(
+                        orderTable,
+                        secondOrderTable
+                );
         HttpStatus statusCode = tableGroupResponseEntity.getStatusCode();
         URI location = tableGroupResponseEntity.getHeaders().getLocation();
         TableGroup body = tableGroupResponseEntity.getBody();
@@ -72,26 +74,16 @@ class TableGroupIntegrationTest extends IntegrationTest {
     @Test
     void ungroup() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(
-                Arrays.asList(orderTable, secondOrderTable)
-        );
-        ResponseEntity<TableGroup> tableGroupResponseEntity = testRestTemplate.postForEntity(
-                TABLE_GROUP_URL,
-                tableGroup,
-                TableGroup.class
-        );
-        TableGroup createdTableGroup = tableGroupResponseEntity.getBody();
+        TableGroup createdTableGroup = tableGroupTemplate
+                .create(
+                        orderTable,
+                        secondOrderTable)
+                .getBody();
         assertThat(createdTableGroup).isNotNull();
 
         // when
-        ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
-                TABLE_GROUP_URL + "/{tableGroupId}",
-                HttpMethod.DELETE,
-                HttpEntity.EMPTY,
-                Void.class,
-                createdTableGroup.getId()
-        );
+        ResponseEntity<Void> responseEntity = tableGroupTemplate
+                .ungroup(createdTableGroup);
         HttpStatus statusCode = responseEntity.getStatusCode();
 
         // then
