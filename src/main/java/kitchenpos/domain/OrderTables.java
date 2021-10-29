@@ -24,9 +24,15 @@ public class OrderTables {
         return new ArrayList<>(orderTables);
     }
 
-    public void checkSizeWith(List<OrderTable> other) {
-        if (orderTables.size() != other.size()) {
+    public void checkValidity(OrderTables other) {
+        if (orderTables.size() != other.orderTables.size()) {
             throw new IllegalArgumentException();
         }
+        orderTables.forEach(OrderTable::check);
     }
+
+    public void update(Long tableGroupId, boolean empty) {
+        orderTables.forEach(it -> it.update(tableGroupId, empty));
+    }
+
 }

@@ -10,7 +10,7 @@ public class OrderLineItemRequest {
     private Long menuId;
     private Long quantity;
 
-    public OrderLineItemRequest(OrderLineItem orderLineItem){
+    public OrderLineItemRequest(OrderLineItem orderLineItem) {
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
     }

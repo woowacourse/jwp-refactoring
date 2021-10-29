@@ -14,6 +14,7 @@ import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableGroupRequest;
+import kitchenpos.application.dtos.TableGroupResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -93,9 +94,9 @@ public class TestFixtures {
         return new OrderRequest(order.getOrderTableId(), orderLineItemRequests);
     }
 
-    public static TableGroupRequest createTableGroupRequest(TableGroup tableGroup) {
-        final List<OrderTableRequest> orderTableRequests = tableGroup.getOrderTables().stream()
-                .map(orderTable -> new OrderTableRequest(orderTable.getId()))
+    public static TableGroupRequest createTableGroupRequest(List<Long> ids) {
+        final List<OrderTableRequest> orderTableRequests = ids.stream()
+                .map(OrderTableRequest::new)
                 .collect(Collectors.toList());
         return new TableGroupRequest(orderTableRequests);
     }
@@ -105,7 +106,7 @@ public class TestFixtures {
         return TableGroup.builder()
                 .id(tableGroupId)
                 .createdDate(LocalDateTime.now())
-                .orderTables(Arrays.asList(createOrderTable(1L, tableGroupId), createOrderTable(2L, tableGroupId)))
+//                .orderTables(Arrays.asList(createOrderTable(1L, tableGroupId), createOrderTable(2L, tableGroupId)))
                 .build();
     }
 
@@ -134,7 +135,15 @@ public class TestFixtures {
     public static MenuResponse createMenuResponse(Menu menu) {
         return new MenuResponse(menu, Collections.singletonList(createMenuProduct()));
     }
+
     public static MenuResponse createMenuResponse() {
         return new MenuResponse(createMenu(), Collections.singletonList(createMenuProduct()));
+    }
+
+    public static TableGroupResponse createTableGroupResponse() {
+        final TableGroup tableGroup = createTableGroup();
+        return new TableGroupResponse(tableGroup,
+                Arrays.asList(createOrderTable(1L, tableGroup.getId()), createOrderTable(2L, tableGroup.getId()))
+        );
     }
 }

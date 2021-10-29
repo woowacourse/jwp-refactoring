@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,8 +28,19 @@ public class OrderTable {
         this.empty = builder.empty;
     }
 
+    public void check() {
+        if (!empty || Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public static Builder builder() {
         return new Builder();
+    }
+
+    public void update(Long tableGroupId, boolean empty) {
+        this.tableGroupId = tableGroupId;
+        this.empty = empty;
     }
 
     public static class Builder {

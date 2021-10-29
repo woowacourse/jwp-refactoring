@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 import kitchenpos.TestFixtures;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableGroupRequest;
+import kitchenpos.application.dtos.TableGroupResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -63,9 +65,9 @@ class TableGroupServiceTest {
                 .build();
         orderTables = Arrays.asList(savedOrderTable1, savedOrderTable2);
         tableGroup = TableGroup.builder()
-                .orderTables(orderTables)
+                .createdDate(LocalDateTime.now())
                 .build();
-        tableGroupRequest = TestFixtures.createTableGroupRequest(tableGroup);
+        tableGroupRequest = TestFixtures.createTableGroupRequest(Arrays.asList(1L, 2L));
     }
 
     @DisplayName("단체 지정을 등록할 수 있다")
@@ -77,11 +79,10 @@ class TableGroupServiceTest {
                 .build();
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(orderTables);
         when(tableGroupRepository.save(any())).thenReturn(savedTableGroup);
-        when(orderTableRepository.save(any())).thenReturn(savedOrderTable1);
-        when(orderTableRepository.save(any())).thenReturn(savedOrderTable2);
 
-        final TableGroup actual = tableGroupService.create(tableGroupRequest);
-        assertThat(actual).isEqualTo(savedTableGroup);
+        final TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(new TableGroupResponse(savedTableGroup, orderTables));
     }
 
     @DisplayName("주문 테이블이 비어있지 않아야 된다")
@@ -120,10 +121,9 @@ class TableGroupServiceTest {
                 .of(orderTable)
                 .id(3L)
                 .build();
-        final TableGroup wrongTableGroup = TableGroup.builder()
-                .orderTables(Arrays.asList(savedOrderTable1, savedOrderTable2))
-                .build();
-        TableGroupRequest request = TestFixtures.createTableGroupRequest(wrongTableGroup);
+        TableGroupRequest request = TestFixtures.createTableGroupRequest(
+                Arrays.asList(savedOrderTable1.getId(), savedOrderTable2.getId())
+        );
         final List<OrderTable> savedOrderTables = Arrays.asList(savedOrderTable1, savedOrderTable2, orderTable3);
 
         when(orderTableRepository.findAllByIdIn(any())).thenReturn(savedOrderTables);

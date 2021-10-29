@@ -3,10 +3,10 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableGroupRequest;
+import kitchenpos.application.dtos.TableGroupResponse;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -32,43 +32,26 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest request) {
+    public TableGroupResponse create(final TableGroupRequest request) {
         final List<OrderTable> orderTablesValue = request.getOrderTables().stream()
                 .map(it -> OrderTable.builder()
                         .id(it.getId())
                         .build())
                 .collect(Collectors.toList());
         final OrderTables orderTables = new OrderTables(orderTablesValue);
-
         final List<Long> orderTableIds = request.getOrderTables().stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
-
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-        orderTables.checkSizeWith(savedOrderTables);
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
         final TableGroup tableGroup = TableGroup.builder()
-                .orderTables(savedOrderTables)
                 .createdDate(LocalDateTime.now())
                 .build();
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
+        savedOrderTables.checkValidity(orderTables);
+        savedOrderTables.update(savedTableGroup.getId(), false);
 
-        final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return savedTableGroup;
+        return new TableGroupResponse(savedTableGroup, savedOrderTables.getOrderTables());
     }
 
     @Transactional
