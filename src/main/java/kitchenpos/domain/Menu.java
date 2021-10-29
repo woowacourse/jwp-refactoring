@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,6 +20,8 @@ public class Menu {
     private BigDecimal price;
     @Column(nullable = false)
     private Long menuGroupId;
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
     }
@@ -27,10 +31,19 @@ public class Menu {
         this.name = builder.name;
         this.price = builder.price;
         this.menuGroupId = builder.menuGroupId;
+        this.menuProducts = builder.menuProducts;
     }
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    public void updateMenuProducts(MenuProducts menuProducts) {
+        this.menuProducts = menuProducts;
+    }
+
+    public void updateMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public static class Builder {
@@ -38,6 +51,7 @@ public class Menu {
         private String name;
         private BigDecimal price;
         private Long menuGroupId;
+        private MenuProducts menuProducts;
 
         private Builder() {
         }
@@ -47,6 +61,7 @@ public class Menu {
             this.name = menu.name;
             this.price = menu.price;
             this.menuGroupId = menu.menuGroupId;
+            this.menuProducts = menu.menuProducts;
             return this;
         }
 
@@ -70,6 +85,7 @@ public class Menu {
             return this;
         }
 
+
         public Menu build() {
             return new Menu(this);
         }
@@ -90,5 +106,9 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroupId;
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts.getMenuProducts();
     }
 }

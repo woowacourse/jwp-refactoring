@@ -14,12 +14,12 @@ public class MenuResponse {
     private final Long MenuGroupId;
     private final List<MenuProductResponse> menuProducts;
 
-    public MenuResponse(Menu menu, List<MenuProduct> menuProducts) {
+    public MenuResponse(Menu menu) {
         this.id = menu.getId();
         this.name = menu.getName();
         this.price = menu.getPrice().longValue();
         this.MenuGroupId = menu.getMenuGroupId();
-        this.menuProducts = menuProducts.stream()
+        this.menuProducts = menu.getMenuProducts().stream()
                 .map(MenuProductResponse::new)
                 .collect(Collectors.toList());
     }

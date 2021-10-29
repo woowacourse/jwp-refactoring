@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.application.dtos.MenuProductRequest;
 import kitchenpos.application.dtos.MenuRequest;
-import kitchenpos.application.dtos.MenuResponse;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
@@ -107,18 +106,19 @@ class MenuServiceTest {
                 new MenuProductRequest(menuProduct1),
                 new MenuProductRequest(menuProduct2)
         );
+        final List<Product> products = Arrays.asList(savedProduct1, savedProduct2);
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
-        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-        when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
+        when(productRepository.findAllByIdIn(any())).thenReturn(products);
+//        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
+//        when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
-        final MenuResponse actual = menuService.create(request);
+        final Menu actual = menuService.create(request);
 
-        assertThat(actual).usingRecursiveComparison()
-                .isEqualTo(new MenuResponse(menu, Arrays.asList(menuProduct1, menuProduct2)));
+        assertThat(actual).isEqualTo(savedMenu1);
     }
 
     @DisplayName("메뉴의 가격은 0 원 이상이어야 한다")
@@ -158,8 +158,8 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
-        when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
-        when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
+//        when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
+//        when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -169,14 +169,9 @@ class MenuServiceTest {
     void list() {
         final List<Menu> menus = Arrays.asList(savedMenu1, savedMenu2);
         when(menuRepository.findAll()).thenReturn(menus);
-        when(menuProductRepository.findAllByMenuIdIn(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
-        final List<MenuResponse> expected = Arrays.asList(
-                new MenuResponse(savedMenu1, Collections.singletonList(menuProduct1)),
-                new MenuResponse(savedMenu2, Collections.singletonList(menuProduct2))
-        );
 
-        final List<MenuResponse> actual = menuService.list();
+        final List<Menu> actual = menuService.list();
 
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actual).isEqualTo(menus);
     }
 }

@@ -37,8 +37,9 @@ class MenuRestControllerTest {
     @Test
     void create() throws Exception {
         final Menu menu = TestFixtures.createMenu();
+        menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
         final String content = objectMapper.writeValueAsString(TestFixtures.createMenuRequest(menu));
-        when(menuService.create(any())).thenReturn(TestFixtures.createMenuResponse(menu));
+        when(menuService.create(any())).thenReturn(menu);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/menus")
                         .content(content)
@@ -54,7 +55,9 @@ class MenuRestControllerTest {
 
     @Test
     void list() throws Exception {
-        when(menuService.list()).thenReturn(Collections.singletonList(TestFixtures.createMenuResponse()));
+        final Menu menu = TestFixtures.createMenu();
+        menu.updateMenuProducts(Collections.singletonList(TestFixtures.createMenuProduct()));
+        when(menuService.list()).thenReturn(Collections.singletonList(menu));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/menus"))
                 .andReturn()

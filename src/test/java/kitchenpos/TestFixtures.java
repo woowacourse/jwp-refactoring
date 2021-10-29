@@ -132,14 +132,6 @@ public class TestFixtures {
         return new OrderTableRequest(orderTable.getId());
     }
 
-    public static MenuResponse createMenuResponse(Menu menu) {
-        return new MenuResponse(menu, Collections.singletonList(createMenuProduct()));
-    }
-
-    public static MenuResponse createMenuResponse() {
-        return new MenuResponse(createMenu(), Collections.singletonList(createMenuProduct()));
-    }
-
     public static TableGroupResponse createTableGroupResponse() {
         final TableGroup tableGroup = createTableGroup();
         return new TableGroupResponse(tableGroup,
