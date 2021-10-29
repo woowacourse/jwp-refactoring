@@ -20,12 +20,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
+    @InjectMocks
     private MenuService menuService;
     private MenuProduct menuProduct;
     private List<MenuProduct> menuProducts;
@@ -47,8 +49,6 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuService = new MenuService(menuDao, menuGroupDao, menuProductDao, productDao);
-
         menuProduct = new MenuProduct();
         menuProduct.setProductId(1L);
         menuProduct.setMenuId(1L);

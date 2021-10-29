@@ -13,12 +13,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
 
+    @InjectMocks
     private TableService tableService;
     private OrderTable orderTable;
 
@@ -30,7 +32,6 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableService = new TableService(orderDao, orderTableDao);
         orderTable = new OrderTable();
         orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(1);

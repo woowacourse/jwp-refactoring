@@ -19,12 +19,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class TableGroupServiceTest {
+class TableGroupServiceTest {
 
+    @InjectMocks
     private TableGroupService tableGroupService;
     private List<OrderTable> orderTables;
     private OrderTable orderTable;
@@ -42,8 +44,6 @@ public class TableGroupServiceTest {
 
     @BeforeEach
     void setUp() {
-        tableGroupService = new TableGroupService(orderDao, orderTableDao, tableGroupDao);
-
         orderTables = new ArrayList<>();
         orderTable = new OrderTable();
         orderTable.setId(1L);
