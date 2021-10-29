@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.menu.domain.MenuDao;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menugroup.domain.MenuGroupDao;
 import kitchenpos.menu.domain.MenuProductDao;
 import kitchenpos.order.domain.OrderDao;
@@ -89,7 +90,7 @@ public class FixtureMaker {
     public Menu createMenu() {
         MenuGroup menuGroup = createMenuGroup();
         List<MenuProduct> menuProducts = createMenuProducts(menuGroup.getId());
-        return menuDao.save(new Menu("메뉴", new BigDecimal(1000), menuGroup.getId(), menuProducts));
+        return menuDao.save(new Menu("메뉴", new BigDecimal(1000), menuGroup.getId(), new MenuProducts(menuProducts)));
     }
 
     public Order createOrder() {

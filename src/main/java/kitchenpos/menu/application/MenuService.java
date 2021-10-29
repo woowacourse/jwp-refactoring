@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.menu.dto.MenuCreateRequestDto;
 import kitchenpos.menu.dto.MenuCreateResponseDto;
 import kitchenpos.menu.dto.MenuProductDto;
@@ -69,7 +70,7 @@ public class MenuService {
         for (MenuProductDto menuProductDto : menuDto.getMenuProducts()) {
             menuProductGroup.add(new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()));
         }
-        Menu menu = new Menu(menuDto.getId(), menuDto.getName(), menuDto.getPrice(), menuDto.getMenuGroupId(), menuProductGroup);
+        Menu menu = new Menu(menuDto.getId(), menuDto.getName(), menuDto.getPrice(), menuDto.getMenuGroupId(), new MenuProducts(menuProductGroup));
         return menu;
     }
 
