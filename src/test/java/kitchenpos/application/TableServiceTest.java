@@ -131,6 +131,12 @@ public class TableServiceTest {
     @Test
     void changeNumberOfGuestsExceptionUnderZero() {
         final GuestNumberRequest request = new GuestNumberRequest(-1);
+        final OrderTable savedOrderTable = OrderTable.builder()
+                .id(1L)
+                .numberOfGuests(10)
+                .empty(false)
+                .build();
+        when(orderTableRepository.findById(any())).thenReturn(Optional.of(savedOrderTable));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable1.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);

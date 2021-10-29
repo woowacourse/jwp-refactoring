@@ -2,10 +2,9 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Embeddable;
+import java.util.stream.Collectors;
 import org.springframework.util.CollectionUtils;
 
-@Embeddable
 public class OrderTables {
     private List<OrderTable> orderTables;
 
@@ -35,4 +34,9 @@ public class OrderTables {
         orderTables.forEach(it -> it.update(tableGroupId, empty));
     }
 
+    public List<Long> getOrderTableIds (){
+        return orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
 }

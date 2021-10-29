@@ -43,6 +43,18 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void checkTableGroupId(){
+        if (Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void checkValidity(){
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public static class Builder {
         private Long id;
         private Long tableGroupId;
@@ -105,7 +117,10 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
+    public void updateNumberOfGuests(final int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -113,7 +128,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setEmpty(final boolean empty) {
+    public void updateEmpty(final boolean empty) {
         this.empty = empty;
     }
 }
