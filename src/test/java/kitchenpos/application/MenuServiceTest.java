@@ -103,7 +103,7 @@ class MenuServiceTest {
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("조건을 만족하는 경우 성공한다.")
+        @DisplayName("조건을 만족하는 경우 생성할 수 있다.")
         @Test
         void create() {
             product.setId(1L);

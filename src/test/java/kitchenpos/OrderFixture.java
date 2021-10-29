@@ -24,4 +24,12 @@ public class OrderFixture {
         order.setOrderedTime(ORDER_TIME);
         return order;
     }
+
+    public static OrderLineItem createOrderLineItem(Long menuId) {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(1L);
+        orderLineItem.setMenuId(menuId);
+        orderLineItem.setQuantity(1);
+        return orderLineItem;
+    }
 }
