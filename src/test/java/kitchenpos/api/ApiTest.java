@@ -34,7 +34,7 @@ public abstract class ApiTest {
         truncateAllTables();
     }
 
-    private void truncateAllTables() throws SQLException {
+    private void truncateAllTables() {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             @Override
             protected void doInTransactionWithoutResult(final TransactionStatus status) {

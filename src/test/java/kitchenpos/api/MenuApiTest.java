@@ -1,6 +1,5 @@
 package kitchenpos.api;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
@@ -93,7 +92,7 @@ public class MenuApiTest extends ApiTest {
         Menu[] response = responseEntity.getBody();
 
         List<Menu> expected = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < menus.size(); i++) {
             Menu menu = new Menu();
             menu.setId(menus.get(i).getId());
             menu.setName(menus.get(i).getName());

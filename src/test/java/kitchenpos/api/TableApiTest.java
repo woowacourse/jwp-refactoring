@@ -79,7 +79,8 @@ public class TableApiTest extends ApiTest {
         );
         OrderTable response = responseEntity.getBody();
 
-        OrderTable expected = TableGenerator.newInstance(orderTableToPut.getId(), orderTableToPut.getTableGroupId(), orderTableToPut.getNumberOfGuests(), false);
+        OrderTable expected = TableGenerator.newInstance(orderTableToPut.getId(), orderTableToPut.getTableGroupId(), orderTableToPut.getNumberOfGuests(),
+            false);
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response).usingRecursiveComparison()
             .isEqualTo(expected);
@@ -93,7 +94,8 @@ public class TableApiTest extends ApiTest {
         OrderTable request = TableGenerator.newInstance(newNumberOfGuests);
 
         ResponseEntity<OrderTable> responseEntity = testRestTemplate.exchange(
-            BASE_URL + "/" + orderTableToPut.getId() + "/number-of-guests", HttpMethod.PUT,
+            BASE_URL + "/" + orderTableToPut.getId() + "/number-of-guests",
+            HttpMethod.PUT,
             new HttpEntity<>(request, new HttpHeaders()),
             OrderTable.class
         );
@@ -103,6 +105,6 @@ public class TableApiTest extends ApiTest {
             orderTableToPut.isEmpty());
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response).usingRecursiveComparison()
-                .isEqualTo(expected);
+            .isEqualTo(expected);
     }
 }
