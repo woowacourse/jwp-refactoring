@@ -7,6 +7,8 @@ import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
+import kitchenpos.exception.menu.NoSuchMenuGroupException;
+import kitchenpos.exception.product.NoSuchProductException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -94,7 +96,7 @@ class MenuServiceTest {
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchMenuGroupException.class);
     }
 
     @Test
@@ -104,14 +106,14 @@ class MenuServiceTest {
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, 1L);
         MenuRequest menuRequest = new MenuRequest("name", 1000L, 1L, Arrays.asList(menuProductRequest));
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(mock(MenuGroup.class)));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchProductException.class);
     }
 
     @ParameterizedTest
