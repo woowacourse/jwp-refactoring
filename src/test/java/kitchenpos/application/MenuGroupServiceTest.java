@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -27,15 +28,19 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 저장할 수 있다.")
     void create() {
         // given
+        String menuGroupName = "menuGroup";
+
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setId(1L);
-        menuGroup.setName("menuGroup");
+        menuGroup.setName(menuGroupName);
 
         given(menuGroupRepository.save(any(MenuGroup.class)))
                 .willReturn(menuGroup);
 
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(menuGroupName);
+
         // when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroup actual = menuGroupService.create(menuGroupRequest);
 
         // then
         assertThat(actual).isEqualTo(menuGroup);
