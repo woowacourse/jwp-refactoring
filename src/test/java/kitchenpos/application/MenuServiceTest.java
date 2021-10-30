@@ -123,7 +123,7 @@ class MenuServiceTest {
 
     @ParameterizedTest
     @CsvSource({"2000, 1000, 1", "5000, 1000, 3"})
-    @DisplayName("메뉴의 가격이 상품 가격의 총합보다 크다면 예외가 발생한다.")
+    @DisplayName("메뉴의 가격이 메뉴 상품 가격의 총합보다 크다면 예외가 발생한다.")
     void createFailWhenMenuPriceLowerThanAllProduct(Long menuPrice, Long productPrice, Long productQuantity) {
         // given
         String menuName = "name";

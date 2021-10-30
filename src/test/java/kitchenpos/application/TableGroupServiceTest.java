@@ -45,7 +45,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Test
-    @DisplayName("테이블 그룹을 생성할 수 있다.")
+    @DisplayName("복수의 테이블을 대상으로 단체로 지정할 수 있다.")
     void create() {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -76,7 +76,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹 요청에 테이블이 없다면 예외가 발생한다.")
+    @DisplayName("단체 지정 요청에 테이블이 없다면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasNoTables() {
         // given
         TableGroupRequest tableGroupRequest = new TableGroupRequest(Collections.emptyList());
@@ -87,7 +87,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹 요청에 테이블이 2개 미만 존재하면 예외가 발생한다.")
+    @DisplayName("단체 지정 요청에 테이블이 2개 미만 존재하면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasUnderTwoTables() {
         // given
         TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(1L));
@@ -98,7 +98,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹에 등록하려는 테이블들을 전부 찾을 수 없으면 예외가 발생한다.")
+    @DisplayName("단체에 지정하려는 테이블들을 찾을 수 없으면 예외가 발생한다.")
     void createFailWhenOrderTableHasTableThatDoesNotExist() {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -121,7 +121,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹에 등록하려는 테이블중에 비어있지 않은 테이블이 있다면 예외가 발생한다.")
+    @DisplayName("단체에 지정하려는 테이블중에 비어있지 않은 테이블이 있다면 예외가 발생한다.")
     void createFailWhenTableIsNotEmpty() {
         // given
         OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
@@ -144,7 +144,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹에 등록하려는 테이블 중에 이미 그룹에 지정된 객체가 있다면 예외가 발생한다.")
+    @DisplayName("단체에 지정하려는 테이블 중에 이미 그룹에 지정된 객체가 있다면 예외가 발생한다.")
     void createFailWhenTableHasNoTableGroupId() {
         // given
         TableGroup anotherTableGroup = new TableGroup(LocalDateTime.now());
@@ -169,7 +169,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("테이블 그룹을 해제 시킬 수 있다.")
+    @DisplayName("단체 지정을 해제 시킬 수 있다.")
     void ungroup() {
         // given
         long tableGroupId = 1L;
@@ -195,7 +195,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("그룹 해제시, 테이블의 주문 상태가 요리중이거나 식사중인 경우 예외가 발생한다.")
+    @DisplayName("단체 지정 해제시, 테이블의 주문 상태가 요리중이거나 식사중인 경우 예외가 발생한다.")
     void ungroupFailWhenTableIsOnCookingOrMealStatus() {
         // given
         long tableGroupId = 1L;

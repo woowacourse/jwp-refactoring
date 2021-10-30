@@ -27,7 +27,7 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Test
-    @DisplayName("Product를 저장할 수 있다.")
+    @DisplayName("상품을 저장할 수 있다.")
     void create() {
         // given
         String productName = "product";
