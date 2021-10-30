@@ -51,11 +51,11 @@ public class MenuService {
                 .collect(Collectors.toList());
 
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
+        Menu savedMenu = menuRepository.save(menu);
 
         // todo 영속성 전이
         menuProductRepository.saveAll(menuProducts);
 
-        Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.from(savedMenu);
     }
 
