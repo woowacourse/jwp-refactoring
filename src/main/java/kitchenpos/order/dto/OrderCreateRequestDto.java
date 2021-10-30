@@ -45,4 +45,16 @@ public class OrderCreateRequestDto {
     public List<OrderLineItemDto> getOrderLineItems() {
         return orderLineItems;
     }
+
+    public Order toEntity() {
+        List<OrderLineItem> orderLineItemGroup = new ArrayList<>();
+        for (OrderLineItemDto orderLineItemDto : orderLineItems) {
+            orderLineItemGroup.add(new OrderLineItem(orderLineItemDto.getMenuId(), orderLineItemDto.getQuantity()));
+        }
+        return new Order(
+            orderTableId,
+            orderStatus,
+            orderedTime,
+            orderLineItemGroup);
+    }
 }
