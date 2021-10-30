@@ -15,7 +15,7 @@ public class OrderServiceChangeTest extends OrderServiceTest {
 
     @DisplayName("주문 상태 변경 시 주문 번호가 등록이 되어 있어야 한다.")
     @Test
-    void changeNullOrderStatus() {
+    void nullOrderStatus() {
         //given
         given(orderDao.findById(1L)).willReturn(Optional.empty());
 
@@ -28,7 +28,7 @@ public class OrderServiceChangeTest extends OrderServiceTest {
 
     @DisplayName("주문 상태 시 완료된 주문은 아니어야 한다.")
     @Test
-    void changeCompletedOrderStatus() {
+    void completedOrderStatus() {
         //given
         standardOrder.setOrderStatus(OrderStatus.COMPLETION.name());
         given(orderDao.findById(1L)).willReturn(Optional.of(standardOrder));

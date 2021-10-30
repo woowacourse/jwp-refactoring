@@ -17,7 +17,7 @@ public class OrderServiceCreateTest extends OrderServiceTest {
 
     @DisplayName("주문이 비어서 들어선 안 된다.")
     @Test
-    void createOrderOfNull() {
+    void nullOrder() {
         //given
         standardOrder.setOrderLineItems(null);
 
@@ -30,7 +30,7 @@ public class OrderServiceCreateTest extends OrderServiceTest {
 
     @DisplayName("주문의 리스트가 메뉴와 일치해선 안 된다.")
     @Test
-    void createOrderWithExistedItems() {
+    void withExistedItems() {
         //given
         given(menuDao.countByIdIn(Arrays.asList(1L))).willReturn(1L);
 
@@ -43,7 +43,7 @@ public class OrderServiceCreateTest extends OrderServiceTest {
 
     @DisplayName("주문 테이블이 비어선 안 된다.")
     @Test
-    void createOrderWithOrderTable() {
+    void withOrderTable() {
         //given
         given(menuDao.countByIdIn(any())).willReturn(1L);
         given(orderTableDao.findById(1L)).willReturn(Optional.empty());
