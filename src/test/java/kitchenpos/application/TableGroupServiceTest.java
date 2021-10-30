@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +44,8 @@ class TableGroupServiceTest {
         // given
         Long tableGroupId = 1L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 1, true);
 
         TableGroup tableGroup = new TableGroup();
         tableGroup.setId(tableGroupId);
@@ -62,7 +58,7 @@ class TableGroupServiceTest {
                 .collect(Collectors.toList());
 
         given(orderTableRepository.findAllByIdIn(any(List.class)))
-                        .willReturn(orderTables);
+                .willReturn(orderTables);
         given(tableGroupRepository.save(any(TableGroup.class)))
                 .willReturn(tableGroup);
 
@@ -101,14 +97,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹에 등록하려는 테이블들을 전부 찾을 수 없으면 예외가 발생한다.")
     void createFailWhenOrderTableHasTableThatDoesNotExist() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 1, true);
 
-        TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
         List<Long> tableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -128,16 +120,10 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹에 등록하려는 테이블중에 비어있지 않은 테이블이 있다면 예외가 발생한다.")
     void createFailWhenTableIsNotEmpty() {
         // given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
+        OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 1, false);
 
-        TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
         List<Long> tableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -159,13 +145,8 @@ class TableGroupServiceTest {
         // given
         TableGroup anotherTableGroup = new TableGroup(LocalDateTime.now());
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroup(anotherTableGroup);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable(1L, anotherTableGroup, 1, true);
+        OrderTable orderTable2 = new OrderTable(2L, anotherTableGroup, 1, true);
 
         TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
@@ -191,10 +172,8 @@ class TableGroupServiceTest {
         // given
         long tableGroupId = 1L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L, mock(TableGroup.class), 1, true);
+        OrderTable orderTable2 = new OrderTable(2L, mock(TableGroup.class), 1, true);
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 
@@ -219,12 +198,8 @@ class TableGroupServiceTest {
         // given
         long tableGroupId = 1L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
+        OrderTable orderTable1 = new OrderTable(1L, mock(TableGroup.class), 1, false);
+        OrderTable orderTable2 = new OrderTable(2L, mock(TableGroup.class), 1, false);
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
 

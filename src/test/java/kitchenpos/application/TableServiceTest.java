@@ -78,10 +78,9 @@ class TableServiceTest {
     void changeEmpty(boolean isEmptyTable) {
         // given
         long targetOrderTableId = 1L;
+        int numberOfGuests = 1;
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setId(targetOrderTableId);
-        targetOrderTable.setEmpty(!isEmptyTable);
+        OrderTable targetOrderTable = new OrderTable(null, numberOfGuests, !isEmptyTable);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(null, isEmptyTable);
 
@@ -103,19 +102,11 @@ class TableServiceTest {
     @DisplayName("테이블의 주문 가능 여부를 변경시킬 때 해당하는 Id의 테이블이 없다면 예외를 발생시킨다.")
     void changeEmptyFailWhenTableIsNotExists() {
         // given
-        long targetOrderTableId = 1L;
-        long wrongOrderTableId = 2L;
-
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setId(targetOrderTableId);
-
-        OrderTableRequest orderTableRequest = new OrderTableRequest();
-
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableRequest))
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, mock(OrderTableRequest.class)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,9 +117,9 @@ class TableServiceTest {
         long targetOrderTableId = 1L;
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setTableGroup(tableGroup);
-        targetOrderTable.setId(targetOrderTableId);
+        int numberOfGuests = 1;
+
+        OrderTable targetOrderTable = new OrderTable(tableGroup, numberOfGuests, false);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest();
 
@@ -146,8 +137,7 @@ class TableServiceTest {
         // given
         long targetOrderTableId = 1L;
 
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setId(targetOrderTableId);
+        OrderTable targetOrderTable = new OrderTable(mock(TableGroup.class), 1, true);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest();
 
@@ -169,9 +159,7 @@ class TableServiceTest {
         OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setId(targetOrderTableId);
-        targetOrderTable.setEmpty(false);
+        OrderTable targetOrderTable = new OrderTable(mock(TableGroup.class), 1, false);
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
@@ -207,9 +195,11 @@ class TableServiceTest {
         OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
-        OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setId(targetOrderTableId);
-        targetOrderTable.setEmpty(true);
+        OrderTable targetOrderTable = new OrderTable(
+                targetOrderTableId,
+                mock(TableGroup.class),
+                numberOfGuestsToChange + 1,
+                true);
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));

@@ -48,9 +48,7 @@ class OrderServiceTest {
     void create() {
         // given
         Long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
-        orderTable.setEmpty(false);
+        OrderTable orderTable = new OrderTable(1L, null, 1, false);
 
         MenuGroup menuGroup = new MenuGroup("menuGroupName");
         long menuId = 1L;
@@ -136,9 +134,7 @@ class OrderServiceTest {
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
 
         Long orderTableId = 1L;
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(orderTableId);
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable(orderTableId, null, 1, true);
 
         OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
 
