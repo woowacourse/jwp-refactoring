@@ -26,17 +26,17 @@
     ```json
     {
         "id": 1,
-        "createdDate": "2021-10-30T21:21:44.444",
+        "createdDate": "2021-10-30T22:29:59.029",
         "orderTables": [
             {
                 "id": 1,
-                "tableGroup": null,
+                "tableGroupId": 1,
                 "numberOfGuests": 0,
                 "empty": false
             },
             {
                 "id": 2,
-                "tableGroup": null,
+                "tableGroupId": 1,
                 "numberOfGuests": 0,
                 "empty": false
             }

@@ -18,19 +18,19 @@
     [
         {
             "id": 1,
-            "tableGroup": null,
+            "tableGroupId": null,
             "numberOfGuests": 0,
             "empty": false
         },
         {
             "id": 2,
-            "tableGroup": null,
+            "tableGroupId": null,
             "numberOfGuests": 0,
             "empty": false
         },
         {
             "id": 3,
-            "tableGroup": null,
+            "tableGroupId": null,
             "numberOfGuests": 0,
             "empty": true
         }
@@ -55,7 +55,7 @@
     ```json
     {
         "id": 9,
-        "tableGroup": null,
+        "tableGroupId": null,
         "numberOfGuests": 0,
         "empty": true
     }
@@ -78,7 +78,7 @@
     ```json
     {
         "id": 9,
-        "tableGroup": null,
+        "tableGroupId": null,
         "numberOfGuests": 0,
         "empty": true
     }
@@ -101,7 +101,7 @@
     ```json
     {
         "id": 9,
-        "tableGroup": null,
+        "tableGroupId": null,
         "numberOfGuests": 4,
         "empty": false
     }

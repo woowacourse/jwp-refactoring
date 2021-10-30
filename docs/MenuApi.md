@@ -18,58 +18,43 @@
         "id": 1,
         "name": "후라이드치킨",
         "price": 16000.00,
+        "menuGroupId": 2,
         "menuProducts": [
           {
             "seq": 1,
-            "product": {
-              "id": 1,
-              "name": "후라이드",
-              "price": 16000.00
-            },
-            "quantity": 1,
+            "menuId": 1,
             "productId": 1,
-            "menuId": 1
+            "quantity": 1
           }
-        ],
-        "menuGroupId": 2
+        ]
       },
       {
         "id": 2,
         "name": "양념치킨",
         "price": 16000.00,
+        "menuGroupId": 2,
         "menuProducts": [
           {
             "seq": 2,
-            "product": {
-              "id": 2,
-              "name": "양념치킨",
-              "price": 16000.00
-            },
-            "quantity": 1,
+            "menuId": 2,
             "productId": 2,
-            "menuId": 2
+            "quantity": 1
           }
-        ],
-        "menuGroupId": 2
+        ]
       },
       {
         "id": 3,
         "name": "반반치킨",
         "price": 16000.00,
+        "menuGroupId": 2,
         "menuProducts": [
           {
             "seq": 3,
-            "product": {
-              "id": 3,
-              "name": "반반치킨",
-              "price": 16000.00
-            },
-            "quantity": 1,
+            "menuId": 3,
             "productId": 3,
-            "menuId": 3
+            "quantity": 1
           }
-        ],
-        "menuGroupId": 2
+        ]
       }
     ]
     ```
@@ -99,20 +84,15 @@
     {
         "id": 7,
         "name": "후라이드+후라이드",
-        "price": 19000,
+        "price": 19000.00,
+        "menuGroupId": 1,
         "menuProducts": [
             {
                 "seq": 7,
-                "product": {
-                    "id": 1,
-                    "name": "후라이드",
-                    "price": 16000.00
-                },
-                "quantity": 2,
+                "menuId": 7,
                 "productId": 1,
-                "menuId": 7
+                "quantity": 2
             }
-        ],
-        "menuGroupId": 1
+        ]
     }
     ```

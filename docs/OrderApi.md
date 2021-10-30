@@ -17,16 +17,17 @@
     [
         {
             "id": 1,
+            "orderTableId": 1,
             "orderStatus": "MEAL",
-            "orderedTime": "2021-10-30T21:24:14.882",
+            "orderedTime": "2021-10-30T22:30:43.472",
             "orderLineItems": [
                 {
                     "seq": 1,
-                    "quantity": 1,
-                    "menuId": 1
+                    "orderId": 1,
+                    "menuId": 1,
+                    "quantity": 1
                 }
-            ],
-            "orderTableId": 9
+            ]
         }
     ]
     ```
@@ -53,16 +54,17 @@
     ```json
     {
         "id": 1,
+        "orderTableId": 1,
         "orderStatus": "COOKING",
-        "orderedTime": "2021-10-30T21:24:14.882",
+        "orderedTime": "2021-10-30T22:30:43.472",
         "orderLineItems": [
             {
                 "seq": 1,
-                "quantity": 1,
-                "menuId": 1
+                "orderId": 1,
+                "menuId": 1,
+                "quantity": 1
             }
-        ],
-        "orderTableId": 9
+        ]
     }
     ```
 
@@ -81,16 +83,17 @@
     - Status Code: 200
     ```json
     {
-    "id": 1,
-    "orderStatus": "MEAL",
-    "orderedTime": "2021-10-30T21:24:14.882",
-    "orderLineItems": [
-        {
-            "seq": 1,
-            "quantity": 1,
-            "menuId": 1
-        }
-    ],
-    "orderTableId": 9
+        "id": 1,
+        "orderTableId": 1,
+        "orderStatus": "MEAL",
+        "orderedTime": "2021-10-30T22:30:43.472",
+        "orderLineItems": [
+            {
+                "seq": 1,
+                "orderId": 1,
+                "menuId": 1,
+                "quantity": 1
+            }
+        ]
     }
     ```
