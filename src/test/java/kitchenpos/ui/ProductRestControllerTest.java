@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,7 +30,7 @@ class ProductRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(17000));
-        Product expected = new Product(1L, "강정치킨", 17000);
+        ProductResponse expected = new ProductResponse(1L, "강정치킨", BigDecimal.valueOf(17000));
         given(productService.create(any(CreateProductRequest.class))).willReturn(expected);
 
         // when
@@ -87,7 +88,7 @@ class ProductRestControllerTest extends ControllerTest {
         // given
         Product 강정치킨 = new Product(1L, "강정치킨", 17000);
         Product 구운치킨 = new Product(2L, "구운치킨", 14000);
-        List<Product> expected = Arrays.asList(강정치킨, 구운치킨);
+        List<ProductResponse> expected = Arrays.asList(ProductResponse.from(강정치킨), ProductResponse.from(구운치킨));
         given(productService.list()).willReturn(expected);
 
         // when

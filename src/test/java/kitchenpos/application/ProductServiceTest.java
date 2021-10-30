@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -39,10 +40,11 @@ class ProductServiceTest {
         given(productRepository.save(any(Product.class))).willReturn(expected);
 
         // when
-        Product actual = productService.create(강정치킨);
+        ProductResponse actual = productService.create(강정치킨);
 
         // then
-        assertEquals(expected, actual);
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getPrice(), actual.getPrice());
     }
 
     @Test
@@ -80,9 +82,10 @@ class ProductServiceTest {
         given(productRepository.findAll()).willReturn(expected);
 
         // when
-        List<Product> actual = productService.list();
+        List<ProductResponse> actual = productService.list();
 
         // then
-        assertEquals(expected, actual);
+        assertEquals("강정치킨", actual.get(0).getName());
+        assertEquals("구운치킨", actual.get(1).getName());
     }
 }
