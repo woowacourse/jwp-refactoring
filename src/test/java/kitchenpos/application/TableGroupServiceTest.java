@@ -10,12 +10,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +34,10 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private TableGroupRepository tableGroupRepository;
 
     @Test
     @DisplayName("테이블 단체 정상 생성")
@@ -130,9 +135,17 @@ class TableGroupServiceTest {
 
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(table1, table2)));
 
-        orderDao.save(new Order(table1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+        orderRepository.save(
+                new Order(table1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderRepository.deleteAllInBatch();
+        orderTableRepository.deleteAllInBatch();
+        tableGroupRepository.deleteAllInBatch();
     }
 }

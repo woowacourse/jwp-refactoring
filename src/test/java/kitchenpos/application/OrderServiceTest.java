@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -19,15 +18,20 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTestWithProfiles
 class OrderServiceTest {
 
@@ -41,9 +45,18 @@ class OrderServiceTest {
     private MenuService menuService;
     @Autowired
     private MenuGroupService menuGroupService;
-
     @Autowired
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+    @Autowired
+    private MenuRepository menuRepository;
 
     private OrderTable table;
     private Product chicken;
@@ -80,7 +93,7 @@ class OrderServiceTest {
         Order order = new Order(table.getId(), null, null, orderLineItems);
 
         Order saved = orderService.create(order);
-        List<OrderLineItem> savedOrderLineItems = orderLineItemDao.findAllByOrderId(saved.getId());
+        List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(saved.getId());
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getOrderedTime());
@@ -194,5 +207,15 @@ class OrderServiceTest {
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order(orderStatus)))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderLineItemRepository.deleteAllInBatch();
+        orderRepository.deleteAllInBatch();
+        productRepository.deleteAllInBatch();
+        orderTableRepository.deleteAllInBatch();
+        menuGroupRepository.deleteAllInBatch();
+        menuRepository.deleteAllInBatch();
     }
 }

@@ -8,11 +8,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -34,12 +34,10 @@ class TableServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
-
     @Autowired
     private TableGroupRepository tableGroupRepository;
-
     @Autowired
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Test
     @DisplayName("주문 테이블 정상 생성")
@@ -92,7 +90,8 @@ class TableServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmptyForTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
         OrderTable orderTable = tableService.create(new OrderTable(false));
-        orderDao.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+        orderRepository.save(
+                new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -140,6 +139,7 @@ class TableServiceTest {
 
     @AfterEach
     void tearDown() {
+        orderRepository.deleteAllInBatch();
         orderTableRepository.deleteAllInBatch();
         tableGroupRepository.deleteAllInBatch();
     }
