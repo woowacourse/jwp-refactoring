@@ -1,11 +1,14 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.menu.EmptyOrderLineItemsException;
 import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
+import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Order {
@@ -29,18 +32,26 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTable, orderStatus, orderedTime);
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
 
         if (orderTable.isEmpty()) {
             throw new CannotPlaceAnOrderAsTableIsEmptyException();
+        }
+
+        if (Objects.isNull(orderLineItems) || CollectionUtils.isEmpty(orderLineItems)) {
+            throw new EmptyOrderLineItemsException();
+        }
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.belongsTo(this);
         }
     }
 

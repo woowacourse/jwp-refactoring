@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
-import kitchenpos.exception.menu.EmptyOrderLineItemsRequestException;
+import kitchenpos.exception.menu.EmptyOrderLineItemsException;
 import kitchenpos.exception.menu.NoSuchMenuException;
 import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
@@ -57,8 +57,8 @@ class OrderServiceTest {
         Menu mockMenu = mock(Menu.class);
         Long menuQuantity = 1L;
 
-        Order expected = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        OrderLineItem orderLineItem = new OrderLineItem(expected, mockMenu, menuQuantity);
+        OrderLineItem orderLineItem = new OrderLineItem(mockMenu, menuQuantity);
+        Order expected = new Order(orderTable, Arrays.asList(orderLineItem));
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, menuQuantity);
         OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
@@ -88,21 +88,26 @@ class OrderServiceTest {
     @DisplayName("주문의 항목이 비어있는 경우 예외가 발생한다.")
     void createFailWhenEmptyOrderLineItems() {
         // given
-        OrderRequest orderRequest = new OrderRequest(null, Collections.emptyList());
+        OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
+
+        given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(mock(OrderTable.class)));
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(EmptyOrderLineItemsRequestException.class);
+                .isInstanceOf(EmptyOrderLineItemsException.class);
     }
 
     @Test
     @DisplayName("주문 항목의 메뉴를 찾을 수 없는 경우 예외가 발생한다.")
     void createFailWhenCannotFindMenu() {
         // given
-        OrderRequest orderRequest = new OrderRequest(null, Arrays.asList(new OrderLineItemRequest(1L, 1L)));
+        OrderRequest orderRequest = new OrderRequest(1L, Arrays.asList(new OrderLineItemRequest(1L, 1L)));
 
-        given(menuRepository.countByIdIn(any(List.class)))
-                .willReturn(0L);
+        given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(mock(OrderTable.class)));
+        given(menuRepository.findById(anyLong()))
+                .willReturn(Optional.empty());
 
         // when
         assertThatThrownBy(() -> orderService.create(orderRequest))
@@ -140,8 +145,8 @@ class OrderServiceTest {
 
         OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
 
-        given(menuRepository.countByIdIn(any(List.class)))
-                .willReturn(Long.valueOf(orderRequest.getOrderLineItemRequests().size()));
+        given(menuRepository.findById(anyLong()))
+                .willReturn(Optional.of(mock(Menu.class)));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
@@ -183,7 +188,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문이 이미 완료된 상태라면 상태를 변경할 수 없다.")
     void changeOrderStatusFailWhenOrderIsCompleted() {
-        Order order = new Order(mock(OrderTable.class), OrderStatus.COMPLETION.name(), LocalDateTime.now());
+        Order order = new Order(1L, mock(OrderTable.class), OrderStatus.COMPLETION.name(), LocalDateTime.now(), Arrays.asList(mock(OrderLineItem.class)));
 
         // given
         given(orderRepository.findById(anyLong()))
@@ -199,7 +204,7 @@ class OrderServiceTest {
     void changeOrderStatus() {
         // given
         OrderStatus expectedStatus = OrderStatus.MEAL;
-        Order order = new Order(1L, mock(OrderTable.class), expectedStatus.name(), LocalDateTime.now());
+        Order order = new Order(1L, mock(OrderTable.class), OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(mock(OrderLineItem.class)));
 
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));

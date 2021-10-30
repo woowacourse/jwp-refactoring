@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.orderlineitem.AlreadyAssignedOrderLineItemException;
+
 import javax.persistence.*;
 
 @Entity
@@ -22,18 +24,15 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Order order, Menu menu, long quantity) {
-        this(null, order, menu, quantity);
-    }
-
-    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
-        this.seq = seq;
-        this.order = order;
+    public OrderLineItem(Menu menu, Long quantity) {
         this.menu = menu;
         this.quantity = Quantity.from(quantity);
+    }
 
-        if (order != null) {
-            order.getOrderLineItems().add(this);
+    public void belongsTo(Order order) {
+        if (this.order != null) {
+            throw new AlreadyAssignedOrderLineItemException();
         }
+        this.order = order;
     }
 }

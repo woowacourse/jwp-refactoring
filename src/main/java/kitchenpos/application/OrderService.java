@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
-import kitchenpos.exception.menu.EmptyOrderLineItemsRequestException;
 import kitchenpos.exception.menu.NoSuchMenuException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
@@ -12,11 +11,11 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,36 +39,23 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        // todo
-        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
-
-        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new EmptyOrderLineItemsRequestException();
-        }
-
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new NoSuchMenuException();
-        }
-
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(NoSuchOrderTableException::new);
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        final Order savedOrder = orderRepository.save(order);
+        List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItemRequests().stream()
+                .map(orderLineItemRequest -> {
+                    Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                            .orElseThrow(NoSuchMenuException::new);
+                    Long quantity = orderLineItemRequest.getQuantiy();
+                    return new OrderLineItem(menu, quantity);
+                })
+                .collect(Collectors.toList());
 
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(NoSuchMenuException::new);
+        Order order = new Order(orderTable, orderLineItems);
 
-            OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantiy());
-            orderLineItemRepository.save(orderLineItem);
-        }
+        orderLineItemRepository.saveAll(orderLineItems);
 
-        return savedOrder;
+        return orderRepository.save(order);
     }
 
     public List<Order> list() {
