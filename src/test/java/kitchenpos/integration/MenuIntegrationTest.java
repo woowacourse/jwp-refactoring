@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -12,11 +13,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.net.URI;
@@ -60,16 +58,16 @@ class MenuIntegrationTest {
                 .create("추천메뉴")
                 .getBody();
         assertThat(menuGroup).isNotNull();
-        menuGroup.setName("추천메뉴");
-        assertThat(menuGroup).isNotNull();
         menuGroupId = menuGroup.getId();
 
         menuName = "후라이드+후라이드";
         menuPrice = new BigDecimal(19000);
 
-        menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(2L);
+        menuProduct = DomainBuilder
+                .createMenuProduct(
+                        productId,
+                        2L
+                );
     }
 
     @DisplayName("menu 를 생성한다")

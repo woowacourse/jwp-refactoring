@@ -46,19 +46,18 @@
 
 ### 서비스 슬라이스 테스트
 
-- [ ] Menu 테스트
-  - [ ] /api/menus POST success
+- [x] Menu 테스트
+  - [x] /api/menus POST success
   - [ ] /api/menus POST failure
-    - [ ] menu 의 price 가 null 인 경우
-    - [ ] menu 의 price 가 0 보다 작은 경우
-    - [ ] menuGroup 이 존재하지 않는 경우
-    - [ ] menuProduct 의 product 가 존재하지 않는 경우
-    - [ ] menu 가 모든 product 의 총 금액보다 큰 경우
-  - [ ] /api/menus GET success
+    - [x] menu 의 price 가 null 인 경우
+    - [x] menu 의 price 가 음수인 경우
+    - [x] menuGroupId 에 해당하는 menuGroup 이 존재하지 않는 경우
+    - [x] menuProduct 의 productId 에 해당하는 product 가 존재하지 않는 경우
+    - [x] menu 의 price 가 모든 product 의 총 금액보다 큰 경우
+  - [x] /api/menus GET success
 
-- [ ] MenuGroup 테스트
-  - [ ] /api/menu-groups POST success
-  - [ ] /api/menu-groups GET success
+- [x] MenuGroup 테스트
+  - [x] 로직이 간단해서 추가하지 않음
 
 - [ ] Order 테스트
   - [ ] /api/orders POST success
