@@ -89,7 +89,7 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹 요청에 테이블이 1개 미만 존재하면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasUnderTwoTables() {
         // given
-        TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(mock(Long.class)));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(1L));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
