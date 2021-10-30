@@ -1,9 +1,10 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.domain.*;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderStatusModifyRequest;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.OrderStatusModifyRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void getOrders() {
         // when
-        ResponseEntity<Order[]> responseEntity = testRestTemplate.getForEntity("/api/orders", Order[].class);
+        ResponseEntity<OrderResponse[]> responseEntity = testRestTemplate.getForEntity("/api/orders", OrderResponse[].class);
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -103,13 +104,12 @@ class OrderAcceptanceTest extends AcceptanceTest {
         주문3.setOrderLineItems(Arrays.asList(주문3_아이템1, 주문3_아이템2));
 
         // when
-        ResponseEntity<Order> response = testRestTemplate.postForEntity("/api/orders", 주문3, Order.class);
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 주문3, OrderResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Order 응답된_주문 = response.getBody();
-        // TODO: 트랜잭션 관리를 하던가 orderTableID를 가져오게 하던가 할것 여기 이상해
-//        assertThat(응답된_주문.getOrderTableId()).isEqualTo(주문_테이블.getId());
+        OrderResponse 응답된_주문 = response.getBody();
+        assertThat(응답된_주문.getOrderTableId()).isEqualTo(주문_테이블.getId());
         assertThat(응답된_주문.getOrderLineItems()).hasSize(2);
     }
 
@@ -128,7 +128,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         유효하지_않은_주문.setOrderLineItems(Arrays.asList(유효하지_않은_주문_아이템));
 
         // when
-        ResponseEntity<Order> response = testRestTemplate.postForEntity("/api/orders", 유효하지_않은_주문, Order.class);
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 유효하지_않은_주문, OrderResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

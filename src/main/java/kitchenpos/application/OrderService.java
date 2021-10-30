@@ -1,16 +1,17 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderLineItemRepository;
-import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderStatusModifyRequest;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.request.OrderStatusModifyRequest;
+import kitchenpos.ui.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest orderRequest) {
+    public OrderResponse create(final OrderRequest orderRequest) {
         // TODO: 오더라인 아이템 menuId 발리데이션
 //        if (orderLineItemRequests.size() != menuRepository.countByOrderLineItemsIn(orderLineItems)) {
 //            throw new IllegalArgumentException();
@@ -73,21 +74,22 @@ public class OrderService {
         }
 
         savedOrder.setOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        return OrderResponse.of(savedOrder);
     }
 
-    public List<Order> list() {
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
+        // TODO: FetchJoin으로 한번에 물어오기
         for (final Order order : orders) {
             order.setOrderLineItems(orderLineItemRepository.findAllByOrder(order));
         }
 
-        return orders;
+        return OrderResponse.toList(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusModifyRequest orderStatusModifyRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusModifyRequest orderStatusModifyRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -97,6 +99,6 @@ public class OrderService {
 
         savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrder(savedOrder));
 
-        return savedOrder;
+        return OrderResponse.of(savedOrder);
     }
 }

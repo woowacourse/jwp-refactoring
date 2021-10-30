@@ -43,4 +43,8 @@ public class OrderLineItem {
     public void setMenu(Menu menu) {
         this.menu = menu;
     }
+
+    public Long getOrderId() {
+        return order.getId();
+    }
 }
