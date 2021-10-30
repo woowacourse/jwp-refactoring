@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
@@ -26,4 +27,13 @@ public class AcceptanceTest {
                 .accept("application/json")
                 .when().get(api);
     }
+
+    protected Response post(String api, Object body) {
+        return RestAssured.given().log().all()
+                .accept("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().post(api);
+    }
+
 }
