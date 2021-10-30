@@ -16,10 +16,10 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
-import kitchenpos.dto.response.MenuProductResponse;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.menu.MenuGroupResponse;
+import kitchenpos.dto.response.menu.MenuProductResponse;
+import kitchenpos.dto.response.menu.MenuResponse;
+import kitchenpos.dto.response.product.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;

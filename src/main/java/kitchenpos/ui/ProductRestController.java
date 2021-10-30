@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.dto.request.product.CreateProductRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.product.ProductResponse;
 
 @RestController
 public class ProductRestController {

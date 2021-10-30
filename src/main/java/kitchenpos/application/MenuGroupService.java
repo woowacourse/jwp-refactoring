@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.dto.request.menu.CreateMenuGroupRequest;
-import kitchenpos.dto.response.MenuGroupResponse;
+import kitchenpos.dto.response.menu.MenuGroupResponse;
 
 @Service
 public class MenuGroupService {

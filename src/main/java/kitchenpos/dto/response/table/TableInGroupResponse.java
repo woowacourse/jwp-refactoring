@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.order.OrderResponse;
 
 public class TableInGroupResponse {
     private Long id;

@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.*;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.menu.MenuResponse;
 
 @Service
 public class MenuService {

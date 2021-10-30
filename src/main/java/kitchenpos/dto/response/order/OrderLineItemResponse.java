@@ -1,6 +1,7 @@
-package kitchenpos.dto.response;
+package kitchenpos.dto.response.order;
 
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.response.menu.MenuResponse;
 
 public class OrderLineItemResponse {
     private Long seq;

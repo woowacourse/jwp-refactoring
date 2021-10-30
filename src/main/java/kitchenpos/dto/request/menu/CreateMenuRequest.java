@@ -3,8 +3,6 @@ package kitchenpos.dto.request.menu;
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.dto.request.menu.MenuProductRequest;
-
 public class CreateMenuRequest {
     private String name;
     private BigDecimal price;

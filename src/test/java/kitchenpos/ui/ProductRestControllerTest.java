@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
 import kitchenpos.dto.request.product.CreateProductRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.product.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;

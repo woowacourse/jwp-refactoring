@@ -13,7 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import kitchenpos.domain.*;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductRequest;
-import kitchenpos.dto.response.MenuResponse;
+import kitchenpos.dto.response.menu.MenuResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

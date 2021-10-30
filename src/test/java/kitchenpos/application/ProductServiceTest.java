@@ -11,7 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.product.CreateProductRequest;
-import kitchenpos.dto.response.ProductResponse;
+import kitchenpos.dto.response.product.ProductResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

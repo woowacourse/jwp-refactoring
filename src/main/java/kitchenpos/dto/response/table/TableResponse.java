@@ -4,16 +4,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.order.OrderResponse;
 
 public class TableResponse {
     private Long id;
-    private TableGroupResponse tableGroup;
+    private GroupOfTableResponse tableGroup;
     private int numberOfGuests;
     private boolean empty;
     private List<OrderResponse> orders;
 
-    public TableResponse(Long id, TableGroupResponse tableGroupResponse, int numberOfGuests, boolean empty, List<OrderResponse> orders) {
+    public TableResponse(Long id, GroupOfTableResponse tableGroupResponse, int numberOfGuests, boolean empty, List<OrderResponse> orders) {
         this.id = id;
         this.tableGroup = tableGroupResponse;
         this.numberOfGuests = numberOfGuests;
@@ -24,7 +24,7 @@ public class TableResponse {
     public static TableResponse from(OrderTable orderTable) {
         return new TableResponse(
                 orderTable.getId(),
-                TableGroupResponse.from(orderTable.getTableGroup()),
+                GroupOfTableResponse.from(orderTable.getTableGroup()),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty(),
                 orderResponse(orderTable)
@@ -41,7 +41,7 @@ public class TableResponse {
         return id;
     }
 
-    public TableGroupResponse getTableGroup() {
+    public GroupOfTableResponse getTableGroup() {
         return tableGroup;
     }
 

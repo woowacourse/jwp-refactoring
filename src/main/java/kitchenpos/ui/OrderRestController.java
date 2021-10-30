@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import kitchenpos.application.OrderService;
 import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.response.CreateOrderResponse;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.order.CreateOrderResponse;
+import kitchenpos.dto.response.order.OrderResponse;
 
 @RestController
 public class OrderRestController {

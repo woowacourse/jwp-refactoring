@@ -15,10 +15,11 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.dto.request.order.OrderLineItemRequest;
-import kitchenpos.dto.response.CreateOrderResponse;
-import kitchenpos.dto.response.MenuResponse;
-import kitchenpos.dto.response.OrderLineItemResponse;
-import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.order.CreateOrderResponse;
+import kitchenpos.dto.response.menu.MenuResponse;
+import kitchenpos.dto.response.order.OrderLineItemResponse;
+import kitchenpos.dto.response.order.OrderResponse;
+import kitchenpos.dto.response.table.OrderedTableResponse;
 
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
@@ -47,7 +48,7 @@ class OrderRestControllerTest extends ControllerTest {
         );
         CreateOrderResponse expected = new CreateOrderResponse(
                 1L,
-                단일_손님2_테이블,
+                OrderedTableResponse.from(단일_손님2_테이블),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItemResponse(1L, MenuResponse.from(후라이드_단품), 2))
