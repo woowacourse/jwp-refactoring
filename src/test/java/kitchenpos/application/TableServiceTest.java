@@ -9,12 +9,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -141,6 +141,6 @@ class TableServiceTest {
     @AfterEach
     void tearDown() {
         orderTableRepository.deleteAllInBatch();
-        tableGroupDao.deleteAllInBatch();
+        tableGroupRepository.deleteAllInBatch();
     }
 }
