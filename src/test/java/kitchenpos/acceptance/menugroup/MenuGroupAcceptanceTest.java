@@ -3,7 +3,6 @@ package kitchenpos.acceptance.menugroup;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +53,8 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<MenuGroup> response = responseEntity.getBody();
         assertThat(response).hasSize(2);
-        List<String> names = response.stream().map(MenuGroup::getName).collect(Collectors.toList());
-        assertThat(names).containsExactlyInAnyOrder("추천메뉴", "최고메뉴");
+        assertThat(response)
+                .extracting(MenuGroup::getName)
+                .containsExactlyInAnyOrder("추천메뉴", "최고메뉴");
     }
 }

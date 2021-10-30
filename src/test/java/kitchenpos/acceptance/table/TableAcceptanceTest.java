@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -65,8 +64,9 @@ class TableAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<OrderTable> response = responseEntity.getBody();
         assertThat(response).hasSize(2);
-        List<Long> ids = response.stream().map(OrderTable::getId).collect(Collectors.toList());
-        assertThat(ids).containsExactlyInAnyOrder(1L, 2L);
+        assertThat(response)
+                .extracting(OrderTable::getId)
+                .containsExactlyInAnyOrder(1L, 2L);
     }
 
     @DisplayName("주문 가능 상태를 변경 성공")

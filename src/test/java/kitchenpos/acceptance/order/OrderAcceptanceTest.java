@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -184,8 +183,9 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Order> response = responseEntity.getBody();
         assertThat(response).hasSize(1);
-        List<Long> ids = response.stream().map(Order::getId).collect(Collectors.toList());
-        assertThat(ids).containsExactlyInAnyOrder(1L);
+        assertThat(response)
+                .extracting(Order::getId)
+                .containsExactlyInAnyOrder(1L);
     }
 
     @DisplayName("주문 상태 변경 성공")

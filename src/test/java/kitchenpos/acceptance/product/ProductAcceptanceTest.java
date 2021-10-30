@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -91,7 +90,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Product> response = responseEntity.getBody();
         assertThat(response).hasSize(2);
-        List<String> names = response.stream().map(Product::getName).collect(Collectors.toList());
-        assertThat(names).containsExactlyInAnyOrder("강정치킨", "간장치킨");
+        assertThat(response)
+                .extracting(Product::getName)
+                .containsExactlyInAnyOrder("강정치킨", "간장치킨");
     }
 }

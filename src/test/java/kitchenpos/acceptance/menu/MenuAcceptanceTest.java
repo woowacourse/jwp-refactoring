@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -190,7 +189,8 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Menu> response = responseEntity.getBody();
         assertThat(response).hasSize(2);
-        List<String> names = response.stream().map(Menu::getName).collect(Collectors.toList());
-        assertThat(names).containsExactlyInAnyOrder("후라이드+후라이드", "앙념+후라이드");
+        assertThat(response)
+                .extracting(Menu::getName)
+                .containsExactlyInAnyOrder("후라이드+후라이드", "앙념+후라이드");
     }
 }
