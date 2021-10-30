@@ -51,10 +51,7 @@ public class MenuService {
 
         final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
 
-        Menu menu = new Menu();
-        menu.setName(menuRequest.getName());
-        menu.setPrice(BigDecimal.valueOf(priceRequested));
-        menu.setMenuGroup(menuGroup);
+        Menu menu = new Menu(menuRequest.getName(), BigDecimal.valueOf(priceRequested), menuGroup);
 
         final Menu savedMenu = menuRepository.save(menu);
 
@@ -76,16 +73,18 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        savedMenu.setMenuProducts(savedMenuProducts);
-
         return savedMenu;
     }
 
     public List<Menu> list() {
         final List<Menu> menus = menuRepository.findAll();
 
+        // todo Fetch Join으로 초기화
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            List<MenuProduct> menuProducts = menu.getMenuProducts();
+            for (MenuProduct menuProduct : menuProducts) {
+                menuProduct.getQuantity();
+            }
         }
 
         return menus;

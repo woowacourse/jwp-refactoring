@@ -51,22 +51,18 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
         // given
-        String menuName = "menuName";
         Long menuGroupId = 1L;
         MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
 
+        String menuName = "menuName";
         BigDecimal price = BigDecimal.valueOf(1000);
-        Menu expected = new Menu();
-        expected.setPrice(price);
-        expected.setMenuGroup(menuGroup);
+        Menu expected = new Menu(menuName, price, menuGroup);
 
         long productId = 1L;
         Product product = new Product(productId, "productName", BigDecimal.valueOf(1000));
 
         long menuProductQuantity = 1;
         MenuProduct menuProduct = new MenuProduct(expected, product, menuProductQuantity);
-
-        expected.setMenuProducts(Arrays.asList(menuProduct));
 
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));

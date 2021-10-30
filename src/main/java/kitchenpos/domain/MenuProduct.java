@@ -30,6 +30,10 @@ public class MenuProduct {
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
+
+        if (menu != null) {
+            menu.getMenuProducts().add(this);
+        }
     }
 
     public Long getSeq() {
