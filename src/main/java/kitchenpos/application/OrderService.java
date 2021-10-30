@@ -3,6 +3,9 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.exception.menu.EmptyOrderLineItemsRequestException;
+import kitchenpos.exception.menu.NoSuchMenuException;
+import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -37,10 +40,11 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
+        // todo
         List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
 
         if (CollectionUtils.isEmpty(orderLineItemRequests)) {
-            throw new IllegalArgumentException();
+            throw new EmptyOrderLineItemsRequestException();
         }
 
         final List<Long> menuIds = orderLineItemRequests.stream()
@@ -48,27 +52,18 @@ public class OrderService {
                 .collect(Collectors.toList());
 
         if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
+            throw new NoSuchMenuException();
         }
 
-        Long orderTableId = orderRequest.getOrderTableId();
-        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+                .orElseThrow(NoSuchOrderTableException::new);
 
         Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-
         final Order savedOrder = orderRepository.save(order);
 
-
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            // todo 레포 조회 리팩토링
-            Long menuId = orderLineItemRequest.getMenuId();
-            Menu menu = menuRepository.findById(menuId)
-                    .orElseThrow(IllegalArgumentException::new);
+            Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
+                    .orElseThrow(NoSuchMenuException::new);
 
             OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantiy());
             orderLineItemRepository.save(orderLineItem);

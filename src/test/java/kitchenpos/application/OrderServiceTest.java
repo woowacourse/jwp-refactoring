@@ -3,6 +3,10 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.exception.menu.EmptyOrderLineItemsRequestException;
+import kitchenpos.exception.menu.NoSuchMenuException;
+import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
+import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -88,7 +92,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(EmptyOrderLineItemsRequestException.class);
     }
 
     @Test
@@ -102,7 +106,7 @@ class OrderServiceTest {
 
         // when
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchMenuException.class);
 
     }
 
@@ -120,7 +124,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchOrderTableException.class);
     }
 
     @Test
@@ -143,7 +147,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotPlaceAnOrderAsTableIsEmptyException.class);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,6 +37,10 @@ public class Order {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+
+        if (orderTable.isEmpty()) {
+            throw new CannotPlaceAnOrderAsTableIsEmptyException();
+        }
     }
 
     public Long getId() {
