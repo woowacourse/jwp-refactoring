@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -27,6 +30,10 @@ class ProductAcceptanceTest extends AcceptanceTest {
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        Product response = responseEntity.getBody();
+        assertThat(response.getId()).isEqualTo(1);
+        assertThat(response.getName()).isEqualTo("강정치킨");
+        assertThat(response.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(17000));
     }
 
     @DisplayName("상품 등록 실패 - 가격 부재")
@@ -73,12 +80,18 @@ class ProductAcceptanceTest extends AcceptanceTest {
         productDao.save(chicken1);
         productDao.save(chicken2);
 
-        ResponseEntity<List> responseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<List<Product>> responseEntity = testRestTemplate.exchange(
                 "/api/products",
-                List.class
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Product>>() {
+                }
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2);
+        List<Product> response = responseEntity.getBody();
+        assertThat(response).hasSize(2);
+        List<String> names = response.stream().map(Product::getName).collect(Collectors.toList());
+        assertThat(names).containsExactlyInAnyOrder("강정치킨", "간장치킨");
     }
 }

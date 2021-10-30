@@ -41,6 +41,9 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        TableGroup response = responseEntity.getBody();
+        assertThat(response.getId()).isEqualTo(1);
+        assertThat(response.getOrderTables()).hasSize(2);
     }
 
     @DisplayName("테이블 그룹 등록 실패 - 테이블 2개 미만")

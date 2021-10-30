@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -18,6 +19,7 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -72,6 +74,11 @@ class OrderAcceptanceTest extends AcceptanceTest {
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        Order response = responseEntity.getBody();
+        assertThat(response.getId()).isEqualTo(1);
+        assertThat(response.getOrderTableId()).isEqualTo(savedOrderTable.getId());
+        assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(response.getOrderLineItems()).hasSize(1);
     }
 
     @DisplayName("주문 등록 실패 - 메뉴가 1개 미만")
@@ -166,12 +173,19 @@ class OrderAcceptanceTest extends AcceptanceTest {
         order.setOrderedTime(LocalDateTime.now());
         orderDao.save(order);
 
-        ResponseEntity<List> responseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<List<Order>> responseEntity = testRestTemplate.exchange(
                 "/api/orders",
-                List.class);
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Order>>() {
+                }
+        );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(1);
+        List<Order> response = responseEntity.getBody();
+        assertThat(response).hasSize(1);
+        List<Long> ids = response.stream().map(Order::getId).collect(Collectors.toList());
+        assertThat(ids).containsExactlyInAnyOrder(1L);
     }
 
     @DisplayName("주문 상태 변경 성공")

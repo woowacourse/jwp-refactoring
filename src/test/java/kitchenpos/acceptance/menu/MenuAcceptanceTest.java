@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -13,6 +14,8 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -64,6 +67,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 Menu.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        Menu response = responseEntity.getBody();
+        assertThat(response.getId()).isEqualTo(1);
+        assertThat(response.getName()).isEqualTo("후라이드+후라이드");
+        assertThat(response.getMenuGroupId()).isEqualTo(savedMenuGroup.getId());
+        assertThat(response.getMenuProducts()).hasSize(1);
     }
 
     @DisplayName("메뉴 등록 실패 - 가격 부재")
@@ -171,12 +179,18 @@ class MenuAcceptanceTest extends AcceptanceTest {
         menuDao.save(halfHalf);
         menuDao.save(halfHalf2);
 
-        ResponseEntity<List> responseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<List<Menu>> responseEntity = testRestTemplate.exchange(
                 "/api/menus",
-                List.class
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Menu>>() {
+                }
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2);
+        List<Menu> response = responseEntity.getBody();
+        assertThat(response).hasSize(2);
+        List<String> names = response.stream().map(Menu::getName).collect(Collectors.toList());
+        assertThat(names).containsExactlyInAnyOrder("후라이드+후라이드", "앙념+후라이드");
     }
 }

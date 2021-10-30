@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -11,6 +12,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -32,6 +34,10 @@ class TableAcceptanceTest extends AcceptanceTest {
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        OrderTable response = responseEntity.getBody();
+        assertThat(response.getId()).isEqualTo(1);
+        assertThat(response.getNumberOfGuests()).isEqualTo(0);
+        assertThat(response.isEmpty()).isTrue();
     }
 
     @DisplayName("테이블 목록 조회")
@@ -48,13 +54,19 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderTableDao.save(table);
         orderTableDao.save(table2);
 
-        ResponseEntity<List> responseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<List<OrderTable>> responseEntity = testRestTemplate.exchange(
                 "/api/tables",
-                List.class
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<OrderTable>>() {
+                }
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2);
+        List<OrderTable> response = responseEntity.getBody();
+        assertThat(response).hasSize(2);
+        List<Long> ids = response.stream().map(OrderTable::getId).collect(Collectors.toList());
+        assertThat(ids).containsExactlyInAnyOrder(1L, 2L);
     }
 
     @DisplayName("주문 가능 상태를 변경 성공")
@@ -126,6 +138,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         table.setNumberOfGuests(0);
         table.setEmpty(true);
         OrderTable savedTable = orderTableDao.save(table);
+        table.setEmpty(false);
 
         Order order = new Order();
         order.setOrderTableId(savedTable.getId());
@@ -141,6 +154,8 @@ class TableAcceptanceTest extends AcceptanceTest {
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        savedTable = orderTableDao.findById(savedTable.getId()).orElseThrow(IllegalArgumentException::new);
+        assertThat(savedTable.isEmpty()).isFalse();
     }
 
     @DisplayName("주문 가능 상태를 변경 실패 - 조리 상태의 주문")
