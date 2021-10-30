@@ -15,8 +15,8 @@ public class OrderLineItem {
     @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "kf_order_line_item_menus"), nullable = false)
     private Menu menu;
 
-    @Column(nullable = false)
-    private long quantity;
+    @Embedded
+    private Quantity quantity;
 
     public OrderLineItem() {
     }
@@ -29,7 +29,7 @@ public class OrderLineItem {
         this.seq = seq;
         this.order = order;
         this.menu = menu;
-        this.quantity = quantity;
+        this.quantity = Quantity.from(quantity);
 
         if (order != null) {
             order.getOrderLineItems().add(this);

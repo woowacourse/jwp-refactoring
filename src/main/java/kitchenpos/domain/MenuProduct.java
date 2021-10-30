@@ -15,21 +15,21 @@ public class MenuProduct {
     @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_menu_product_product"), nullable = false)
     private Product product;
 
-    @Column(nullable = false)
-    private long quantity;
+    @Embedded
+    private Quantity quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, long quantity) {
+    public MenuProduct(Menu menu, Product product, Long quantity) {
         this(null, menu, product, quantity);
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
-        this.quantity = quantity;
+        this.quantity = Quantity.from(quantity);
 
         if (menu != null) {
             menu.getMenuProducts().add(this);
@@ -48,7 +48,7 @@ public class MenuProduct {
         return product;
     }
 
-    public long getQuantity() {
+    public Quantity getQuantity() {
         return quantity;
     }
 }
