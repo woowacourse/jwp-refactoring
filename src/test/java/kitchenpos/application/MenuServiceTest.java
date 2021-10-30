@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -49,24 +50,14 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setMenuId(1L);
-        menuProduct.setQuantity(1);
+        menuProduct = Fixtures.makeMenuProduct();
 
         menuProducts = new ArrayList<>();
         menuProducts.add(menuProduct);
 
-        product = new Product();
-        product.setPrice(BigDecimal.valueOf(16000.00));
-        product.setId(1L);
-        product.setName("후라이드치킨");
+        product = Fixtures.makeProduct();
 
-        menu = new Menu();
-        menu.setId(1L);
-        menu.setPrice(BigDecimal.valueOf(16000.00));
-        menu.setName("후라이드치킨");
-        menu.setMenuGroupId(1L);
+        menu = Fixtures.makeMenu();
         menu.setMenuProducts(menuProducts);
 
         menus = new ArrayList<>();

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
+import kitchenpos.Fixtures;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,10 +26,7 @@ class ProductServiceTest {
     @DisplayName("product 생성")
     @Test
     void create() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("후라이드치킨");
-        product.setPrice(BigDecimal.valueOf(16000.00));
+        Product product = Fixtures.makeProduct();
 
         productService.create(product);
 

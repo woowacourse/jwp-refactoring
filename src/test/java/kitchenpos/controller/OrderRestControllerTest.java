@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.Fixtures;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
@@ -38,10 +39,7 @@ class OrderRestControllerTest {
     @DisplayName("주문 생성")
     @Test
     void create() throws Exception {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderTableId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
+        Order order = Fixtures.makeOrder();
         order.setOrderLineItems(new ArrayList<>());
 
         ObjectMapper objectMapper = new ObjectMapper();

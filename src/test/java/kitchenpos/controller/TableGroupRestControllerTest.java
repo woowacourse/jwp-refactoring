@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import kitchenpos.Fixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.TableGroupRestController;
@@ -36,8 +37,7 @@ public class TableGroupRestControllerTest {
     @DisplayName("테이블 그룹 생성")
     @Test
     void create() throws Exception {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
+        TableGroup tableGroup = Fixtures.makeTableGroup();
         tableGroup.setOrderTables(new ArrayList<>());
 
         ObjectMapper objectMapper = new ObjectMapper();

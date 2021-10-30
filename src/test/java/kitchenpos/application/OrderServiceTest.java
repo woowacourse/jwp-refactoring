@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -49,22 +50,16 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderService = new OrderService(menuDao, orderDao, orderLineItemDao, orderTableDao);
-
-        orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        orderLineItem = Fixtures.makeOrderLineItem();
 
         orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItem);
 
-        order = new Order();
-        order.setId(1L);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(1L);
+        order = Fixtures.makeOrder();
         order.setOrderLineItems(orderLineItems);
 
-        orderTable = new OrderTable();
+        orderTable = Fixtures.makeOrderTable();
+        orderTable.setEmpty(false);
 
     }
 

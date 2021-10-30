@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.Fixtures;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.ui.TableRestController;
@@ -36,11 +37,7 @@ class TableRestControllerTest {
     @DisplayName("table 생성")
     @Test
     void create() throws Exception {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setTableGroupId(1L);
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(2);
+        OrderTable orderTable = Fixtures.makeOrderTable();
 
         ObjectMapper objectMapper = new ObjectMapper();
 

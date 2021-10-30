@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.Fixtures;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.ProductRestController;
@@ -36,10 +37,7 @@ class ProductRestControllerTest {
     @DisplayName("product 생성")
     @Test
     void create() throws Exception {
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("후라이드치킨");
-        product.setPrice(BigDecimal.valueOf(16000.00));
+        Product product = Fixtures.makeProduct();
 
         ObjectMapper objectMapper = new ObjectMapper();
 

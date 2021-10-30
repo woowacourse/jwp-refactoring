@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
+import kitchenpos.Fixtures;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -32,10 +33,7 @@ class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = new OrderTable();
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(1);
-        orderTable.setId(1L);
+        orderTable = Fixtures.makeOrderTable();
     }
 
     @DisplayName("table 생성")

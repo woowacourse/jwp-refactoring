@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.mockito.Mockito.verify;
 
+import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,9 +25,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 생성")
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("후라이드치킨");
+        MenuGroup menuGroup = Fixtures.makeMenuGroup();
 
         menuGroupService.create(menuGroup);
 

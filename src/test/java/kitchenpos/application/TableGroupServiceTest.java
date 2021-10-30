@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.Fixtures;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -45,22 +46,16 @@ class TableGroupServiceTest {
     @BeforeEach
     void setUp() {
         orderTables = new ArrayList<>();
-        orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(1);
+        orderTable = Fixtures.makeOrderTable();
 
-        orderTable2 = new OrderTable();
+        orderTable2 = Fixtures.makeOrderTable();
         orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
-        orderTable2.setNumberOfGuests(1);
 
         orderTables.add(orderTable);
         orderTables.add(orderTable2);
 
-        tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        tableGroup = Fixtures.makeTableGroup();
+
         tableGroup.setOrderTables(orderTables);
 
     }

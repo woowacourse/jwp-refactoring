@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.Fixtures;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.MenuGroupRestController;
@@ -43,9 +44,7 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 생성 controller")
     @Test
     void menuGroup() throws Exception {
-        MenuGroup createMenu = new MenuGroup();
-        createMenu.setName("후라이드치킨");
-        createMenu.setId(1L);
+        MenuGroup createMenu = Fixtures.makeMenuGroup();
 
         String content = objectMapper.writeValueAsString(createMenu);
 
