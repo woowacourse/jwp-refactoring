@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,18 +32,20 @@ class ProductServiceTest {
         // given
         String productName = "product";
         Long productPrice = 10000L;
-        Product expected = new Product(productName, productPrice);
+        Product expectedProduct = new Product(productName, productPrice);
 
         given(productRepository.save(any(Product.class)))
-                .willReturn(expected);
+                .willReturn(expectedProduct);
 
         ProductRequest productRequest = new ProductRequest(productName, productPrice);
 
         // when
-        Product actual = productService.create(productRequest);
+        ProductResponse actual = productService.create(productRequest);
+        ProductResponse expected = ProductResponse.from(expectedProduct);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -51,13 +55,19 @@ class ProductServiceTest {
         Product product1 = new Product("product1", 10000L);
         Product product2 = new Product("product2", 10000L);
 
-        List<Product> expected = Arrays.asList(product1, product2);
+        List<Product> expectedProducts = Arrays.asList(product1, product2);
         given(productRepository.findAll())
-                .willReturn(expected);
+                .willReturn(expectedProducts);
+
+        List<ProductResponse> expected = expectedProducts.stream()
+                .map(ProductResponse::from)
+                .collect(Collectors.toList());
 
         // when
-        List<Product> actual = productService.list();
+        List<ProductResponse> actual = productService.list();
 
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }
