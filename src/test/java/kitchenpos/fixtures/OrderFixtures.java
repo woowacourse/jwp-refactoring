@@ -3,6 +3,7 @@ package kitchenpos.fixtures;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 
@@ -21,13 +22,7 @@ public class OrderFixtures {
         String orderStatus,
         List<OrderLineItem> orderLineItems
     ) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(id, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
     public static Order createOrder() {
@@ -38,6 +33,14 @@ public class OrderFixtures {
         Order order = createOrder();
         order.setOrderStatus(status);
         return order;
+    }
+
+    public static OrderRequest createOrderRequest(Order order) {
+        return new OrderRequest(order.getOrderTableId(), order.getOrderStatus(), order.getOrderLineItems());
+    }
+
+    public static OrderRequest createOrderRequest() {
+        return createOrderRequest(createOrder());
     }
 
     public static List<OrderLineItem> createOrderLineItems() {

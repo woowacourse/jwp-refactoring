@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.OrderFixtures.createOrder;
+import static kitchenpos.fixtures.OrderFixtures.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +13,9 @@ import static org.mockito.Mockito.verify;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.ChangeOrderStatusRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -43,10 +48,12 @@ class OrderServiceTest extends ServiceTest {
     private OrderService orderService;
 
     private Order order;
+    private OrderRequest request;
 
     @BeforeEach
     void setUp() {
-        order = OrderFixtures.createOrder();
+        order = createOrder();
+        request = createOrderRequest();
     }
 
     @Test
@@ -57,15 +64,15 @@ class OrderServiceTest extends ServiceTest {
         given(orderDao.save(any())).willReturn(order);
         given(orderLineItemDao.save(any())).willReturn(OrderFixtures.createOrderLineItem());
 
-        assertDoesNotThrow(() -> orderService.create(OrderFixtures.createOrder()));
+        assertDoesNotThrow(() -> orderService.create(request));
         verify(orderLineItemDao, times(order.getOrderLineItems().size())).save(any());
         verify(orderDao, times(1)).save(any());
     }
 
     @Test
     void 생성_시_주문_항목이_비어있으면_예외를_반환한다() {
-        Order emptyOrder = OrderFixtures.createOrder(
-            1L, 1L, "COOKING", Collections.emptyList()
+        OrderRequest emptyOrder = createOrderRequest(
+            createOrder(1L, 1L, "COOKING", Collections.emptyList())
         );
 
         assertThrows(IllegalArgumentException.class, () -> orderService.create(emptyOrder));
@@ -76,7 +83,7 @@ class OrderServiceTest extends ServiceTest {
         given(menuDao.countByIdIn(any()))
             .willReturn(Long.valueOf(order.getOrderLineItems().size() + 1));
 
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+        assertThrows(IllegalArgumentException.class, () -> orderService.create(request));
     }
 
     @Test
@@ -85,7 +92,7 @@ class OrderServiceTest extends ServiceTest {
             .willReturn(Long.valueOf(order.getOrderLineItems().size()));
         given(orderTableDao.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+        assertThrows(IllegalArgumentException.class, () -> orderService.create(request));
     }
 
     @Test
@@ -95,7 +102,7 @@ class OrderServiceTest extends ServiceTest {
             .willReturn(Long.valueOf(order.getOrderLineItems().size()));
         given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
 
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+        assertThrows(IllegalArgumentException.class, () -> orderService.create(request));
     }
 
     @Test
@@ -105,25 +112,27 @@ class OrderServiceTest extends ServiceTest {
             Collections.singletonList(OrderFixtures.createOrderLineItem())
         );
 
-        List<Order> orders = assertDoesNotThrow(() -> orderService.list());
+        List<OrderResponse> orders = assertDoesNotThrow(() -> orderService.list());
         orders.stream()
-            .map(Order::getOrderLineItems)
+            .map(OrderResponse::getOrderLineItems)
             .forEach(lineItems -> assertThat(lineItems).isNotEmpty());
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
+        ChangeOrderStatusRequest completedOrder = new ChangeOrderStatusRequest(OrderStatus.COMPLETION);
         given(orderDao.findById(any())).willReturn(Optional.of(order));
         given(orderLineItemDao.findAllByOrderId(any())).willReturn(OrderFixtures.createOrderLineItems());
 
-        Order changedOrder = assertDoesNotThrow(() -> orderService.changeOrderStatus(this.order.getId(), completedOrder));
+        OrderResponse changedOrder = assertDoesNotThrow(
+            () -> orderService.changeOrderStatus(this.order.getId(), completedOrder)
+        );
         assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
     @Test
     void 상태_변경_시_주문이_존재하지_않으면_예외를_반환한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
+        ChangeOrderStatusRequest completedOrder = new ChangeOrderStatusRequest(OrderStatus.COMPLETION);
         given(orderDao.findById(any())).willReturn(Optional.empty());
 
         assertThrows(
@@ -134,12 +143,13 @@ class OrderServiceTest extends ServiceTest {
 
     @Test
     void 상태_변경_시_완료된_주문_변경_시_예외를_반환한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
+        Order completedOrder = createOrder(OrderStatus.COMPLETION.name());
+        ChangeOrderStatusRequest changeRequest = new ChangeOrderStatusRequest(OrderStatus.COOKING);
         given(orderDao.findById(any())).willReturn(Optional.of(completedOrder));
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> orderService.changeOrderStatus(this.order.getId(), order)
+            () -> orderService.changeOrderStatus(this.order.getId(), changeRequest)
         );
     }
 }
