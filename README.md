@@ -1,7 +1,5 @@
 # 키친포스
 
-## 요구 사항
-
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
@@ -24,63 +22,87 @@
 - [ ] 요구 사항 가독성 있게 변경
 
 ## 요구 사항
+
+### 통합 테스트
+- [x] /api/menus POST success
+- [x] /api/menus GET success
+- [x] /api/menu-groups POST success
+- [x] /api/menu-groups GET success
+- [x] /api/menus POST success
+- [x] /api/menus GET success
+- [x] /api/menu-groups POST success
+- [x] /api/menu-groups GET success
+- [x] /api/orders POST success
+- [x] /api/orders GET success
+- [x] /api/orders PUT success
+- [x] /api/products POST success
+- [x] /api/products GET success
+- [x] /api/tables POST success
+- [x] /api/tables GET success
+- [x] /api/tables/{orderTableId}/empty PUT success
+- [x] /api/tables/{orderTableId}/number-of-guests PUT success
+- [x] /api/table-groups POST success
+- [x] /api/table-groups/{tableGroupId} DELETE success
+
+### 서비스 슬라이스 테스트
+
 - [ ] Menu 테스트
-  - [x] /api/menus POST success
+  - [ ] /api/menus POST success
   - [ ] /api/menus POST failure
     - [ ] menu 의 price 가 null 인 경우
     - [ ] menu 의 price 가 0 보다 작은 경우
     - [ ] menuGroup 이 존재하지 않는 경우
     - [ ] menuProduct 의 product 가 존재하지 않는 경우
     - [ ] menu 가 모든 product 의 총 금액보다 큰 경우
-  - [x] /api/menus GET success
+  - [ ] /api/menus GET success
 
-- [x] MenuGroup 테스트
-  - [x] /api/menu-groups POST success
-  - [x] /api/menu-groups GET success
+- [ ] MenuGroup 테스트
+  - [ ] /api/menu-groups POST success
+  - [ ] /api/menu-groups GET success
 
 - [ ] Order 테스트
-  - [x] /api/orders POST success
+  - [ ] /api/orders POST success
   - [ ] /api/orders POST failure
     - [ ] orderLineItem 이 없는 경우
     - [ ] orderLineItem 개수가 메뉴 수와 일치하지 않는 경우
     - [ ] orderTable 이 존재하지 않는 경우
     - [ ] orderTable 이 비어있는 경우
-  - [x] /api/orders GET success
-  - [x] /api/orders PUT success
+  - [ ] /api/orders GET success
+  - [ ] /api/orders PUT success
   - [ ] /api/orders PUT failure
     - [ ] order 가 존재하지 않는 경우
     - [ ] order 가 이미 완료된 order 인 경우
 
 - [ ] Product 테스트
-  - [x] /api/products POST success
+  - [ ] /api/products POST success
   - [ ] /api/products POST failure
     - [ ] product 의 price 가 null 인 경우
     - [ ] product 의 price 가 0 보다 작은 경우
-  - [x] /api/products GET success
+  - [ ] /api/products GET success
 
 - [ ] Table 테스트
-  - [x] /api/tables POST success
+  - [ ] /api/tables POST success
   - [ ] /api/tables POST failure
-  - [x] /api/tables GET success
-  - [x] /api/tables/{orderTableId}/empty PUT success
+  - [ ] /api/tables GET success
+  - [ ] /api/tables/{orderTableId}/empty PUT success
   - [ ] /api/tables/{orderTableId}/empty PUT failure
     - [ ] orderTable 이 존재하지 않는 경우
     - [ ] tableGroup 이 존재하지 않는 경우
     - [ ] order 의 상태가 COOKING 이거나 MEAL 인 경우 (COMPLETION 이 아닌 경우)
-  - [x] /api/tables/{orderTableId}/number-of-guests PUT success
+  - [ ] /api/tables/{orderTableId}/number-of-guests PUT success
   - [ ] /api/tables/{orderTableId}/number-of-guests PUT failure
     - [ ] numberOfGuests 가 0 보다 작은 경우
     - [ ] orderTable 이 존재하지 않는 경우
     - [ ] orderTable 이 비어있는 경우
 
 - [ ] TableGroup 테스트
-  - [x] /api/table-groups POST success
+  - [ ] /api/table-groups POST success
   - [ ] /api/table-groups POST failure
     - [ ] 요청한 orderTable 이 0 개인 경우 (empty)
     - [ ] 요청한 orderTable 의 수가 2 개 미만인 경우
     - [ ] 요청한 orderTable 중 존재하지 않는 것이 있는 경우
     - [ ] 요청한 orderTable 이 비어있지 않는 경우
     - [ ] 요청한 orderTable 이 이미 tableGroup 이 있는 경우
-  - [x] /api/table-groups/{tableGroupId} DELETE success
+  - [ ] /api/table-groups/{tableGroupId} DELETE success
   - [ ] /api/table-groups/{tableGroupId} DELETE failure
     - [ ] 요청한 orderTable 의 order 상태가 COOKING 또는 MEAL 인 경우 (COMPLETION 이 아닌 경우)
