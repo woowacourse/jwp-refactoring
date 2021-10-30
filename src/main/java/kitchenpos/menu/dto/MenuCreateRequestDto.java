@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.domain.MenuProducts;
 
 public class MenuCreateRequestDto {
     private Long id;
@@ -44,5 +45,14 @@ public class MenuCreateRequestDto {
 
     public List<MenuProductDto> getMenuProducts() {
         return menuProducts;
+    }
+
+    public Menu toEntity() {
+        List<MenuProduct> menuProductGroup = new ArrayList<>();
+        for (MenuProductDto menuProductDto : menuProducts) {
+            menuProductGroup.add(new MenuProduct(menuProductDto.getProductId(), menuProductDto.getQuantity()));
+        }
+        Menu menu = new Menu(id, name, price, menuGroupId, new MenuProducts(menuProductGroup));
+        return menu;
     }
 }
