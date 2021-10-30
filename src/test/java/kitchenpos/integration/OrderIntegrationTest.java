@@ -1,5 +1,6 @@
 package kitchenpos.integration;
 
+import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -18,14 +19,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,18 +50,14 @@ class OrderIntegrationTest {
 
     private Long orderTableId;
 
-    private Long menuId;
-
     private OrderLineItem orderLineItem;
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = orderTableTemplate
-                .create(
-                        3,
-                        false
-                )
-                .getBody();
+        OrderTable orderTable = orderTableTemplate.create(
+                3,
+                false
+        ).getBody();
         assertThat(orderTable).isNotNull();
         orderTableId = orderTable.getId();
 
@@ -73,33 +67,31 @@ class OrderIntegrationTest {
         assertThat(menuGroup).isNotNull();
         Long menuGroupId = menuGroup.getId();
 
-        Product product = productTemplate
-                .create(
-                        "강정치킨",
-                        new BigDecimal(17000)
-                )
-                .getBody();
+        Product product = productTemplate.create(
+                "강정치킨",
+                new BigDecimal(17000)
+        ).getBody();
         assertThat(product).isNotNull();
         Long productId = product.getId();
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(2L);
+        MenuProduct menuProduct = DomainBuilder.createMenuProduct(
+                productId,
+                2L
+        );
 
-        Menu menu = menuTemplate
-                .create(
-                        "후라이드+후라이드",
-                        new BigDecimal(19000),
-                        menuGroupId,
-                        Collections.singletonList(menuProduct)
-                )
-                .getBody();
+        Menu menu = menuTemplate.create(
+                "후라이드+후라이드",
+                new BigDecimal(19000),
+                menuGroupId,
+                Collections.singletonList(menuProduct)
+        ).getBody();
         assertThat(menu).isNotNull();
-        menuId = menu.getId();
+        Long menuId = menu.getId();
 
-        orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(1);
+        orderLineItem = DomainBuilder.createOrderLineItem(
+                menuId,
+                1L
+        );
     }
 
     @DisplayName("Order 를 생성한다")
@@ -108,8 +100,8 @@ class OrderIntegrationTest {
         // given // when
         ResponseEntity<Order> orderResponseEntity = orderTemplate
                 .create(
-                        Collections.singletonList(orderLineItem),
-                        orderTableId
+                        orderTableId,
+                        Collections.singletonList(orderLineItem)
                 );
         HttpStatus statusCode = orderResponseEntity.getStatusCode();
         URI location = orderResponseEntity.getHeaders().getLocation();
@@ -131,11 +123,10 @@ class OrderIntegrationTest {
     @Test
     void list() {
         // given
-        Order order = orderTemplate
-                .create(
-                        Collections.singletonList(orderLineItem),
-                        orderTableId)
-                .getBody();
+        Order order = orderTemplate.create(
+                orderTableId,
+                Collections.singletonList(orderLineItem)
+        ).getBody();
         assertThat(order).isNotNull();
         Long orderId = order.getId();
 
@@ -156,22 +147,20 @@ class OrderIntegrationTest {
     @Test
     void changeOrderStatus() {
         // given
-        Order order = orderTemplate
-                .create(
-                        Collections.singletonList(orderLineItem),
-                        orderTableId)
-                .getBody();
+        Order order = orderTemplate.create(
+                orderTableId,
+                Collections.singletonList(orderLineItem)
+        ).getBody();
         assertThat(order).isNotNull();
         Long orderId = order.getId();
 
         // when
         order.setOrderStatus(OrderStatus.MEAL.name());
 
-        ResponseEntity<Order> orderResponseEntity = orderTemplate
-                .changeOrderStatus(
-                        orderId,
-                        order
-                );
+        ResponseEntity<Order> orderResponseEntity = orderTemplate.changeOrderStatus(
+                orderId,
+                order
+        );
         HttpStatus statusCode = orderResponseEntity.getStatusCode();
         Order body = orderResponseEntity.getBody();
 

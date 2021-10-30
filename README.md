@@ -48,7 +48,7 @@
 
 - [x] Menu 테스트
   - [x] /api/menus POST success
-  - [ ] /api/menus POST failure
+  - [x] /api/menus POST failure
     - [x] menu 의 price 가 null 인 경우
     - [x] menu 의 price 가 음수인 경우
     - [x] menuGroupId 에 해당하는 menuGroup 이 존재하지 않는 경우
@@ -59,18 +59,18 @@
 - [x] MenuGroup 테스트
   - [x] 로직이 간단해서 추가하지 않음
 
-- [ ] Order 테스트
-  - [ ] /api/orders POST success
-  - [ ] /api/orders POST failure
-    - [ ] orderLineItem 이 없는 경우
-    - [ ] orderLineItem 개수가 메뉴 수와 일치하지 않는 경우
-    - [ ] orderTable 이 존재하지 않는 경우
-    - [ ] orderTable 이 비어있는 경우
-  - [ ] /api/orders GET success
-  - [ ] /api/orders PUT success
-  - [ ] /api/orders PUT failure
-    - [ ] order 가 존재하지 않는 경우
-    - [ ] order 가 이미 완료된 order 인 경우
+- [x] Order 테스트
+  - [x] /api/orders POST success
+  - [x] /api/orders POST failure
+    - [x] orderLineItems 가 비어있는 경우
+    - [x] orderLineItem 개수가 menu 수와 일치하지 않는 경우
+    - [x] orderTable 이 존재하지 않는 경우
+    - [x] orderTable 이 비어있는 경우
+  - [x] /api/orders GET success
+  - [x] /api/orders PUT success
+  - [x] /api/orders PUT failure
+    - [x] orderId 에 대한 order 가 존재하지 않는 경우
+    - [x] order 가 이미 완료된 order 인 경우
 
 - [ ] Product 테스트
   - [ ] /api/products POST success

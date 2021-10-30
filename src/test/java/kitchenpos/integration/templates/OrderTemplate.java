@@ -1,5 +1,6 @@
 package kitchenpos.integration.templates;
 
+import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,12 @@ public class OrderTemplate extends IntegrationTemplate {
     public static final String ORDER_URL = "/api/orders";
     public static final String ORDER_STATUS_URL = ORDER_URL + "/{orderId}/order-status";
 
-    public ResponseEntity<Order> create(List<OrderLineItem> orderLineItems, Long orderTableId) {
-        Order order = new Order();
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(orderTableId);
+    public ResponseEntity<Order> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        Order order = DomainBuilder
+                .createOrder(
+                        orderTableId,
+                        orderLineItems
+                );
 
         return post(
                 ORDER_URL,
