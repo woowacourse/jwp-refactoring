@@ -43,7 +43,7 @@ class MenuGroupServiceTest {
         assertThat(actual.getId()).isEqualTo(1L);
     }
 
-    @DisplayName("메뉴 그룹을 조회 할 수 있다.")
+    @DisplayName("메뉴그룹 리스트를 조회 할 수 있다.")
     @Test
     public void testList() {
         //given

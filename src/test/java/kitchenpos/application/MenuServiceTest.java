@@ -97,7 +97,7 @@ public class MenuServiceTest {
         }).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴를 조회할 수 있다.")
+    @DisplayName("메뉴 리스트를 조회할 수 있다.")
     @Test
     public void testList() {
         //given
