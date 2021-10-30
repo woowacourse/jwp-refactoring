@@ -59,27 +59,27 @@
   - [x] 모든 product를 찾아 반환한다.
   
 ###  TableGroup
-- [ ] tableGroup을 만든다.
-  - [ ] orderTable를 불러온다.
-  - [ ] 불러온 orderTables가 비어있거나 사이즈가 1이하인 경우 예외를 던진다.
-  - [ ] orderTables에서 orderTableIds를 모아 orderTables 사이즈와 비교해 다른 경우 예외를 던진다.
-  - [ ] orderTableIds를 이용해 저장된 orderTables를 불러온다.
-  - [ ] 저장된 orderTable 중 비어있거나, orderTable의 TableGroupId가 존재하는 경우 예외를 던진다.
-  - [ ] tableGroup에 현재 날짜를 설정한다.
-  - [ ] tableGroup을 저장한다.
-    - [ ] 저장된 orderTable은 tableGroupId를 지닌다.
-    - [ ] 저장된 orderTable은 비어있지 않다.
-    - [ ] orderTable을 저장한다.
-  - [ ] 저장된 tableGroup은 orderTable를 갖고있다.
+- [x] tableGroup을 만든다.
+  - [x] orderTable를 불러온다.
+  - [x] 불러온 orderTables가 비어있지 않거나 사이즈가 1이하인 경우 예외를 던진다.
+  - [x] orderTables에서 orderTableIds를 모아 orderTables 사이즈와 비교해 다른 경우 예외를 던진다.
+  - [x] orderTableIds를 이용해 저장된 orderTables를 불러온다.
+  - [x] 저장된 orderTable 중 비어있거나, orderTable의 TableGroupId가 존재하는 경우 예외를 던진다.
+  - [x] tableGroup에 현재 날짜를 설정한다.
+  - [x] tableGroup을 저장한다.
+    - [x] 저장된 orderTable은 tableGroupId를 지닌다.
+    - [x] 저장된 orderTable은 비어있지 않다.
+    - [x] orderTable을 저장한다.
+  - [x] 저장된 tableGroup은 orderTable를 갖고있다.
 
-- [ ] tableGroup을 해체한다.
-  - [ ] tableGroupId에 해당하는 모든 orderTable을 불러온다.
-  - [ ] 불러온 orderTables의 아이디를 모아 리스트로 만든다.
-  - [ ] ordertablesIds에 속하고, orderStatus가 {cooking, meal}에 속한 경우 예외를 던진다.
-  - [ ] 모든 orderTable을 다음 상태로 만든다.
-    - [ ] tableGroupId가 null
-    - [ ] orderTable은 비어있지 않음
-  - [ ] 변경된 상태의 orderTable을 저장
+- [x] tableGroup을 해체한다.
+  - [x] tableGroupId에 해당하는 모든 orderTable을 불러온다.
+  - [x] 불러온 orderTables의 아이디를 모아 리스트로 만든다.
+  - [x] ordertablesIds에 속하고, orderStatus가 {cooking, meal}에 속한 경우 예외를 던진다.
+  - [x] 모든 orderTable을 다음 상태로 만든다.
+    - [x] tableGroupId가 null
+    - [x] orderTable은 비어있지 않음
+  - [x] 변경된 상태의 orderTable을 저장
   
 ### Table
 - [ ] table을 만든다.
