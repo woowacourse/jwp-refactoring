@@ -2,8 +2,8 @@
 
 ## 요구 사항
 ### MenuGroup
-- [ ] MenuGroup을 만들어 저장한다.
-- [ ] 모든 MenuGroup을 불러와 반환한다.
+- [x] MenuGroup을 만들어 저장한다.
+- [x] 모든 MenuGroup을 불러와 반환한다.
 
 ### Menu
 - [ ] Menu는 name과 price, menuGroup, menuProducts를 갖고 있다.
