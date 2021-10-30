@@ -12,7 +12,7 @@ public class MenuProduct {
     private Menu menu;
 
     @ManyToOne
-    @JoinColumn(name = "produt_id", foreignKey = @ForeignKey(name = "fk_menu_product_product"), nullable = false)
+    @JoinColumn(name = "product_id", foreignKey = @ForeignKey(name = "fk_menu_product_product"), nullable = false)
     private Product product;
 
     @Column(nullable = false)
