@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +31,7 @@ class TableGroupServiceTest {
     private TableGroupService tableGroupService;
 
     @Autowired
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private OrderDao orderDao;
@@ -39,8 +39,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 정상 생성")
     void create() {
-        OrderTable table1 = orderTableDao.save(new OrderTable(true));
-        OrderTable table2 = orderTableDao.save(new OrderTable(true));
+        OrderTable table1 = orderTableRepository.save(new OrderTable(true));
+        OrderTable table2 = orderTableRepository.save(new OrderTable(true));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table1, table2));
         TableGroup saved = tableGroupService.create(tableGroup);
@@ -64,7 +64,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 1개 테이블")
     void createWithSingleTable() {
-        OrderTable table = orderTableDao.save(new OrderTable(true));
+        OrderTable table = orderTableRepository.save(new OrderTable(true));
         TableGroup tableGroup = new TableGroup(Collections.singletonList(table));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
@@ -73,8 +73,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 존재하지 않는 테이블 포함")
     void createContainingNotExistingTable() {
-        OrderTable table = orderTableDao.save(new OrderTable(true));
-        OrderTable notSavedOrderTable = new OrderTable();
+        OrderTable table = orderTableRepository.save(new OrderTable(true));
+        OrderTable notSavedOrderTable = new OrderTable(false);
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, notSavedOrderTable));
 
@@ -84,8 +84,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 빈 상태가 아닌 테이블 포함")
     void createContainingNotEmptyTable() {
-        OrderTable table = orderTableDao.save(new OrderTable(true));
-        OrderTable notEmptyTable = orderTableDao.save(new OrderTable(false));
+        OrderTable table = orderTableRepository.save(new OrderTable(true));
+        OrderTable notEmptyTable = orderTableRepository.save(new OrderTable(false));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, notEmptyTable));
 
@@ -95,11 +95,12 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 이미 단체 지정된 테이블 포함")
     void createContainingGroupedTable() {
-        OrderTable groupedTable1 = orderTableDao.save(new OrderTable(true));
-        OrderTable groupedTable2 = orderTableDao.save(new OrderTable(true));
+        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(true));
+        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(true));
+
         tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
 
-        OrderTable table = orderTableDao.save(new OrderTable(true));
+        OrderTable table = orderTableRepository.save(new OrderTable(true));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, groupedTable1));
 
@@ -109,13 +110,14 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("단체 지정 정상 취소")
     void ungroup() {
-        OrderTable groupedTable1 = orderTableDao.save(new OrderTable(true));
-        OrderTable groupedTable2 = orderTableDao.save(new OrderTable(true));
+        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(true));
+        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(true));
+
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
 
         tableGroupService.ungroup(tableGroup.getId());
 
-        List<OrderTable> tables = orderTableDao.findAllByIdIn(
+        List<OrderTable> tables = orderTableRepository.findAllByIdIn(
                 Arrays.asList(groupedTable1.getId(), groupedTable2.getId()));
         assertThat(tables)
                 .allMatch(table -> Objects.isNull(table.getTableGroupId()))
@@ -125,8 +127,9 @@ class TableGroupServiceTest {
     @ParameterizedTest(name = "단체 지정 취소 실패 :: 주문 상태 {0} 테이블 포함")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
-        OrderTable table1 = orderTableDao.save(new OrderTable(true));
-        OrderTable table2 = orderTableDao.save(new OrderTable(true));
+        OrderTable table1 = orderTableRepository.save(new OrderTable(true));
+        OrderTable table2 = orderTableRepository.save(new OrderTable(true));
+
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(table1, table2)));
 
         orderDao.save(new Order(table1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));

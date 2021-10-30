@@ -5,23 +5,23 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.repository.OrderTableRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTestWithProfiles
 class TableServiceTest {
     private static final OrderTable CHANGE_EMPTY_TRUE = new OrderTable(true);
@@ -30,7 +30,10 @@ class TableServiceTest {
     private TableService tableService;
 
     @Autowired
-    private OrderTableDao tableDao;
+    private TableGroupService tableGroupService;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private TableGroupDao tableGroupDao;
@@ -77,13 +80,11 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 Empty 상태 수정 실패 :: 단체 지정된 테이블")
     void changeEmptyForTableWithTableGroupId() {
-        OrderTable orderTable = tableService.create(new OrderTable(false));
-        TableGroup tableGroup = tableGroupDao.save(
-                new TableGroup(LocalDateTime.now(), Collections.singletonList(orderTable)));
-        orderTable.setTableGroupId(tableGroup.getId());
-        tableDao.save(orderTable);
+        OrderTable orderTable1 = tableService.create(new OrderTable(true));
+        OrderTable orderTable2 = tableService.create(new OrderTable(true));
 
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE))
+        tableGroupService.create(new TableGroup(Arrays.asList(orderTable1, orderTable2)));
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), CHANGE_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,7 +92,6 @@ class TableServiceTest {
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void changeEmptyForTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
         OrderTable orderTable = tableService.create(new OrderTable(false));
-        tableDao.save(orderTable);
         orderDao.save(new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE))
@@ -136,5 +136,11 @@ class TableServiceTest {
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), request))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        orderTableRepository.deleteAllInBatch();
+        tableGroupDao.deleteAllInBatch();
     }
 }
