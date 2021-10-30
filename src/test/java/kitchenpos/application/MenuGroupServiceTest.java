@@ -30,9 +30,7 @@ class MenuGroupServiceTest {
         // given
         String menuGroupName = "menuGroup";
 
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName(menuGroupName);
+        MenuGroup menuGroup = new MenuGroup(1L, menuGroupName);
 
         given(menuGroupRepository.save(any(MenuGroup.class)))
                 .willReturn(menuGroup);
@@ -50,13 +48,8 @@ class MenuGroupServiceTest {
     @DisplayName("등록된 메뉴 그룹 목록을 불러올 수 있다.")
     void list() {
         // given
-        MenuGroup menuGroup1 = new MenuGroup();
-        menuGroup1.setId(1L);
-        menuGroup1.setName("menuGroup1");
-
-        MenuGroup menuGroup2 = new MenuGroup();
-        menuGroup2.setId(2L);
-        menuGroup2.setName("menuGroup2");
+        MenuGroup menuGroup1 = new MenuGroup(1L, "menuGroup1");
+        MenuGroup menuGroup2 = new MenuGroup(2L, "menuGroup2");
 
         List<MenuGroup> expected = Arrays.asList(menuGroup1, menuGroup2);
         given(menuGroupRepository.findAll())
