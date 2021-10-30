@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.request;
 
 import java.math.BigDecimal;
 

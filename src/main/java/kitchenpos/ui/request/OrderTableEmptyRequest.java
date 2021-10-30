@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.request;
 
 public class OrderTableEmptyRequest {
     private Boolean empty;
