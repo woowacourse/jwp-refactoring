@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,10 +21,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
 
     private JdbcTemplateOrderDao jdbcTemplateOrderDao;
+    private JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
+    private JdbcTemplateTableGroupDao jdbcTemplateTableGroupDao;
 
     @BeforeEach
     void setUp() {
         jdbcTemplateOrderDao = new JdbcTemplateOrderDao(dataSource);
+        jdbcTemplateOrderTableDao = new JdbcTemplateOrderTableDao(dataSource);
+        jdbcTemplateTableGroupDao = new JdbcTemplateTableGroupDao(dataSource);
     }
 
     @DisplayName("Order를 저장할 때")
@@ -33,7 +39,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void success() {
             // given
-            Order order = Order를_생성한다(1L, COOKING.name());
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = Order를_생성한다(orderTable.getId(), COOKING.name());
 
             // when
             Order savedOrder = jdbcTemplateOrderDao.save(order);
@@ -49,7 +57,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void createdThenUpdate() {
             // given
-            Order beforeSaveOrderTable = Order를_생성한다(1L, COOKING.name());
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order beforeSaveOrderTable = Order를_생성한다(orderTable.getId(), COOKING.name());
             Order afterSaveOrderTable = jdbcTemplateOrderDao.save(beforeSaveOrderTable);
 
             assertThat(jdbcTemplateOrderDao.findById(afterSaveOrderTable.getId())).isPresent();
@@ -82,7 +92,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderStatusNullException() {
             // given
-            Order order = Order를_생성한다(1L, null);
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = Order를_생성한다(orderTable.getId(), null);
 
             // when, then
             assertThatThrownBy(() -> jdbcTemplateOrderDao.save(order))
@@ -93,7 +105,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderedTimeNullException() {
             // given
-            Order order = Order를_생성한다(1L, COOKING.name(), null);
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = Order를_생성한다(orderTable.getId(), COOKING.name(), null);
 
             // when, then
             assertThatThrownBy(() -> jdbcTemplateOrderDao.save(order))
@@ -109,7 +123,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void present() {
             // given
-            Order savedOrder = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order savedOrder = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             Optional<Order> foundOrder = jdbcTemplateOrderDao.findById(savedOrder.getId());
@@ -137,9 +153,12 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         // given
         List<Order> beforeSavedOrders = jdbcTemplateOrderDao.findAll();
 
-        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name())));
-        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(2L, COOKING.name())));
-        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(3L, COOKING.name())));
+        TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+        OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+
+        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name())));
+        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name())));
+        beforeSavedOrders.add(jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name())));
 
         // when
         List<Order> afterSavedOrders = jdbcTemplateOrderDao.findAll();
@@ -158,7 +177,9 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void returnTrue() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
@@ -173,11 +194,13 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderTableIdNotMatchFalse() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                2L, Arrays.asList(COOKING.name(), MEAL.name())
+                Long.MAX_VALUE, Arrays.asList(COOKING.name(), MEAL.name())
             );
 
             // then
@@ -188,11 +211,13 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderStatusNotInFalse() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                1L, Arrays.asList(MEAL.name(), COMPLETION.name())
+                orderTable.getId(), Arrays.asList(MEAL.name(), COMPLETION.name())
             );
 
             // then
@@ -208,11 +233,13 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void returnTrue() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(1L, 2L), Arrays.asList(COOKING.name(), MEAL.name())
+                Arrays.asList(orderTable.getId(), Long.MAX_VALUE), Arrays.asList(COOKING.name(), MEAL.name())
             );
 
             // then
@@ -223,11 +250,13 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderTableIdNotInFalse() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(2L, 3L), Arrays.asList(COOKING.name(), MEAL.name())
+                Arrays.asList(Long.MAX_VALUE, Long.MAX_VALUE - 1), Arrays.asList(COOKING.name(), MEAL.name())
             );
 
             // then
@@ -238,11 +267,13 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         @Test
         void orderStatusNotInFalse() {
             // given
-            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(1L, COOKING.name()));
+            TableGroup tableGroup = jdbcTemplateTableGroupDao.save(TableGroup을_생성한다());
+            OrderTable orderTable = jdbcTemplateOrderTableDao.save(OrderTable을_생성한다(2, tableGroup.getId()));
+            Order order = jdbcTemplateOrderDao.save(Order를_생성한다(orderTable.getId(), COOKING.name()));
 
             // when
             boolean exists = jdbcTemplateOrderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(1L, 2L), Arrays.asList(MEAL.name(), COMPLETION.name())
+                Arrays.asList(orderTable.getId(), Long.MAX_VALUE), Arrays.asList(MEAL.name(), COMPLETION.name())
             );
 
             // then
@@ -261,5 +292,20 @@ class JdbcTemplateOrderDaoTest extends JdbcTemplateDaoTest {
         order.setOrderedTime(localDateTime);
 
         return order;
+    }
+
+    private OrderTable OrderTable을_생성한다(int numberOfGuests, Long tableGroupId) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setTableGroupId(tableGroupId);
+
+        return orderTable;
+    }
+
+    private TableGroup TableGroup을_생성한다() {
+        TableGroup tableGroup = new TableGroup();
+        tableGroup.setCreatedDate(LocalDateTime.now());
+
+        return tableGroup;
     }
 }
