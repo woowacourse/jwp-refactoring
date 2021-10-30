@@ -128,13 +128,12 @@ class MenuServiceTest {
     @DisplayName("메뉴명으로 메뉴 목록을 받아올 수 있다")
     @Test
     void listTest() {
-        //when
-        List<Menu> list = menuService.list();
-        //then
+        //given
         List<Menu> expectedFixtures = MenuFixture.createFixture().getFixtures();
+        //when & then
+        List<Menu> list = menuService.list();
 
         assertThat(list.size()).isEqualTo(expectedFixtures.size());
-        // menuProducts를 제외하고 Fixture의 요소 중 내용이 다 같은 픽스쳐가 있는지 검증
         expectedFixtures.forEach(
             menu -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
                 .usingElementComparatorIgnoringFields("menuProducts")
