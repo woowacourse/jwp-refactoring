@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,10 +24,10 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class TableServiceTest {
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @MockBean
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     TableService tableService;
@@ -38,7 +38,7 @@ class TableServiceTest {
         // given
         OrderTable orderTable = new OrderTable();
 
-        given(orderTableDao.save(any(OrderTable.class)))
+        given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(orderTable);
 
         // when
@@ -56,7 +56,7 @@ class TableServiceTest {
         OrderTable orderTable2 = new OrderTable();
 
         List<OrderTable> expected = Arrays.asList(orderTable1, orderTable2);
-        given(orderTableDao.findAll())
+        given(orderTableRepository.findAll())
                 .willReturn(expected);
 
         // when
@@ -80,11 +80,11 @@ class TableServiceTest {
         OrderTable inputOrderTable = new OrderTable();
         inputOrderTable.setEmpty(isEmptyTable);
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
                 .willReturn(false);
-        given(orderTableDao.save(any(OrderTable.class)))
+        given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(targetOrderTable);
 
         // when
@@ -106,7 +106,7 @@ class TableServiceTest {
 
         OrderTable inputOrderTable = new OrderTable();
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
@@ -127,7 +127,7 @@ class TableServiceTest {
 
         OrderTable inputOrderTable = new OrderTable();
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
 
         // when, then
@@ -146,9 +146,9 @@ class TableServiceTest {
 
         OrderTable inputOrderTable = new OrderTable();
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
                 .willReturn(true);
 
         // when, then
@@ -169,9 +169,9 @@ class TableServiceTest {
         targetOrderTable.setId(targetOrderTableId);
         targetOrderTable.setEmpty(false);
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
-        given(orderTableDao.save(any(OrderTable.class)))
+        given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(targetOrderTable);
 
         // when
@@ -209,7 +209,7 @@ class TableServiceTest {
         targetOrderTable.setId(targetOrderTableId);
         targetOrderTable.setEmpty(true);
 
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
 
         // when, then

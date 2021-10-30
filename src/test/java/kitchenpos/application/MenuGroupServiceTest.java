@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class MenuGroupServiceTest {
     @MockBean
-    MenuGroupDao menuGroupDao;
+    MenuGroupRepository menuGroupRepository;
 
     @Autowired
     MenuGroupService menuGroupService;
@@ -31,7 +31,7 @@ class MenuGroupServiceTest {
         menuGroup.setId(1L);
         menuGroup.setName("menuGroup");
 
-        given(menuGroupDao.save(any(MenuGroup.class)))
+        given(menuGroupRepository.save(any(MenuGroup.class)))
                 .willReturn(menuGroup);
 
         // when
@@ -54,11 +54,11 @@ class MenuGroupServiceTest {
         menuGroup2.setName("menuGroup2");
 
         List<MenuGroup> expected = Arrays.asList(menuGroup1, menuGroup2);
-        given(menuGroupDao.findAll())
+        given(menuGroupRepository.findAll())
                 .willReturn(expected);
 
         // when
-        List<MenuGroup> actual = menuGroupDao.findAll();
+        List<MenuGroup> actual = menuGroupRepository.findAll();
 
         // then
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);

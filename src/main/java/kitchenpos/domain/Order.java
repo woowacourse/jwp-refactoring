@@ -1,13 +1,24 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 public class Order {
+    @Id @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private Long orderTableId;
+
+    @Column(nullable = false)
     private String orderStatus;
+
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
+
+    @OneToMany(mappedBy = "orderId")
     private List<OrderLineItem> orderLineItems;
 
     public Long getId() {

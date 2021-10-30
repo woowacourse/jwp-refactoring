@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -28,16 +28,16 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class OrderServiceTest {
     @MockBean
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @MockBean
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @MockBean
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @MockBean
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     OrderService orderService;
@@ -62,13 +62,13 @@ class OrderServiceTest {
 
         order.setOrderTableId(orderTable.getId());
 
-        given(menuDao.countByIdIn(any(List.class)))
+        given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
-        given(orderDao.save(any(Order.class)))
+        given(orderRepository.save(any(Order.class)))
                 .willReturn(order);
-        given(orderLineItemDao.save(any(OrderLineItem.class)))
+        given(orderLineItemRepository.save(any(OrderLineItem.class)))
                 .willReturn(orderLineItem);
 
         // when
@@ -102,7 +102,7 @@ class OrderServiceTest {
 
         order.setOrderLineItems(Arrays.asList(orderLineItem));
 
-        given(menuDao.countByIdIn(any(List.class)))
+        given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(0L);
 
         // when
@@ -122,9 +122,9 @@ class OrderServiceTest {
 
         order.setOrderLineItems(Arrays.asList(orderLineItem));
 
-        given(menuDao.countByIdIn(any(List.class)))
+        given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
@@ -149,9 +149,9 @@ class OrderServiceTest {
 
         order.setOrderTableId(orderTable.getId());
 
-        given(menuDao.countByIdIn(any(List.class)))
+        given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
         // when, then
@@ -168,7 +168,7 @@ class OrderServiceTest {
 
         List<Order> expected = Arrays.asList(order1, order2);
 
-        given(orderDao.findAll())
+        given(orderRepository.findAll())
                 .willReturn(expected);
         // when
         List<Order> actual = orderService.list();
@@ -181,7 +181,7 @@ class OrderServiceTest {
     @DisplayName("주문을 찾지 못하면 예외가 발생한다.")
     void changeOrderStatusFailWhenCannotFindOrder() {
         // given
-        given(orderDao.findById(anyLong()))
+        given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
@@ -197,7 +197,7 @@ class OrderServiceTest {
         order.setOrderStatus(OrderStatus.COMPLETION.name());
 
         // given
-        given(orderDao.findById(anyLong()))
+        given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
 
         // when, then
@@ -215,9 +215,9 @@ class OrderServiceTest {
         OrderStatus expectedStatus = OrderStatus.MEAL;
         order.setOrderStatus(expectedStatus.name());
 
-        given(orderDao.findById(anyLong()))
+        given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
-        given(orderDao.save(any(Order.class)))
+        given(orderRepository.save(any(Order.class)))
                 .willReturn(order);
 
         // when

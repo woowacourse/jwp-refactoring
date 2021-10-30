@@ -1,7 +1,13 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
+
+@Entity
 public class MenuGroup {
+    @Id @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
     private String name;
 
     public Long getId() {

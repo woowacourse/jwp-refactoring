@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
@@ -29,16 +29,16 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class MenuServiceTest {
     @MockBean
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @MockBean
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @MockBean
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @MockBean
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     MenuService menuService;
@@ -63,13 +63,13 @@ class MenuServiceTest {
 
         menu.setMenuProducts(Arrays.asList(menuProduct));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
-        given(menuDao.save(any(Menu.class)))
+        given(menuRepository.save(any(Menu.class)))
                 .willReturn(menu);
-        given(menuProductDao.save(any(MenuProduct.class)))
+        given(menuProductRepository.save(any(MenuProduct.class)))
                 .willReturn(menuProduct);
 
 
@@ -113,7 +113,7 @@ class MenuServiceTest {
         menu.setPrice(price);
         menu.setMenuGroupId(1L);
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(false);
 
         // when, then
@@ -135,9 +135,9 @@ class MenuServiceTest {
 
         menu.setMenuProducts(Arrays.asList(menuProduct));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
@@ -166,9 +166,9 @@ class MenuServiceTest {
 
         menu.setMenuProducts(Arrays.asList(menuProduct));
 
-        given(menuGroupDao.existsById(anyLong()))
+        given(menuGroupRepository.existsById(anyLong()))
                 .willReturn(true);
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
@@ -184,7 +184,7 @@ class MenuServiceTest {
         Menu menu2 = new Menu();
 
         List<Menu> expected = Arrays.asList(menu1, menu2);
-        given(menuDao.findAll())
+        given(menuRepository.findAll())
                 .willReturn(expected);
 
         // when

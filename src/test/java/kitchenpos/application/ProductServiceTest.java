@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class ProductServiceTest {
     @MockBean
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private ProductService productService;
@@ -34,7 +34,7 @@ class ProductServiceTest {
         product.setName("product");
         product.setPrice(BigDecimal.valueOf(10000L));
 
-        given(productDao.save(any(Product.class)))
+        given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
         // when
@@ -53,7 +53,7 @@ class ProductServiceTest {
         product.setName("product");
         product.setPrice(BigDecimal.valueOf(-10000L));
 
-        given(productDao.save(any(Product.class)))
+        given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
         // when, then
@@ -70,7 +70,7 @@ class ProductServiceTest {
         product.setName("product");
         product.setPrice(null);
 
-        given(productDao.save(any(Product.class)))
+        given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
         // when, then
@@ -93,7 +93,7 @@ class ProductServiceTest {
         product2.setPrice(BigDecimal.valueOf(10000L));
 
         List<Product> expected = Arrays.asList(product1, product2);
-        given(productDao.findAll())
+        given(productRepository.findAll())
                 .willReturn(expected);
 
         // when
