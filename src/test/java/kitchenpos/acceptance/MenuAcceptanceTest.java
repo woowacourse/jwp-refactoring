@@ -3,8 +3,9 @@ package kitchenpos.acceptance;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +65,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void getMenus() {
         // when
-        ResponseEntity<Menu[]> responseEntity = testRestTemplate.getForEntity("/api/menus", Menu[].class);
+        ResponseEntity<MenuResponse[]> responseEntity = testRestTemplate.getForEntity("/api/menus", MenuResponse[].class);
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -90,11 +91,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
         두마리메뉴_후라이드_양념치킨.setMenuProducts(Arrays.asList(두마리메뉴_후라이드_양념치킨_중_후라이드, 두마리메뉴_후라이드_양념치킨_중_양념));
 
         // when
-        ResponseEntity<Menu> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, Menu.class);
+        ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, MenuResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Menu 응답된_메뉴 = response.getBody();
+        MenuResponse 응답된_메뉴 = response.getBody();
         assertThat(응답된_메뉴.getName()).isEqualTo("두마리메뉴_후라이드_양념치킨");
         assertThat(응답된_메뉴.getMenuProducts()).hasSize(2);
     }
@@ -118,7 +119,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         두마리메뉴_후라이드_양념치킨.setMenuProducts(Arrays.asList(두마리메뉴_후라이드_양념치킨_중_후라이드, 두마리메뉴_후라이드_양념치킨_중_양념));
 
         // when
-        ResponseEntity<Menu> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, Menu.class);
+        ResponseEntity<MenuResponse> response = testRestTemplate.postForEntity("/api/menus", 두마리메뉴_후라이드_양념치킨, MenuResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

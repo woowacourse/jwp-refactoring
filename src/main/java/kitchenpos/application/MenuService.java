@@ -8,8 +8,9 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
+import kitchenpos.ui.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
@@ -37,7 +39,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         final Menu menu = new Menu();
 
         final BigDecimal price = menuRequest.getPrice();
@@ -77,16 +79,17 @@ public class MenuService {
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
-        return savedMenu;
+        return MenuResponse.of(savedMenu);
     }
 
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenu(menu));
+            final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenu(menu);
+            menu.setMenuProducts(menuProducts);
         }
 
-        return menus;
+        return MenuResponse.toList(menus);
     }
 }
