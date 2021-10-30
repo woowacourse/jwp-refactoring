@@ -3,10 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
-import kitchenpos.exception.table.CannotChangeTableStatusAsAlreadyAssignedTableGroupException;
-import kitchenpos.exception.table.CannotChangeTableStatusAsOrderStatusException;
-import kitchenpos.exception.table.InvalidNumberOfGuestsException;
-import kitchenpos.exception.table.NoSuchOrderTableException;
+import kitchenpos.exception.table.*;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -212,6 +209,6 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeNumberOfGuestsAsItIsEmptyException.class);
     }
 }

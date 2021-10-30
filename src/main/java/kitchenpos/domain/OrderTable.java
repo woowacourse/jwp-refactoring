@@ -1,9 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.table.CannotChangeTableGroupAsAlreadyAssignedException;
-import kitchenpos.exception.table.CannotChangeTableGroupAsNotEmpty;
-import kitchenpos.exception.table.CannotChangeTableStatusAsAlreadyAssignedTableGroupException;
-import kitchenpos.exception.table.InvalidNumberOfGuestsException;
+import kitchenpos.exception.table.*;
 
 import javax.persistence.*;
 
@@ -70,6 +67,9 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         validateNumberOfGuests(numberOfGuests);
+        if (this.isEmpty()) {
+            throw new CannotChangeNumberOfGuestsAsItIsEmptyException();
+        }
         this.numberOfGuests = numberOfGuests;
     }
 
