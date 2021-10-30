@@ -1,19 +1,19 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
-import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class MenuService {
@@ -36,20 +36,14 @@ public class MenuService {
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
-        final Long price = menuRequest.getPrice();
-
-        Long menuGroupId = menuRequest.getMenuGroupId();
-        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
+        MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-
-        final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
-
-        Menu menu = new Menu(menuRequest.getName(), price, menuGroup);
-
+        
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
         final Menu savedMenu = menuRepository.save(menu);
 
         Long sum = 0L;
-        for (final MenuProductRequest menuProductRequest : menuProductRequests) {
+        for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProductRequests()) {
             final Product product = productRepository.findById(menuProductRequest.getProductId())
                     .orElseThrow(IllegalArgumentException::new);
             Long quantity = menuProductRequest.getQuantity();
