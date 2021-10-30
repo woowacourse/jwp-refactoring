@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.repository.MenuRepository;
@@ -50,13 +51,14 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
         // given
-        BigDecimal price = BigDecimal.valueOf(1000);
-        String name = "name";
-        long menuGroupId = 1L;
+        String menuName = "menuName";
+        Long menuGroupId = 1L;
+        MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
 
+        BigDecimal price = BigDecimal.valueOf(1000);
         Menu expected = new Menu();
         expected.setPrice(price);
-        expected.setMenuGroupId(menuGroupId);
+        expected.setMenuGroup(menuGroup);
 
         Product product = new Product();
         long productId = 1L;
@@ -70,8 +72,8 @@ class MenuServiceTest {
 
         expected.setMenuProducts(Arrays.asList(menuProduct));
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(menuGroup));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
@@ -80,7 +82,7 @@ class MenuServiceTest {
                 .willReturn(menuProduct);
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
-        MenuRequest menuRequest = new MenuRequest(name, price.longValue(), menuGroupId, Arrays.asList(menuProductRequest));
+        MenuRequest menuRequest = new MenuRequest(menuName, price.longValue(), menuGroupId, Arrays.asList(menuProductRequest));
 
         // when
         Menu actual = menuService.create(menuRequest);
@@ -148,7 +150,8 @@ class MenuServiceTest {
     void createFailWhenMenuPriceLowerThanAllProduct(Long menuPrice, Long productPrice, Long productQuantity) {
         // given
         String menuName = "name";
-        Menu expected = new Menu(menuName, BigDecimal.valueOf(menuPrice), 1L);
+        MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
+        Menu expected = new Menu(menuName, BigDecimal.valueOf(menuPrice), menuGroup);
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, productQuantity);
         MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, 1L, Arrays.asList(menuProductRequest));

@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.repository.MenuRepository;
@@ -45,16 +46,15 @@ public class MenuService {
         }
 
         Long menuGroupId = menuRequest.getMenuGroupId();
-        if (!menuGroupRepository.existsById(menuGroupId)) {
-            throw new IllegalArgumentException();
-        }
+        MenuGroup menuGroup = menuGroupRepository.findById(menuGroupId)
+                .orElseThrow(IllegalArgumentException::new);
 
         final List<MenuProductRequest> menuProductRequests = menuRequest.getMenuProductRequests();
 
         Menu menu = new Menu();
         menu.setName(menuRequest.getName());
         menu.setPrice(BigDecimal.valueOf(priceRequested));
-        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuGroup(menuGroup);
 
         final Menu savedMenu = menuRepository.save(menu);
 

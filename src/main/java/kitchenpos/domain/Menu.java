@@ -15,31 +15,32 @@ public class Menu {
     @Column(nullable = false)
     private BigDecimal price;
 
-    @Column(nullable = false)
-    private Long menuGroupId;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+
+    @OneToMany(mappedBy = "menuId")
+    private List<MenuProduct> menuProducts;
 
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, Long menuGroupId) {
-        this(null, name, price, menuGroupId);
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroupId = menuGroupId;
+        this.menuGroup = menuGroup;
     }
-
-    @OneToMany(mappedBy = "menuId")
-    private List<MenuProduct> menuProducts;
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -47,7 +48,7 @@ public class Menu {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -55,23 +56,23 @@ public class Menu {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
+    public void setMenuGroup(MenuGroup menuGroup) {
+        this.menuGroup = menuGroup;
     }
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void setMenuProducts(List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
     }
 }
