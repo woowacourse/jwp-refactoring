@@ -6,21 +6,21 @@
 - [x] 모든 MenuGroup을 불러와 반환한다.
 
 ### Menu
-- [ ] Menu는 name과 price, menuGroup, menuProducts를 갖고 있다.
+- [x] Menu는 name과 price, menuGroup, menuProducts를 갖고 있다.
   
-- [ ] Menu를 만들어 저장한다.
-    - [ ] menu의 가격이 null이거나 0보다 작은 경우 예외를 던진다.
-    - [ ] menu의 menuGroup을 찾을 수 없는 경우 예외를 던진다.
-    - [ ] menuProducts를 찾을 수 없는 경우 예외를 던진다.
-    - [ ] menu의 모든 Product를 가격과 수량을 곱해 더한다.
-      - [ ] 존재하지 않는 product가 있다면 예외를 던진다.
-    - [ ] menu의 가격이 menuProducts 가격의 총합을 넘는 경우 예외를 던진다.
-  - [ ] menu를 저장한다.
-    - [ ] menuproduct를 저장한다
-    - [ ] 저장된 menu에 저장된 menuProducts를 저장한다.
+- [x] Menu를 만들어 저장한다.
+    - [x] menu의 가격이 null이거나 0보다 작은 경우 예외를 던진다.
+    - [x] menu의 menuGroup을 찾을 수 없는 경우 예외를 던진다.
+    - [x] menuProducts를 찾을 수 없는 경우 예외를 던진다.
+    - [x] menu의 모든 Product를 가격과 수량을 곱해 더한다.
+      - [x] 존재하지 않는 product가 있다면 예외를 던진다.
+    - [x] menu의 가격이 menuProducts 가격의 총합을 넘는 경우 예외를 던진다.
+  - [x] menu를 저장한다.
+    - [x] menuproduct를 저장한다
+    - [x] 저장된 menu에 저장된 menuProducts를 저장한다.
   
-- [ ] 모든 menu를 불러와 반환한다.
-  - [ ] 모든 menu에는 menuProduct가 존재한다.
+- [x] 모든 menu를 불러와 반환한다.
+  - [x] 모든 menu에는 menuProduct가 존재한다.
 
 ### Order
 - [ ] Order를 만든다.
