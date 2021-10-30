@@ -21,10 +21,10 @@ public class ProductApiTest extends ApiTest {
 
     private static final String BASE_URL = "/api/products";
 
-    private List<Product> products;
-
     @Autowired
     private JdbcTemplateProductDao productDao;
+
+    private List<Product> products;
 
     @Override
     @BeforeEach

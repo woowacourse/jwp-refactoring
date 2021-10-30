@@ -24,8 +24,10 @@ public class TableServiceTest extends ServiceTest {
 
     @Mock
     private OrderDao orderDao;
+
     @Mock
     private OrderTableDao orderTableDao;
+
     @InjectMocks
     private TableService tableService;
 

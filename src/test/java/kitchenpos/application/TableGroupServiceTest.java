@@ -30,10 +30,13 @@ public class TableGroupServiceTest extends ServiceTest {
 
     @Mock
     private OrderDao orderDao;
+
     @Mock
     private OrderTableDao orderTableDao;
+
     @Mock
     private TableGroupDao tableGroupDao;
+
     @InjectMocks
     private TableGroupService tableGroupService;
 

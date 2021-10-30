@@ -12,6 +12,10 @@ public class MenuGenerator {
         return newInstance(null, name, price, menuGroupId, menuProducts);
     }
 
+    public static Menu newInstance(String name, int price, Long menuGroupId) {
+        return newInstance(null, name, price, menuGroupId, null);
+    }
+
     public static Menu newInstance(Long id, String name, int price, Long menuGroupId) {
         return newInstance(id, name, price, menuGroupId, Collections.emptyList());
     }
@@ -26,8 +30,6 @@ public class MenuGenerator {
         menu.setMenuProducts(menuProducts);
         return menu;
     }
-
-
 
     public static MenuProduct newMenuProduct(Long productId, int quantity) {
         return newMenuProduct(null, productId, quantity);

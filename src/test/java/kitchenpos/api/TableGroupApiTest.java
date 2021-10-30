@@ -35,7 +35,6 @@ public class TableGroupApiTest extends ApiTest {
     private JdbcTemplateOrderTableDao orderTableDao;
 
     private List<TableGroup> tableGroups;
-
     private List<OrderTable> orderTables;
 
     @Override

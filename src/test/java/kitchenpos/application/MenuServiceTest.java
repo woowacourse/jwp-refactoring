@@ -28,12 +28,16 @@ public class MenuServiceTest extends ServiceTest {
 
     @Mock
     private MenuDao menuDao;
+
     @Mock
     private MenuGroupDao menuGroupDao;
+
     @Mock
     private MenuProductDao menuProductDao;
+
     @Mock
     private ProductDao productDao;
+
     @InjectMocks
     private MenuService menuService;
 

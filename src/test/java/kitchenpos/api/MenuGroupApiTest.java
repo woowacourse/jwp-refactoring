@@ -19,10 +19,10 @@ public class MenuGroupApiTest extends ApiTest {
 
     private static final String BASE_URL = "/api/menu-groups";
 
-    private List<MenuGroup> menuGroups;
-
     @Autowired
     private JdbcTemplateMenuGroupDao menuGroupDao;
+
+    private List<MenuGroup> menuGroups;
 
     @Override
     @BeforeEach
