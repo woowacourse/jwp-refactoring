@@ -1,13 +1,13 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.*;
+import kitchenpos.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
 import kitchenpos.dto.response.OrderResponse;
@@ -16,18 +16,15 @@ import kitchenpos.dto.response.OrderResponse;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -65,21 +62,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderRepository.findById(orderId)
-                                                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
+    public OrderResponse changeOrderStatus(final Long orderId, final ChangeOrderStatusRequest request) {
+        final Order order = orderRepository.findById(orderId)
+                                           .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
 
-        if (Objects.equals(OrderStatus.COMPLETION, savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");
-        }
-
-        final OrderStatus orderStatus = order.getOrderStatus();
-        savedOrder.setOrderStatus(orderStatus);
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return savedOrder;
+        order.changeOrderStatus(request.getOrderStatus());
+        return OrderResponse.from(order);
     }
 }

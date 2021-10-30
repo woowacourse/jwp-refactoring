@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +7,8 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
+import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.OrderLineItemFixture.양념반_후라이드반_하나;
 import static kitchenpos.fixture.OrderLineItemFixture.후라이드_단품_둘;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -55,18 +56,29 @@ class OrderTest {
                 .hasMessage("빈 테이블은 주문할 수 없습니다.");
     }
 
-//    @Test
-//    @DisplayName("주문 상태를 변경할 수 있다.")
-//    void changeOrderStatus() {
-//        // given
-//        OrderTable orderTable = new OrderTable(5, false);
-//        List<OrderLineItem> orderLineItems = Arrays.asList(후라이드_단품_둘, 양념반_후라이드반_하나);
-//        Order order = new Order(orderTable, orderLineItems);
-//
-//        // when
-//        order.changeOrderStatus();
-//
-//        // then
-//
-//    }
+    @Test
+    @DisplayName("주문 상태를 변경할 수 있다.")
+    void changeOrderStatus() {
+        // given
+        Order order = COOKING_ORDER;
+
+        // when
+        order.changeOrderStatus(OrderStatus.MEAL.name());
+
+        // then
+        assertEquals(OrderStatus.MEAL, order.getOrderStatus());
+
+    }
+
+    @Test
+    @DisplayName("주문 상태가 COMPLETION이면 주문 상태를 변경할 수 없다.")
+    void notExistOrder() {
+        // given
+        Order order = COMPLETION_ORDER;
+
+        // when & then
+        assertThatThrownBy(() -> order.changeOrderStatus(OrderStatus.COOKING.name()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("계산 완료된 주문의 상태는 변경할 수 없습니다.");
+    }
 }

@@ -32,12 +32,12 @@
     - [x] TableGroup
         - [x] OrderTable
     
-- [ ] 비즈니스 로직 도메인으로 옮기기
+- [x] 비즈니스 로직 도메인으로 옮기기
   * TDD로 진행
   - [x] Product
   - [x] Menu
   - [x] OrderTable
-  - [ ] Order
+  - [x] Order
   - [x] TableGroup
 
 - [ ] controller - service 사이 dto 사용  

@@ -8,13 +8,11 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.request.ChangeOrderStatusRequest;
 import kitchenpos.dto.request.CreateOrderRequest;
 import kitchenpos.dto.request.OrderLineItemRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
@@ -22,11 +20,12 @@ import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderLineItemResponse;
 import kitchenpos.dto.response.OrderResponse;
 
-import static kitchenpos.fixture.MenuFixture.양념_단품;
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
 import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
-import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.OrderLineItemFixture.후라이드_단품_둘;
+import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
+import static kitchenpos.fixture.OrderTableFixture.단일_손님2_테이블;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -171,57 +170,63 @@ class OrderRestControllerTest extends ControllerTest {
                 .andExpect(content().json(objectToJsonString(expected)));
     }
 
-//    @Test
-//    @DisplayName("주문 상태를 변경할 수 있다.")
-//    void changeOrderStatus() throws Exception {
-//        // given
-//        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION, null, null);
-//        Order expected = new Order(1L, 단일_손님2_테이블, OrderStatus.COMPLETION, LocalDateTime.now(), Arrays.asList(후라이드치킨_2마리_주문1, 양념치킨_1마리_주문1));
-//        given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(expected);
-//
-//        // when
-//        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
-//                .content(objectToJsonString(changeStatusOrder))
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        // then
-//        response.andExpect(status().isOk())
-//                .andExpect(content().json(objectToJsonString(expected)));
-//    }
-//
-//    @Test
-//    @DisplayName("주문 상태를 변경하려면 주문은 존재해야 한다.")
-//    void changeOrderStatusWrongOrderNotExist() throws Exception {
-//        Order changeStatusOrder = new Order(null, null, OrderStatus.COMPLETION, null, null);
-//        willThrow(new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."))
-//                .given(orderService).changeOrderStatus(anyLong(), any(Order.class));
-//
-//        // when
-//        ResultActions response = mockMvc.perform(put("/api/orders/11/order-status")
-//                .content(objectToJsonString(changeStatusOrder))
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        // then
-//        response.andExpect(status().isBadRequest())
-//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
-//                .andExpect(jsonPath("$.message").value("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
-//    }
-//
-//    @Test
-//    @DisplayName("주문 상태를 변경하려면 주문 상태는 조리중(COOKING)이나 식사중(MEAL)이어야한다.")
-//    void changeOrderStatusWrongOrderStatus() throws Exception {
-//        Order changeStatusOrder = new Order(null, null, OrderStatus.MEAL, null, null);
-//        willThrow(new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다."))
-//                .given(orderService).changeOrderStatus(anyLong(), any(Order.class));
-//
-//        // when
-//        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
-//                .content(objectToJsonString(changeStatusOrder))
-//                .contentType(MediaType.APPLICATION_JSON));
-//
-//        // then
-//        response.andExpect(status().isBadRequest())
-//                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
-//                .andExpect(jsonPath("$.message").value("계산 완료된 주문의 상태는 변경할 수 없습니다."));
-//    }
+    @Test
+    @DisplayName("주문 상태를 변경할 수 있다.")
+    void changeOrderStatus() throws Exception {
+        // given
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
+        OrderResponse expected = new OrderResponse(
+                1L,
+                OrderStatus.MEAL,
+                LocalDateTime.now(),
+                Collections.singletonList(OrderLineItemResponse.from(후라이드_단품_둘))
+        );
+
+        given(orderService.changeOrderStatus(anyLong(), any(ChangeOrderStatusRequest.class))).willReturn(expected);
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
+                .content(objectToJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(status().isOk())
+                .andExpect(content().json(objectToJsonString(expected)));
+    }
+
+    @Test
+    @DisplayName("주문 상태를 변경하려면 주문은 존재해야 한다.")
+    void changeOrderStatusWrongOrderNotExist() throws Exception {
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
+        willThrow(new IllegalArgumentException("존재하지 않는 주문의 상태는 변경할 수 없습니다."))
+                .given(orderService).changeOrderStatus(anyLong(), any(ChangeOrderStatusRequest.class));
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/orders/11/order-status")
+                .content(objectToJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+                .andExpect(jsonPath("$.message").value("존재하지 않는 주문의 상태는 변경할 수 없습니다."));
+    }
+
+    @Test
+    @DisplayName("주문 상태를 변경하려면 주문 상태는 조리중(COOKING)이나 식사중(MEAL)이어야한다.")
+    void changeOrderStatusWrongOrderStatus() throws Exception {
+        ChangeOrderStatusRequest request = new ChangeOrderStatusRequest("MEAL");
+        willThrow(new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다."))
+                .given(orderService).changeOrderStatus(anyLong(), any(ChangeOrderStatusRequest.class));
+
+        // when
+        ResultActions response = mockMvc.perform(put("/api/orders/1/order-status")
+                .content(objectToJsonString(request))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        response.andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
+                .andExpect(jsonPath("$.message").value("계산 완료된 주문의 상태는 변경할 수 없습니다."));
+    }
 }

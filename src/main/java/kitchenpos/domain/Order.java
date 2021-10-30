@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.*;
 
 import org.springframework.util.CollectionUtils;
@@ -69,6 +70,14 @@ public class Order {
 
     public boolean isStatus(OrderStatus status) {
         return this.orderStatus == status;
+    }
+
+    public void changeOrderStatus(String orderStatus) {
+        OrderStatus status = OrderStatus.valueOf(orderStatus);
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");
+        }
+        this.orderStatus = status;
     }
 
     public Long getId() {
