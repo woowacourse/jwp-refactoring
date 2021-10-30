@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,21 +9,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.TableGroup;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
+import static kitchenpos.fixture.OrderTableFixture.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("TableService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
 class TableServiceTest {
-
-    @Mock
-    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -68,21 +70,15 @@ class TableServiceTest {
     @DisplayName("테이블이 비어있는지를 나타내는 상태를 수정할 수 있다.")
     void changeEmpty() {
         // given
-        Long tableId = 1L;
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        OrderTable table = new OrderTable(1L, null, 0, true);
-        OrderTable expected = new OrderTable(1L, null, 0, false);
-        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(tableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
-        given(orderTableRepository.save(table)).willReturn(table);
+        OrderTable table = new OrderTable(4L, null, 2, false);
+        OrderTable changeEmptyTable = new OrderTable(table.getNumberOfGuests(), true);
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
         // when
-        OrderTable actual = tableService.changeEmpty(tableId, changeEmptyTable);
+        OrderTable actual = tableService.changeEmpty(table.getId(), changeEmptyTable);
 
         // then
-        assertFalse(actual.isEmpty());
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
+        assertTrue(actual.isEmpty());
     }
 
     @Test
@@ -90,7 +86,7 @@ class TableServiceTest {
     void changeEmptyWrongNotExist() {
         // given
         Long tableId = 1L;
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
+        OrderTable changeEmptyTable = new OrderTable(0, false);
         given(orderTableRepository.findById(tableId)).willReturn(Optional.empty());
 
         // when & then
@@ -103,14 +99,13 @@ class TableServiceTest {
     @DisplayName("빈 상태를 수정하려면 테이블은 그룹에 속해있지 않아야한다.")
     void changeEmptyWrongNotInGroup() {
         // given
-        TableGroup group = new TableGroup(1L);
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        OrderTable table = new OrderTable(1L, group, 0, true);
-        given(orderTableRepository.findById(group.getId())).willReturn(Optional.of(table));
+        OrderTable changeEmptyTable = new OrderTable(0, false);
+        OrderTable table = 그룹1_손님2_테이블;
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableService.changeEmpty(group.getId(), changeEmptyTable));
+                () -> tableService.changeEmpty(table.getTableGroup().getId(), changeEmptyTable));
         assertEquals("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요.", exception.getMessage());
     }
 
@@ -118,16 +113,19 @@ class TableServiceTest {
     @DisplayName("빈 상태를 수정하려면 테이블이 조리중(COOKING)이나 식사중(MEAL)이 아니어야한다.")
     void changeEmptyWrongCookingOrMeal() {
         // given
-        Long tableId = 1L;
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        OrderTable table = new OrderTable(1L, null, 0, true);
-        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(tableId,
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        OrderTable table = new OrderTable(
+                5L,
+                null,
+                2,
+                false,
+                Collections.singletonList(COOKING_ORDER)
+        );
+        OrderTable changeEmptyTable = new OrderTable(table.getNumberOfGuests(), true);
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableService.changeEmpty(tableId, changeEmptyTable));
+                () -> tableService.changeEmpty(table.getId(), changeEmptyTable));
         assertEquals("조리중이나 식사중인 경우 상태를 변경할 수 없습니다.", exception.getMessage());
     }
 
@@ -135,31 +133,28 @@ class TableServiceTest {
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
     void changeNumberOfGuests() {
         // given
-        Long tableId = 1L;
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
-        OrderTable table = new OrderTable(1L, null, 0, false);
-        OrderTable expected = new OrderTable(1L, null, 5, false);
-        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
-        given(orderTableRepository.save(table)).willReturn(table);
+        OrderTable table = 단일_손님2_테이블;
+        OrderTable changeNumberTable = new OrderTable(5, false);
+        given(orderTableRepository.findById(table.getId())).willReturn(Optional.of(table));
 
         // when
-        OrderTable actual = tableService.changeNumberOfGuests(tableId, changeNumberTable);
+        OrderTable actual = tableService.changeNumberOfGuests(table.getId(), changeNumberTable);
 
         // then
         assertEquals(5, actual.getNumberOfGuests());
-        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
-    @DisplayName("손님의 수를 변경하려면 기존 손님의 수는 0 이상이어야 한다.")
+    @DisplayName("손님의 수를 변경하려면 변경하려는 손님의 수는 0 이상이어야 한다.")
     void changeNumberOfGuestsWrongNumber() {
         // given
-        Long tableId = 1L;
-        OrderTable changeNumberTable = new OrderTable(null, null, -1, false);
+        OrderTable table = 단일_손님2_테이블;
+        OrderTable changeNumberTable = new OrderTable(-1, false);
+        given(orderTableRepository.findById(table.getId())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableService.changeNumberOfGuests(tableId, changeNumberTable));
+                () -> tableService.changeNumberOfGuests(table.getId(), changeNumberTable));
         assertEquals("변경하려는 손님 수는 0이상이어야 합니다.", exception.getMessage());
     }
 
@@ -168,7 +163,7 @@ class TableServiceTest {
     void changeNumberOfGuestsWrongTableNotExist() {
         // given
         Long tableId = 1L;
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
+        OrderTable changeNumberTable = new OrderTable(5, false);
         given(orderTableRepository.findById(tableId)).willReturn(Optional.empty());
 
         // when & then
@@ -181,14 +176,13 @@ class TableServiceTest {
     @DisplayName("손님의 수를 변경하려면 테이블은 비어있지 않아야한다.")
     void changeNumberOfGuestsWrongTableEmpty() {
         // given
-        Long tableId = 1L;
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
-        OrderTable table = new OrderTable(1L, null, 0, true);
-        given(orderTableRepository.findById(tableId)).willReturn(Optional.of(table));
+        OrderTable table = 단일_손님0_테이블;
+        OrderTable changeNumberTable = new OrderTable(5, table.isEmpty());
+        given(orderTableRepository.findById(table.getId())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableService.changeNumberOfGuests(tableId, changeNumberTable));
+                () -> tableService.changeNumberOfGuests(table.getId(), changeNumberTable));
         assertEquals("비어있는 테이블의 손님 수를 변경할 수 없습니다.", exception.getMessage());
     }
 }

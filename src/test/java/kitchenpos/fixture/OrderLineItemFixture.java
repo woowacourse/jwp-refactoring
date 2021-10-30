@@ -2,7 +2,8 @@ package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderLineItem;
 
-import static kitchenpos.fixture.MenuFixture.*;
+import static kitchenpos.fixture.MenuFixture.양념반_후라이드반;
+import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 
 public class OrderLineItemFixture {
     public static OrderLineItem 후라이드_단품_둘 = new OrderLineItem(후라이드_단품, 2);

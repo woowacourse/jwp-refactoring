@@ -31,6 +31,10 @@ public class Order {
         this(id, null, null, null, null);
     }
 
+    public Order(OrderTable orderTable, OrderStatus status) {
+        this(null, orderTable, status, null, null);
+    }
+
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
         this(null, orderTable, null, null, orderLineItems);
     }
@@ -41,6 +45,10 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public boolean isStatus(OrderStatus status) {
+        return this.orderStatus == status;
     }
 
     public Long getId() {
