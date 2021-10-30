@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.exception.table.CannotChangeTableGroupAsAlreadyAssignedException;
 import kitchenpos.exception.table.CannotChangeTableGroupAsNotEmpty;
 import kitchenpos.exception.table.NoSuchOrderTableException;
@@ -65,11 +66,14 @@ class TableGroupServiceTest {
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
+
+
         // when
-        TableGroup actual = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
 
         // then
-        assertThat(actual).isEqualTo(tableGroup);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(TableGroupResponse.from(tableGroup));
     }
 
     @Test
