@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.domain.Menu;
@@ -44,6 +46,9 @@ class OrderServiceTest {
 
     @Autowired
     private OrderLineItemDao orderLineItemDao;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private OrderTable table;
     private Product chicken;

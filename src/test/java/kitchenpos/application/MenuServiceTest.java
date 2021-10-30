@@ -8,8 +8,6 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -28,10 +26,10 @@ class MenuServiceTest {
     private MenuService menuService;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductService productService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupService menuGroupService;
 
     private Product product;
     private MenuGroup menuGroup;
@@ -39,8 +37,8 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = productDao.save(new Product("product", BigDecimal.valueOf(1000)));
-        menuGroup = menuGroupDao.save(new MenuGroup("menuGroup"));
+        product = productService.create(new Product("product", BigDecimal.valueOf(1000)));
+        menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
     }
 
 

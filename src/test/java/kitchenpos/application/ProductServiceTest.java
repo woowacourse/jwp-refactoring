@@ -8,17 +8,19 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTestWithProfiles
 class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Test
     @DisplayName("상품 정상 등록")
@@ -54,5 +56,10 @@ class ProductServiceTest {
 
         List<Product> products = productService.list();
         assertThat(products).hasSize(3);
+    }
+
+    @AfterEach
+    void tearDown() {
+        productRepository.deleteAll();
     }
 }
