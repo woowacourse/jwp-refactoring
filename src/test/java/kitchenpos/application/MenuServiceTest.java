@@ -12,13 +12,15 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.ProductRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTestWithProfiles
 class MenuServiceTest {
 
@@ -30,6 +32,13 @@ class MenuServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+
+    @Autowired
+    private MenuRepository menuRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     private Product product;
     private MenuGroup menuGroup;
@@ -152,5 +161,12 @@ class MenuServiceTest {
 
         assertThat(menus).hasSize(1);
         assertThat(menus).allMatch(menu -> !menu.getMenuProducts().isEmpty());
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuRepository.deleteAllInBatch();
+        productRepository.deleteAllInBatch();
+        menuGroupRepository.deleteAllInBatch();
     }
 }
