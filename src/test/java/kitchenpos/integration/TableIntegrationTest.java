@@ -20,7 +20,7 @@ public class TableIntegrationTest extends IntegrationTest {
         final MockMvcResponse<OrderTable> result = tableApi.테이블_등록(2, false);
 
         //then
-        Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(result.getContent().getNumberOfGuests()).isEqualTo(2);
         Assertions.assertThat(result.getContent().isEmpty()).isFalse();
     }

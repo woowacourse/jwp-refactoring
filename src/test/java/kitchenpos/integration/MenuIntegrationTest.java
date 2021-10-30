@@ -64,8 +64,7 @@ public class MenuIntegrationTest extends IntegrationTest {
     public void 메뉴_등록_실패_notFoundProduct() {
         //given
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
-        final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
-        final MenuProduct menuProduct = new MenuProduct(productId, 1);
+        final MenuProduct menuProduct = new MenuProduct(Long.MAX_VALUE, 1);
 
         // when
         final MockMvcResponse<Menu> result = menuApi.메뉴_등록(민초치킨, menuGroupId,
