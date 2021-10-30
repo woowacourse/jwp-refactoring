@@ -1,5 +1,12 @@
 package kitchenpos.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderTable {
     private Long id;
     private Long tableGroupId;
