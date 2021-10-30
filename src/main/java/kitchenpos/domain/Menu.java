@@ -28,7 +28,10 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, Long price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(String name,
+                Long price,
+                MenuGroup menuGroup,
+                List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = Price.from(price);
         this.menuGroup = menuGroup;

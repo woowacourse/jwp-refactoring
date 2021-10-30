@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.exception.menu.EmptyOrderLineItemsException;
 import kitchenpos.exception.menu.NoSuchMenuException;
 import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -76,7 +78,7 @@ class OrderServiceTest {
 
         // when
 
-        Order actual = orderService.create(orderRequest);
+        OrderResponse actual = orderService.create(orderRequest);
 
         // then
         assertThat(actual).usingRecursiveComparison()
@@ -159,18 +161,34 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 불러올 수 있다.")
     void list() {
         // given
-        Order order1 = new Order();
-        Order order2 = new Order();
+        OrderTable mockOrderTable = mock(OrderTable.class);
+        Menu mockMenu = mock(Menu.class);
+        OrderLineItem orderLineItem = new OrderLineItem(mockMenu, 1L);
+        Order order = new Order(1L,
+                mockOrderTable,
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                Arrays.asList(orderLineItem));
 
-        List<Order> expected = Arrays.asList(order1, order2);
+        given(mockOrderTable.getId())
+                .willReturn(1L);
+        given(mockMenu.getId())
+                .willReturn(1L);
 
+        List<Order> expectedOrders = Arrays.asList(order, order);
         given(orderRepository.findAll())
-                .willReturn(expected);
+                .willReturn(expectedOrders);
+
+        List<OrderResponse> expected = expectedOrders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
+
         // when
-        List<Order> actual = orderService.list();
+        List<OrderResponse> actual = orderService.list();
 
         // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -203,18 +221,26 @@ class OrderServiceTest {
     @DisplayName("주문의 진행 상황을 변경할 수 있다.")
     void changeOrderStatus() {
         // given
-        OrderStatus expectedStatus = OrderStatus.MEAL;
-        Order order = new Order(1L, mock(OrderTable.class), OrderStatus.COOKING.name(), LocalDateTime.now(), Arrays.asList(mock(OrderLineItem.class)));
+        OrderTable orderTable = new OrderTable(1L, mock(TableGroup.class), 1, false);
+        Menu mockMenu = mock(Menu.class);
+        Order order = new Order(1L,
+                orderTable,
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                Arrays.asList(new OrderLineItem(mockMenu, 1L)));
 
+        given(mockMenu.getId())
+                .willReturn(1L);
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
         given(orderRepository.save(any(Order.class)))
                 .willReturn(order);
 
+        OrderStatus expectedStatus = OrderStatus.MEAL;
         OrderRequest orderRequest = new OrderRequest(expectedStatus.name());
 
         // when
-        Order actual = orderService.changeOrderStatus(order.getId(), orderRequest);
+        OrderResponse actual = orderService.changeOrderStatus(order.getId(), orderRequest);
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(expectedStatus.name());

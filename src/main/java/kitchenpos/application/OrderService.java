@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.exception.menu.NoSuchMenuException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
@@ -38,7 +39,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest orderRequest) {
+    public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(NoSuchOrderTableException::new);
 
@@ -55,34 +56,28 @@ public class OrderService {
 
         orderLineItemRepository.saveAll(orderLineItems);
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        return OrderResponse.from(savedOrder);
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        // todo Response dto 만들어 OrderLineItems 담기
-
-        return orders;
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
+        final Order order = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
             throw new IllegalArgumentException();
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
-        savedOrder.changeOrderStatus(orderStatus.name());
+        order.changeOrderStatus(orderStatus.name());
 
-        orderRepository.save(savedOrder);
-
-//        todo Response DTO 만들어 담아내기
-//        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
-
-        return savedOrder;
+        return OrderResponse.from(order);
     }
 }

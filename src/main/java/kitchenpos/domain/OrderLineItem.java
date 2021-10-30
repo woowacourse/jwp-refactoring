@@ -35,4 +35,20 @@ public class OrderLineItem {
         }
         this.order = order;
     }
+
+    public Long getSeq() {
+        return seq;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public Menu getMenu() {
+        return menu;
+    }
+
+    public Long getQuantity() {
+        return quantity.longValue();
+    }
 }
