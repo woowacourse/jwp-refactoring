@@ -203,9 +203,11 @@ class OrderServiceTest {
     class ChangeTest {
 
         Long orderId;
-        LocalDateTime now;
+
         List<OrderLineItem> orderLineItems;
+
         Order savedOrder;
+
         Order order;
 
         @BeforeEach

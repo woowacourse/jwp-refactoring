@@ -70,8 +70,11 @@ class MenuServiceTest {
     class CreateTest {
 
         private Product product;
+
         private MenuProduct menuProduct;
+
         private Menu menu;
+
         private Menu savedMenu;
 
         @BeforeEach

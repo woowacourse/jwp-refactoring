@@ -2,6 +2,12 @@ package kitchenpos.factory;
 
 import kitchenpos.domain.OrderTable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class OrderTableFactory {
 
     private Long id;
@@ -60,5 +66,12 @@ public class OrderTableFactory {
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(empty);
         return orderTable;
+    }
+
+    public List<OrderTable> buildList(int size) {
+        return IntStream.range(0, size)
+                .boxed()
+                .map(num -> build())
+                .collect(Collectors.toList());
     }
 }

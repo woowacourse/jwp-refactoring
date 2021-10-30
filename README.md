@@ -94,14 +94,14 @@
     - [ ] orderTable 이 존재하지 않는 경우
     - [ ] orderTable 이 비어있는 경우
 
-- [ ] TableGroup 테스트
-  - [ ] /api/table-groups POST success
-  - [ ] /api/table-groups POST failure
-    - [ ] 요청한 orderTable 이 0 개인 경우 (empty)
-    - [ ] 요청한 orderTable 의 수가 2 개 미만인 경우
-    - [ ] 요청한 orderTable 중 존재하지 않는 것이 있는 경우
-    - [ ] 요청한 orderTable 이 비어있지 않는 경우
-    - [ ] 요청한 orderTable 이 이미 tableGroup 이 있는 경우
-  - [ ] /api/table-groups/{tableGroupId} DELETE success
-  - [ ] /api/table-groups/{tableGroupId} DELETE failure
-    - [ ] 요청한 orderTable 의 order 상태가 COOKING 또는 MEAL 인 경우 (COMPLETION 이 아닌 경우)
+- [x] TableGroup 테스트
+  - [x] /api/table-groups POST success
+  - [x] /api/table-groups POST failure
+    - [x] 요청한 orderTables 가 비어있는 경우
+    - [x] 요청한 orderTable 의 수가 2 개 미만인 경우
+    - [x] 요청한 orderTable 중 존재하지 않는 것이 있는 경우
+    - [x] 요청한 orderTable 이 비어있지 않는 경우
+    - [x] 요청한 orderTable 이 이미 tableGroup 을 가지고 있는 경우
+  - [x] /api/table-groups/{tableGroupId} DELETE success
+  - [x] /api/table-groups/{tableGroupId} DELETE failure
+    - [x] 요청한 orderTable 의 order 상태가 COMPLETION 이 아닌 경우
