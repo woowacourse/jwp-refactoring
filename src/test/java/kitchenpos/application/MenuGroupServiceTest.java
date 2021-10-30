@@ -2,8 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.fixtures.MenuGroupFixture;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,7 +33,7 @@ class MenuGroupServiceTest {
     public void testCreateMenuGroup() {
         //given
         MenuGroup menuGroup = new MenuGroup();
-        given(menuGroupDao.save(any())).willReturn(menuGroup1());
+        given(menuGroupDao.save(any())).willReturn(치킨());
 
         //when
         MenuGroup actual = menuGroupService.create(menuGroup);
@@ -49,13 +47,13 @@ class MenuGroupServiceTest {
     @Test
     public void testList() {
         //given
-        given(menuGroupDao.findAll()).willReturn(Arrays.asList(menuGroup1(), menuGroup2()));
+        given(menuGroupDao.findAll()).willReturn(Arrays.asList(치킨(), 디저트(), 양식()));
 
         //when
         List<MenuGroup> actual = menuGroupService.list();
 
         //then
         verify(menuGroupDao, times(1)).findAll();
-        assertThat(actual).hasSize(2);
+        assertThat(actual).hasSize(3);
     }
 }
