@@ -83,13 +83,7 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            final List<MenuProduct> menuProducts = menuProductRepository.findAllByMenu(menu);
-            menu.setMenuProducts(menuProducts);
-        }
-
+        final List<Menu> menus = menuRepository.findAllFetchJoinMenuProducts();
         return MenuResponse.toList(menus);
     }
 }

@@ -78,13 +78,7 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
-
-        // TODO: FetchJoin으로 한번에 물어오기
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrder(order));
-        }
-
+        final List<Order> orders = orderRepository.findAllFetchJoinOrderLineItems();
         return OrderResponse.toList(orders);
     }
 
