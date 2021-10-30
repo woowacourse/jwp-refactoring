@@ -19,7 +19,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class MenuGroupServiceTest extends TestFixture {
+class MenuGroupServiceKitchenPosTest extends KitchenPosTestFixture {
 
     @Mock
     private MenuGroupDao menuGroupDao;

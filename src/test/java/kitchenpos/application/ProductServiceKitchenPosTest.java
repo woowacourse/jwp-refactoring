@@ -21,7 +21,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class ProductServiceTest extends TestFixture {
+class ProductServiceKitchenPosTest extends KitchenPosTestFixture {
 
     @Mock
     private ProductDao productDao;

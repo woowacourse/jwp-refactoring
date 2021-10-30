@@ -1,5 +1,7 @@
-package kitchenpos.application;
+package kitchenpos;
 
+import kitchenpos.application.KitchenPosTestFixture;
+import kitchenpos.application.TableService;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -23,7 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TableServiceTest extends TestFixture {
+class TableServiceKitchenPosTest extends KitchenPosTestFixture {
 
     @Mock
     private OrderDao orderDao;

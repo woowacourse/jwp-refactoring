@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
-public class TestFixture {
+public class KitchenPosTestFixture {
 
     public static final List<String> COOKING_OR_MEAL_STATUS = Arrays.asList(
             OrderStatus.COOKING.name(), OrderStatus.MEAL.name()

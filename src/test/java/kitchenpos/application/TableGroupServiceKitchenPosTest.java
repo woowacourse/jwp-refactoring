@@ -28,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class TableGroupServiceTest extends TestFixture {
+class TableGroupServiceKitchenPosTest extends KitchenPosTestFixture {
 
     OrderTable firstOrderTable;
     OrderTable secondOrderTable;

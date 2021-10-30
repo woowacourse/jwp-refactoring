@@ -27,7 +27,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-class OrderServiceTest extends TestFixture {
+class OrderServiceKitchenPosTest extends KitchenPosTestFixture {
 
     public static final long MENU_ID = 1L;
 
