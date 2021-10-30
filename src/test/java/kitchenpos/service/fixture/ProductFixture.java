@@ -1,6 +1,8 @@
 package kitchenpos.service.fixture;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.Product;
 import kitchenpos.service.dao.TestProductDao;
 
@@ -13,25 +15,29 @@ public class ProductFixture {
     public static final Long 간장치킨 = 5L;
     public static final Long 순살치킨 = 6L;
 
+    private List<Product> fixtures;
+
     private final TestProductDao testProductDao;
 
     private ProductFixture(TestProductDao testProductDao) {
         this.testProductDao = testProductDao;
     }
 
-    public static ProductFixture createFixture(){
+    public static ProductFixture createFixture() {
         ProductFixture productFixture = new ProductFixture(new TestProductDao());
-        productFixture.createProduct();
+        productFixture.fixtures = productFixture.createProduct();
         return productFixture;
     }
 
-    private void createProduct() {
-        saveProduct("후라이드", new BigDecimal(16000));
-        saveProduct("양념치킨", new BigDecimal(16000));
-        saveProduct("반반치킨", new BigDecimal(16000));
-        saveProduct("통구이", new BigDecimal(16000));
-        saveProduct("간장치킨", new BigDecimal(17000));
-        saveProduct("순살치킨", new BigDecimal(17000));
+    private List<Product> createProduct() {
+        return Arrays.asList(
+            saveProduct("후라이드", new BigDecimal(16000)),
+            saveProduct("양념치킨", new BigDecimal(16000)),
+            saveProduct("반반치킨", new BigDecimal(16000)),
+            saveProduct("통구이", new BigDecimal(16000)),
+            saveProduct("간장치킨", new BigDecimal(17000)),
+            saveProduct("순살치킨", new BigDecimal(17000))
+        );
     }
 
     private Product saveProduct(String productName, BigDecimal price) {
@@ -41,7 +47,11 @@ public class ProductFixture {
         return testProductDao.save(product);
     }
 
-    public TestProductDao getTestProductDao(){
+    public TestProductDao getTestProductDao() {
         return testProductDao;
+    }
+
+    public List<Product> getFixtures(){
+        return fixtures;
     }
 }

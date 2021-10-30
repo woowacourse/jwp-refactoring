@@ -51,8 +51,8 @@ public class MenuGroupServiceTest {
 
         assertThat(expectedFixtures.size()).isEqualTo(list.size());
         expectedFixtures.forEach(
-            menu -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
-                .contains(menu)
+            menuGroup -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
+                .contains(menuGroup)
         );
     }
 }

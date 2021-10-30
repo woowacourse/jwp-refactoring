@@ -4,6 +4,7 @@ import static kitchenpos.service.fixture.MenuGroupFixture.한마리메뉴;
 import static kitchenpos.service.fixture.ProductFixture.후라이드;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -19,13 +20,12 @@ import kitchenpos.service.fixture.MenuFixture;
 import kitchenpos.service.fixture.MenuGroupFixture;
 import kitchenpos.service.fixture.MenuProductFixture;
 import kitchenpos.service.fixture.ProductFixture;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("메뉴 기능에서 ")
+@DisplayName("메뉴 기능에서")
 class MenuServiceTest {
 
     private MenuDao menuDao;
@@ -70,7 +70,7 @@ class MenuServiceTest {
             Menu expectedResult = menuService.create(menu);
 
             //than
-            Assertions.assertAll(
+            assertAll(
                 () -> assertThat(expectedResult.getName()).isEqualTo(DOUBLE_FRIED_CHICKEN_NAME),
                 () -> assertThat(expectedResult.getPrice()).isEqualTo(productPrice)
             );
@@ -89,7 +89,8 @@ class MenuServiceTest {
             menu.setMenuProducts(Collections.singletonList(fried));
 
             //when & than
-            assertThatThrownBy(()-> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("메뉴 그룹 ID가 없으면 예외가 발생한다")
@@ -105,7 +106,8 @@ class MenuServiceTest {
             menu.setMenuProducts(Collections.singletonList(fried));
 
             //when & than
-            assertThatThrownBy(()-> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("속한 상품들의 가격 합 보다 메뉴의 가격이 더 작으면 예외")
@@ -121,7 +123,8 @@ class MenuServiceTest {
             menu.setMenuProducts(Collections.singletonList(fried));
 
             //when & than
-            assertThatThrownBy(()-> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(menu))
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -133,11 +136,12 @@ class MenuServiceTest {
         //when & then
         List<Menu> list = menuService.list();
 
-        assertThat(list.size()).isEqualTo(expectedFixtures.size());
-        expectedFixtures.forEach(
-            menu -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
-                .usingElementComparatorIgnoringFields("menuProducts")
-                .contains(menu)
-        );
+        assertAll(
+            () -> assertThat(list.size()).isEqualTo(expectedFixtures.size()),
+            () -> expectedFixtures.forEach(
+                menu -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
+                    .usingElementComparatorIgnoringFields("menuProducts")
+                    .contains(menu)
+            ));
     }
 }
