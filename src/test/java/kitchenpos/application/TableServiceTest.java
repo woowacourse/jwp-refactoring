@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
@@ -20,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 class TableServiceTest {
@@ -36,16 +38,18 @@ class TableServiceTest {
     @DisplayName("테이블을 저장할 수 있다.")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable();
+        OrderTable expected = new OrderTable(1L, null, 1, false);
+
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1, false);
 
         given(orderTableRepository.save(any(OrderTable.class)))
-                .willReturn(orderTable);
+                .willReturn(expected);
 
         // when
-        OrderTable actual = tableService.create(orderTable);
+        OrderTable actual = tableService.create(orderTableRequest);
 
         // then
-        assertThat(actual).isEqualTo(orderTable);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -77,8 +81,7 @@ class TableServiceTest {
         targetOrderTable.setId(targetOrderTableId);
         targetOrderTable.setEmpty(!isEmptyTable);
 
-        OrderTable inputOrderTable = new OrderTable();
-        inputOrderTable.setEmpty(isEmptyTable);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(null, isEmptyTable);
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
@@ -88,7 +91,7 @@ class TableServiceTest {
                 .willReturn(targetOrderTable);
 
         // when
-        OrderTable actual = tableService.changeEmpty(targetOrderTableId, inputOrderTable);
+        OrderTable actual = tableService.changeEmpty(targetOrderTableId, orderTableRequest);
 
         // then
         assertThat(actual.isEmpty()).isEqualTo(isEmptyTable);
@@ -104,13 +107,13 @@ class TableServiceTest {
         OrderTable targetOrderTable = new OrderTable();
         targetOrderTable.setId(targetOrderTableId);
 
-        OrderTable inputOrderTable = new OrderTable();
+        OrderTableRequest orderTableRequest = new OrderTableRequest();
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(wrongOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -125,13 +128,13 @@ class TableServiceTest {
         targetOrderTable.setTableGroupId(tableGroupId);
         targetOrderTable.setId(targetOrderTableId);
 
-        OrderTable inputOrderTable = new OrderTable();
+        OrderTableRequest orderTableRequest = new OrderTableRequest();
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -144,7 +147,7 @@ class TableServiceTest {
         OrderTable targetOrderTable = new OrderTable();
         targetOrderTable.setId(targetOrderTableId);
 
-        OrderTable inputOrderTable = new OrderTable();
+        OrderTableRequest orderTableRequest = new OrderTableRequest();
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
@@ -152,7 +155,7 @@ class TableServiceTest {
                 .willReturn(true);
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -161,8 +164,7 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         // given
         int numberOfGuestsToChange = 1;
-        OrderTable inputOrderTable = new OrderTable();
-        inputOrderTable.setNumberOfGuests(numberOfGuestsToChange);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
         OrderTable targetOrderTable = new OrderTable();
@@ -175,7 +177,7 @@ class TableServiceTest {
                 .willReturn(targetOrderTable);
 
         // when
-        OrderTable actual = tableService.changeNumberOfGuests(targetOrderTableId, inputOrderTable);
+        OrderTable actual = tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(numberOfGuestsToChange);
@@ -186,13 +188,12 @@ class TableServiceTest {
     void changeNumberOfGuestsFailWhenInputNumberOfGuestsIsNegativeNumber() {
         // given
         int numberOfGuestsToChange = -1;
-        OrderTable inputOrderTable = new OrderTable();
-        inputOrderTable.setNumberOfGuests(numberOfGuestsToChange);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -202,7 +203,7 @@ class TableServiceTest {
         // given
         int numberOfGuestsToChange = 1;
         OrderTable inputOrderTable = new OrderTable();
-        inputOrderTable.setNumberOfGuests(numberOfGuestsToChange);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
         OrderTable targetOrderTable = new OrderTable();
@@ -213,7 +214,7 @@ class TableServiceTest {
                 .willReturn(Optional.of(targetOrderTable));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, inputOrderTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
