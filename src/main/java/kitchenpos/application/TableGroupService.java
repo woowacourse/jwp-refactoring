@@ -49,8 +49,7 @@ public class TableGroupService {
             }
         }
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(LocalDateTime.now());
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
@@ -58,7 +57,6 @@ public class TableGroupService {
             savedOrderTable.joinToTableGroup(tableGroup);
             savedOrderTable.changeStatus(false);
         }
-        savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }

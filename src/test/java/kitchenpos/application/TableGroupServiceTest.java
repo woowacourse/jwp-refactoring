@@ -42,16 +42,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹을 생성할 수 있다.")
     void create() {
         // given
-        Long tableGroupId = 1L;
-
         OrderTable orderTable1 = new OrderTable(1L, null, 1, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 1, true);
 
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(tableGroupId);
+        TableGroup tableGroup = new TableGroup(1L, LocalDateTime.now());
 
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
         List<Long> tableIds = orderTables.stream()
                 .map(OrderTable::getId)
@@ -148,9 +144,7 @@ class TableGroupServiceTest {
         OrderTable orderTable1 = new OrderTable(1L, anotherTableGroup, 1, true);
         OrderTable orderTable2 = new OrderTable(2L, anotherTableGroup, 1, true);
 
-        TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
 
         List<Long> tableIds = orderTables.stream()
                 .map(OrderTable::getId)

@@ -56,6 +56,9 @@ public class OrderTable {
     }
 
     public void joinToTableGroup(TableGroup tableGroup) {
+        if (tableGroup != null) {
+            tableGroup.getOrderTables().add(this);
+        }
         this.tableGroup = tableGroup;
     }
 
