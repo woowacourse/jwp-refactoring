@@ -3,9 +3,8 @@ package kitchenpos.fixtures;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.application.dto.MenuGroupResponse;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuFixtures {
@@ -22,26 +21,22 @@ public class MenuFixtures {
         Long menuGroupId,
         List<MenuProduct> menuProducts
     ) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price * 100, 2));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+        return new Menu(null, name, BigDecimal.valueOf(price * 100, 2), menuGroupId, menuProducts);
     }
 
     public static Menu createMenu() {
-        ArrayList<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(createMenuProduct());
-        menuProducts.add(createMenuProduct());
-
-        return createMenu(MENU_NAME, PRICE, MENU_GROUP_ID, menuProducts);
+        return createMenu(MENU_NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
     }
 
     public static Menu createMenu(int price) {
-        Menu menu = createMenu();
-        menu.setPrice(new BigDecimal(price));
-        return menu;
+        return createMenu(MENU_NAME, price, MENU_GROUP_ID, createMenuProducts());
+    }
+
+    private static List<MenuProduct> createMenuProducts() {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        menuProducts.add(createMenuProduct());
+        menuProducts.add(createMenuProduct());
+        return menuProducts;
     }
 
     public static MenuProduct createMenuProduct(
@@ -58,5 +53,13 @@ public class MenuFixtures {
 
     public static MenuProduct createMenuProduct() {
         return createMenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
+    }
+
+    public static MenuRequest createMenuRequest(Menu menu) {
+        return new MenuRequest(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+    }
+
+    public static MenuRequest createMenuRequest() {
+        return createMenuRequest(createMenu());
     }
 }

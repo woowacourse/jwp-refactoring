@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.MenuFixtures.createMenu;
+import static kitchenpos.fixtures.MenuFixtures.createMenuRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -12,6 +14,8 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -43,10 +47,12 @@ public class MenuServiceTest extends ServiceTest {
     private MenuService menuService;
 
     private Menu menu;
+    private MenuRequest request;
 
     @BeforeEach
     void setUp() {
-        menu = MenuFixtures.createMenu();
+        menu = createMenu();
+        request = createMenuRequest();
     }
 
     @Test
@@ -56,7 +62,7 @@ public class MenuServiceTest extends ServiceTest {
         given(menuDao.save(any())).willReturn(menu);
         given(menuProductDao.save(any())).willReturn(MenuFixtures.createMenuProduct());
 
-        assertDoesNotThrow(() -> menuService.create(menu));
+        assertDoesNotThrow(() -> menuService.create(request));
         verify(menuProductDao, times(menu.getMenuProducts().size())).save(any());
         verify(menuDao, times(1)).save(any());
     }
@@ -65,12 +71,12 @@ public class MenuServiceTest extends ServiceTest {
     void 메뉴_그룹이_존재하지_않을_경우_예외를_반환한다() {
         given(menuGroupDao.existsById(any())).willReturn(false);
 
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(menu));
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(request));
     }
 
     @Test
     void 생성_시_가격이_음수이면_예외를_반환한다() {
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(-1)));
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(createMenuRequest(createMenu(-1))));
     }
 
     @Test
@@ -81,8 +87,10 @@ public class MenuServiceTest extends ServiceTest {
         given(menuGroupDao.existsById(any())).willReturn(true);
         given(productDao.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
 
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(priceSum + 1)));
-
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> menuService.create(createMenuRequest(createMenu(priceSum + 1)))
+        );
     }
 
     @Test
@@ -91,9 +99,9 @@ public class MenuServiceTest extends ServiceTest {
         given(menuProductDao.findAllByMenuId(any()))
             .willReturn(Collections.singletonList(MenuFixtures.createMenuProduct()));
 
-        List<Menu> menus = assertDoesNotThrow(() -> menuService.list());
-        menus.stream()
-            .map(Menu::getMenuProducts)
+        List<MenuResponse> menuResponses = assertDoesNotThrow(() -> menuService.list());
+        menuResponses.stream()
+            .map(MenuResponse::getMenuProducts)
             .forEach(menuProducts -> assertThat(menuProducts).isNotEmpty());
     }
 }
