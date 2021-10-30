@@ -7,9 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
-import kitchenpos.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
 import kitchenpos.dto.response.OrderResponse;
 

@@ -12,9 +12,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.CreateOrderRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
+import kitchenpos.dto.request.order.OrderLineItemRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
 import kitchenpos.dto.response.MenuResponse;
 import kitchenpos.dto.response.OrderLineItemResponse;

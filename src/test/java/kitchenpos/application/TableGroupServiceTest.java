@@ -13,7 +13,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.TableIdRequest;
 import kitchenpos.dto.response.table.TableGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -47,9 +48,9 @@ class TableGroupServiceTest {
     @DisplayName("테이블을 묶어 그룹을 지정할 수 있다 - 그룹이 지정된 테이블들은 비어 있지 않은 상태가 된다.")
     void create() {
         // given
-        OrderTable table1Id = new OrderTable(단일_손님0_테이블1.getId(), null, 0, true);
-        OrderTable table2Id = new OrderTable(단일_손님0_테이블2.getId(), null, 0, true);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
         TableGroup expected = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(단일_손님0_테이블1, 단일_손님0_테이블2));
 
@@ -73,7 +74,7 @@ class TableGroupServiceTest {
     void createWrongTableInsufficientTable() {
         // given
         OrderTable table = new OrderTable(1L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(table));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(new TableIdRequest(table.getId())));
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
         // when & then
@@ -86,9 +87,9 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 등록된 테이블이여야 한다.")
     void createWrongTableNotRegister() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
@@ -102,12 +103,12 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 비어있어야 한다.")
     void createWrongTableNotEmpty() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, false);
-        OrderTable table2 = new OrderTable(2L, null, 5, true);
+        OrderTable table1 = new OrderTable(단일_손님0_테이블1.getId(), null, 3, false);
+        OrderTable table2 = new OrderTable(단일_손님0_테이블2.getId(), null, 5, true);
 
         given(orderTableRepository.findById(table1.getId())).willReturn(Optional.of(table1));
         given(orderTableRepository.findById(table2.getId())).willReturn(Optional.of(table2));
@@ -122,12 +123,12 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 소속된 다른 그룹이 없어야한다.")
     void createWrongTableInGroup() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, true);
-        OrderTable table2 = new OrderTable(2L, GROUP1, 5, true);
+        OrderTable table1 = new OrderTable(단일_손님0_테이블1.getId(), null, 3, true);
+        OrderTable table2 = new OrderTable(단일_손님0_테이블2.getId(), GROUP1, 5, true);
 
         given(orderTableRepository.findById(table1.getId())).willReturn(Optional.of(table1));
         given(orderTableRepository.findById(table2.getId())).willReturn(Optional.of(table2));

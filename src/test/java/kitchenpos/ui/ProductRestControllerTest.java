@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.request.product.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;

@@ -10,8 +10,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.TableIdRequest;
 import kitchenpos.dto.response.table.TableInGroupResponse;
 import kitchenpos.dto.response.table.TableGroupResponse;
 
@@ -31,9 +31,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("테이블을 묶어 그룹을 지정할 수 있다 - 그룹이 지정된 테이블들은 비어 있지 않은 상태가 된다.")
     void create() throws Exception {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
         TableGroupResponse expected = new TableGroupResponse(
                 1L,
@@ -58,8 +58,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("그룹에 둘 이상의 테이블이 포함되어야한다.")
     void createWrongTableInsufficientTable() throws Exception {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(table1Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(new TableIdRequest(1L)));
         willThrow(new IllegalArgumentException("그룹을 지정하려면 둘 이상의 테이블이 필요합니다."))
                 .given(tableGroupService).create(any(CreateTableGroupRequest.class));
 
@@ -78,9 +77,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("목록에 포함된 테이블들은 모두 등록된 테이블이여야 한다.")
     void createWrongTableNotRegister() throws Exception {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
         willThrow(new IllegalArgumentException("등록되지 않은 테이블은 그룹으로 지정할 수 없습니다."))
                 .given(tableGroupService).create(any(CreateTableGroupRequest.class));
 
@@ -99,9 +98,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("목록에 포함된 테이블들은 모두 비어있어야 하고 모두 소속된 다른 그룹이 없어야한다.")
     void createWrongTableNotEmpty() throws Exception {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        CreateTableGroupRequest group = new CreateTableGroupRequest(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
         willThrow(new IllegalArgumentException("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다."))
                 .given(tableGroupService).create(any(CreateTableGroupRequest.class));
 

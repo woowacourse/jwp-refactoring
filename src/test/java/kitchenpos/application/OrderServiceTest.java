@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.domain.*;
-import kitchenpos.dto.request.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.CreateOrderRequest;
-import kitchenpos.dto.request.OrderLineItemRequest;
+import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
+import kitchenpos.dto.request.order.CreateOrderRequest;
+import kitchenpos.dto.request.order.OrderLineItemRequest;
 import kitchenpos.dto.response.CreateOrderResponse;
 import kitchenpos.dto.response.OrderResponse;
 import org.mockito.InjectMocks;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.request.product.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 
 @RestController

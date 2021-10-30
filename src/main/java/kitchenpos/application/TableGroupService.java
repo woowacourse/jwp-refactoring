@@ -10,7 +10,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
-import kitchenpos.dto.request.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.CreateTableGroupRequest;
 import kitchenpos.dto.response.table.TableGroupResponse;
 
 @Service

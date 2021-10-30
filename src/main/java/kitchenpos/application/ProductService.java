@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
-import kitchenpos.dto.request.CreateProductRequest;
+import kitchenpos.dto.request.product.CreateProductRequest;
 import kitchenpos.dto.response.ProductResponse;
 
 @Service
