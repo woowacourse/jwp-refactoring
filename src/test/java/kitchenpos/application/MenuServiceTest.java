@@ -84,16 +84,19 @@ class MenuServiceTest {
                     .name("강정치킨")
                     .price(new BigDecimal(17000))
                     .build();
+
             menuProduct = MenuProductFactory.builder()
                     .productId(1L)
                     .quantity(2L)
                     .build();
+
             menu = MenuFactory.builder()
                     .name("후라이드+후라이드")
                     .price(new BigDecimal(19000))
                     .menuGroupId(1L)
                     .menuProducts(Collections.singletonList(menuProduct))
                     .build();
+
             savedMenu = MenuFactory.copy(menu)
                     .id(1L)
                     .build();

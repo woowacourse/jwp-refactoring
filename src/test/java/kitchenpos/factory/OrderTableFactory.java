@@ -67,11 +67,4 @@ public class OrderTableFactory {
         orderTable.setEmpty(empty);
         return orderTable;
     }
-
-    public List<OrderTable> buildList(int size) {
-        return IntStream.range(0, size)
-                .boxed()
-                .map(num -> build())
-                .collect(Collectors.toList());
-    }
 }
