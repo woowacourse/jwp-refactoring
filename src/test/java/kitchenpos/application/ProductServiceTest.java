@@ -60,6 +60,6 @@ class ProductServiceTest {
 
     @AfterEach
     void tearDown() {
-        productRepository.deleteAll();
+        productRepository.deleteAllInBatch();
     }
 }

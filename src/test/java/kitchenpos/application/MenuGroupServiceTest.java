@@ -6,16 +6,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 @SpringBootTestWithProfiles
 class MenuGroupServiceTest {
 
     @Autowired
     private MenuGroupService menuGroupService;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
     @Test
     void create() {
@@ -34,5 +36,10 @@ class MenuGroupServiceTest {
 
         List<MenuGroup> menuGroups = menuGroupService.list();
         assertThat(menuGroups.size()).isEqualTo(3);
+    }
+
+    @AfterEach
+    void tearDown() {
+        menuGroupRepository.deleteAllInBatch();
     }
 }
