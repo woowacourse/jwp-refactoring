@@ -44,4 +44,9 @@ public class AcceptanceTest {
                 .when().put(api);
     }
 
+    protected Response delete(String api) {
+        return RestAssured.given().log().all()
+                .when().delete(api);
+    }
+
 }

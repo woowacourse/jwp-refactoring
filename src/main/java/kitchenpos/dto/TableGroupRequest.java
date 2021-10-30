@@ -5,6 +5,9 @@ import java.util.List;
 public class TableGroupRequest {
     private List<Long> orderTableIds;
 
+    public TableGroupRequest() {
+    }
+
     public TableGroupRequest(List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
