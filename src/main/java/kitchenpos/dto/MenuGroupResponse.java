@@ -1,5 +1,6 @@
 package kitchenpos.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupResponse {
