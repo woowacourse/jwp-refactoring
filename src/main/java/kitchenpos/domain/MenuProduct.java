@@ -13,25 +13,22 @@ public class MenuProduct {
 
     @ManyToOne
     private Menu menu;
-    private Long productId;
+    @ManyToOne
+    private Product product;
     private long quantity;
 
     protected MenuProduct() {
     }
 
-    public MenuProduct(Long productId, long quantity) {
-        this(null, null, productId, quantity);
+    public MenuProduct(Product product, long quantity) {
+        this(null, null, product, quantity);
     }
 
-    private MenuProduct(Long seq, Menu menu, Long productId, long quantity) {
+    private MenuProduct(Long seq, Menu menu, Product product, long quantity) {
         this.seq = seq;
         this.menu = menu;
-        this.productId = productId;
+        this.product = product;
         this.quantity = quantity;
-    }
-
-    public void setMenu(final Menu menu) {
-        this.menu = menu;
     }
 
     public Long getSeq() {
@@ -42,8 +39,12 @@ public class MenuProduct {
         return menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 
     public long getQuantity() {

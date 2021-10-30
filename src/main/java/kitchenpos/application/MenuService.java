@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -41,7 +40,7 @@ public class MenuService {
         menu.register(menuValidator);
 
         menuRepository.save(menu);
-        menuProductRepository.saveAll(menu.getMenuProducts());
+        menuProductRepository.saveAll(menu.getMenuProducts().toList());
         return menu;
     }
 
@@ -50,7 +49,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(new MenuProducts(menuProductRepository.findAllByMenuId(menu.getId())));
         }
 
         return menus;

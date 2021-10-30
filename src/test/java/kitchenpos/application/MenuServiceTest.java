@@ -13,7 +13,6 @@ import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
@@ -69,7 +68,7 @@ class MenuServiceTest {
         Menu saved = menuService.create(input);
 
         assertNotNull(saved.getId());
-        assertThat(saved.getMenuProducts()).allSatisfy(it -> Objects.nonNull(it.getSeq()));
+        assertThat(saved.getMenuProducts().toList()).allMatch(it -> Objects.nonNull(it.getSeq()));
         assertThat(saved.getPrice()).isEqualByComparingTo(sumOfMenuProduct);
     }
 
@@ -158,7 +157,7 @@ class MenuServiceTest {
         List<Menu> menus = menuService.list();
 
         assertThat(menus).hasSize(1);
-        assertThat(menus).allMatch(menu -> !menu.getMenuProducts().isEmpty());
+        assertThat(menus).allMatch(menu -> !menu.getMenuProducts().toList().isEmpty());
     }
 
     @AfterEach

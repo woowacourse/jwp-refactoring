@@ -219,10 +219,10 @@ class OrderServiceTest {
     void tearDown() {
         orderLineItemRepository.deleteAllInBatch();
         orderRepository.deleteAllInBatch();
-        productRepository.deleteAllInBatch();
         orderTableRepository.deleteAllInBatch();
-        menuGroupRepository.deleteAllInBatch();
         menuProductRepository.deleteAllInBatch();
+        productRepository.deleteAllInBatch();
+        menuGroupRepository.deleteAllInBatch();
         menuRepository.deleteAllInBatch();
     }
 }

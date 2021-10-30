@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -18,7 +17,7 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
     @Transient
-    private List<MenuProduct> menuProducts;
+    private MenuProducts menuProducts;
 
     protected Menu() {
     }
@@ -33,14 +32,12 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProducts = new MenuProducts(menuProducts);
     }
 
     public void register(MenuValidator menuValidator) {
         menuValidator.validate(this);
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(this);
-        }
+        menuProducts.setMenu(this);
     }
 
     public Long getId() {
@@ -67,11 +64,11 @@ public class Menu {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
     }
 
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
+    public void setMenuProducts(MenuProducts menuProducts) {
         this.menuProducts = menuProducts;
     }
 }
