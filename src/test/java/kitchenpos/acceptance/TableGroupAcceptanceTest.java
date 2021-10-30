@@ -4,8 +4,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.ui.dto.OrderTableIdRequest;
-import kitchenpos.ui.dto.TableGroupRequest;
+import kitchenpos.ui.request.OrderTableIdRequest;
+import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,11 +80,11 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         테이블_그룹_요청.setOrderTables(Arrays.asList(주문_테이블3_ID, 주문_테이블4_ID));
 
         // when
-        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroup.class);
+        ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        TableGroup 응답_테이블_그룹 = response.getBody();
+        TableGroupResponse 응답_테이블_그룹 = response.getBody();
         assertThat(응답_테이블_그룹.getOrderTables().get(0).getId()).isEqualTo(주문_테이블3.getId());
         assertThat(응답_테이블_그룹.getOrderTables().get(1).getId()).isEqualTo(주문_테이블4.getId());
     }
@@ -98,7 +99,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         유효하지_않은_테이블_그룹_요청.setOrderTables(Arrays.asList(단일_주문_테이블_요청));
 
         // when
-        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroup.class);
+        ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroupResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
