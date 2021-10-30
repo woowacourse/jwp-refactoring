@@ -47,7 +47,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 정상 등록 :: 메뉴 품목의 합과 동일")
     void createPriceEqualToSumOfMenuProduct() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
 
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
 
@@ -63,7 +63,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 정상 등록 :: 메뉴 품목의 합에 일부 할인")
     void createPriceWithDiscount() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
 
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
         BigDecimal price = sumOfMenuProduct.subtract(BigDecimal.valueOf(1000));
@@ -80,7 +80,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 등록 실패 :: 메뉴 가격 null")
     void createWithNullPrice() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
 
         Menu input = new Menu("menu", null, menuGroup.getId(),
                 Collections.singletonList(menuProduct));
@@ -91,7 +91,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 등록 실패 :: 메뉴 가격 음수")
     void createWithNegativePrice() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
 
         Menu input = new Menu("menu", new BigDecimal(-1000), menuGroup.getId(),
                 Collections.singletonList(menuProduct));
@@ -102,7 +102,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 등록 실패 :: 메뉴 가격이 메뉴 품목 가격의 합보다 비싼 경우")
     void createWithExpensivePrice() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
 
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
         BigDecimal expensivePrice = sumOfMenuProduct.add(BigDecimal.valueOf(1000));
@@ -116,7 +116,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 등록 실패 :: 존재하지 않는 메뉴 그룹")
     void createWithNotExistingMenuGroup() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
 
         Long notExistingMenuGroupId = Long.MAX_VALUE;
@@ -132,7 +132,7 @@ class MenuServiceTest {
     void createWithMenuGroupWithNotExistingProduct() {
         Long notExistingProductId = Long.MAX_VALUE;
 
-        menuProduct = new MenuProduct(null, null, notExistingProductId, 3);
+        menuProduct = new MenuProduct(notExistingProductId, 3);
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
 
         Menu input = new Menu("menu", sumOfMenuProduct, menuGroup.getId(),
@@ -144,7 +144,7 @@ class MenuServiceTest {
     @Test
     @DisplayName("메뉴 품목 정상 조회")
     void searchMenuList() {
-        menuProduct = new MenuProduct(null, null, product.getId(), 3);
+        menuProduct = new MenuProduct(product.getId(), 3);
         BigDecimal sumOfMenuProduct = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
         Menu input = new Menu("menu", sumOfMenuProduct, menuGroup.getId(),
                 Collections.singletonList(menuProduct));
