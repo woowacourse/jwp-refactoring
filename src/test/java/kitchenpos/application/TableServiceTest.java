@@ -11,13 +11,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTableRepository;
-import kitchenpos.domain.TableGroup;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.OrderTableFixture.*;
+import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -52,8 +52,7 @@ class TableServiceTest {
     @DisplayName("전체 테이블을 조회할 수 있다.")
     void list() {
         // given
-        TableGroup group = new TableGroup(1L);
-        OrderTable table1 = new OrderTable(1L, group, 5, true);
+        OrderTable table1 = new OrderTable(1L, GROUP1, 5, true);
         OrderTable table2 = new OrderTable(2L, null, 0, true);
         List<OrderTable> expected = Arrays.asList(table1, table2);
         given(orderTableRepository.findAll()).willReturn(expected);
@@ -176,7 +175,7 @@ class TableServiceTest {
     @DisplayName("손님의 수를 변경하려면 테이블은 비어있지 않아야한다.")
     void changeNumberOfGuestsWrongTableEmpty() {
         // given
-        OrderTable table = 단일_손님0_테이블;
+        OrderTable table = 단일_손님0_테이블1;
         OrderTable changeNumberTable = new OrderTable(5, table.isEmpty());
         given(orderTableRepository.findById(table.getId())).willReturn(Optional.of(table));
 

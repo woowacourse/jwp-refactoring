@@ -31,10 +31,6 @@ public class OrderTable {
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this(id, tableGroup, numberOfGuests, empty, new ArrayList<>());
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty, List<Order> orders) {
@@ -81,6 +77,10 @@ public class OrderTable {
         if (this.empty) {
             throw new IllegalArgumentException("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
         }
+    }
+
+    public void changeFull() {
+        this.empty = false;
     }
 
     public Long getId() {

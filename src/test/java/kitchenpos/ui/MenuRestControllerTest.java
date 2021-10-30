@@ -57,7 +57,8 @@ class MenuRestControllerTest extends ControllerTest {
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
         MenuProductResponse expected_후라이드치킨 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
         MenuProductResponse expected_양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
-        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays.asList(expected_후라이드치킨, expected_양념치킨));
+        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays
+                .asList(expected_후라이드치킨, expected_양념치킨));
         given(menuService.create(any(CreateMenuRequest.class))).willReturn(expected);
 
         // when
@@ -180,8 +181,10 @@ class MenuRestControllerTest extends ControllerTest {
         MenuProductResponse 양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
         MenuProductResponse 후라이드치킨2 = new MenuProductResponse(3L, ProductResponse.from(후라이드치킨_정보), 1);
         MenuProductResponse 간장치킨 = new MenuProductResponse(4L, ProductResponse.from(간장치킨_정보), 1);
-        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays.asList(후라이드치킨1, 양념치킨));
-        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(할인메뉴), Arrays.asList(후라이드치킨2, 간장치킨));
+        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays
+                .asList(후라이드치킨1, 양념치킨));
+        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(할인메뉴), Arrays
+                .asList(후라이드치킨2, 간장치킨));
         List<MenuResponse> expected = Arrays.asList(양념반_후라이드반, 간장반_후라이드반);
         given(menuService.list()).willReturn(expected);
 

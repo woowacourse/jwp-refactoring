@@ -48,7 +48,8 @@ class ProductRestControllerTest extends ControllerTest {
     void createWrongPriceNull() throws Exception {
         // given
         CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", null);
-        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(CreateProductRequest.class));
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService)
+                                                                                 .create(any(CreateProductRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
@@ -66,7 +67,8 @@ class ProductRestControllerTest extends ControllerTest {
     void createWrongPriceUnderZero() throws Exception {
         // given
         CreateProductRequest 강정치킨 = new CreateProductRequest("강정치킨", BigDecimal.valueOf(-1));
-        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService).create(any(CreateProductRequest.class));
+        willThrow(new IllegalArgumentException("상품의 가격은 비어있을 수 없고 0 이상이어야 합니다.")).given(productService)
+                                                                                 .create(any(CreateProductRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(post("/api/products")
