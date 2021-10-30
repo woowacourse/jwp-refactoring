@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "table_group")
 public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -5,6 +5,7 @@ import kitchenpos.exception.menuproduct.AlreadyAssignedMenuProductException;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "menu_product")
 public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

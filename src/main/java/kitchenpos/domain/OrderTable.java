@@ -5,6 +5,7 @@ import kitchenpos.exception.table.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "order_table")
 public class OrderTable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

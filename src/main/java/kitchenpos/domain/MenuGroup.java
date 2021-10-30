@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "menu_group")
 public class MenuGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

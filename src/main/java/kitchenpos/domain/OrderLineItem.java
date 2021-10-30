@@ -5,6 +5,7 @@ import kitchenpos.exception.orderlineitem.AlreadyAssignedOrderLineItemException;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "order_line_item")
 public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
