@@ -6,7 +6,9 @@ import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.exception.menu.EmptyOrderLineItemsException;
 import kitchenpos.exception.menu.NoSuchMenuException;
+import kitchenpos.exception.order.CannotChangeOrderStatusAsCompletionException;
 import kitchenpos.exception.order.CannotPlaceAnOrderAsTableIsEmptyException;
+import kitchenpos.exception.order.NoSuchOrderException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -200,7 +202,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, mock(OrderRequest.class)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchOrderException.class);
     }
 
     @Test
@@ -214,7 +216,7 @@ class OrderServiceTest {
 
         // when, then
         assertThatThrownBy(() -> orderService.changeOrderStatus(1L, mock(OrderRequest.class)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeOrderStatusAsCompletionException.class);
     }
 
     @Test

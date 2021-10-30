@@ -1,10 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
-import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.exception.menu.NoSuchMenuException;
+import kitchenpos.exception.order.CannotChangeOrderStatusAsCompletionException;
+import kitchenpos.exception.order.NoSuchOrderException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -13,10 +14,8 @@ import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,10 +68,10 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
         final Order order = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(NoSuchOrderException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), order.getOrderStatus())) {
-            throw new IllegalArgumentException();
+            throw new CannotChangeOrderStatusAsCompletionException();
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
