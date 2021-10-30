@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -12,7 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -53,39 +56,43 @@ class TableGroupServiceTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
 
+        List<Long> tableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         given(orderTableRepository.findAllByIdIn(any(List.class)))
-                .willReturn(orderTables);
+                        .willReturn(orderTables);
         given(tableGroupRepository.save(any(TableGroup.class)))
                 .willReturn(tableGroup);
 
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+
         // when
-        TableGroup actual = tableGroupService.create(tableGroup);
+        TableGroup actual = tableGroupService.create(tableGroupRequest);
 
         // then
         assertThat(actual).isEqualTo(tableGroup);
     }
 
     @Test
-    @DisplayName("테이블 그룹에 테이블이 없다면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 요청에 테이블이 없다면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasNoTables() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList());
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("테이블 그룹에 테이블이 1개 미만 존재하면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 요청에 테이블이 1개 미만 존재하면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasUnderTwoTables() {
         // given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(mock(OrderTable.class)));
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(mock(Long.class)));
 
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -102,11 +109,17 @@ class TableGroupServiceTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
 
+        List<Long> tableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         given(orderTableRepository.findAllByIdIn(any(List.class)))
                 .willReturn(Arrays.asList());
 
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -125,11 +138,17 @@ class TableGroupServiceTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
 
+        List<Long> tableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         given(orderTableRepository.findAllByIdIn(any(List.class)))
                 .willReturn(orderTables);
 
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -151,11 +170,17 @@ class TableGroupServiceTest {
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         tableGroup.setOrderTables(orderTables);
 
+        List<Long> tableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
+
         given(orderTableRepository.findAllByIdIn(any(List.class)))
                 .willReturn(orderTables);
 
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
+
         // when, then
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+        assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
