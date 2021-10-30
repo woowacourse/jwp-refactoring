@@ -18,35 +18,21 @@ public class OrderLineItem {
     @Column(nullable = false)
     private long quantity;
 
-    public Long getSeq() {
-        return seq;
+    public OrderLineItem() {
     }
 
-    public void setSeq(final Long seq) {
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        this(null, order, menu, quantity);
+    }
+
+    public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
         this.seq = seq;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public Menu getMenu() {
-        return menu;
-    }
-
-    public void setMenu(Menu menu) {
         this.menu = menu;
-    }
-
-    public long getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
         this.quantity = quantity;
+
+        if (order != null) {
+            order.getOrderLineItems().add(this);
+        }
     }
 }

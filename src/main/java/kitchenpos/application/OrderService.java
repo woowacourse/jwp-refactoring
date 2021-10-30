@@ -64,23 +64,16 @@ public class OrderService {
 
         final Order savedOrder = orderRepository.save(order);
 
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setOrder(order);
 
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             // todo 레포 조회 리팩토링
             Long menuId = orderLineItemRequest.getMenuId();
             Menu menu = menuRepository.findById(menuId)
                     .orElseThrow(IllegalArgumentException::new);
 
-            orderLineItem.setMenu(menu);
-            orderLineItem.setQuantity(orderLineItemRequest.getQuantiy());
-
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            OrderLineItem orderLineItem = new OrderLineItem(order, menu, orderLineItemRequest.getQuantiy());
+            orderLineItemRepository.save(orderLineItem);
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
         return savedOrder;
     }
@@ -88,9 +81,7 @@ public class OrderService {
     public List<Order> list() {
         final List<Order> orders = orderRepository.findAll();
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
+        // todo Response dto 만들어 OrderLineItems 담기
 
         return orders;
     }
@@ -105,11 +96,12 @@ public class OrderService {
         }
 
         final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
+        savedOrder.changeOrderStatus(orderStatus.name());
 
         orderRepository.save(savedOrder);
 
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
+//        todo Response DTO 만들어 담아내기
+//        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrderId(orderId));
 
         return savedOrder;
     }
