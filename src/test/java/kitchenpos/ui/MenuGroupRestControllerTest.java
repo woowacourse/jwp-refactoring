@@ -10,6 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -24,9 +26,9 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹을 생성할 수 있다.")
     void create() throws Exception {
         // given
-        MenuGroup 추천메뉴 = new MenuGroup("추천 메뉴");
-        MenuGroup expected = new MenuGroup(1L, "추천 메뉴");
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(expected);
+        CreateMenuGroupRequest 추천메뉴 = new CreateMenuGroupRequest("추천 메뉴");
+        MenuGroupResponse expected = new MenuGroupResponse(1L, "추천 메뉴");
+        given(menuGroupService.create(any(CreateMenuGroupRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/menu-groups")
@@ -43,9 +45,9 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("전체 메뉴 그룹을 조회할 수 있다.")
     void list() throws Exception {
         // given
-        MenuGroup 추천메뉴 = new MenuGroup(1L, "추천 메뉴");
-        MenuGroup 세트메뉴 = new MenuGroup(2L, "세트 메뉴");
-        List<MenuGroup> expected = Arrays.asList(추천메뉴, 세트메뉴);
+        MenuGroupResponse 추천메뉴 = new MenuGroupResponse(1L, "추천 메뉴");
+        MenuGroupResponse 세트메뉴 = new MenuGroupResponse(2L, "세트 메뉴");
+        List<MenuGroupResponse> expected = Arrays.asList(추천메뉴, 세트메뉴);
         given(menuGroupService.list()).willReturn(expected);
 
         // when

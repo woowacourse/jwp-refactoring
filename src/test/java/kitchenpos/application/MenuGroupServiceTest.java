@@ -9,12 +9,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("MenuGroupService 단위 테스트")
@@ -31,15 +34,15 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 이름을 통해 메뉴 그룹을 생성할 수 있다.")
     void create() {
         // given
-        MenuGroup 추천메뉴 = new MenuGroup("추천 메뉴");
+        CreateMenuGroupRequest 추천메뉴 = new CreateMenuGroupRequest("추천 메뉴");
         MenuGroup expected = new MenuGroup(1L, "추천 메뉴");
-        given(menuGroupRepository.save(추천메뉴)).willReturn(expected);
+        given(menuGroupRepository.save(any(MenuGroup.class))).willReturn(expected);
 
         // when
-        MenuGroup actual = menuGroupService.create(추천메뉴);
+        MenuGroupResponse actual = menuGroupService.create(추천메뉴);
 
         // then
-        assertEquals(expected, actual);
+        assertEquals(expected.getName(), actual.getName());
     }
 
     @Test
@@ -52,9 +55,10 @@ class MenuGroupServiceTest {
         given(menuGroupRepository.findAll()).willReturn(expected);
 
         // when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
 
         // then
-        assertIterableEquals(expected, actual);
+        assertThat(actual.get(0).getName()).isEqualTo("추천 메뉴");
+        assertThat(actual.get(1).getName()).isEqualTo("세트 메뉴");
     }
 }
