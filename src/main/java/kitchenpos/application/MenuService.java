@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,18 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MenuService {
     private final MenuDao menuDao;
-    private final MenuProductDao menuProductDao;
     private final ProductRepository productRepository;
     private final MenuGroupRepository menuGroupRepository;
+    private final MenuProductRepository menuProductRepository;
 
-    public MenuService(
-            final MenuDao menuDao,
-            final MenuProductDao menuProductDao,
-            ProductRepository productRepository, MenuGroupRepository menuGroupRepository) {
+    public MenuService(final MenuDao menuDao, ProductRepository productRepository,
+                       MenuGroupRepository menuGroupRepository,
+                       MenuProductRepository menuProductRepository) {
         this.menuDao = menuDao;
-        this.menuProductDao = menuProductDao;
         this.productRepository = productRepository;
         this.menuGroupRepository = menuGroupRepository;
+        this.menuProductRepository = menuProductRepository;
     }
 
     @Transactional
@@ -62,7 +61,7 @@ public class MenuService {
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
         for (final MenuProduct menuProduct : menuProducts) {
             menuProduct.setMenuId(menuId);
-            savedMenuProducts.add(menuProductDao.save(menuProduct));
+            savedMenuProducts.add(menuProductRepository.save(menuProduct));
         }
         savedMenu.setMenuProducts(savedMenuProducts);
 
@@ -73,7 +72,7 @@ public class MenuService {
         final List<Menu> menus = menuDao.findAll();
 
         for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
+            menu.setMenuProducts(menuProductRepository.findAllByMenuId(menu.getId()));
         }
 
         return menus;
