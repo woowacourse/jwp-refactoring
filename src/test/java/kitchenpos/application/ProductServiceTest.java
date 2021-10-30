@@ -32,11 +32,7 @@ class ProductServiceTest {
         // given
         String productName = "product";
         BigDecimal productPrice = BigDecimal.valueOf(10000L);
-
-        Product product = new Product();
-        product.setId(1L);
-        product.setName(productName);
-        product.setPrice(productPrice);
+        Product product = new Product(productName, productPrice);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
@@ -57,10 +53,7 @@ class ProductServiceTest {
         String productName = "product";
         BigDecimal productPrice = BigDecimal.valueOf(-10000L);
 
-        Product product = new Product();
-        product.setId(1L);
-        product.setName(productName);
-        product.setPrice(productPrice);
+        Product product = new Product(productName, productPrice);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
@@ -78,10 +71,7 @@ class ProductServiceTest {
         // given
         String productName = "product";
 
-        Product product = new Product();
-        product.setId(1L);
-        product.setName(productName);
-        product.setPrice(null);
+        Product product = new Product(productName, null);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
@@ -97,15 +87,8 @@ class ProductServiceTest {
     @DisplayName("등록된 상품들을 불러올 수 있다.")
     void list() {
         // given
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setName("product1");
-        product1.setPrice(BigDecimal.valueOf(10000L));
-
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setName("product2");
-        product2.setPrice(BigDecimal.valueOf(10000L));
+        Product product1 = new Product("product1", BigDecimal.valueOf(10000L));
+        Product product2 = new Product("product2", BigDecimal.valueOf(10000L));
 
         List<Product> expected = Arrays.asList(product1, product2);
         given(productRepository.findAll())

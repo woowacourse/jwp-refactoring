@@ -60,10 +60,8 @@ class MenuServiceTest {
         expected.setPrice(price);
         expected.setMenuGroup(menuGroup);
 
-        Product product = new Product();
         long productId = 1L;
-        product.setId(productId);
-        product.setPrice(BigDecimal.valueOf(1000));
+        Product product = new Product(productId, "productName", BigDecimal.valueOf(1000));
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProduct(product);
