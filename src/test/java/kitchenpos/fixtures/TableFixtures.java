@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -46,11 +47,7 @@ public class TableFixtures {
         LocalDateTime createdDate,
         List<OrderTable> orderTables
     ) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(id, createdDate, orderTables);
     }
 
     public static TableGroup createTableGroup() {
@@ -59,5 +56,13 @@ public class TableFixtures {
 
     public static TableGroup createTableGroup(List<OrderTable> orderTables) {
         return createTableGroup(TABLE_GROUP_ID, LocalDateTime.now(), orderTables);
+    }
+
+    public static TableGroupRequest createTableGroupRequest(TableGroup tableGroup) {
+        return new TableGroupRequest(tableGroup.getOrderTables());
+    }
+
+    public static TableGroupRequest createTableGroupRequest() {
+        return createTableGroupRequest(createTableGroup());
     }
 }

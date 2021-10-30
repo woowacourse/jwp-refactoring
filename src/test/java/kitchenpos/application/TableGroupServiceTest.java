@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.TableFixtures.createTableGroup;
+import static kitchenpos.fixtures.TableFixtures.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +13,8 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
@@ -38,10 +42,12 @@ class TableGroupServiceTest extends ServiceTest {
     private TableGroupService tableGroupService;
 
     private TableGroup tableGroup;
+    private TableGroupRequest request;
 
     @BeforeEach
     void setUp() {
-        tableGroup = TableFixtures.createTableGroup();
+        tableGroup = createTableGroup();
+        request = createTableGroupRequest();
     }
 
     @Test
@@ -49,15 +55,15 @@ class TableGroupServiceTest extends ServiceTest {
         given(orderTableDao.findAllByIdIn(any())).willReturn(tableGroup.getOrderTables());
         given(tableGroupDao.save(any())).willReturn(tableGroup);
 
-        TableGroup savedTableGroup = assertDoesNotThrow(() -> tableGroupService.create(tableGroup));
+        TableGroupResponse savedTableGroup = assertDoesNotThrow(() -> tableGroupService.create(request));
         savedTableGroup.getOrderTables()
             .forEach(orderTable -> assertThat(orderTable.getTableGroupId()).isNotNull());
     }
 
     @Test
     void 생성_시_지정_할_주문_테이블들이_2개_미만_이면_예외를_반환한다() {
-        TableGroup invalidTableGroup = TableFixtures.createTableGroup(
-            Collections.singletonList(TableFixtures.createOrderTable(true))
+        TableGroupRequest invalidTableGroup = createTableGroupRequest(
+            createTableGroup(Collections.singletonList(TableFixtures.createOrderTable(true)))
         );
 
         assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(invalidTableGroup));
@@ -68,14 +74,14 @@ class TableGroupServiceTest extends ServiceTest {
         given(orderTableDao.findAllByIdIn(any()))
             .willReturn(Collections.singletonList(TableFixtures.createOrderTable(true)));
 
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(tableGroup));
+        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
     }
 
     @Test
     void 생성_시_주문_테이블들이_비어있으면_예외를_반환한다() {
         given(orderTableDao.findAllByIdIn(any())).willReturn(TableFixtures.createOrderTables(false));
 
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(tableGroup));
+        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
     }
 
     @Test
@@ -85,7 +91,7 @@ class TableGroupServiceTest extends ServiceTest {
         groupedTables.add(TableFixtures.createOrderTable(2L, 1L, 10, true));
         given(orderTableDao.findAllByIdIn(any())).willReturn(groupedTables);
 
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(tableGroup));
+        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
     }
 
     @Test
