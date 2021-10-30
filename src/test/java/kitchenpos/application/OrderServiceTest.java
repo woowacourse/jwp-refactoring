@@ -1,21 +1,19 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -52,12 +50,14 @@ class OrderServiceTest {
         long orderId = 1L;
         expected.setId(orderId);
 
+        MenuGroup menuGroup = new MenuGroup();
         long menuId = 1L;
+        Menu menu = new Menu(menuId, "name", BigDecimal.valueOf(1000L), menuGroup);
         long menuQuantity = 1L;
 
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setOrderId(orderId);
+        orderLineItem.setMenu(menu);
+        orderLineItem.setOrder(expected);
         orderLineItem.setQuantity(menuQuantity);
 
         expected.setOrderLineItems(Arrays.asList(orderLineItem));
@@ -71,6 +71,8 @@ class OrderServiceTest {
 
         given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(expected.getOrderLineItems().size()));
+        given(menuRepository.findById(anyLong()))
+                .willReturn(Optional.of(menu));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class)))

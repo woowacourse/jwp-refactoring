@@ -1,15 +1,12 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -71,8 +68,14 @@ public class OrderService {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setOrderId(orderId);
-            orderLineItem.setMenuId(orderLineItemRequest.getMenuId());
+            orderLineItem.setOrder(order);
+
+            // todo 레포 조회 리팩토링
+            Long menuId = orderLineItemRequest.getMenuId();
+            Menu menu = menuRepository.findById(menuId)
+                    .orElseThrow(IllegalArgumentException::new);
+
+            orderLineItem.setMenu(menu);
             orderLineItem.setQuantity(orderLineItemRequest.getQuantiy());
 
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
