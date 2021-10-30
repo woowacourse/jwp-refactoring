@@ -18,6 +18,20 @@ public class Menu {
     @Column(nullable = false)
     private Long menuGroupId;
 
+    public Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
+    }
+
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+    }
+
     @OneToMany(mappedBy = "menuId")
     private List<MenuProduct> menuProducts;
 
