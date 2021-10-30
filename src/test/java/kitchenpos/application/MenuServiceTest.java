@@ -55,33 +55,33 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
         // given
+        long productId = 1L;
+        long menuProductQuantity = 1;
+        MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
+
         String menuName = "menuName";
         Long menuPrice = 1000L;
         Long menuGroupId = 1L;
-
-        long productId = 1L;
-        long menuProductQuantity = 1;
-
-        MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
         MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, menuGroupId, Arrays.asList(menuProductRequest));
 
-        MenuGroup menuGroup = new MenuGroup(menuGroupId, "menuGroupName");
         Product product = new Product(productId, "productName", 1000L);
 
+        MenuGroup menuGroup = new MenuGroup(menuGroupId, "menuGroupName");
+
         MenuProduct menuProduct = new MenuProduct(product, menuProductQuantity);
-        Menu expectedMenu = new Menu(menuName, menuPrice, menuGroup, Arrays.asList(menuProduct));
+        Menu savedMenu = new Menu(menuName, menuPrice, menuGroup, Arrays.asList(menuProduct));
 
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
-                .willReturn(expectedMenu);
+                .willReturn(savedMenu);
         given(menuProductRepository.save(any(MenuProduct.class)))
                 .willReturn(menuProduct);
 
         // when
-        MenuResponse expected = MenuResponse.from(expectedMenu);
+        MenuResponse expected = MenuResponse.from(savedMenu);
         MenuResponse actual = menuService.create(menuRequest);
 
         // then
@@ -149,18 +149,18 @@ class MenuServiceTest {
         Product product = new Product("product1", 10000L);
 
         MenuProduct menuProduct1 = new MenuProduct(product, 1L);
-        MenuProduct menuProduct2 = new MenuProduct(product, 1L);
+        MenuProduct menuProduct2 = new MenuProduct(product, 2L);
 
         MenuGroup menuGroup = new MenuGroup("menuGroup");
 
         Menu menu1 = new Menu("menuName", 10000L, menuGroup, Arrays.asList(menuProduct1));
-        Menu menu2 = new Menu("menuName", 10000L, menuGroup, Arrays.asList(menuProduct2));
+        Menu menu2 = new Menu("menuName", 20000L, menuGroup, Arrays.asList(menuProduct2));
 
-        List<Menu> expectedMenu = Arrays.asList(menu1, menu2);
+        List<Menu> savedMenu = Arrays.asList(menu1, menu2);
         given(menuRepository.findAll())
-                .willReturn(expectedMenu);
+                .willReturn(savedMenu);
 
-        List<MenuResponse> expected = expectedMenu.stream()
+        List<MenuResponse> expected = savedMenu.stream()
                 .map(MenuResponse::from)
                 .collect(Collectors.toList());
 
