@@ -1,4 +1,4 @@
-package kitchenpos.application;
+package kitchenpos.application.menugroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.LinkedList;
 import java.util.List;
+import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;
