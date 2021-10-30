@@ -4,9 +4,10 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableEmptyRequest;
-import kitchenpos.ui.dto.OrderTableNumberOfGuestRequest;
-import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.request.OrderTableEmptyRequest;
+import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +26,7 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest orderTableRequest) {
+    public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
         OrderTable newOrderTable = new OrderTable.Builder()
                 .id(null)
                 .tableGroup(null)
@@ -33,15 +34,17 @@ public class TableService {
                 .empty(orderTableRequest.isEmpty())
                 .build();
 
-        return orderTableRepository.save(newOrderTable);
+        orderTableRepository.save(newOrderTable);
+        return OrderTableResponse.of(newOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        final List<OrderTable> orderTables = orderTableRepository.findAllFetchJoinTableGroup();
+        return OrderTableResponse.toList(orderTables);
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableEmptyRequest orderTableEmptyRequest) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -56,11 +59,12 @@ public class TableService {
 
         savedOrderTable.setEmpty(orderTableEmptyRequest.getEmpty());
 
-        return orderTableRepository.save(savedOrderTable);
+        orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.of(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableNumberOfGuestRequest orderTableNumberOfGuestRequest) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableNumberOfGuestRequest orderTableNumberOfGuestRequest) {
         final int numberOfGuests = orderTableNumberOfGuestRequest.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
@@ -76,6 +80,7 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableRepository.save(savedOrderTable);
+        orderTableRepository.save(savedOrderTable);
+        return OrderTableResponse.of(savedOrderTable);
     }
 }

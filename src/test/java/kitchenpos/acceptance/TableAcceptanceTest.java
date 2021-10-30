@@ -3,9 +3,10 @@ package kitchenpos.acceptance;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.ui.dto.OrderTableEmptyRequest;
-import kitchenpos.ui.dto.OrderTableNumberOfGuestRequest;
-import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.request.OrderTableEmptyRequest;
+import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,7 +53,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void getOrders() {
         // when
-        ResponseEntity<OrderTable[]> response = testRestTemplate.getForEntity("/api/tables", OrderTable[].class);
+        ResponseEntity<OrderTableResponse[]> response = testRestTemplate.getForEntity("/api/tables", OrderTableResponse[].class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -68,13 +69,13 @@ class TableAcceptanceTest extends AcceptanceTest {
         주문_테이블3_요청.setEmpty(true);
 
         // when
-        ResponseEntity<OrderTable> response = testRestTemplate.postForEntity("/api/tables", 주문_테이블3_요청, OrderTable.class);
+        ResponseEntity<OrderTableResponse> response = testRestTemplate.postForEntity("/api/tables", 주문_테이블3_요청, OrderTableResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        OrderTable 응답된_주문_테이블 = response.getBody();
+        OrderTableResponse 응답된_주문_테이블 = response.getBody();
         assertThat(응답된_주문_테이블.getNumberOfGuests()).isZero();
-        assertThat(응답된_주문_테이블.isEmpty()).isTrue();
+        assertThat(응답된_주문_테이블.getEmpty()).isTrue();
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경한다")
