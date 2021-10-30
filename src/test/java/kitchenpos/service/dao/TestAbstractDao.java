@@ -1,4 +1,4 @@
-package kitchenpos.dao;
+package kitchenpos.service.dao;
 
 import static java.util.stream.Collectors.toList;
 
@@ -11,8 +11,9 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 
 abstract class TestAbstractDao<T> {
-    public final AtomicLong incrementId;
-    public final Map<Long, T> database;
+
+    protected final AtomicLong incrementId;
+    protected final Map<Long, T> database;
 
     public TestAbstractDao() {
         this.incrementId = new AtomicLong(1L);

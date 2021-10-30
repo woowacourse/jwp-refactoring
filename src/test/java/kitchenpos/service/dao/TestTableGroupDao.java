@@ -1,7 +1,8 @@
-package kitchenpos.dao;
+package kitchenpos.service.dao;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.TableGroup;
 
 public class TestTableGroupDao extends TestAbstractDao<TableGroup> implements TableGroupDao {

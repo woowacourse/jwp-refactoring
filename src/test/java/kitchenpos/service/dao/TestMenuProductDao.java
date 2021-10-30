@@ -1,10 +1,11 @@
-package kitchenpos.dao;
+package kitchenpos.service.dao;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
+import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.MenuProduct;
 
 public class TestMenuProductDao extends TestAbstractDao<MenuProduct> implements MenuProductDao {

@@ -1,10 +1,11 @@
-package kitchenpos.dao;
+package kitchenpos.service.dao;
 
 import static java.util.stream.Collectors.toList;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.BiConsumer;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
 
 public class TestOrderTableDao extends TestAbstractDao<OrderTable> implements OrderTableDao {
