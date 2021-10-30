@@ -113,7 +113,7 @@ class OrderServiceTest {
         given(menuRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
-        // when
+        // when, then
         assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(NoSuchMenuException.class);
 
