@@ -1,30 +1,24 @@
-package kitchenpos.dto.request;
+package kitchenpos.dto.request.menu;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.request.menu.MenuProductRequest;
 
 public class CreateMenuRequest {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductRequest> menuProducts;
 
     public CreateMenuRequest() {
     }
 
-    public CreateMenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public CreateMenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public Menu toEntity(MenuGroup menuGroup) {
-        return new Menu(name, price, menuGroup, menuProducts);
     }
 
     public String getName() {
@@ -39,7 +33,7 @@ public class CreateMenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
     }
 }

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.request.menu.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

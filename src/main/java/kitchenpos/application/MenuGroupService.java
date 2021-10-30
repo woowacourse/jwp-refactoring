@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.dto.request.CreateMenuGroupRequest;
+import kitchenpos.dto.request.menu.CreateMenuGroupRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 
 @Service

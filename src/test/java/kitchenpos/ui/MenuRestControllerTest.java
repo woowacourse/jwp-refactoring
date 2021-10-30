@@ -14,7 +14,8 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.menu.CreateMenuRequest;
+import kitchenpos.dto.request.menu.MenuProductRequest;
 import kitchenpos.dto.response.MenuGroupResponse;
 import kitchenpos.dto.response.MenuProductResponse;
 import kitchenpos.dto.response.MenuResponse;
@@ -54,7 +55,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴를 등록할 수 있다")
     void create() throws Exception {
         // given
-        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
+                "양념 반 + 후라이드 반",
+                BigDecimal.valueOf(30000),
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                )
+        );
         MenuProductResponse expected_후라이드치킨 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
         MenuProductResponse expected_양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
         MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays
@@ -76,7 +85,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 null이면 메뉴를 등록할 수 없다.")
     void createWrongPriceNull() throws Exception {
         // given
-        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", null, 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
+                "양념 반 + 후라이드 반",
+                null,
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                )
+        );
         willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
                 .given(menuService)
                 .create(any(CreateMenuRequest.class));
@@ -96,7 +113,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 음수면 메뉴를 등록할 수 없다.")
     void createWrongPriceUnderZero() throws Exception {
         // given
-        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(-1), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
+                "양념 반 + 후라이드 반",
+                BigDecimal.valueOf(-1),
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                )
+        );
         willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
                 .given(menuService)
                 .create(any(CreateMenuRequest.class));
@@ -116,7 +141,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴의 가격이 메뉴를 구성하는 실제 제품들을 단품으로 주문하였을 때의 가격 합보다 크면 메뉴를 등록할 수 없다.")
     void createWrongPriceSumOfProducts() throws Exception {
         // given
-        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32001), 1L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
+                "양념 반 + 후라이드 반",
+                BigDecimal.valueOf(32001),
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                )
+        );
         willThrow(new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다."))
                 .given(menuService)
                 .create(any(CreateMenuRequest.class));
@@ -136,7 +169,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹이 존재하지 않으면 메뉴를 등록할 수 없다.")
     void createWrongMenuGroupNotExist() throws Exception {
         // given
-        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest("양념 반 + 후라이드 반", BigDecimal.valueOf(32000), 10L, Arrays.asList(후라이드치킨, 양념치킨));
+        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
+                "양념 반 + 후라이드 반",
+                BigDecimal.valueOf(32000),
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                )
+        );
         willThrow(new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."))
                 .given(menuService)
                 .create(any(CreateMenuRequest.class));
@@ -156,8 +197,15 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("목록에 포함된 데이터들이 존재하지 않으면 메뉴를 등록할 수 없다.")
     void createWrongProductNotExist() throws Exception {
         // given
-        MenuProduct 간장치킨 = new MenuProduct(new Product(), 1);
-        CreateMenuRequest 간장반_후라이드반 = new CreateMenuRequest("간장 반 + 후라이드 반", BigDecimal.valueOf(32000), 1L, Arrays.asList(후라이드치킨, 간장치킨));
+        CreateMenuRequest 간장반_후라이드반 = new CreateMenuRequest(
+                "간장 반 + 후라이드 반",
+                BigDecimal.valueOf(32000),
+                1L,
+                Arrays.asList(
+                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(10L, 1)
+                )
+        );
         willThrow(new IllegalArgumentException("상품이 존재하지 않습니다.")).given(menuService)
                                                                  .create(any(CreateMenuRequest.class));
 

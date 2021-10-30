@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.domain.*;
-import kitchenpos.dto.request.CreateMenuRequest;
+import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.response.MenuResponse;
 
 @Service
@@ -30,26 +30,27 @@ public class MenuService {
     public MenuResponse create(final CreateMenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                                                        .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
+        final List<MenuProduct> menuProducts = getMenuProducts(request);
 
-        validatesProductExist(request);
-        final Menu menu = request.toEntity(menuGroup);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
         final Menu savedMenu = menuRepository.save(menu);
+
         return MenuResponse.from(savedMenu);
     }
 
-    private void validatesProductExist(CreateMenuRequest request) {
-        List<MenuProduct> menuProducts = request.getMenuProducts();
-        for (MenuProduct menuProduct : menuProducts) {
-            productRepository.findById(menuProduct.getProduct().getId())
-                             .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-        }
+    private List<MenuProduct> getMenuProducts(CreateMenuRequest request) {
+        return request.getMenuProducts().stream()
+                      .map(item -> {
+                          Product product = productRepository.findById(item.getProductId())
+                                                             .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
+                          return new MenuProduct(product, item.getQuantity());
+                      })
+                      .collect(Collectors.toList());
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        return menus.stream()
-                    .map(MenuResponse::from)
-                    .collect(Collectors.toList());
+        return menuRepository.findAll().stream()
+                             .map(MenuResponse::from)
+                             .collect(Collectors.toList());
     }
 }
