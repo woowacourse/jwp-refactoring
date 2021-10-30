@@ -1,5 +1,7 @@
 package kitchenpos.integration;
 
+import static kitchenpos.integration.api.texture.ProductTexture.*;
+
 import java.math.BigDecimal;
 import java.util.Collections;
 import kitchenpos.domain.Menu;
@@ -13,6 +15,7 @@ import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.api.OrderApi;
 import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.api.TableApi;
+import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,13 +41,12 @@ public class OrderIntegrationTest extends IntegrationTest {
     @BeforeEach
     void setUp() {
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
-        final Long productId = productApi.상품_등록(new Product("민초 치킨", new BigDecimal(19000))).getContent().getId();
+        final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
         final MenuProduct menuProduct = new MenuProduct(productId, 1);
 
-        기본_메뉴 =
-            menuApi
-                .메뉴_등록("민초 치킨", new BigDecimal(19000), menuGroupId, Collections.singletonList(menuProduct))
-                .getContent();
+        기본_메뉴 = menuApi
+            .메뉴_등록(민초치킨, menuGroupId, Collections.singletonList(menuProduct))
+            .getContent();
     }
 
     @Test

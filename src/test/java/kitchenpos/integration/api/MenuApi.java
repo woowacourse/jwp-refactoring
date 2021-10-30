@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,16 @@ public class MenuApi {
         final Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(price);
+        menu.setMenuGroupId(menuGroupId);
+        menu.setMenuProducts(menuProducts);
+
+        return 메뉴_등록(menu);
+    }
+
+    public MockMvcResponse<Menu> 메뉴_등록(ProductTexture productTexture, Long menuGroupId, List<MenuProduct> menuProducts) {
+        final Menu menu = new Menu();
+        menu.setName(productTexture.getProduct().getName());
+        menu.setPrice(productTexture.getProduct().getPrice());
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(menuProducts);
 
