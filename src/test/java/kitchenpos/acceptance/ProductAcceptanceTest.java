@@ -22,11 +22,11 @@ class ProductAcceptanceTest extends AcceptanceTest {
     void setUp() {
         후라이드치킨.setName("후라이드치킨");
         후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        productDao.save(후라이드치킨);
+        productRepository.save(후라이드치킨);
 
         양념치킨.setName("양념치킨");
         양념치킨.setPrice(BigDecimal.valueOf(16000));
-        productDao.save(양념치킨);
+        productRepository.save(양념치킨);
     }
 
     @DisplayName("등록된 전체 상품들을 반환한다")

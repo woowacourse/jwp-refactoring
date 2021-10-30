@@ -19,10 +19,10 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @BeforeEach
     void setUp() {
         한마리메뉴.setName("한마리메뉴");
-        menuGroupDao.save(한마리메뉴);
+        menuGroupRepository.save(한마리메뉴);
 
         두마리메뉴.setName("두마리메뉴");
-        menuGroupDao.save(두마리메뉴);
+        menuGroupRepository.save(두마리메뉴);
     }
 
     @DisplayName("등록된 전체 메뉴 그룹 카테코리를 반환한다")

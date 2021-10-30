@@ -31,21 +31,21 @@ class TableAcceptanceTest extends AcceptanceTest {
     void setUp() {
         주문_테이블1.setNumberOfGuests(4);
         주문_테이블1.setEmpty(false);
-        주문_테이블1 = orderTableDao.save(주문_테이블1);
+        주문_테이블1 = orderTableRepository.save(주문_테이블1);
 
         주문_테이블2.setNumberOfGuests(2);
         주문_테이블2.setEmpty(false);
-        주문_테이블2 = orderTableDao.save(주문_테이블2);
+        주문_테이블2 = orderTableRepository.save(주문_테이블2);
 
         요리중인_주문.setOrderStatus(OrderStatus.COOKING);
         요리중인_주문.setOrderTable(주문_테이블2);
         요리중인_주문.setOrderedTime(LocalDateTime.now());
-        orderDao.save(요리중인_주문);
+        orderRepository.save(요리중인_주문);
 
         식사중인_주문.setOrderStatus(OrderStatus.MEAL);
         식사중인_주문.setOrderTable(주문_테이블2);
         식사중인_주문.setOrderedTime(LocalDateTime.now());
-        orderDao.save(식사중인_주문);
+        orderRepository.save(식사중인_주문);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블들에 대한 정보를 반환한다")
@@ -89,7 +89,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/empty", 변경할_주문_테이블_EMPTY_요청);
 
         // then
-        OrderTable 변경된_주문_테이블1 = orderTableDao.findById(주문_테이블1_ID).get();
+        OrderTable 변경된_주문_테이블1 = orderTableRepository.findById(주문_테이블1_ID).get();
         assertThat(변경된_주문_테이블1.getId()).isEqualTo(주문_테이블1_ID);
         assertThat(변경된_주문_테이블1.isEmpty()).isTrue();
     }
@@ -122,7 +122,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/number-of-guests", 변경할_주문_테이블_손님_요청);
 
         // then
-        OrderTable 변경된_주문_테이블1 = orderTableDao.findById(주문_테이블1_ID).get();
+        OrderTable 변경된_주문_테이블1 = orderTableRepository.findById(주문_테이블1_ID).get();
         assertThat(변경된_주문_테이블1.getId()).isEqualTo(주문_테이블1_ID);
         assertThat(변경된_주문_테이블1.getNumberOfGuests()).isEqualTo(100);
     }
@@ -150,7 +150,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         OrderTable 비워진_주문_테이블 = new OrderTable();
         비워진_주문_테이블.setNumberOfGuests(4);
         비워진_주문_테이블.setEmpty(true);
-        비워진_주문_테이블 = orderTableDao.save(비워진_주문_테이블);
+        비워진_주문_테이블 = orderTableRepository.save(비워진_주문_테이블);
 
         OrderTableNumberOfGuestRequest 변경할_주문_테이블_손님_요청 = new OrderTableNumberOfGuestRequest();
         변경할_주문_테이블_손님_요청.setNumberOfGuests(100);

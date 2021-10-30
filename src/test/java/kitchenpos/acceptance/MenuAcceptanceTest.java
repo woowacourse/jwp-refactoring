@@ -2,7 +2,6 @@ package kitchenpos.acceptance;
 
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
@@ -33,32 +32,32 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @BeforeEach
     void setUp() {
         한마리메뉴.setName("한마리메뉴");
-        한마리메뉴 = menuGroupDao.save(한마리메뉴);
+        한마리메뉴 = menuGroupRepository.save(한마리메뉴);
 
         두마리메뉴.setName("두마리메뉴");
-        두마리메뉴 = menuGroupDao.save(두마리메뉴);
+        두마리메뉴 = menuGroupRepository.save(두마리메뉴);
 
         후라이드치킨.setName("후라이드치킨");
         후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        후라이드치킨 = productDao.save(후라이드치킨);
+        후라이드치킨 = productRepository.save(후라이드치킨);
 
         양념치킨.setName("양념치킨");
         양념치킨.setPrice(BigDecimal.valueOf(16000));
-        양념치킨 = productDao.save(양념치킨);
+        양념치킨 = productRepository.save(양념치킨);
 
         간장치킨.setName("간장치킨");
         간장치킨.setPrice(BigDecimal.valueOf(16000));
-        간장치킨 = productDao.save(간장치킨);
+        간장치킨 = productRepository.save(간장치킨);
 
         한마리메뉴_후라이드치킨.setName("후라이드치킨");
         한마리메뉴_후라이드치킨.setPrice(BigDecimal.valueOf(15000));
         한마리메뉴_후라이드치킨.setMenuGroup(한마리메뉴);
-        한마리메뉴_후라이드치킨 = menuDao.save(한마리메뉴_후라이드치킨);
+        한마리메뉴_후라이드치킨 = menuRepository.save(한마리메뉴_후라이드치킨);
 
         두마리메뉴_양념_간장치킨.setName("양념+간장치킨");
         두마리메뉴_양념_간장치킨.setPrice(BigDecimal.valueOf(32000));
         두마리메뉴_양념_간장치킨.setMenuGroup(두마리메뉴);
-        두마리메뉴_양념_간장치킨 = menuDao.save(두마리메뉴_양념_간장치킨);
+        두마리메뉴_양념_간장치킨 = menuRepository.save(두마리메뉴_양념_간장치킨);
     }
 
     @DisplayName("등록된 전체 메뉴에 대한 정보를 반환한다.")

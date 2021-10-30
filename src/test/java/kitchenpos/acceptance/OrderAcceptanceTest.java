@@ -11,7 +11,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -40,40 +39,40 @@ class OrderAcceptanceTest extends AcceptanceTest {
     void setUp() {
         주문_테이블.setNumberOfGuests(4);
         주문_테이블.setEmpty(false);
-        주문_테이블 = orderTableDao.save(주문_테이블);
+        주문_테이블 = orderTableRepository.save(주문_테이블);
 
         주문.setOrderTable(주문_테이블);
         주문.setOrderStatus(OrderStatus.COOKING);
         주문.setOrderedTime(LocalDateTime.now());
-        주문 = orderDao.save(주문);
+        주문 = orderRepository.save(주문);
 
         한마리메뉴.setName("한마리메뉴");
-        한마리메뉴 = menuGroupDao.save(한마리메뉴);
+        한마리메뉴 = menuGroupRepository.save(한마리메뉴);
 
         두마리메뉴.setName("두마리메뉴");
-        두마리메뉴 = menuGroupDao.save(두마리메뉴);
+        두마리메뉴 = menuGroupRepository.save(두마리메뉴);
 
         후라이드치킨.setName("후라이드치킨");
         후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        후라이드치킨 = productDao.save(후라이드치킨);
+        후라이드치킨 = productRepository.save(후라이드치킨);
 
         양념치킨.setName("양념치킨");
         양념치킨.setPrice(BigDecimal.valueOf(16000));
-        양념치킨 = productDao.save(양념치킨);
+        양념치킨 = productRepository.save(양념치킨);
 
         간장치킨.setName("간장치킨");
         간장치킨.setPrice(BigDecimal.valueOf(16000));
-        간장치킨 = productDao.save(간장치킨);
+        간장치킨 = productRepository.save(간장치킨);
 
         한마리메뉴_후라이드치킨.setName("후라이드치킨");
         한마리메뉴_후라이드치킨.setPrice(BigDecimal.valueOf(15000));
         한마리메뉴_후라이드치킨.setMenuGroup(한마리메뉴);
-        한마리메뉴_후라이드치킨 = menuDao.save(한마리메뉴_후라이드치킨);
+        한마리메뉴_후라이드치킨 = menuRepository.save(한마리메뉴_후라이드치킨);
 
         두마리메뉴_양념_간장치킨.setName("양념+간장치킨");
         두마리메뉴_양념_간장치킨.setPrice(BigDecimal.valueOf(32000));
         두마리메뉴_양념_간장치킨.setMenuGroup(두마리메뉴);
-        두마리메뉴_양념_간장치킨 = menuDao.save(두마리메뉴_양념_간장치킨);
+        두마리메뉴_양념_간장치킨 = menuRepository.save(두마리메뉴_양념_간장치킨);
     }
 
     @DisplayName("매장에서 발생한 주문들에 대한 정보를 반환한다")
@@ -147,7 +146,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         testRestTemplate.put("/api/orders/" + 주문_ID + "/order-status", 변경할_주문);
 
         // then
-        Order 변경된_주문 = orderDao.findById(주문_ID).get();
+        Order 변경된_주문 = orderRepository.findById(주문_ID).get();
         assertThat(변경된_주문.getId()).isEqualTo(주문.getId());
         assertThat(변경된_주문.getOrderTableId()).isEqualTo(주문.getOrderTableId());
         assertThat(변경된_주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
@@ -162,7 +161,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         완료된_주문.setOrderTable(주문_테이블);
         완료된_주문.setOrderStatus(OrderStatus.COMPLETION);
         완료된_주문.setOrderedTime(LocalDateTime.now());
-        완료된_주문 = orderDao.save(완료된_주문);
+        완료된_주문 = orderRepository.save(완료된_주문);
 
         OrderStatusModifyRequest 변경할_주문 = new OrderStatusModifyRequest();
         변경할_주문.setOrderStatus(OrderStatus.MEAL.name());
