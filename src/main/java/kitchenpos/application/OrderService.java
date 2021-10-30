@@ -1,16 +1,16 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 import kitchenpos.domain.*;
+import kitchenpos.dto.request.CreateOrderRequest;
+import kitchenpos.dto.response.CreateOrderResponse;
+import kitchenpos.dto.response.OrderResponse;
 
 @Service
 public class OrderService {
@@ -32,54 +32,36 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public CreateOrderResponse create(final CreateOrderRequest request) {
+        final OrderTable orderTable = getOrderTable(request);
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다.");
-        }
-
-        final List<Menu> menus = orderLineItems.stream()
-                                               .map(OrderLineItem::getMenu)
-                                               .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuRepository.countByIdIn(menus)) {
-            throw new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다.");
-        }
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
-                                                          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
-        }
-
-        order.setOrderTable(orderTable);
-        order.setOrderStatus(OrderStatus.COOKING);
-        order.setOrderedTime(LocalDateTime.now());
-
+        final Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(savedOrder);
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        return CreateOrderResponse.from(savedOrder);
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderRepository.findAll();
+    private OrderTable getOrderTable(CreateOrderRequest request) {
+        return orderTableRepository.findById(request.getOrderTableId())
+                                   .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
+    }
 
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-        }
+    private List<OrderLineItem> getOrderLineItems(CreateOrderRequest request) {
+        return request.getOrderLineItems()
+                      .stream()
+                      .map(item -> {
+                          final Menu menu = menuRepository.findById(item.getMenuId())
+                                                          .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다."));
+                          return new OrderLineItem(menu, item.getQuantity());
+                      })
+                      .collect(Collectors.toList());
+    }
 
-        return orders;
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+                              .map(OrderResponse::from)
+                              .collect(Collectors.toList());
     }
 
     @Transactional
