@@ -37,7 +37,7 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    TableService tableService;
+    private TableService tableService;
 
     @Test
     @DisplayName("테이블을 저장할 수 있다.")

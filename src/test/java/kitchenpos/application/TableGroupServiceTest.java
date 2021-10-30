@@ -42,7 +42,7 @@ class TableGroupServiceTest {
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    TableGroupService tableGroupService;
+    private TableGroupService tableGroupService;
 
     @Test
     @DisplayName("테이블 그룹을 생성할 수 있다.")

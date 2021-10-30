@@ -21,10 +21,10 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 class MenuGroupServiceTest {
     @MockBean
-    MenuGroupRepository menuGroupRepository;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    MenuGroupService menuGroupService;
+    private MenuGroupService menuGroupService;
 
     @Test
     @DisplayName("메뉴 그룹을 저장할 수 있다.")

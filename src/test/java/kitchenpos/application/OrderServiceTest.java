@@ -49,7 +49,7 @@ class OrderServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    OrderService orderService;
+    private OrderService orderService;
 
     @Test
     @DisplayName("주문을 생성할 수 있다.")
