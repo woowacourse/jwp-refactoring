@@ -23,32 +23,32 @@
   - [x] 모든 menu에는 menuProduct가 존재한다.
 
 ### Order
-- [ ] Order를 만든다.
-  - [ ] orderLineItems를 불러온다
-    - [ ] 존재하지 않는 경우 예외를 던진다.
-  - [ ] orderLineItems의 갯수와 저장된 menuIds의 갯수가 다른경우 예외를 던진다.
-  - [ ] order의 orderTableId를 이용해 orderTable을 불러온다.
-    - [ ] 존재하지 않는 경우 예외를 던진다.
-  - [ ] orderTable이 비어있는 경우 예외를 던진다.
-  - [ ] order는 orderTableId를 가진다.
-  - [ ] order의 OrderStatus는 Cooking으로 설정한다.
-  - [ ] order는 orderTime을 현재로 설정한다.
-- [ ] order를 저장한다.
-  - [ ] orderLineItem은 저장된 orderId를 갖고 있다.
-  - [ ] orderLineItem을 저장한 후 새로운 orderLineItems에 더한다.
-- [ ] 저장된 order는 저장된 orderLineItems를 가진다.
+- [x] Order를 만든다.
+  - [x] orderLineItems를 불러온다
+    - [x] 존재하지 않는 경우 예외를 던진다.
+  - [x] orderLineItems의 갯수와 저장된 menuIds의 갯수가 다른경우 예외를 던진다.
+  - [x] order의 orderTableId를 이용해 orderTable을 불러온다.
+    - [x] 존재하지 않는 경우 예외를 던진다.
+  - [x] orderTable이 비어있는 경우 예외를 던진다.
+  - [x] order는 orderTableId를 가진다.
+  - [x] order의 OrderStatus는 Cooking으로 설정한다.
+  - [x] order는 orderTime을 현재로 설정한다.
+- [x] order를 저장한다.
+  - [x] orderLineItem은 저장된 orderId를 갖고 있다.
+  - [x] orderLineItem을 저장한 후 새로운 orderLineItems에 더한다.
+- [x] 저장된 order는 저장된 orderLineItems를 가진다.
   
-- [ ] Order를 반환한다.
-  - [ ] 모든 order를 불러와 반환한다.
-  - [ ] 모든 order에는 orderLineItem이 존재한다.
+- [x] Order를 반환한다.
+  - [x] 모든 order를 불러와 반환한다.
+  - [x] 모든 order에는 orderLineItem이 존재한다.
   
-- [ ] OrderStatus를 변경한다.
-  - [ ] 기존 order를 불러온다.
-    - [ ] 존재하지 않는 경우 예외를 던진다.
-    - [ ] orderStatus가 완성인 경우 예외를 던진다.
-    - [ ] 기존 order의 orderStatus를 넘겨받은 order의 상태로 변경한다.
-    - [ ] orderStatus가 변경된 order를 저장한다.
-    - [ ] 저장된 order는 orderLineItems를 갖고 있다.
+- [x] OrderStatus를 변경한다.
+  - [x] 기존 order를 불러온다.
+    - [x] 존재하지 않는 경우 예외를 던진다.
+    - [x]  orderStatus가 완성인 경우 예외를 던진다.
+    - [x] 기존 order의 orderStatus를 넘겨받은 order의 상태로 변경한다.
+    - [x] orderStatus가 변경된 order를 저장한다.
+    - [x] 저장된 order는 orderLineItems를 갖고 있다.
   
 ### Product
 - [x] Product를 만든다.
