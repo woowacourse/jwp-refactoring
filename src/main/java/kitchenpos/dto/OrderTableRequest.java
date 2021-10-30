@@ -7,16 +7,24 @@ public class OrderTableRequest {
     public OrderTableRequest() {
     }
 
+    public OrderTableRequest(Integer numberOfGuests) {
+        this(numberOfGuests, null);
+    }
+
+    public OrderTableRequest(Boolean empty) {
+        this(null, empty);
+    }
+
     public OrderTableRequest(Integer numberOfGuests, Boolean empty) {
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public int getNumberOfGuests() {
+    public Integer getNumberOfGuests() {
         return numberOfGuests;
     }
 
-    public boolean isEmpty() {
+    public Boolean isEmpty() {
         return empty;
     }
 }

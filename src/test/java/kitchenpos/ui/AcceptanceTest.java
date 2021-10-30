@@ -36,4 +36,12 @@ public class AcceptanceTest {
                 .when().post(api);
     }
 
+    protected Response put(String api, Object body) {
+        return RestAssured.given().log().all()
+                .accept("application/json")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(body)
+                .when().put(api);
+    }
+
 }

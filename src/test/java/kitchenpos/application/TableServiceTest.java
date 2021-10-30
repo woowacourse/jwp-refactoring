@@ -97,7 +97,7 @@ class TableServiceTest {
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
+        given(orderRepository.existsByOrderTableAndOrderStatusIsIn(any(OrderTable.class), any(List.class)))
                 .willReturn(false);
         given(orderTableRepository.save(any(OrderTable.class)))
                 .willReturn(targetOrderTable);
@@ -154,7 +154,7 @@ class TableServiceTest {
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
-        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), any(List.class)))
+        given(orderRepository.existsByOrderTableAndOrderStatusIsIn(any(OrderTable.class), any(List.class)))
                 .willReturn(true);
 
         // when, then
