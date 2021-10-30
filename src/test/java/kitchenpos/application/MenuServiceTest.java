@@ -63,10 +63,8 @@ class MenuServiceTest {
         long productId = 1L;
         Product product = new Product(productId, "productName", BigDecimal.valueOf(1000));
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProduct(product);
         long menuProductQuantity = 1;
-        menuProduct.setQuantity(menuProductQuantity);
+        MenuProduct menuProduct = new MenuProduct(expected, product, menuProductQuantity);
 
         expected.setMenuProducts(Arrays.asList(menuProduct));
 

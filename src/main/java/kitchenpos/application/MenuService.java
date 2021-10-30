@@ -67,10 +67,9 @@ public class MenuService {
 
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
 
-            MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setMenu(savedMenu);
-            menuProduct.setProduct(product);
-            menuProduct.setQuantity(quantity);
+            MenuProduct menuProduct = new MenuProduct(savedMenu, product, quantity);
+            MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
+            savedMenuProducts.add(savedMenuProduct);
         }
 
         if (BigDecimal.valueOf(priceRequested).compareTo(sum) > 0) {
