@@ -42,20 +42,20 @@ public class OrderService {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(NoSuchOrderTableException::new);
 
-        List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItemRequests().stream()
+        List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems().stream()
                 .map(orderLineItemRequest -> {
                     Menu menu = menuRepository.findById(orderLineItemRequest.getMenuId())
                             .orElseThrow(NoSuchMenuException::new);
-                    Long quantity = orderLineItemRequest.getQuantiy();
+                    Long quantity = orderLineItemRequest.getQuantity();
                     return new OrderLineItem(menu, quantity);
                 })
                 .collect(Collectors.toList());
 
         Order order = new Order(orderTable, orderLineItems);
+        Order savedOrder = orderRepository.save(order);
 
         orderLineItemRepository.saveAll(orderLineItems);
 
-        Order savedOrder = orderRepository.save(order);
         return OrderResponse.from(savedOrder);
     }
 

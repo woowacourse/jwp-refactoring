@@ -4,20 +4,23 @@ import java.util.List;
 
 public class OrderRequest {
     private Long orderTableId;
-    private List<OrderLineItemRequest> orderLineItemRequests;
+    private List<OrderLineItemRequest> orderLineItems;
     private String orderStatus;
+
+    public OrderRequest() {
+    }
 
     public OrderRequest(String orderStatus) {
         this(null, null, orderStatus);
     }
 
-    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
-        this(orderTableId, orderLineItemRequests, null);
+    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
+        this(orderTableId, orderLineItems, null);
     }
 
-    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests, String orderStatus) {
+    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems, String orderStatus) {
         this.orderTableId = orderTableId;
-        this.orderLineItemRequests = orderLineItemRequests;
+        this.orderLineItems = orderLineItems;
         this.orderStatus = orderStatus;
     }
 
@@ -25,8 +28,8 @@ public class OrderRequest {
         return orderTableId;
     }
 
-    public List<OrderLineItemRequest> getOrderLineItemRequests() {
-        return orderLineItemRequests;
+    public List<OrderLineItemRequest> getOrderLineItems() {
+        return orderLineItems;
     }
 
     public String getOrderStatus() {
