@@ -11,7 +11,7 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.CreateTableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.dto.response.table.TableGroupResponse;
 
 @Service
 public class TableGroupService {

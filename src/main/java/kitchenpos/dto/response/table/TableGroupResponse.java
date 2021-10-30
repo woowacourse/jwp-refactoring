@@ -1,30 +1,36 @@
-package kitchenpos.dto.response;
+package kitchenpos.dto.response.table;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupResponse {
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTables;
+    private List<TableInGroupResponse> orderTables;
 
-    public TableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTables) {
+    public TableGroupResponse() {
+    }
+
+    public TableGroupResponse(Long id, LocalDateTime createdDate, List<TableInGroupResponse> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
     }
 
     public static TableGroupResponse from(TableGroup tableGroup) {
+        if (Objects.isNull(tableGroup)) {
+            return new TableGroupResponse();
+        }
         return new TableGroupResponse(tableGroup.getId(), tableGroup.getCreatedDate(), orderTableResponse(tableGroup));
     }
 
-    private static List<OrderTableResponse> orderTableResponse(TableGroup tableGroup) {
+    private static List<TableInGroupResponse> orderTableResponse(TableGroup tableGroup) {
         return tableGroup.getOrderTables().stream()
-                   .map(OrderTableResponse::from)
+                   .map(TableInGroupResponse::from)
                    .collect(Collectors.toList());
     }
 
@@ -36,7 +42,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTables() {
+    public List<TableInGroupResponse> getOrderTables() {
         return orderTables;
     }
 }

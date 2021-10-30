@@ -14,7 +14,7 @@ import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.CreateTableGroupRequest;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.dto.response.table.TableGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;

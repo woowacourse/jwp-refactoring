@@ -1,27 +1,30 @@
-package kitchenpos.dto.response;
+package kitchenpos.dto.response.table;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.response.OrderResponse;
 
-public class OrderTableResponse {
+public class TableResponse {
     private Long id;
+    private TableGroupResponse tableGroup;
     private int numberOfGuests;
     private boolean empty;
     private List<OrderResponse> orders;
 
-    public OrderTableResponse(Long id, int numberOfGuests, boolean empty, List<OrderResponse> orders) {
+    public TableResponse(Long id, TableGroupResponse tableGroupResponse, int numberOfGuests, boolean empty, List<OrderResponse> orders) {
         this.id = id;
+        this.tableGroup = tableGroupResponse;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
         this.orders = orders;
     }
 
-    public static OrderTableResponse from(OrderTable orderTable) {
-        return new OrderTableResponse(
+    public static TableResponse from(OrderTable orderTable) {
+        return new TableResponse(
                 orderTable.getId(),
+                TableGroupResponse.from(orderTable.getTableGroup()),
                 orderTable.getNumberOfGuests(),
                 orderTable.isEmpty(),
                 orderResponse(orderTable)
@@ -36,6 +39,10 @@ public class OrderTableResponse {
 
     public Long getId() {
         return id;
+    }
+
+    public TableGroupResponse getTableGroup() {
+        return tableGroup;
     }
 
     public int getNumberOfGuests() {

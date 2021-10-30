@@ -1,6 +1,7 @@
 package kitchenpos.ui;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -10,6 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.table.ChangeTableEmptyRequest;
+import kitchenpos.dto.request.table.ChangeTableGuestRequest;
+import kitchenpos.dto.request.table.CreateTableRequest;
+import kitchenpos.dto.response.table.TableResponse;
 
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,9 +32,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("테이블을 생성할 수 있다.")
     void create() throws Exception {
         // given
-        OrderTable table = new OrderTable(0, true);
-        OrderTable expected = new OrderTable(1L, null, 0, true);
-        given(tableService.create(any(OrderTable.class))).willReturn(expected);
+        CreateTableRequest table = new CreateTableRequest(0, true);
+        TableResponse expected = new TableResponse(1L, null, 0, false, Collections.emptyList());
+        given(tableService.create(any(CreateTableRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(post("/api/tables")
@@ -48,7 +53,7 @@ class TableRestControllerTest extends ControllerTest {
         // given
         OrderTable table1 = new OrderTable(1L, GROUP1, 3, false);
         OrderTable table2 = new OrderTable(2L, null, 0, true);
-        List<OrderTable> expected = Arrays.asList(table1, table2);
+        List<TableResponse> expected = Arrays.asList(TableResponse.from(table1), TableResponse.from(table2));
         given(tableService.list()).willReturn(expected);
 
         // when
@@ -64,13 +69,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("테이블이 비어있는지를 나타내는 상태를 수정할 수 있다.")
     void changeEmpty() throws Exception {
         // given
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        OrderTable expected = new OrderTable(1L, null, 0, false);
-        given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(expected);
+        ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
+        TableResponse expected = new TableResponse(1L, null, 0, false, Collections.emptyList());
+        given(tableService.changeEmpty(anyLong(), any(ChangeTableEmptyRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/empty")
-                .content(objectToJsonString(changeEmptyTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -82,13 +87,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("빈 상태를 수정하려면 테이블은 존재해야 한다.")
     void changeEmptyWrongNotExist() throws Exception {
         // given
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
+        ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
         willThrow(new IllegalArgumentException("주문 테이블이 존재하지 않습니다."))
-                .given(tableService).changeEmpty(anyLong(), any(OrderTable.class));
+                .given(tableService).changeEmpty(anyLong(), any(ChangeTableEmptyRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/10/empty")
-                .content(objectToJsonString(changeEmptyTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -101,13 +106,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("빈 상태를 수정하려면 테이블은 그룹에 속해있지 않아야한다.")
     void changeEmptyWrongNotInGroup() throws Exception {
         // given
-        OrderTable changeEmptyTable = new OrderTable(null, GROUP1, 0, false);
+        ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
         willThrow(new IllegalArgumentException("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요."))
-                .given(tableService).changeEmpty(anyLong(), any(OrderTable.class));
+                .given(tableService).changeEmpty(anyLong(), any(ChangeTableEmptyRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/empty")
-                .content(objectToJsonString(changeEmptyTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -120,13 +125,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("빈 상태를 수정하려면 테이블이 조리중(COOKING)이나 식사중(MEAL)이 아니어야한다.")
     void changeEmptyWrongCookingOrMeal() throws Exception {
         // given
-        OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
+        ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
         willThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다."))
-                .given(tableService).changeEmpty(anyLong(), any(OrderTable.class));
+                .given(tableService).changeEmpty(anyLong(), any(ChangeTableEmptyRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/empty")
-                .content(objectToJsonString(changeEmptyTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -139,13 +144,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블의 손님 수를 변경한다.")
     void changeNumberOfGuests() throws Exception {
         // given
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
-        OrderTable expected = new OrderTable(1L, null, 5, false);
-        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(expected);
+        ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
+        TableResponse expected = new TableResponse(1L, null, 5, false, Collections.emptyList());
+        given(tableService.changeNumberOfGuests(anyLong(), any(ChangeTableGuestRequest.class))).willReturn(expected);
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/number-of-guests")
-                .content(objectToJsonString(changeNumberTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -157,13 +162,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("손님의 수를 변경하려면 기존 손님의 수는 0 이상이어야 한다.")
     void changeNumberOfGuestsWrongNumber() throws Exception {
         // given
-        OrderTable changeNumberTable = new OrderTable(null, null, -1, false);
+        ChangeTableGuestRequest request = new ChangeTableGuestRequest(-1);
         willThrow(new IllegalArgumentException("변경하려는 손님 수는 0이상이어야 합니다."))
-                .given(tableService).changeNumberOfGuests(anyLong(), any(OrderTable.class));
+                .given(tableService).changeNumberOfGuests(anyLong(), any(ChangeTableGuestRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/number-of-guests")
-                .content(objectToJsonString(changeNumberTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -176,13 +181,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("손님의 수를 변경하려면 테이블은 존재해야 한다.")
     void changeNumberOfGuestsWrongTableNotExist() throws Exception {
         // given
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
+        ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
         willThrow(new IllegalArgumentException("주문 테이블이 존재하지 않습니다."))
-                .given(tableService).changeNumberOfGuests(anyLong(), any(OrderTable.class));
+                .given(tableService).changeNumberOfGuests(anyLong(), any(ChangeTableGuestRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/10/number-of-guests")
-                .content(objectToJsonString(changeNumberTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -195,13 +200,13 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("손님의 수를 변경하려면 테이블은 비어있지 않아야한다.")
     void changeNumberOfGuestsWrongTableEmpty() throws Exception {
         // given
-        OrderTable changeNumberTable = new OrderTable(null, null, 5, false);
+        ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
         willThrow(new IllegalArgumentException("비어있는 테이블의 손님 수를 변경할 수 없습니다."))
-                .given(tableService).changeNumberOfGuests(anyLong(), any(OrderTable.class));
+                .given(tableService).changeNumberOfGuests(anyLong(), any(ChangeTableGuestRequest.class));
 
         // when
         ResultActions response = mockMvc.perform(put("/api/tables/1/number-of-guests")
-                .content(objectToJsonString(changeNumberTable))
+                .content(objectToJsonString(request))
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then

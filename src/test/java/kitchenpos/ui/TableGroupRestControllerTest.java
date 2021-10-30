@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.request.CreateTableGroupRequest;
-import kitchenpos.dto.response.OrderTableResponse;
-import kitchenpos.dto.response.TableGroupResponse;
+import kitchenpos.dto.response.table.TableInGroupResponse;
+import kitchenpos.dto.response.table.TableGroupResponse;
 
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블2;
@@ -38,7 +38,7 @@ class TableGroupRestControllerTest extends ControllerTest {
         TableGroupResponse expected = new TableGroupResponse(
                 1L,
                 LocalDateTime.now(),
-                Arrays.asList(OrderTableResponse.from(단일_손님0_테이블1), OrderTableResponse.from(단일_손님0_테이블2))
+                Arrays.asList(TableInGroupResponse.from(단일_손님0_테이블1), TableInGroupResponse.from(단일_손님0_테이블2))
         );
 
         given(tableGroupService.create(any(CreateTableGroupRequest.class))).willReturn(expected);

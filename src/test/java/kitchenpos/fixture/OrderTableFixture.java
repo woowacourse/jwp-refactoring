@@ -1,5 +1,7 @@
 package kitchenpos.fixture;
 
+import java.util.Collections;
+
 import kitchenpos.domain.OrderTable;
 
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
