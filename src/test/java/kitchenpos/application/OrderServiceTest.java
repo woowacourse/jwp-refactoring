@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -21,9 +23,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 class OrderServiceTest {
@@ -46,48 +48,53 @@ class OrderServiceTest {
     @DisplayName("주문을 생성할 수 있다.")
     void create() {
         // given
-        Order order = new Order();
+        Order expected = new Order();
         long orderId = 1L;
-        order.setId(orderId);
+        expected.setId(orderId);
+
+        long menuId = 1L;
+        long menuQuantity = 1L;
 
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
+        orderLineItem.setMenuId(menuId);
         orderLineItem.setOrderId(orderId);
+        orderLineItem.setQuantity(menuQuantity);
 
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        expected.setOrderLineItems(Arrays.asList(orderLineItem));
 
+        Long orderTableId = 1L;
         OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        orderTable.setId(orderTableId);
         orderTable.setEmpty(false);
 
-        order.setOrderTableId(orderTable.getId());
+        expected.setOrderTableId(orderTable.getId());
 
         given(menuRepository.countByIdIn(any(List.class)))
-                .willReturn(Long.valueOf(order.getOrderLineItems().size()));
+                .willReturn(Long.valueOf(expected.getOrderLineItems().size()));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class)))
-                .willReturn(order);
+                .willReturn(expected);
         given(orderLineItemRepository.save(any(OrderLineItem.class)))
                 .willReturn(orderLineItem);
 
         // when
-        Order actual = orderService.create(order);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
+        Order actual = orderService.create(orderRequest);
 
         // then
-        assertThat(actual).isEqualTo(order);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     @DisplayName("주문의 항목이 비어있는 경우 예외가 발생한다.")
     void createFailWhenEmptyOrderLineItems() {
         // given
-        Order order = new Order();
-
-        order.setOrderLineItems(Collections.emptyList());
+        OrderRequest orderRequest = new OrderRequest(null, Collections.emptyList());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -95,18 +102,13 @@ class OrderServiceTest {
     @DisplayName("주문 항목의 메뉴를 찾을 수 없는 경우 예외가 발생한다.")
     void createFailWhenCannotFindMenu() {
         // given
-        Order order = new Order();
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderRequest orderRequest = new OrderRequest(null, Arrays.asList(new OrderLineItemRequest(1L, 1L)));
 
         given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(0L);
 
         // when
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -115,20 +117,16 @@ class OrderServiceTest {
     @DisplayName("테이블을 찾을 수 없는 경우 예외가 발생한다.")
     void createFailWhenCannotFindOrderTable() {
         // given
-        Order order = new Order();
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        List<OrderLineItemRequest> orderLineItemRequests = Arrays.asList(mock(OrderLineItemRequest.class));
+        OrderRequest orderRequest = new OrderRequest(1L, orderLineItemRequests);
 
         given(menuRepository.countByIdIn(any(List.class)))
-                .willReturn(Long.valueOf(order.getOrderLineItems().size()));
+                .willReturn(Long.valueOf(orderLineItemRequests.size()));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -136,26 +134,24 @@ class OrderServiceTest {
     @DisplayName("빈 테이블에 주문 생성 시 예외가 발생한다.")
     void createFailWhenPlaceOrderOnEmptyTable() {
         // given
-        Order order = new Order();
+        Long menuId = 1L;
+        Long menuQuantity = 1L;
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-
+        Long orderTableId = 1L;
         OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        orderTable.setId(orderTableId);
         orderTable.setEmpty(true);
 
-        order.setOrderTableId(orderTable.getId());
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
 
         given(menuRepository.countByIdIn(any(List.class)))
-                .willReturn(Long.valueOf(order.getOrderLineItems().size()));
+                .willReturn(Long.valueOf(orderRequest.getOrderLineItemRequests().size()));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
 
         // when, then
-        assertThatThrownBy(() -> orderService.create(order))
+        assertThatThrownBy(() -> orderService.create(orderRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

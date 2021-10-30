@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
@@ -38,40 +40,41 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderRequest orderRequest) {
+        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
+        if (CollectionUtils.isEmpty(orderLineItemRequests)) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
+        final List<Long> menuIds = orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByIdIn(menuIds)) {
+        if (orderLineItemRequests.size() != menuRepository.countByIdIn(menuIds)) {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTableId())
+        Long orderTableId = orderRequest.getOrderTableId();
+        final OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
+        Order order = new Order(orderTableId, OrderStatus.COOKING.name(), LocalDateTime.now());
 
         final Order savedOrder = orderRepository.save(order);
 
         final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+        for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setOrderId(orderId);
+            orderLineItem.setMenuId(orderLineItemRequest.getMenuId());
+            orderLineItem.setQuantity(orderLineItemRequest.getQuantiy());
+
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         savedOrder.setOrderLineItems(savedOrderLineItems);

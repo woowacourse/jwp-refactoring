@@ -21,6 +21,20 @@ public class Order {
     @OneToMany(mappedBy = "orderId")
     private List<OrderLineItem> orderLineItems;
 
+    public Order() {
+    }
+
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTableId, orderStatus, orderedTime);
+    }
+
+    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+        this.id = id;
+        this.orderTableId = orderTableId;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
+    }
+
     public Long getId() {
         return id;
     }
