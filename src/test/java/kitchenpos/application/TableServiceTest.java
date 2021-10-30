@@ -3,6 +3,10 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.exception.table.CannotChangeTableStatusAsAlreadyAssignedTableGroupException;
+import kitchenpos.exception.table.CannotChangeTableStatusAsOrderStatusException;
+import kitchenpos.exception.table.InvalidNumberOfGuestsException;
+import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -107,7 +111,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(1L, mock(OrderTableRequest.class)))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchOrderTableException.class);
     }
 
     @Test
@@ -128,7 +132,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeTableStatusAsAlreadyAssignedTableGroupException.class);
     }
 
     @Test
@@ -137,7 +141,7 @@ class TableServiceTest {
         // given
         long targetOrderTableId = 1L;
 
-        OrderTable targetOrderTable = new OrderTable(mock(TableGroup.class), 1, true);
+        OrderTable targetOrderTable = new OrderTable(null, 1, true);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest();
 
@@ -148,7 +152,7 @@ class TableServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableService.changeEmpty(targetOrderTableId, orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeTableStatusAsOrderStatusException.class);
     }
 
     @Test
@@ -180,11 +184,13 @@ class TableServiceTest {
         int numberOfGuestsToChange = -1;
         OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
-        long targetOrderTableId = 1L;
+        OrderTable orderTable = new OrderTable(mock(TableGroup.class), 1, false);
+        given(orderTableRepository.findById(anyLong()))
+                .willReturn(Optional.of(orderTable));
 
         // when, then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTableRequest))
+                .isInstanceOf(InvalidNumberOfGuestsException.class);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.table.InvalidNumberOfGuestsException;
+
 import javax.persistence.*;
 
 @Entity
@@ -29,6 +31,8 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
+
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -67,7 +71,14 @@ public class OrderTable {
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
+        validateNumberOfGuests(numberOfGuests);
         this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new InvalidNumberOfGuestsException();
+        }
     }
 
     public void ungroup() {
