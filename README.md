@@ -82,29 +82,29 @@
   - [x] 변경된 상태의 orderTable을 저장
   
 ### Table
-- [ ] table을 만든다.
-  - [ ] orderTable의 id를 null로 지정한다.
-  - [ ] orderTable의 TableGroupId를 null로 지정한다.
-  - [ ] orderTable을 저장한다.
+- [x] table을 만든다.
+  - [x] orderTable의 id를 null로 지정한다.
+  - [x] orderTable의 TableGroupId를 null로 지정한다.
+  - [x] orderTable을 저장한다.
   
-- [ ] 저장된 table을 반환한다.
+- [x] 저장된 table을 반환한다.
   
-- [ ] table을 비어있는 상태로 만든다.
-  - [ ] orderTable을 불러온다
-    - [ ] 존재하지 않는 경우 예외를 던진다.
-    - [ ] tableGroupId가 존재하는 경우 예외를 던진다.
-  - [ ] 변경하려는 orderTableId의 orderStatus가 {cooking, meal}인 경우 예외를 던진다.
-  - [ ] 불러온 orderTable을 전달받은 orderTable의 empty값으로 변경한다.
-  - [ ] 불러온 orderTable을 저장한다.
+- [x] table을 비어있는 상태로 만든다.
+  - [x] orderTable을 불러온다
+    - [x] 존재하지 않는 경우 예외를 던진다.
+    - [x] tableGroupId가 존재하는 경우 예외를 던진다.
+  - [x] 변경하려는 orderTableId의 orderStatus가 {cooking, meal}인 경우 예외를 던진다.
+  - [x] 불러온 orderTable을 전달받은 orderTable의 empty값으로 변경한다.
+  - [x] 불러온 orderTable을 저장한다.
   
-- [ ] table의 게스트 숫자를 변경한다.
-  - [ ] orderTable의 numberOfGuests를 불러온다.
-    - [ ] numberOfGuests가 0 이하인 경우 예외를 던진다.
-  - [ ] 전달받은 orderTableId로 저장된 orderTable을 불러온다.
-    - [ ] 존재하지 않는 경우 예외를 던진다.
-    - [ ] 저장된 orderTable이 비어있는 경우 예외를 던진다.
-  - [ ] 저장된 orderTable에 numberOfGuests를 지정한다.
-  - [ ] 저장된 orderTable을 저장한다.
+- [x] table의 게스트 숫자를 변경한다.
+  - [x] orderTable의 numberOfGuests를 불러온다.
+    - [x] numberOfGuests가 0 이하인 경우 예외를 던진다.
+  - [x] 전달받은 orderTableId로 저장된 orderTable을 불러온다.
+    - [x] 존재하지 않는 경우 예외를 던진다.
+    - [x] 저장된 orderTable이 비어있는 경우 예외를 던진다.
+  - [x] 저장된 orderTable에 numberOfGuests를 지정한다.
+  - [x] 저장된 orderTable을 저장한다.
 
 
 ## 용어 사전
