@@ -112,6 +112,17 @@ class OrderServiceTest {
     }
 
     @Test
+    @DisplayName("주문 등록 실패 :: 같은 메뉴의 중복된 주문 항목 포함")
+    void createWithDuplicateOrderLineItem() {
+        List<OrderLineItem> orderLineItems = Arrays.asList(
+                new OrderLineItem(pizzaSet.getId(), 2),
+                new OrderLineItem(pizzaSet.getId(), 1));
+        Order order = new Order(table.getId(), null, null, orderLineItems);
+
+        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     @DisplayName("주문 등록 실패 :: 존재하지 않는 주문 테이블")
     void createWithNotExistingOrderTable() {
         Long notExistingTableId = Long.MAX_VALUE;
