@@ -10,8 +10,9 @@ public class Order {
     @Id @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
-    private Long orderTableId;
+    @ManyToOne
+    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_order_order_table"), nullable = false)
+    private OrderTable orderTable;
 
     @Column(nullable = false)
     private String orderStatus;
@@ -25,13 +26,13 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(null, orderTableId, orderStatus, orderedTime);
+    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        this(null, orderTable, orderStatus, orderedTime);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
     }
@@ -40,8 +41,8 @@ public class Order {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public String getOrderStatus() {

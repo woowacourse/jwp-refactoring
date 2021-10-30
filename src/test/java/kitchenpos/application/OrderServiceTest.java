@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -46,28 +47,21 @@ class OrderServiceTest {
     @DisplayName("주문을 생성할 수 있다.")
     void create() {
         // given
-        Order expected = new Order();
-        long orderId = 1L;
-        expected.setId(orderId);
-
-        MenuGroup menuGroup = new MenuGroup();
-        long menuId = 1L;
-        Menu menu = new Menu(menuId, "name", BigDecimal.valueOf(1000L), menuGroup);
-        long menuQuantity = 1L;
-
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenu(menu);
-        orderLineItem.setOrder(expected);
-        orderLineItem.setQuantity(menuQuantity);
-
-        expected.setOrderLineItems(Arrays.asList(orderLineItem));
-
         Long orderTableId = 1L;
         OrderTable orderTable = new OrderTable();
         orderTable.setId(orderTableId);
         orderTable.setEmpty(false);
 
-        expected.setOrderTableId(orderTable.getId());
+        MenuGroup menuGroup = new MenuGroup("menuGroupName");
+        long menuId = 1L;
+        Menu menu = new Menu(menuId, "menuName", BigDecimal.valueOf(1000L), menuGroup);
+        long menuQuantity = 1L;
+
+        Order expected = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        OrderLineItem orderLineItem = new OrderLineItem(expected, menu, menuQuantity);
+
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
+        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
 
         given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(expected.getOrderLineItems().size()));
@@ -81,12 +75,13 @@ class OrderServiceTest {
                 .willReturn(orderLineItem);
 
         // when
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
-        OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
+
         Order actual = orderService.create(orderRequest);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .ignoringFields("orderedTime")
+                .isEqualTo(actual);
     }
 
     @Test
@@ -183,23 +178,21 @@ class OrderServiceTest {
                 .willReturn(Optional.empty());
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, mock(OrderRequest.class)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("주문이 이미 완료된 상태라면 상태를 변경할 수 없다.")
     void changeOrderStatusFailWhenOrderIsCompleted() {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        Order order = new Order(mock(OrderTable.class), OrderStatus.COMPLETION.name(), LocalDateTime.now());
 
         // given
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
 
         // when, then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, new Order()))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, mock(OrderRequest.class)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -207,19 +200,18 @@ class OrderServiceTest {
     @DisplayName("주문의 진행 상황을 변경할 수 있다.")
     void changeOrderStatus() {
         // given
-        Order order = new Order();
-        order.setId(1L);
-
         OrderStatus expectedStatus = OrderStatus.MEAL;
-        order.setOrderStatus(expectedStatus.name());
+        Order order = new Order(1L, mock(OrderTable.class), expectedStatus.name(), LocalDateTime.now());
 
         given(orderRepository.findById(anyLong()))
                 .willReturn(Optional.of(order));
         given(orderRepository.save(any(Order.class)))
                 .willReturn(order);
 
+        OrderRequest orderRequest = new OrderRequest(expectedStatus.name());
+
         // when
-        Order actual = orderService.changeOrderStatus(order.getId(), order);
+        Order actual = orderService.changeOrderStatus(order.getId(), orderRequest);
 
         // then
         assertThat(actual.getOrderStatus()).isEqualTo(expectedStatus.name());
