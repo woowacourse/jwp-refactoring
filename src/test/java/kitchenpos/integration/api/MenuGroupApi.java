@@ -4,6 +4,8 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
+import kitchenpos.ui.request.MenuGroupCreateRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,22 +17,20 @@ public class MenuGroupApi {
     @Autowired
     private MockMvcUtils mockMvcUtils;
 
-    public MockMvcResponse<MenuGroup> 메뉴_그룹_등록(MenuGroup menuGroup) {
+    public MockMvcResponse<MenuGroupResponse> 메뉴_그룹_등록(MenuGroupCreateRequest menuGroup) {
         return mockMvcUtils.request()
             .post(BASE_URL)
             .content(menuGroup)
-            .asSingleResult(MenuGroup.class);
+            .asSingleResult(MenuGroupResponse.class);
     }
 
-    public MockMvcResponse<MenuGroup> 메뉴_그룹_등록(String name) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-        return 메뉴_그룹_등록(menuGroup);
+    public MockMvcResponse<MenuGroupResponse> 메뉴_그룹_등록(String name) {
+        return 메뉴_그룹_등록(MenuGroupCreateRequest.create(name));
     }
 
-    public MockMvcResponse<List<MenuGroup>> 메뉴_그룹_조회() {
+    public MockMvcResponse<List<MenuGroupResponse>> 메뉴_그룹_조회() {
         return mockMvcUtils.request()
             .get(BASE_URL)
-            .asMultiResult(MenuGroup.class);
+            .asMultiResult(MenuGroupResponse.class);
     }
 }

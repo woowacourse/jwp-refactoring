@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.utils.MockMvcResponse;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class MenuGroupIntegrationTest extends IntegrationTest {
         final String menuGroupName = "추천메뉴";
 
         //when
-        final MockMvcResponse<MenuGroup> result = menuGroupApi.메뉴_그룹_등록(menuGroupName);
+        final MockMvcResponse<MenuGroupResponse> result = menuGroupApi.메뉴_그룹_등록(menuGroupName);
 
         //then
         Assertions.assertThat(result.getContent().getName()).isEqualTo(menuGroupName);
@@ -32,12 +33,12 @@ public class MenuGroupIntegrationTest extends IntegrationTest {
         //given
 
         //when
-        final MockMvcResponse<List<MenuGroup>> result = menuGroupApi.메뉴_그룹_조회();
+        final MockMvcResponse<List<MenuGroupResponse>> result = menuGroupApi.메뉴_그룹_조회();
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(result.getContent())
-            .extracting(MenuGroup::getName)
+            .extracting(MenuGroupResponse::getName)
             .containsExactlyInAnyOrder("두마리메뉴", "한마리메뉴", "순살파닭두마리메뉴", "신메뉴");
     }
 }
