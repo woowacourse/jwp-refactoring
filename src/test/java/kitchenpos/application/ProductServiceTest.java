@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.dto.ProductRequest;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -29,16 +30,21 @@ class ProductServiceTest {
     @DisplayName("Product를 저장할 수 있다.")
     void create() {
         // given
+        String productName = "product";
+        BigDecimal productPrice = BigDecimal.valueOf(10000L);
+
         Product product = new Product();
         product.setId(1L);
-        product.setName("product");
-        product.setPrice(BigDecimal.valueOf(10000L));
+        product.setName(productName);
+        product.setPrice(productPrice);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
+        ProductRequest productRequest = new ProductRequest(productName, productPrice.longValue());
+
         // when
-        Product actual = productService.create(product);
+        Product actual = productService.create(productRequest);
 
         // then
         assertThat(actual).isEqualTo(product);
@@ -48,16 +54,21 @@ class ProductServiceTest {
     @DisplayName("저장하려는 상품의 가격이 0보다 작으면 예외를 발생시킨다.")
     void negativePriceWillReturnException() {
         // given
+        String productName = "product";
+        BigDecimal productPrice = BigDecimal.valueOf(-10000L);
+
         Product product = new Product();
         product.setId(1L);
-        product.setName("product");
-        product.setPrice(BigDecimal.valueOf(-10000L));
+        product.setName(productName);
+        product.setPrice(productPrice);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
+        ProductRequest productRequest = new ProductRequest(productName, productPrice.longValue());
+
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -65,16 +76,20 @@ class ProductServiceTest {
     @DisplayName("저장하려는 상품의 가격이 null일 경우 예외를 발생시킨다.")
     void nullPriceWillReturnException() {
         // given
+        String productName = "product";
+
         Product product = new Product();
         product.setId(1L);
-        product.setName("product");
+        product.setName(productName);
         product.setPrice(null);
 
         given(productRepository.save(any(Product.class)))
                 .willReturn(product);
 
+        ProductRequest productRequest = new ProductRequest(productName, null);
+
         // when, then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(productRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
