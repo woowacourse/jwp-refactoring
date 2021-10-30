@@ -125,7 +125,7 @@ class TableServiceTest {
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> tableService.changeEmpty(table.getId(), changeEmptyTable));
-        assertEquals("조리중이나 식사중인 경우 상태를 변경할 수 없습니다.", exception.getMessage());
+        assertEquals("주문 상태가 조리중이나 식사중입니다.", exception.getMessage());
     }
 
     @Test

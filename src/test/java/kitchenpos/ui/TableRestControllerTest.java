@@ -121,7 +121,7 @@ class TableRestControllerTest extends ControllerTest {
     void changeEmptyWrongCookingOrMeal() throws Exception {
         // given
         OrderTable changeEmptyTable = new OrderTable(null, null, 0, false);
-        willThrow(new IllegalArgumentException("조리중이나 식사중인 경우 상태를 변경할 수 없습니다."))
+        willThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다."))
                 .given(tableService).changeEmpty(anyLong(), any(OrderTable.class));
 
         // when
@@ -132,7 +132,7 @@ class TableRestControllerTest extends ControllerTest {
         // then
         response.andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
-                .andExpect(jsonPath("$.message").value("조리중이나 식사중인 경우 상태를 변경할 수 없습니다."));
+                .andExpect(jsonPath("$.message").value("주문 상태가 조리중이나 식사중입니다."));
     }
 
     @Test

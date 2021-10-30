@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 class TableGroupTest {
 
     @Test
-    @DisplayName("테이블 그룹 올바르다면 그룹을 생성할 수 있다.")
+    @DisplayName("테이블 그룹이 올바르다면 그룹을 생성할 수 있다.")
     void create() {
         // when & then
         assertDoesNotThrow(() -> new TableGroup(Arrays.asList(단일_손님0_테이블1, 단일_손님0_테이블2)));
@@ -45,5 +45,12 @@ class TableGroupTest {
         assertThatThrownBy(() -> new TableGroup(Arrays.asList(단일_손님0_테이블1, 그룹_손님0_테이블)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("테이블 그룹을  올바르다면 그룹을 생성할 수 있다.")
+    void upGroup() {
+        // when & then
+        assertDoesNotThrow(() -> new TableGroup(Arrays.asList(단일_손님0_테이블1, 단일_손님0_테이블2)));
     }
 }

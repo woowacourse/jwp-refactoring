@@ -58,7 +58,7 @@ class OrderTableTest {
         // when & then
         assertThatThrownBy(() -> table.changeEmpty(true))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("조리중이나 식사중인 경우 상태를 변경할 수 없습니다.");
+                .hasMessage("주문 상태가 조리중이나 식사중입니다.");
     }
 
     @Test

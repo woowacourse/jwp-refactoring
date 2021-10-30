@@ -9,13 +9,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
+import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
 import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블2;
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
@@ -28,9 +33,6 @@ import static org.mockito.BDDMockito.given;
 @DisplayName("TableGroupService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
 class TableGroupServiceTest {
-
-    @Mock
-    private OrderRepository orderRepository;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -140,15 +142,16 @@ class TableGroupServiceTest {
     @DisplayName("묶여있는 테이블 그룹을 해제할 수 있다. - 그룹이 해제된 테이블들은 비어 있지 않은 상태가 된다.")
     void ungroup() {
         // given
-        OrderTable table1 = new OrderTable(1L, GROUP1, 3, true);
-        OrderTable table2 = new OrderTable(2L, GROUP1, 5, true);
-        given(orderTableRepository.findAllByTableGroupId(GROUP1.getId())).willReturn(Arrays.asList(table1, table2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(table1.getId(), table2.getId()),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
+        OrderTable table1 = new OrderTable(1L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
+        OrderTable table2 = new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
+        TableGroup GROUP2 = new TableGroup(
+                2L,
+                LocalDateTime.now(),
+                Arrays.asList(table1, table2));
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
 
         // when
-        tableGroupService.ungroup(GROUP1.getId());
+        tableGroupService.ungroup(GROUP2.getId());
 
         // then
         assertNull(table1.getTableGroup());
@@ -161,16 +164,20 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들의 상태가 하나라도 조리중(COOKING)이나 식사중(MEAL)인 경우 그룹을 해제할 수 없다.")
     void ungroupWrongTableCookingOrMeal() {
         // given
-        OrderTable table1 = new OrderTable(1L, GROUP1, 3, true);
-        OrderTable table2 = new OrderTable(2L, GROUP1, 5, true);
-        given(orderTableRepository.findAllByTableGroupId(GROUP1.getId())).willReturn(Arrays.asList(table1, table2));
-        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(table1.getId(), table2.getId()),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        TableGroup GROUP2 = new TableGroup(
+                2L,
+                LocalDateTime.now(),
+                Arrays.asList(
+                        new OrderTable(1L, null, 0, true, Collections.singletonList(COOKING_ORDER)),
+                        new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER))
+                )
+        );
+
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableGroupService.ungroup(GROUP1.getId()));
-        assertEquals("조리중이나 식사중인 테이블을 포함하여 그룹으로 지정할 수 없습니다.", exception.getMessage());
+                () -> tableGroupService.ungroup(GROUP2.getId()));
+        assertEquals("주문 상태가 조리중이나 식사중입니다.", exception.getMessage());
     }
 }

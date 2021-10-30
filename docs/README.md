@@ -38,7 +38,7 @@
   - [x] Menu
   - [x] OrderTable
   - [ ] Order
-  - [ ] TableGroup
+  - [x] TableGroup
 
 - [ ] controller - service 사이 dto 사용  
 - [ ] 도메인에서 setter 제거

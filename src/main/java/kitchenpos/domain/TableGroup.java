@@ -63,6 +63,10 @@ public class TableGroup {
         }
     }
 
+    public void ungroup() {
+        orderTables.forEach(OrderTable::ungroup);
+    }
+
     public Long getId() {
         return id;
     }

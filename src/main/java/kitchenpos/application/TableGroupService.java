@@ -1,28 +1,27 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
 import kitchenpos.dto.request.CreateTableGroupRequest;
 import kitchenpos.dto.response.TableGroupResponse;
 
 @Service
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(
-            final OrderRepository orderRepository,
             final OrderTableRepository orderTableRepository,
             final TableGroupRepository tableGroupRepository
     ) {
-        this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
@@ -38,27 +37,14 @@ public class TableGroupService {
         tableGroup.changeFull();
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
         return TableGroupResponse.from(savedTableGroup);
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
+                                                          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹입니다."));
 
-        final List<Long> orderTableIds = orderTables.stream()
-                                                    .map(OrderTable::getId)
-                                                    .collect(Collectors.toList());
-
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException("조리중이나 식사중인 테이블을 포함하여 그룹으로 지정할 수 없습니다.");
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
-        }
+        tableGroup.ungroup();
     }
 }

@@ -134,7 +134,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("목록에 포함된 테이블들의 상태가 하나라도 조리중(COOKING)이나 식사중(MEAL)인 경우 그룹을 해제할 수 없다.")
     void ungroupWrongTableCookingOrMeal() throws Exception {
         // given
-        willThrow(new IllegalArgumentException("조리중이나 식사중인 테이블을 포함하여 그룹으로 지정할 수 없습니다."))
+        willThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다."))
                 .given(tableGroupService).ungroup(anyLong());
 
         // when
@@ -143,7 +143,7 @@ class TableGroupRestControllerTest extends ControllerTest {
         // then
         response.andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IllegalArgumentException))
-                .andExpect(jsonPath("$.message").value("조리중이나 식사중인 테이블을 포함하여 그룹으로 지정할 수 없습니다."));
+                .andExpect(jsonPath("$.message").value("주문 상태가 조리중이나 식사중입니다."));
     }
 
 }

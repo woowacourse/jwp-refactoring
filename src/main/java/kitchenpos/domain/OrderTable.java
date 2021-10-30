@@ -57,7 +57,7 @@ public class OrderTable {
         boolean isCookingOrMeal = orders.stream()
                                         .anyMatch(order -> order.isStatus(OrderStatus.COOKING) || order.isStatus(OrderStatus.MEAL));
         if (isCookingOrMeal) {
-            throw new IllegalArgumentException("조리중이나 식사중인 경우 상태를 변경할 수 없습니다.");
+            throw new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.");
         }
     }
 
@@ -80,6 +80,12 @@ public class OrderTable {
     }
 
     public void changeFull() {
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        validatesOrderStatus();
+        this.tableGroup = null;
         this.empty = false;
     }
 
