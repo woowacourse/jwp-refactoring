@@ -58,12 +58,12 @@ class MenuServiceTest {
         when(menuProductDao.findAllByMenuId(menu.getId())).thenReturn(Collections.singletonList(menuProduct));
 
         // when
-        List<Menu> list = menuService.list();
+        List<Menu> result = menuService.list();
 
         // then
         verify(menuDao, times(1)).findAll();
         verify(menuProductDao, times(1)).findAllByMenuId(menu.getId());
-        assertThat(list).containsExactly(menu);
+        assertThat(result).containsExactly(menu);
     }
 
     @Nested

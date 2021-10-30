@@ -79,20 +79,19 @@
     - [ ] product 의 price 가 0 보다 작은 경우
   - [ ] /api/products GET success
 
-- [ ] Table 테스트
-  - [ ] /api/tables POST success
-  - [ ] /api/tables POST failure
-  - [ ] /api/tables GET success
-  - [ ] /api/tables/{orderTableId}/empty PUT success
-  - [ ] /api/tables/{orderTableId}/empty PUT failure
-    - [ ] orderTable 이 존재하지 않는 경우
-    - [ ] tableGroup 이 존재하지 않는 경우
-    - [ ] order 의 상태가 COOKING 이거나 MEAL 인 경우 (COMPLETION 이 아닌 경우)
-  - [ ] /api/tables/{orderTableId}/number-of-guests PUT success
-  - [ ] /api/tables/{orderTableId}/number-of-guests PUT failure
-    - [ ] numberOfGuests 가 0 보다 작은 경우
-    - [ ] orderTable 이 존재하지 않는 경우
-    - [ ] orderTable 이 비어있는 경우
+- [x] Table 테스트
+  - [x] /api/tables POST success
+  - [x] /api/tables GET success
+  - [x] /api/tables/{orderTableId}/empty PUT success
+  - [x] /api/tables/{orderTableId}/empty PUT failure
+    - [x] orderTable 이 존재하지 않는 경우
+    - [x] tableGroup 이 존재하는 경우
+    - [x] order 의 상태가 COMPLETION 이 아닌 경우
+  - [x] /api/tables/{orderTableId}/number-of-guests PUT success
+  - [x] /api/tables/{orderTableId}/number-of-guests PUT failure
+    - [x] numberOfGuests 가 음수인 경우
+    - [x] 저장된 orderTable 이 존재하지 않는 경우
+    - [x] 저장된 orderTable 이 비어있는 경우
 
 - [x] TableGroup 테스트
   - [x] /api/table-groups POST success
