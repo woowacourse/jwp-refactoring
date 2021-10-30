@@ -33,14 +33,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
         best.setName("최고메뉴");
         savedMenuGroup2 = menuGroupDao.save(best);
 
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
-        chicken.setPrice(BigDecimal.valueOf(17000));
-        Product savedChicken = productDao.save(chicken);
-        Product chicken2 = new Product();
-        chicken2.setName("간장치킨");
-        chicken2.setPrice(BigDecimal.valueOf(17000));
-        Product savedChicken2 = productDao.save(chicken2);
+        Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
+        Product savedChicken = productRepository.save(chicken);
+        Product chicken2 = new Product("간장치킨", BigDecimal.valueOf(17000));
+        Product savedChicken2 = productRepository.save(chicken2);
 
         menuProduct = new MenuProduct();
         menuProduct.setProductId(savedChicken.getId());

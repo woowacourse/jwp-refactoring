@@ -39,10 +39,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
         recommendation.setName("추천메뉴");
         MenuGroup savedMenuGroup = menuGroupDao.save(recommendation);
 
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
-        chicken.setPrice(BigDecimal.valueOf(17000));
-        Product savedChicken = productDao.save(chicken);
+        Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
+        Product savedChicken = productRepository.save(chicken);
 
         MenuProduct menuProduct = new MenuProduct();
         menuProduct.setProductId(savedChicken.getId());
