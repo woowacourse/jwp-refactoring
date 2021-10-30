@@ -30,17 +30,27 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validatesPrice(price);
+        validatesPriceValue(price);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+        validatesMenuProductsPrice();
     }
 
-    private void validatesPrice(BigDecimal price) {
+    private void validatesPriceValue(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다.");
+        }
+    }
+
+    private void validatesMenuProductsPrice() {
+        final BigDecimal sum = menuProducts.stream()
+                                           .map(MenuProduct::totalPrice)
+                                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
         }
     }
 

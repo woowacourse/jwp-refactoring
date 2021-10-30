@@ -35,7 +35,7 @@
 - [ ] 비즈니스 로직 도메인으로 옮기기
   * TDD로 진행
   - [x] Product
-  - [ ] Menu
+  - [x] Menu
   - [x] OrderTable
   - [ ] Order
   - [ ] TableGroup
