@@ -97,4 +97,36 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("비어있는 테이블의 손님 수를 변경할 수 없습니다.");
     }
+
+    @Test
+    @DisplayName("그룹을 해제하면 테이블의 그룹이 null이 되고, 비어있지 않게 된다.")
+    void ungroup() {
+        // given
+        OrderTable table = new OrderTable(1L, null, 4, false);
+
+        // when
+        table.ungroup();
+
+        // then
+        assertNull(table.getTableGroup());
+        assertFalse(table.isEmpty());
+    }
+
+    @Test
+    @DisplayName("주문 상태가 조리중이나 식사중이라면 그룹을 해제할 수 없다.")
+    void ungroupWrongStatus() {
+        // given
+        OrderTable table = new OrderTable(
+                1L,
+                null,
+                4,
+                false,
+                Collections.singletonList(COOKING_ORDER)
+        );
+
+        // when & then
+        assertThatThrownBy(table::ungroup)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("주문 상태가 조리중이나 식사중입니다.");
+    }
 }

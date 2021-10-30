@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import static kitchenpos.fixture.OrderTableFixture.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @DisplayName("TableGroup 단위 테스트")
 class TableGroupTest {
@@ -52,5 +54,27 @@ class TableGroupTest {
     void upGroup() {
         // when & then
         assertDoesNotThrow(() -> new TableGroup(Arrays.asList(단일_손님0_테이블1, 단일_손님0_테이블2)));
+    }
+
+    @Test
+    @DisplayName("그룹에 속한 모든 테이블이 비어있지 않게된다.")
+    void changeFull() {
+        // given
+        TableGroup group = new TableGroup(
+                Arrays.asList(
+                        new OrderTable(0, true),
+                        new OrderTable(0, true),
+                        new OrderTable(0, true)
+                )
+        );
+
+        // when
+        group.changeFull();
+        List<OrderTable> results = group.getOrderTables();
+
+        // then
+        assertFalse(results.get(0).isEmpty());
+        assertFalse(results.get(1).isEmpty());
+        assertFalse(results.get(2).isEmpty());
     }
 }
