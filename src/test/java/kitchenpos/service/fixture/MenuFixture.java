@@ -4,7 +4,6 @@ import static java.util.Collections.unmodifiableList;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.service.dao.TestMenuDao;

@@ -1,9 +1,6 @@
 package kitchenpos.service.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.service.dao.TestMenuDao;
 import kitchenpos.service.dao.TestMenuProductDao;
 
 public class MenuProductFixture {
