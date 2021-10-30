@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 public class OrderTable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

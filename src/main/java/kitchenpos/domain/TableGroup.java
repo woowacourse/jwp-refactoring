@@ -8,7 +8,7 @@ import java.util.List;
 @Entity
 public class TableGroup {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
