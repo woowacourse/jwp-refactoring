@@ -4,8 +4,8 @@ import kitchenpos.domain.*;
 import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,7 +21,8 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -50,21 +50,19 @@ class OrderServiceTest {
         Long orderTableId = 1L;
         OrderTable orderTable = new OrderTable(1L, null, 1, false);
 
-        MenuGroup menuGroup = new MenuGroup("menuGroupName");
-        long menuId = 1L;
-        Menu menu = new Menu(menuId, "menuName", 1000L, menuGroup);
-        long menuQuantity = 1L;
+        Menu mockMenu = mock(Menu.class);
+        Long menuQuantity = 1L;
 
         Order expected = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        OrderLineItem orderLineItem = new OrderLineItem(expected, menu, menuQuantity);
+        OrderLineItem orderLineItem = new OrderLineItem(expected, mockMenu, menuQuantity);
 
-        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menuId, menuQuantity);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, menuQuantity);
         OrderRequest orderRequest = new OrderRequest(orderTableId, Arrays.asList(orderLineItemRequest));
 
         given(menuRepository.countByIdIn(any(List.class)))
                 .willReturn(Long.valueOf(expected.getOrderLineItems().size()));
         given(menuRepository.findById(anyLong()))
-                .willReturn(Optional.of(menu));
+                .willReturn(Optional.of(mockMenu));
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(orderTable));
         given(orderRepository.save(any(Order.class)))

@@ -4,7 +4,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
-import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
@@ -14,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MenuService {
@@ -38,26 +38,21 @@ public class MenuService {
     public Menu create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
-        final Menu savedMenu = menuRepository.save(menu);
 
-        Long sum = 0L;
-        for (final MenuProductRequest menuProductRequest : menuRequest.getMenuProductRequests()) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-            Long quantity = menuProductRequest.getQuantity();
-            MenuProduct menuProduct = new MenuProduct(savedMenu, product, quantity);
+        List<MenuProduct> menuProducts = menuRequest.getMenuProductRequests().stream()
+                .map(menuProductRequest -> {
+                    Product product = productRepository.findById(menuProductRequest.getProductId())
+                            .orElseThrow(IllegalArgumentException::new);
+                    return new MenuProduct(product, menuProductRequest.getQuantity());
+                })
+                .collect(Collectors.toList());
 
-            MenuProduct savedMenuProduct = menuProductRepository.save(menuProduct);
-            sum += product.getPrice() * quantity;
-        }
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup, menuProducts);
 
-        if (menu.getPrice() > sum) {
-            throw new IllegalArgumentException();
-        }
+        // todo 영속성 전이
+        menuProductRepository.saveAll(menuProducts);
 
-        return savedMenu;
+        return menuRepository.save(menu);
     }
 
     public List<Menu> list() {

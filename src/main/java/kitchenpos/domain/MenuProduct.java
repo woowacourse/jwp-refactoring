@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.menuproduct.AlreadyAssignedMenuProductException;
+
 import javax.persistence.*;
 
 @Entity
@@ -21,11 +23,11 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(Menu menu, Product product, Long quantity) {
-        this(null, menu, product, quantity);
+    public MenuProduct(Product product, Long quantity) {
+        this(null, null, product, quantity);
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
+    private MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
         this.seq = seq;
         this.menu = menu;
         this.product = product;
@@ -34,6 +36,17 @@ public class MenuProduct {
         if (menu != null) {
             menu.getMenuProducts().add(this);
         }
+    }
+
+    public void belongsTo(Menu menu) {
+        if (this.menu != null) {
+            throw new AlreadyAssignedMenuProductException();
+        }
+        this.menu = menu;
+    }
+
+    public Long getTotalPrice() {
+        return this.product.getPrice() * quantity.longValue();
     }
 
     public Long getSeq() {

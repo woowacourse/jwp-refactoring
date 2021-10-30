@@ -1,15 +1,16 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.dto.MenuProductRequest;
-import kitchenpos.dto.MenuRequest;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuProductRequest;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -51,18 +51,21 @@ class MenuServiceTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     void create() {
         // given
-        Long menuGroupId = 1L;
-        MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
-
         String menuName = "menuName";
         Long menuPrice = 1000L;
-        Menu expected = new Menu(menuName, menuPrice, menuGroup);
+        Long menuGroupId = 1L;
 
         long productId = 1L;
+        long menuProductQuantity = 1;
+
+        MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
+        MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, menuGroupId, Arrays.asList(menuProductRequest));
+
+        MenuGroup menuGroup = new MenuGroup(menuGroupId, "menuGroupName");
         Product product = new Product(productId, "productName", 1000L);
 
-        long menuProductQuantity = 1;
-        MenuProduct menuProduct = new MenuProduct(expected, product, menuProductQuantity);
+        MenuProduct menuProduct = new MenuProduct(product, menuProductQuantity);
+        Menu expected = new Menu(menuName, menuPrice, menuGroup, Arrays.asList(menuProduct));
 
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
@@ -73,36 +76,11 @@ class MenuServiceTest {
         given(menuProductRepository.save(any(MenuProduct.class)))
                 .willReturn(menuProduct);
 
-        MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
-        MenuRequest menuRequest = new MenuRequest(menuName, menuPrice.longValue(), menuGroupId, Arrays.asList(menuProductRequest));
-
         // when
         Menu actual = menuService.create(menuRequest);
 
         // then
         assertThat(actual).isEqualTo(expected);
-    }
-
-    @Test
-    @DisplayName("가격이 null이라면 예외가 발생한다.")
-    void createFailWhenPriceIsNull() {
-        // given
-        MenuRequest menuRequest = new MenuRequest("name", null, 1L, mock(List.class));
-
-        // when, then
-        assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    @DisplayName("가격이 음수라면 예외가 발생한다.")
-    void createFailWhenPriceIsNegativeNumber() {
-        // given
-        MenuRequest menuRequest = new MenuRequest("name", -1L, 1L, mock(List.class));
-
-        // when, then
-        assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -142,24 +120,19 @@ class MenuServiceTest {
     void createFailWhenMenuPriceLowerThanAllProduct(Long menuPrice, Long productPrice, Long productQuantity) {
         // given
         String menuName = "name";
-        MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
-        Menu expected = new Menu(menuName, menuPrice, menuGroup);
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, productQuantity);
         MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, 1L, Arrays.asList(menuProductRequest));
 
-        given(menuGroupRepository.existsById(anyLong()))
-                .willReturn(true);
-        given(menuRepository.save(any(Menu.class)))
-                .willReturn(expected);
-
-        Product product = new Product("name", productPrice);
+        Product product = new Product("productName", productPrice);
+        given(menuGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(mock(MenuGroup.class)));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
 
         // when, then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(MenuPriceOverThanProductsException.class);
     }
 
     @Test

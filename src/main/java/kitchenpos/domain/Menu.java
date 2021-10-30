@@ -1,5 +1,7 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -26,15 +28,28 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, Long price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
-    }
-
-    public Menu(Long id, String name, Long price, MenuGroup menuGroup) {
-        this.id = id;
+    public Menu(String name, Long price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this.name = name;
         this.price = Price.from(price);
         this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
+
+        validatePrice(menuProducts);
+
+        for (MenuProduct menuProduct : menuProducts) {
+            if (menuProduct != null) {
+                menuProduct.belongsTo(this);
+            }
+        }
+    }
+
+    private void validatePrice(List<MenuProduct> menuProducts) {
+        long totalPriceOfMenuProducts = menuProducts.stream()
+                .mapToLong(MenuProduct::getTotalPrice)
+                .sum();
+        if (totalPriceOfMenuProducts < price.longValue()) {
+            throw new MenuPriceOverThanProductsException();
+        }
     }
 
     public Long getId() {
