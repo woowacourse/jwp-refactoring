@@ -1,10 +1,10 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.TableGroupDao;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ public abstract class AcceptanceTest {
     protected MenuDao menuDao;
 
     @Autowired
-    protected MenuGroupDao menuGroupDao;
+    protected MenuGroupRepository menuGroupRepository;
 
     @Autowired
     protected OrderDao orderDao;

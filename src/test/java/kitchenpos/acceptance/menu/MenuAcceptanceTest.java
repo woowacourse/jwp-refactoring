@@ -26,12 +26,10 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        MenuGroup recommendation = new MenuGroup();
-        recommendation.setName("추천메뉴");
-        savedMenuGroup = menuGroupDao.save(recommendation);
-        MenuGroup best = new MenuGroup();
-        best.setName("최고메뉴");
-        savedMenuGroup2 = menuGroupDao.save(best);
+        MenuGroup recommendation = new MenuGroup("추천메뉴");
+        savedMenuGroup = menuGroupRepository.save(recommendation);
+        MenuGroup best = new MenuGroup("최고메뉴");
+        savedMenuGroup2 = menuGroupRepository.save(best);
 
         Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
         Product savedChicken = productRepository.save(chicken);

@@ -35,9 +35,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
         table.setEmpty(false);
         savedOrderTable = orderTableDao.save(table);
 
-        MenuGroup recommendation = new MenuGroup();
-        recommendation.setName("추천메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(recommendation);
+        MenuGroup recommendation = new MenuGroup("추천메뉴");
+        MenuGroup savedMenuGroup = menuGroupRepository.save(recommendation);
 
         Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
         Product savedChicken = productRepository.save(chicken);
