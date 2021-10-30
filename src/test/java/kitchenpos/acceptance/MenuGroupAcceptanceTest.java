@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.dto.MenuGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void createMenuGroup() {
         // given
-        MenuGroup 세마리메뉴 = new MenuGroup();
+        MenuGroupRequest 세마리메뉴 = new MenuGroupRequest();
         세마리메뉴.setName("세마리메뉴");
 
         // when

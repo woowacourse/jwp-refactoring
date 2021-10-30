@@ -6,6 +6,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableIdRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class TableGroupService {
     private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
@@ -29,20 +32,22 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+        final List<OrderTableIdRequest> orderTableIdRequests = tableGroupRequest.getOrderTables();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIdRequests) || orderTableIdRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
+        final List<Long> orderTableIds = orderTableIdRequests.stream()
+                .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
         final List<OrderTable> savedOrderTables = orderTableDao.findAllById(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        final TableGroup tableGroup = new TableGroup();
+
+        if (orderTableIdRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -56,8 +61,9 @@ public class TableGroupService {
 
         final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
+        // TODO: 양방향 연관관계 다시 더 공부하기 제발
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroup(savedTableGroup);
+//            savedOrderTable.setTableGroup(savedTableGroup);
             savedOrderTable.setEmpty(false);
             orderTableDao.save(savedOrderTable);
         }

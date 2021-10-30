@@ -8,6 +8,9 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.dto.OrderLineItemRequest;
+import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderStatusModifyRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,18 +39,19 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public Order create(final OrderRequest orderRequest) {
+        // TODO: 오더라인 아이템 menuId 발리데이션
+//        if (orderLineItemRequests.size() != menuDao.countByOrderLineItemsIn(orderLineItems)) {
+//            throw new IllegalArgumentException();
+//        }
 
-        if (orderLineItems.size() != menuDao.countByOrderLineItemsIn(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
+        final Order order = new Order();
         order.setId(null);
 
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+        final OrderTable orderTable = orderTableDao.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
+        // 오더를 받은 테이블이라면 사람이 있어야 말이 되는거겠지?
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -58,13 +62,18 @@ public class OrderService {
 
         final Order savedOrder = orderDao.save(order);
 
+        final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
+
+        for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            final OrderLineItem orderLineItem = new OrderLineItem();
             orderLineItem.setOrder(savedOrder);
+            orderLineItem.setMenu(menuDao.findById(orderLineItemRequest.getMenuId()).get());
+            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
 
+        savedOrder.setOrderLineItems(savedOrderLineItems);
         return savedOrder;
     }
 
@@ -79,11 +88,11 @@ public class OrderService {
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusModifyRequest orderStatusModifyRequest) {
         final Order savedOrder = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        savedOrder.changeOrderStatus(order.getOrderStatus());
+        savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatusModifyRequest.getOrderStatus()));
 
         orderDao.save(savedOrder);
 

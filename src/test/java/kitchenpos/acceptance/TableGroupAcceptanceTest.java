@@ -4,6 +4,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.dto.OrderTableIdRequest;
+import kitchenpos.ui.dto.TableGroupRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,21 +37,21 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         주문_테이블1.setNumberOfGuests(4);
         주문_테이블1.setEmpty(true);
-        주문_테이블1.setTableGroupId(테이블_그룹1.getId());
+        주문_테이블1.setTableGroup(테이블_그룹1);
         주문_테이블1 = orderTableDao.save(주문_테이블1);
 
         주문_테이블2.setNumberOfGuests(2);
         주문_테이블2.setEmpty(true);
-        주문_테이블2.setTableGroupId(테이블_그룹1.getId());
+        주문_테이블2.setTableGroup(테이블_그룹1);
         주문_테이블2 = orderTableDao.save(주문_테이블2);
 
-        주문1.setOrderTableId(주문_테이블1.getId());
-        주문1.setOrderStatus(OrderStatus.COMPLETION.name());
+        주문1.setOrderTable(주문_테이블1);
+        주문1.setOrderStatus(OrderStatus.COMPLETION);
         주문1.setOrderedTime(LocalDateTime.now());
         주문1 = orderDao.save(주문1);
 
-        주문2.setOrderTableId(주문_테이블2.getId());
-        주문2.setOrderStatus(OrderStatus.COMPLETION.name());
+        주문2.setOrderTable(주문_테이블2);
+        주문2.setOrderStatus(OrderStatus.COMPLETION);
         주문2.setOrderedTime(LocalDateTime.now());
         주문2 = orderDao.save(주문2);
     }
@@ -69,12 +71,15 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         주문_테이블4.setEmpty(true);
         주문_테이블4 = orderTableDao.save(주문_테이블4);
 
-        TableGroup 테이블_그룹2 = new TableGroup();
-        테이블_그룹2.setCreatedDate(LocalDateTime.now());
-        테이블_그룹2.setOrderTables(Arrays.asList(주문_테이블3, 주문_테이블4));
+        TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
+        OrderTableIdRequest 주문_테이블3_ID = new OrderTableIdRequest();
+        주문_테이블3_ID.setId(주문_테이블3.getId());
+        OrderTableIdRequest 주문_테이블4_ID = new OrderTableIdRequest();
+        주문_테이블4_ID.setId(주문_테이블4.getId());
+        테이블_그룹_요청.setOrderTables(Arrays.asList(주문_테이블3_ID, 주문_테이블4_ID));
 
         // when
-        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹2, TableGroup.class);
+        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroup.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -87,18 +92,13 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotCreateTableGroupWithSingleTable() {
         // given
-        OrderTable 단일_주문_테이블 = new OrderTable();
-
-        단일_주문_테이블.setNumberOfGuests(100);
-        단일_주문_테이블.setEmpty(true);
-        단일_주문_테이블 = orderTableDao.save(단일_주문_테이블);
-
-        TableGroup 유효하지_않은_테이블_그룹 = new TableGroup();
-        유효하지_않은_테이블_그룹.setCreatedDate(LocalDateTime.now());
-        유효하지_않은_테이블_그룹.setOrderTables(Arrays.asList(단일_주문_테이블));
+        OrderTableIdRequest 단일_주문_테이블_요청 = new OrderTableIdRequest();
+        단일_주문_테이블_요청.setId(주문_테이블1.getId());
+        TableGroupRequest 유효하지_않은_테이블_그룹_요청 = new TableGroupRequest();
+        유효하지_않은_테이블_그룹_요청.setOrderTables(Arrays.asList(단일_주문_테이블_요청));
 
         // when
-        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹, TableGroup.class);
+        ResponseEntity<TableGroup> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroup.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -113,10 +113,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         // then
         OrderTable 변경된_주문_테이블1 = orderTableDao.findById(주문_테이블1.getId()).get();
-        assertThat(변경된_주문_테이블1.getTableGroupId()).isNull();
+        assertThat(변경된_주문_테이블1.getTableGroup()).isNull();
 
         OrderTable 변경된_주문_테이블2 = orderTableDao.findById(주문_테이블2.getId()).get();
-        assertThat(변경된_주문_테이블2.getTableGroupId()).isNull();
+        assertThat(변경된_주문_테이블2.getTableGroup()).isNull();
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제할 때, 테이블 그룹의 테이블들의 주문 상태가 COMPLETION이 아니면 에러가 발생한다.")
@@ -124,8 +124,8 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
         // when
         Order 주문3 = new Order();
-        주문3.setOrderTableId(주문_테이블1.getId());
-        주문3.setOrderStatus(OrderStatus.COOKING.name());
+        주문3.setOrderTable(주문_테이블1);
+        주문3.setOrderStatus(OrderStatus.COOKING);
         주문3.setOrderedTime(LocalDateTime.now());
         orderDao.save(주문3);
 

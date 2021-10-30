@@ -4,6 +4,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -50,12 +52,12 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
         한마리메뉴_후라이드치킨.setName("후라이드치킨");
         한마리메뉴_후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        한마리메뉴_후라이드치킨.setMenuGroupId(한마리메뉴.getId());
+        한마리메뉴_후라이드치킨.setMenuGroup(한마리메뉴);
         한마리메뉴_후라이드치킨 = menuDao.save(한마리메뉴_후라이드치킨);
 
         두마리메뉴_양념_간장치킨.setName("양념+간장치킨");
         두마리메뉴_양념_간장치킨.setPrice(BigDecimal.valueOf(32000));
-        두마리메뉴_양념_간장치킨.setMenuGroupId(두마리메뉴.getId());
+        두마리메뉴_양념_간장치킨.setMenuGroup(두마리메뉴);
         두마리메뉴_양념_간장치킨 = menuDao.save(두마리메뉴_양념_간장치킨);
     }
 
@@ -74,15 +76,15 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void createMenu() {
         // given
-        MenuProduct 두마리메뉴_후라이드_양념치킨_중_후라이드 = new MenuProduct();
+        MenuProductRequest 두마리메뉴_후라이드_양념치킨_중_후라이드 = new MenuProductRequest();
         두마리메뉴_후라이드_양념치킨_중_후라이드.setProductId(후라이드치킨.getId());
-        두마리메뉴_후라이드_양념치킨_중_후라이드.setQuantity(1);
+        두마리메뉴_후라이드_양념치킨_중_후라이드.setQuantity(1L);
 
-        MenuProduct 두마리메뉴_후라이드_양념치킨_중_양념 = new MenuProduct();
+        MenuProductRequest 두마리메뉴_후라이드_양념치킨_중_양념 = new MenuProductRequest();
         두마리메뉴_후라이드_양념치킨_중_양념.setProductId(양념치킨.getId());
-        두마리메뉴_후라이드_양념치킨_중_양념.setQuantity(1);
+        두마리메뉴_후라이드_양념치킨_중_양념.setQuantity(1L);
 
-        Menu 두마리메뉴_후라이드_양념치킨 = new Menu();
+        MenuRequest 두마리메뉴_후라이드_양념치킨 = new MenuRequest();
         두마리메뉴_후라이드_양념치킨.setName("두마리메뉴_후라이드_양념치킨");
         두마리메뉴_후라이드_양념치킨.setPrice(후라이드치킨.getPrice().add(양념치킨.getPrice()));
         두마리메뉴_후라이드_양념치킨.setMenuGroupId(두마리메뉴.getId());
@@ -102,17 +104,17 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotCreateMenuWhenMenuProductIsMoreExpensive() {
         // given
-        MenuProduct 두마리메뉴_후라이드_양념치킨_중_후라이드 = new MenuProduct();
+        MenuProductRequest 두마리메뉴_후라이드_양념치킨_중_후라이드 = new MenuProductRequest();
         두마리메뉴_후라이드_양념치킨_중_후라이드.setProductId(후라이드치킨.getId());
-        두마리메뉴_후라이드_양념치킨_중_후라이드.setQuantity(1);
+        두마리메뉴_후라이드_양념치킨_중_후라이드.setQuantity(1L);
 
-        MenuProduct 두마리메뉴_후라이드_양념치킨_중_양념 = new MenuProduct();
+        MenuProductRequest 두마리메뉴_후라이드_양념치킨_중_양념 = new MenuProductRequest();
         두마리메뉴_후라이드_양념치킨_중_양념.setProductId(양념치킨.getId());
-        두마리메뉴_후라이드_양념치킨_중_양념.setQuantity(1);
+        두마리메뉴_후라이드_양념치킨_중_양념.setQuantity(1L);
 
-        Menu 두마리메뉴_후라이드_양념치킨 = new Menu();
+        MenuRequest 두마리메뉴_후라이드_양념치킨 = new MenuRequest();
         두마리메뉴_후라이드_양념치킨.setName("두마리메뉴_후라이드_양념치킨");
-        두마리메뉴_후라이드_양념치킨.setPrice(BigDecimal.valueOf(9999999));
+        두마리메뉴_후라이드_양념치킨.setPrice(BigDecimal.valueOf(9999999L));
         두마리메뉴_후라이드_양념치킨.setMenuGroupId(두마리메뉴.getId());
         두마리메뉴_후라이드_양념치킨.setMenuProducts(Arrays.asList(두마리메뉴_후라이드_양념치킨_중_후라이드, 두마리메뉴_후라이드_양념치킨_중_양념));
 
