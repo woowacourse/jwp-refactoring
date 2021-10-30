@@ -1,9 +1,10 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.KitchenPosTestFixture;
+import kitchenpos.KitchenPosTestFixture;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -37,13 +38,22 @@ class MenuGroupRestControllerTest extends KitchenPosTestFixture {
     @MockBean
     private MenuGroupService menuGroupService;
 
+    private MenuGroup firstMenuGroup;
+    private MenuGroup secondMenuGroup;
+    private MenuGroup thirdMenuGroup;
+
+    @BeforeEach
+    void setUp() {
+        firstMenuGroup = 메뉴_그룹을_저장한다(1L, "추천 메뉴");
+        secondMenuGroup = 메뉴_그룹을_저장한다(2L, "추천 메뉴2");
+        thirdMenuGroup = 메뉴_그룹을_저장한다(3L, "추천 메뉴3");
+    }
+
     @Test
     void create() throws Exception {
         // given
-        MenuGroup menuGroup = 메뉴_그룹을_저장한다(1L, "추천 메뉴");
-
         // when
-        given(menuGroupService.create(any())).willReturn(menuGroup);
+        given(menuGroupService.create(any())).willReturn(firstMenuGroup);
 
         // then
         mvc.perform(post("/api/menu-groups")
@@ -51,17 +61,14 @@ class MenuGroupRestControllerTest extends KitchenPosTestFixture {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("추천 메뉴"));
+                .andExpect(jsonPath("$.id").value(firstMenuGroup.getId().intValue()))
+                .andExpect(jsonPath("$.name").value(firstMenuGroup.getName()));
     }
 
     @Test
     void list() throws Exception {
         // given
-        List<MenuGroup> menuGroups = Arrays.asList(
-                메뉴_그룹을_저장한다(1L, "추천 메뉴1"),
-                메뉴_그룹을_저장한다(2L, "추천 메뉴2"),
-                메뉴_그룹을_저장한다(3L, "추천 메뉴3"));
+        List<MenuGroup> menuGroups = Arrays.asList(firstMenuGroup, secondMenuGroup, thirdMenuGroup);
 
         // when
         given(menuGroupService.list()).willReturn(menuGroups);
@@ -71,11 +78,11 @@ class MenuGroupRestControllerTest extends KitchenPosTestFixture {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].id", is(1)))
-                .andExpect(jsonPath("$[0].name", is("추천 메뉴1")))
-                .andExpect(jsonPath("$[1].id", is(2)))
-                .andExpect(jsonPath("$[1].name", is("추천 메뉴2")))
-                .andExpect(jsonPath("$[2].id", is(3)))
-                .andExpect(jsonPath("$[2].name", is("추천 메뉴3")));
+                .andExpect(jsonPath("$[0].id", is(firstMenuGroup.getId().intValue())))
+                .andExpect(jsonPath("$[0].name", is(firstMenuGroup.getName())))
+                .andExpect(jsonPath("$[1].id", is(secondMenuGroup.getId().intValue())))
+                .andExpect(jsonPath("$[1].name", is(secondMenuGroup.getName())))
+                .andExpect(jsonPath("$[2].id", is(thirdMenuGroup.getId().intValue())))
+                .andExpect(jsonPath("$[2].name", is(thirdMenuGroup.getName())));
     }
 }

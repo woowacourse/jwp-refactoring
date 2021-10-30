@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.KitchenPosTestFixture;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;

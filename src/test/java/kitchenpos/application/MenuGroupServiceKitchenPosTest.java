@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.KitchenPosTestFixture;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.BeforeEach;

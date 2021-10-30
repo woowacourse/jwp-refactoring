@@ -1,9 +1,10 @@
 package kitchenpos.ui;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kitchenpos.application.KitchenPosTestFixture;
+import kitchenpos.KitchenPosTestFixture;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,22 +45,21 @@ class OrderRestControllerTest extends KitchenPosTestFixture {
 
     @BeforeEach
     void setUp() {
+        OrderLineItem orderLineItem1 = 주문_항목을_저장한다(1L, 1L, 1L, 1000L);
+        OrderLineItem orderLineItem2 = 주문_항목을_저장한다(2L, 2L, 2L, 1000L);
         firstOrder = 주문을_저장한다(
                 1L,
                 1L,
                 OrderStatus.COMPLETION.name(),
                 LocalDateTime.now(),
-                Arrays.asList(
-                        주문_항목을_저장한다(1L, 1L, 1L, 1000L),
-                        주문_항목을_저장한다(2L, 2L, 2L, 1000L)
-                )
+                Arrays.asList(orderLineItem1, orderLineItem2)
         );
         secondOrder = 주문을_저장한다(
                 2L,
                 2L,
                 OrderStatus.COOKING.name(),
                 LocalDateTime.now(),
-                Collections.singletonList(주문_항목을_저장한다(2L, 2L, 2L, 1000L))
+                Collections.singletonList(orderLineItem2)
         );
     }
 
