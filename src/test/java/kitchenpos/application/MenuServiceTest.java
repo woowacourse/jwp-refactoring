@@ -6,6 +6,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
 import kitchenpos.exception.menu.NoSuchMenuGroupException;
 import kitchenpos.exception.product.NoSuchProductException;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -67,22 +69,25 @@ class MenuServiceTest {
         Product product = new Product(productId, "productName", 1000L);
 
         MenuProduct menuProduct = new MenuProduct(product, menuProductQuantity);
-        Menu expected = new Menu(menuName, menuPrice, menuGroup, Arrays.asList(menuProduct));
+        Menu expectedMenu = new Menu(menuName, menuPrice, menuGroup, Arrays.asList(menuProduct));
 
         given(menuGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(menuGroup));
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
-                .willReturn(expected);
+                .willReturn(expectedMenu);
         given(menuProductRepository.save(any(MenuProduct.class)))
                 .willReturn(menuProduct);
 
         // when
-        Menu actual = menuService.create(menuRequest);
+        MenuResponse expected = MenuResponse.from(expectedMenu);
+        MenuResponse actual = menuService.create(menuRequest);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual)
+                .usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -141,17 +146,29 @@ class MenuServiceTest {
     @DisplayName("메뉴 목록을 불러올 수 있다.")
     void list() {
         //given
-        Menu menu1 = new Menu();
-        Menu menu2 = new Menu();
+        Product product = new Product("product1", 10000L);
 
-        List<Menu> expected = Arrays.asList(menu1, menu2);
+        MenuProduct menuProduct1 = new MenuProduct(product, 1L);
+        MenuProduct menuProduct2 = new MenuProduct(product, 1L);
+
+        MenuGroup menuGroup = new MenuGroup("menuGroup");
+
+        Menu menu1 = new Menu("menuName", 10000L, menuGroup, Arrays.asList(menuProduct1));
+        Menu menu2 = new Menu("menuName", 10000L, menuGroup, Arrays.asList(menuProduct2));
+
+        List<Menu> expectedMenu = Arrays.asList(menu1, menu2);
         given(menuRepository.findAll())
-                .willReturn(expected);
+                .willReturn(expectedMenu);
+
+        List<MenuResponse> expected = expectedMenu.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
 
         // when
-        List<Menu> actual = menuService.list();
+        List<MenuResponse> actual = menuService.list();
 
         // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 }

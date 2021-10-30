@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.exception.menu.NoSuchMenuGroupException;
 import kitchenpos.exception.product.NoSuchProductException;
 import kitchenpos.repository.MenuGroupRepository;
@@ -37,7 +38,7 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(NoSuchMenuGroupException::new);
 
@@ -54,14 +55,13 @@ public class MenuService {
         // todo 영속성 전이
         menuProductRepository.saveAll(menuProducts);
 
-        return menuRepository.save(menu);
+        Menu savedMenu = menuRepository.save(menu);
+        return MenuResponse.from(savedMenu);
     }
 
-    public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        // todo Fetch Join으로 초기화 및 Response 객체 생성
-
-        return menus;
+    public List<MenuResponse> list() {
+        return menuRepository.findAll().stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 }

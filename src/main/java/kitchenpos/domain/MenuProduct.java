@@ -62,7 +62,7 @@ public class MenuProduct {
         return product;
     }
 
-    public Quantity getQuantity() {
-        return quantity;
+    public Long getQuantity() {
+        return quantity.longValue();
     }
 }
