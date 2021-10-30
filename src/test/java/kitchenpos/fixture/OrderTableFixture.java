@@ -8,28 +8,39 @@ public class OrderTableFixture {
     private static final int NUMBER_OF_GUESTS = 1;
     private static final boolean EMPTY = false;
 
-    public static OrderTable createOrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public static OrderTable createOrderTable() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
+        orderTable.setId(ID);
+        orderTable.setTableGroupId(TABLE_GROUP_ID);
+        orderTable.setNumberOfGuests(NUMBER_OF_GUESTS);
+        orderTable.setEmpty(EMPTY);
         return orderTable;
     }
 
-    public static OrderTable createOrderTable() {
-        return createOrderTable(ID, TABLE_GROUP_ID, NUMBER_OF_GUESTS, EMPTY);
-    }
-
     public static OrderTable createOrderTable(int numberOfGuests) {
-        return createOrderTable(ID, TABLE_GROUP_ID, numberOfGuests, EMPTY);
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(ID);
+        orderTable.setTableGroupId(TABLE_GROUP_ID);
+        orderTable.setNumberOfGuests(numberOfGuests);
+        orderTable.setEmpty(EMPTY);
+        return orderTable;
     }
 
-    public static OrderTable createOrderTable(Long id, Long tableGroupId, boolean empty) {
-        return createOrderTable(id, tableGroupId, NUMBER_OF_GUESTS, empty);
+    public static OrderTable createOrderTable(Long id, Long tableGroupId, boolean isEmpty) {
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(id);
+        orderTable.setTableGroupId(tableGroupId);
+        orderTable.setNumberOfGuests(NUMBER_OF_GUESTS);
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
     }
 
     public static OrderTable createOrderTable(boolean isEmpty) {
-        return createOrderTable(ID, TABLE_GROUP_ID, NUMBER_OF_GUESTS, isEmpty);
+        OrderTable orderTable = new OrderTable();
+        orderTable.setId(ID);
+        orderTable.setTableGroupId(TABLE_GROUP_ID);
+        orderTable.setNumberOfGuests(NUMBER_OF_GUESTS);
+        orderTable.setEmpty(isEmpty);
+        return orderTable;
     }
 }
