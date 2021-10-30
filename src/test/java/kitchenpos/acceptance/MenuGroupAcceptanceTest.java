@@ -1,7 +1,8 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.ui.dto.MenuGroupRequest;
+import kitchenpos.ui.request.MenuGroupRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void getMenuGroups() {
         // when
-        ResponseEntity<MenuGroup[]> responseEntity = testRestTemplate.getForEntity("/api/menu-groups", MenuGroup[].class);
+        ResponseEntity<MenuGroupResponse[]> responseEntity = testRestTemplate.getForEntity("/api/menu-groups", MenuGroupResponse[].class);
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -44,11 +45,11 @@ class MenuGroupAcceptanceTest extends AcceptanceTest {
         세마리메뉴.setName("세마리메뉴");
 
         // when
-        ResponseEntity<MenuGroup> responseEntity = testRestTemplate.postForEntity("/api/menu-groups", 세마리메뉴, MenuGroup.class);
+        ResponseEntity<MenuGroupResponse> responseEntity = testRestTemplate.postForEntity("/api/menu-groups", 세마리메뉴, MenuGroupResponse.class);
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        MenuGroup 응답된_메뉴_그룹 = responseEntity.getBody();
+        MenuGroupResponse 응답된_메뉴_그룹 = responseEntity.getBody();
         assertThat(응답된_메뉴_그룹.getName()).isEqualTo("세마리메뉴");
     }
 }
