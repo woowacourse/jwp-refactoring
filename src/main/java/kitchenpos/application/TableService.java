@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.table.CannotChangeTableStatusAsOrderStatusException;
 import kitchenpos.exception.table.NoSuchOrderTableException;
 import kitchenpos.repository.OrderRepository;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TableService {
@@ -24,18 +26,22 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTableRequest orderTableRequest) {
+    public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
         OrderTable orderTable = new OrderTable(orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty());
 
-        return orderTableRepository.save(orderTable);
+        OrderTable savedOrderTable = orderTableRepository.save(orderTable);
+        return OrderTableResponse.from(savedOrderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableRepository.findAll()
+                .stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NoSuchOrderTableException::new);
 
@@ -46,16 +52,17 @@ public class TableService {
 
         savedOrderTable.changeStatus(orderTableRequest.isEmpty());
 
-        return savedOrderTable;
+        return OrderTableResponse.from(savedOrderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NoSuchOrderTableException::new);
 
         savedOrderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
 
-        return orderTableRepository.save(savedOrderTable);
+
+        return OrderTableResponse.from(savedOrderTable);
     }
 }

@@ -67,7 +67,6 @@ class TableGroupServiceTest {
         TableGroupRequest tableGroupRequest = new TableGroupRequest(tableIds);
 
 
-
         // when
         TableGroupResponse actual = tableGroupService.create(tableGroupRequest);
 

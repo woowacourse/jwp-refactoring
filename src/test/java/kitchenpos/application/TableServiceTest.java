@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.exception.table.*;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,18 +43,21 @@ class TableServiceTest {
     @DisplayName("테이블을 저장할 수 있다.")
     void create() {
         // given
-        OrderTable expected = new OrderTable(1L, null, 1, false);
+        OrderTable expectedTable = new OrderTable(1L, null, 1, false);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(1, false);
 
         given(orderTableRepository.save(any(OrderTable.class)))
-                .willReturn(expected);
+                .willReturn(expectedTable);
+
+        OrderTableResponse expected = OrderTableResponse.from(expectedTable);
 
         // when
-        OrderTable actual = tableService.create(orderTableRequest);
+        OrderTableResponse actual = tableService.create(orderTableRequest);
 
         // then
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @Test
@@ -62,15 +67,20 @@ class TableServiceTest {
         OrderTable orderTable1 = new OrderTable();
         OrderTable orderTable2 = new OrderTable();
 
-        List<OrderTable> expected = Arrays.asList(orderTable1, orderTable2);
+        List<OrderTable> expectedTables = Arrays.asList(orderTable1, orderTable2);
         given(orderTableRepository.findAll())
-                .willReturn(expected);
+                .willReturn(expectedTables);
+
+        List<OrderTableResponse> expected = expectedTables.stream()
+                .map(OrderTableResponse::from)
+                .collect(Collectors.toList());
 
         // when
-        List<OrderTable> actual = tableService.list();
+        List<OrderTableResponse> actual = tableService.list();
 
         // then
-        assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual).usingRecursiveComparison()
+                .isEqualTo(expected);
     }
 
     @ParameterizedTest
@@ -93,7 +103,7 @@ class TableServiceTest {
                 .willReturn(targetOrderTable);
 
         // when
-        OrderTable actual = tableService.changeEmpty(targetOrderTableId, orderTableRequest);
+        OrderTableResponse actual = tableService.changeEmpty(targetOrderTableId, orderTableRequest);
 
         // then
         assertThat(actual.isEmpty()).isEqualTo(isEmptyTable);
@@ -168,7 +178,7 @@ class TableServiceTest {
                 .willReturn(targetOrderTable);
 
         // when
-        OrderTable actual = tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest);
+        OrderTableResponse actual = tableService.changeNumberOfGuests(targetOrderTableId, orderTableRequest);
 
         // then
         assertThat(actual.getNumberOfGuests()).isEqualTo(numberOfGuestsToChange);
