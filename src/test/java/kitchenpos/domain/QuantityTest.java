@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.domain.quantity.InvalideQuantityValueException;
+import kitchenpos.exception.quantity.InvalideQuantityValueException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

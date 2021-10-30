@@ -41,10 +41,6 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(NoSuchOrderTableException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new CannotChangeTableStatusAsAlreadyAssignedTableGroupException();
-        }
-
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
                 orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new CannotChangeTableStatusAsOrderStatusException();

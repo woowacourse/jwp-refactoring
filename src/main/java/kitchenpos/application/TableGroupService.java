@@ -4,6 +4,9 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.exception.table.NoSuchOrderTableException;
+import kitchenpos.exception.tablegroup.CannotUnGroupAsOrderStatusException;
+import kitchenpos.exception.tablegroup.InvalidTableGroupSizeExcpetion;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -34,28 +37,19 @@ public class TableGroupService {
         final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
 
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new InvalidTableGroupSizeExcpetion();
         }
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
-
-        if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
+        final List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        if (orderTableIds.size() != orderTables.size()) {
+            throw new NoSuchOrderTableException();
         }
 
         TableGroup tableGroup = new TableGroup(LocalDateTime.now());
-
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.joinToTableGroup(tableGroup);
-            savedOrderTable.changeStatus(false);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.joinToTableGroup(tableGroup);
         }
 
         return savedTableGroup;
@@ -71,13 +65,13 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
                 orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
+            throw new CannotUnGroupAsOrderStatusException();
         }
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.ungroup();
-            orderTable.changeStatus(false);
-            orderTableRepository.save(orderTable);
         }
+
+        tableGroupRepository.deleteById(tableGroupId);
     }
 }

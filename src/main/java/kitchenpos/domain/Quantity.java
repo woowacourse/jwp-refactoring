@@ -1,6 +1,6 @@
 package kitchenpos.domain;
 
-import kitchenpos.exception.domain.quantity.InvalideQuantityValueException;
+import kitchenpos.exception.quantity.InvalideQuantityValueException;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

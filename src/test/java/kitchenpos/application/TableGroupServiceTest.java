@@ -3,6 +3,11 @@ package kitchenpos.application;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.exception.table.CannotChangeTableGroupAsAlreadyAssignedException;
+import kitchenpos.exception.table.CannotChangeTableGroupAsNotEmpty;
+import kitchenpos.exception.table.NoSuchOrderTableException;
+import kitchenpos.exception.tablegroup.CannotUnGroupAsOrderStatusException;
+import kitchenpos.exception.tablegroup.InvalidTableGroupSizeExcpetion;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -75,18 +80,18 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidTableGroupSizeExcpetion.class);
     }
 
     @Test
-    @DisplayName("테이블 그룹 요청에 테이블이 1개 미만 존재하면 예외가 발생한다.")
+    @DisplayName("테이블 그룹 요청에 테이블이 2개 미만 존재하면 예외가 발생한다.")
     void createFailWhenOrderTableGroupHasUnderTwoTables() {
         // given
         TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(1L));
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(InvalidTableGroupSizeExcpetion.class);
     }
 
     @Test
@@ -109,7 +114,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(NoSuchOrderTableException.class);
     }
 
     @Test
@@ -132,7 +137,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeTableGroupAsNotEmpty.class);
     }
 
     @Test
@@ -157,7 +162,7 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotChangeTableGroupAsAlreadyAssignedException.class);
     }
 
     @Test
@@ -204,6 +209,6 @@ class TableGroupServiceTest {
 
         // when, then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(CannotUnGroupAsOrderStatusException.class);
     }
 }

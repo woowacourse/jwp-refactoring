@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import kitchenpos.exception.table.CannotChangeTableGroupAsAlreadyAssignedException;
+import kitchenpos.exception.table.CannotChangeTableGroupAsNotEmpty;
+import kitchenpos.exception.table.CannotChangeTableStatusAsAlreadyAssignedTableGroupException;
 import kitchenpos.exception.table.InvalidNumberOfGuestsException;
 
 import javax.persistence.*;
@@ -44,30 +47,24 @@ public class OrderTable {
         }
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
     public void joinToTableGroup(TableGroup tableGroup) {
+        if (this.tableGroup != null) {
+            throw new CannotChangeTableGroupAsAlreadyAssignedException();
+        }
+        if (!isEmpty()) {
+            throw new CannotChangeTableGroupAsNotEmpty();
+        }
         if (tableGroup != null) {
             tableGroup.getOrderTables().add(this);
         }
+        changeStatus(false);
         this.tableGroup = tableGroup;
     }
 
     public void changeStatus(boolean isEmpty) {
+        if (this.tableGroup != null) {
+            throw new CannotChangeTableStatusAsAlreadyAssignedTableGroupException();
+        }
         this.empty = isEmpty;
     }
 
@@ -83,6 +80,26 @@ public class OrderTable {
     }
 
     public void ungroup() {
+        if (this.tableGroup != null) {
+            this.tableGroup.getOrderTables().remove(this);
+        }
         this.tableGroup = null;
+        changeStatus(false);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

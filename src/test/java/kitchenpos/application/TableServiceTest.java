@@ -125,7 +125,7 @@ class TableServiceTest {
 
         OrderTable targetOrderTable = new OrderTable(tableGroup, numberOfGuests, false);
 
-        OrderTableRequest orderTableRequest = new OrderTableRequest();
+        OrderTableRequest orderTableRequest = new OrderTableRequest(null, true);
 
         given(orderTableRepository.findById(anyLong()))
                 .willReturn(Optional.of(targetOrderTable));
