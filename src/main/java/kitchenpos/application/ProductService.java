@@ -20,13 +20,19 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductRequest productRequest) {
-        final BigDecimal price = BigDecimal.valueOf(productRequest.getPrice());
+        Long priceRequested = productRequest.getPrice();
 
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+        if (Objects.isNull(priceRequested)) {
             throw new IllegalArgumentException();
         }
 
-        Product product = new Product(productRequest.getName(), BigDecimal.valueOf(productRequest.getPrice()));
+        BigDecimal price = BigDecimal.valueOf(priceRequested);
+
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        Product product = new Product(productRequest.getName(), price);
 
         return productRepository.save(product);
     }
