@@ -220,7 +220,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("주문의 진행 상황을 변경할 수 있다.")
+    @DisplayName("주문의 주문 상태을 변경할 수 있다.")
     void changeOrderStatus() {
         // given
         OrderTable orderTable = new OrderTable(1L, mock(TableGroup.class), 1, false);

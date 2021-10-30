@@ -66,6 +66,8 @@ class ProductServiceTest {
         // when
         List<ProductResponse> actual = productService.list();
 
+
+        // then
         assertThat(actual)
                 .usingRecursiveComparison()
                 .isEqualTo(expected);

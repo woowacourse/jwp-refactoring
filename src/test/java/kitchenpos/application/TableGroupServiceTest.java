@@ -195,7 +195,7 @@ class TableGroupServiceTest {
     }
 
     @Test
-    @DisplayName("그룹 해제시, 테이블 상태가 요리중이거나 식사중인 경우 예외가 발생한다.")
+    @DisplayName("그룹 해제시, 테이블의 주문 상태가 요리중이거나 식사중인 경우 예외가 발생한다.")
     void ungroupFailWhenTableIsOnCookingOrMealStatus() {
         // given
         long tableGroupId = 1L;
