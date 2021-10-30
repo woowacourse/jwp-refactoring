@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -156,12 +157,12 @@ class TableGroupServiceTest {
     @DisplayName("테이블 그룹에 등록하려는 테이블 중에 이미 그룹에 지정된 객체가 있다면 예외가 발생한다.")
     void createFailWhenTableHasNoTableGroupId() {
         // given
-        long anotherTableGroupId = 2L;
+        TableGroup anotherTableGroup = new TableGroup(LocalDateTime.now());
 
         OrderTable orderTable1 = new OrderTable();
         orderTable1.setId(1L);
         orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(anotherTableGroupId);
+        orderTable1.setTableGroup(anotherTableGroup);
         OrderTable orderTable2 = new OrderTable();
         orderTable2.setId(2L);
         orderTable2.setEmpty(true);
@@ -207,7 +208,7 @@ class TableGroupServiceTest {
 
         // then
         for (OrderTable orderTable : orderTables) {
-            assertThat(orderTable.getTableGroupId()).isNull();
+            assertThat(orderTable.getTableGroup()).isNull();
             assertThat(orderTable.isEmpty()).isFalse();
         }
     }

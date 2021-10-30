@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -122,10 +124,10 @@ class TableServiceTest {
     void changeEmptyFailWhenGroupIdExists() {
         // given
         long targetOrderTableId = 1L;
-        long tableGroupId = 1L;
+        TableGroup tableGroup = new TableGroup(LocalDateTime.now());
 
         OrderTable targetOrderTable = new OrderTable();
-        targetOrderTable.setTableGroupId(tableGroupId);
+        targetOrderTable.setTableGroup(tableGroup);
         targetOrderTable.setId(targetOrderTableId);
 
         OrderTableRequest orderTableRequest = new OrderTableRequest();
@@ -202,7 +204,6 @@ class TableServiceTest {
     void changeNumberOfGuestsFailWhenTableIsEmpty() {
         // given
         int numberOfGuestsToChange = 1;
-        OrderTable inputOrderTable = new OrderTable();
         OrderTableRequest orderTableRequest = new OrderTableRequest(numberOfGuestsToChange, null);
 
         long targetOrderTableId = 1L;
