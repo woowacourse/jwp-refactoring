@@ -78,13 +78,7 @@ class MenuServiceKitchenPosTest extends KitchenPosTestFixture {
         given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
         given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
 
-        Menu expected = 메뉴를_저장한다(
-                1L,
-                "후라이드+후라이드",
-                BigDecimal.valueOf(19000),
-                1L,
-                Collections.singletonList(menuProduct)
-        );
+        Menu expected = 메뉴를_저장한다(1L, menu);
         given(menuDao.save(menu)).willReturn(expected);
 
         // when

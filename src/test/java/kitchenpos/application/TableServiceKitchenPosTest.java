@@ -1,6 +1,6 @@
-package kitchenpos;
+package kitchenpos.application;
 
-import kitchenpos.application.TableService;
+import kitchenpos.KitchenPosTestFixture;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;

@@ -17,6 +17,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -35,23 +36,23 @@ class ProductServiceKitchenPosTest extends KitchenPosTestFixture {
 
     @BeforeEach
     void setUp() {
-        강정치킨 = 상품을_저장한다(1L, "강정치킨", BigDecimal.valueOf(1700));
-        튀김소보로 = 상품을_저장한다(2L, "튀김소보로", BigDecimal.valueOf(1200));
+        강정치킨 = 상품을_저장한다(null, "강정치킨", BigDecimal.valueOf(1700));
+        튀김소보로 = 상품을_저장한다(null, "튀김소보로", BigDecimal.valueOf(1200));
     }
 
     @DisplayName("상품을 등록할 수 있다.")
     @Test
     void create() {
         // given
-        Product product = 상품을_저장한다(null, "강정치킨", BigDecimal.valueOf(1700));
-        given(productDao.save(product)).willReturn(강정치킨);
+        Product product = 상품을_저장한다(1L, "강정치킨", BigDecimal.valueOf(1700));
+        given(productDao.save(any(Product.class))).willReturn(product);
 
         // when
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productService.create(강정치킨);
 
         // then
-        assertThat(savedProduct).isEqualTo(강정치킨);
-        verify(productDao, times(1)).save(product);
+        assertThat(savedProduct).usingRecursiveComparison().isEqualTo(product);
+        verify(productDao, times(1)).save(강정치킨);
     }
 
     @DisplayName("1자 이상의 문자로 구성된 상품명을 등록한다.")

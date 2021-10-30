@@ -54,6 +54,8 @@ class OrderServiceKitchenPosTest extends KitchenPosTestFixture {
     private OrderTable orderTable;
     private OrderLineItem orderLineItem;
     private List<OrderLineItem> orderLineItems;
+    private Order firstOrder;
+    private Order secondOrder;
 
     @BeforeEach
     void setUp() {
@@ -88,13 +90,27 @@ class OrderServiceKitchenPosTest extends KitchenPosTestFixture {
                 menuProduct.getQuantity()
         );
         orderLineItems = Collections.singletonList(orderLineItem);
+        firstOrder = 주문을_저장한다(
+                null,
+                orderTable.getId(),
+                OrderStatus.COMPLETION.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
+        secondOrder = 주문을_저장한다(
+                2L,
+                orderTable.getId(),
+                OrderStatus.MEAL.name(),
+                LocalDateTime.now(),
+                orderLineItems
+        );
     }
 
     @DisplayName("메뉴를 주문할 수 있다.")
     @Test
     void create() {
         // given
-        Order order = 주문을_저장한다(
+        firstOrder = 주문을_저장한다(
                 null,
                 orderTable.getId(),
                 OrderStatus.COMPLETION.name(),
@@ -103,45 +119,28 @@ class OrderServiceKitchenPosTest extends KitchenPosTestFixture {
         );
 
         given(menuDao.countByIdIn(Collections.singletonList(menu.getId()))).willReturn(1L);
-        given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.of(orderTable));
+        given(orderTableDao.findById(firstOrder.getOrderTableId())).willReturn(Optional.of(orderTable));
 
-        Order expected = 주문을_저장한다(
-                1L,
-                order.getOrderTableId(),
-                order.getOrderStatus(),
-                order.getOrderedTime(),
-                order.getOrderLineItems()
-        );
-        given(orderDao.save(order)).willReturn(expected);
+        Order expected = 주문을_저장한다(1L, firstOrder);
+        given(orderDao.save(firstOrder)).willReturn(expected);
 
         // when
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(firstOrder);
 
         // then
         assertThat(savedOrder).isEqualTo(expected);
+
         verify(menuDao, times(1)).countByIdIn(Collections.singletonList(menuProduct.getProductId()));
-        verify(orderTableDao, times(1)).findById(order.getOrderTableId());
-        verify(orderDao, times(1)).save(order);
+        verify(orderTableDao, times(1)).findById(firstOrder.getOrderTableId());
+        verify(orderDao, times(1)).save(firstOrder);
     }
 
     @DisplayName("주문 내역을 조회할 수 있다.")
     @Test
     void list() {
         // given
-        Order saveOrder1 = 주문을_저장한다(
-                1L,
-                orderTable.getId(),
-                OrderStatus.COMPLETION.name(),
-                LocalDateTime.now(),
-                orderLineItems
-        );
-        Order saveOrder2 = 주문을_저장한다(
-                2L,
-                orderTable.getId(),
-                OrderStatus.MEAL.name(),
-                LocalDateTime.now(),
-                orderLineItems
-        );
+        Order saveOrder1 = 주문을_저장한다(1L, firstOrder);
+        Order saveOrder2 = 주문을_저장한다(2L, secondOrder);
 
         given(orderDao.findAll()).willReturn(Arrays.asList(saveOrder1, saveOrder2));
         given(orderLineItemDao.findAllByOrderId(any(Long.class))).willReturn(orderLineItems);
