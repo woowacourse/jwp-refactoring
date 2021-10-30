@@ -66,7 +66,7 @@ class MenuServiceTest {
         product.setPrice(BigDecimal.valueOf(1000));
 
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
+        menuProduct.setProduct(product);
         long menuProductQuantity = 1;
         menuProduct.setQuantity(menuProductQuantity);
 

@@ -1,20 +1,19 @@
 package kitchenpos.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class MenuProduct {
     @Id @GeneratedValue
     private Long seq;
 
-    @Column(nullable = false)
-    private Long menuId;
+    @ManyToOne
+    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_menu_product_menu"), nullable = false)
+    private Menu menu;
 
-    @Column(nullable = false)
-    private Long productId;
+    @ManyToOne
+    @JoinColumn(name = "produt_id", foreignKey = @ForeignKey(name = "fk_menu_product_product"), nullable = false)
+    private Product product;
 
     @Column(nullable = false)
     private long quantity;
@@ -27,20 +26,20 @@ public class MenuProduct {
         this.seq = seq;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setMenu(Menu menu) {
+        this.menu = menu;
     }
 
-    public Long getProductId() {
-        return productId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {

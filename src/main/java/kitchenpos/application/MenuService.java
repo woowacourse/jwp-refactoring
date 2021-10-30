@@ -68,8 +68,8 @@ public class MenuService {
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(quantity)));
 
             MenuProduct menuProduct = new MenuProduct();
-            menuProduct.setMenuId(savedMenu.getId());
-            menuProduct.setProductId(product.getId());
+            menuProduct.setMenu(savedMenu);
+            menuProduct.setProduct(product);
             menuProduct.setQuantity(quantity);
         }
 
