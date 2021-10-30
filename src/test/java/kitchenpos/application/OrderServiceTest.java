@@ -10,15 +10,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
+import kitchenpos.application.dto.MenuProductRequest;
+import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
@@ -56,6 +58,8 @@ class OrderServiceTest {
     @Autowired
     private MenuGroupRepository menuGroupRepository;
     @Autowired
+    private MenuProductRepository menuProductRepository;
+    @Autowired
     private MenuRepository menuRepository;
 
     private OrderTable table;
@@ -78,10 +82,12 @@ class OrderServiceTest {
         pizza = productService.create(new Product("pizza", BigDecimal.valueOf(15000)));
         frenchFry = productService.create(new Product("frenchFry", BigDecimal.valueOf(2000)));
 
-        chickenSet = menuService.create(new Menu("chickenSet", BigDecimal.valueOf(21000), menuGroup.getId(),
-                Arrays.asList(new MenuProduct(this.chicken.getId(), 1), new MenuProduct(this.frenchFry.getId(), 1))));
-        pizzaSet = menuService.create(new Menu("pizzaSet", BigDecimal.valueOf(16000), menuGroup.getId(),
-                Arrays.asList(new MenuProduct(this.pizza.getId(), 1), new MenuProduct(this.frenchFry.getId(), 1))));
+        chickenSet = menuService.create(new MenuRequest("chickenSet", BigDecimal.valueOf(21000), menuGroup.getId(),
+                Arrays.asList(new MenuProductRequest(this.chicken.getId(), 1L),
+                        new MenuProductRequest(this.frenchFry.getId(), 1L))));
+        pizzaSet = menuService.create(new MenuRequest("pizzaSet", BigDecimal.valueOf(16000), menuGroup.getId(),
+                Arrays.asList(new MenuProductRequest(this.pizza.getId(), 1L),
+                        new MenuProductRequest(this.frenchFry.getId(), 1L))));
     }
 
     @Test
@@ -216,6 +222,7 @@ class OrderServiceTest {
         productRepository.deleteAllInBatch();
         orderTableRepository.deleteAllInBatch();
         menuGroupRepository.deleteAllInBatch();
+        menuProductRepository.deleteAllInBatch();
         menuRepository.deleteAllInBatch();
     }
 }

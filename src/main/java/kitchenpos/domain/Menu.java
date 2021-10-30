@@ -2,10 +2,12 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import kitchenpos.domain.validator.MenuValidator;
 
 @Entity
 public class Menu {
@@ -32,6 +34,13 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public void register(MenuValidator menuValidator) {
+        menuValidator.validate(this);
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.setMenu(this);
+        }
     }
 
     public Long getId() {
