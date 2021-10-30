@@ -7,20 +7,22 @@ import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductRequest;
 import kitchenpos.dto.response.menu.MenuGroupResponse;
 import kitchenpos.dto.response.menu.MenuProductResponse;
 import kitchenpos.dto.response.menu.MenuResponse;
-import kitchenpos.dto.response.product.ProductResponse;
 
+import static kitchenpos.fixture.MenuFixture.더블간장;
+import static kitchenpos.fixture.MenuFixture.양념_단품;
+import static kitchenpos.fixture.MenuGroupFixture.추천메뉴;
+import static kitchenpos.fixture.MenuProductFixture.양념치킨_한마리_메뉴상품;
+import static kitchenpos.fixture.MenuProductFixture.후라이드치킨_한마리_메뉴상품;
+import static kitchenpos.fixture.ProductFixture.양념치킨;
+import static kitchenpos.fixture.ProductFixture.후라이드치킨;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -32,25 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("MenuRestController 단위 테스트")
 class MenuRestControllerTest extends ControllerTest {
 
-    private MenuGroup 추천메뉴;
-    private MenuGroup 할인메뉴;
-    private Product 후라이드치킨_정보;
-    private Product 양념치킨_정보;
-    private MenuProduct 후라이드치킨;
-    private MenuProduct 양념치킨;
-
-    @Override
-    @BeforeEach
-    void setUp() {
-        super.setUp();
-        추천메뉴 = new MenuGroup(1L, "추천 메뉴");
-        할인메뉴 = new MenuGroup(2L, "할인 메뉴");
-        후라이드치킨_정보 = new Product(1L, "후라이드 치킨", 16000);
-        양념치킨_정보 = new Product(2L, "양념 치킨", 16000);
-        후라이드치킨 = new MenuProduct(후라이드치킨_정보, 1);
-        양념치킨 = new MenuProduct(양념치킨_정보, 1);
-    }
-
     @Test
     @DisplayName("메뉴를 등록할 수 있다")
     void create() throws Exception {
@@ -60,14 +43,19 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(30000),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        MenuProductResponse expected_후라이드치킨 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
-        MenuProductResponse expected_양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
-        MenuResponse expected = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays
-                .asList(expected_후라이드치킨, expected_양념치킨));
+        MenuResponse expected = new MenuResponse(
+                1L,
+                "양념 반 + 후라이드 반",
+                BigDecimal.valueOf(30000),
+                MenuGroupResponse.from(추천메뉴),
+                Arrays.asList(
+                        MenuProductResponse.from(후라이드치킨_한마리_메뉴상품),
+                        MenuProductResponse.from(양념치킨_한마리_메뉴상품))
+        );
         given(menuService.create(any(CreateMenuRequest.class))).willReturn(expected);
 
         // when
@@ -90,8 +78,8 @@ class MenuRestControllerTest extends ControllerTest {
                 null,
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
@@ -118,8 +106,8 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(-1),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         willThrow(new IllegalArgumentException("메뉴의 가격은 비어있을 수 없고 0 이상이어야 합니다."))
@@ -143,11 +131,11 @@ class MenuRestControllerTest extends ControllerTest {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
                 "양념 반 + 후라이드 반",
-                BigDecimal.valueOf(32001),
+                BigDecimal.valueOf(34001),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         willThrow(new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다."))
@@ -174,8 +162,8 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(32000),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         willThrow(new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."))
@@ -202,7 +190,7 @@ class MenuRestControllerTest extends ControllerTest {
                 BigDecimal.valueOf(32000),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
+                        new MenuProductRequest(후라이드치킨.getId(), 2),
                         new MenuProductRequest(10L, 1)
                 )
         );
@@ -224,16 +212,10 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("전체 메뉴를 조회할 수 있다")
     void list() throws Exception {
         // given
-        Product 간장치킨_정보 = new Product(3L, "간장 치킨", 16000);
-        MenuProductResponse 후라이드치킨1 = new MenuProductResponse(1L, ProductResponse.from(후라이드치킨_정보), 1);
-        MenuProductResponse 양념치킨 = new MenuProductResponse(2L, ProductResponse.from(양념치킨_정보), 1);
-        MenuProductResponse 후라이드치킨2 = new MenuProductResponse(3L, ProductResponse.from(후라이드치킨_정보), 1);
-        MenuProductResponse 간장치킨 = new MenuProductResponse(4L, ProductResponse.from(간장치킨_정보), 1);
-        MenuResponse 양념반_후라이드반 = new MenuResponse(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(추천메뉴), Arrays
-                .asList(후라이드치킨1, 양념치킨));
-        MenuResponse 간장반_후라이드반 = new MenuResponse(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), MenuGroupResponse.from(할인메뉴), Arrays
-                .asList(후라이드치킨2, 간장치킨));
-        List<MenuResponse> expected = Arrays.asList(양념반_후라이드반, 간장반_후라이드반);
+        List<MenuResponse> expected = Arrays.asList(
+                MenuResponse.from(양념_단품),
+                MenuResponse.from(더블간장)
+        );
         given(menuService.list()).willReturn(expected);
 
         // when

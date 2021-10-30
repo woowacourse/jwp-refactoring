@@ -2,15 +2,18 @@ package kitchenpos.application;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.domain.*;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroupRepository;
+import kitchenpos.domain.MenuRepository;
+import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.request.menu.CreateMenuRequest;
 import kitchenpos.dto.request.menu.MenuProductRequest;
 import kitchenpos.dto.response.menu.MenuResponse;
@@ -18,9 +21,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static kitchenpos.fixture.MenuFixture.더블간장;
+import static kitchenpos.fixture.MenuFixture.양념반_후라이드반;
+import static kitchenpos.fixture.MenuGroupFixture.추천메뉴;
+import static kitchenpos.fixture.MenuProductFixture.강정치킨_한마리_메뉴상품;
+import static kitchenpos.fixture.ProductFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -41,53 +48,29 @@ class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
-    private MenuGroup 추천메뉴;
-    private MenuGroup 할인메뉴;
-    private Product 후라이드치킨정보;
-    private Product 양념치킨정보;
-    private MenuProduct 후라이드치킨;
-    private MenuProduct 양념치킨;
+    @Test
+    @DisplayName("메뉴를 등록할 수 있다")
+    void create() {
+        // given
+        CreateMenuRequest request = new CreateMenuRequest(
+                "강정",
+                BigDecimal.valueOf(15000),
+                추천메뉴.getId(),
+                Collections.singletonList(new MenuProductRequest(강정치킨.getId(), 1))
+        );
+        Menu expected = new Menu(1L, "강정", BigDecimal.valueOf(15000), 추천메뉴, Collections.singletonList(강정치킨_한마리_메뉴상품));
+        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(productRepository.findById(anyLong())).willReturn(Optional.of(강정치킨));
+        given(menuRepository.save(any(Menu.class))).willReturn(expected);
 
-    @BeforeEach
-    void setUp() {
-        추천메뉴 = new MenuGroup(1L, "추천 메뉴");
-        할인메뉴 = new MenuGroup(2L, "할인 메뉴");
-        후라이드치킨정보 = new Product(1L, "후라이드 치킨", 16000);
-        양념치킨정보 = new Product(2L, "양념 치킨", 16000);
-        후라이드치킨 = new MenuProduct(후라이드치킨정보, 1);
-        양념치킨 = new MenuProduct(양념치킨정보, 1);
+        // when
+        MenuResponse actual = menuService.create(request);
+
+        // then
+        assertNotNull(actual.getId());
+        assertThat(actual.getName()).isEqualTo("강정");
+        assertEquals(1, actual.getMenuProducts().size());
     }
-
-//    @Test
-//    @DisplayName("메뉴를 등록할 수 있다")
-//    void create() {
-//        // given
-//        CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
-//                "양념 반 + 후라이드 반",
-//                BigDecimal.valueOf(30000),
-//                1L,
-//                Arrays.asList(
-//                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-//                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
-//                )
-//        );
-//        Menu menu = new Menu(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 추천메뉴, Arrays.asList(후라이드치킨, 양념치킨));
-//        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
-//        given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
-//        given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
-//        given(menuRepository.save(any(Menu.class))).willReturn(menu);
-//        MenuProduct expected_후라이드치킨 = new MenuProduct(1L, menu, 후라이드치킨정보, 1);
-//        MenuProduct expected_양념치킨 = new MenuProduct(2L, menu, 양념치킨정보, 1);
-//        menu.setMenuProducts(Arrays.asList(expected_후라이드치킨, expected_양념치킨));
-//        MenuResponse expected = MenuResponse.from(menu);
-//
-//        // when
-//        MenuResponse actual = menuService.create(양념반_후라이드반);
-//
-//        // then
-//        assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
-//        assertEquals(2, actual.getMenuProducts().size());
-//    }
 
     @Test
     @DisplayName("메뉴의 가격이 null이면 메뉴를 등록할 수 없다.")
@@ -98,13 +81,13 @@ class MenuServiceTest {
                 null,
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 2),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
-        given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
-        given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
+        given(productRepository.findById(후라이드치킨.getId())).willReturn(Optional.of(후라이드치킨));
+        given(productRepository.findById(양념치킨.getId())).willReturn(Optional.of(양념치킨));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -121,13 +104,13 @@ class MenuServiceTest {
                 BigDecimal.valueOf(-1),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 2),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
-        given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
-        given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
+        given(productRepository.findById(후라이드치킨.getId())).willReturn(Optional.of(후라이드치킨));
+        given(productRepository.findById(양념치킨.getId())).willReturn(Optional.of(양념치킨));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -141,16 +124,16 @@ class MenuServiceTest {
         // given
         CreateMenuRequest 양념반_후라이드반 = new CreateMenuRequest(
                 "양념 반 + 후라이드 반",
-                BigDecimal.valueOf(32001),
+                BigDecimal.valueOf(34001),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 1),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 1),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
-        given(productRepository.findById(후라이드치킨.getProduct().getId())).willReturn(Optional.of(후라이드치킨정보));
-        given(productRepository.findById(양념치킨.getProduct().getId())).willReturn(Optional.of(양념치킨정보));
+        given(productRepository.findById(후라이드치킨.getId())).willReturn(Optional.of(후라이드치킨));
+        given(productRepository.findById(양념치킨.getId())).willReturn(Optional.of(양념치킨));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -167,8 +150,8 @@ class MenuServiceTest {
                 BigDecimal.valueOf(30000),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 2),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.empty());
@@ -188,8 +171,8 @@ class MenuServiceTest {
                 BigDecimal.valueOf(32001),
                 1L,
                 Arrays.asList(
-                        new MenuProductRequest(후라이드치킨.getProduct().getId(), 2),
-                        new MenuProductRequest(양념치킨.getProduct().getId(), 1)
+                        new MenuProductRequest(후라이드치킨.getId(), 2),
+                        new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
@@ -200,32 +183,16 @@ class MenuServiceTest {
         assertEquals("상품이 존재하지 않습니다.", exception.getMessage());
     }
 
-//    @Test
-//    @DisplayName("전체 메뉴를 조회할 수 있다")
-//    void list() {
-//        // given
-//        Product 간장치킨정보 = new Product(3L, "간장 치킨", 16000);
-//        MenuProduct 간장치킨 = new MenuProduct(간장치킨정보, 1);
-//        Menu 양념반_후라이드반 = new Menu(1L, "양념 반 + 후라이드 반", BigDecimal.valueOf(30000), 추천메뉴, Arrays.asList(후라이드치킨, 양념치킨));
-//        Menu 간장반_후라이드반 = new Menu(2L, "간장 반 + 후라이드 반", BigDecimal.valueOf(30000), 할인메뉴, Arrays.asList(후라이드치킨, 간장치킨));
-//        given(menuRepository.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 간장반_후라이드반));
-//
-//        MenuProduct expected_후라이드치킨_menu1 = new MenuProduct(1L, 양념반_후라이드반, 후라이드치킨정보, 1);
-//        MenuProduct expected_양념치킨 = new MenuProduct(2L, 양념반_후라이드반, 양념치킨정보, 1);
-//        MenuProduct expected_후라이드치킨_menu2 = new MenuProduct(3L, 간장반_후라이드반, 후라이드치킨정보, 1);
-//        MenuProduct expected_간장치킨 = new MenuProduct(4L, 간장반_후라이드반, 간장치킨정보, 1);
-//        양념반_후라이드반.setMenuProducts(Arrays.asList(expected_후라이드치킨_menu1, expected_양념치킨));
-//        간장반_후라이드반.setMenuProducts(Arrays.asList(expected_후라이드치킨_menu2, expected_간장치킨));
-//
-//        MenuResponse expected_양념반_후라이드반 = MenuResponse.from(양념반_후라이드반);
-//        MenuResponse expected_간장반_후라이드반 = MenuResponse.from(간장반_후라이드반);
-//
-//        // when
-//        List<MenuResponse> actual = menuService.list();
-//
-//        // then
-//        assertEquals(2, actual.size());
-//        assertThat(actual.get(0)).usingRecursiveComparison().isEqualTo(expected_양념반_후라이드반);
-//        assertThat(actual.get(1)).usingRecursiveComparison().isEqualTo(expected_간장반_후라이드반);
-//    }
+    @Test
+    @DisplayName("전체 메뉴를 조회할 수 있다")
+    void list() {
+        // given
+        given(menuRepository.findAll()).willReturn(Arrays.asList(양념반_후라이드반, 더블간장));
+
+        // when
+        List<MenuResponse> actual = menuService.list();
+
+        // then
+        assertEquals(2, actual.size());
+    }
 }
