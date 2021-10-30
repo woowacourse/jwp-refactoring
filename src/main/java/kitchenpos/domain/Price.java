@@ -1,0 +1,34 @@
+package kitchenpos.domain;
+
+import kitchenpos.exception.domain.price.InvalidePriceValueException;
+
+import javax.persistence.Embeddable;
+import java.math.BigDecimal;
+import java.util.Objects;
+
+@Embeddable
+public class Price {
+    private BigDecimal price;
+
+    public Price() {
+    }
+
+    private Price(BigDecimal price) {
+        this.price = price;
+    }
+
+    public static Price from(Long price) {
+        validate(price);
+        return new Price(BigDecimal.valueOf(price));
+    }
+
+    public static void validate(Long price) {
+        if (Objects.isNull(price) || price < 0) {
+            throw new InvalidePriceValueException();
+        }
+    }
+
+    public Long longValue() {
+        return price.longValue();
+    }
+}

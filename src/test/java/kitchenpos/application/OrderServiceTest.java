@@ -52,7 +52,7 @@ class OrderServiceTest {
 
         MenuGroup menuGroup = new MenuGroup("menuGroupName");
         long menuId = 1L;
-        Menu menu = new Menu(menuId, "menuName", BigDecimal.valueOf(1000L), menuGroup);
+        Menu menu = new Menu(menuId, "menuName", 1000L, menuGroup);
         long menuQuantity = 1L;
 
         Order expected = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());

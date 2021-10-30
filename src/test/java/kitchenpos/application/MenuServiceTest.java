@@ -55,11 +55,11 @@ class MenuServiceTest {
         MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
 
         String menuName = "menuName";
-        BigDecimal price = BigDecimal.valueOf(1000);
-        Menu expected = new Menu(menuName, price, menuGroup);
+        Long menuPrice = 1000L;
+        Menu expected = new Menu(menuName, menuPrice, menuGroup);
 
         long productId = 1L;
-        Product product = new Product(productId, "productName", BigDecimal.valueOf(1000));
+        Product product = new Product(productId, "productName", 1000L);
 
         long menuProductQuantity = 1;
         MenuProduct menuProduct = new MenuProduct(expected, product, menuProductQuantity);
@@ -74,7 +74,7 @@ class MenuServiceTest {
                 .willReturn(menuProduct);
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(productId, menuProductQuantity);
-        MenuRequest menuRequest = new MenuRequest(menuName, price.longValue(), menuGroupId, Arrays.asList(menuProductRequest));
+        MenuRequest menuRequest = new MenuRequest(menuName, menuPrice.longValue(), menuGroupId, Arrays.asList(menuProductRequest));
 
         // when
         Menu actual = menuService.create(menuRequest);
@@ -143,7 +143,7 @@ class MenuServiceTest {
         // given
         String menuName = "name";
         MenuGroup menuGroup = new MenuGroup(1L, "menuGroupName");
-        Menu expected = new Menu(menuName, BigDecimal.valueOf(menuPrice), menuGroup);
+        Menu expected = new Menu(menuName, menuPrice, menuGroup);
 
         MenuProductRequest menuProductRequest = new MenuProductRequest(1L, productQuantity);
         MenuRequest menuRequest = new MenuRequest(menuName, menuPrice, 1L, Arrays.asList(menuProductRequest));
@@ -153,7 +153,7 @@ class MenuServiceTest {
         given(menuRepository.save(any(Menu.class)))
                 .willReturn(expected);
 
-        Product product = new Product("name", BigDecimal.valueOf(productPrice));
+        Product product = new Product("name", productPrice);
         given(productRepository.findById(anyLong()))
                 .willReturn(Optional.of(product));
 

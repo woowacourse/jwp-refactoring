@@ -13,8 +13,8 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
@@ -26,14 +26,14 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(String name, Long price, MenuGroup menuGroup) {
         this(null, name, price, menuGroup);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long id, String name, Long price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = Price.from(price);
         this.menuGroup = menuGroup;
     }
 
@@ -45,8 +45,8 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public Long getPrice() {
+        return price.longValue();
     }
 
     public MenuGroup getMenuGroup() {

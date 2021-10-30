@@ -28,4 +28,8 @@ public class Quantity {
         validate(quantity);
         return new Quantity(quantity);
     }
+
+    public Long longValue() {
+        return quantity;
+    }
 }

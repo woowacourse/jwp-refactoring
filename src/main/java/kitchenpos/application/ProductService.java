@@ -20,17 +20,7 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductRequest productRequest) {
-        Long priceRequested = productRequest.getPrice();
-
-        if (Objects.isNull(priceRequested)) {
-            throw new IllegalArgumentException();
-        }
-
-        BigDecimal price = BigDecimal.valueOf(priceRequested);
-
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+        Long price = productRequest.getPrice();
 
         Product product = new Product(productRequest.getName(), price);
 
