@@ -3,6 +3,7 @@ package kitchenpos.fixtures;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -18,16 +19,19 @@ public class TableFixtures {
         int numberOfGuests,
         boolean empty
     ) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable(boolean empty) {
         return createOrderTable(ORDER_TABLE_ID, null, NUMBER_OF_GUESTS, empty);
+    }
+
+    public static OrderTableRequest createOrderTableRequest(OrderTable request) {
+        return new OrderTableRequest(request.getNumberOfGuests(), request.isEmpty());
+    }
+
+    public static OrderTableRequest createOrderTableRequest(boolean empty) {
+        return createOrderTableRequest(createOrderTable(empty));
     }
 
     public static List<OrderTable> createOrderTables(boolean empty) {

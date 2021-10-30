@@ -10,6 +10,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import java.util.Optional;
+import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
@@ -33,24 +35,28 @@ public class TableServiceTest extends ServiceTest {
 
     private OrderTable emptyTable;
     private OrderTable nonEmptyTable;
+    private OrderTableRequest request;
 
     @BeforeEach
     void setUp() {
         emptyTable = TableFixtures.createOrderTable(true);
         nonEmptyTable = TableFixtures.createOrderTable(false);
+        request = TableFixtures.createOrderTableRequest(emptyTable);
     }
 
     @Test
     void 주문_테이블을_생성한다() {
-        assertDoesNotThrow(() -> tableService.create(emptyTable));
-        verify(orderTableDao, times(1)).save(emptyTable);
+        given(orderTableDao.save(any())).willReturn(emptyTable);
+
+        assertDoesNotThrow(() -> tableService.create(request));
+        verify(orderTableDao, times(1)).save(any());
     }
 
     @Test
     void 주문_테이블_리스트를_반환한다() {
         given(orderTableDao.findAll()).willReturn(TableFixtures.createOrderTables(true));
 
-        List<OrderTable> orderTables = assertDoesNotThrow(() -> tableService.list());
+        List<OrderTableResponse> orderTables = assertDoesNotThrow(() -> tableService.list());
         assertThat(orderTables).isNotEmpty();
     }
 
@@ -58,8 +64,9 @@ public class TableServiceTest extends ServiceTest {
     void 주문_테이블의_상태를_변경한다() {
         given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(false);
+        given(orderTableDao.save(any())).willReturn(nonEmptyTable);
 
-        assertDoesNotThrow(() -> tableService.changeEmpty(emptyTable.getId(), nonEmptyTable));
+        assertDoesNotThrow(() -> tableService.changeEmpty(emptyTable.getId(), false));
         verify(orderTableDao).save(ArgumentMatchers.refEq(nonEmptyTable));
     }
 
@@ -67,7 +74,7 @@ public class TableServiceTest extends ServiceTest {
     void 상태_변경_시_주문_테이블이_존재하지_않으면_예외를_반환한다() {
         given(orderTableDao.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), nonEmptyTable));
+        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), false));
     }
 
     @Test
@@ -75,7 +82,7 @@ public class TableServiceTest extends ServiceTest {
         OrderTable groupedTable = TableFixtures.createOrderTable(1L, 1L, 10, true);
         given(orderTableDao.findById(any())).willReturn(Optional.of(groupedTable));
 
-        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), nonEmptyTable));
+        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), false));
     }
 
     @Test
@@ -83,47 +90,43 @@ public class TableServiceTest extends ServiceTest {
         given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
         given(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).willReturn(true);
 
-        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), nonEmptyTable));
+        assertThrows(IllegalArgumentException.class, () -> tableService.changeEmpty(emptyTable.getId(), false));
     }
 
     @Test
     void 주문_테이블의_손님_수를_변경한다() {
         OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, 3000, false);
         given(orderTableDao.findById(any())).willReturn(Optional.of(nonEmptyTable));
+        given(orderTableDao.save(any())).willReturn(crowdTable);
 
-        assertDoesNotThrow(() -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), crowdTable));
-        verify(orderTableDao).save(ArgumentMatchers.refEq(crowdTable));
+        assertDoesNotThrow(() -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), 3000));
     }
 
     @Test
     void 손님_수_변경_시_손님_수가_음수이면_예외를_반환한다() {
-        OrderTable invalidTable = TableFixtures.createOrderTable(1L, null, -1, false);
-
         assertThrows(
             IllegalArgumentException.class,
-            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), invalidTable)
+            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), -1)
         );
     }
 
     @Test
     void 손님_수_변경_시_주문_테이블이_존재하지_않으면_예외를_반환한다() {
-        OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, 3000, false);
         given(orderTableDao.findById(any())).willReturn(Optional.empty());
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), crowdTable)
+            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), 3000)
         );
     }
 
     @Test
     void 손님_수_변경_시_빈_테이블이면_예외를_반환한다() {
-        OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, 3000, false);
         given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
 
         assertThrows(
             IllegalArgumentException.class,
-            () -> tableService.changeNumberOfGuests(emptyTable.getId(), crowdTable)
+            () -> tableService.changeNumberOfGuests(emptyTable.getId(), 3000)
         );
     }
 }

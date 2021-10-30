@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderTableRequest;
+import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
@@ -22,22 +25,21 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final OrderTable orderTable) {
-        orderTable.setId(null);
-        orderTable.setTableGroupId(null);
-
-        return orderTableDao.save(orderTable);
+    public OrderTableResponse create(final OrderTableRequest orderTable) {
+        return OrderTableResponse.of(orderTableDao.save(orderTable.toEntity()));
     }
 
-    public List<OrderTable> list() {
-        return orderTableDao.findAll();
+    public List<OrderTableResponse> list() {
+        return orderTableDao.findAll().stream()
+            .map(OrderTableResponse::of)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
-
+        // TODO : 캡슐화
         if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
         }
@@ -47,15 +49,14 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.setEmpty(orderTable.isEmpty());
+        savedOrderTable.setEmpty(empty);
 
-        return orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
+        // TODO : 캡슐화
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -69,6 +70,6 @@ public class TableService {
 
         savedOrderTable.setNumberOfGuests(numberOfGuests);
 
-        return orderTableDao.save(savedOrderTable);
+        return OrderTableResponse.of(orderTableDao.save(savedOrderTable));
     }
 }

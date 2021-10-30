@@ -19,6 +19,9 @@ public class MenuRequest {
         this.menuProducts = menuProducts;
     }
 
+    public MenuRequest() {
+    }
+
     public Menu toEntity() {
         return new Menu(name, price, menuGroupId, menuProducts);
     }
