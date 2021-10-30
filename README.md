@@ -51,12 +51,12 @@
     - [ ] 저장된 order는 orderLineItems를 갖고 있다.
   
 ### Product
-- [ ] Product를 만든다.
-  - [ ] product의 가격이 null이거나 0보다 작은 경우 예외를 던진다
-  - [ ] product를 저장한다.
+- [x] Product를 만든다.
+  - [x] product의 가격이 null이거나 0보다 작은 경우 예외를 던진다
+  - [x] product를 저장한다.
 
-- [ ] 모든 Product를 반환한다.
-  - [ ] 모든 product를 찾아 반환한다.
+- [x] 모든 Product를 반환한다.
+  - [x] 모든 product를 찾아 반환한다.
   
 ###  TableGroup
 - [ ] tableGroup을 만든다.
