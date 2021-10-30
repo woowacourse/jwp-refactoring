@@ -3,13 +3,13 @@ package kitchenpos.domain;
 import kitchenpos.exception.menu.MenuPriceOverThanProductsException;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class Menu {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)

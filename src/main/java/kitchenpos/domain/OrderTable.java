@@ -6,7 +6,8 @@ import javax.persistence.*;
 
 @Entity
 public class OrderTable {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne

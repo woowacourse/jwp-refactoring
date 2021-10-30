@@ -9,7 +9,8 @@ import java.util.List;
 
 @Entity
 public class Order {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne

@@ -4,7 +4,8 @@ import javax.persistence.*;
 
 @Entity
 public class OrderLineItem {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long seq;
 
     @ManyToOne

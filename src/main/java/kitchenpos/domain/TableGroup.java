@@ -7,7 +7,8 @@ import java.util.List;
 
 @Entity
 public class TableGroup {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)

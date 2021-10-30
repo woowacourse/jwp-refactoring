@@ -1,11 +1,11 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 @Entity
 public class Product {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
