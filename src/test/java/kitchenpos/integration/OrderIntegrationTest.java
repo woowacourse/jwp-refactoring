@@ -1,6 +1,5 @@
 package kitchenpos.integration;
 
-import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -9,6 +8,8 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.factory.MenuProductFactory;
+import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.MenuGroupTemplate;
 import kitchenpos.integration.templates.MenuTemplate;
@@ -74,10 +75,10 @@ class OrderIntegrationTest {
         assertThat(product).isNotNull();
         Long productId = product.getId();
 
-        MenuProduct menuProduct = DomainBuilder.createMenuProduct(
-                productId,
-                2L
-        );
+        MenuProduct menuProduct = MenuProductFactory.builder()
+                .productId(productId)
+                .quantity(2L)
+                .build();
 
         Menu menu = menuTemplate.create(
                 "후라이드+후라이드",
@@ -88,10 +89,10 @@ class OrderIntegrationTest {
         assertThat(menu).isNotNull();
         Long menuId = menu.getId();
 
-        orderLineItem = DomainBuilder.createOrderLineItem(
-                menuId,
-                1L
-        );
+        orderLineItem = OrderLineItemFactory.builder()
+                .menuId(menuId)
+                .quantity(1L)
+                .build();
     }
 
     @DisplayName("Order 를 생성한다")

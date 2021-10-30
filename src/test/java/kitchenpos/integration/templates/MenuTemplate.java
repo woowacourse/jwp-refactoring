@@ -1,8 +1,8 @@
 package kitchenpos.integration.templates;
 
-import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.factory.MenuFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +18,12 @@ public class MenuTemplate extends IntegrationTemplate {
                                        BigDecimal price,
                                        Long menuGroupId,
                                        List<MenuProduct> menuProducts) {
-        Menu menu = DomainBuilder
-                .createMenu(
-                        name,
-                        price,
-                        menuGroupId,
-                        menuProducts
-                );
+        Menu menu = MenuFactory.builder()
+                .name(name)
+                .price(price)
+                .menuGroupId(menuGroupId)
+                .menuProducts(menuProducts)
+                .build();
 
         return post(
                 MENU_URL,

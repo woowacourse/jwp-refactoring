@@ -1,10 +1,10 @@
 package kitchenpos.integration;
 
-import kitchenpos.DomainBuilder;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.MenuGroupTemplate;
 import kitchenpos.integration.templates.MenuTemplate;
@@ -63,11 +63,10 @@ class MenuIntegrationTest {
         menuName = "후라이드+후라이드";
         menuPrice = new BigDecimal(19000);
 
-        menuProduct = DomainBuilder
-                .createMenuProduct(
-                        productId,
-                        2L
-                );
+        menuProduct = MenuProductFactory.builder()
+                .productId(productId)
+                .quantity(2L)
+                .build();
     }
 
     @DisplayName("menu 를 생성한다")
