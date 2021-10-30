@@ -33,7 +33,7 @@ public class OrderService {
         final OrderTable orderTable = getOrderTable(request);
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
 
-        final Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        final Order order = new Order(orderTable, orderLineItems);
         final Order savedOrder = orderRepository.save(order);
 
         return CreateOrderResponse.from(savedOrder);

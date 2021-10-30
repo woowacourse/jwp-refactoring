@@ -25,7 +25,7 @@ class OrderTest {
 
         // when & then
         assertDoesNotThrow(() -> {
-            Order order = new Order(orderTable, OrderStatus.COOKING, Arrays.asList(후라이드_단품_둘, 양념반_후라이드반_하나));
+            Order order = new Order(orderTable, Arrays.asList(후라이드_단품_둘, 양념반_후라이드반_하나));
             assertNotNull(order.getOrderTable());
             assertEquals(OrderStatus.COOKING, order.getOrderStatus());
             assertNotNull(order.getOrderedTime());

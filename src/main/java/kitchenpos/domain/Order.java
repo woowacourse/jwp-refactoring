@@ -29,21 +29,8 @@ public class Order {
     public Order() {
     }
 
-    // temp
-    public Order(Long id) {
-        this(id, null, null, null, null);
-    }
-
-    public Order(OrderTable orderTable, OrderStatus status) {
-        this(null, orderTable, status, null, null);
-    }
-
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, orderLineItems);
-    }
-
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
@@ -84,39 +71,19 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public OrderTable getOrderTable() {
         return orderTable;
-    }
-
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
     }
 
     public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public void setOrderStatus(OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }
