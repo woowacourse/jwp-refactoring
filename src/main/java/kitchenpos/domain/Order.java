@@ -85,6 +85,9 @@ public class Order {
     }
 
     public void updateOrderStatus(String orderStatus) {
+        if (!isNotCompleted()) {
+            throw new IllegalArgumentException("주문이 이미 완료된 상태입니다.");
+        }
         this.orderStatus = orderStatus;
     }
 

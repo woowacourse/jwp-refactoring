@@ -25,11 +25,11 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = tableGroupRequest.orderTableIds();
-        List<OrderTable> savedOrderTables = orderTableService.findAllOrderTables(orderTableIds);
-
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroupRequest.toTableGroup());
-        List<OrderTable> orderTables = orderTableService.create(savedOrderTables, savedTableGroup);
-        return TableGroupResponse.of(savedTableGroup, orderTables);
+
+        List<OrderTable> findOrderTables = orderTableService.findAllOrderTables(orderTableIds);
+        List<OrderTable> updateOrderTables = orderTableService.addTableGroup(findOrderTables, savedTableGroup);
+        return TableGroupResponse.of(savedTableGroup, updateOrderTables);
     }
 
     @Transactional

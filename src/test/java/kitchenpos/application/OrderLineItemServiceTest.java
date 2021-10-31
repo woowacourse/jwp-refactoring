@@ -46,7 +46,7 @@ class OrderLineItemServiceTest extends ServiceTest {
         given(menuRepository.findById(anyLong())).willThrow(NonExistentException.class);
 
         // when - then
-        assertThatThrownBy(() -> orderLineItemService.create(orderLineItemRequests, order))
+        assertThatThrownBy(() -> orderLineItemService.createOrderLineItem(orderLineItemRequests, order))
                 .isInstanceOf(NonExistentException.class);
         then(menuRepository).should(times(1))
                 .findById(anyLong());

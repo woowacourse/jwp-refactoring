@@ -78,6 +78,7 @@ public class OrderTable {
             throw new IllegalArgumentException("tableGroup이 이미 등록되어있습니다.");
         }
         this.tableGroup = tableGroup;
+        changeEmpty(false);
     }
 
     public Long getTableGroupId() {

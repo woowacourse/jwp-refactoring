@@ -57,7 +57,7 @@ public class OrderServiceTest extends ServiceTest {
         then(orderRepository).should(never())
                 .save(any(Order.class));
         then(orderLineItemService).should(never())
-                .create(anyList(), any(Order.class));
+                .createOrderLineItem(anyList(), any(Order.class));
     }
 
     @DisplayName("주문 상태를 변경한다. - 실패, 주문을 찾을 수 없다.")

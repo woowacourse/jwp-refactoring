@@ -34,13 +34,15 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        Order savedOrder = saveOrders(orderRequest);
-        List<OrderLineItem> orderLineItems
-                = orderLineItemService.create(orderRequest.getOrderLineItems(), savedOrder);
+        Order savedOrder = createOrder(orderRequest);
+        List<OrderLineItem> orderLineItems = orderLineItemService.createOrderLineItem(
+                orderRequest.getOrderLineItems(),
+                savedOrder
+        );
         return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    private Order saveOrders(OrderRequest orderRequest) {
+    private Order createOrder(OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new NonExistentException("주문 테이블을 찾을 수 없습니다."));
         Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
@@ -60,15 +62,8 @@ public class OrderService {
     public OrderStatusResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order updateOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NonExistentException("주문을 찾을 수 없습니다."));
-        validateOrderStatus(updateOrder);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
         updateOrder.updateOrderStatus(orderStatus.name());
         return OrderStatusResponse.from(updateOrder.getOrderStatus());
-    }
-
-    private void validateOrderStatus(Order updateOrder) {
-        if (!updateOrder.isNotCompleted()) {
-            throw new IllegalArgumentException("주문이 이미 완료된 상태입니다.");
-        }
     }
 }

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NonExistentException;
@@ -36,19 +37,10 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NonExistentException("주문테이블을 찾을 수 없습니다."));
 
-        validateOrderAndOrderStatus(orderTableId);
+        Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
+        orders.checkNotCompleted();
         savedOrderTable.changeEmpty(tableRequest.isEmpty());
         return TableResponse.from(savedOrderTable);
-    }
-
-    private void validateOrderAndOrderStatus(Long orderTableId) {
-        List<Order> findOrders = orderRepository.findAllByOrderTableId(orderTableId);
-        findOrders.stream()
-                .filter(Order::isNotCompleted)
-                .findAny()
-                .ifPresent(order -> {
-                    throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재합니다.");
-                });
     }
 
     @Transactional

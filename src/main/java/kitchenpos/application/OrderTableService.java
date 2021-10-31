@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -23,12 +23,11 @@ public class OrderTableService {
     }
 
     @Transactional
-    public List<OrderTable> create(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
+    public List<OrderTable> addTableGroup(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
         List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.addTableGroup(savedTableGroup);
-            savedOrderTable.changeEmpty(false);
-            orderTables.add(orderTableRepository.save(savedOrderTable));
+        for (final OrderTable updateOrderTable : savedOrderTables) {
+            updateOrderTable.addTableGroup(savedTableGroup);
+            orderTables.add(updateOrderTable);
         }
         return orderTables;
     }
@@ -49,14 +48,8 @@ public class OrderTableService {
     public void ungroup(Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable orderTable : orderTables) {
-            List<Order> orders = orderRepository.findAllByOrderTableId(orderTable.getId());
-            orders.stream()
-                    .filter(Order::isNotCompleted)
-                    .findAny()
-                    .ifPresent(order -> {
-                        throw new IllegalArgumentException("아직 조리 혹은 식사 중인 주문이 존재합니다.");
-                    });
-            orderTable.ungroup();
+            Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
+            orders.ungroupOf(orderTable);
         }
     }
 }

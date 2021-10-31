@@ -25,7 +25,7 @@ public class OrderLineItemService {
     }
 
     @Transactional
-    public List<OrderLineItem> create(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
+    public List<OrderLineItem> createOrderLineItem(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu findMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
