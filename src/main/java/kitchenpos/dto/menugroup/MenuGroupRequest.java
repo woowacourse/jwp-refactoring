@@ -4,12 +4,12 @@ public class MenuGroupRequest {
 
     private final String name;
 
-    public MenuGroupRequest(String name) {
-        this.name = name;
-    }
-
     public MenuGroupRequest() {
         this(null);
+    }
+
+    public MenuGroupRequest(String name) {
+        this.name = name;
     }
 
     public String getName() {

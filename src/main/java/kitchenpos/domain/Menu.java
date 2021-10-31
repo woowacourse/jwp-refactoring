@@ -30,23 +30,23 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
     private MenuGroup menuGroup;
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
-        validatePrice(price);
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-    }
-
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+    protected Menu() {
     }
 
     public Menu(String name, int price, MenuGroup menuGroup) {
         this(null, name, BigDecimal.valueOf(price), menuGroup);
     }
 
-    protected Menu() {
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
+    }
+
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+        validatePrice(price);
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
     }
 
     private void validatePrice(BigDecimal price) {

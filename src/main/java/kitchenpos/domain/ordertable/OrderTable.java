@@ -31,23 +31,23 @@ public class OrderTable {
     @Column(nullable = false)
     private Boolean empty;
 
-    public OrderTable(Long id, TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
-        validate(numberOfGuests, empty);
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    protected OrderTable() {
     }
 
     public OrderTable(Integer numberOfGuests, Boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    protected OrderTable() {
+    public OrderTable(TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public OrderTable(Long id, TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
+        validate(numberOfGuests, empty);
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     private void validate(Integer numberOfGuests, Boolean empty) {

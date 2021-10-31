@@ -29,22 +29,22 @@ public class MenuProduct {
     @Embedded
     private Quantity quantity;
 
-    public MenuProduct(Long seq, Menu menu, Product product, Quantity quantity) {
-        this.seq = seq;
-        this.menu = menu;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public MenuProduct(Menu menu, Product product, Quantity quantity) {
-        this(null, menu, product, quantity);
+    protected MenuProduct() {
     }
 
     public MenuProduct(Menu menu, Product product, long quantity) {
         this(null, menu, product, new Quantity(quantity));
     }
 
-    protected MenuProduct() {
+    public MenuProduct(Menu menu, Product product, Quantity quantity) {
+        this(null, menu, product, quantity);
+    }
+
+    public MenuProduct(Long seq, Menu menu, Product product, Quantity quantity) {
+        this.seq = seq;
+        this.menu = menu;
+        this.product = product;
+        this.quantity = quantity;
     }
 
     public Long getSeq() {

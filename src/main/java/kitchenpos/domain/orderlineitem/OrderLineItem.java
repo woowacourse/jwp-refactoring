@@ -32,11 +32,7 @@ public class OrderLineItem {
     @Embedded
     private Quantity quantity;
 
-    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
-        this.seq = seq;
-        this.order = order;
-        this.menu = menu;
-        this.quantity = quantity;
+    protected OrderLineItem() {
     }
 
     public OrderLineItem(Menu menu, Quantity quantity) {
@@ -47,7 +43,11 @@ public class OrderLineItem {
         this(null, order, menu, new Quantity(quantityValue));
     }
 
-    protected OrderLineItem() {
+    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
+        this.seq = seq;
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
     }
 
     public Long getSeq() {

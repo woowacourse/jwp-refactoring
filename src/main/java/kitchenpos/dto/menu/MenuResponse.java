@@ -12,6 +12,10 @@ public class MenuResponse {
     private final Long menuGroupId;
     private final List<MenuProductResponse> menuProducts;
 
+    public MenuResponse(Menu menu, List<MenuProductResponse> menuProductResponses) {
+        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
+    }
+
     public MenuResponse(
         Long id,
         String name,
@@ -24,10 +28,6 @@ public class MenuResponse {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
-    }
-
-    public MenuResponse(Menu menu, List<MenuProductResponse> menuProductResponses) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
     public Long getId() {

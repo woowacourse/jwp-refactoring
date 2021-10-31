@@ -9,6 +9,10 @@ public class MenuRequest {
     private final Long menuGroupId;
     private final List<MenuProductRequest> menuProducts;
 
+    public MenuRequest() {
+        this(null, null, null, null);
+    }
+
     public MenuRequest(
         String name,
         Integer price,
@@ -19,10 +23,6 @@ public class MenuRequest {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProductRequests;
-    }
-
-    public MenuRequest() {
-        this(null, null, null, null);
     }
 
     public String getName() {

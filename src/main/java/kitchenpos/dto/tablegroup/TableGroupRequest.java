@@ -7,12 +7,12 @@ public class TableGroupRequest {
 
     private final List<OrderTableRequest> orderTables;
 
-    public TableGroupRequest(List<OrderTableRequest> orderTables) {
-        this.orderTables = orderTables;
-    }
-
     public TableGroupRequest() {
         this(null);
+    }
+
+    public TableGroupRequest(List<OrderTableRequest> orderTables) {
+        this.orderTables = orderTables;
     }
 
     public List<OrderTableRequest> getOrderTables() {

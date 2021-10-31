@@ -10,6 +10,18 @@ public class OrderRequest {
     private final Long orderTableId;
     private final List<OrderLineItemRequest> orderLineItems;
 
+    public OrderRequest() {
+        this(null, null, null);
+    }
+
+    public OrderRequest(OrderStatus orderStatus) {
+        this(orderStatus, null, null);
+    }
+
+    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
+        this(null, orderTableId, orderLineItemRequests);
+    }
+
     public OrderRequest(
         OrderStatus orderStatus,
         Long orderTableId,
@@ -18,18 +30,6 @@ public class OrderRequest {
         this.orderStatus = orderStatus;
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
-    }
-
-    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
-        this(null, orderTableId, orderLineItemRequests);
-    }
-
-    public OrderRequest(OrderStatus orderStatus) {
-        this(orderStatus, null, null);
-    }
-
-    public OrderRequest() {
-        this(null, null, null);
     }
 
     public OrderStatus getOrderStatus() {

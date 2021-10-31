@@ -11,6 +11,14 @@ public class TableGroupResponse {
     private final LocalDateTime createdDate;
     private final List<OrderTableResponse> orderTables;
 
+    public TableGroupResponse(TableGroup tableGroup, List<OrderTableResponse> orderTableResponses) {
+        this(
+            tableGroup.getId(),
+            tableGroup.getCreatedDate(),
+            orderTableResponses
+        );
+    }
+
     public TableGroupResponse(
         Long id,
         LocalDateTime createdDate,
@@ -19,14 +27,6 @@ public class TableGroupResponse {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-    }
-
-    public TableGroupResponse(TableGroup tableGroup, List<OrderTableResponse> orderTableResponses) {
-        this(
-            tableGroup.getId(),
-            tableGroup.getCreatedDate(),
-            orderTableResponses
-        );
     }
 
     public Long getId() {

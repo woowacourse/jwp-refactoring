@@ -23,12 +23,12 @@ public class TableGroup {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
+    public TableGroup() {
+    }
+
     protected TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-    }
-
-    public TableGroup() {
     }
 
     public Long getId() {

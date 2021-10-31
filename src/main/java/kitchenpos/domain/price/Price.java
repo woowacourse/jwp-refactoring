@@ -13,16 +13,16 @@ public class Price {
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 
-    public Price(Integer value) {
-        validate(value);
-        this.value = BigDecimal.valueOf(value);
+    protected Price() {
     }
 
     public Price(BigDecimal value) {
         this(value.intValue());
     }
 
-    protected Price() {
+    public Price(Integer value) {
+        validate(value);
+        this.value = BigDecimal.valueOf(value);
     }
 
     private void validate(Integer value) {

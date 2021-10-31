@@ -9,13 +9,6 @@ public class OrderLineItemResponse {
     private final Long menuId;
     private final Long quantity;
 
-    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, Long quantity) {
-        this.seq = seq;
-        this.orderId = orderId;
-        this.menuId = menuId;
-        this.quantity = quantity;
-    }
-
     public OrderLineItemResponse(OrderLineItem orderLineItem) {
         this(
             orderLineItem.getSeq(),
@@ -23,6 +16,13 @@ public class OrderLineItemResponse {
             orderLineItem.getMenuId(),
             orderLineItem.getQuantityValue()
         );
+    }
+
+    public OrderLineItemResponse(Long seq, Long orderId, Long menuId, Long quantity) {
+        this.seq = seq;
+        this.orderId = orderId;
+        this.menuId = menuId;
+        this.quantity = quantity;
     }
 
     public Long getSeq() {
