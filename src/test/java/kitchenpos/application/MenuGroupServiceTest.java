@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+@DisplayName("MenuGroup Service 테스트")
 @SpringBootTest
 class MenuGroupServiceTest {
 
