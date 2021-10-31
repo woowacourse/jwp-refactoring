@@ -101,30 +101,24 @@
 
 # 주문테이블(OrderTable)
 ## 저장
-- [ ] 주문테이블이 DB에 저장된다.
-- [ ] id의 존재에 상관없에 저장시 DB의 AutoIncrement를 통해 id가 DB에 저장된다.
+- [x] 주문테이블이 DB에 저장된다.
 ### 제약사항
-- [ ] DB에서 id는 20바이트 이하로 제한된다.
-- [ ] DB에서 id는 null을 허용하지 않는다.
-- [ ] DB에서 table_group_id는 null을 허용한다.
-- [ ] DB에서 number_of_guestss는 11바이트 이하로 제한된다.
-- [ ] DB에서 number_of_guestss는 null을 허용하지 않는다.
-- [ ] DB에서 empty는 null을 허용하지 않는다.
+- [x] DB에서 table_group_id는 null을 허용한다.
 ## 조회 
-- [ ] DB에 저장된 모든 주분테이을를 반환한다.
+- [x] DB에 저장된 모든 주분테이을를 반환한다.
   - [ ] DB에 저장된 주문테이블이 없으면 빈 배열을 반환한다.
 ## 수정 - empty 값 변경
-- [ ] 요청한 empty 값으로 주문 테이블의 empty 값을 변경한다.
+- [x] 요청한 empty 값으로 주문 테이블의 empty 값을 변경한다.
 ### 제약사항
-- [ ] empty 값을 변경할 주문테이블이 존재하지 않다면 `예외`가 발생한다. 
-- [ ] empty 값을 변경할 주문테이블에 단체지정이 지정되어 있다면 `예외`가 발생한다.
-- [ ] empty 값을 변경할 주문테이블에 할당된 주문의 주문상테가 COMPLETION이 아니면 `예외`가 발생한다.
+- [x] empty 값을 변경할 주문테이블이 존재하지 않다면 `예외`가 발생한다. 
+- [x] empty 값을 변경할 주문테이블에 단체지정이 지정되어 있다면 `예외`가 발생한다.
+- [x] empty 값을 변경할 주문테이블에 할당된 주문의 주문상테가 COMPLETION이 아니면 `예외`가 발생한다.
 ## 수정 - numberOfGuests 값 변경
-- [ ] 요청한 numberOfGuests 값으로 주문 테이블의 numberOfGuests 값을 변경한다.
+- [x] 요청한 numberOfGuests 값으로 주문 테이블의 numberOfGuests 값을 변경한다.
 ### 제약사항
-- [ ] numberOfGuests 값을 변경할 주문테이블이 존재하지 않다면 `예외`가 발생한다.
-- [ ] 변경 할 numberOfGuests의 값이 0 이하면 `예외`가 발생한다.
-- [ ] numberOfGuests 값을 변경할 주문 테이블의 empty 값이 true면 `예외`가 발생한다.
+- [x] numberOfGuests 값을 변경할 주문테이블이 존재하지 않다면 `예외`가 발생한다.
+- [x] 변경 할 numberOfGuests의 값이 0 미만이면 `예외`가 발생한다.
+- [x] numberOfGuests 값을 변경할 주문 테이블의 empty 값이 true면 `예외`가 발생한다.
 
 # 단체지정(TableGroup)
 ## 저장

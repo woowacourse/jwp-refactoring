@@ -4,6 +4,7 @@ import kitchenpos.domain.OrderTable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderTableFixture {
     public static final OrderTable FIRST;
@@ -18,6 +19,10 @@ public class OrderTableFixture {
     public static final OrderTable SEVENTH;
     public static final OrderTable EIGHT;
     public static final OrderTable NINTH;
+    public static final OrderTable TO_EMPTY_TRUE;
+    public static final OrderTable TO_EMPTY_FALSE;
+    public static final OrderTable TO_NUMBER_OF_GUESTS_FIVE;
+
 
     static {
         FIRST = newInstance(1L, true);
@@ -32,10 +37,20 @@ public class OrderTableFixture {
         SEVENTH = newInstance(7L, true);
         EIGHT = newInstance(8L, true);
         NINTH = newInstance(9L, true);
+        TO_EMPTY_TRUE = newInstance(null, true);
+        TO_EMPTY_FALSE = newInstance(null, false);
+        TO_NUMBER_OF_GUESTS_FIVE = newInstance(null, false, 5);
     }
 
     public static List<OrderTable> orderTables() {
         return Arrays.asList(FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH, SEVENTH, EIGHT, NINTH);
+    }
+
+    public static List<Long> orderTablesId() {
+        return orderTables()
+                .stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList());
     }
 
     private static OrderTable newInstance(Long id, boolean empty) {
