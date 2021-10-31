@@ -4,18 +4,14 @@ import static kitchenpos.integration.api.texture.ProductTexture.강정치킨;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.List;
-import kitchenpos.domain.Product;
 import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.ui.request.ProductCreateRequest;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.application.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProductIntegrationTest extends IntegrationTest {
 

@@ -2,21 +2,18 @@ package kitchenpos.integration;
 
 import static kitchenpos.integration.api.texture.ProductTexture.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Product;
 import kitchenpos.integration.api.MenuApi;
 import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.api.OrderApi;
 import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.api.TableApi;
-import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.application.response.MenuResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,13 +33,13 @@ public class OrderIntegrationTest extends IntegrationTest {
     @Autowired
     private MenuGroupApi menuGroupApi;
 
-    private Menu 기본_메뉴;
+    private MenuResponse 기본_메뉴;
 
     @BeforeEach
     void setUp() {
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
         final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
-        final MenuProduct menuProduct = new MenuProduct(productId, 1);
+        final MenuProductRequest menuProduct = MenuProductRequest.create(productId, 1);
 
         기본_메뉴 = menuApi
             .메뉴_등록(민초치킨, menuGroupId, Collections.singletonList(menuProduct))

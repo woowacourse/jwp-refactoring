@@ -1,11 +1,10 @@
 package kitchenpos.integration.api;
 
 import java.util.List;
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
 import kitchenpos.ui.request.MenuGroupCreateRequest;
-import kitchenpos.ui.response.MenuGroupResponse;
+import kitchenpos.application.response.MenuGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

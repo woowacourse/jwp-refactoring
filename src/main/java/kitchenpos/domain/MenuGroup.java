@@ -25,6 +25,10 @@ public class MenuGroup {
         return create(null, name);
     }
 
+    public static MenuGroup create(Long id) {
+        return create(id, null);
+    }
+
     public Long getId() {
         return id;
     }

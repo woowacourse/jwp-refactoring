@@ -1,4 +1,4 @@
-package kitchenpos.ui.response;
+package kitchenpos.application.response;
 
 import kitchenpos.domain.MenuGroup;
 
@@ -22,3 +22,4 @@ public class MenuGroupResponse {
         return name;
     }
 }
+

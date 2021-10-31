@@ -34,6 +34,12 @@ public class Product {
         return create(null, name, price);
     }
 
+    public static Product createSingleId(Long id) {
+        final Product product = new Product();
+        product.id = id;
+        return product;
+    }
+
     public Long getId() {
         return id;
     }
