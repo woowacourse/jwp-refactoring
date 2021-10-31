@@ -13,4 +13,6 @@ public interface MenuGroupDao {
     List<MenuGroup> findAll();
 
     boolean existsById(Long id);
+
+    int deleteAll();
 }

@@ -61,6 +61,14 @@ public class JdbcTemplateMenuDao implements MenuDao {
         return jdbcTemplate.queryForObject(sql, parameters, Long.class);
     }
 
+    @Override
+    public int deleteAll(){
+        final String sql = "DELETE menu";
+        final SqlParameterSource parameters = new MapSqlParameterSource();
+
+        return jdbcTemplate.update(sql, parameters);
+    }
+
     private Menu select(final Long id) {
         final String sql = "SELECT id, name, price, menu_group_id FROM menu WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

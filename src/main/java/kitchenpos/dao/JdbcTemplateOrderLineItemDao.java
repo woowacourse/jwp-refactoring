@@ -61,6 +61,14 @@ public class JdbcTemplateOrderLineItemDao implements OrderLineItemDao {
         return jdbcTemplate.query(sql, parameters, (resultSet, rowNumber) -> toEntity(resultSet));
     }
 
+    @Override
+    public int deleteAll() {
+        final String sql = "DELETE order_line_item";
+        final SqlParameterSource parameters = new MapSqlParameterSource();
+
+        return jdbcTemplate.update(sql, parameters);
+    }
+
     private OrderLineItem select(final Long id) {
         final String sql = "SELECT seq, order_id, menu_id, quantity FROM order_line_item WHERE seq = (:seq)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

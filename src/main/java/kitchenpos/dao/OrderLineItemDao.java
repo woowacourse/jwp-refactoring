@@ -13,4 +13,6 @@ public interface OrderLineItemDao {
     List<OrderLineItem> findAll();
 
     List<OrderLineItem> findAllByOrderId(Long orderId);
+
+    int deleteAll();
 }

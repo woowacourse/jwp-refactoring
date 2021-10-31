@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -57,11 +58,16 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
-         productService.create(new Product(1L, "강정치킨", BigDecimal.valueOf(17000)));
-         productService.create(new Product(2L, "양념치킨", BigDecimal.valueOf(17000)));
-         productService.create(new Product(3L, "후라이드치킨", BigDecimal.valueOf(15000)));
+        //given
+        productService.create(new Product(1L, "강정치킨", BigDecimal.valueOf(17000)));
+        productService.create(new Product(2L, "양념치킨", BigDecimal.valueOf(17000)));
+        productService.create(new Product(3L, "후라이드치킨", BigDecimal.valueOf(15000)));
 
-        assertThat(productService.list().size()).isEqualTo(3);
+        //when
+        List<Product> result = productService.list();
+
+        //then
+        assertThat(result.size()).isEqualTo(3);
     }
 
 }

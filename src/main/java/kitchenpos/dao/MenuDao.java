@@ -13,4 +13,6 @@ public interface MenuDao {
     List<Menu> findAll();
 
     long countByIdIn(List<Long> ids);
+
+    int deleteAll();
 }
