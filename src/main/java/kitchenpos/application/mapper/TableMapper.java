@@ -1,6 +1,6 @@
 package kitchenpos.application.mapper;
 
-import kitchenpos.application.dto.TableRequest;
+import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.domain.OrderTable;
 import org.springframework.stereotype.Component;
 

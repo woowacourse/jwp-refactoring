@@ -1,8 +1,8 @@
 package kitchenpos.application.mapper;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.MenuProductRequest;
-import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.request.MenuProductRequest;
+import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.repository.ProductRepository;

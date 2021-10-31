@@ -1,9 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.application.dto.OrderRequest;
-import kitchenpos.application.dto.OrderStatusRequest;
+import kitchenpos.application.dto.request.OrderRequest;
+import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;

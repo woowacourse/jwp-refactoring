@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.TableRequest;
+import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.application.mapper.TableMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;

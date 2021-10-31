@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
-import kitchenpos.application.dto.MenuRequest;
+import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
