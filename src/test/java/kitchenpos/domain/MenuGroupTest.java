@@ -13,6 +13,7 @@ public class MenuGroupTest {
     @NullAndEmptySource
     void create(String name) {
         assertThatThrownBy(() -> new MenuGroup(name))
-                .isInstanceOf(FieldNotValidException.class);
+                .isInstanceOf(FieldNotValidException.class)
+                .hasMessageContaining("메뉴 그룹명이 유효하지 않습니다.");
     }
 }
