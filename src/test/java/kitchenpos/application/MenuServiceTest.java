@@ -14,7 +14,7 @@ import java.util.Optional;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -50,7 +50,7 @@ class MenuServiceTest {
     private MenuProductDao menuProductDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @BeforeEach
     void setUp() {
@@ -75,7 +75,7 @@ class MenuServiceTest {
             .willReturn(Optional.of(menuGroup));
         given(menuProductDao.findById(anyLong()))
             .willReturn(Optional.of(menuProduct));
-        given(productDao.findById(anyLong()))
+        given(productRepository.findById(anyLong()))
             .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);

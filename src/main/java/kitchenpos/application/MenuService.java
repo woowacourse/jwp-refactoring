@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -22,18 +22,18 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductDao menuProductDao;
-    private final ProductDao productDao;
+    private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductDao menuProductDao,
-            final ProductDao productDao
+            final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductDao = menuProductDao;
-        this.productDao = productDao;
+        this.productRepository = productRepository;
     }
 
     @Transactional
@@ -49,7 +49,7 @@ public class MenuService {
 
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productDao.findById(menuProduct.getProduct().getId())
+            final Product product = productRepository.findById(menuProduct.getProduct().getId())
                     .orElseThrow(IllegalArgumentException::new);
             sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
