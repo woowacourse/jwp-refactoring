@@ -118,8 +118,6 @@ class TableGroupServiceTest {
             TableGroup result = tableGroupService.create(this.tableGroup);
 
             // then
-            verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
-            verify(tableGroupDao, times(1)).save(tableGroup);
             verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
             List<OrderTable> orderTableArguments = orderTableArgumentCaptor.getAllValues();
             assertThat(orderTableArguments)
@@ -168,7 +166,6 @@ class TableGroupServiceTest {
             // when // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
         }
 
         @DisplayName("TableGroup 생성 실패한다 - 요청한 orderTable 이 비어있지 않는 경우")
@@ -187,7 +184,6 @@ class TableGroupServiceTest {
             // when // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
         }
 
         @DisplayName("TableGroup 생성 실패한다 - 요청한 orderTable 이 이미 tableGroup 을 가지고 있는 경우")
@@ -206,7 +202,6 @@ class TableGroupServiceTest {
             // when // then
             assertThatThrownBy(() -> tableGroupService.create(tableGroup))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findAllByIdIn(orderTableIds);
         }
     }
 
@@ -274,11 +269,6 @@ class TableGroupServiceTest {
             tableGroupService.ungroup(tableGroupId);
 
             // then
-            verify(orderTableDao, times(1)).findAllByTableGroupId(tableGroupId);
-            verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds,
-                notCompletionOrderStatuses
-            );
             verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
             List<OrderTable> orderTableArguments = orderTableArgumentCaptor.getAllValues();
             assertThat(orderTableArguments)
@@ -301,11 +291,6 @@ class TableGroupServiceTest {
             // when // then
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findAllByTableGroupId(tableGroupId);
-            verify(orderDao, times(1)).existsByOrderTableIdInAndOrderStatusIn(
-                orderTableIds,
-                notCompletionOrderStatuses
-            );
         }
     }
 }

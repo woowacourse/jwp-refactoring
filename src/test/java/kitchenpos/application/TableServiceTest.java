@@ -126,12 +126,6 @@ class TableServiceTest {
             OrderTable result = tableService.changeEmpty(orderTableId, orderTable);
 
             // then
-            verify(orderTableDao, times(1)).findById(orderTableId);
-            verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                notCompletionOrderStatuses
-            );
-            verify(orderTableDao, times(1)).save(savedOrderTable);
             assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(savedOrderTable);
@@ -146,7 +140,6 @@ class TableServiceTest {
             // when // then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findById(orderTableId);
         }
 
         @DisplayName("OrderTable 의 empty 필드 변경 실패한다 - tableGroup 이 존재하는 경우")
@@ -161,7 +154,6 @@ class TableServiceTest {
             // when // then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findById(orderTableId);
         }
 
         @DisplayName("OrderTable 의 empty 필드 변경 실패한다 - order 의 상태가 COMPLETION 이 아닌 경우")
@@ -177,11 +169,6 @@ class TableServiceTest {
             // when // then
             assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findById(orderTableId);
-            verify(orderDao, times(1)).existsByOrderTableIdAndOrderStatusIn(
-                orderTableId,
-                notCompletionOrderStatuses
-            );
         }
 
         @DisplayName("OrderTable 의 numberOfGuest 필드를 변경한다")
@@ -195,8 +182,6 @@ class TableServiceTest {
             OrderTable result = tableService.changeNumberOfGuests(orderTableId, orderTable);
 
             // then
-            verify(orderTableDao, times(1)).findById(orderTableId);
-            verify(orderTableDao, times(1)).save(savedOrderTable);
             assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(savedOrderTable);
@@ -224,7 +209,6 @@ class TableServiceTest {
             // when // then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findById(orderTableId);
         }
 
         @DisplayName("OrderTable 의 numberOfGuest 필드 변경 실패한다 - 저장된 orderTable 이 비어있는 경우")
@@ -239,7 +223,6 @@ class TableServiceTest {
             // when // then
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
-            verify(orderTableDao, times(1)).findById(orderTableId);
         }
     }
 }
