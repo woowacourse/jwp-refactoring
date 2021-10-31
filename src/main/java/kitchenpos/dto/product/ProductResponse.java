@@ -14,8 +14,12 @@ public class ProductResponse {
         this.price = price;
     }
 
-    public static ProductResponse of(Product product) {
-        return new ProductResponse(product.getId(), product.getName(), product.getPriceAsInteger());
+    public ProductResponse(Product product) {
+        this(
+            product.getId(),
+            product.getName(),
+            product.getPriceAsInteger()
+        );
     }
 
     public Long getId() {

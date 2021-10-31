@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
@@ -56,8 +57,15 @@ public class OrderService {
     }
 
     private OrderResponse convertToResponse(Order order, List<OrderLineItem> orderLineItems) {
-        List<OrderLineItemResponse> orderLineItemResponses = OrderLineItemResponse.of(orderLineItems);
-        return OrderResponse.of(order, orderLineItemResponses);
+        List<OrderLineItemResponse> orderLineItemResponses = convertToResponse(orderLineItems);
+        return new OrderResponse(order, orderLineItemResponses);
+    }
+
+    private List<OrderLineItemResponse> convertToResponse(List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+            .map(OrderLineItemResponse::new)
+            .collect(Collectors.toList())
+            ;
     }
 
     private void saveOrderLineItemsWithOrder(List<OrderLineItem> orderLineItems, Order order) {
@@ -93,8 +101,8 @@ public class OrderService {
         final List<Order> foundAllOrders = orderRepository.findAll();
         for (Order foundOrder : foundAllOrders) {
             final List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrder(foundOrder);
-            final List<OrderLineItemResponse> orderLineItemResponses = OrderLineItemResponse.of(foundOrderLineItems);
-            final OrderResponse orderResponse = OrderResponse.of(foundOrder, orderLineItemResponses);
+            final List<OrderLineItemResponse> orderLineItemResponses = convertToResponse(foundOrderLineItems);
+            final OrderResponse orderResponse = new OrderResponse(foundOrder, orderLineItemResponses);
             orderResponses.add(orderResponse);
         }
         return orderResponses;

@@ -24,7 +24,7 @@ public class ProductService {
     public ProductResponse create(final ProductRequest productRequest) {
         final Product newProduct = convertRequestToEntity(productRequest);
         productRepository.save(newProduct);
-        return ProductResponse.of(newProduct);
+        return new ProductResponse(newProduct);
     }
 
     private Product convertRequestToEntity(ProductRequest productRequest) {
@@ -38,7 +38,7 @@ public class ProductService {
     public List<ProductResponse> findAll() {
         final List<Product> foundAllProducts = productRepository.findAll();
         return foundAllProducts.stream()
-            .map(ProductResponse::of)
+            .map(ProductResponse::new)
             .collect(Collectors.toList());
     }
 }

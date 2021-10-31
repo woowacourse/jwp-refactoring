@@ -1,7 +1,5 @@
 package kitchenpos.dto.orderlineitem;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
 
 public class OrderLineItemResponse {
@@ -18,20 +16,13 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
-        return new OrderLineItemResponse(
+    public OrderLineItemResponse(OrderLineItem orderLineItem) {
+        this(
             orderLineItem.getSeq(),
             orderLineItem.getOrderId(),
             orderLineItem.getMenuId(),
             orderLineItem.getQuantityValue()
         );
-    }
-
-    public static List<OrderLineItemResponse> of(List<OrderLineItem> orderLineItems) {
-        return orderLineItems.stream()
-            .map(OrderLineItemResponse::of)
-            .collect(Collectors.toList())
-            ;
     }
 
     public Long getSeq() {

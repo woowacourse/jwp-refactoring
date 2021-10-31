@@ -28,8 +28,8 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(Order order, List<OrderLineItemResponse> orderLineItemResponses) {
-        return new OrderResponse(
+    public OrderResponse(Order order, List<OrderLineItemResponse> orderLineItemResponses) {
+        this(
             order.getId(),
             order.getOrderTableId(),
             order.getOrderStatus(),

@@ -1,11 +1,13 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.ordertable.OrderTables;
 import kitchenpos.dto.ordertable.OrderTableRequest;
+import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.dto.tablegroup.TableGroupRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.InvalidStateException;
@@ -45,7 +47,19 @@ public class TableGroupService {
         orderTables.changeAllEmptyToFalse();
         orderTables.assign(tableGroup);
 
-        return TableGroupResponse.of(tableGroup, orderTables.getOrderTables());
+        return convertToTableGroupResponse(tableGroup, orderTables.getOrderTables());
+    }
+
+    private TableGroupResponse convertToTableGroupResponse(TableGroup tableGroup, List<OrderTable> orderTables) {
+        final List<OrderTableResponse> orderTableResponses = convertToOrderTableResponses(orderTables);
+        return new TableGroupResponse(tableGroup, orderTableResponses);
+    }
+
+    private List<OrderTableResponse> convertToOrderTableResponses(List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(OrderTableResponse::new)
+            .collect(Collectors.toList())
+            ;
     }
 
     private OrderTables convertRequestToEntities(List<OrderTableRequest> orderTableRequests) {

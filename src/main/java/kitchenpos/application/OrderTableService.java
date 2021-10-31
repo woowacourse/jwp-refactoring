@@ -33,7 +33,7 @@ public class OrderTableService {
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
         final OrderTable orderTable = convertRequestToEntity(orderTableRequest);
         orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(orderTable);
+        return new OrderTableResponse(orderTable);
     }
 
     private OrderTable convertRequestToEntity(OrderTableRequest orderTableRequest) {
@@ -47,7 +47,7 @@ public class OrderTableService {
     public List<OrderTableResponse> findAll() {
         final List<OrderTable> foundAllOrderTables = orderTableRepository.findAll();
         return foundAllOrderTables.stream()
-            .map(OrderTableResponse::of)
+            .map(OrderTableResponse::new)
             .collect(Collectors.toList())
             ;
     }
@@ -57,7 +57,7 @@ public class OrderTableService {
         final OrderTable foundOrderTable = findOrderTableById(orderTableId);
         validateOrderTableToChangeEmpty(foundOrderTable);
         foundOrderTable.changeEmpty(orderTableRequest.getEmpty());
-        return OrderTableResponse.of(foundOrderTable);
+        return new OrderTableResponse(foundOrderTable);
     }
 
     private void validateOrderTableToChangeEmpty(OrderTable foundOrderTable) {
@@ -90,7 +90,7 @@ public class OrderTableService {
         final OrderTable foundOrderTable = findOrderTableById(orderTableId);
         validateNotEmpty(foundOrderTable);
         changeNumberOfGuests(foundOrderTable, orderTableRequest.getNumberOfGuests());
-        return OrderTableResponse.of(foundOrderTable);
+        return new OrderTableResponse(foundOrderTable);
     }
 
     private void validateNotEmpty(OrderTable foundOrderTable) {
