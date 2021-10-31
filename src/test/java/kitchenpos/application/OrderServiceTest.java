@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
@@ -16,11 +15,10 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.request.TableRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
@@ -103,17 +101,12 @@ class OrderServiceTest {
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
         OrderRequest order = new OrderRequest(table.getId(), orderLineItems);
 
-        Order saved = orderService.create(order);
-        List<OrderLineItem> savedOrderLineItems = orderLineItemRepository.findAllByOrderId(saved.getId());
+        OrderResponse saved = orderService.create(order);
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getOrderedTime());
-        assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
-        assertThat(saved.getOrderLineItems().toList())
-                .hasSize(orderLineItems.size())
-                .allMatch(orderLineItem -> Objects.equals(orderLineItem.getOrder().getId(), saved.getId()))
-                .allMatch(orderLineItem -> Objects.nonNull(orderLineItem.getSeq()));
-        assertThat(savedOrderLineItems).hasSize(orderLineItems.size());
+        assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(saved.getOrderLineItems()).hasSize(orderLineItems.size());
     }
 
     @Test
@@ -180,10 +173,10 @@ class OrderServiceTest {
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
         orderService.create(new OrderRequest(table.getId(), orderLineItems));
 
-        List<Order> orders = orderService.list();
+        List<OrderResponse> responses = orderService.list();
 
-        assertThat(orders).hasSize(1);
-        assertThat(orders).allMatch(order -> !order.getOrderLineItems().toList().isEmpty());
+        assertThat(responses).hasSize(1);
+        assertThat(responses).allMatch(order -> !order.getOrderLineItems().isEmpty());
     }
 
     @ParameterizedTest(name = "주문 상태 정상 수정 :: -> {0}")
@@ -202,11 +195,11 @@ class OrderServiceTest {
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(
                 new OrderLineItemRequest(chickenSet.getId(), 2L),
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
-        Order order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
+        OrderResponse order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
 
-        Order saved = orderService.changeOrderStatus(order.getId(), new OrderStatusRequest(orderStatus));
+        OrderResponse saved = orderService.changeOrderStatus(order.getId(), new OrderStatusRequest(orderStatus));
 
-        assertThat(saved.getOrderStatus().name()).isEqualTo(orderStatus);
+        assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
     }
 
     @ParameterizedTest(name = "주문 상태 수정 실패 :: 이미 완료된 주문 주문-> {0}")
@@ -215,7 +208,7 @@ class OrderServiceTest {
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(
                 new OrderLineItemRequest(chickenSet.getId(), 2L),
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
-        Order order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
+        OrderResponse order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
         orderService.changeOrderStatus(order.getId(), new OrderStatusRequest("COMPLETION"));
 
         assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusRequest(orderStatus)))

@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.util.List;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
@@ -30,30 +31,30 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final OrderRequest orderRequest) {
+    public OrderResponse create(final OrderRequest orderRequest) {
         Order order = orderMapper.mapFrom(orderRequest);
         order.register(orderValidator);
 
         orderRepository.save(order);
         orderLineItemRepository.saveAll(order.getOrderLineItems().toList());
-        return order;
+        return OrderResponse.of(order);
     }
 
-    public List<Order> list() {
+    @Transactional(readOnly = true)
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
         for (final Order order : orders) {
             order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId())));
         }
-        return orders;
+        return OrderResponse.listOf(orders);
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest statusRequest) {
+    public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest statusRequest) {
         final Order order = findOrderById(orderId);
         order.changeStatus(OrderStatus.valueOf(statusRequest.getOrderStatus()));
-        orderRepository.save(order);
         order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)));
-        return order;
+        return OrderResponse.of(order);
     }
 
     private Order findOrderById(Long orderId) {
