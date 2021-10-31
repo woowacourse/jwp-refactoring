@@ -5,7 +5,6 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static kitchenpos.fixtures.MenuFixture.*;
-import static kitchenpos.fixtures.MenuGroupFixture.*;
 import static kitchenpos.fixtures.ProductFixture.아메리카노;
 import static kitchenpos.fixtures.ProductFixture.쫀득쫀득치즈볼;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +28,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class MenuServiceTest {
+class MenuServiceTest {
 
     @Mock
     private MenuDao menuDao;
@@ -46,7 +44,7 @@ public class MenuServiceTest {
 
     @DisplayName("메뉴를 등록 할 수 있다.")
     @Test
-    public void testCreateMenu() {
+    void testCreateMenu() {
         //given
         given(menuGroupDao.existsById(any())).willReturn(true);
         given(productDao.findById(any()))
@@ -63,7 +61,7 @@ public class MenuServiceTest {
 
     @DisplayName("메뉴의 가격은 존재해야 하고, 음수가 아니어야 한다.")
     @Test
-    public void testCreateMenuPriceNegative() {
+    void testCreateMenuPriceNegative() {
         //given
         Menu menu = new Menu();
         menu.setPrice(new BigDecimal(-1));
@@ -76,7 +74,7 @@ public class MenuServiceTest {
 
     @DisplayName("메뉴의 가격은 메뉴에 포함된 메뉴 상품의 총 가격의 합보다 작아야 한다.")
     @Test
-    public void testCreateMenuTotalPrice() {
+    void testCreateMenuTotalPrice() {
         //given
         given(menuGroupDao.existsById(any())).willReturn(true);
         given(productDao.findById(any()))
@@ -94,7 +92,7 @@ public class MenuServiceTest {
 
     @DisplayName("메뉴 리스트를 조회할 수 있다.")
     @Test
-    public void testList() {
+    void testList() {
         //given
         given(menuDao.findAll()).willReturn(Arrays.asList(치즈폭탄(), 무많이뿌링클(), 둘이서알리오갈리오(), 아메리카노한잔()));
 

@@ -21,7 +21,8 @@ import static kitchenpos.fixtures.OderTableFixture.비어있는주문테이블;
 import static kitchenpos.fixtures.OderTableFixture.첫번째주문테이블;
 import static kitchenpos.fixtures.OrderFixture.첫번째주문;
 import static kitchenpos.fixtures.OrderFixture.첫번째주문등록;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -42,7 +43,7 @@ class OrderServiceTest {
 
     @DisplayName("주문을 받을 수 있다.")
     @Test
-    public void testCreateOrder() {
+    void testCreateOrder() {
         //given
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn((long) order.getOrderLineItems().size());
@@ -59,7 +60,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 시 주문 항목이 비어있으면 안된다.")
     @Test
-    public void testCreateOrderOrderItemEmpty() {
+    void testCreateOrderOrderItemEmpty() {
         //given
         Order order = new Order();
         order.setOrderLineItems(Collections.EMPTY_LIST);
@@ -72,7 +73,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 시 주문 항목의 메뉴는 등록된 메뉴여야 한다.")
     @Test
-    public void testCreateOrderMenuNotExist() {
+    void testCreateOrderMenuNotExist() {
         //given
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn(0L);
@@ -85,7 +86,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 시, 주문 항목의 주문테이블은 등록된 테이블이어야 한다.")
     @Test
-    public void testCreateOrderTableNotExist() {
+    void testCreateOrderTableNotExist() {
         //given
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn((long) order.getOrderLineItems().size());
@@ -99,7 +100,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 시, 비어있는 주문 테이블에서 주문이 되면 안된다.")
     @Test
-    public void testCreateOrderEmptyTable() {
+    void testCreateOrderEmptyTable() {
         //given
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn((long) order.getOrderLineItems().size());
@@ -113,7 +114,7 @@ class OrderServiceTest {
 
     @DisplayName("주문 리스트를 조회 할 수 있다.")
     @Test
-    public void testList() {
+    void testList() {
         //given
         given(orderDao.findAll()).willReturn((Collections.singletonList(첫번째주문등록())));
 
@@ -126,7 +127,7 @@ class OrderServiceTest {
 
     @DisplayName("등록된 주문의 상태를 변경 할 수 있다.")
     @Test
-    public void testChangeOrderStatus() {
+    void testChangeOrderStatus() {
         //given
         Order order = new Order();
         order.setOrderStatus(OrderStatus.MEAL.name());

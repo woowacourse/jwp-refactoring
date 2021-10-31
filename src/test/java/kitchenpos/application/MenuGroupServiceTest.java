@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static kitchenpos.fixtures.MenuGroupFixture.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -30,7 +30,7 @@ class MenuGroupServiceTest {
 
     @DisplayName("메뉴 그룹을 등록 할 수 있다.")
     @Test
-    public void testCreateMenuGroup() {
+    void testCreateMenuGroup() {
         //given
         MenuGroup menuGroup = new MenuGroup();
         given(menuGroupDao.save(any())).willReturn(치킨());
@@ -44,7 +44,7 @@ class MenuGroupServiceTest {
 
     @DisplayName("메뉴그룹 리스트를 조회 할 수 있다.")
     @Test
-    public void testList() {
+    void testList() {
         //given
         given(menuGroupDao.findAll()).willReturn(Arrays.asList(치킨(), 디저트(), 양식()));
 

@@ -1,9 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static kitchenpos.fixtures.ProductFixture.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -24,7 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class ProductServiceTest {
+class ProductServiceTest {
 
     @Mock
     private ProductDao productDao;
@@ -34,7 +32,7 @@ public class ProductServiceTest {
 
     @DisplayName("상품을 등록 할 수 있다.")
     @Test
-    public void testCreateProduct() {
+    void testCreateProduct() {
         //given
         given(productDao.save(any())).willReturn(맛있는뿌링클());
 
@@ -47,7 +45,7 @@ public class ProductServiceTest {
 
     @DisplayName("상품의 가격은 존재해야하고, 음수가 아니어야 한다.")
     @Test
-    public void testCreateProductPriceNegative() {
+    void testCreateProductPriceNegative() {
         //given
         Product product = new Product();
         product.setPrice(new BigDecimal(-1));
@@ -60,7 +58,7 @@ public class ProductServiceTest {
 
     @DisplayName("상품 리스트 조회할 수 있다.")
     @Test
-    public void testList() {
+    void testList() {
         //given
         given(productDao.findAll()).willReturn(Arrays.asList(맛있는뿌링클(), 알리오갈리오(), 쫀득쫀득치즈볼(),
                 시원한콜라(), 치킨무(), 아메리카노()));
