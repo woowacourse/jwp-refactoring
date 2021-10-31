@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@DisplayName("ProductService")
+@DisplayName("ProductService를 테스트한다.")
 @SpringBootTest
 class ProductServiceTest {
 
@@ -57,7 +57,11 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회한다.")
     @Test
     void list() {
-        assertThat(productService.list().size()).isEqualTo(0);
+         productService.create(new Product(1L, "강정치킨", BigDecimal.valueOf(17000)));
+         productService.create(new Product(2L, "양념치킨", BigDecimal.valueOf(17000)));
+         productService.create(new Product(3L, "후라이드치킨", BigDecimal.valueOf(15000)));
+
+        assertThat(productService.list().size()).isEqualTo(3);
     }
 
 }
