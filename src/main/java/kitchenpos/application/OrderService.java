@@ -7,33 +7,24 @@ import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.validator.OrderValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
     private final OrderMapper orderMapper;
     private final OrderValidator orderValidator;
 
-    public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository, OrderMapper orderMapper,
-            OrderValidator orderValidator) {
-        this.menuRepository = menuRepository;
+    public OrderService(OrderRepository orderRepository,
+                        OrderLineItemRepository orderLineItemRepository,
+                        OrderMapper orderMapper, OrderValidator orderValidator) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
         this.orderMapper = orderMapper;
         this.orderValidator = orderValidator;
     }

@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import kitchenpos.domain.validator.TableValidator;
 
 @Entity
 public class OrderTable {
@@ -16,14 +17,6 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(boolean empty) {
-        this(null, null, 0, empty);
-    }
-
-    public OrderTable(int numberOfGuests) {
-        this(null, null, numberOfGuests, false);
-    }
-
     public OrderTable(int numberOfGuests, boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
@@ -33,6 +26,22 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    public void updateEmpty(TableValidator tableValidator, Boolean empty) {
+        tableValidator.validateUpdateEmpty(this);
+        this.empty = empty;
+    }
+
+    public void updateNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
@@ -53,10 +62,6 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
     }
 
     public boolean isEmpty() {

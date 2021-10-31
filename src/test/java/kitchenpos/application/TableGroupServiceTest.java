@@ -42,8 +42,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 정상 생성")
     void create() {
-        OrderTable table1 = orderTableRepository.save(new OrderTable(true));
-        OrderTable table2 = orderTableRepository.save(new OrderTable(true));
+        OrderTable table1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable table2 = orderTableRepository.save(new OrderTable(3, true));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table1, table2));
         TableGroup saved = tableGroupService.create(tableGroup);
@@ -67,7 +67,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 1개 테이블")
     void createWithSingleTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(true));
+        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
         TableGroup tableGroup = new TableGroup(Collections.singletonList(table));
 
         assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
@@ -76,8 +76,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 존재하지 않는 테이블 포함")
     void createContainingNotExistingTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(true));
-        OrderTable notSavedOrderTable = new OrderTable(false);
+        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable notSavedOrderTable = new OrderTable(3, false);
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, notSavedOrderTable));
 
@@ -87,8 +87,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 빈 상태가 아닌 테이블 포함")
     void createContainingNotEmptyTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(true));
-        OrderTable notEmptyTable = orderTableRepository.save(new OrderTable(false));
+        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable notEmptyTable = orderTableRepository.save(new OrderTable(3, false));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, notEmptyTable));
 
@@ -98,12 +98,12 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 이미 단체 지정된 테이블 포함")
     void createContainingGroupedTable() {
-        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(true));
-        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(true));
+        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(3, true));
 
         tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
 
-        OrderTable table = orderTableRepository.save(new OrderTable(true));
+        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
 
         TableGroup tableGroup = new TableGroup(Arrays.asList(table, groupedTable1));
 
@@ -113,8 +113,8 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("단체 지정 정상 취소")
     void ungroup() {
-        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(true));
-        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(true));
+        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(3, true));
 
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
 
@@ -130,8 +130,8 @@ class TableGroupServiceTest {
     @ParameterizedTest(name = "단체 지정 취소 실패 :: 주문 상태 {0} 테이블 포함")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
-        OrderTable table1 = orderTableRepository.save(new OrderTable(true));
-        OrderTable table2 = orderTableRepository.save(new OrderTable(true));
+        OrderTable table1 = orderTableRepository.save(new OrderTable(3, true));
+        OrderTable table2 = orderTableRepository.save(new OrderTable(3, true));
 
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(table1, table2)));
 
