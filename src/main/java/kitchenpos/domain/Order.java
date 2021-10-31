@@ -1,14 +1,42 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Entity
+@Table(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
+
+    @ManyToOne
+    private OrderTable orderTable;
+
+    @Column(nullable = false)
     private String orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(OrderTable orderTable, String orderStatus) {
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+    }
 
     public Long getId() {
         return id;
@@ -18,12 +46,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(final OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public String getOrderStatus() {
@@ -40,13 +68,5 @@ public class Order {
 
     public void setOrderedTime(final LocalDateTime orderedTime) {
         this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
-    }
-
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }
