@@ -26,9 +26,9 @@ class MenuAcceptanceTest extends AcceptanceTest {
     Menu 한마리메뉴_후라이드치킨 = new Menu();
     Menu 두마리메뉴_양념_간장치킨 = new Menu();
 
-    Product 후라이드치킨 = new Product();
-    Product 양념치킨 = new Product();
-    Product 간장치킨 = new Product();
+    Product 후라이드치킨;
+    Product 양념치킨;
+    Product 간장치킨;
 
     @BeforeEach
     void setUp() {
@@ -42,16 +42,22 @@ class MenuAcceptanceTest extends AcceptanceTest {
                 .build();
         두마리메뉴 = menuGroupRepository.save(두마리메뉴);
 
-        후라이드치킨.setName("후라이드치킨");
-        후라이드치킨.setPrice(BigDecimal.valueOf(15000));
+        후라이드치킨 = new Product.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .build();
         후라이드치킨 = productRepository.save(후라이드치킨);
 
-        양념치킨.setName("양념치킨");
-        양념치킨.setPrice(BigDecimal.valueOf(16000));
+        양념치킨 = new Product.Builder()
+                .name("양념치킨")
+                .price(BigDecimal.valueOf(16000))
+                .build();
         양념치킨 = productRepository.save(양념치킨);
 
-        간장치킨.setName("간장치킨");
-        간장치킨.setPrice(BigDecimal.valueOf(16000));
+        간장치킨 = new Product.Builder()
+                .name("간장치킨")
+                .price(BigDecimal.valueOf(16000))
+                .build();
         간장치킨 = productRepository.save(간장치킨);
 
         한마리메뉴_후라이드치킨.setName("후라이드치킨");

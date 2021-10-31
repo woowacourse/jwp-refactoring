@@ -16,18 +16,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("상품 관련 기능")
 class ProductAcceptanceTest extends AcceptanceTest {
 
-    Product 후라이드치킨 = new Product();
-    Product 양념치킨 = new Product();
+    Product 후라이드치킨;
+    Product 양념치킨;
 
     @BeforeEach
     void setUp() {
-        후라이드치킨.setName("후라이드치킨");
-        후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        productRepository.save(후라이드치킨);
+        후라이드치킨 = new Product.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .build();
+        후라이드치킨 = productRepository.save(후라이드치킨);
 
-        양념치킨.setName("양념치킨");
-        양념치킨.setPrice(BigDecimal.valueOf(16000));
-        productRepository.save(양념치킨);
+        양념치킨 = new Product.Builder()
+                .name("양념치킨")
+                .price(BigDecimal.valueOf(16000))
+                .build();
+        양념치킨 = productRepository.save(양념치킨);
     }
 
     @DisplayName("등록된 전체 상품들을 반환한다")
