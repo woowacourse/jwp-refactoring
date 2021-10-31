@@ -21,55 +21,40 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
+    private final MenuProductService menuProductService;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     public MenuService(
         final MenuRepository menuRepository,
         final MenuGroupRepository menuGroupRepository,
-        final MenuProductRepository menuProductRepository,
-        final ProductRepository productRepository
+        final MenuProductService menuProductService,
+        final ProductRepository productRepository,
+        final ProductService productService
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
+        this.menuProductService = menuProductService;
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @Transactional
     public Menu create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
             .orElseThrow(IllegalArgumentException::new);
-        Menu menu = new Menu(menuRequest.getName(), BigDecimal.valueOf(menuRequest.getPrice()),
+        Menu menu = new Menu(
+            menuRequest.getName(),
+            BigDecimal.valueOf(menuRequest.getPrice()),
             menuGroup);
 
-        final List<MenuProduct> menuProducts = menuRequest.getMenuProductIds().stream()
-            .map(menuProductId -> menuProductRepository.findById(menuProductId)
-                .orElseThrow(IllegalArgumentException::new))
-            .collect(Collectors.toList());
+        final List<MenuProduct> menuProducts =
+            menuProductService.findAll(menuRequest.getMenuProductIds());
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProduct().getId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum
-                .add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        BigDecimal price = menu.getPrice();
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        productService.checkPrice(menuProducts, menu);
 
         final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.addMenu(savedMenu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-
-        savedMenu.addMenuProducts(savedMenuProducts);
+        menuProductService.saveMenu(menuProducts, savedMenu);
 
         return savedMenu;
     }
@@ -78,7 +63,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
-            menu.addMenuProducts(menuProductRepository.findAllByMenu(menu));
+            menu.addMenuProducts(menuProductService.findAllByMenu(menu));
         }
 
         return menus;

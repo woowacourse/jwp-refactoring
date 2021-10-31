@@ -77,8 +77,6 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-//        savedOrderTable.setNumberOfGuests(numberOfGuests);
-
         return orderTableRepository.save(savedOrderTable);
     }
 }

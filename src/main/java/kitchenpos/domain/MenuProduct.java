@@ -24,10 +24,17 @@ public class MenuProduct {
     }
 
     public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+        validateQuantity(quantity);
         this.seq = seq;
         this.menu = menu;
         this.product = product;
         this.quantity = quantity;
+    }
+
+    private void validateQuantity(long quantity) {
+        if (quantity < 0) {
+            throw new IllegalArgumentException("수량은 항상 0 이상이어야 합니다.");
+        }
     }
 
     public Long getSeq() {
