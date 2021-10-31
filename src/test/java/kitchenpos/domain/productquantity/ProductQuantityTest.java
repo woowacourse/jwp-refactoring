@@ -2,8 +2,8 @@ package kitchenpos.domain.productquantity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import kitchenpos.domain.Product;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.domain.price.Price;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,10 +1,9 @@
-package kitchenpos.domain;
+package kitchenpos.domain.quantity;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.provider.NullSource;

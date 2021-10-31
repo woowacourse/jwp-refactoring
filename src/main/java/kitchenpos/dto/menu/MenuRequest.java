@@ -1,6 +1,7 @@
 package kitchenpos.dto.menu;
 
 import java.util.List;
+import kitchenpos.dto.menuproduct.MenuProductRequest;
 
 public class MenuRequest {
 

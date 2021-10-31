@@ -2,7 +2,7 @@ package kitchenpos.domain.orderlineitem;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.Order;
+import kitchenpos.domain.order.Order;
 import kitchenpos.exception.InvalidStateException;
 
 public class OrderLineItems {

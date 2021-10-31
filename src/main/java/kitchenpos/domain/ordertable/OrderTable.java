@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.exception.InvalidArgumentException;
 import kitchenpos.exception.InvalidStateException;
 

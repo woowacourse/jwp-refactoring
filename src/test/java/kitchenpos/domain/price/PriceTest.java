@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.provider.Arguments;

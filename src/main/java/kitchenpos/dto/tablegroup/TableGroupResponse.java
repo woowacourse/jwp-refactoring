@@ -2,7 +2,7 @@ package kitchenpos.dto.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 
 public class TableGroupResponse {

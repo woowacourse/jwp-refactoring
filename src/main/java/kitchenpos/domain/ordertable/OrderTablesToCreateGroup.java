@@ -2,7 +2,7 @@ package kitchenpos.domain.ordertable;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.exception.InvalidStateException;
 
 public class OrderTablesToCreateGroup {

@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menuproduct;
 
 import java.util.Objects;
 import javax.persistence.Embedded;
@@ -10,6 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.quantity.Quantity;
+import kitchenpos.domain.menu.Menu;
 
 @Entity
 public class MenuProduct {

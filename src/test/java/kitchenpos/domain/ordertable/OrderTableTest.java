@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.InvalidArgumentException;
 import kitchenpos.exception.InvalidStateException;
 import org.junit.jupiter.api.DisplayName;

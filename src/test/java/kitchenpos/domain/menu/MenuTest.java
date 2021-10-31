@@ -1,9 +1,10 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import kitchenpos.config.CustomParameterizedTest;
+import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

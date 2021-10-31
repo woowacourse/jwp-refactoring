@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 
 @Embeddable
