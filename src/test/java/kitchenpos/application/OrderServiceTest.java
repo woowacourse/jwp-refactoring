@@ -16,10 +16,10 @@ import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.Product;
@@ -74,8 +74,8 @@ class OrderServiceTest {
 
     private MenuGroupResponse menuGroup;
 
-    private Menu chickenSet;
-    private Menu pizzaSet;
+    private MenuResponse chickenSet;
+    private MenuResponse pizzaSet;
 
     @BeforeEach
     void setUp() {

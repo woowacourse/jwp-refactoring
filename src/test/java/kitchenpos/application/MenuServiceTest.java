@@ -7,13 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.ProductResponse;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
@@ -67,10 +66,10 @@ class MenuServiceTest {
         MenuRequest input = new MenuRequest("menu", sumOfMenuProduct, menuGroup.getId(),
                 Collections.singletonList(menuProductRequest));
 
-        Menu saved = menuService.create(input);
+        MenuResponse saved = menuService.create(input);
 
         assertNotNull(saved.getId());
-        assertThat(saved.getMenuProducts().toList()).allMatch(it -> Objects.nonNull(it.getSeq()));
+        assertThat(saved.getMenuProducts()).hasSize(input.getMenuProductRequests().size());
         assertThat(saved.getPrice()).isEqualByComparingTo(sumOfMenuProduct);
     }
 
@@ -85,7 +84,7 @@ class MenuServiceTest {
         MenuRequest input = new MenuRequest("menu", price, menuGroup.getId(),
                 Collections.singletonList(menuProductRequest));
 
-        Menu saved = menuService.create(input);
+        MenuResponse saved = menuService.create(input);
 
         assertNotNull(saved.getId());
         assertThat(saved.getPrice()).isEqualByComparingTo(price);
@@ -156,10 +155,10 @@ class MenuServiceTest {
                 Collections.singletonList(menuProductRequest));
         menuService.create(input);
 
-        List<Menu> menus = menuService.list();
+        List<MenuResponse> menus = menuService.list();
 
         assertThat(menus).hasSize(1);
-        assertThat(menus).allMatch(menu -> !menu.getMenuProducts().toList().isEmpty());
+        assertThat(menus).allMatch(menu -> !menu.getMenuProducts().isEmpty());
     }
 
     @AfterEach

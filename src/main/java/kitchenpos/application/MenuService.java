@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProducts;
@@ -28,22 +29,22 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final MenuRequest menuRequest) {
+    public MenuResponse create(final MenuRequest menuRequest) {
         Menu menu = menuMapper.mapFrom(menuRequest);
         menu.register(menuValidator);
 
         menuRepository.save(menu);
         menuProductRepository.saveAll(menu.getMenuProducts().toList());
-        return menu;
+        return MenuResponse.of(menu);
     }
 
     @Transactional(readOnly = true)
-    public List<Menu> list() {
+    public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
         for (final Menu menu : menus) {
             menu.setMenuProducts(new MenuProducts(menuProductRepository.findAllByMenuId(menu.getId())));
         }
-        return menus;
+        return MenuResponse.listOf(menus);
     }
 }
