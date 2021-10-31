@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.domain.order.OrderStatus;
-import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.tablegroup.TableGroupRequest;
 import kitchenpos.exception.NotFoundException;
@@ -213,8 +213,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
     private TableGroupRequest TableGroupRequest를_생성한다(OrderTable... orderTables) {
         final List<OrderTableRequest> orderTableRequests = Stream.of(orderTables)
             .map(orderTable -> new OrderTableRequest(orderTable.getId()))
-            .collect(Collectors.toList())
-            ;
+            .collect(Collectors.toList());
         return new TableGroupRequest(orderTableRequests);
     }
 

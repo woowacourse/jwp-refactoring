@@ -1,8 +1,8 @@
 package kitchenpos.domain.productquantity;
 
+import kitchenpos.domain.price.Price;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.quantity.Quantity;
-import kitchenpos.domain.price.Price;
 
 public class ProductQuantity {
 

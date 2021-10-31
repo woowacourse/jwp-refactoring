@@ -15,8 +15,8 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.domain.product.Product;
-import kitchenpos.dto.menuproduct.MenuProductRequest;
 import kitchenpos.dto.menu.MenuRequest;
+import kitchenpos.dto.menuproduct.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.NullSource;
@@ -190,7 +190,7 @@ class MenuIntegrationTest extends IntegrationTest {
     void findAll_Success() throws Exception {
         // given
         final MenuGroup menuGroup = MenuGroup을_저장한다("추천메뉴");
-        
+
         final Menu menu1 = Menu를_저장한다("후라이드메뉴", 16_000, menuGroup);
         final Menu menu2 = Menu를_저장한다("양념치킨메뉴", 34_000, menuGroup);
 

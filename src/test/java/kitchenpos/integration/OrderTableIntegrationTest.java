@@ -31,6 +31,28 @@ class OrderTableIntegrationTest extends IntegrationTest {
 
     private static final String API_PATH = "/api/tables";
 
+    static Stream<Arguments> changeEmptyStatus_Success() {
+        return Stream.of(
+            Arguments.of(OrderStatus.COMPLETION.name(), false, true),
+            Arguments.of(OrderStatus.COMPLETION.name(), false, false),
+            Arguments.of(OrderStatus.COMPLETION.name(), true, false),
+            Arguments.of(OrderStatus.COMPLETION.name(), true, true)
+        );
+    }
+
+    static Stream<Arguments> changeEmptyStatus_Fail_When_OrderStatusIsCooKingOrMeal() {
+        return Stream.of(
+            Arguments.of(OrderStatus.COOKING.name(), false, true),
+            Arguments.of(OrderStatus.COOKING.name(), false, false),
+            Arguments.of(OrderStatus.COOKING.name(), true, false),
+            Arguments.of(OrderStatus.COOKING.name(), true, true),
+            Arguments.of(OrderStatus.MEAL.name(), false, true),
+            Arguments.of(OrderStatus.MEAL.name(), false, false),
+            Arguments.of(OrderStatus.MEAL.name(), true, false),
+            Arguments.of(OrderStatus.MEAL.name(), true, true)
+        );
+    }
+
     @DisplayName("생성 - 성공")
     @Test
     void create_Success() throws Exception {
@@ -81,15 +103,6 @@ class OrderTableIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[1].numberOfGuests").value(orderTable2.getNumberOfGuests()))
             .andExpect(jsonPath("$[1].empty").value(orderTable2.isEmpty()))
         ;
-    }
-
-    static Stream<Arguments> changeEmptyStatus_Success() {
-        return Stream.of(
-            Arguments.of(OrderStatus.COMPLETION.name(), false, true),
-            Arguments.of(OrderStatus.COMPLETION.name(), false, false),
-            Arguments.of(OrderStatus.COMPLETION.name(), true, false),
-            Arguments.of(OrderStatus.COMPLETION.name(), true, true)
-        );
     }
 
     @DisplayName("empty 상태를 변경한다. - 성공")
@@ -143,19 +156,6 @@ class OrderTableIntegrationTest extends IntegrationTest {
         // then
         PUT_API를_요청하면_BadRequest를_응답한다(API_PATH + "/0/empty", orderTableRequest);
         DB에_저장되어있는_OrderTable의_empty값_검증(orderTable, beforeEmpty);
-    }
-
-    static Stream<Arguments> changeEmptyStatus_Fail_When_OrderStatusIsCooKingOrMeal() {
-        return Stream.of(
-            Arguments.of(OrderStatus.COOKING.name(), false, true),
-            Arguments.of(OrderStatus.COOKING.name(), false, false),
-            Arguments.of(OrderStatus.COOKING.name(), true, false),
-            Arguments.of(OrderStatus.COOKING.name(), true, true),
-            Arguments.of(OrderStatus.MEAL.name(), false, true),
-            Arguments.of(OrderStatus.MEAL.name(), false, false),
-            Arguments.of(OrderStatus.MEAL.name(), true, false),
-            Arguments.of(OrderStatus.MEAL.name(), true, true)
-        );
     }
 
     @DisplayName("OrderTable의 empty 상태를 변경한다. - 실패 - OrderTable의 Order의 OrderStatus가 COOKING 또는 MEAL일 때")

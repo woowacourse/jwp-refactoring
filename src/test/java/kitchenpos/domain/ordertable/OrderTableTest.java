@@ -29,6 +29,24 @@ class OrderTableTest {
         );
     }
 
+    static Stream<Arguments> create_Fail_When_NumberOfGuestsIsNegative() {
+        return Stream.of(
+            Arguments.of(-1, true),
+            Arguments.of(-1, false),
+            Arguments.of(-1_000, true),
+            Arguments.of(-1_000, false)
+        );
+    }
+
+    static Stream<Arguments> changeEmpty_Success() {
+        return Stream.of(
+            Arguments.of(true, false),
+            Arguments.of(false, true),
+            Arguments.of(false, false),
+            Arguments.of(true, true)
+        );
+    }
+
     @DisplayName("생성 - 성공")
     @CustomParameterizedTest
     @MethodSource
@@ -38,15 +56,6 @@ class OrderTableTest {
         // then
         assertThatCode(() -> new OrderTable(numberOfGuests, empty))
             .doesNotThrowAnyException();
-    }
-
-    static Stream<Arguments> create_Fail_When_NumberOfGuestsIsNegative() {
-        return Stream.of(
-            Arguments.of(-1, true),
-            Arguments.of(-1, false),
-            Arguments.of(-1_000, true),
-            Arguments.of(-1_000, false)
-        );
     }
 
     @DisplayName("생성 - 실패 - numberOfGuests가 음수일 때")
@@ -152,15 +161,6 @@ class OrderTableTest {
             .isInstanceOf(InvalidArgumentException.class);
 
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(oldNumberOfGuests);
-    }
-
-    static Stream<Arguments> changeEmpty_Success() {
-        return Stream.of(
-            Arguments.of(true, false),
-            Arguments.of(false, true),
-            Arguments.of(false, false),
-            Arguments.of(true, true)
-        );
     }
 
     @DisplayName("empty값 변경 - 성공 - newEmpty값이 null이 아닐 때")
