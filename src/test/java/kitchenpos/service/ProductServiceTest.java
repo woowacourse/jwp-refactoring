@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.service;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
