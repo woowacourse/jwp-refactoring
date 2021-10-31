@@ -11,7 +11,6 @@ import org.mockito.quality.Strictness;
 
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public @interface ServiceTest {
 }

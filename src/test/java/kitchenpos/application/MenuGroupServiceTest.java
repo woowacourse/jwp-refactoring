@@ -32,12 +32,12 @@ class MenuGroupServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = createMenuGroup();
-        when(menuGroupService.create(any())).then(AdditionalAnswers.returnsFirstArg());
     }
 
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create() {
+        when(menuGroupService.create(any())).then(AdditionalAnswers.returnsFirstArg());
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         assertThat(savedMenuGroup).isEqualTo(menuGroup);
     }
