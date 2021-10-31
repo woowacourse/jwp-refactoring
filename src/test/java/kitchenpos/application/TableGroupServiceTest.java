@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.repository.TableGroupRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -33,7 +33,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         // when -  then
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(NonExistentException.class);
         then(tableGroupRepository).should(times(1))
                 .existsById(tableGroupId);
         then(orderTableService).should(never())

@@ -5,7 +5,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class OrderLineItemService {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu findMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
-                    .orElseThrow(() -> new NotFoundException("메뉴를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new NonExistentException("메뉴를 찾을 수 없습니다."));
 
             OrderLineItem orderLineItem = new OrderLineItem(order, findMenu, orderLineItemRequest.getQuantity());
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));

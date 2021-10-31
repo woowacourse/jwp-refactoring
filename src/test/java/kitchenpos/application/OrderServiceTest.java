@@ -5,7 +5,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -47,11 +47,11 @@ public class OrderServiceTest extends ServiceTest {
                 CREATE_ORDER_ITEM_REQUEST(2L, 1L)
         ));
         given(orderTableRepository.findById(orderRequest.getOrderTableId()))
-                .willThrow(NotFoundException.class);
+                .willThrow(NonExistentException.class);
 
         // when - then
         assertThatThrownBy(() -> orderService.create(orderRequest))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(NonExistentException.class);
         then(orderTableRepository).should(times(1))
                 .findById(orderRequest.getOrderTableId());
         then(orderRepository).should(never())
@@ -66,11 +66,11 @@ public class OrderServiceTest extends ServiceTest {
         // given
         Long orderId = -100L;
         OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.COOKING.name());
-        given(orderRepository.findById(orderId)).willThrow(NotFoundException.class);
+        given(orderRepository.findById(orderId)).willThrow(NonExistentException.class);
 
         // when- then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderStatusRequest))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(NonExistentException.class);
         then(orderRepository).should(times(1))
                 .findById(orderId);
     }

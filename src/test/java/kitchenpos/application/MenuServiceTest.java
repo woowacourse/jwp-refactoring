@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.MenuRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,11 +43,11 @@ public class MenuServiceTest extends ServiceTest {
 
         // when
         given(menuGroupRepository.findById(menuRequest.getMenuGroupId()))
-                .willThrow(NotFoundException.class);
+                .willThrow(NonExistentException.class);
 
         // then
         assertThatThrownBy(() -> menuService.create(menuRequest))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(NonExistentException.class);
         then(menuGroupRepository).should(times(1))
                 .findById(menuRequest.getMenuGroupId());
         then(menuRepository).should(never())

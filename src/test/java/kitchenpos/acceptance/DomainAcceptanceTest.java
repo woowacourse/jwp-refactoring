@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 import static java.util.Collections.singletonList;
 
-public class DomainAcceptanceTest extends AcceptanceTest {
+abstract class DomainAcceptanceTest extends AcceptanceTest {
     protected Long POST_SAMPLE_MENU() {
         Long productId = POST_SAMPLE_PRODUCT();
         Long menuGroupId = POST_SAMPLE_MENU_GROUP();

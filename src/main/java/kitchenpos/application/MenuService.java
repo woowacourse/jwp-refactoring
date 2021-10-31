@@ -5,7 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
-                .orElseThrow(() -> new NotFoundException("menuGroup을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NonExistentException("menuGroup을 찾을 수 없습니다."));
 
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
         Menu savedMenu = menuRepository.save(menu);

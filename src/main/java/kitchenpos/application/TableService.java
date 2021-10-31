@@ -4,7 +4,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.TableRequest;
 import kitchenpos.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class TableService {
     @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableRequest tableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new NotFoundException("주문테이블을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NonExistentException("주문테이블을 찾을 수 없습니다."));
 
         validateOrderAndOrderStatus(orderTableId);
         savedOrderTable.changeEmpty(tableRequest.isEmpty());
@@ -56,7 +56,7 @@ public class TableService {
         int numberOfGuests = tableRequest.getNumberOfGuests();
 
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(() -> new NotFoundException("주문테이블을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NonExistentException("주문테이블을 찾을 수 없습니다."));
 
         savedOrderTable.addNumberOfGuests(numberOfGuests);
         return TableResponse.from(savedOrderTable);

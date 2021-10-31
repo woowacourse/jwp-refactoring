@@ -6,7 +6,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderResponse;
 import kitchenpos.ui.dto.OrderStatusRequest;
@@ -42,7 +42,7 @@ public class OrderService {
 
     private Order saveOrders(OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(() -> new NotFoundException("주문 테이블을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NonExistentException("주문 테이블을 찾을 수 없습니다."));
         Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
         return orderRepository.save(order);
     }
@@ -59,7 +59,7 @@ public class OrderService {
     @Transactional
     public OrderStatusResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
         final Order updateOrder = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
+                .orElseThrow(() -> new NonExistentException("주문을 찾을 수 없습니다."));
         validateOrderStatus(updateOrder);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
         updateOrder.updateOrderStatus(orderStatus.name());

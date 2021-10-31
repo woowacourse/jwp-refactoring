@@ -5,7 +5,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
-import kitchenpos.exception.NotFoundException;
+import kitchenpos.exception.NonExistentException;
 import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,11 +43,11 @@ class OrderLineItemServiceTest extends ServiceTest {
                 CREATE_ORDER_ITEM_REQUEST(2L, 1L)
         );
         Order order = new Order(new OrderTable(10, false));
-        given(menuRepository.findById(anyLong())).willThrow(NotFoundException.class);
+        given(menuRepository.findById(anyLong())).willThrow(NonExistentException.class);
 
         // when - then
         assertThatThrownBy(() -> orderLineItemService.create(orderLineItemRequests, order))
-                .isInstanceOf(NotFoundException.class);
+                .isInstanceOf(NonExistentException.class);
         then(menuRepository).should(times(1))
                 .findById(anyLong());
         then(orderLineItemRepository).should(never())
