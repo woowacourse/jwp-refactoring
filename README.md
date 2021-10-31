@@ -72,12 +72,12 @@
     - [x] orderId 에 대한 order 가 존재하지 않는 경우
     - [x] order 가 이미 완료된 order 인 경우
 
-- [ ] Product 테스트
-  - [ ] /api/products POST success
-  - [ ] /api/products POST failure
-    - [ ] product 의 price 가 null 인 경우
-    - [ ] product 의 price 가 0 보다 작은 경우
-  - [ ] /api/products GET success
+- [x] Product 테스트
+  - [x] /api/products POST success
+  - [x] /api/products POST failure
+    - [x] product 의 price 가 null 인 경우
+    - [x] product 의 price 가 음수인 경우
+  - [x] /api/products GET success
 
 - [x] Table 테스트
   - [x] /api/tables POST success
