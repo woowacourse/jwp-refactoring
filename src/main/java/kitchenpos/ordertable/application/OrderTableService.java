@@ -1,23 +1,21 @@
 package kitchenpos.ordertable.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.order.domain.OrderDao;
-import kitchenpos.ordertable.domain.OrderTableDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableDao;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrderTableService {
 
-    private final OrderDao orderDao;
     private final OrderTableDao orderTableDao;
+    private final ApplicationEventPublisher publisher;
 
-    public OrderTableService(final OrderDao orderDao, final OrderTableDao orderTableDao) {
-        this.orderDao = orderDao;
+    public OrderTableService(OrderTableDao orderTableDao, ApplicationEventPublisher publisher) {
         this.orderTableDao = orderTableDao;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -33,11 +31,7 @@ public class OrderTableService {
     public OrderTable changeEmpty(Long orderTableId, OrderTable orderTable) {
         final OrderTable savedOrderTable = orderTableDao.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        publisher.publishEvent(new OrderTableStartedToChangeEmptyEvent(orderTableId));
         savedOrderTable.changeEmpty(orderTable.isEmpty());
 
         return orderTableDao.save(savedOrderTable);
