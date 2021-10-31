@@ -24,8 +24,8 @@ public class OrderTable {
         this(null, null, numberOfGuests, false);
     }
 
-    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        this(null, tableGroupId, numberOfGuests, empty);
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
     }
 
     private OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {

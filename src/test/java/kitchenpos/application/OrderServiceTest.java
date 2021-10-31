@@ -15,6 +15,7 @@ import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusRequest;
+import kitchenpos.application.dto.TableRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringBootTestWithProfiles
 class OrderServiceTest {
+    private static final TableRequest TABLE_REQUEST_THREE_NON_EMPTY = new TableRequest(3, false);
 
     @Autowired
     private OrderService orderService;
@@ -77,7 +79,7 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        table = tableService.create(new OrderTable(false));
+        table = tableService.create(TABLE_REQUEST_THREE_NON_EMPTY);
 
         menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
 
@@ -160,7 +162,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 등록 실패 :: 비어야 하는 주문 테이블로의 주문")
     void createWithEmptyStateOrderTable() {
-        tableService.changeEmpty(table.getId(), new OrderTable(true));
+        tableService.changeEmpty(table.getId(), new TableRequest(null, true));
 
         List<OrderLineItemRequest> orderLineItems = Arrays.asList(
                 new OrderLineItemRequest(chickenSet.getId(), 2L),
