@@ -18,7 +18,7 @@ public class OrderTableResponse {
     public static OrderTableResponse of(OrderTable orderTable) {
         if (orderTable.isGrouped()) {
             return new OrderTableResponse(
-                orderTable.getId(), orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()
+                orderTable.getId(), orderTable.getTableGroup().getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty()
             );
         }
         return new OrderTableResponse(orderTable.getId(), null, orderTable.getNumberOfGuests(), orderTable.isEmpty());

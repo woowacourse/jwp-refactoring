@@ -2,20 +2,27 @@ package kitchenpos.application.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderResponse {
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
+    private OrderTable orderTable;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemResponse> orderLineItems;
 
-    public OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-        List<OrderLineItem> orderLineItems) {
+    public OrderResponse(
+        Long id,
+        OrderTable orderTable,
+        OrderStatus orderStatus,
+        LocalDateTime orderedTime,
+        List<OrderLineItemResponse> orderLineItems
+    ) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -23,7 +30,13 @@ public class OrderResponse {
 
     public static OrderResponse of(Order order) {
         return new OrderResponse(
-            order.getId(), order.getOrderTableId(), order.getOrderStatus(), order.getOrderedTime(), order.getOrderLineItems()
+            order.getId(),
+            order.getOrderTable(),
+            order.getOrderStatus(),
+            order.getOrderedTime(),
+            order.getOrderLineItems().stream()
+                .map(OrderLineItemResponse::of)
+                .collect(Collectors.toList())
         );
     }
 
@@ -31,11 +44,11 @@ public class OrderResponse {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -43,7 +56,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }

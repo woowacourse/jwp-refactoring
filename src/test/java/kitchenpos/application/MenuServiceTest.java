@@ -13,17 +13,19 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.MenuResponse;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixtures.MenuFixtures;
+import kitchenpos.fixtures.MenuGroupFixtures;
 import kitchenpos.fixtures.ProductFixtures;
+import kitchenpos.repository.MenuGroupRepository;
+import kitchenpos.repository.MenuProductRepository;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,16 +34,16 @@ import org.mockito.Mock;
 public class MenuServiceTest extends ServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -57,21 +59,21 @@ public class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴를_생성한다() {
-        given(menuGroupDao.existsById(any())).willReturn(true);
-        given(productDao.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
-        given(menuDao.save(any())).willReturn(menu);
-        given(menuProductDao.save(any())).willReturn(MenuFixtures.createMenuProduct());
+        given(menuGroupRepository.findById(any())).willReturn(Optional.of(MenuGroupFixtures.createMenuGroup()));
+        given(productRepository.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
+        given(menuRepository.save(any())).willReturn(menu);
+        given(menuProductRepository.saveAll(any())).willReturn(MenuFixtures.createMenuProducts());
 
         assertDoesNotThrow(() -> menuService.create(request));
-        verify(menuProductDao, times(menu.getMenuProducts().size())).save(any());
-        verify(menuDao, times(1)).save(any());
+        verify(menuProductRepository, times(1)).saveAll(any());
+        verify(menuRepository, times(1)).save(any());
     }
 
     @Test
     void 메뉴_그룹이_존재하지_않을_경우_예외를_반환한다() {
-        given(menuGroupDao.existsById(any())).willReturn(false);
+        given(menuGroupRepository.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(request));
+        assertThrows(NoSuchElementException.class, () -> menuService.create(request));
     }
 
     @Test
@@ -84,8 +86,8 @@ public class MenuServiceTest extends ServiceTest {
         List<MenuProduct> menuProducts = MenuFixtures.createMenu().getMenuProducts();
         BigDecimal price = ProductFixtures.createProduct().getPrice();
         int priceSum = menuProducts.size() * price.intValue();
-        given(menuGroupDao.existsById(any())).willReturn(true);
-        given(productDao.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
+        given(menuGroupRepository.findById(any())).willReturn(Optional.of(MenuGroupFixtures.createMenuGroup()));
+        given(productRepository.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
 
         assertThrows(
             IllegalArgumentException.class,
@@ -95,9 +97,7 @@ public class MenuServiceTest extends ServiceTest {
 
     @Test
     void 메뉴_리스트를_반환한다() {
-        given(menuDao.findAll()).willReturn(Collections.singletonList(menu));
-        given(menuProductDao.findAllByMenuId(any()))
-            .willReturn(Collections.singletonList(MenuFixtures.createMenuProduct()));
+        given(menuRepository.findAll()).willReturn(Collections.singletonList(menu));
 
         List<MenuResponse> menuResponses = assertDoesNotThrow(() -> menuService.list());
         menuResponses.stream()

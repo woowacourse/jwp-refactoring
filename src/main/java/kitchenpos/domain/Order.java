@@ -3,60 +3,93 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.ForeignKey;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
+@Table(name = "orders")
+@Entity
 public class Order {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
+
+    @ManyToOne
+    @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_orders_order_table"))
+    private OrderTable orderTable;
+
+    @Enumerated
+    private OrderStatus orderStatus;
+
+    @OneToMany(mappedBy = "order")
     private List<OrderLineItem> orderLineItems;
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+    private LocalDateTime orderedTime;
+
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
         List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
     }
 
-    public Order(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
-        this(id, orderTableId, orderStatus, orderedTime, new ArrayList<>());
+    public Order() {
+    }
+
+    public static Order newOf(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        orderTable.addOrder(order);
+        for (OrderLineItem item : orderLineItems) {
+            item.belongsTo(order);
+        }
+        return order;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.isCompleted()) {
+            throw new IllegalStateException("주문 상태가 이미 완료되었습니다.");
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public void validateNotCompleted() {
+        if (!orderStatus.isCompleted()) {
+            throw new IllegalStateException("주문 상태가 완료되지 않았습니다.");
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderTableId(Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
-    public void setOrderStatus(String orderStatus) {
-        this.orderStatus = orderStatus;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
     }
 }

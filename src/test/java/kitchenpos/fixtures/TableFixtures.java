@@ -1,10 +1,14 @@
 package kitchenpos.fixtures;
 
+import static kitchenpos.fixtures.OrderFixtures.createCompletedOrders;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
@@ -16,15 +20,16 @@ public class TableFixtures {
 
     public static OrderTable createOrderTable(
         Long id,
-        Long tableGroupId,
+        TableGroup tableGroup,
+        List<Order> orders,
         int numberOfGuests,
         boolean empty
     ) {
-        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
+        return new OrderTable(id, tableGroup, orders, numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable(boolean empty) {
-        return createOrderTable(ORDER_TABLE_ID, null, NUMBER_OF_GUESTS, empty);
+        return createOrderTable(ORDER_TABLE_ID, null, createCompletedOrders(), NUMBER_OF_GUESTS, empty);
     }
 
     public static OrderTableRequest createOrderTableRequest(OrderTable request) {
@@ -38,7 +43,7 @@ public class TableFixtures {
     public static List<OrderTable> createOrderTables(boolean empty) {
         List<OrderTable> orderTables = new ArrayList<>();
         orderTables.add(createOrderTable(empty));
-        orderTables.add(createOrderTable(2L, null, NUMBER_OF_GUESTS, empty));
+        orderTables.add(createOrderTable(2L, null, createCompletedOrders(), NUMBER_OF_GUESTS, empty));
         return orderTables;
     }
 
@@ -59,7 +64,11 @@ public class TableFixtures {
     }
 
     public static TableGroupRequest createTableGroupRequest(TableGroup tableGroup) {
-        return new TableGroupRequest(tableGroup.getOrderTables());
+        return new TableGroupRequest(
+            tableGroup.getOrderTables().stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toList())
+        );
     }
 
     public static TableGroupRequest createTableGroupRequest() {

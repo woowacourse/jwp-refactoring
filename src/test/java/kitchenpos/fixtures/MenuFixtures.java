@@ -3,63 +3,73 @@ package kitchenpos.fixtures;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuFixtures {
-    private static final long MENU_ID = 1L;
-    private static final long PRODUCT_ID = 1L;
+
     private static final long QUANTITY = 1L;
     private static final String MENU_NAME = "기본 메뉴";
     private static final long PRICE = 10000;
-    private static final long MENU_GROUP_ID = 1L;
+    private static final MenuGroup MENU_GROUP = MenuGroupFixtures.createMenuGroup();
+    private static final long MENU_PRODUCT_ID = 1L;
+    private static final long MENU_ID = 1L;
 
     public static Menu createMenu(
+        Long id,
         String name,
         long price,
-        Long menuGroupId,
+        MenuGroup menuGroup,
         List<MenuProduct> menuProducts
     ) {
-        return new Menu(null, name, BigDecimal.valueOf(price * 100, 2), menuGroupId, menuProducts);
+        return new Menu(id, name, BigDecimal.valueOf(price * 100, 2), menuGroup, menuProducts);
     }
 
     public static Menu createMenu() {
-        return createMenu(MENU_NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
+        return createMenu(MENU_ID, MENU_NAME, PRICE, MENU_GROUP, createMenuProducts());
     }
 
     public static Menu createMenu(int price) {
-        return createMenu(MENU_NAME, price, MENU_GROUP_ID, createMenuProducts());
-    }
-
-    private static List<MenuProduct> createMenuProducts() {
-        List<MenuProduct> menuProducts = new ArrayList<>();
-        menuProducts.add(createMenuProduct());
-        menuProducts.add(createMenuProduct());
-        return menuProducts;
-    }
-
-    public static MenuProduct createMenuProduct(
-        Long menuId,
-        Long productId,
-        long quantity
-    ) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
-    }
-
-    public static MenuProduct createMenuProduct() {
-        return createMenuProduct(MENU_ID, PRODUCT_ID, QUANTITY);
-    }
-
-    public static MenuRequest createMenuRequest(Menu menu) {
-        return new MenuRequest(menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menu.getMenuProducts());
+        return createMenu(MENU_ID, MENU_NAME, price, MENU_GROUP, createMenuProducts());
     }
 
     public static MenuRequest createMenuRequest() {
         return createMenuRequest(createMenu());
+    }
+
+    public static MenuRequest createMenuRequest(Menu menu) {
+        return new MenuRequest(
+            menu.getName(),
+            menu.getPrice(),
+            menu.getMenuGroup().getId(),
+            menu.getMenuProducts().stream()
+                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .collect(Collectors.toList())
+        );
+    }
+
+    public static MenuProduct createMenuProduct(
+        Long id,
+        Menu menu,
+        Product product,
+        long quantity
+    ) {
+        return new MenuProduct(id, menu, product, quantity);
+    }
+
+    public static MenuProduct createMenuProduct() {
+        return createMenuProduct(null, null, ProductFixtures.createProduct(), QUANTITY);
+    }
+
+    public static List<MenuProduct> createMenuProducts() {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        menuProducts.add(createMenuProduct());
+        menuProducts.add(createMenuProduct());
+        return menuProducts;
     }
 }

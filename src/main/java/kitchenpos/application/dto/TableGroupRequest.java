@@ -5,20 +5,16 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
-    private List<OrderTable> orderTables;
+    private List<Long> orderTableIds;
 
-    public TableGroupRequest(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public TableGroupRequest(List<Long> orderTableIds) {
+        this.orderTableIds = orderTableIds;
     }
 
     public TableGroupRequest() {
     }
 
-    public TableGroup toEntity() {
-        return new TableGroup(orderTables);
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 }

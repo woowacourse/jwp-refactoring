@@ -1,34 +1,28 @@
 package kitchenpos.application.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderRequest {
     private Long orderTableId;
-    private String orderStatus;
-    private List<OrderLineItem> orderLineItems;
+    private OrderStatus orderStatus;
+    private List<OrderLineItemRequest> orderLineItems;
 
-    public OrderRequest(Long orderTableId, String orderStatus, List<OrderLineItem> orderLineItems) {
+    public OrderRequest(Long orderTableId, OrderStatus orderStatus, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
-    }
-
-    public Order toEntity() {
-        return new Order(orderTableId, orderStatus, orderLineItems);
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 }

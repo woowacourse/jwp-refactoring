@@ -1,11 +1,20 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
+@Entity
 public class Product {
-    private final Long id;
-    private final String name;
-    private final BigDecimal price;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private BigDecimal price;
 
     public Product(Long id, String name, BigDecimal price) {
         this.id = id;
@@ -15,6 +24,9 @@ public class Product {
 
     public Product(String name, BigDecimal price) {
         this(null, name, price);
+    }
+
+    public Product() {
     }
 
     public Long getId() {
