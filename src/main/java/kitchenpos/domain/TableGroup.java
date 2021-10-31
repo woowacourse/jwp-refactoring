@@ -2,10 +2,14 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import org.springframework.util.CollectionUtils;
 
 @Entity
 public class TableGroup {
@@ -51,5 +55,26 @@ public class TableGroup {
 
     public void setOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = orderTables;
+    }
+
+    public void register() {
+        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+
+        Set<Long> orderTableIds = orderTables.stream()
+                .map(OrderTable::getId)
+                .collect(Collectors.toSet());
+
+        if (orderTables.size() != orderTableIds.size()) {
+            throw new IllegalArgumentException();
+        }
+
+        for (final OrderTable savedOrderTable : orderTables) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+                throw new IllegalArgumentException();
+            }
+        }
+        this.createdDate = LocalDateTime.now();
     }
 }

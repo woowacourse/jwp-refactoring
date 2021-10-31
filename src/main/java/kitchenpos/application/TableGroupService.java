@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
@@ -20,16 +22,23 @@ public class TableGroupService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableGroupMapper tableGroupMapper;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
-                             final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(OrderRepository orderRepository,
+                             OrderTableRepository orderTableRepository,
+                             TableGroupRepository tableGroupRepository,
+                             TableGroupMapper tableGroupMapper) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableGroupMapper = tableGroupMapper;
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+
+        TableGroup tableGroup = tableGroupMapper.mapFrom(tableGroupRequest);
+        tableGroup.register();
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
 
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {

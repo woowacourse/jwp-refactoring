@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
+import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.TableGroupRequest.OrderTableId;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -18,6 +20,7 @@ import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,24 +32,33 @@ class TableGroupServiceTest {
 
     @Autowired
     private TableGroupService tableGroupService;
-
     @Autowired
     private OrderTableRepository orderTableRepository;
-
     @Autowired
     private OrderRepository orderRepository;
-
     @Autowired
     private TableGroupRepository tableGroupRepository;
+
+    private OrderTable table1;
+    private OrderTable table2;
+    private OrderTableId tableId1;
+    private OrderTableId tableId2;
+    private TableGroupRequest tableGroupRequest;
+
+    @BeforeEach
+    void setUp() {
+        table1 = orderTableRepository.save(new OrderTable(3, true));
+        table2 = orderTableRepository.save(new OrderTable(3, true));
+
+        tableId1 = new OrderTableId(table1.getId());
+        tableId2 = new OrderTableId(table2.getId());
+        tableGroupRequest = new TableGroupRequest(Arrays.asList(tableId1, tableId2));
+    }
 
     @Test
     @DisplayName("테이블 단체 정상 생성")
     void create() {
-        OrderTable table1 = orderTableRepository.save(new OrderTable(3, true));
-        OrderTable table2 = orderTableRepository.save(new OrderTable(3, true));
-
-        TableGroup tableGroup = new TableGroup(Arrays.asList(table1, table2));
-        TableGroup saved = tableGroupService.create(tableGroup);
+        TableGroup saved = tableGroupService.create(tableGroupRequest);
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getCreatedDate());
@@ -59,69 +71,61 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 0개 테이블")
     void createWithEmptyTable() {
-        TableGroup tableGroup = new TableGroup(Collections.emptyList());
+        TableGroupRequest groupRequest = new TableGroupRequest(Collections.emptyList());
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(groupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 1개 테이블")
     void createWithSingleTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
-        TableGroup tableGroup = new TableGroup(Collections.singletonList(table));
+        TableGroupRequest groupRequest = new TableGroupRequest(Collections.singletonList(tableId1));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(groupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 존재하지 않는 테이블 포함")
     void createContainingNotExistingTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
-        OrderTable notSavedOrderTable = new OrderTable(3, false);
+        OrderTableId notExistingTableId = new OrderTableId(Long.MAX_VALUE);
+        TableGroupRequest groupRequest = new TableGroupRequest(Arrays.asList(tableId1, notExistingTableId));
 
-        TableGroup tableGroup = new TableGroup(Arrays.asList(table, notSavedOrderTable));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(groupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 빈 상태가 아닌 테이블 포함")
     void createContainingNotEmptyTable() {
-        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
         OrderTable notEmptyTable = orderTableRepository.save(new OrderTable(3, false));
+        OrderTableId notEmptyTableId = new OrderTableId(notEmptyTable.getId());
 
-        TableGroup tableGroup = new TableGroup(Arrays.asList(table, notEmptyTable));
+        TableGroupRequest groupRequest = new TableGroupRequest(Arrays.asList(tableId1, notEmptyTableId));
 
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(groupRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("테이블 단체 생성 실패 :: 이미 단체 지정된 테이블 포함")
     void createContainingGroupedTable() {
-        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(3, true));
-        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(3, true));
+        tableGroupService.create(tableGroupRequest);
 
-        tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
+        OrderTable newTable = orderTableRepository.save(new OrderTable(3, true));
+        OrderTableId newTableId = new OrderTableId(newTable.getId());
 
-        OrderTable table = orderTableRepository.save(new OrderTable(3, true));
+        TableGroupRequest newRequest = new TableGroupRequest(Arrays.asList(tableId1, newTableId));
 
-        TableGroup tableGroup = new TableGroup(Arrays.asList(table, groupedTable1));
-
-        assertThatThrownBy(() -> tableGroupService.create(tableGroup)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(newRequest)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     @DisplayName("단체 지정 정상 취소")
     void ungroup() {
-        OrderTable groupedTable1 = orderTableRepository.save(new OrderTable(3, true));
-        OrderTable groupedTable2 = orderTableRepository.save(new OrderTable(3, true));
-
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(groupedTable1, groupedTable2)));
+        TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
 
         tableGroupService.ungroup(tableGroup.getId());
 
         List<OrderTable> tables = orderTableRepository.findAllByIdIn(
-                Arrays.asList(groupedTable1.getId(), groupedTable2.getId()));
+                Arrays.asList(table1.getId(), table2.getId()));
         assertThat(tables)
                 .allMatch(table -> Objects.isNull(table.getTableGroupId()))
                 .allMatch(table -> !table.isEmpty());
@@ -130,10 +134,7 @@ class TableGroupServiceTest {
     @ParameterizedTest(name = "단체 지정 취소 실패 :: 주문 상태 {0} 테이블 포함")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
-        OrderTable table1 = orderTableRepository.save(new OrderTable(3, true));
-        OrderTable table2 = orderTableRepository.save(new OrderTable(3, true));
-
-        TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(table1, table2)));
+        TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
 
         orderRepository.save(
                 new Order(table1, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));

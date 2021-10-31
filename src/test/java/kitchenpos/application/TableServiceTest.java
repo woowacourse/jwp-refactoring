@@ -8,11 +8,12 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.SpringBootTestWithProfiles;
+import kitchenpos.application.dto.TableGroupRequest;
+import kitchenpos.application.dto.TableGroupRequest.OrderTableId;
 import kitchenpos.application.dto.TableRequest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -83,7 +84,10 @@ class TableServiceTest {
         OrderTable orderTable1 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
         OrderTable orderTable2 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
 
-        tableGroupService.create(new TableGroup(Arrays.asList(orderTable1, orderTable2)));
+        tableGroupService.create(new TableGroupRequest(Arrays.asList(
+                new OrderTableId(orderTable1.getId()),
+                new OrderTableId(orderTable2.getId())
+        )));
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable1.getId(), CHANGE_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
