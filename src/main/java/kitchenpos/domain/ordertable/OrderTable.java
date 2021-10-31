@@ -103,6 +103,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(Integer newNumberOfGuests) {
         validateNumberOfGuests(newNumberOfGuests);
+        validateNotEmpty();
         numberOfGuests = newNumberOfGuests;
     }
 

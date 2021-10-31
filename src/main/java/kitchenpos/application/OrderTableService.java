@@ -79,20 +79,8 @@ public class OrderTableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable foundOrderTable = findOrderTableById(orderTableId);
-        validateNotEmpty(foundOrderTable);
-        changeNumberOfGuests(foundOrderTable, orderTableRequest.getNumberOfGuests());
+        foundOrderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
+
         return new OrderTableResponse(foundOrderTable);
-    }
-
-    private void validateNotEmpty(OrderTable foundOrderTable) {
-        try {
-            foundOrderTable.validateNotEmpty();
-        } catch (IllegalStateException e) {
-            throw new BadRequestException(e.getMessage());
-        }
-    }
-
-    private void changeNumberOfGuests(OrderTable orderTable, Integer numberOfGuests) {
-        orderTable.changeNumberOfGuests(numberOfGuests);
     }
 }

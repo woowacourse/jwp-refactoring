@@ -107,12 +107,12 @@ class OrderTableTest {
             .doesNotThrowAnyException();
     }
 
-    @DisplayName("numberOfGuests 변경 - 성공 - 음수, null이 아닐 때")
+    @DisplayName("numberOfGuests 변경 - 성공 - 음수, null이 아니고 empty가 false일 때")
     @CustomParameterizedTest
     @ValueSource(ints = {0, 1, 100})
     void changeNumberOfGuests(Integer newNumberOfGuests) {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable orderTable = new OrderTable(2, false);
 
         // when
         // then
@@ -120,6 +120,22 @@ class OrderTableTest {
             .doesNotThrowAnyException();
 
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(newNumberOfGuests);
+    }
+
+    @DisplayName("numberOfGuests 변경 - 실 - 음수, null이 아니고 empty가 true일 때")
+    @CustomParameterizedTest
+    @ValueSource(ints = {0, 1, 100})
+    void changeNumberOfGuests_Fail_WhenEmptyIsTrue(Integer newNumberOfGuests) {
+        // given
+        final int oldNumberOfGuests = 2;
+        final OrderTable orderTable = new OrderTable(oldNumberOfGuests, true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(newNumberOfGuests))
+            .isInstanceOf(InvalidStateException.class);
+
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(oldNumberOfGuests);
     }
 
     @DisplayName("numberOfGuests 변경 - 실패 - 음수 또는 null일 때")
