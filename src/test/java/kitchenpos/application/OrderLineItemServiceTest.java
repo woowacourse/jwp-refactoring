@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderItem;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderItemRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.ui.dto.OrderItemRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -23,22 +23,22 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
-@DisplayName("OrderItem 서비스 테스트")
-class OrderItemServiceTest extends ServiceTest {
+@DisplayName("OrderLineItem 서비스 테스트")
+class OrderLineItemServiceTest extends ServiceTest {
     @InjectMocks
-    private OrderItemService orderItemService;
+    private OrderLineItemService orderLineItemService;
 
     @Mock
     private MenuRepository menuRepository;
 
     @Mock
-    private OrderItemRepository orderItemRepository;
+    private OrderLineItemRepository orderLineItemRepository;
 
-    @DisplayName("OrderItem을 생성한다. - 실패, 메뉴를 찾을 수 없음")
+    @DisplayName("OrderLineItem을 생성한다. - 실패, 메뉴를 찾을 수 없음")
     @Test
     void createFailedWhenMenuNotFound() {
         // given
-        List<OrderItemRequest> orderItemRequests = Arrays.asList(
+        List<OrderLineItemRequest> orderLineItemRequests = Arrays.asList(
                 CREATE_ORDER_ITEM_REQUEST(1L, 1L),
                 CREATE_ORDER_ITEM_REQUEST(2L, 1L)
         );
@@ -46,11 +46,11 @@ class OrderItemServiceTest extends ServiceTest {
         given(menuRepository.findById(anyLong())).willThrow(NotFoundException.class);
 
         // when - then
-        assertThatThrownBy(() -> orderItemService.create(orderItemRequests, orders))
+        assertThatThrownBy(() -> orderLineItemService.create(orderLineItemRequests, orders))
                 .isInstanceOf(NotFoundException.class);
         then(menuRepository).should(times(1))
                 .findById(anyLong());
-        then(orderItemRepository).should(never())
-                .save(any(OrderItem.class));
+        then(orderLineItemRepository).should(never())
+                .save(any(OrderLineItem.class));
     }
 }

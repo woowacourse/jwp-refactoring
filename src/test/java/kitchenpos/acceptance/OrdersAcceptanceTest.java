@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.ui.dto.OrderItemRequest;
+import kitchenpos.ui.dto.OrderLineItemRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderStatusRequest;
 import kitchenpos.ui.dto.OrderStatusResponse;
@@ -29,7 +29,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
         long orderTableId = POST_SAMPLE_ORDER_TABLE(1, false);
         OrderRequest orderRequest = OrderRequest.of(
                 orderTableId,
-                singletonList(OrderItemRequest.of(menuId, 1L))
+                singletonList(OrderLineItemRequest.of(menuId, 1L))
         );
 
         // when - then

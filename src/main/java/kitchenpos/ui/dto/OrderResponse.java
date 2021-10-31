@@ -1,6 +1,6 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.OrderItem;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.Orders;
 
 import java.time.LocalDateTime;
@@ -13,12 +13,12 @@ public class OrderResponse {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderItemResponse> orderLineItems;
+    private List<OrderLineItemResponse> orderLineItems;
 
     private OrderResponse() {
     }
 
-    private OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderItemResponse> orderLineItems) {
+    private OrderResponse(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -26,17 +26,17 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse of(Orders orders, List<OrderItem> orderItems) {
+    public static OrderResponse of(Orders orders, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 orders.getId(),
                 orders.getOrderTableId(),
                 orders.getOrderStatus(),
                 orders.getOrderedTime(),
-                OrderItemResponse.from(orderItems)
+                OrderLineItemResponse.from(orderLineItems)
         );
     }
 
-    public static List<OrderResponse> from(Map<Orders, List<OrderItem>> results) {
+    public static List<OrderResponse> from(Map<Orders, List<OrderLineItem>> results) {
         List<OrderResponse> orderResponses = new ArrayList<>();
         results.forEach((key, value) -> orderResponses.add(
                 OrderResponse.of(key, value)
@@ -60,7 +60,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderItemResponse> getOrderLineItems() {
+    public List<OrderLineItemResponse> getOrderLineItems() {
         return orderLineItems;
     }
 }

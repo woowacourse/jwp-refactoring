@@ -10,31 +10,31 @@ public class OrderRequest {
     @NotNull(message = "주문테이블 아이디가 null입니다.")
     private Long orderTableId;
     @NotEmpty(message = "주문 항목이 비어있습니다.")
-    private List<OrderItemRequest> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItems;
 
     private OrderRequest() {
     }
 
-    private OrderRequest(Long orderTableId, List<OrderItemRequest> orderLineItems) {
+    private OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderRequest of(Long orderTableId, List<OrderItemRequest> orderItemRequests) {
-        return new OrderRequest(orderTableId, orderItemRequests);
+    public static OrderRequest of(Long orderTableId, List<OrderLineItemRequest> orderLineItemRequests) {
+        return new OrderRequest(orderTableId, orderLineItemRequests);
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public List<OrderItemRequest> getOrderLineItems() {
+    public List<OrderLineItemRequest> getOrderLineItems() {
         return orderLineItems;
     }
 
     public List<Long> getMenuIds() {
         return orderLineItems.stream()
-                .map(OrderItemRequest::getMenuId)
+                .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
     }
 }

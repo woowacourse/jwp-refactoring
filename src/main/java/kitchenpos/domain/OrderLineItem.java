@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class OrderItem {
+public class OrderLineItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,18 +24,18 @@ public class OrderItem {
     @Column(nullable = false)
     private long quantity;
 
-    protected OrderItem() {
+    protected OrderLineItem() {
     }
 
-    public OrderItem(Menu menu, long quantity) {
+    public OrderLineItem(Menu menu, long quantity) {
         this(null, null, menu, quantity);
     }
 
-    public OrderItem(Orders orders, Menu menu, long quantity) {
+    public OrderLineItem(Orders orders, Menu menu, long quantity) {
         this(null, orders, menu, quantity);
     }
 
-    public OrderItem(Long seq, Orders orders, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Orders orders, Menu menu, long quantity) {
         this.seq = seq;
         this.orders = orders;
         this.menu = menu;

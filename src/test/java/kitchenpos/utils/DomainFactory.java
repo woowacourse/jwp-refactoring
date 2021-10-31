@@ -3,7 +3,7 @@ package kitchenpos.utils;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.OrderItem;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.Product;
@@ -25,8 +25,8 @@ public class DomainFactory {
         return new Orders(id, orderTable, orderStatus, LocalDateTime.now());
     }
 
-    public static OrderItem CREATE_ORDER_LINE_ITEM(Long seq, Orders orders, Menu menu, Long quantity) {
-        return new OrderItem(seq, orders, menu, quantity);
+    public static OrderLineItem CREATE_ORDER_LINE_ITEM(Long seq, Orders orders, Menu menu, Long quantity) {
+        return new OrderLineItem(seq, orders, menu, quantity);
     }
 
     public static OrderTable CREATE_ORDER_TABLE(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {

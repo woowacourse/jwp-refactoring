@@ -1,6 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.OrderItem;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
@@ -24,20 +24,20 @@ import java.util.Map;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
-    private final OrderItemService orderItemService;
+    private final OrderLineItemService orderLineItemService;
 
-    public OrderService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, OrderItemService orderItemService) {
+    public OrderService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, OrderLineItemService orderLineItemService) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
-        this.orderItemService = orderItemService;
+        this.orderLineItemService = orderLineItemService;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Orders savedOrders = saveOrders(orderRequest);
-        List<OrderItem> orderItems
-                = orderItemService.create(orderRequest.getOrderLineItems(), savedOrders);
-        return OrderResponse.of(savedOrders, orderItems);
+        List<OrderLineItem> orderLineItems
+                = orderLineItemService.create(orderRequest.getOrderLineItems(), savedOrders);
+        return OrderResponse.of(savedOrders, orderLineItems);
     }
 
     private Orders saveOrders(OrderRequest orderRequest) {
@@ -48,10 +48,10 @@ public class OrderService {
     }
 
     public List<OrderResponse> list() {
-        Map<Orders, List<OrderItem>> results = new HashMap<>();
+        Map<Orders, List<OrderLineItem>> results = new HashMap<>();
         final List<Orders> orders = orderRepository.findAll();
         for (final Orders order : orders) {
-            results.put(order, orderItemService.findAllByOrderId(order.getId()));
+            results.put(order, orderLineItemService.findAllByOrderId(order.getId()));
         }
         return OrderResponse.from(results);
     }

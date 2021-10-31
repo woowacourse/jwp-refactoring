@@ -36,7 +36,7 @@ public class OrderServiceTest extends ServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderItemService orderItemService;
+    private OrderLineItemService orderLineItemService;
 
     @DisplayName("주문을 생성한다. - 실패, 주문 테이블을 찾을 수 없다.")
     @Test
@@ -56,7 +56,7 @@ public class OrderServiceTest extends ServiceTest {
                 .findById(orderRequest.getOrderTableId());
         then(orderRepository).should(never())
                 .save(any(Orders.class));
-        then(orderItemService).should(never())
+        then(orderLineItemService).should(never())
                 .create(anyList(), any(Orders.class));
     }
 
