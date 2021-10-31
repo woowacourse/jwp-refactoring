@@ -21,9 +21,11 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
@@ -45,48 +47,54 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    private Order order;
+    @DisplayName("주문 생성")
+    @Nested
+    class createOrder {
 
-    @BeforeEach
-    void setUp() {
-        order = createOrder();
-        when(mockOrderDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
-        when(mockOrderLineItemDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
-        when(mockMenuDao.countByIdIn(any())).thenReturn((long) order.getOrderLineItems().size());
-        when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(createOrderTable()));
-    }
+        @BeforeEach
+        void setUp() {
+            when(mockOrderDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+            when(mockOrderLineItemDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(createOrderTable()));
+        }
 
-    @DisplayName("주문을 생성한다.")
-    @Test
-    void create() {
-        Order savedOrder = orderService.create(order);
-        assertThat(savedOrder).isEqualTo(order);
-    }
+        @DisplayName("주문을 생성한다.")
+        @Test
+        void create() {
+            Order order = createOrder();
+            when(mockMenuDao.countByIdIn(any())).thenReturn((long) order.getOrderLineItems().size());
 
-    @DisplayName("주문 항목이 1개 이상이어야한다.")
-    @Test
-    void createWithInvalidOrderItemList() {
-        order.setOrderLineItems(Collections.emptyList());
-        assertThatThrownBy(() -> orderService.create(order));
-    }
+            Order savedOrder = orderService.create(order);
+            assertThat(savedOrder).isEqualTo(order);
+        }
 
-    @DisplayName("주문 항목의 메뉴가 존재해야 한다.")
-    @Test
-    void createWithNonexistentMenu() {
-        when(mockMenuDao.countByIdIn(any())).thenReturn(0L);
-        assertThatThrownBy(() -> orderService.create(order));
-    }
+        @DisplayName("주문 항목이 1개 이상이어야한다.")
+        @Test
+        void createWithInvalidOrderItemList() {
+            Order order = createOrder(Collections.emptyList());
+            when(mockMenuDao.countByIdIn(any())).thenReturn((long) order.getOrderLineItems().size());
+            assertThatThrownBy(() -> orderService.create(order));
+        }
 
-    @DisplayName("주문 테이블은 비어있지 않아야한다.")
-    @Test
-    void createWithEmptyTable() {
-        when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(createOrderTable(true)));
-        assertThatThrownBy(() -> orderService.create(order));
+        @DisplayName("주문 항목의 메뉴가 존재해야 한다.")
+        @Test
+        void createWithNonexistentMenu() {
+            when(mockMenuDao.countByIdIn(any())).thenReturn(0L);
+            assertThatThrownBy(() -> orderService.create(createOrder()));
+        }
+
+        @DisplayName("주문 테이블은 비어있지 않아야한다.")
+        @Test
+        void createWithEmptyTable() {
+            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(createOrderTable(true)));
+            assertThatThrownBy(() -> orderService.create(createOrder()));
+        }
     }
 
     @DisplayName("주문 목록을 반환한다.")
     @Test
     void list() {
+        Order order = createOrder();
         when(mockOrderDao.findAll()).thenReturn(Collections.singletonList(order));
         when(mockOrderLineItemDao.findAllByOrderId(any())).thenReturn(order.getOrderLineItems());
         List<Order> list = orderService.list();
@@ -96,35 +104,46 @@ class OrderServiceTest {
         );
     }
 
-    @DisplayName("주문의 상태를 변경한다.")
-    @Test
-    void changeOrderStatus() {
-        Order savedOrder = createOrder();
-        when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+    @DisplayName("주문 상태 변경")
+    @Nested
+    class ChangeOrderStatus {
 
-        String newStatus = OrderStatus.COOKING.name();
-        orderService.changeOrderStatus(savedOrder.getId(), createOrder(savedOrder.getId(), newStatus));
+        @Captor
+        private ArgumentCaptor<Order> argumentCaptor;
+        private Order savedOrder;
 
-        ArgumentCaptor<Order> argumentCaptor = ArgumentCaptor.forClass(Order.class);
-        verify(mockOrderDao).save(argumentCaptor.capture());
-        assertThat(argumentCaptor.getValue().getOrderStatus()).isEqualTo(newStatus);
-    }
+        @BeforeEach
+        void setUp(){
+            savedOrder = createOrder();
+            when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+        }
 
-    @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
-    @Test
-    void changeOrderStatusInCompletion() {
-        Order savedOrder = createOrder(OrderStatus.COMPLETION);
-        when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+        @DisplayName("주문의 상태를 변경한다.")
+        @Test
+        void changeOrderStatus() {
+            String newStatus = OrderStatus.COOKING.name();
+            Order updateOrder = createOrder(savedOrder.getId(), newStatus);
+            orderService.changeOrderStatus(savedOrder.getId(), updateOrder);
 
-        Order updateOrder = createOrder(savedOrder.getId(), OrderStatus.COOKING.name());
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));
-    }
+            verify(mockOrderDao).save(argumentCaptor.capture());
+            assertThat(argumentCaptor.getValue().getOrderStatus()).isEqualTo(newStatus);
+        }
 
-    @DisplayName("COOKING, MEAL, COMPLETION이 아닌 다른 상태로 주문을 변경할 수 없다.")
-    @Test
-    void changeOrderStatusWithInvalidStatus() {
-        when(mockOrderDao.findById(any())).thenReturn(Optional.of(order));
-        Order updateOrder = createOrder(order.getId(), "INVALID_STATUS");
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), updateOrder));
+        @DisplayName("COOKING, MEAL, COMPLETION이 아닌 다른 상태로 주문을 변경할 수 없다.")
+        @Test
+        void changeOrderStatusWithInvalidStatus() {
+            Order updateOrder = createOrder(savedOrder.getId(), "INVALID_STATUS");
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));
+        }
+
+        @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
+        @Test
+        void changeOrderStatusInCompletion() {
+            Order savedOrder = createOrder(OrderStatus.COMPLETION);
+            when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+
+            Order updateOrder = createOrder(savedOrder.getId(), OrderStatus.COOKING.name());
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));
+        }
     }
 }

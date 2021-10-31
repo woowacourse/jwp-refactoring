@@ -22,6 +22,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
@@ -45,52 +46,63 @@ class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
-    private Menu menu;
+    @DisplayName("메뉴 생성")
+    @Nested
+    class CreateMenu {
 
-    @BeforeEach
-    void setUp() {
-        menu = createMenu();
-        when(mockMenuDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
-        when(mockMenuGroupDao.existsById(any())).thenReturn(true);
-        when(mockProductDao.findById(any())).thenReturn(Optional.of(createProduct()));
-    }
-
-    @DisplayName("메뉴를 생성한다.")
-    @Test
-    void create() {
-        Menu savedMenu = menuService.create(menu);
-        assertThat(savedMenu).isEqualTo(menu);
-    }
-
-    @DisplayName("메뉴 가격은 음수일 수 없다.")
-    @Test
-    void createWithInvalidPrice1() {
-        menu.setPrice(BigDecimal.valueOf(-1));
-        assertThatThrownBy(() -> menuService.create(menu));
-    }
-
-    @DisplayName("메뉴 상품 가격의 합보다 큰 가격으로 메뉴를 생성할 수 없다.")
-    @Test
-    void createWithInvalidPrice2() {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menu.getMenuProducts()) {
-            Product product = mockProductDao.findById(menuProduct.getProductId()).get();
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        @BeforeEach
+        void setUp() {
+            when(mockMenuDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+            when(mockMenuGroupDao.existsById(any())).thenReturn(true);
+            when(mockProductDao.findById(any())).thenReturn(Optional.of(createProduct()));
         }
-        menu.setPrice(sum.add(BigDecimal.ONE));
-        assertThatThrownBy(() -> menuService.create(menu));
-    }
 
-    @DisplayName("존재하지 않는 메뉴 그룹에 메뉴를 생성할 수 없다.")
-    @Test
-    void createWithInvalidMenuGroup() {
-        when(mockMenuGroupDao.existsById(any())).thenReturn(false);
-        assertThatThrownBy(() -> menuService.create(menu));
+        @DisplayName("메뉴를 생성한다.")
+        @Test
+        void create() {
+            Menu menu = createMenu();
+            Menu savedMenu = menuService.create(menu);
+            assertThat(savedMenu).isEqualTo(menu);
+        }
+
+        @DisplayName("메뉴 가격은 음수일 수 없다.")
+        @Test
+        void createWithInvalidPrice1() {
+            BigDecimal price = BigDecimal.valueOf(-1);
+            Menu menu = createMenu(price);
+            assertThatThrownBy(() -> menuService.create(menu));
+        }
+
+        @DisplayName("메뉴 상품 가격의 합보다 큰 가격으로 메뉴를 생성할 수 없다.")
+        @Test
+        void createWithInvalidPrice2() {
+            Menu menu = createMenu();
+            BigDecimal price = sumOfProductPrice(menu.getMenuProducts()).add(BigDecimal.ONE);
+            menu.setPrice(price);
+            assertThatThrownBy(() -> menuService.create(menu));
+        }
+
+        @DisplayName("존재하지 않는 메뉴 그룹에 메뉴를 생성할 수 없다.")
+        @Test
+        void createWithInvalidMenuGroup() {
+            when(mockMenuGroupDao.existsById(any())).thenReturn(false);
+            assertThatThrownBy(() -> menuService.create(createMenu()));
+        }
+
+        private BigDecimal sumOfProductPrice(List<MenuProduct> menuProducts) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (MenuProduct menuProduct : menuProducts) {
+                Product product = mockProductDao.findById(menuProduct.getProductId()).get();
+                sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+            }
+            return sum;
+        }
     }
 
     @DisplayName("메뉴 목록을 출력한다.")
     @Test
     void list() {
+        Menu menu = createMenu();
         when(mockMenuDao.findAll()).thenReturn(Collections.singletonList(menu));
         when(mockMenuProductDao.findAllByMenuId(any())).thenReturn(menu.getMenuProducts());
         List<Menu> list = menuService.list();

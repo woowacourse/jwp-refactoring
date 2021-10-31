@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -37,8 +37,8 @@ class ProductRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestProduct))
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/products/" + requestProduct.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestProduct)));
 
     }
@@ -48,8 +48,7 @@ class ProductRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<Product> expected = Collections.singletonList(createProduct());
         when(mockProductService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/products")
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }

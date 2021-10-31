@@ -11,7 +11,6 @@ import java.util.List;
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -27,17 +26,11 @@ class MenuGroupServiceTest {
     @InjectMocks
     private MenuGroupService menuGroupService;
 
-    private MenuGroup menuGroup;
-
-    @BeforeEach
-    void setUp() {
-        menuGroup = createMenuGroup();
-    }
-
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create() {
         when(menuGroupService.create(any())).then(AdditionalAnswers.returnsFirstArg());
+        MenuGroup menuGroup = createMenuGroup();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         assertThat(savedMenuGroup).isEqualTo(menuGroup);
     }
@@ -45,6 +38,7 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹 목록을 반환한다.")
     @Test
     void list() {
+        MenuGroup menuGroup = createMenuGroup();
         when(mockMenuGroupDao.findAll()).thenReturn(Collections.singletonList(menuGroup));
         List<MenuGroup> list = menuGroupService.list();
         assertAll(

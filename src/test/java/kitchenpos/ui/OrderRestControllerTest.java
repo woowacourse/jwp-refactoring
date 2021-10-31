@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -38,8 +39,8 @@ class OrderRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestOrder))
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/orders/" + requestOrder.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestOrder)));
     }
 
@@ -48,8 +49,7 @@ class OrderRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<Order> expected = Collections.singletonList(createOrder());
         when(mockOrderService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/orders")
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/orders"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
@@ -65,7 +65,6 @@ class OrderRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestOrder))
                 )
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(requestOrder)));
     }

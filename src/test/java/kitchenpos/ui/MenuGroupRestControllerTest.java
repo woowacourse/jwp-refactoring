@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -37,8 +38,8 @@ class MenuGroupRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMenuGroup))
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/menu-groups/" + requestMenuGroup.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestMenuGroup)));
     }
 
@@ -47,8 +48,7 @@ class MenuGroupRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<MenuGroup> expected = Collections.singletonList(createMenuGroup());
         when(mockMenuGroupService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/menu-groups")
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/menu-groups"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
