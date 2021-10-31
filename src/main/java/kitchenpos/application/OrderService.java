@@ -52,7 +52,9 @@ public class OrderService {
         final Order order = new Order(foundOrderTable, OrderStatus.COOKING);
         orderRepository.save(order);
 
-        saveOrderLineItemsWithOrder(orderLineItems.getOrderLineItems(), order);
+        orderLineItems.assignOrder(order);
+        orderLineItemRepository.saveAll(orderLineItems.getOrderLineItems());
+
         return convertToOrderResponse(order, orderLineItems.getOrderLineItems());
     }
 
@@ -66,13 +68,6 @@ public class OrderService {
             .map(OrderLineItemResponse::new)
             .collect(Collectors.toList())
             ;
-    }
-
-    private void saveOrderLineItemsWithOrder(List<OrderLineItem> orderLineItems, Order order) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.assignOrder(order);
-        }
-        orderLineItemRepository.saveAll(orderLineItems);
     }
 
     private OrderTable findOrderTableById(Long orderTableId) {

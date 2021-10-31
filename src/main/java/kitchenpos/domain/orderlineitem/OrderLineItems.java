@@ -2,6 +2,7 @@ package kitchenpos.domain.orderlineitem;
 
 import java.util.ArrayList;
 import java.util.List;
+import kitchenpos.domain.Order;
 import kitchenpos.exception.InvalidStateException;
 
 public class OrderLineItems {
@@ -24,5 +25,11 @@ public class OrderLineItems {
 
     public List<OrderLineItem> getOrderLineItems() {
         return new ArrayList<>(orderLineItems);
+    }
+
+    public void assignOrder(Order order) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.assignOrder(order);
+        }
     }
 }
