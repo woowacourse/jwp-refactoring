@@ -53,7 +53,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null);
+        order.setId(null); // todo: 이미 null일텐데 null을 주는 이유는 뭘까? 혹시라도 클라이언트단에서 이상한 id 값을 주게되면, 추측컨데 문제가될 수 있어서 그런듯하다. (추후 DTO로 받아서 ID 요소 없애버리기..)
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
