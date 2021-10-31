@@ -16,9 +16,7 @@ import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 public class Fixtures {
 
     public static MenuGroup makeMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
-
-
+        MenuGroup menuGroup = new MenuGroup(1L, "한마리치킨");
         return menuGroup;
     }
 
@@ -36,39 +34,32 @@ public class Fixtures {
     }
 
     public static Menu makeMenu() {
-        Menu menu = new Menu();
-
-        return menu;
+        MenuGroup menuGroup = makeMenuGroup();
+        return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup);
     }
 
     public static OrderLineItem makeOrderLineItem() {
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setOrderId(1L);
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+
 
         return orderLineItem;
     }
 
     public static Order makeOrder() {
-        Order order = new Order();
-        order.setId(1L);
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderTableId(1L);
+        OrderTable orderTable = makeOrderTable();
+        Order order = new Order(1L, orderTable, OrderStatus.COOKING);
+
         return order;
     }
 
     public static OrderTable makeOrderTable() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
-        orderTable.setEmpty(true);
-        orderTable.setNumberOfGuests(1);
+        TableGroup tableGroup = makeTableGroup();
+        OrderTable orderTable = new OrderTable(1L, tableGroup, 1, false);
+
         return orderTable;
     }
 
     public static TableGroup makeTableGroup() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-        return tableGroup;
+        return new TableGroup(1L);
     }
 }

@@ -10,11 +10,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderRequest;
 import kitchenpos.ui.OrderRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,13 +42,12 @@ class OrderRestControllerTest {
     @Test
     void create() throws Exception {
         Order order = Fixtures.makeOrder();
-        order.setOrderLineItems(new ArrayList<>());
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         String content = objectMapper.writeValueAsString(order);
 
-        given(orderService.create(any(Order.class)))
+        given(orderService.create(any(OrderRequest.class)))
             .willReturn(order);
 
         mvc.perform(post("/api/orders")
@@ -71,16 +72,13 @@ class OrderRestControllerTest {
     @DisplayName("주문 상태 수정")
     @Test
     void update() throws Exception {
-        Order updateOrder = new Order();
-        updateOrder.setId(1L);
-        updateOrder.setOrderTableId(1L);
-        updateOrder.setOrderStatus(OrderStatus.MEAL.name());
+        Order updateOrder = new Order(1L, Fixtures.makeOrderTable(), OrderStatus.MEAL);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         String content = objectMapper.writeValueAsString(updateOrder);
 
-        given(orderService.changeOrderStatus(anyLong(), any(Order.class)))
+        given(orderService.changeOrderStatus(anyLong(), any(OrderRequest.class)))
             .willReturn(updateOrder);
 
         mvc.perform(put("/api/orders/{orderId}/order-status", 1L)

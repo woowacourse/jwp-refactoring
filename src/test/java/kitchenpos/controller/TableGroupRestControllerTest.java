@@ -38,7 +38,6 @@ public class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         TableGroup tableGroup = Fixtures.makeTableGroup();
-        tableGroup.setOrderTables(new ArrayList<>());
 
         ObjectMapper objectMapper = new ObjectMapper();
 

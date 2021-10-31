@@ -7,15 +7,15 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.Fixtures;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,58 +35,58 @@ class TableGroupServiceTest {
     private TableGroup tableGroup;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @BeforeEach
     void setUp() {
         orderTables = new ArrayList<>();
         orderTable = Fixtures.makeOrderTable();
 
-        orderTable2 = Fixtures.makeOrderTable();
-        orderTable2.setId(2L);
+        orderTable2 = new OrderTable(2L, tableGroup, 1, false);
+
 
         orderTables.add(orderTable);
         orderTables.add(orderTable2);
 
         tableGroup = Fixtures.makeTableGroup();
 
-        tableGroup.setOrderTables(orderTables);
+        tableGroup.addOrderTables(orderTables);
 
     }
 
     @DisplayName("table group 생성")
     @Test
     void create() {
-        given(orderTableDao.findAllByIdIn(anyList()))
+        given(orderTableRepository.findAllByIdIn(anyList()))
             .willReturn(orderTables);
-        given(tableGroupDao.save(tableGroup))
+        given(tableGroupRepository.save(tableGroup))
             .willReturn(tableGroup);
 
         tableGroupService.create(tableGroup);
 
-        verify(orderTableDao).findAllByIdIn(anyList());
-        verify(tableGroupDao).save(tableGroup);
-        verify(orderTableDao).save(orderTable);
+        verify(orderTableRepository).findAllByIdIn(anyList());
+        verify(tableGroupRepository).save(tableGroup);
+        verify(orderTableRepository).save(orderTable);
     }
 
     @DisplayName("table group 해제")
     @Test
     void unGroup() {
-        given(orderTableDao.findAllByTableGroupId(anyLong()))
+        given(orderTableRepository.findAllByTableGroupId(anyLong()))
             .willReturn(orderTables);
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
+        given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
             .willReturn(false);
 
         tableGroupService.ungroup(1L);
 
-        verify(orderTableDao).findAllByTableGroupId(anyLong());
-        verify(orderDao).existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList());
-        verify(orderTableDao, times(2)).save(any());
+        verify(orderTableRepository).findAllByTableGroupId(anyLong());
+        verify(orderRepository).existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList());
+        verify(orderTableRepository, times(2)).save(any());
     }
 }

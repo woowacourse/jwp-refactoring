@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 import kitchenpos.Fixtures;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,10 +26,10 @@ class TableServiceTest {
     private OrderTable orderTable;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @BeforeEach
     void setUp() {
@@ -41,7 +41,7 @@ class TableServiceTest {
     void create() {
         tableService.create(orderTable);
 
-        verify(orderTableDao).save(orderTable);
+        verify(orderTableRepository).save(orderTable);
     }
 
     @DisplayName("table 불러오기")
@@ -49,20 +49,20 @@ class TableServiceTest {
     void list() {
         tableService.list();
 
-        verify(orderTableDao).findAll();
+        verify(orderTableRepository).findAll();
     }
 
     @DisplayName("table 비우기")
     @Test
     void emptyTable() {
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
             .willReturn(Optional.of(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
             .willReturn(false);
 
         tableService.changeEmpty(1L, orderTable);
 
-        verify(orderTableDao).findById(anyLong());
-        verify(orderDao).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
+        verify(orderTableRepository).findById(anyLong());
+        verify(orderRepository).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
     }
 }
