@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.*;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
@@ -23,58 +20,54 @@ import java.util.List;
 public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        // TODO: 오더라인 아이템 menuId 발리데이션
-//        if (orderLineItemRequests.size() != menuRepository.countByOrderLineItemsIn(orderLineItems)) {
-//            throw new IllegalArgumentException();
-//        }
+        final OrderTable orderTable = findOrderTable(orderRequest.getOrderTableId());
+        final List<OrderLineItem> orderLineItems = generateOrderLineItems(orderRequest.getOrderLineItems());
 
-        final Order order = new Order();
-        order.setId(null);
+        final Order order = new Order.Builder()
+                .orderTable(orderTable)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(orderLineItems)
+                .build();
+        orderRepository.save(order);
+        return OrderResponse.of(order);
+    }
 
-        final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
+    private OrderTable findOrderTable(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+    }
 
-        // 오더를 받은 테이블이라면 사람이 있어야 말이 되는거겠지?
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        order.setOrderTable(orderTable);
-        order.setOrderStatus(OrderStatus.COOKING);
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderRepository.save(order);
-
-        final List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItems();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-
+    private List<OrderLineItem> generateOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
+        final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final OrderLineItem orderLineItem = new OrderLineItem();
-            orderLineItem.setOrder(savedOrder);
-            orderLineItem.setMenu(menuRepository.findById(orderLineItemRequest.getMenuId()).get());
-            orderLineItem.setQuantity(orderLineItemRequest.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            final Menu menu = findMenu(orderLineItemRequest.getMenuId());
+            final OrderLineItem orderLineItem = new OrderLineItem.Builder()
+                    .menu(menu)
+                    .quantity(orderLineItemRequest.getQuantity())
+                    .build();
+            orderLineItems.add(orderLineItem);
         }
+        return orderLineItems;
+    }
 
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        return OrderResponse.of(savedOrder);
+    private Menu findMenu(Long menuId) {
+        return menuRepository.findById(menuId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<OrderResponse> list() {
@@ -84,15 +77,13 @@ public class OrderService {
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusModifyRequest orderStatusModifyRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order foundOrder = findOrder(orderId);
+        foundOrder.changeOrderStatus(OrderStatus.valueOf(orderStatusModifyRequest.getOrderStatus()));
+        return OrderResponse.of(foundOrder);
+    }
+
+    private Order findOrder(Long orderId) {
+        return orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        savedOrder.changeOrderStatus(OrderStatus.valueOf(orderStatusModifyRequest.getOrderStatus()));
-
-        orderRepository.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemRepository.findAllByOrder(savedOrder));
-
-        return OrderResponse.of(savedOrder);
     }
 }

@@ -36,7 +36,7 @@ public class OrderTable {
 
     public void ungroupFromTableGroup() {
         for (Order order : orders) {
-            if (!order.isCompleted()) {
+            if (order.isNotCompleted()) {
                 throw new IllegalArgumentException();
             }
         }
@@ -49,7 +49,7 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         for (Order order : orders) {
-            if (!order.isCompleted()) {
+            if (order.isNotCompleted()) {
                 throw new IllegalArgumentException();
             }
         }

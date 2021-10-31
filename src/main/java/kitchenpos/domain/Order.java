@@ -5,6 +5,8 @@ import org.springframework.util.CollectionUtils;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity(name = "orders")
 public class Order {
@@ -28,23 +30,58 @@ public class Order {
     }
 
     public Order(Builder builder) {
+        validateOrderTable(builder.orderTable);
+        validateOrderLineItems(builder.orderLineItems);
+        validateOrderStatus(builder.orderStatus);
         this.id = builder.id;
         this.orderTable = builder.orderTable;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
         this.orderLineItems = builder.orderLineItems;
+        registerOrderToOrderLineItems(this.orderLineItems);
+    }
+
+    private void validateOrderTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
+        final Set<Menu> orderedMenus = orderLineItems.stream()
+                .map(OrderLineItem::getMenu)
+                .collect(Collectors.toSet());
+        if (orderedMenus.size() != orderLineItems.size()) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateOrderStatus(OrderStatus orderStatus) {
+        if (orderStatus.equals(OrderStatus.COOKING)) {
+            return;
+        }
+        throw new IllegalArgumentException();
+    }
+
+    private void registerOrderToOrderLineItems(List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.registerOrder(this);
+        }
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTable.getId();
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
     public void setOrderTable(OrderTable orderTable) {
@@ -71,10 +108,6 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
-    }
-
     public void changeOrderStatus(OrderStatus orderStatus) {
         if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
             throw new IllegalArgumentException();
@@ -82,8 +115,8 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public boolean isCompleted() {
-        return this.orderStatus.equals(OrderStatus.COMPLETION);
+    public boolean isNotCompleted() {
+        return !OrderStatus.COMPLETION.equals(this.orderStatus);
     }
 
     public static class Builder {
@@ -117,9 +150,6 @@ public class Order {
         }
 
         public Builder orderLineItems(List<OrderLineItem> orderLineItems) {
-            if (CollectionUtils.isEmpty(orderLineItems)) {
-                throw new IllegalArgumentException();
-            }
             this.orderLineItems = orderLineItems;
             return this;
         }

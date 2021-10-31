@@ -1,9 +1,7 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
+import kitchenpos.repository.OrderRepository;
 import kitchenpos.ui.request.OrderTableEmptyRequest;
 import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
 import kitchenpos.ui.request.OrderTableRequest;
@@ -16,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -31,8 +30,16 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     TableGroup 테이블_그룹1;
 
-    Order 요리중인_주문 = new Order();
-    Order 식사중인_주문 = new Order();
+    Order 주문_테이블1_요리중인_주문;
+    Order 주문_테이블2_식사중인_주문;
+
+    MenuGroup 한마리메뉴;
+    Product 후라이드치킨;
+    MenuProduct 한마리메뉴_후라이드치킨;
+    Menu 한마리메뉴_중_후라이드치킨;
+
+    OrderLineItem 주문_테이블1_한마리메뉴_중_후라이트치킨;
+    OrderLineItem 주문_테이블2_한마리메뉴_중_후라이트치킨;
 
     @BeforeEach
     void setUp() {
@@ -67,15 +74,62 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderTableRepository.save(주문_테이블3_테이블_그룹1_소속);
         orderTableRepository.save(주문_테이블4_테이블_그룹1_소속);
 
-        요리중인_주문.setOrderStatus(OrderStatus.COOKING);
-        요리중인_주문.setOrderTable(주문_테이블2);
-        요리중인_주문.setOrderedTime(LocalDateTime.now());
-        orderRepository.save(요리중인_주문);
+        후라이드치킨  = new Product.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .build();
+        productRepository.save(후라이드치킨);
 
-        식사중인_주문.setOrderStatus(OrderStatus.MEAL);
-        식사중인_주문.setOrderTable(주문_테이블2);
-        식사중인_주문.setOrderedTime(LocalDateTime.now());
-        orderRepository.save(식사중인_주문);
+        한마리메뉴 = new MenuGroup.Builder()
+                .name("한마리메뉴")
+                .build();
+        menuGroupRepository.save(한마리메뉴);
+
+        한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
+                .menu(null)
+                .product(후라이드치킨)
+                .quantity(1L)
+                .build();
+
+        한마리메뉴_중_후라이드치킨 = new Menu.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .menuGroup(한마리메뉴)
+                .menuProducts(Arrays.asList(한마리메뉴_후라이드치킨))
+                .build();
+        menuRepository.save(한마리메뉴_중_후라이드치킨);
+        menuProductRepository.save(한마리메뉴_후라이드치킨);
+
+        주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(주문_테이블1_요리중인_주문)
+                .quantity(1L)
+                .build();
+
+        주문_테이블1_요리중인_주문 = new Order.Builder()
+                .orderTable(주문_테이블1)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .build();
+        orderRepository.save(주문_테이블1_요리중인_주문);
+        orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
+
+        주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(주문_테이블2_식사중인_주문)
+                .quantity(1L)
+                .build();
+
+        주문_테이블2_식사중인_주문 = new Order.Builder()
+                .orderTable(주문_테이블2)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블2_한마리메뉴_중_후라이트치킨))
+                .build();
+        주문_테이블2_식사중인_주문.changeOrderStatus(OrderStatus.MEAL);
+        orderRepository.save(주문_테이블2_식사중인_주문);
+        orderLineItemRepository.save(주문_테이블2_한마리메뉴_중_후라이트치킨);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블들에 대한 정보를 반환한다")
@@ -114,6 +168,8 @@ class TableAcceptanceTest extends AcceptanceTest {
         OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
         변경할_주문_테이블_EMPTY_요청.setEmpty(true);
         Long 주문_테이블1_ID = 주문_테이블1.getId();
+        주문_테이블1_요리중인_주문.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(주문_테이블1_요리중인_주문);
 
         // when
         testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/empty", 변경할_주문_테이블_EMPTY_요청);

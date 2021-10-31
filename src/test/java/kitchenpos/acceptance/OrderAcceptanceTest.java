@@ -22,9 +22,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("주문 관련 기능")
 class OrderAcceptanceTest extends AcceptanceTest {
 
-    OrderTable 주문_테이블;
+    OrderTable 비어있지않은_주문_테이블;
+    OrderTable 비어있는_주문_테이블;
 
-    Order 주문 = new Order();
+    Order 주문;
 
     MenuGroup 한마리메뉴;
     MenuGroup 두마리메뉴;
@@ -40,19 +41,10 @@ class OrderAcceptanceTest extends AcceptanceTest {
     MenuProduct 두마리메뉴_양념치킨;
     MenuProduct 두마리메뉴_간장치킨;
 
+    OrderLineItem 비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨;
+
     @BeforeEach
     void setUp() {
-        주문_테이블 = new OrderTable.Builder()
-                .numberOfGuests(4)
-                .empty(false)
-                .build();
-        주문_테이블 = orderTableRepository.save(주문_테이블);
-
-        주문.setOrderTable(주문_테이블);
-        주문.setOrderStatus(OrderStatus.COOKING);
-        주문.setOrderedTime(LocalDateTime.now());
-        주문 = orderRepository.save(주문);
-
         한마리메뉴 = new MenuGroup.Builder()
                 .name("한마리메뉴")
                 .build();
@@ -67,19 +59,19 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .name("후라이드치킨")
                 .price(BigDecimal.valueOf(15000))
                 .build();
-        후라이드치킨 = productRepository.save(후라이드치킨);
+        productRepository.save(후라이드치킨);
 
         양념치킨 = new Product.Builder()
                 .name("양념치킨")
                 .price(BigDecimal.valueOf(16000))
                 .build();
-        양념치킨 = productRepository.save(양념치킨);
+        productRepository.save(양념치킨);
 
         간장치킨 = new Product.Builder()
                 .name("간장치킨")
                 .price(BigDecimal.valueOf(16000))
                 .build();
-        간장치킨 = productRepository.save(간장치킨);
+        productRepository.save(간장치킨);
 
         한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
                 .menu(null)
@@ -118,6 +110,32 @@ class OrderAcceptanceTest extends AcceptanceTest {
         menuProductRepository.save(두마리메뉴_양념치킨);
         menuProductRepository.save(두마리메뉴_간장치킨);
 
+        비어있지않은_주문_테이블 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(false)
+                .build();
+        orderTableRepository.save(비어있지않은_주문_테이블);
+
+        비어있는_주문_테이블 = new OrderTable.Builder()
+                .numberOfGuests(0)
+                .empty(true)
+                .build();
+        orderTableRepository.save(비어있는_주문_테이블);
+
+        비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨 = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(주문)
+                .quantity(1L)
+                .build();
+
+        주문 = new Order.Builder()
+                .orderTable(비어있지않은_주문_테이블)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨))
+                .build();
+        orderRepository.save(주문);
+        orderLineItemRepository.save(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨);
     }
 
     @DisplayName("매장에서 발생한 주문들에 대한 정보를 반환한다")
@@ -135,26 +153,45 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void createOrder() {
         // given
-        OrderLineItemRequest 주문3_아이템1 = new OrderLineItemRequest();
-        주문3_아이템1.setMenuId(한마리메뉴_중_후라이드치킨.getId());
-        주문3_아이템1.setQuantity(1L);
+        OrderLineItemRequest 주문_요청_아이템1 = new OrderLineItemRequest();
+        주문_요청_아이템1.setMenuId(한마리메뉴_중_후라이드치킨.getId());
+        주문_요청_아이템1.setQuantity(1L);
 
-        OrderLineItemRequest 주문3_아이템2 = new OrderLineItemRequest();
-        주문3_아이템2.setMenuId(두마리메뉴_중_양념치킨_간장치킨.getId());
-        주문3_아이템2.setQuantity(1L);
+        OrderLineItemRequest 주문_요청_아이템2 = new OrderLineItemRequest();
+        주문_요청_아이템2.setMenuId(두마리메뉴_중_양념치킨_간장치킨.getId());
+        주문_요청_아이템2.setQuantity(1L);
 
-        OrderRequest 주문3 = new OrderRequest();
-        주문3.setOrderTableId(주문_테이블.getId());
-        주문3.setOrderLineItems(Arrays.asList(주문3_아이템1, 주문3_아이템2));
+        OrderRequest 주문_요청 = new OrderRequest();
+        주문_요청.setOrderTableId(비어있지않은_주문_테이블.getId());
+        주문_요청.setOrderLineItems(Arrays.asList(주문_요청_아이템1, 주문_요청_아이템2));
 
         // when
-        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 주문3, OrderResponse.class);
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 주문_요청, OrderResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         OrderResponse 응답된_주문 = response.getBody();
-        assertThat(응답된_주문.getOrderTableId()).isEqualTo(주문_테이블.getId());
+        assertThat(응답된_주문.getOrderTableId()).isEqualTo(비어있지않은_주문_테이블.getId());
         assertThat(응답된_주문.getOrderLineItems()).hasSize(2);
+    }
+
+    @DisplayName("매장에서 발생한 주문 정보를 생성시, 오더 테이블이 비어있으면 안된다.")
+    @Test
+    void cannotCreateOrderWhenOrderTableIsEmpty() {
+        // given
+        OrderLineItemRequest 주문_요청_아이템 = new OrderLineItemRequest();
+        주문_요청_아이템.setMenuId(한마리메뉴_중_후라이드치킨.getId());
+        주문_요청_아이템.setQuantity(1L);
+
+        OrderRequest 주문_요청 = new OrderRequest();
+        주문_요청.setOrderTableId(비어있는_주문_테이블.getId());
+        주문_요청.setOrderLineItems(Arrays.asList(주문_요청_아이템));
+
+        // when
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 주문_요청, OrderResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DisplayName("매장에서 발생한 주문 정보를 생성 시, 등록되지 않은 메뉴로는 주문 정보 생성 할 수 없다")
@@ -168,8 +205,27 @@ class OrderAcceptanceTest extends AcceptanceTest {
         유효하지_않은_주문_아이템.setQuantity(1L);
 
         OrderRequest 유효하지_않은_주문 = new OrderRequest();
-        유효하지_않은_주문.setOrderTableId(주문_테이블.getId());
+        유효하지_않은_주문.setOrderTableId(비어있지않은_주문_테이블.getId());
         유효하지_않은_주문.setOrderLineItems(Arrays.asList(유효하지_않은_주문_아이템));
+
+        // when
+        ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 유효하지_않은_주문, OrderResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("매장에서 발생한 주문 정보를 생성 시, 중복되는 메뉴로 주문 정보 생성할 수 없다.")
+    @Test
+    void cannotCreateOrderWithDuplicateMenu() {
+        // given
+        OrderLineItemRequest 주문_요청_아이템 = new OrderLineItemRequest();
+        주문_요청_아이템.setMenuId(한마리메뉴_중_후라이드치킨.getId());
+        주문_요청_아이템.setQuantity(1L);
+
+        OrderRequest 유효하지_않은_주문 = new OrderRequest();
+        유효하지_않은_주문.setOrderTableId(비어있지않은_주문_테이블.getId());
+        유효하지_않은_주문.setOrderLineItems(Arrays.asList(주문_요청_아이템, 주문_요청_아이템));
 
         // when
         ResponseEntity<OrderResponse> response = testRestTemplate.postForEntity("/api/orders", 유효하지_않은_주문, OrderResponse.class);
@@ -196,16 +252,18 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(변경된_주문.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 
-
     @DisplayName("매장에서 발생한 orderId에 해당하는 주문 정보를 수정 시, 해당 주문 정보의 OrderStatus가 이미 COMPLETION이라면 수정할 수 없다.")
     @Test
     void cannotChangeOrderStatusWhenCompletion() {
         // given
-        Order 완료된_주문 = new Order();
-        완료된_주문.setOrderTable(주문_테이블);
-        완료된_주문.setOrderStatus(OrderStatus.COMPLETION);
-        완료된_주문.setOrderedTime(LocalDateTime.now());
-        완료된_주문 = orderRepository.save(완료된_주문);
+        Order 완료된_주문 = new Order.Builder()
+                .orderTable(비어있지않은_주문_테이블)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨))
+                .build();
+        완료된_주문.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(완료된_주문);
 
         OrderStatusModifyRequest 변경할_주문 = new OrderStatusModifyRequest();
         변경할_주문.setOrderStatus(OrderStatus.MEAL.name());

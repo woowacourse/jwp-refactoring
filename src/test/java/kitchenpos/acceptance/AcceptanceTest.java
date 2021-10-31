@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import kitchenpos.repository.*;
+import kitchenpos.ui.response.OrderLineItemResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -18,6 +19,9 @@ public abstract class AcceptanceTest {
 
     @Autowired
     protected OrderTableRepository orderTableRepository;
+
+    @Autowired
+    protected OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     protected MenuRepository menuRepository;
