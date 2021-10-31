@@ -82,7 +82,7 @@ class ProductServiceTest {
     @Test
     void findAll() {
         // given
-        List<Product> beforeSavedProducts = productDao.findAll();
+        List<Product> beforeSavedProducts = productService.list();
 
         beforeSavedProducts.add(productDao.save(Product를_생성한다("치즈버거", 4_500)));
         beforeSavedProducts.add(productDao.save(Product를_생성한다("치킨버거", 5_000)));
