@@ -84,20 +84,20 @@
 
 # 메뉴상품(MenuProduct)
 ## 저장 
-- [ ] 메뉴상품이 DB에 저장된다.
-- [ ] 동일한  menuid, productId, quantity의 메뉴상품을 저장 할 수 있다.  
+- [x] 메뉴상품이 DB에 저장된다.
+- [x] 동일한  menuid, productId, quantity의 메뉴상품을 저장 할 수 있다.  
 ### 제약사항
-- [ ] DB에서 menu_id를 가지는 메뉴가 존재해야한다.
-- [ ] DB에서 menu_id는 null을 허용하지 않는다.
-- [ ] DB에서 product_id를 가지는 상품이 존재해야한다.
-- [ ] DB에서 product_id는 null을 허용하지 않는다.
+- [x] DB에서 menu_id를 가지는 메뉴가 존재해야한다.
+- [x] DB에서 menu_id는 null을 허용하지 않는다.
+- [x] DB에서 product_id를 가지는 상품이 존재해야한다.
+- [x] DB에서 product_id는 null을 허용하지 않는다.
 ## 조회 
-- [ ] id로 DB의 메뉴상품을 찾아 반환한다.
-  - [ ] DB에 저장된 메뉴상품이 없다면 빈 Optional 객체를 반환한다.
-- [ ] DB에 저장된 모든 메뉴상품을 반환한다.
+- [x] id로 DB의 메뉴상품을 찾아 반환한다.
+  - [x] DB에 저장된 메뉴상품이 없다면 빈 Optional 객체를 반환한다.
+- [x] DB에 저장된 모든 메뉴상품을 반환한다.
   - [ ] DB에 저장된 메뉴상품이 없으면 빈 배열을 반환한다.
-- [ ] menuId로 모든 menuProducts를 반환한다. 
-  - [ ] DB의 메뉴상품에 저장된 menuId가 없다면 빈 배열을 반환한다. 
+- [x] menuId로 모든 menuProducts를 반환한다. 
+  - [x] DB의 메뉴상품에 저장된 menuId가 없다면 빈 배열을 반환한다. 
 
 # 주문테이블(OrderTable)
 ## 저장
