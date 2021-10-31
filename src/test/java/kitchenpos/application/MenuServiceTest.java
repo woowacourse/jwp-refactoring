@@ -1,13 +1,11 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
 
-import java.util.ArrayList;
-import java.util.List;
+import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.domain.MenuGroup;
-import org.junit.jupiter.api.BeforeAll;
+import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.ProductDao;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,50 +16,38 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    private static final MenuGroup standardMenuGroup = new MenuGroup();
-    private static final List<MenuGroup> standardMenuGroups = new ArrayList<>();
+    @Mock
+    private MenuDao menuDao;
 
     @Mock
     private MenuGroupDao menuGroupDao;
 
-    @InjectMocks
-    private MenuGroupService menuGroupService;
+    @Mock
+    private MenuProductDao menuProductDao;
 
-    @BeforeAll
-    static void beforeSetUp() {
-        standardMenuGroup.setId(1L);
-        standardMenuGroup.setName("메뉴이름");
-        standardMenuGroups.add(standardMenuGroup);
-    }
+    @Mock
+    private ProductDao productDao;
+
+    @InjectMocks
+    private MenuService menuService;
 
     @Test
-    @DisplayName("그룹 생성 테스트")
+    @DisplayName("테스트 이름")
     void create() {
         //given
-        MenuGroup request = new MenuGroup();
-        request.setName(standardMenuGroup.getName());
-
-        given(menuGroupDao.save(request)).willReturn(standardMenuGroup);
 
         //when
-        MenuGroup menuGroup = menuGroupService.create(request);
 
         //then
-        assertThat(menuGroup).isNotNull();
-        assertThat(menuGroup.getId()).isNotZero();
-        assertThat(menuGroup).usingRecursiveComparison()
-            .isEqualTo(standardMenuGroup);
     }
 
     @Test
-    @DisplayName("리스트 반환 테스트")
+    @DisplayName("테스트 이름")
     void list() {
         //given
-        given(menuGroupDao.findAll()).willReturn(standardMenuGroups);
+
         //when
-        List<MenuGroup> list = menuGroupService.list();
+
         //then
-        assertThat(list).hasSize(1).
-            containsExactly(standardMenuGroup);
     }
 }
