@@ -1,10 +1,19 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.OrderService;
-import kitchenpos.domain.Order;
+import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderResponse;
+import kitchenpos.ui.dto.OrderStatusRequest;
+import kitchenpos.ui.dto.OrderStatusResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -16,27 +25,27 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/orders")
-    public ResponseEntity<Order> create(@RequestBody final Order order) {
-        final Order created = orderService.create(order);
-        final URI uri = URI.create("/api/orders/" + created.getId());
+    @PostMapping("/api/order")
+    public ResponseEntity<OrderResponse> create(@RequestBody @Valid final OrderRequest orderRequest) {
+        final OrderResponse orderResponse = orderService.create(orderRequest);
+        final URI uri = URI.create("/api/order/" + orderResponse.getId());
         return ResponseEntity.created(uri)
-                .body(created)
+                .body(orderResponse)
                 ;
     }
 
-    @GetMapping("/api/orders")
-    public ResponseEntity<List<Order>> list() {
+    @GetMapping("/api/order")
+    public ResponseEntity<List<OrderResponse>> list() {
         return ResponseEntity.ok()
                 .body(orderService.list())
                 ;
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
-    public ResponseEntity<Order> changeOrderStatus(
+    @PutMapping("/api/order/{orderId}/order-status")
+    public ResponseEntity<OrderStatusResponse> changeOrderStatus(
             @PathVariable final Long orderId,
-            @RequestBody final Order order
+            @RequestBody final OrderStatusRequest orderStatusRequest
     ) {
-        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, order));
+        return ResponseEntity.ok(orderService.changeOrderStatus(orderId, orderStatusRequest));
     }
 }

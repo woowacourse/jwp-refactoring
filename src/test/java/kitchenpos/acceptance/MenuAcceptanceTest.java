@@ -3,42 +3,42 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import java.util.HashMap;
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 인수 테스트")
-public class MenuAcceptanceTest extends AcceptanceTest {
+public class MenuAcceptanceTest extends DomainAcceptanceTest {
     @DisplayName("POST /api/menus")
     @Test
     void create() {
         // given
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(2);
+        Long productId = POST_SAMPLE_PRODUCT();
+        Long menuGroupId = POST_SAMPLE_MENU_GROUP();
 
-        // when
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", "후라이드+후라이드");
-        params.put("price", "19000.00");
-        params.put("menuGroupId", "1");
-        params.put("menuProducts", singletonList(menuProduct));
+        MenuProductRequest menuProductRequest = MenuProductRequest.from(productId, 2L);
+        MenuRequest menuRequest = MenuRequest.of(
+                "후라이드+후라이드",
+                BigDecimal.valueOf(19000.00),
+                menuGroupId,
+                singletonList(menuProductRequest)
+        );
 
         // then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(params)
+                .body(menuRequest)
                 .when().post("/api/menus")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
@@ -53,6 +53,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         // given - when
+        POST_SAMPLE_MENU();
 
         // then
         ExtractableResponse<Response> response = RestAssured
@@ -62,7 +63,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
                 .statusCode(HttpStatus.OK.value())
                 .extract();
 
-        List<Menu> menus = convertBodyToList(response, Menu.class);
+        List<MenuResponse> menus = convertBodyToList(response, MenuResponse.class);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(menus).isNotNull();
         assertThat(menus).isNotEmpty();
