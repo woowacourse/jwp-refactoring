@@ -27,7 +27,7 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(Builder builder) {
+    private Menu(Builder builder) {
         validateMenuProductsPrice(builder.menuProducts, builder.price);
         this.id = builder.id;
         this.name = builder.name;
@@ -41,15 +41,18 @@ public class Menu {
         if (Objects.isNull(menuProducts)) {
             throw new IllegalArgumentException();
         }
+        BigDecimal totalPriceOfSingleMenuProduct = calculateMenuProductsPrice(menuProducts);
+        if (price.compareTo(totalPriceOfSingleMenuProduct) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
 
+    private BigDecimal calculateMenuProductsPrice(List<MenuProduct> menuProducts) {
         BigDecimal totalPriceOfSingleMenuProduct = BigDecimal.ZERO;
         for (MenuProduct menuProduct : menuProducts) {
             totalPriceOfSingleMenuProduct = totalPriceOfSingleMenuProduct.add(menuProduct.calculatePrice());
         }
-
-        if (price.compareTo(totalPriceOfSingleMenuProduct) > 0) {
-            throw new IllegalArgumentException();
-        }
+        return totalPriceOfSingleMenuProduct;
     }
 
     public void registerMenuToMenuProducts(List<MenuProduct> menuProducts) {

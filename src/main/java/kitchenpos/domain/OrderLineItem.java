@@ -19,7 +19,7 @@ public class OrderLineItem {
     public OrderLineItem() {
     }
 
-    public OrderLineItem(Builder builder) {
+    private OrderLineItem(Builder builder) {
         this.seq = builder.seq;
         this.order = builder.order;
         this.menu = builder.menu;

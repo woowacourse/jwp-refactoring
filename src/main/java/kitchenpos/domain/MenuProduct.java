@@ -21,7 +21,7 @@ public class MenuProduct {
     public MenuProduct() {
     }
 
-    public MenuProduct(Builder builder) {
+    private MenuProduct(Builder builder) {
         this.seq = builder.seq;
         this.menu = builder.menu;
         this.product = builder.product;

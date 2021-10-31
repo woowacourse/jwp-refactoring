@@ -22,7 +22,6 @@ public class TableService {
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
         OrderTable newOrderTable = new OrderTable.Builder()
-                .id(null)
                 .tableGroup(null)
                 .numberOfGuests(orderTableRequest.getNumberOfGuests())
                 .empty(orderTableRequest.isEmpty())

@@ -17,7 +17,7 @@ public class MenuGroup {
     public MenuGroup() {
     }
 
-    public MenuGroup(Builder builder) {
+    private MenuGroup(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
     }

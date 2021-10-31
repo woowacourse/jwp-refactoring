@@ -19,11 +19,11 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public TableGroup(Builder builder) {
+    private TableGroup(Builder builder) {
         this.id = builder.id;
         this.createdDate = builder.createdDate;
-        registerOrderTables(builder.orderTables);
         this.orderTables = builder.orderTables;
+        registerOrderTables(builder.orderTables);
     }
 
     private void registerOrderTables(List<OrderTable> orderTables) {

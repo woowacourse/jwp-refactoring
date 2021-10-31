@@ -29,7 +29,6 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final List<OrderTable> orderTables = findOrderTables(tableGroupRequest.getOrderTables());
-
         final TableGroup tableGroup = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
                 .orderTables(orderTables)
@@ -49,11 +48,9 @@ public class TableGroupService {
                 .collect(Collectors.toList());
 
         final List<OrderTable> foundOrderTables = orderTableRepository.findAllById(orderTableIds);
-
         if (orderTableIdRequests.size() != foundOrderTables.size()) {
             throw new IllegalArgumentException();
         }
-
         return foundOrderTables;
     }
 

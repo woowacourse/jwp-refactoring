@@ -19,7 +19,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(Builder builder) {
+    private Product(Builder builder) {
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;

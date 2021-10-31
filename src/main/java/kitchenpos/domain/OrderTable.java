@@ -23,7 +23,7 @@ public class OrderTable {
     public OrderTable() {
     }
 
-    public OrderTable(Builder builder) {
+    private OrderTable(Builder builder) {
         this.id = builder.id;
         this.tableGroup = builder.tableGroup;
         this.numberOfGuests = builder.numberOfGuests;
@@ -36,9 +36,7 @@ public class OrderTable {
 
     public void ungroupFromTableGroup() {
         for (Order order : orders) {
-            if (order.isNotCompleted()) {
-                throw new IllegalArgumentException();
-            }
+            checkOrderIsCompleted(order);
         }
         this.tableGroup = null;
         this.empty = false;
@@ -49,11 +47,16 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         for (Order order : orders) {
-            if (order.isNotCompleted()) {
-                throw new IllegalArgumentException();
-            }
+            checkOrderIsCompleted(order);
         }
         this.empty = empty;
+    }
+
+    private void checkOrderIsCompleted(Order order) {
+        if (order.isCompleted()) {
+            return;
+        }
+        throw new IllegalArgumentException();
     }
 
     public void changeNumberOfGuests(Integer numberOfGuests) {

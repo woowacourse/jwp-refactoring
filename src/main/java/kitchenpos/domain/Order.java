@@ -29,7 +29,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(Builder builder) {
+    private Order(Builder builder) {
         validateOrderTable(builder.orderTable);
         validateOrderLineItems(builder.orderLineItems);
         validateOrderStatus(builder.orderStatus);
@@ -115,8 +115,8 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public boolean isNotCompleted() {
-        return !OrderStatus.COMPLETION.equals(this.orderStatus);
+    public boolean isCompleted() {
+        return OrderStatus.COMPLETION.equals(this.orderStatus);
     }
 
     public static class Builder {

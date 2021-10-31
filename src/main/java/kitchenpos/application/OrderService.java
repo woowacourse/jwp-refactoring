@@ -36,13 +36,13 @@ public class OrderService {
     public OrderResponse create(final OrderRequest orderRequest) {
         final OrderTable orderTable = findOrderTable(orderRequest.getOrderTableId());
         final List<OrderLineItem> orderLineItems = generateOrderLineItems(orderRequest.getOrderLineItems());
-
         final Order order = new Order.Builder()
                 .orderTable(orderTable)
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(orderLineItems)
                 .build();
+
         orderRepository.save(order);
         return OrderResponse.of(order);
     }
