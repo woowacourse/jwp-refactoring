@@ -39,7 +39,7 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.notGroupedTable()));
-        tableService.changeEmpty(0L, OrderTableFixture.orderTable());
+        tableService.changeEmpty(0L, OrderTableFixture.notGroupedTable());
     }
 
     @DisplayName("주문 테이블을 비울 시 주문 테이블 id가 존재해야 한다")
@@ -59,7 +59,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블을 비울 시 요리중이거나 식사중인 상태일 수 없다")
     @Test
     void changeInvalidStatus() {
-
+        when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.notGroupedTable()));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
 
         assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderTable())).
