@@ -80,7 +80,6 @@
     - [x] 예외
       - [x] TableGroupRequest
         - [x] orderTableRequests
-          - [x] empty
           - [x] size < 2
           - [x] DB에서 조회한 OrderTable들
             - [x] 존재하지 않을 때

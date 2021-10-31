@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.tablegroup.TableGroupRequest;
 import kitchenpos.exception.NotFoundException;
@@ -154,8 +154,8 @@ class TableGroupIntegrationTest extends IntegrationTest {
     void ungroup_Success() throws Exception {
         // given
         final TableGroup tableGroup = TableGroup을_저장한다();
-        final OrderTable orderTable1 = OrderTable을_저장한다(tableGroup);
-        final OrderTable orderTable2 = OrderTable을_저장한다(tableGroup);
+        final OrderTable orderTable1 = OrderTable을_저장한다(tableGroup, 0, true);
+        final OrderTable orderTable2 = OrderTable을_저장한다(tableGroup, 0, true);
         Order를_저장한다(orderTable1, OrderStatus.COMPLETION);
         Order를_저장한다(orderTable1, OrderStatus.COMPLETION);
 
@@ -177,8 +177,8 @@ class TableGroupIntegrationTest extends IntegrationTest {
     void ungroup_Fail_When_OrderStatusIsCookingOrMeal(OrderStatus orderStatus) throws Exception {
         // given
         final TableGroup tableGroup = TableGroup을_저장한다();
-        final OrderTable orderTable1 = OrderTable을_저장한다(tableGroup);
-        final OrderTable orderTable2 = OrderTable을_저장한다(tableGroup);
+        final OrderTable orderTable1 = 비어있지_않은_OrderTable을_저장한다(tableGroup);
+        final OrderTable orderTable2 = 비어있지_않은_OrderTable을_저장한다(tableGroup);
         Order를_저장한다(orderTable1, orderStatus);
         Order를_저장한다(orderTable2, OrderStatus.COMPLETION);
 
@@ -196,7 +196,7 @@ class TableGroupIntegrationTest extends IntegrationTest {
         assertThat(foundOrderTables).containsExactly(orderTable1, orderTable2);
     }
 
-    private OrderTable OrderTable을_저장한다(TableGroup tableGroup) {
+    private OrderTable 비어있지_않은_OrderTable을_저장한다(TableGroup tableGroup) {
         return OrderTable을_저장한다(tableGroup, 1, false);
     }
 

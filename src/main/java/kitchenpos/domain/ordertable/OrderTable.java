@@ -90,7 +90,7 @@ public class OrderTable {
         }
     }
 
-    public void validateIsEmpty() {
+    public void validateEmpty() {
         if (!empty) {
             throw new InvalidStateException("OrderTable이 비어있지 않습니다.");
         }
@@ -134,7 +134,12 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void removeTableGroup() {
+    public void ungroup() {
+        removeTableGroup();
+        changeEmpty(false);
+    }
+
+    private void removeTableGroup() {
         tableGroup = null;
     }
 

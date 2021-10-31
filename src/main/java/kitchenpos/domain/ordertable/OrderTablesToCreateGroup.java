@@ -5,56 +5,42 @@ import java.util.List;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.InvalidStateException;
 
-public class OrderTables {
+public class OrderTablesToCreateGroup {
 
     private final List<OrderTable> orderTables;
 
-    public OrderTables() {
-        orderTables = new ArrayList<>();
+    public OrderTablesToCreateGroup(List<OrderTable> orderTables) {
+        validate(orderTables);
+        this.orderTables = new ArrayList<>(orderTables);
     }
 
-    public void add(OrderTable orderTable) {
-        orderTables.add(orderTable);
+    private void validate(List<OrderTable> orderTables) {
+        validateMinSize(orderTables);
+        validateEachOrderTables(orderTables);
     }
 
-    public void validate() {
-        validateSize();
-        validateEachOrderTables();
-    }
-
-    private void validateSize() {
+    private void validateMinSize(List<OrderTable> orderTables) {
         if (orderTables.size() < 2) {
             throw new InvalidStateException("OrderTable들의 개수가 2 이상이어야 합니다.");
         }
     }
 
-    private void validateEachOrderTables() {
+    private void validateEachOrderTables(List<OrderTable> orderTables) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.validateIsEmpty();
+            orderTable.validateEmpty();
             orderTable.validateTableGroupIsNull();
-        }
-    }
-
-    public void ungroup() {
-        removeTableGroupOfAll();
-        changeAllEmptyToFalse();
-    }
-
-    private void removeTableGroupOfAll() {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.removeTableGroup();
-        }
-    }
-
-    public void assign(TableGroup tableGroup) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.assign(tableGroup);
         }
     }
 
     public void changeAllEmptyToFalse() {
         for (OrderTable orderTable : orderTables) {
             orderTable.changeEmpty(false);
+        }
+    }
+
+    public void assign(TableGroup tableGroup) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.assign(tableGroup);
         }
     }
 
