@@ -1,7 +1,6 @@
 package kitchenpos;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -11,7 +10,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 
 public class Fixtures {
 
@@ -21,7 +19,6 @@ public class Fixtures {
 
     public static MenuProduct makeMenuProduct() {
         MenuProduct menuProduct = new MenuProduct();
-
 
         return menuProduct;
     }
@@ -39,7 +36,6 @@ public class Fixtures {
 
     public static OrderLineItem makeOrderLineItem() {
         OrderLineItem orderLineItem = new OrderLineItem();
-
 
         return orderLineItem;
     }

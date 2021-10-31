@@ -17,7 +17,6 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -49,7 +48,6 @@ class TableGroupServiceTest {
     void setUp() {
         orderTables = new ArrayList<>();
         orderTable = Fixtures.makeOrderTable();
-
 
         orderTable2 = new OrderTable(2L, null, 1, true);
 

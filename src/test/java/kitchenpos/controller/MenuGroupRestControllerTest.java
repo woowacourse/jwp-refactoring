@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.ui.MenuGroupRestController;

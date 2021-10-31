@@ -9,7 +9,8 @@ import javax.persistence.Id;
 @Entity
 public class Product {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private BigDecimal price;

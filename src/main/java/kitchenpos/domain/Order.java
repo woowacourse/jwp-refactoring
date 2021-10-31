@@ -2,8 +2,6 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -17,11 +15,12 @@ import org.hibernate.annotations.CreationTimestamp;
 @Entity
 public class Order {
 
-    @Id @GeneratedValue
-    private Long id;
+    @Id
+    @GeneratedValue
+    private final Long id;
 
     @ManyToOne
-    private OrderTable orderTable;
+    private final OrderTable orderTable;
     @Enumerated
     private OrderStatus orderStatus;
 
@@ -29,13 +28,14 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItem> orderLineItems;
 
     public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this(orderTable, orderStatus, new ArrayList<>());
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus,
+        List<OrderLineItem> orderLineItems) {
         this(null, orderTable, orderStatus, orderLineItems);
     }
 

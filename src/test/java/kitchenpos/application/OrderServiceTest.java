@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -109,7 +109,8 @@ class OrderServiceTest {
         given(orderRepository.findById(anyLong()))
             .willReturn(Optional.of(order));
 
-        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(), Collections.singletonList(1L));
+        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(),
+            Collections.singletonList(1L));
 
         orderService.changeOrderStatus(1L, orderRequest);
 

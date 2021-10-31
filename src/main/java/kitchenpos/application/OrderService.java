@@ -1,8 +1,12 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
@@ -14,23 +18,19 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 @Service
 public class OrderService {
+
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuRepository menuRepository,
-            final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+        final MenuRepository menuRepository,
+        final OrderRepository orderRepository,
+        final OrderLineItemRepository orderLineItemRepository,
+        final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
@@ -50,8 +50,8 @@ public class OrderService {
         }
 
         final List<Menu> menus = orderLineItems.stream()
-                .map(OrderLineItem::getMenu)
-                .collect(Collectors.toList());
+            .map(OrderLineItem::getMenu)
+            .collect(Collectors.toList());
 
         long count = menus.stream()
             .map(menu -> menuRepository.countById(menu.getId()))
@@ -61,9 +61,8 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -97,7 +96,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
             throw new IllegalArgumentException();

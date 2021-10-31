@@ -1,13 +1,12 @@
 package kitchenpos.dto;
 
 import java.util.List;
-import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
 
-    private Long orderTableId;
-    private String orderStatus;
-    private List<Long> orderLineItemIds;
+    private final Long orderTableId;
+    private final String orderStatus;
+    private final List<Long> orderLineItemIds;
 
     public OrderRequest(Long orderTableId, String orderStatus,
         List<Long> orderLineItemIds) {

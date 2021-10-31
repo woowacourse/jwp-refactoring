@@ -1,5 +1,8 @@
 package kitchenpos.application;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
@@ -7,22 +10,18 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableRequest;
-import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-
 @Service
 public class TableService {
+
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository,
+    public TableService(final OrderRepository orderRepository,
+        final OrderTableRepository orderTableRepository,
         final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
@@ -44,16 +43,17 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
+    public OrderTable changeEmpty(final Long orderTableId,
+        final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
-                orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
+            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
             throw new IllegalArgumentException();
         }
 
@@ -71,7 +71,7 @@ public class TableService {
         }
 
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException();

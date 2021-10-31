@@ -1,14 +1,13 @@
 package kitchenpos.dto;
 
 import java.util.List;
-import kitchenpos.domain.MenuProduct;
 
 public class MenuRequest {
 
-    private String name;
-    private double price;
-    private Long menuGroupId;
-    private List<Long> menuProductIds;
+    private final String name;
+    private final double price;
+    private final Long menuGroupId;
+    private final List<Long> menuProductIds;
 
     public MenuRequest(String name, double price, Long menuGroupId, List<Long> menuProductIds) {
         this.name = name;

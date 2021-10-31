@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
-import kitchenpos.Fixtures;
 import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;

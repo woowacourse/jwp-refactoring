@@ -2,7 +2,6 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -14,7 +13,8 @@ import javax.persistence.OneToOne;
 @Entity
 public class Menu {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
     private String name;
     private BigDecimal price;
@@ -23,7 +23,7 @@ public class Menu {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts = new ArrayList<>();
+    private final List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
 

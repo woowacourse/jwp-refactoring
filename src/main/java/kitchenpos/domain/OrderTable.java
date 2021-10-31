@@ -8,7 +8,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class OrderTable {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne

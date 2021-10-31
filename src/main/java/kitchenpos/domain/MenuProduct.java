@@ -8,7 +8,8 @@ import javax.persistence.ManyToOne;
 @Entity
 public class MenuProduct {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long seq;
 
     @ManyToOne

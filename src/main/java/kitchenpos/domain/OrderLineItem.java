@@ -4,12 +4,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import org.springframework.stereotype.Repository;
 
 @Entity
 public class OrderLineItem {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long seq;
 
     @ManyToOne

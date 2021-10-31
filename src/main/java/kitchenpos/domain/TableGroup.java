@@ -11,12 +11,14 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
-    @Id @GeneratedValue
+
+    @Id
+    @GeneratedValue
     private Long id;
     private LocalDateTime createdDate;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<OrderTable> orderTables = new ArrayList<>();
+    private final List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {
 
