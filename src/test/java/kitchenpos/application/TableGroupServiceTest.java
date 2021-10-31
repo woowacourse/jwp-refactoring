@@ -12,10 +12,10 @@ import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.request.TableGroupRequest.OrderTableId;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -58,14 +58,13 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("테이블 단체 정상 생성")
     void create() {
-        TableGroup saved = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse saved = tableGroupService.create(tableGroupRequest);
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getCreatedDate());
-        assertThat(saved.getGroupTables().toList())
+        assertThat(saved.getOrderTableIds())
                 .hasSize(2)
-                .allMatch(table -> !table.isEmpty())
-                .allMatch(table -> Objects.equals(table.getTableGroup(), saved));
+                .allMatch(Objects::nonNull);
     }
 
     @Test
@@ -120,7 +119,7 @@ class TableGroupServiceTest {
     @Test
     @DisplayName("단체 지정 정상 취소")
     void ungroup() {
-        TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupRequest);
 
         tableGroupService.ungroup(tableGroup.getId());
 
@@ -134,7 +133,7 @@ class TableGroupServiceTest {
     @ParameterizedTest(name = "단체 지정 취소 실패 :: 주문 상태 {0} 테이블 포함")
     @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
     void ungroupTableGroupOfTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
-        TableGroup tableGroup = tableGroupService.create(tableGroupRequest);
+        TableGroupResponse tableGroup = tableGroupService.create(tableGroupRequest);
 
         orderRepository.save(
                 new Order(table1, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));

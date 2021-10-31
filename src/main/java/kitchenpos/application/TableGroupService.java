@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.application.dto.request.TableGroupRequest;
+import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.application.mapper.TableGroupMapper;
 import kitchenpos.domain.GroupTables;
 import kitchenpos.domain.TableGroup;
@@ -28,12 +29,12 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroupRequest tableGroupRequest) {
+    public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         TableGroup tableGroup = tableGroupMapper.mapFrom(tableGroupRequest);
         tableGroup.register();
         tableGroupRepository.save(tableGroup);
         orderTableRepository.saveAll(tableGroup.getGroupTables().toList());
-        return tableGroup;
+        return TableGroupResponse.of(tableGroup);
     }
 
     @Transactional
