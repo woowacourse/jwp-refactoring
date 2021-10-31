@@ -4,14 +4,17 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.application.ProductService;
+import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 public class ProductServiceTest extends ServiceTest {
-
+    @Mock
+    private ProductDao productDao;
     @InjectMocks
     private ProductService productService;
 
