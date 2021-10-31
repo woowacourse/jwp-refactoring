@@ -1,8 +1,7 @@
-package kitchenpos.table.domain;
+package kitchenpos.tablegroup.domain;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.table.domain.TableGroup;
 
 public interface TableGroupDao {
 

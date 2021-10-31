@@ -1,9 +1,9 @@
-package kitchenpos.table.infrastructure;
+package kitchenpos.ordertable.infrastructure;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableDao;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 

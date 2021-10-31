@@ -5,8 +5,8 @@ import kitchenpos.menu.domain.MenuDao;
 import kitchenpos.order.application.OrderStartedEvent;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableDao;
+import kitchenpos.ordertable.domain.OrderTable;
+import kitchenpos.ordertable.domain.OrderTableDao;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
