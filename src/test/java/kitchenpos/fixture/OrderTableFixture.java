@@ -22,6 +22,8 @@ public class OrderTableFixture {
     public static final OrderTable TO_EMPTY_TRUE;
     public static final OrderTable TO_EMPTY_FALSE;
     public static final OrderTable TO_NUMBER_OF_GUESTS_FIVE;
+    public static final OrderTable TABLE_BEFORE_SAVE;
+    public static final OrderTable TABLE_BEFORE_SAVE_EMPTY_FALSE;
 
 
     static {
@@ -40,6 +42,8 @@ public class OrderTableFixture {
         TO_EMPTY_TRUE = newInstance(null, true);
         TO_EMPTY_FALSE = newInstance(null, false);
         TO_NUMBER_OF_GUESTS_FIVE = newInstance(null, false, 5);
+        TABLE_BEFORE_SAVE = newInstance(null, true);
+        TABLE_BEFORE_SAVE_EMPTY_FALSE = newInstance(null, false);
     }
 
     public static List<OrderTable> orderTables() {

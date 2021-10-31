@@ -1,10 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.CustomParameterizedTest;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.fixture.OrderFixture;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -15,26 +17,34 @@ import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
 
 @DisplayName("Table 비즈니스 흐름 테스트")
 @Transactional
 @SpringBootTest
 class TableServiceTest {
-    @Autowired
     private TableService tableService;
     @Autowired
-    private TableGroupService tableGroupService;
+    private OrderTableDao orderTableDao;
     @Autowired
-    private OrderService orderService;
+    private TableGroupService tableGroupService;
+    @Mock
+    private OrderDao orderDao;
+
+    private OrderTable orderTable;
 
     private static Stream<Arguments> create() {
         return Stream.of(
@@ -43,6 +53,12 @@ class TableServiceTest {
                 Arguments.of(OrderTableFixture.SECOND.getTableGroupId(), true),
                 Arguments.of(null, true)
         );
+    }
+
+    @BeforeEach
+    void init() {
+        tableService = new TableService(orderDao, orderTableDao);
+        orderTable = tableService.create(OrderTableFixture.TABLE_BEFORE_SAVE);
     }
 
     @DisplayName("주문테이블 저장 - 성공")
@@ -73,9 +89,9 @@ class TableServiceTest {
     void changeEmpty() {
         //given
         //when
-        final OrderTable actual = tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_TRUE);
+        final OrderTable actual = tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_TRUE);
         //then
-        assertThat(actual.getId()).isEqualTo(OrderTableFixture.FIRST.getId());
+        assertThat(actual.getId()).isEqualTo(orderTable.getId());
         assertThat(actual.isEmpty()).isTrue();
     }
 
@@ -93,10 +109,14 @@ class TableServiceTest {
     @Test
     void changeEmptyWhenOrderTableAssignTableGroup() {
         //given
-        tableGroupService.create(TableGroupFixture.FIRST_SECOND_TABLE);
+        final OrderTable firstTable = orderTableDao.save(OrderTableFixture.TABLE_BEFORE_SAVE);
+        final OrderTable secondTable = orderTableDao.save(OrderTableFixture.TABLE_BEFORE_SAVE);
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(Arrays.asList(firstTable, secondTable));
         //when
+        final TableGroup expect = tableGroupService.create(tableGroup);
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_TRUE))
+        assertThatThrownBy(() -> tableService.changeEmpty(expect.getOrderTables().get(0).getId(), OrderTableFixture.TO_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -104,11 +124,13 @@ class TableServiceTest {
     @Test
     void changeEmptyWhenOrderTableOrderIsNotCOMPLETION() {
         //given
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+                .willReturn(false)
+                .willReturn(true);
         //when
-        tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_FALSE);
-        orderService.create(OrderFixture.FIRST_TABLE_후라이드치킨_하나);
+        tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_FALSE);
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_TRUE))
+        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -117,8 +139,8 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         //given
         //when
-        tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_FALSE);
-        final OrderTable actual = tableService.changeNumberOfGuests(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE);
+        tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_FALSE);
+        final OrderTable actual = tableService.changeNumberOfGuests(orderTable.getId(), OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE);
         //then
         assertThat(actual.getNumberOfGuests()).isEqualTo(OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE.getNumberOfGuests());
     }
@@ -128,7 +150,7 @@ class TableServiceTest {
     void changeNumberOfGuestsFailureWhenNotFoundOrderTable() {
         //given
         //when
-        tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_FALSE);
+        tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_FALSE);
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, OrderTableFixture.TO_EMPTY_FALSE))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -142,9 +164,9 @@ class TableServiceTest {
         final OrderTable expect = new OrderTable();
         expect.setNumberOfGuests(numberOfGuests);
         //when
-        tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_FALSE);
+        tableService.changeEmpty(orderTable.getId(), OrderTableFixture.TO_EMPTY_FALSE);
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(OrderTableFixture.FIRST.getId(), expect))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), expect))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -153,9 +175,8 @@ class TableServiceTest {
     void changeNumberOfGuestsFailureWhenTableEmptyTrue() {
         //given
         //when
-        tableService.changeEmpty(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_EMPTY_TRUE);
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

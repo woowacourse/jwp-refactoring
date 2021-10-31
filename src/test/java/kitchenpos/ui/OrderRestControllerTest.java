@@ -49,14 +49,15 @@ class OrderRestControllerTest extends ApiDocument {
     @Test
     void order_change_order_status() throws Exception {
         //given
-        final Order order = new Order();
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
+        final Order requestOrder = new Order();
+        requestOrder.setOrderStatus(OrderStatus.COMPLETION.name());
+        final Order responseOrder = OrderFixture.FIRST_TABLE_후라이드치킨_하나_COMPLETION;
         //when
-        willReturn(OrderFixture.FIRST_TABLE_후라이드치킨_하나_COMPLETION).given(orderService)
+        willReturn(responseOrder).given(orderService)
                 .changeOrderStatus(anyLong(), any(Order.class));
-        final ResultActions result = 주문_상태_변경_요청(OrderFixture.FIRST_TABLE_후라이드치킨_하나.getId(), order);
+        final ResultActions result = 주문_상태_변경_요청(OrderFixture.FIRST_TABLE_후라이드치킨_하나.getId(), requestOrder);
         //then
-        주문_상태_변경_성공함(result, OrderFixture.FIRST_TABLE_후라이드치킨_하나_COMPLETION);
+        주문_상태_변경_성공함(result, responseOrder);
     }
 
     private ResultActions 주문_저장_요청(Order order) throws Exception {

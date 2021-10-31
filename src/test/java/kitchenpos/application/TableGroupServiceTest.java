@@ -7,6 +7,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ParameterContext;
@@ -45,10 +46,23 @@ class TableGroupServiceTest {
     @Autowired
     private OrderService orderService;
 
+    private OrderTable firstOrderTableEmptyTrue;
+    private OrderTable secondOrderTableEmptyTrue;
+    private OrderTable orderTableEmptyFalse;
+    private OrderTable orderTableBeforeSave;
+
     private static Stream<Arguments> create() {
         return Stream.of(
                 Arguments.of(NOW, TableGroupFixture.FIRST_SECOND_TABLE_BEFORE_SAVE.getOrderTables())
         );
+    }
+
+    @BeforeEach
+    void setUp() {
+        firstOrderTableEmptyTrue = orderTableDao.save(OrderTableFixture.TABLE_BEFORE_SAVE);
+        secondOrderTableEmptyTrue = orderTableDao.save(OrderTableFixture.TABLE_BEFORE_SAVE);
+        orderTableEmptyFalse = orderTableDao.save(OrderTableFixture.TABLE_BEFORE_SAVE_EMPTY_FALSE);
+        orderTableBeforeSave = OrderTableFixture.TABLE_BEFORE_SAVE;
     }
 
     @DisplayName("단체지정 저장 - 성공")
@@ -86,7 +100,7 @@ class TableGroupServiceTest {
     void createFailureWhenOrderTableLowerThanTwo() {
         //given
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.singletonList(OrderTableFixture.FIRST));
+        tableGroup.setOrderTables(Collections.singletonList(firstOrderTableEmptyTrue));
         //when
         //then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -98,7 +112,7 @@ class TableGroupServiceTest {
     void createFailureWhenOrderTableDoesNotMatches() {
         //given
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(OrderTableFixture.FIRST, OrderTableFixture.NINTH));
+        tableGroup.setOrderTables(Arrays.asList(orderTableBeforeSave, firstOrderTableEmptyTrue));
         //when
         //then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -110,7 +124,7 @@ class TableGroupServiceTest {
     void createFailureWhenOrderTableEmptyFalse() {
         //given
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(OrderTableFixture.FIRST_EMPTY_FALSE, OrderTableFixture.NINTH));
+        tableGroup.setOrderTables(Arrays.asList(orderTableEmptyFalse, firstOrderTableEmptyTrue));
         //when
         //then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -122,8 +136,7 @@ class TableGroupServiceTest {
     void createFailureWhenOrderTableAssignTableGroup() {
         //given
         final TableGroup tableGroup = new TableGroup();
-        tableGroup.setCreatedDate(NOW);
-        tableGroup.setOrderTables(Arrays.asList(OrderTableFixture.FIRST, OrderTableFixture.SECOND));
+        tableGroup.setOrderTables(Arrays.asList(firstOrderTableEmptyTrue, secondOrderTableEmptyTrue));
         //when
         tableGroupService.create(tableGroup);
         //then
@@ -135,8 +148,10 @@ class TableGroupServiceTest {
     @Test
     void unGroupTableGroup() {
         //given
+        final TableGroup tableGroup = new TableGroup();
+        tableGroup.setOrderTables(Arrays.asList(firstOrderTableEmptyTrue, secondOrderTableEmptyTrue));
         //when
-        final TableGroup expect = tableGroupService.create(TableGroupFixture.FIRST_SECOND_TABLE_BEFORE_SAVE);
+        final TableGroup expect = tableGroupService.create(tableGroup);
         tableGroupService.ungroup(expect.getId());
         final Optional<OrderTable> foundOrderTable = orderTableDao.findById(expect.getOrderTables().get(0).getId());
         //then
