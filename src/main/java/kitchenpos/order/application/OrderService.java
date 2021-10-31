@@ -9,8 +9,7 @@ import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.dto.OrderCreateRequestDto;
 import kitchenpos.order.dto.OrderCreateResponseDto;
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableDao;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,16 +18,16 @@ public class OrderService {
 
     private final MenuDao menuDao;
     private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final ApplicationEventPublisher publisher;
 
     public OrderService(
         final MenuDao menuDao,
         final OrderDao orderDao,
-        final OrderTableDao orderTableDao
+        final ApplicationEventPublisher publisher
     ) {
         this.menuDao = menuDao;
         this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -40,25 +39,10 @@ public class OrderService {
 
         final List<Long> menuIds = order.getMenuIds();
 
-        shouldExistingLineItems(orderLineItems, menuIds);
-        shouldNotOrderTableEmpty(order);
+        publisher.publishEvent(new OrderStartedEvent(order, orderLineItems, menuIds));
 
         Order savedOrder = orderDao.save(order);
         return new OrderCreateResponseDto(savedOrder);
-    }
-
-    private void shouldNotOrderTableEmpty(Order order) {
-        OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-            .orElseThrow(IllegalArgumentException::new);
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void shouldExistingLineItems(List<OrderLineItem> orderLineItems, List<Long> menuIds) {
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new IllegalArgumentException();
-        }
     }
 
     public List<Order> list() {
