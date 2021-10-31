@@ -14,3 +14,7 @@
 - [x] Lombok을 사용하지 않는다.
 - [x] JPA를 도입할 경우 `spring.jpa.hibernate.ddl-auto=validate` 옵션을 필수로 준다.
   - [ ] DB 형상관리를 해보자.
+
+
+- [ ] 도메인에 최대한 로직을 위임하자
+- [ ] @Nested를 활용해 코드 중복을 제거하고 계층 구조를 나타내자
