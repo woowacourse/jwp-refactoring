@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -23,6 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("OrderDao 테스트")
 @SpringBootTest
+@Transactional
 class OrderDaoTest {
     @Autowired
     private OrderDao orderDao;

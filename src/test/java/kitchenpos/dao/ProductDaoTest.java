@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Product Dao 테스트")
 @SpringBootTest
+@Transactional
 class ProductDaoTest {
     @Autowired
     private ProductDao productDao;

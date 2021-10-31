@@ -120,13 +120,14 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("주문 조회 - 성공 - 젠처 주문 조회")
+    @DisplayName("주문 조회 - 성공 - 전체 주문 조회")
     @Test
     void findAll() {
         //given
         //when
         final List<Order> actual = orderService.list();
         //then
+        assertThat(actual).hasSize(1);
         assertThat(actual).extracting(Order::getId)
                 .contains(order.getId());
         assertThat(actual).flatExtracting(Order::getOrderLineItems)
