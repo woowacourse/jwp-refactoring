@@ -29,12 +29,16 @@ public class TableGroup {
         this.groupTables = groupTables;
     }
 
-    public Long getId() {
-        return id;
+    public void register() {
+        if (!groupTables.canAssignTableGroup()) {
+            throw new IllegalArgumentException();
+        }
+        groupTables.setTableGroup(this);
+        createdDate = LocalDateTime.now();
     }
 
-    public void setId(final Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -43,13 +47,5 @@ public class TableGroup {
 
     public GroupTables getGroupTables() {
         return groupTables;
-    }
-
-    public void register() {
-        if (!groupTables.canAssignTableGroup()) {
-            throw new IllegalArgumentException();
-        }
-        groupTables.setTableGroup(this);
-        createdDate = LocalDateTime.now();
     }
 }
