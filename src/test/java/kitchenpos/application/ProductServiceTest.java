@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -27,7 +28,7 @@ class ProductServiceTest {
     void create() {
         Product product = new Product("product", BigDecimal.valueOf(1000));
 
-        Product saved = productService.create(product);
+        ProductResponse saved = productService.create(product);
         assertNotNull(saved.getId());
     }
 
@@ -54,7 +55,7 @@ class ProductServiceTest {
         productService.create(new Product("productB", BigDecimal.valueOf(1000)));
         productService.create(new Product("productC", BigDecimal.valueOf(1000)));
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
         assertThat(products).hasSize(3);
     }
 

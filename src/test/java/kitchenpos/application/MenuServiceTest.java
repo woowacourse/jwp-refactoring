@@ -11,6 +11,7 @@ import java.util.Objects;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
@@ -45,7 +46,7 @@ class MenuServiceTest {
     @Autowired
     private MenuProductRepository menuProductRepository;
 
-    private Product product;
+    private ProductResponse product;
     private MenuGroup menuGroup;
     private MenuProductRequest menuProductRequest;
 
