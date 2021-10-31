@@ -69,4 +69,14 @@ class ProductDaoTest {
         assertThat(foundProduct).isNotEmpty();
         assertThat(foundProduct.get().getName()).isEqualTo(ProductFixture.후라이드치킨.getName());
     }
+
+    @DisplayName("상품 조회 - 성공 - 저장된 id가 없을때")
+    @Test
+    void findByIdWhenNotFound() {
+        //given
+        //when
+        final Optional<Product> foundProduct = productDao.findById(0L);
+        //then
+        assertThat(foundProduct).isEmpty();
+    }
 }
