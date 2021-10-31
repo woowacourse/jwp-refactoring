@@ -14,16 +14,16 @@ public class MenuGroupTemplate extends IntegrationTemplate {
         menuGroup.setName(name);
 
         return post(
-                MENU_GROUP_URL,
-                menuGroup,
-                MenuGroup.class
+            MENU_GROUP_URL,
+            menuGroup,
+            MenuGroup.class
         );
     }
 
     public ResponseEntity<MenuGroup[]> list() {
         return get(
-                MENU_GROUP_URL,
-                MenuGroup[].class
+            MENU_GROUP_URL,
+            MenuGroup[].class
         );
     }
 

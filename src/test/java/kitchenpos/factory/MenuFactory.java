@@ -1,10 +1,9 @@
 package kitchenpos.factory;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuFactory {
 
@@ -36,11 +35,11 @@ public class MenuFactory {
 
     public static MenuFactory copy(Menu menu) {
         return new MenuFactory(
-                menu.getId(),
-                menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroupId(),
-                menu.getMenuProducts()
+            menu.getId(),
+            menu.getName(),
+            menu.getPrice(),
+            menu.getMenuGroupId(),
+            menu.getMenuProducts()
         );
     }
 

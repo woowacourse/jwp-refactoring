@@ -1,11 +1,10 @@
 package kitchenpos.integration.templates;
 
+import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.Arrays;
 
 @Component
 public class TableGroupTemplate extends IntegrationTemplate {
@@ -16,20 +15,20 @@ public class TableGroupTemplate extends IntegrationTemplate {
     public ResponseEntity<TableGroup> create(OrderTable... tables) {
         TableGroup tableGroup = new TableGroup();
         tableGroup.setOrderTables(
-                Arrays.asList(tables)
+            Arrays.asList(tables)
         );
 
         return post(
-                TABLE_GROUP_URL,
-                tableGroup,
-                TableGroup.class
+            TABLE_GROUP_URL,
+            tableGroup,
+            TableGroup.class
         );
     }
 
     public ResponseEntity<Void> ungroup(TableGroup createdTableGroup) {
         return delete(
-                UNGROUP_URL,
-                createdTableGroup.getId()
+            UNGROUP_URL,
+            createdTableGroup.getId()
         );
     }
 }

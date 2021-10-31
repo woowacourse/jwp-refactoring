@@ -26,10 +26,10 @@ public class OrderLineItemFactory {
 
     public static OrderLineItemFactory copy(OrderLineItem orderLineItem) {
         return new OrderLineItemFactory(
-                orderLineItem.getSeq(),
-                orderLineItem.getOrderId(),
-                orderLineItem.getMenuId(),
-                orderLineItem.getQuantity()
+            orderLineItem.getSeq(),
+            orderLineItem.getOrderId(),
+            orderLineItem.getMenuId(),
+            orderLineItem.getQuantity()
         );
     }
 

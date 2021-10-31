@@ -2,12 +2,6 @@ package kitchenpos.factory;
 
 import kitchenpos.domain.OrderTable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
 public class OrderTableFactory {
 
     private Long id;
@@ -32,10 +26,10 @@ public class OrderTableFactory {
 
     public static OrderTableFactory copy(OrderTable orderTable) {
         return new OrderTableFactory(
-                orderTable.getId(),
-                orderTable.getTableGroupId(),
-                orderTable.getNumberOfGuests(),
-                orderTable.isEmpty()
+            orderTable.getId(),
+            orderTable.getTableGroupId(),
+            orderTable.getNumberOfGuests(),
+            orderTable.isEmpty()
         );
     }
 

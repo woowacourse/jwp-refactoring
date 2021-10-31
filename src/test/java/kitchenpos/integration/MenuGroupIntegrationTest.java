@@ -1,5 +1,9 @@
 package kitchenpos.integration;
 
+import static kitchenpos.integration.templates.MenuGroupTemplate.MENU_GROUP_URL;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.net.URI;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.MenuGroupTemplate;
@@ -9,11 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-
-import static kitchenpos.integration.templates.MenuGroupTemplate.MENU_GROUP_URL;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 class MenuGroupIntegrationTest {
@@ -62,10 +61,10 @@ class MenuGroupIntegrationTest {
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
         assertThat(body)
-                .hasSize(2)
-                .extracting("name")
-                .containsExactlyInAnyOrder(
-                        menuGroupName, secondMenuGroupName
-                );
+            .hasSize(2)
+            .extracting("name")
+            .containsExactlyInAnyOrder(
+                menuGroupName, secondMenuGroupName
+            );
     }
 }

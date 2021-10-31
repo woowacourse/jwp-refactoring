@@ -15,36 +15,37 @@ public class IntegrationTemplate {
 
     public <T> ResponseEntity<T> get(String url, Class<T> responseType) {
         return testRestTemplate.getForEntity(
-                url,
-                responseType
+            url,
+            responseType
         );
     }
 
     public <T> ResponseEntity<T> post(String url, T request, Class<T> responseType) {
         return testRestTemplate.postForEntity(
-                url,
-                request,
-                responseType
+            url,
+            request,
+            responseType
         );
     }
 
-    public <T, P> ResponseEntity<T> put(String url, P pathVariable , T request, Class<T> responseType) {
+    public <T, P> ResponseEntity<T> put(String url, P pathVariable, T request,
+                                        Class<T> responseType) {
         return testRestTemplate.exchange(
-                url,
-                HttpMethod.PUT,
-                new HttpEntity<>(request),
-                responseType,
-                pathVariable
+            url,
+            HttpMethod.PUT,
+            new HttpEntity<>(request),
+            responseType,
+            pathVariable
         );
     }
 
     public <T> ResponseEntity<Void> delete(String url, T pathVariable) {
         return testRestTemplate.exchange(
-                url,
-                HttpMethod.DELETE,
-                HttpEntity.EMPTY,
-                Void.class,
-                pathVariable
+            url,
+            HttpMethod.DELETE,
+            HttpEntity.EMPTY,
+            Void.class,
+            pathVariable
         );
     }
 }

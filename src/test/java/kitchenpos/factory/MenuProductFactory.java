@@ -26,10 +26,10 @@ public class MenuProductFactory {
 
     public static MenuProductFactory copy(MenuProduct menuProduct) {
         return new MenuProductFactory(
-                menuProduct.getSeq(),
-                menuProduct.getMenuId(),
-                menuProduct.getProductId(),
-                menuProduct.getQuantity()
+            menuProduct.getSeq(),
+            menuProduct.getMenuId(),
+            menuProduct.getProductId(),
+            menuProduct.getQuantity()
         );
     }
 

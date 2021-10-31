@@ -1,5 +1,9 @@
 package kitchenpos.integration;
 
+import static kitchenpos.integration.templates.OrderTableTemplate.TABLE_URL;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.net.URI;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.OrderTableTemplate;
@@ -8,11 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.net.URI;
-
-import static kitchenpos.integration.templates.OrderTableTemplate.TABLE_URL;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 class TableIntegrationTest {
@@ -25,10 +24,10 @@ class TableIntegrationTest {
     void create() {
         // given // when
         ResponseEntity<OrderTable> orderTableResponseEntity = orderTableTemplate
-                .create(
-                        0,
-                        true
-                );
+            .create(
+                0,
+                true
+            );
         HttpStatus statusCode = orderTableResponseEntity.getStatusCode();
         URI location = orderTableResponseEntity.getHeaders().getLocation();
         OrderTable body = orderTableResponseEntity.getBody();
@@ -48,25 +47,25 @@ class TableIntegrationTest {
     void list() {
         // given
         OrderTable createdOrderTable = orderTableTemplate
-                .create(
-                        0,
-                        true)
-                .getBody();
+            .create(
+                0,
+                true)
+            .getBody();
         assertThat(createdOrderTable).isNotNull();
         Long createdOrderTableId = createdOrderTable.getId();
 
         // when
         ResponseEntity<OrderTable[]> orderTablesResponseEntity = orderTableTemplate
-                .list();
+            .list();
         HttpStatus statusCode = orderTablesResponseEntity.getStatusCode();
         OrderTable[] body = orderTablesResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
         assertThat(body)
-                .hasSize(1)
-                .extracting("id")
-                .contains(createdOrderTableId);
+            .hasSize(1)
+            .extracting("id")
+            .contains(createdOrderTableId);
     }
 
 
@@ -75,10 +74,10 @@ class TableIntegrationTest {
     void changeEmpty() {
         // given
         OrderTable orderTable = orderTableTemplate
-                .create(
-                        0,
-                        true)
-                .getBody();
+            .create(
+                0,
+                true)
+            .getBody();
         assertThat(orderTable).isNotNull();
         Long orderTableId = orderTable.getId();
 
@@ -86,10 +85,10 @@ class TableIntegrationTest {
         orderTable.setEmpty(false);
 
         ResponseEntity<OrderTable> orderTableResponseEntity = orderTableTemplate
-                .changeEmpty(
-                        orderTableId,
-                        orderTable
-                );
+            .changeEmpty(
+                orderTableId,
+                orderTable
+            );
         HttpStatus statusCode = orderTableResponseEntity.getStatusCode();
         OrderTable body = orderTableResponseEntity.getBody();
 
@@ -104,10 +103,10 @@ class TableIntegrationTest {
     void changeNumberOfGuests() {
         // given
         OrderTable orderTable = orderTableTemplate
-                .create(
-                        0,
-                        false)
-                .getBody();
+            .create(
+                0,
+                false)
+            .getBody();
         assertThat(orderTable).isNotNull();
         Long orderTableId = orderTable.getId();
 
@@ -115,10 +114,10 @@ class TableIntegrationTest {
         orderTable.setNumberOfGuests(4);
 
         ResponseEntity<OrderTable> orderTableResponseEntity = orderTableTemplate
-                .changeNumberOfGuests(
-                        orderTableId,
-                        orderTable
-                );
+            .changeNumberOfGuests(
+                orderTableId,
+                orderTable
+            );
         HttpStatus statusCode = orderTableResponseEntity.getStatusCode();
         OrderTable body = orderTableResponseEntity.getBody();
 

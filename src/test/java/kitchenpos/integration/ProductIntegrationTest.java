@@ -1,5 +1,10 @@
 package kitchenpos.integration;
 
+import static kitchenpos.integration.templates.ProductTemplate.PRODUCT_URL;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.math.BigDecimal;
+import java.net.URI;
 import kitchenpos.domain.Product;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.ProductTemplate;
@@ -9,12 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.math.BigDecimal;
-import java.net.URI;
-
-import static kitchenpos.integration.templates.ProductTemplate.PRODUCT_URL;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @IntegrationTest
 class ProductIntegrationTest {
@@ -37,10 +36,10 @@ class ProductIntegrationTest {
     void create() {
         // given // when
         ResponseEntity<Product> productResponseEntity = productTemplate
-                .create(
-                        productName,
-                        productPrice
-                );
+            .create(
+                productName,
+                productPrice
+            );
         HttpStatus statusCode = productResponseEntity.getStatusCode();
         URI location = productResponseEntity.getHeaders().getLocation();
         Product body = productResponseEntity.getBody();
@@ -51,8 +50,8 @@ class ProductIntegrationTest {
         assertThat(body.getId()).isNotNull();
         assertThat(body.getName()).isEqualTo(productName);
         assertThat(body.getPrice())
-                .usingComparator(BigDecimal::compareTo)
-                .isEqualTo(productPrice);
+            .usingComparator(BigDecimal::compareTo)
+            .isEqualTo(productPrice);
         assertThat(location).isEqualTo(URI.create(PRODUCT_URL + "/" + body.getId()));
     }
 
@@ -61,18 +60,18 @@ class ProductIntegrationTest {
     void list() {
         // given
         productTemplate
-                .create(
-                        productName,
-                        productPrice
-                );
+            .create(
+                productName,
+                productPrice
+            );
 
         String secondProductName = "매콤치킨";
         BigDecimal secondProductPrice = new BigDecimal(18000);
         productTemplate
-                .create(
-                        secondProductName,
-                        secondProductPrice
-                );
+            .create(
+                secondProductName,
+                secondProductPrice
+            );
 
         // when
         ResponseEntity<Product[]> productResponseEntity = productTemplate.list();
@@ -82,10 +81,10 @@ class ProductIntegrationTest {
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
         assertThat(body)
-                .hasSize(2)
-                .extracting("name")
-                .containsExactlyInAnyOrder(
-                        productName, secondProductName
-                );
+            .hasSize(2)
+            .extracting("name")
+            .containsExactlyInAnyOrder(
+                productName, secondProductName
+            );
     }
 }

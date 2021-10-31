@@ -1,10 +1,9 @@
 package kitchenpos.factory;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 
 public class OrderFactory {
 
@@ -19,10 +18,10 @@ public class OrderFactory {
     }
 
     private OrderFactory(Long id,
-                        Long orderTableId,
-                        String orderStatus,
-                        LocalDateTime orderedTime,
-                        List<OrderLineItem> orderLineItems) {
+                         Long orderTableId,
+                         String orderStatus,
+                         LocalDateTime orderedTime,
+                         List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
@@ -36,11 +35,11 @@ public class OrderFactory {
 
     public static OrderFactory copy(Order order) {
         return new OrderFactory(
-                order.getId(),
-                order.getOrderTableId(),
-                order.getOrderStatus(),
-                order.getOrderedTime(),
-                order.getOrderLineItems()
+            order.getId(),
+            order.getOrderTableId(),
+            order.getOrderStatus(),
+            order.getOrderedTime(),
+            order.getOrderLineItems()
         );
     }
 

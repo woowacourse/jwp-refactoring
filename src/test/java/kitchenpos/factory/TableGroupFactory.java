@@ -1,10 +1,9 @@
 package kitchenpos.factory;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class TableGroupFactory {
 
@@ -28,9 +27,9 @@ public class TableGroupFactory {
 
     public static TableGroupFactory copy(TableGroup tableGroup) {
         return new TableGroupFactory(
-                tableGroup.getId(),
-                tableGroup.getCreatedDate(),
-                tableGroup.getOrderTables()
+            tableGroup.getId(),
+            tableGroup.getCreatedDate(),
+            tableGroup.getOrderTables()
         );
     }
 

@@ -1,8 +1,7 @@
 package kitchenpos.factory;
 
-import kitchenpos.domain.Product;
-
 import java.math.BigDecimal;
+import kitchenpos.domain.Product;
 
 public class ProductFactory {
 
@@ -26,9 +25,9 @@ public class ProductFactory {
 
     public static ProductFactory copy(Product product) {
         return new ProductFactory(
-                product.getId(),
-                product.getName(),
-                product.getPrice()
+            product.getId(),
+            product.getName(),
+            product.getPrice()
         );
     }
 

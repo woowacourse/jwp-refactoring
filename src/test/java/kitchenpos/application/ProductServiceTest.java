@@ -1,5 +1,12 @@
 package kitchenpos.application;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.factory.ProductFactory;
@@ -10,15 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-
-import java.math.BigDecimal;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @MockitoSettings
 class ProductServiceTest {
@@ -48,11 +46,11 @@ class ProductServiceTest {
         @BeforeEach
         void setUp() {
             product = ProductFactory.builder()
-                    .price(new BigDecimal(17000))
-                    .build();
+                .price(new BigDecimal(17000))
+                .build();
             savedProduct = ProductFactory.copy(product)
-                    .id(1L)
-                    .build();
+                .id(1L)
+                .build();
 
         }
 
@@ -60,15 +58,15 @@ class ProductServiceTest {
         @Test
         void create() {
             // given
-            when(productDao.save(product)).thenReturn(savedProduct);
+            given(productDao.save(product)).willReturn(savedProduct);
 
             // when
             Product result = productService.create(product);
 
             // then
             assertThat(result)
-                    .usingRecursiveComparison()
-                    .isEqualTo(savedProduct);
+                .usingRecursiveComparison()
+                .isEqualTo(savedProduct);
         }
 
         @DisplayName("Product 생성 실패한다 - product 의 price 가 null 인 경우")
@@ -76,12 +74,12 @@ class ProductServiceTest {
         void create_whenPriceIsNull() {
             // given
             product = ProductFactory.copy(product)
-                    .price(null)
-                    .build();
+                .price(null)
+                .build();
 
             // when // then
             assertThatThrownBy(() -> productService.create(product))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("Product 생성 실패한다 - product 의 price 가 음수인 경우")
@@ -89,12 +87,12 @@ class ProductServiceTest {
         void create_whenPriceIsNegative() {
             // given
             product = ProductFactory.copy(product)
-                    .price(new BigDecimal(-1))
-                    .build();
+                .price(new BigDecimal(-1))
+                .build();
 
-            // when // then
+            // when // given
             assertThatThrownBy(() -> productService.create(product))
-                    .isExactlyInstanceOf(IllegalArgumentException.class);
+                .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
 }

@@ -1,13 +1,12 @@
 package kitchenpos.integration.templates;
 
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.factory.MenuFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @Component
 public class MenuTemplate extends IntegrationTemplate {
@@ -19,23 +18,23 @@ public class MenuTemplate extends IntegrationTemplate {
                                        Long menuGroupId,
                                        List<MenuProduct> menuProducts) {
         Menu menu = MenuFactory.builder()
-                .name(name)
-                .price(price)
-                .menuGroupId(menuGroupId)
-                .menuProducts(menuProducts)
-                .build();
+            .name(name)
+            .price(price)
+            .menuGroupId(menuGroupId)
+            .menuProducts(menuProducts)
+            .build();
 
         return post(
-                MENU_URL,
-                menu,
-                Menu.class
+            MENU_URL,
+            menu,
+            Menu.class
         );
     }
 
     public ResponseEntity<Menu[]> list() {
         return get(
-                MENU_URL,
-                Menu[].class
+            MENU_URL,
+            Menu[].class
         );
     }
 }

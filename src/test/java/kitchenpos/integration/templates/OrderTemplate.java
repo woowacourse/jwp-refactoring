@@ -1,12 +1,11 @@
 package kitchenpos.integration.templates;
 
+import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.factory.OrderFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Component
 public class OrderTemplate extends IntegrationTemplate {
@@ -16,30 +15,30 @@ public class OrderTemplate extends IntegrationTemplate {
 
     public ResponseEntity<Order> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         Order order = OrderFactory.builder()
-                .orderTableId(orderTableId)
-                .orderLineItems(orderLineItems)
-                .build();
+            .orderTableId(orderTableId)
+            .orderLineItems(orderLineItems)
+            .build();
 
         return post(
-                ORDER_URL,
-                order,
-                Order.class
+            ORDER_URL,
+            order,
+            Order.class
         );
     }
 
     public ResponseEntity<Order[]> list() {
         return get(
-                ORDER_URL,
-                Order[].class
+            ORDER_URL,
+            Order[].class
         );
     }
 
     public ResponseEntity<Order> changeOrderStatus(Long orderId, Order order) {
         return put(
-                ORDER_STATUS_URL,
-                orderId,
-                order,
-                Order.class
+            ORDER_STATUS_URL,
+            orderId,
+            order,
+            Order.class
         );
     }
 }
