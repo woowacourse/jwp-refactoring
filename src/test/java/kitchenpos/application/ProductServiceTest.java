@@ -15,8 +15,6 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.fixtures.MenuFixture.*;
-import static kitchenpos.fixtures.MenuFixture.아메리카노한잔;
 import static kitchenpos.fixtures.ProductFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

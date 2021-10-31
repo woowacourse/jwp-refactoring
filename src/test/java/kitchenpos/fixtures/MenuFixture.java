@@ -4,6 +4,7 @@ import kitchenpos.domain.Menu;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static kitchenpos.fixtures.MenuGroupFixture.*;
 import static kitchenpos.fixtures.MenuProductFixture.*;
@@ -11,14 +12,19 @@ import static kitchenpos.fixtures.ProductFixture.*;
 
 public class MenuFixture {
 
-    public static Menu 치즈폭탄() {
+    public static Menu 첫번째메뉴() {
         Menu menu = new Menu();
-        menu.setId(1L);
         menu.setMenuGroupId(디저트().getId());
         menu.setName("치즈폭탄");
         menu.setPrice(new BigDecimal(53500));
         menu.setMenuProducts(Arrays.asList(치즈폭탄의치즈볼(menu, 쫀득쫀득치즈볼()),
                 치즈폭탄의아메리카노(menu, 아메리카노())));
+        return menu;
+    }
+
+    public static Menu 치즈폭탄() {
+        Menu menu = 첫번째메뉴();
+        menu.setId(1L);
         return menu;
     }
 
@@ -48,7 +54,7 @@ public class MenuFixture {
         menu.setId(4L);
         menu.setMenuGroupId(디저트().getId());
         menu.setName("아메리카노한잔");
-        menu.setMenuProducts(Arrays.asList(아메리카노한잔의아메리카노(menu, 아메리카노())));
+        menu.setMenuProducts(Collections.singletonList(아메리카노한잔의아메리카노(menu, 아메리카노())));
         return menu;
     }
 }

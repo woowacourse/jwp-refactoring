@@ -55,14 +55,9 @@ public class MenuServiceTest {
         given(menuProductDao.save(any())).willReturn(any());
 
         //when
-        Menu actual = menuService.create(치즈폭탄());
+        Menu actual = menuService.create(첫번째메뉴());
 
         //then
-        verify(menuGroupDao, times(1)).existsById(any());
-        verify(productDao, times(2)).findById(any());
-        verify(menuDao, times(1)).save(any());
-        verify(menuProductDao, times(2)).save(any());
-
         assertThat(actual.getId()).isEqualTo(1L);
     }
 

@@ -39,7 +39,6 @@ class MenuGroupServiceTest {
         MenuGroup actual = menuGroupService.create(menuGroup);
 
         //then
-        verify(menuGroupDao, times(1)).save(menuGroup);
         assertThat(actual.getId()).isEqualTo(1L);
     }
 
