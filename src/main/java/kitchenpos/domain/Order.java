@@ -3,6 +3,8 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -16,7 +18,8 @@ public class Order {
     private Long id;
     @ManyToOne
     private OrderTable orderTable;
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     @Transient
     private OrderLineItems orderLineItems;
@@ -25,20 +28,20 @@ public class Order {
     }
 
     public Order(String orderStatus) {
-        this(null, null, orderStatus, null, null);
+        this(null, null, OrderStatus.valueOf(orderStatus), null, null);
     }
 
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(orderTable, null, null, orderLineItems);
+        this(null, orderTable, null, null, new OrderLineItems(orderLineItems));
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
+        this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime, new OrderLineItems(orderLineItems));
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
-                 OrderLineItems orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+                  OrderLineItems orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -49,9 +52,16 @@ public class Order {
     public void register(OrderValidator orderValidator) {
         orderValidator.validate(this);
 
-        orderStatus = OrderStatus.COOKING.name();
+        orderStatus = OrderStatus.COOKING;
         orderedTime = LocalDateTime.now();
         orderLineItems.setOrder(this);
+    }
+
+    public void changeStatus(OrderStatus orderStatus) {
+        if (OrderStatus.COMPLETION.equals(this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
     }
 
     public Long getId() {
@@ -66,16 +76,8 @@ public class Order {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {

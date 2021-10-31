@@ -14,6 +14,7 @@ import kitchenpos.application.dto.MenuProductRequest;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.OrderLineItemRequest;
 import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderStatusRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -105,7 +106,7 @@ class OrderServiceTest {
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getOrderedTime());
-        assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
+        assertThat(saved.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(saved.getOrderLineItems().toList())
                 .hasSize(orderLineItems.size())
                 .allMatch(orderLineItem -> Objects.equals(orderLineItem.getOrder().getId(), saved.getId()))
@@ -188,7 +189,8 @@ class OrderServiceTest {
     void changeOrderStatus(String orderStatus) {
         Long notExistingOrderId = Long.MAX_VALUE;
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(notExistingOrderId, new Order(orderStatus)))
+        assertThatThrownBy(
+                () -> orderService.changeOrderStatus(notExistingOrderId, new OrderStatusRequest(orderStatus)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -200,9 +202,9 @@ class OrderServiceTest {
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
         Order order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
 
-        Order saved = orderService.changeOrderStatus(order.getId(), new Order(orderStatus));
+        Order saved = orderService.changeOrderStatus(order.getId(), new OrderStatusRequest(orderStatus));
 
-        assertThat(saved.getOrderStatus()).isEqualTo(orderStatus);
+        assertThat(saved.getOrderStatus().name()).isEqualTo(orderStatus);
     }
 
     @ParameterizedTest(name = "주문 상태 수정 실패 :: 이미 완료된 주문 주문-> {0}")
@@ -212,9 +214,9 @@ class OrderServiceTest {
                 new OrderLineItemRequest(chickenSet.getId(), 2L),
                 new OrderLineItemRequest(pizzaSet.getId(), 1L));
         Order order = orderService.create(new OrderRequest(table.getId(), orderLineItems));
-        orderService.changeOrderStatus(order.getId(), new Order("COMPLETION"));
+        orderService.changeOrderStatus(order.getId(), new OrderStatusRequest("COMPLETION"));
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new Order(orderStatus)))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), new OrderStatusRequest(orderStatus)))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

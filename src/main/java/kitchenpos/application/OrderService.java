@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import java.util.List;
-import java.util.Objects;
 import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderStatusRequest;
 import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItems;
@@ -50,30 +50,19 @@ public class OrderService {
 
     public List<Order> list() {
         final List<Order> orders = orderRepository.findAll();
-
         for (final Order order : orders) {
             order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId())));
         }
-
         return orders;
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
+    public Order changeOrderStatus(final Long orderId, final OrderStatusRequest statusRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
+        savedOrder.changeStatus(OrderStatus.valueOf(statusRequest.getOrderStatus()));
         orderRepository.save(savedOrder);
-
         savedOrder.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)));
-
         return savedOrder;
     }
 }
