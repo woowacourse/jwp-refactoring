@@ -158,7 +158,7 @@ class TableServiceTest {
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(OrderTableFixture.FIRST.getId(), OrderTableFixture.TO_NUMBER_OF_GUESTS_FIVE))
                 .isInstanceOf(IllegalArgumentException.class);
     }
-    
+
     private static class OrderTableAggregator implements ArgumentsAggregator {
         @Override
         public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
