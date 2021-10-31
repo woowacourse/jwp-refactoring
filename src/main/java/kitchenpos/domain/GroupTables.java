@@ -3,6 +3,7 @@ package kitchenpos.domain;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import kitchenpos.domain.validator.TableGroupValidator;
 import org.springframework.util.CollectionUtils;
 
 public class GroupTables {
@@ -12,7 +13,6 @@ public class GroupTables {
     public GroupTables(List<OrderTable> orderTables) {
         validateTableGroupSize(orderTables);
         validateDistinctTables(orderTables);
-        validateAssignTableGroup(orderTables);
         this.orderTables = orderTables;
     }
 
@@ -32,16 +32,22 @@ public class GroupTables {
         }
     }
 
-    private void validateAssignTableGroup(List<OrderTable> orderTables) {
-        if (!orderTables.stream().allMatch(OrderTable::canAssignTableGroup)) {
-            throw new IllegalArgumentException();
-        }
+    public boolean canAssignTableGroup() {
+        return orderTables.stream().allMatch(OrderTable::canAssignTableGroup);
     }
 
     public void setTableGroup(TableGroup tableGroup) {
         for (final OrderTable savedOrderTable : orderTables) {
             savedOrderTable.setTableGroup(tableGroup);
             savedOrderTable.setEmpty(false);
+        }
+    }
+
+    public void ungroup(TableGroupValidator tableGroupValidator) {
+        tableGroupValidator.validateUngroup(orderTables);
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(null);
+            orderTable.setEmpty(false);
         }
     }
 

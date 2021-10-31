@@ -46,6 +46,9 @@ public class TableGroup {
     }
 
     public void register() {
+        if (!groupTables.canAssignTableGroup()) {
+            throw new IllegalArgumentException();
+        }
         groupTables.setTableGroup(this);
         createdDate = LocalDateTime.now();
     }

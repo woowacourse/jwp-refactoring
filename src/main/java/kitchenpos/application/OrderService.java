@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderStatusRequest;
 import kitchenpos.application.mapper.OrderMapper;
@@ -49,11 +50,15 @@ public class OrderService {
 
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatusRequest statusRequest) {
-        final Order savedOrder = orderRepository.findById(orderId)
+        final Order order = findOrderById(orderId);
+        order.changeStatus(OrderStatus.valueOf(statusRequest.getOrderStatus()));
+        orderRepository.save(order);
+        order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)));
+        return order;
+    }
+
+    private Order findOrderById(Long orderId) {
+        return orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        savedOrder.changeStatus(OrderStatus.valueOf(statusRequest.getOrderStatus()));
-        orderRepository.save(savedOrder);
-        savedOrder.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)));
-        return savedOrder;
     }
 }
