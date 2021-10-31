@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NotFoundException;
@@ -34,23 +34,23 @@ public class OrderService {
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        Orders savedOrders = saveOrders(orderRequest);
+        Order savedOrder = saveOrders(orderRequest);
         List<OrderLineItem> orderLineItems
-                = orderLineItemService.create(orderRequest.getOrderLineItems(), savedOrders);
-        return OrderResponse.of(savedOrders, orderLineItems);
+                = orderLineItemService.create(orderRequest.getOrderLineItems(), savedOrder);
+        return OrderResponse.of(savedOrder, orderLineItems);
     }
 
-    private Orders saveOrders(OrderRequest orderRequest) {
+    private Order saveOrders(OrderRequest orderRequest) {
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(() -> new NotFoundException("주문 테이블을 찾을 수 없습니다."));
-        Orders orders = new Orders(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
-        return orderRepository.save(orders);
+        Order order = new Order(orderTable, OrderStatus.COOKING.name(), LocalDateTime.now());
+        return orderRepository.save(order);
     }
 
     public List<OrderResponse> list() {
-        Map<Orders, List<OrderLineItem>> results = new HashMap<>();
-        final List<Orders> orders = orderRepository.findAll();
-        for (final Orders order : orders) {
+        Map<Order, List<OrderLineItem>> results = new HashMap<>();
+        final List<Order> orders = orderRepository.findAll();
+        for (final Order order : orders) {
             results.put(order, orderLineItemService.findAllByOrderId(order.getId()));
         }
         return OrderResponse.from(results);
@@ -58,16 +58,16 @@ public class OrderService {
 
     @Transactional
     public OrderStatusResponse changeOrderStatus(final Long orderId, final OrderStatusRequest orderStatusRequest) {
-        final Orders updateOrders = orderRepository.findById(orderId)
+        final Order updateOrder = orderRepository.findById(orderId)
                 .orElseThrow(() -> new NotFoundException("주문을 찾을 수 없습니다."));
-        validateOrderStatus(updateOrders);
+        validateOrderStatus(updateOrder);
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
-        updateOrders.updateOrderStatus(orderStatus.name());
-        return OrderStatusResponse.from(updateOrders.getOrderStatus());
+        updateOrder.updateOrderStatus(orderStatus.name());
+        return OrderStatusResponse.from(updateOrder.getOrderStatus());
     }
 
-    private void validateOrderStatus(Orders updateOrders) {
-        if (!updateOrders.isNotCompleted()) {
+    private void validateOrderStatus(Order updateOrder) {
+        if (!updateOrder.isNotCompleted()) {
             throw new IllegalArgumentException("주문이 이미 완료된 상태입니다.");
         }
     }

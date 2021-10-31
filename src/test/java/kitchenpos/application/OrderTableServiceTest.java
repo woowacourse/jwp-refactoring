@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -60,12 +60,12 @@ public class OrderTableServiceTest extends ServiceTest {
                 new OrderTable(1L, new TableGroup(1L, LocalDateTime.now()), 10, false),
                 new OrderTable(2L, new TableGroup(1L, LocalDateTime.now()), 20, false)
         );
-        List<Orders> orders = orderTables.stream()
-                .map(Orders::new)
+        List<Order> order = orderTables.stream()
+                .map(Order::new)
                 .collect(Collectors.toList());
 
         given(orderTableRepository.findAllByTableGroupId(tableGroupId)).willReturn(orderTables);
-        given(orderRepository.findAllByOrderTableId(anyLong())).willReturn(orders);
+        given(orderRepository.findAllByOrderTableId(anyLong())).willReturn(order);
 
         // when -  then
         assertThatThrownBy(() -> orderTableService.ungroup(tableGroupId))

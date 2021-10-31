@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.exception.NotFoundException;
@@ -42,11 +42,11 @@ class OrderLineItemServiceTest extends ServiceTest {
                 CREATE_ORDER_ITEM_REQUEST(1L, 1L),
                 CREATE_ORDER_ITEM_REQUEST(2L, 1L)
         );
-        Orders orders = new Orders(new OrderTable(10, false));
+        Order order = new Order(new OrderTable(10, false));
         given(menuRepository.findById(anyLong())).willThrow(NotFoundException.class);
 
         // when - then
-        assertThatThrownBy(() -> orderLineItemService.create(orderLineItemRequests, orders))
+        assertThatThrownBy(() -> orderLineItemService.create(orderLineItemRequests, order))
                 .isInstanceOf(NotFoundException.class);
         then(menuRepository).should(times(1))
                 .findById(anyLong());

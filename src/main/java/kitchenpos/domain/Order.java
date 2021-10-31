@@ -10,11 +10,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-public class Orders {
+@Table(name = "orders")
+public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,22 +31,22 @@ public class Orders {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
-    protected Orders() {
+    protected Order() {
     }
 
-    public Orders(OrderTable orderTable) {
+    public Order(OrderTable orderTable) {
         this(null, orderTable, null, LocalDateTime.now());
     }
 
-    public Orders(OrderTable orderTable, String orderStatus) {
+    public Order(OrderTable orderTable, String orderStatus) {
         this(null, orderTable, orderStatus, LocalDateTime.now());
     }
 
-    public Orders(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
         this(null, orderTable, orderStatus, orderedTime);
     }
 
-    public Orders(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
         validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;

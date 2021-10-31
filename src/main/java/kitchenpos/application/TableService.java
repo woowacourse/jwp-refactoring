@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NotFoundException;
@@ -42,9 +42,9 @@ public class TableService {
     }
 
     private void validateOrderAndOrderStatus(Long orderTableId) {
-        List<Orders> findOrders = orderRepository.findAllByOrderTableId(orderTableId);
+        List<Order> findOrders = orderRepository.findAllByOrderTableId(orderTableId);
         findOrders.stream()
-                .filter(Orders::isNotCompleted)
+                .filter(Order::isNotCompleted)
                 .findAny()
                 .ifPresent(order -> {
                     throw new IllegalArgumentException("조리 혹은 식사 중인 주문이 존재합니다.");

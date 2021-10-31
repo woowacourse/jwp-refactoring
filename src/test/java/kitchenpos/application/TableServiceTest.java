@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -60,8 +60,8 @@ class TableServiceTest extends ServiceTest {
         Long orderTableId = 1L;
         TableRequest tableRequest = CREATE_TABLE_REQUEST(0, false);
         OrderTable orderTable = new OrderTable(1L, new TableGroup(1L, LocalDateTime.now()), 10, false);
-        List<Orders> orders = Arrays.asList(
-                new Orders(new OrderTable(10, false), OrderStatus.MEAL.name())
+        List<Order> orders = Arrays.asList(
+                new Order(new OrderTable(10, false), OrderStatus.MEAL.name())
         );
 
         given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(orderTable));

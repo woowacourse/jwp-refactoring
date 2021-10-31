@@ -17,8 +17,8 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문 인수 테스트")
-public class OrdersAcceptanceTest extends DomainAcceptanceTest {
-    @DisplayName("POST /api/orders")
+public class OrderAcceptanceTest extends DomainAcceptanceTest {
+    @DisplayName("POST /api/order")
     @Test
     void create() {
         // given
@@ -37,7 +37,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(orderRequest)
-                .when().post("/api/orders")
+                .when().post("/api/order")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
@@ -47,7 +47,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("GET /api/orders")
+    @DisplayName("GET /api/order")
     @Test
     void list() {
         // given
@@ -56,7 +56,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
         // when - then
         ExtractableResponse<Response> response = RestAssured
                 .given().log().all()
-                .when().get("/api/orders")
+                .when().get("/api/order")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract();
@@ -65,7 +65,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("PUT /api/orders/{orderId}/order-status")
+    @DisplayName("PUT /api/order/{orderId}/order-status")
     @Test
     void changeOrderStatus() {
         // given
@@ -78,7 +78,7 @@ public class OrdersAcceptanceTest extends DomainAcceptanceTest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(orderStatusRequest)
-                .when().put("/api/orders/" + orderId + "/order-status")
+                .when().put("/api/order/" + orderId + "/order-status")
                 .then().log().all()
                 .statusCode(HttpStatus.OK.value())
                 .extract();

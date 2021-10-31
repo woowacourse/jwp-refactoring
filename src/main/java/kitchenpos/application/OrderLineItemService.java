@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.exception.NotFoundException;
@@ -25,13 +25,13 @@ public class OrderLineItemService {
     }
 
     @Transactional
-    public List<OrderLineItem> create(List<OrderLineItemRequest> orderLineItemRequests, Orders orders) {
+    public List<OrderLineItem> create(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu findMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(() -> new NotFoundException("메뉴를 찾을 수 없습니다."));
 
-            OrderLineItem orderLineItem = new OrderLineItem(orders, findMenu, orderLineItemRequest.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(order, findMenu, orderLineItemRequest.getQuantity());
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         return savedOrderLineItems;

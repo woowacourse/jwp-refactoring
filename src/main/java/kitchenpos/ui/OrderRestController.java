@@ -25,23 +25,23 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/orders")
+    @PostMapping("/api/order")
     public ResponseEntity<OrderResponse> create(@RequestBody @Valid final OrderRequest orderRequest) {
         final OrderResponse orderResponse = orderService.create(orderRequest);
-        final URI uri = URI.create("/api/orders/" + orderResponse.getId());
+        final URI uri = URI.create("/api/order/" + orderResponse.getId());
         return ResponseEntity.created(uri)
                 .body(orderResponse)
                 ;
     }
 
-    @GetMapping("/api/orders")
+    @GetMapping("/api/order")
     public ResponseEntity<List<OrderResponse>> list() {
         return ResponseEntity.ok()
                 .body(orderService.list())
                 ;
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
+    @PutMapping("/api/order/{orderId}/order-status")
     public ResponseEntity<OrderStatusResponse> changeOrderStatus(
             @PathVariable final Long orderId,
             @RequestBody final OrderStatusRequest orderStatusRequest

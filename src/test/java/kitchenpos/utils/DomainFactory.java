@@ -5,7 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.Order;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 
@@ -21,12 +21,12 @@ public class DomainFactory {
         return new MenuGroup(id, name);
     }
 
-    public static Orders CREATE_ORDER(Long id, OrderTable orderTable, String orderStatus) {
-        return new Orders(id, orderTable, orderStatus, LocalDateTime.now());
+    public static Order CREATE_ORDER(Long id, OrderTable orderTable, String orderStatus) {
+        return new Order(id, orderTable, orderStatus, LocalDateTime.now());
     }
 
-    public static OrderLineItem CREATE_ORDER_LINE_ITEM(Long seq, Orders orders, Menu menu, Long quantity) {
-        return new OrderLineItem(seq, orders, menu, quantity);
+    public static OrderLineItem CREATE_ORDER_LINE_ITEM(Long seq, Order order, Menu menu, Long quantity) {
+        return new OrderLineItem(seq, order, menu, quantity);
     }
 
     public static OrderTable CREATE_ORDER_TABLE(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {

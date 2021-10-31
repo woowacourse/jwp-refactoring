@@ -1,8 +1,8 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NotFoundException;
@@ -55,9 +55,9 @@ public class OrderServiceTest extends ServiceTest {
         then(orderTableRepository).should(times(1))
                 .findById(orderRequest.getOrderTableId());
         then(orderRepository).should(never())
-                .save(any(Orders.class));
+                .save(any(Order.class));
         then(orderLineItemService).should(never())
-                .create(anyList(), any(Orders.class));
+                .create(anyList(), any(Order.class));
     }
 
     @DisplayName("주문 상태를 변경한다. - 실패, 주문을 찾을 수 없다.")
@@ -81,8 +81,8 @@ public class OrderServiceTest extends ServiceTest {
         // given
         Long orderId = 1L;
         OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.COOKING.name());
-        Orders orders = new Orders(new OrderTable(10, false), OrderStatus.COMPLETION.name());
-        given(orderRepository.findById(orderId)).willReturn(Optional.of(orders));
+        Order order = new Order(new OrderTable(10, false), OrderStatus.COMPLETION.name());
+        given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         // when- then
         assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, orderStatusRequest))

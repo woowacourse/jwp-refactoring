@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class OrdersTest {
+public class OrderTest {
     @DisplayName("주문을 생성한다. - 실패, 주문 테이블이 비어있음")
     @Test
     void createFailed() {
         // given - when
         OrderTable orderTable = new OrderTable(0, true);
-        assertThatThrownBy(() -> new Orders(orderTable))
+        assertThatThrownBy(() -> new Order(orderTable))
                 .isInstanceOf(FieldNotValidException.class);
     }
 

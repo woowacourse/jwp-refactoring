@@ -83,7 +83,7 @@ public class DomainAcceptanceTest extends AcceptanceTest {
                 .given().log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(orderRequest)
-                .when().post("/api/orders")
+                .when().post("/api/order")
                 .then().log().all()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
