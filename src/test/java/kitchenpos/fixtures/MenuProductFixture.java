@@ -4,9 +4,6 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 
-import static kitchenpos.fixtures.MenuFixture.*;
-import static kitchenpos.fixtures.ProductFixture.*;
-
 public class MenuProductFixture {
 
     public static MenuProduct 치즈폭탄의치즈볼(Menu menu, Product product) {

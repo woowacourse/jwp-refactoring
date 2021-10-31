@@ -157,7 +157,7 @@ class TableServiceTest {
     @Test
     void changeNumberOfGuestsEmpty() {
         //given
-        OrderTable orderTable = 비어있는주문테이블();
+        OrderTable orderTable = 비어있는주문테이블1();
         given(orderTableDao.findById(any())).willReturn(Optional.of(orderTable));
         OrderTable withGuest = new OrderTable();
         withGuest.setNumberOfGuests(7);

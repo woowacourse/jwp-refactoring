@@ -17,10 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.fixtures.OderTableFixture.비어있는주문테이블;
+import static kitchenpos.fixtures.OderTableFixture.비어있는주문테이블1;
 import static kitchenpos.fixtures.OderTableFixture.첫번째주문테이블;
 import static kitchenpos.fixtures.OrderFixture.첫번째주문;
-import static kitchenpos.fixtures.OrderFixture.첫번째주문등록;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,7 +47,7 @@ class OrderServiceTest {
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn((long) order.getOrderLineItems().size());
         given(orderTableDao.findById(any())).willReturn(Optional.of(첫번째주문테이블()));
-        given(orderDao.save(any())).willReturn(첫번째주문등록());
+        given(orderDao.save(any())).willReturn(첫번째주문());
         given(orderLineItemDao.save(any())).willReturn(any());
 
         //when
@@ -104,7 +103,7 @@ class OrderServiceTest {
         //given
         Order order = 첫번째주문();
         given(menuDao.countByIdIn(any())).willReturn((long) order.getOrderLineItems().size());
-        given(orderTableDao.findById(any())).willReturn(Optional.of(비어있는주문테이블()));
+        given(orderTableDao.findById(any())).willReturn(Optional.of(비어있는주문테이블1()));
 
         //when, then
         assertThatThrownBy(() -> {
@@ -116,7 +115,7 @@ class OrderServiceTest {
     @Test
     void testList() {
         //given
-        given(orderDao.findAll()).willReturn((Collections.singletonList(첫번째주문등록())));
+        given(orderDao.findAll()).willReturn((Collections.singletonList(첫번째주문())));
 
         //when
         List<Order> actual = orderService.list();
@@ -131,7 +130,7 @@ class OrderServiceTest {
         //given
         Order order = new Order();
         order.setOrderStatus(OrderStatus.MEAL.name());
-        given(orderDao.findById(any())).willReturn(Optional.of(첫번째주문등록(OrderStatus.COOKING)));
+        given(orderDao.findById(any())).willReturn(Optional.of(첫번째주문(OrderStatus.COOKING)));
 
         //when
         Order actual = orderService.changeOrderStatus(1L, order);
