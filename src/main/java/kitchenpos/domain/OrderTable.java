@@ -21,6 +21,9 @@ public class OrderTable {
 
     }
 
+    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
+    }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
@@ -35,6 +38,10 @@ public class OrderTable {
 
     public void fillTable() {
         this.empty = false;
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
     }
 
     public Long getId() {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductDao;
+import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
@@ -47,7 +47,7 @@ class MenuServiceTest {
     private MenuGroupRepository menuGroupRepository;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductRepository menuProductRepository;
 
     @Mock
     private ProductRepository productRepository;
@@ -73,13 +73,13 @@ class MenuServiceTest {
     void create() {
         given(menuGroupRepository.findById(anyLong()))
             .willReturn(Optional.of(menuGroup));
-        given(menuProductDao.findById(anyLong()))
+        given(menuProductRepository.findById(anyLong()))
             .willReturn(Optional.of(menuProduct));
         given(productRepository.findById(anyLong()))
             .willReturn(Optional.of(product));
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
-        given(menuProductDao.save(any(MenuProduct.class)))
+        given(menuProductRepository.save(any(MenuProduct.class)))
             .willReturn(menuProduct);
 
         MenuRequest menuRequest = new MenuRequest("후라이드치킨", 16000.00, menuGroup.getId(),
@@ -102,6 +102,6 @@ class MenuServiceTest {
         menuService.list();
 
         verify(menuRepository).findAll();
-        verify(menuProductDao, times(2)).findAllByMenuId(anyLong());
+        verify(menuProductRepository, times(2)).findALlByMenu(any(Menu.class));
     }
 }

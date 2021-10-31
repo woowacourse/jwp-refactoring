@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -9,7 +10,10 @@ import java.util.Optional;
 import kitchenpos.Fixtures;
 import kitchenpos.dao.OrderRepository;
 import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +35,9 @@ class TableServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
+    @Mock
+    private TableGroupRepository tableGroupRepository;
+
     @BeforeEach
     void setUp() {
         orderTable = Fixtures.makeOrderTable();
@@ -39,9 +46,15 @@ class TableServiceTest {
     @DisplayName("table 생성")
     @Test
     void create() {
-        tableService.create(orderTable);
+        TableGroup tableGroup = Fixtures.makeTableGroup();
+        given(tableGroupRepository.findById(anyLong()))
+            .willReturn(Optional.of(tableGroup));
 
-        verify(orderTableRepository).save(orderTable);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 1, true);
+
+        tableService.create(orderTableRequest);
+
+        verify(orderTableRepository).save(any(OrderTable.class));
     }
 
     @DisplayName("table 불러오기")
@@ -60,7 +73,9 @@ class TableServiceTest {
         given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
             .willReturn(false);
 
-        tableService.changeEmpty(1L, orderTable);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 1, false);
+
+        tableService.changeEmpty(1L, orderTableRequest);
 
         verify(orderTableRepository).findById(anyLong());
         verify(orderRepository).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());

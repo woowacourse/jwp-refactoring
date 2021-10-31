@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuRepository extends JpaRepository<Menu, Long> {
 
-    long countAllByMenus(List<Menu> menus);
+    long countByMenus(List<Menu> menu);
 }

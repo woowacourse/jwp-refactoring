@@ -16,8 +16,7 @@ import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 public class Fixtures {
 
     public static MenuGroup makeMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup(1L, "한마리치킨");
-        return menuGroup;
+        return new MenuGroup(1L, "한마리치킨");
     }
 
     public static MenuProduct makeMenuProduct() {

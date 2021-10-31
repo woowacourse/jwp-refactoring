@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.MenuGroupService;
+import kitchenpos.dao.MenuGroupRepository;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.ui.MenuGroupRestController;
@@ -45,12 +46,16 @@ class MenuGroupRestControllerTest {
     @DisplayName("메뉴 그룹 생성 controller")
     @Test
     void menuGroup() throws Exception {
-        MenuGroup createMenu = Fixtures.makeMenuGroup();
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("한마리치킨");
 
-        String content = objectMapper.writeValueAsString(createMenu);
+        MenuGroup menuGroup = Fixtures.makeMenuGroup();
+
+        String content = objectMapper.writeValueAsString(menuGroupRequest);
 
         given(menuGroupService.create(any(MenuGroupRequest.class)))
-            .willReturn(createMenu);
+            .willReturn(menuGroup);
+
+
 
         mvc.perform(post("/api/menu-groups")
             .content(content)

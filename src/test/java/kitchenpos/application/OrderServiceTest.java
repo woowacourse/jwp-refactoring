@@ -73,7 +73,7 @@ class OrderServiceTest {
     void create() {
         given(orderLineItemRepository.findById(anyLong()))
             .willReturn(Optional.of(orderLineItem));
-        given(menuRepository.countAllByMenus(anyList()))
+        given(menuRepository.countByMenus(anyList()))
             .willReturn(1L);
         given(orderTableRepository.findById(anyLong()))
             .willReturn(Optional.of(orderTable));

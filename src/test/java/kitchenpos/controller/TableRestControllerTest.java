@@ -2,6 +2,7 @@ package kitchenpos.controller;
 
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -10,9 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import kitchenpos.Fixtures;
 import kitchenpos.application.TableService;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.ui.TableRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,16 +39,22 @@ class TableRestControllerTest {
     @MockBean
     private TableService tableService;
 
+    @MockBean
+    private TableGroupRepository tableGroupRepository;
+
     @DisplayName("table 생성")
     @Test
     void create() throws Exception {
         OrderTable orderTable = Fixtures.makeOrderTable();
+        TableGroup tableGroup = Fixtures.makeTableGroup();
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         String content = objectMapper.writeValueAsString(orderTable);
 
-        given(tableService.create(any(OrderTable.class)))
+        given(tableGroupRepository.findById(anyLong()))
+            .willReturn(Optional.of(tableGroup));
+        given(tableService.create(any(OrderTableRequest.class)))
             .willReturn(orderTable);
 
         mvc.perform(post("/api/tables")
