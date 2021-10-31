@@ -10,8 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
+import kitchenpos.domain.orderedmenu.OrderedMenu;
 import kitchenpos.domain.quantity.Quantity;
 
 @Entity
@@ -26,8 +26,8 @@ public class OrderLineItem {
     private Order order;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_menu"))
-    private Menu menu;
+    @JoinColumn(name = "ordered_menu_id", foreignKey = @ForeignKey(name = "fk_order_line_item_ordered_menu"))
+    private OrderedMenu orderedMenu;
 
     @Embedded
     private Quantity quantity;
@@ -35,18 +35,18 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, Quantity quantity) {
-        this(null, null, menu, quantity);
+    public OrderLineItem(OrderedMenu orderedMenu, Quantity quantity) {
+        this(null, null, orderedMenu, quantity);
     }
 
-    public OrderLineItem(Order order, Menu menu, Long quantityValue) {
-        this(null, order, menu, new Quantity(quantityValue));
+    public OrderLineItem(Order order, OrderedMenu orderedMenu, Long quantityValue) {
+        this(null, order, orderedMenu, new Quantity(quantityValue));
     }
 
-    public OrderLineItem(Long seq, Order order, Menu menu, Quantity quantity) {
+    public OrderLineItem(Long seq, Order order, OrderedMenu orderedMenu, Quantity quantity) {
         this.seq = seq;
         this.order = order;
-        this.menu = menu;
+        this.orderedMenu = orderedMenu;
         this.quantity = quantity;
     }
 
@@ -58,8 +58,8 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
+    public OrderedMenu getOrderedMenu() {
+        return orderedMenu;
     }
 
     public Quantity getQuantity() {
@@ -75,7 +75,11 @@ public class OrderLineItem {
     }
 
     public Long getMenuId() {
-        return menu.getId();
+        return orderedMenu.getMenuId();
+    }
+
+    public Long getOrderedMenuId() {
+        return orderedMenu.getId();
     }
 
     public Long getQuantityValue() {

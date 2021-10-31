@@ -8,6 +8,8 @@ import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderedmenu.OrderedMenu;
+import kitchenpos.domain.orderedmenu.OrderedMenuRepository;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
 import kitchenpos.domain.orderlineitem.OrderLineItemRepository;
 import kitchenpos.domain.orderlineitem.OrderLineItems;
@@ -29,17 +31,20 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderedMenuRepository orderedMenuRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(
         final MenuRepository menuRepository,
         final OrderRepository orderRepository,
         final OrderLineItemRepository orderLineItemRepository,
+        final OrderedMenuRepository orderedMenuRepository,
         final OrderTableRepository orderTableRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
+        this.orderedMenuRepository = orderedMenuRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -78,12 +83,18 @@ public class OrderService {
     private OrderLineItems convertToOrderItems(List<OrderLineItemRequest> orderLineItemRequests) {
         final OrderLineItems orderLineItems = new OrderLineItems();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Menu foundMenu = findMenuById(orderLineItemRequest.getMenuId());
+            final OrderedMenu orderedMenu = getNewSavedOrderedMenu(orderLineItemRequest);
             final Long quantityValue = orderLineItemRequest.getQuantity();
-            final OrderLineItem orderLineItem = new OrderLineItem(foundMenu, new Quantity(quantityValue));
+            final OrderLineItem orderLineItem = new OrderLineItem(orderedMenu, new Quantity(quantityValue));
             orderLineItems.add(orderLineItem);
         }
         return orderLineItems;
+    }
+
+    private OrderedMenu getNewSavedOrderedMenu(OrderLineItemRequest orderLineItemRequest) {
+        final Menu foundMenu = findMenuById(orderLineItemRequest.getMenuId());
+        final OrderedMenu orderedMenu = new OrderedMenu(foundMenu.getId(), foundMenu.getName(), foundMenu.getPrice());
+        return orderedMenuRepository.save(orderedMenu);
     }
 
     private Menu findMenuById(Long menuId) {

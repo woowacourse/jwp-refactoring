@@ -4,10 +4,10 @@ spring:
 
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;
     username: sa
     password:
-    schema: classpath:db/migration/V1__Initialize_project_tables.sql
+    schema: classpath:db/migration/V1__Initialize_project_tables.sql,classpath:db/migration/V3__Add_ordered_menu.sql
 
   flyway:
     enabled: false

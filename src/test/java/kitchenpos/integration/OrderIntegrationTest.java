@@ -10,16 +10,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.application.OrderService;
 import kitchenpos.config.CustomParameterizedTest;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.orderedmenu.OrderedMenu;
+import kitchenpos.domain.orderedmenu.OrderedMenuRepository;
 import kitchenpos.domain.orderlineitem.OrderLineItem;
 import kitchenpos.domain.orderlineitem.OrderLineItemRepository;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.price.Price;
 import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.dto.order.OrderRequest;
+import kitchenpos.dto.order.OrderResponse;
 import kitchenpos.dto.orderlineitem.OrderLineItemRequest;
 import kitchenpos.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +41,12 @@ class OrderIntegrationTest extends IntegrationTest {
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
+
+    @Autowired
+    private OrderedMenuRepository orderedMenuRepository;
+
+    @Autowired
+    private OrderService orderService;
 
     private Menu menu;
     private OrderTable orderTable;
@@ -97,7 +108,8 @@ class OrderIntegrationTest extends IntegrationTest {
 
         final OrderLineItem foundOrderLineItem = foundOrderLineItems.get(0);
         assertThat(foundOrderLineItem.getOrderId()).isEqualTo(foundOrder.getId());
-        assertThat(foundOrderLineItem.getMenuId()).isEqualTo(menu.getId());
+        assertThat(foundOrderLineItem.getOrderedMenu().getName()).isEqualTo(menu.getName());
+        assertThat(foundOrderLineItem.getOrderedMenu().getPrice()).isEqualTo(menu.getPrice());
         assertThat(foundOrderLineItem.getQuantity()).isEqualTo(new Quantity(quantityValue));
     }
 
@@ -205,7 +217,7 @@ class OrderIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$.orderLineItems[0].quantity").value(orderLineItem.getQuantityValue()))
         ;
 
-        final Order foundOrder = findOrderById(order);
+        final Order foundOrder = findOrderById(order.getId());
         assertThat(foundOrder.getOrderStatus()).isEqualTo(newOrderStatus);
     }
 
@@ -223,7 +235,7 @@ class OrderIntegrationTest extends IntegrationTest {
         // then
         PUT_API를_요청하면_BadRequest를_응답한다(API_PATH + "/" + order.getId() + "/order-status", orderRequest);
 
-        final Order foundOrder = findOrderById(order);
+        final Order foundOrder = findOrderById(order.getId());
         assertThat(foundOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
@@ -239,6 +251,53 @@ class OrderIntegrationTest extends IntegrationTest {
         PUT_API를_요청하면_BadRequest를_응답한다(API_PATH + "/0/order-status", orderRequest);
     }
 
+    @DisplayName("Menu의 이름과 가격을 변경해도, 변경 이전에 저장된 주문 항목이 변경되지 않는다.")
+    @Test
+    void notChangeOrderedMenu_After_ModifyMenu() {
+        // given
+        final String oldMenuName = menu.getName();
+        final Price oldMenuPrice = new Price(menu.getPriceAsInt());
+
+        final OrderRequest orderRequest = OrderRequest를_생성한다(orderTable.getId(), menu.getId(), 1L);
+        final OrderResponse orderResponse = orderService.create(orderRequest);
+
+        // when
+        final String newMenuName = "새로운메뉴이름";
+        final int newPriceValue = 1_111_111;
+        메뉴의_정보를_수정한다(newMenuName, newPriceValue);
+
+        // then
+        final OrderedMenu foundOrderedMenu = OrderedMenu를_조회한다(orderResponse.getId());
+        assertThat(foundOrderedMenu.getMenuId()).isEqualTo(menu.getId());
+        assertThat(foundOrderedMenu.getName()).isEqualTo(oldMenuName);
+        assertThat(foundOrderedMenu.getPrice()).isEqualTo(oldMenuPrice);
+
+        final Menu foundMenu = Menu를_조회한다(menu.getId());
+        assertThat(foundMenu.getName()).isEqualTo(newMenuName);
+        assertThat(foundMenu.getPriceAsInt()).isEqualTo(newPriceValue);
+    }
+
+    private Menu Menu를_조회한다(Long id) {
+        return menuRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 Id의 Menu가 존재하지 않습니다."));
+    }
+
+    private OrderedMenu OrderedMenu를_조회한다(Long orderId) {
+        final Order foundOrder = findOrderById(orderId);
+        final List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrder(foundOrder);
+
+        assertThat(foundOrderLineItems).hasSize(1);
+        final OrderLineItem foundOrderLineItem = foundOrderLineItems.get(0);
+
+        return foundOrderLineItem.getOrderedMenu();
+    }
+
+    private void 메뉴의_정보를_수정한다(String newName, int newPrice) {
+        menu.changeName(newName);
+        menu.changePrice(newPrice);
+        resetEntityManager();
+    }
+
     private void 생성을_실패한다(OrderRequest orderRequest) throws Exception {
         POST_API를_요청하면_BadRequest를_응답한다(API_PATH, orderRequest);
 
@@ -252,11 +311,13 @@ class OrderIntegrationTest extends IntegrationTest {
     }
 
     private OrderLineItem OrderLineItem을_저장한다(Order order) {
-        return orderLineItemRepository.save(new OrderLineItem(order, menu, 1L));
+        final OrderedMenu orderedMenu = new OrderedMenu(menu.getId(), menu.getName(), menu.getPrice());
+        orderedMenuRepository.save(orderedMenu);
+        return orderLineItemRepository.save(new OrderLineItem(order, orderedMenu, 1L));
     }
 
-    private Order findOrderById(Order order) {
-        return orderRepository.findById(order.getId())
+    private Order findOrderById(Long id) {
+        return orderRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("해당 id의 Order이 존재하지 않습니다."));
     }
 }

@@ -1,6 +1,6 @@
 # 키친포스
 
-## 요구 사항
+## 1단계 - 테스트를 통한 코드 보호 - 요구 사항
 
 - [x] MenuGroup
   - [x] 새로운 MenuGroup을 생성해 DB에 저장한다.
@@ -124,7 +124,7 @@
 
 <br/>
 
-## 리팩터링
+## 2단계 - 서비스 리팩터링
 
 - [x] 도메인 엔티티
   - [x] id 필드 기준으로 equals&hashCode 추가
@@ -145,7 +145,8 @@
 
 <br/>
 
-## 리팩터링 - 코드리뷰 반영
+## 2단계 - 서비스 리팩터링 - 코드리뷰 반영
+
 - [x] DTO 정적 팩토리 메서드 of 제거 -> new 키워드(생성자) 사용
 - [x] Service convert 메서드 네이밍 통일
 - [x] Service와 Domain Exception 분리 제거
@@ -157,6 +158,39 @@
   - [x] 맨 아래에는 주생성자가 위치하도록
 - [x] SQL IN 쿼리 사용할 수 있는 부분 수정
   - [x] IN 쿼리 사용으로 인해 필요해진 검증 메서드 추가
+  
+
+<br/>
+
+## 3단계 - 의존성 리팩터링
+
+- [x] 패키지 도메인별로 분리
+- [x] 클래스 사이, 패키지 사이의 의존 관계 단방향 확인
+  <img width="1749" alt="스크린샷 2021-11-01 오전 5 46 28" src="https://user-images.githubusercontent.com/53412998/139600836-2b297989-5db1-4a3c-9f38-0cc50227ca7e.png">
+- [x] 주문한 메뉴의 정보를 저장하는 OrderedMenu 엔티티 추가
+  - [x] Menu의 id
+  - [x] 주문 당시 Menu의 name
+  - [x] 주문 당시 Menu의 price
+- [x] OrderedMenuRepository 추가
+- [x] OrderLineItem이 Menu가 아니라 OrderedMenu를 참조하도록 변경
+- [x] OrderService에서 Order을 create할 때, Menu의 정보를 기반으로 OrderedMenu를 새로 생성해 저장하도록 수정
+- [x] Menu에 이름, 가격을 변경하는 메서드 추가
+- [x] Flyway DB Migration 파일 추가 : V3__Add_ordered_menu.sql
+  - [x] ordered_menu 테이블 생성
+  - [x] order_line_item 테이블
+    - [x] 외래키 제약조건 fk_order_line_item_menu 삭제
+    - [x] menu_id NOT NULL 조건 삭제
+    - [x] ordered_menu_id 컬럼을 BIGINT(20) 타입,  NOT NULL 조건으로 추가
+    - [x] 외래키 제약조건 fk_order_line_item_ordered_menu 생성
+      - [x] ordered_menu_id 컬럼으로 ordered_menu 테이블의 id 컬럼 참조
+    - [x] 외래키 제약조건 fk_order_line_item_menu 생성
+      - [x] menu_id 컬럼으로 menu 테이블의 id 컬럼 참조
+- [x] 테스트 폴더 application.yml 파일의 H2 DB schema 옵션에 V3__Add_ordered_menu.sql 파일 추가
+- [x] Menu의 이름과 가격을 변경해도, 변경 이전에 저장된 주문 항목이 변경되지 않는지 확인하는 통합테스트 작성
+- [x] 클래스 사이, 패키지 사이의 의존 관계 단방향 확인
+    <img width="1928" alt="스크린샷 2021-11-01 오전 5 48 00" src="https://user-images.githubusercontent.com/53412998/139600869-e0e8aa66-4804-42e3-bc80-d44a87e04cc7.png">
+
+
 
 <br/>
 

@@ -74,6 +74,14 @@ public class Menu {
         return menuGroup.getId();
     }
 
+    public void changeName(String newName) {
+        name = newName;
+    }
+
+    public void changePrice(int newPriceValue) {
+        price = new Price(newPriceValue);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
