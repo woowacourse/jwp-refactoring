@@ -1,5 +1,17 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.RestControllerTest;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
@@ -9,15 +21,6 @@ import org.mockito.AdditionalAnswers;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
-import java.util.Collections;
-import java.util.List;
-
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(OrderRestController.class)
 class OrderRestControllerTest extends RestControllerTest {
@@ -35,8 +38,8 @@ class OrderRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestOrder))
                 )
+                .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/orders/" + requestOrder.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestOrder)));
     }
 
@@ -45,7 +48,8 @@ class OrderRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<Order> expected = Collections.singletonList(createOrder());
         when(mockOrderService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/orders"))
+        mockMvc.perform(get("/api/orders")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
@@ -61,6 +65,7 @@ class OrderRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestOrder))
                 )
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(requestOrder)));
     }

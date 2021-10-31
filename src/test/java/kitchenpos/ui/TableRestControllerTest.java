@@ -1,5 +1,17 @@
 package kitchenpos.ui;
 
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.RestControllerTest;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
@@ -9,15 +21,6 @@ import org.mockito.AdditionalAnswers;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
-import java.util.Collections;
-import java.util.List;
-
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TableRestController.class)
 class TableRestControllerTest extends RestControllerTest {
@@ -35,8 +38,8 @@ class TableRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestTable))
                 )
+                .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/tables/" + requestTable.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestTable)));
     }
 
@@ -45,7 +48,8 @@ class TableRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<OrderTable> expected = Collections.singletonList(createOrderTable());
         when(mockTableService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/tables"))
+        mockMvc.perform(get("/api/tables")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
@@ -61,6 +65,7 @@ class TableRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestTable))
                 )
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(requestTable)));
     }
@@ -76,6 +81,7 @@ class TableRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestTable))
                 )
+                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(requestTable)));
     }
