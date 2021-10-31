@@ -19,7 +19,7 @@
 | 매장 식사 | eat in | 포장하지 않고 매장에서 식사하는 것 |
 
 ## TODO
-- [ ] 요구 사항 가독성 있게 변경
+- [x] 요구 사항 가독성 있게 변경
 
 ## 요구 사항
 
@@ -47,8 +47,8 @@
 ### 서비스 슬라이스 테스트
 
 - [x] Menu 테스트
-  - [x] /api/menus POST success
-  - [x] /api/menus POST failure
+  - [x] Menu 생성 성공
+  - [x] Menu 생성 실패
     - [x] menu 의 price 가 null 인 경우
     - [x] menu 의 price 가 음수인 경우
     - [x] menuGroupId 에 해당하는 menuGroup 이 존재하지 않는 경우
@@ -60,47 +60,47 @@
   - [x] 로직이 간단해서 추가하지 않음
 
 - [x] Order 테스트
-  - [x] /api/orders POST success
-  - [x] /api/orders POST failure
+  - [x] Order 생성 성공
+  - [x] Order 생성 실패
     - [x] orderLineItems 가 비어있는 경우
     - [x] orderLineItem 개수가 menu 수와 일치하지 않는 경우
     - [x] orderTable 이 존재하지 않는 경우
     - [x] orderTable 이 비어있는 경우
-  - [x] /api/orders GET success
-  - [x] /api/orders PUT success
+  - [x] 모든 Order 조회 성공
+  - [x] Order 상태 변경 성공
   - [x] /api/orders PUT failure
     - [x] orderId 에 대한 order 가 존재하지 않는 경우
     - [x] order 가 이미 완료된 order 인 경우
 
 - [x] Product 테스트
-  - [x] /api/products POST success
-  - [x] /api/products POST failure
+  - [x] Product 생성 성공
+  - [x] Product 생성 실패
     - [x] product 의 price 가 null 인 경우
     - [x] product 의 price 가 음수인 경우
-  - [x] /api/products GET success
+  - [x] 모든 Product 조회 성공
 
 - [x] Table 테스트
-  - [x] /api/tables POST success
-  - [x] /api/tables GET success
-  - [x] /api/tables/{orderTableId}/empty PUT success
-  - [x] /api/tables/{orderTableId}/empty PUT failure
+  - [x] Table 생성 성공
+  - [x] 모든 Table 조회 성공
+  - [x] Table empty 상태 변경 성공
+  - [x] Table empty 상태 변경 실패
     - [x] orderTable 이 존재하지 않는 경우
     - [x] tableGroup 이 존재하는 경우
     - [x] order 의 상태가 COMPLETION 이 아닌 경우
-  - [x] /api/tables/{orderTableId}/number-of-guests PUT success
-  - [x] /api/tables/{orderTableId}/number-of-guests PUT failure
+  - [x] Table numberOfGuests 상태 변경 성공
+  - [x] Table numberOfGuests 상태 변경 실패
     - [x] numberOfGuests 가 음수인 경우
     - [x] 저장된 orderTable 이 존재하지 않는 경우
     - [x] 저장된 orderTable 이 비어있는 경우
 
 - [x] TableGroup 테스트
-  - [x] /api/table-groups POST success
-  - [x] /api/table-groups POST failure
+  - [x] TableGroup 생성 성공
+  - [x] TableGroup 생성 실패
     - [x] 요청한 orderTables 가 비어있는 경우
     - [x] 요청한 orderTable 의 수가 2 개 미만인 경우
     - [x] 요청한 orderTable 중 존재하지 않는 것이 있는 경우
     - [x] 요청한 orderTable 이 비어있지 않는 경우
     - [x] 요청한 orderTable 이 이미 tableGroup 을 가지고 있는 경우
-  - [x] /api/table-groups/{tableGroupId} DELETE success
-  - [x] /api/table-groups/{tableGroupId} DELETE failure
+  - [x] TableGroup 삭제 성공
+  - [x] TableGroup 삭제 실패
     - [x] 요청한 orderTable 의 order 상태가 COMPLETION 이 아닌 경우
