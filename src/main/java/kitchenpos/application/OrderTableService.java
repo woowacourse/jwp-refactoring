@@ -7,7 +7,6 @@ import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.exception.BadRequestException;
-import kitchenpos.exception.InvalidRequestParamException;
 import kitchenpos.exception.NotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -31,17 +30,9 @@ public class OrderTableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
-        final OrderTable orderTable = convertRequestToEntity(orderTableRequest);
+        final OrderTable orderTable = new OrderTable(orderTableRequest.getNumberOfGuests(), orderTableRequest.getEmpty());
         orderTableRepository.save(orderTable);
         return new OrderTableResponse(orderTable);
-    }
-
-    private OrderTable convertRequestToEntity(OrderTableRequest orderTableRequest) {
-        try {
-            return new OrderTable(orderTableRequest.getNumberOfGuests(), orderTableRequest.getEmpty());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException(e.getMessage());
-        }
     }
 
     public List<OrderTableResponse> findAll() {

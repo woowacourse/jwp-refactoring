@@ -148,6 +148,11 @@
 
 ## 리팩터링 - 코드리뷰 반영
 - [x] DTO 정적 팩토리 메서드 of 제거 -> new 키워드(생성자) 사용
+- [x] Service convert 메서드 네이밍 통일
+- [x] Service와 Domain Exception 분리 제거
+  - [x] InvalidRequestParamException 삭제
+  - [x] Validation 관리포인트 2개 -> 1개로 축소
+  - [x] Service 메서드 개수 축소
 
 <br/>
 

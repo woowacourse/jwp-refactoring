@@ -38,7 +38,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final OrderTables orderTables = convertRequestToEntities(tableGroupRequest.getOrderTables());
+        final OrderTables orderTables = convertToOrderTables(tableGroupRequest.getOrderTables());
         orderTables.validate();
 
         final TableGroup tableGroup = new TableGroup();
@@ -62,7 +62,7 @@ public class TableGroupService {
             ;
     }
 
-    private OrderTables convertRequestToEntities(List<OrderTableRequest> orderTableRequests) {
+    private OrderTables convertToOrderTables(List<OrderTableRequest> orderTableRequests) {
         final OrderTables orderTables = new OrderTables();
         for (OrderTableRequest orderTableRequest : orderTableRequests) {
             final OrderTable foundOrderTable = findOrderTableById(orderTableRequest.getId());

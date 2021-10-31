@@ -53,15 +53,15 @@ public class OrderService {
         orderRepository.save(order);
 
         saveOrderLineItemsWithOrder(orderLineItems.getOrderLineItems(), order);
-        return convertToResponse(order, orderLineItems.getOrderLineItems());
+        return convertToOrderResponse(order, orderLineItems.getOrderLineItems());
     }
 
-    private OrderResponse convertToResponse(Order order, List<OrderLineItem> orderLineItems) {
-        List<OrderLineItemResponse> orderLineItemResponses = convertToResponse(orderLineItems);
+    private OrderResponse convertToOrderResponse(Order order, List<OrderLineItem> orderLineItems) {
+        List<OrderLineItemResponse> orderLineItemResponses = convertToOrderResponses(orderLineItems);
         return new OrderResponse(order, orderLineItemResponses);
     }
 
-    private List<OrderLineItemResponse> convertToResponse(List<OrderLineItem> orderLineItems) {
+    private List<OrderLineItemResponse> convertToOrderResponses(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
             .map(OrderLineItemResponse::new)
             .collect(Collectors.toList())
@@ -101,7 +101,7 @@ public class OrderService {
         final List<Order> foundAllOrders = orderRepository.findAll();
         for (Order foundOrder : foundAllOrders) {
             final List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrder(foundOrder);
-            final List<OrderLineItemResponse> orderLineItemResponses = convertToResponse(foundOrderLineItems);
+            final List<OrderLineItemResponse> orderLineItemResponses = convertToOrderResponses(foundOrderLineItems);
             final OrderResponse orderResponse = new OrderResponse(foundOrder, orderLineItemResponses);
             orderResponses.add(orderResponse);
         }
@@ -115,7 +115,7 @@ public class OrderService {
         foundOrder.changeStatus(orderRequest.getOrderStatus());
 
         final List<OrderLineItem> foundOrderLineItems = orderLineItemRepository.findAllByOrder(foundOrder);
-        return convertToResponse(foundOrder, foundOrderLineItems);
+        return convertToOrderResponse(foundOrder, foundOrderLineItems);
     }
 
     private Order findOrderById(Long orderId) {
