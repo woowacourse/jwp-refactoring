@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
 import kitchenpos.domain.repository.OrderRepository;

@@ -67,7 +67,7 @@ class MenuProductServiceTest extends ServiceTest {
         MenuRequest menuRequest = CREATE_MENU_REQUEST("menu", BigDecimal.valueOf(20000), 1L,
                 Arrays.asList(CREATE_MENU_PRODUCT_REQUEST(1L, 1L))
         );
-        Product product = CREATE_PRODUCT(null,"product", BigDecimal.TEN);
+        Product product = CREATE_PRODUCT(null, "product", BigDecimal.TEN);
         Menu menu = CREATE_MENU(1L, menuRequest.getName(), menuRequest.getPrice(), new MenuGroup("group"));
 
         given(productRepository.findById(anyLong())).willReturn(Optional.of(product));

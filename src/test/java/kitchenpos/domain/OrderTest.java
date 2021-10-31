@@ -34,7 +34,7 @@ public class OrderTest {
     @ValueSource(strings = {"MEAL", "COOKING"})
     void isNotCompleted(String orderStatus) {
         // given
-        Order order = new Order(new OrderTable(10, false),orderStatus);
+        Order order = new Order(new OrderTable(10, false), orderStatus);
         // when - then
         assertThat(order.isNotCompleted()).isTrue();
     }
