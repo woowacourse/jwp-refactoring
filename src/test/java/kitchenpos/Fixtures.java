@@ -53,8 +53,7 @@ public class Fixtures {
     }
 
     public static OrderTable makeOrderTable() {
-        TableGroup tableGroup = makeTableGroup();
-        OrderTable orderTable = new OrderTable(1L, tableGroup, 1, false);
+        OrderTable orderTable = new OrderTable(1L, null, 1, true);
 
         return orderTable;
     }

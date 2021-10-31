@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import kitchenpos.Fixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.ui.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ public class TableGroupRestControllerTest {
 
         String content = objectMapper.writeValueAsString(tableGroup);
 
-        given(tableGroupService.create(any(TableGroup.class)))
+        given(tableGroupService.create(any(TableGroupRequest.class)))
             .willReturn(tableGroup);
 
         mvc.perform(post("/api/table-groups")

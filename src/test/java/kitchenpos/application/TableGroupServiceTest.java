@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.dao.OrderRepository;
@@ -15,6 +16,7 @@ import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,8 +50,8 @@ class TableGroupServiceTest {
         orderTables = new ArrayList<>();
         orderTable = Fixtures.makeOrderTable();
 
-        orderTable2 = new OrderTable(2L, tableGroup, 1, false);
 
+        orderTable2 = new OrderTable(2L, null, 1, true);
 
         orderTables.add(orderTable);
         orderTables.add(orderTable2);
@@ -65,14 +67,16 @@ class TableGroupServiceTest {
     void create() {
         given(orderTableRepository.findAllByIdIn(anyList()))
             .willReturn(orderTables);
-        given(tableGroupRepository.save(tableGroup))
+        given(tableGroupRepository.save(any(TableGroup.class)))
             .willReturn(tableGroup);
 
-        tableGroupService.create(tableGroup);
+        TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(1L, 2L));
+
+        tableGroupService.create(tableGroupRequest);
 
         verify(orderTableRepository).findAllByIdIn(anyList());
-        verify(tableGroupRepository).save(tableGroup);
-        verify(orderTableRepository).save(orderTable);
+        verify(tableGroupRepository).save(any(TableGroup.class));
+        verify(orderTableRepository, times(2)).save(any(OrderTable.class));
     }
 
     @DisplayName("table group 해제")
@@ -87,6 +91,5 @@ class TableGroupServiceTest {
 
         verify(orderTableRepository).findAllByTableGroupId(anyLong());
         verify(orderRepository).existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList());
-        verify(orderTableRepository, times(2)).save(any());
     }
 }

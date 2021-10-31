@@ -6,6 +6,7 @@ import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -28,38 +29,32 @@ public class TableGroupService {
     }
 
     @Transactional
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupRequest tableGroupRequest) {
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
-
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
+        final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup().getId())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
         }
 
+        TableGroup tableGroup = new TableGroup(savedOrderTables);
+
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-//        final Long tableGroupId = savedTableGroup.getId();
-//        for (final OrderTable savedOrderTable : savedOrderTables) {
-//            savedOrderTable.setTableGroupId(tableGroupId);
-//            savedOrderTable.setEmpty(false);
-//            orderTableDao.save(savedOrderTable);
-//        }
-//        savedTableGroup.setOrderTables(savedOrderTables);
+        for (final OrderTable savedOrderTable : savedOrderTables) {
+            savedOrderTable.addTableGroup(savedTableGroup);
+            savedOrderTable.fillTable();
+            orderTableRepository.save(savedOrderTable);
+        }
+        savedTableGroup.addOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }
@@ -77,10 +72,8 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-//        for (final OrderTable orderTable : orderTables) {
-//            orderTable.setTableGroupId(null);
-//            orderTable.setEmpty(false);
-//            orderTableDao.save(orderTable);
-//        }
+        for (final OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
+        }
     }
 }

@@ -22,6 +22,10 @@ public class TableGroup {
 
     }
 
+    public TableGroup(List<OrderTable> orderTables) {
+        this.orderTables.addAll(orderTables);
+    }
+
     public TableGroup(Long id) {
         this.id = id;
     }
