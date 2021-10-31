@@ -14,13 +14,15 @@ class ProductQuantityTest {
     @Test
     void createFailedWithNullProduct() {
         assertThatThrownBy(() -> new ProductQuantity(null, 1L))
-                .isInstanceOf(FieldNotValidException.class);
+                .isInstanceOf(FieldNotValidException.class)
+                .hasMessageContaining("상품이 유효하지 않습니다.");
     }
 
     @DisplayName("ProductQuantity를 생성한다. - 실패, quantity가 null")
     @Test
     void createFailedWithNullQuantity() {
         assertThatThrownBy(() -> new ProductQuantity(new Product("p", BigDecimal.TEN), null))
-                .isInstanceOf(FieldNotValidException.class);
+                .isInstanceOf(FieldNotValidException.class)
+                .hasMessageContaining("상품 수량이 유효하지 않습니다.");
     }
 }
