@@ -69,6 +69,16 @@ public class OrderTable {
         return tableGroup.getId();
     }
 
+    public void ungroupFromTableGroup() {
+        for (Order order : orders) {
+            if (!order.isCompleted()) {
+                throw new IllegalArgumentException();
+            }
+        }
+        this.setTableGroup(null);
+        this.setEmpty(false);
+    }
+
     public static class Builder {
         private Long id;
         private TableGroup tableGroup;

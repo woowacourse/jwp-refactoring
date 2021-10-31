@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("테이블 그룹 관련 기능")
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    TableGroup 테이블_그룹1 = new TableGroup();
+    TableGroup 테이블_그룹1;
     OrderTable 주문_테이블1 = new OrderTable();
     OrderTable 주문_테이블2 = new OrderTable();
 
@@ -32,29 +32,29 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        테이블_그룹1.setOrderTables(Arrays.asList(주문_테이블1, 주문_테이블2));
-        테이블_그룹1.setCreatedDate(LocalDateTime.now());
-        테이블_그룹1 = tableGroupRepository.save(테이블_그룹1);
-
         주문_테이블1.setNumberOfGuests(4);
         주문_테이블1.setEmpty(true);
-        주문_테이블1.setTableGroup(테이블_그룹1);
-        주문_테이블1 = orderTableRepository.save(주문_테이블1);
 
         주문_테이블2.setNumberOfGuests(2);
         주문_테이블2.setEmpty(true);
-        주문_테이블2.setTableGroup(테이블_그룹1);
-        주문_테이블2 = orderTableRepository.save(주문_테이블2);
+
+        테이블_그룹1 = new TableGroup.Builder()
+                .createdDate(LocalDateTime.now())
+                .orderTables(Arrays.asList(주문_테이블1, 주문_테이블2))
+                .build();
+        tableGroupRepository.save(테이블_그룹1);
+        orderTableRepository.save(주문_테이블1);
+        orderTableRepository.save(주문_테이블2);
 
         주문1.setOrderTable(주문_테이블1);
         주문1.setOrderStatus(OrderStatus.COMPLETION);
         주문1.setOrderedTime(LocalDateTime.now());
-        주문1 = orderRepository.save(주문1);
+        orderRepository.save(주문1);
 
         주문2.setOrderTable(주문_테이블2);
         주문2.setOrderStatus(OrderStatus.COMPLETION);
         주문2.setOrderedTime(LocalDateTime.now());
-        주문2 = orderRepository.save(주문2);
+        orderRepository.save(주문2);
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 생성한다")
@@ -100,6 +100,81 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
 
         // when
         ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 유효하지_않은_테이블_그룹_요청, TableGroupResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("테이블 그룹 요청에 담긴 주문 테이블 ID가 중복된다면, 예외가 발생한다.")
+    @Test
+    void cannotCreateTableGroupWhenRequestOrderTableIdDuplicated() {
+        // given
+        OrderTable 주문_테이블3 = new OrderTable();
+
+        주문_테이블3.setNumberOfGuests(100);
+        주문_테이블3.setEmpty(true);
+        주문_테이블3 = orderTableRepository.save(주문_테이블3);
+
+        TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
+        OrderTableIdRequest 주문_테이블3_ID = new OrderTableIdRequest();
+        주문_테이블3_ID.setId(주문_테이블3.getId());
+        테이블_그룹_요청.setOrderTables(Arrays.asList(주문_테이블3_ID, 주문_테이블3_ID));
+
+        // when
+        ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("그룹화 하려는 주문 테이블이 비어있지 않다면, 그룹화할 수 없다.")
+    @Test
+    void cannotCreateTableGroupWhenIsEmptyFalse() {
+        // given
+        OrderTable 주문_테이블3 = new OrderTable();
+        OrderTable 주문_테이블4 = new OrderTable();
+
+        주문_테이블3.setNumberOfGuests(100);
+        주문_테이블3.setEmpty(false);
+        주문_테이블3 = orderTableRepository.save(주문_테이블3);
+
+        주문_테이블4.setNumberOfGuests(200);
+        주문_테이블4.setEmpty(true);
+        주문_테이블4 = orderTableRepository.save(주문_테이블4);
+
+        TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
+        OrderTableIdRequest 주문_테이블3_ID = new OrderTableIdRequest();
+        주문_테이블3_ID.setId(주문_테이블3.getId());
+        OrderTableIdRequest 주문_테이블4_ID = new OrderTableIdRequest();
+        주문_테이블4_ID.setId(주문_테이블4.getId());
+        테이블_그룹_요청.setOrderTables(Arrays.asList(주문_테이블3_ID, 주문_테이블4_ID));
+
+        // when
+        ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("그룹화 하려는 주문 테이블이 이미 그룹화되어 있다면, 그룹화할 수 없다.")
+    @Test
+    void cannotCreateTableGroupWhenOrderTableAlreayInGroup() {
+        // given
+        OrderTable 주문_테이블3 = new OrderTable();
+
+        주문_테이블3.setNumberOfGuests(100);
+        주문_테이블3.setEmpty(true);
+        주문_테이블3 = orderTableRepository.save(주문_테이블3);
+
+        TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
+        OrderTableIdRequest 주문_테이블1_ID = new OrderTableIdRequest();
+        주문_테이블1_ID.setId(주문_테이블1.getId());
+        OrderTableIdRequest 주문_테이블3_ID = new OrderTableIdRequest();
+        주문_테이블3_ID.setId(주문_테이블3.getId());
+        테이블_그룹_요청.setOrderTables(Arrays.asList(주문_테이블1_ID, 주문_테이블3_ID));
+
+        // when
+        ResponseEntity<TableGroupResponse> response = testRestTemplate.postForEntity("/api/table-groups", 테이블_그룹_요청, TableGroupResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.request.OrderTableIdRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.response.TableGroupResponse;
@@ -14,28 +12,34 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
 public class TableGroupService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTableIdRequest> orderTableIdRequests = tableGroupRequest.getOrderTables();
+        final List<OrderTable> orderTables = findOrderTables(tableGroupRequest.getOrderTables());
 
+        final TableGroup tableGroup = new TableGroup.Builder()
+                .createdDate(LocalDateTime.now())
+                .orderTables(orderTables)
+                .build();
+
+        tableGroupRepository.save(tableGroup);
+        return TableGroupResponse.of(tableGroup);
+    }
+
+    private List<OrderTable> findOrderTables(List<OrderTableIdRequest> orderTableIdRequests) {
         if (CollectionUtils.isEmpty(orderTableIdRequests) || orderTableIdRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -46,48 +50,21 @@ public class TableGroupService {
 
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
 
-        final TableGroup tableGroup = new TableGroup();
-
         if (orderTableIdRequests.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-        }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-
-        // TODO: 양방향 연관관계 다시 더 공부하기 제발
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-//            savedOrderTable.setTableGroup(savedTableGroup);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
-        savedTableGroup.setOrderTables(savedOrderTables);
-
-        return TableGroupResponse.of(savedTableGroup);
+        return savedOrderTables;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                 .orElseThrow(IllegalArgumentException::new);
+
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
-
-        if (orderRepository.existsByOrderTableInAndOrderStatusIn(
-                orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
-            orderTable.setEmpty(false);
-            orderTableRepository.save(orderTable);
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroupFromTableGroup();
         }
     }
 }

@@ -82,6 +82,10 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public boolean isCompleted() {
+        return this.orderStatus.equals(OrderStatus.COMPLETION);
+    }
+
     public static class Builder {
         private Long id;
         private OrderTable orderTable;
