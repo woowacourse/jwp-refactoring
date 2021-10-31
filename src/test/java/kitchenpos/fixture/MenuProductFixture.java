@@ -4,6 +4,7 @@ import kitchenpos.domain.MenuProduct;
 
 public class MenuProductFixture {
     public static final MenuProduct 후라이드치킨_후라이드치킨;
+    public static final MenuProduct 후라이드치킨_후라이드치킨_NO_KEY;
     public static final MenuProduct 양념치킨_양념치킨;
     public static final MenuProduct 반반치킨_반반치킨;
     public static final MenuProduct 통구이_통구이;
@@ -14,6 +15,7 @@ public class MenuProductFixture {
 
     static {
         후라이드치킨_후라이드치킨 = newInstance(1L, 1L, 1L, 1);
+        후라이드치킨_후라이드치킨_NO_KEY =  newInstance(null, null, 1L, 1);
         양념치킨_양념치킨 = newInstance(2L, 2L, 2L, 1);
         반반치킨_반반치킨 = newInstance(3L, 3L, 3L, 1);
         통구이_통구이 = newInstance(4L, 4L, 4L, 1);
