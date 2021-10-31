@@ -57,8 +57,8 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        OrderLineItem orderLineItem = mock(OrderLineItem.class);
-        Order order = mock(Order.class);
+        OrderLineItem orderLineItem = OrderLineItemFactory.builder().build();
+        Order order = OrderFactory.builder().build();
         given(orderDao.findAll()).willReturn(Collections.singletonList(order));
         given(orderLineItemDao.findAllByOrderId(order.getId())).willReturn(
             Collections.singletonList(orderLineItem));

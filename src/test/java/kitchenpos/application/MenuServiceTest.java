@@ -49,8 +49,8 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        MenuProduct menuProduct = mock(MenuProduct.class);
-        Menu menu = mock(Menu.class);
+        MenuProduct menuProduct = MenuProductFactory.builder().build();
+        Menu menu = MenuFactory.builder().build();
         given(menuDao.findAll()).willReturn(Collections.singletonList(menu));
         given(menuProductDao.findAllByMenuId(menu.getId())).willReturn(
             Collections.singletonList(menuProduct));
