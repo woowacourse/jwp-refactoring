@@ -15,6 +15,7 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.request.TableRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.ProductResponse;
@@ -71,7 +72,7 @@ class OrderServiceTest {
     private ProductResponse pizza;
     private ProductResponse frenchFry;
 
-    private MenuGroup menuGroup;
+    private MenuGroupResponse menuGroup;
 
     private Menu chickenSet;
     private Menu pizzaSet;
