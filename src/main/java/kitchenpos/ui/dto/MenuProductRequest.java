@@ -24,10 +24,4 @@ public class MenuProductRequest {
         return quantity;
     }
 
-//    public MenuProduct toMenuProduct() {
-//        return new MenuProduct(
-//                productId,
-//                quantity
-//        );
-//    }
 }
