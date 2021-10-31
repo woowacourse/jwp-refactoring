@@ -17,35 +17,26 @@ public class Fixtures {
 
     public static MenuGroup makeMenuGroup() {
         MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(1L);
-        menuGroup.setName("후라이드치킨");
+
 
         return menuGroup;
     }
 
     public static MenuProduct makeMenuProduct() {
         MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setMenuId(1L);
-        menuProduct.setQuantity(1);
+
 
         return menuProduct;
     }
 
     public static Product makeProduct() {
         Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(16000.00));
-        product.setId(1L);
-        product.setName("후라이드치킨");
+
         return product;
     }
 
     public static Menu makeMenu() {
         Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setPrice(BigDecimal.valueOf(16000.00));
-        menu.setName("후라이드치킨");
-        menu.setMenuGroupId(1L);
 
         return menu;
     }

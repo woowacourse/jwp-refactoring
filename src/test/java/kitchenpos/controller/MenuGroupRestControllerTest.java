@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.ui.MenuGroupRestController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,7 @@ class MenuGroupRestControllerTest {
 
         String content = objectMapper.writeValueAsString(createMenu);
 
-        given(menuGroupService.create(any(MenuGroup.class)))
+        given(menuGroupService.create(any(MenuGroupRequest.class)))
             .willReturn(createMenu);
 
         mvc.perform(post("/api/menu-groups")
