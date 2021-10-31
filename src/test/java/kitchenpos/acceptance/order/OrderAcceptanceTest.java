@@ -9,7 +9,6 @@ import java.util.List;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -41,16 +40,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
         Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
         Product savedChicken = productRepository.save(chicken);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedChicken.getId());
-        menuProduct.setQuantity(2);
-
-        Menu halfHalf = new Menu();
-        halfHalf.setName("후라이드+후라이드");
-        halfHalf.setPrice(BigDecimal.valueOf(19000));
-        halfHalf.setMenuGroupId(savedMenuGroup.getId());
-        halfHalf.setMenuProducts(Arrays.asList(menuProduct));
-        savedMenu = menuDao.save(halfHalf);
+        Menu halfHalf = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), savedMenuGroup);
+        savedMenu = menuRepository.save(halfHalf);
     }
 
     @DisplayName("주문 등록 성공")
