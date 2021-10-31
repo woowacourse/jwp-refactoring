@@ -10,6 +10,8 @@ import kitchenpos.exception.InvalidArgumentException;
 @Embeddable
 public class Price {
 
+    private static final String PRICE_NEGATIVE_ERROR_MESSAGE = "Price는 0보다 작을 수 없습니다.";
+
     @Column(name = "price", nullable = false)
     private BigDecimal value;
 
@@ -17,7 +19,8 @@ public class Price {
     }
 
     public Price(BigDecimal value) {
-        this(value.intValue());
+        validate(value);
+        this.value = value;
     }
 
     public Price(Integer value) {
@@ -25,9 +28,38 @@ public class Price {
         this.value = BigDecimal.valueOf(value);
     }
 
-    private void validate(Integer value) {
-        if (Objects.isNull(value) || value < 0) {
-            throw new InvalidArgumentException("Price는 null이거나 0보다 작을 수 없습니다.");
+    private void validate(Object object) {
+        validateNonNull(object);
+        validateNotNegative(object);
+    }
+
+    private void validateNotNegative(Object object) {
+        if (object instanceof Integer) {
+            validateIntegerNotNegative((Integer) object);
+            return;
+        }
+        if (object instanceof BigDecimal) {
+            validateBigDecimalNotNegative((BigDecimal) object);
+            return;
+        }
+        throw new IllegalArgumentException("유효하지 않은 타입입니다.");
+    }
+
+    private void validateIntegerNotNegative(Integer value) {
+        if (value < 0) {
+            throw new InvalidArgumentException(PRICE_NEGATIVE_ERROR_MESSAGE);
+        }
+    }
+
+    private void validateBigDecimalNotNegative(BigDecimal value) {
+        if (value.intValue() < 0) {
+            throw new InvalidArgumentException(PRICE_NEGATIVE_ERROR_MESSAGE);
+        }
+    }
+
+    private void validateNonNull(Object value) {
+        if (Objects.isNull(value)) {
+            throw new InvalidArgumentException("Price는 null일 수 없습니다.");
         }
     }
 

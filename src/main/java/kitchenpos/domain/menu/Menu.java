@@ -3,6 +3,7 @@ package kitchenpos.domain.menu;
 import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import kitchenpos.domain.menugroup.MenuGroup;
-import kitchenpos.exception.InvalidArgumentException;
+import kitchenpos.domain.price.Price;
 
 @Entity
 public class Menu {
@@ -24,8 +25,8 @@ public class Menu {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", foreignKey = @ForeignKey(name = "fk_menu_menu_group"))
@@ -35,25 +36,18 @@ public class Menu {
     }
 
     public Menu(String name, int price, MenuGroup menuGroup) {
-        this(null, name, BigDecimal.valueOf(price), menuGroup);
+        this(null, name, new Price(price), menuGroup);
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+        this(null, name, new Price(price), menuGroup);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
-        validatePrice(price);
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-    }
-
-    private void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidArgumentException("Menu의 Price는 null이거나 0보다 작을 수 없습니다.");
-        }
     }
 
     public Long getId() {
@@ -64,8 +58,12 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
+    }
+
+    public int getPriceAsInt() {
+        return price.getValueAsInt();
     }
 
     public MenuGroup getMenuGroup() {

@@ -14,7 +14,7 @@ public class MenuResponse {
     private final List<MenuProductResponse> menuProducts;
 
     public MenuResponse(Menu menu, List<MenuProductResponse> menuProductResponses) {
-        this(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
+        this(menu.getId(), menu.getName(), BigDecimal.valueOf(menu.getPriceAsInt()), menu.getMenuGroupId(), menuProductResponses);
     }
 
     public MenuResponse(
