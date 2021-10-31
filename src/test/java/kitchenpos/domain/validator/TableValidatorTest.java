@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,16 +33,6 @@ class TableValidatorTest {
     @Test
     void validateUpdateEmpty() {
         assertDoesNotThrow(() -> tableValidator.validateUpdateEmpty(orderTable));
-    }
-
-    @Test
-    void validateUpdateEmptyWhenGrouped() {
-        OrderTable other = new OrderTable(2L, null, 3, true);
-        TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable, other));
-
-        orderTable.setTableGroup(tableGroup);
-        assertThatThrownBy(() -> tableValidator.validateUpdateEmpty(orderTable))
-                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

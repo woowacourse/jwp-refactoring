@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import java.util.List;
 import kitchenpos.application.dto.request.TableRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.mapper.TableMapper;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -23,27 +24,28 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable create(final TableRequest tableRequest) {
+    public OrderTableResponse create(final TableRequest tableRequest) {
         OrderTable orderTable = tableMapper.mapFrom(tableRequest);
-        return orderTableRepository.save(orderTable);
+        orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(orderTable);
     }
 
-    public List<OrderTable> list() {
-        return orderTableRepository.findAll();
+    public List<OrderTableResponse> list() {
+        return OrderTableResponse.listOf(orderTableRepository.findAll());
     }
 
     @Transactional
-    public OrderTable changeEmpty(final Long orderTableId, final TableRequest tableRequest) {
+    public OrderTableResponse changeEmpty(final Long orderTableId, final TableRequest tableRequest) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.updateEmpty(tableValidator, tableRequest.getEmpty());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(orderTable);
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final TableRequest tableRequest) {
+    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final TableRequest tableRequest) {
         final OrderTable orderTable = findOrderTableById(orderTableId);
         orderTable.updateNumberOfGuests(tableRequest.getNumberOfGuests());
-        return orderTableRepository.save(orderTable);
+        return OrderTableResponse.of(orderTable);
     }
 
     private OrderTable findOrderTableById(Long orderTableId) {

@@ -3,26 +3,24 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.request.TableGroupRequest.OrderTableId;
 import kitchenpos.application.dto.request.TableRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.domain.validator.TableValidator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTestWithProfiles
 class TableServiceTest {
@@ -37,6 +35,9 @@ class TableServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
+    @MockBean
+    private TableValidator tableValidator;
+
     @Autowired
     private OrderTableRepository orderTableRepository;
     @Autowired
@@ -47,7 +48,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 정상 생성")
     void create() {
-        OrderTable saved = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        OrderTableResponse saved = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
         assertNotNull(saved.getId());
     }
 
@@ -64,9 +65,9 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 정상 Empty 상태 수정")
     void changeEmpty() {
-        OrderTable orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
 
-        OrderTable changed = tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE);
+        OrderTableResponse changed = tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE);
         assertThat(changed.isEmpty()).isEqualTo(CHANGE_EMPTY_TRUE.getEmpty());
     }
 
@@ -81,8 +82,8 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 Empty 상태 수정 실패 :: 단체 지정된 테이블")
     void changeEmptyForTableWithTableGroupId() {
-        OrderTable orderTable1 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
-        OrderTable orderTable2 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
+        OrderTableResponse orderTable1 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
+        OrderTableResponse orderTable2 = tableService.create(TABLE_REQUEST_FOUR_EMPTY);
 
         tableGroupService.create(new TableGroupRequest(Arrays.asList(
                 new OrderTableId(orderTable1.getId()),
@@ -92,12 +93,12 @@ class TableServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    @ParameterizedTest(name = "주문 테이블 Empty 상태 수정 실패 :: 주문 상태 {0}")
-    @EnumSource(value = OrderStatus.class, names = {"COOKING", "MEAL"})
-    void changeEmptyForTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
-        OrderTable orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
-        orderRepository.save(
-                new Order(orderTable, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+    @Test
+    @DisplayName("주문 테이블 Empty 상태 수정 실패 :: validate 실패")
+    void changeEmptyForTableWithNotAllowedOrderStatus() {
+        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+
+        doThrow(new IllegalArgumentException()).when(tableValidator).validateUpdateEmpty(any());
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -106,16 +107,16 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 손님 수 정상 수정")
     void changeNumberOfGuests() {
-        OrderTable orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
 
-        OrderTable changed = tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE);
+        OrderTableResponse changed = tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE);
         assertThat(changed.getNumberOfGuests()).isEqualTo(CHANGE_GUESTS_TO_THREE.getNumberOfGuests());
     }
 
     @Test
     @DisplayName("주문 테이블 손님 수 수정 실패 :: 음의 손님 수")
     void changeNumberOfGuestsWithNegativeValue() {
-        OrderTable orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
+        OrderTableResponse orderTable = tableService.create(TABLE_REQUEST_FOUR_NOT_EMPTY);
         TableRequest negativeNumberRequest = new TableRequest(-3, null);
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), negativeNumberRequest))
@@ -134,7 +135,7 @@ class TableServiceTest {
     @Test
     @DisplayName("주문 테이블 손님 수 수정 실패 :: 빈 테이블 상태")
     void changeNumberOfGuestsWithEmptyTableStatus() {
-        OrderTable orderTable = tableService.create(new TableRequest(3, true));
+        OrderTableResponse orderTable = tableService.create(new TableRequest(3, true));
 
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), CHANGE_GUESTS_TO_THREE))
                 .isInstanceOf(IllegalArgumentException.class);

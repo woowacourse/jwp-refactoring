@@ -32,6 +32,9 @@ public class OrderTable {
     }
 
     public void updateEmpty(TableValidator tableValidator, Boolean empty) {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
         tableValidator.validateUpdateEmpty(this);
         this.empty = empty;
     }

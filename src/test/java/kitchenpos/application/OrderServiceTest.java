@@ -16,12 +16,12 @@ import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.request.TableRequest;
+import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
@@ -67,7 +67,7 @@ class OrderServiceTest {
     @Autowired
     private MenuRepository menuRepository;
 
-    private OrderTable table;
+    private OrderTableResponse table;
     private Product chicken;
     private Product pizza;
     private Product frenchFry;
@@ -119,7 +119,7 @@ class OrderServiceTest {
     @Test
     @DisplayName("주문 등록 실패 :: 빈 주문 항목")
     void createWithEmptyOrderLine() {
-        OrderRequest order = new OrderRequest(table.getId(), Collections.EMPTY_LIST);
+        OrderRequest order = new OrderRequest(table.getId(), Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
     }
