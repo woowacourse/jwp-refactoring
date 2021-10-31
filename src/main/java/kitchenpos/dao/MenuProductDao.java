@@ -13,4 +13,6 @@ public interface MenuProductDao {
     List<MenuProduct> findAll();
 
     List<MenuProduct> findAllByMenuId(Long menuId);
+
+    int deleteAll();
 }
