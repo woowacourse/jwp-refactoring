@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Menus;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -48,30 +48,14 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> menuIds = orderLineItemRequests.stream()
-                .map(OrderLineItemRequest::getMenuId)
-                .collect(Collectors.toList());
-
-        int count = 0;
-        for (Long menuId : menuIds) {
-            if (menuRepository.existsById(menuId)) {
-                count++;
-            }
-        }
-
-        if (orderLineItemRequests.size() != count) {
-            throw new IllegalArgumentException();
-        }
+        Menus menus = new Menus(menuRepository.findAllById(getMenuIds(orderLineItemRequests)));
+        menus.validateDistinctSize(orderLineItemRequests.size());
 
         final OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+        orderTable.validateEmpty();
 
         Order order = new Order(orderTable, OrderStatus.COOKING.name());
-
         final Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(savedOrder, orderRequest);
@@ -84,6 +68,12 @@ public class OrderService {
                 savedOrder.getOrderedTime(),
                 orderLineItemResponses
         );
+    }
+
+    private List<Long> getMenuIds(List<OrderLineItemRequest> orderLineItemRequests) {
+        return orderLineItemRequests.stream()
+                .map(OrderLineItemRequest::getMenuId)
+                .collect(Collectors.toList());
     }
 
     private List<OrderLineItemResponse> getOrderLineItemResponse(List<OrderLineItem> savedOrderLineItems) {
@@ -134,15 +124,9 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
+        savedOrder.validateChangeStatus();
 
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new IllegalArgumentException();
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderRepository.save(savedOrder);
+        savedOrder.setOrderStatus(orderRequest.getOrderStatus());
 
         List<OrderLineItemResponse> orderLineItemResponses = getOrderLineItemResponse(
                 orderLineItemRepository.findAllByOrderId(orderId));

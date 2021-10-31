@@ -1,11 +1,9 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;
@@ -25,8 +23,11 @@ public class TableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
-        OrderTable orderTable = new OrderTable(null, orderTableRequest.getNumberOfGuests(),
-                orderTableRequest.isEmpty());
+        OrderTable orderTable = new OrderTable(
+                null,
+                orderTableRequest.getNumberOfGuests(),
+                orderTableRequest.isEmpty()
+        );
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
         return new OrderTableResponse(
@@ -51,15 +52,10 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        savedOrderTable.validateGroup();
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
-        }
-
-        if (orderRepository.existsByOrderTableAndOrderStatusIsIn(
-                savedOrderTable, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
+        Orders orders = new Orders(orderRepository.findAllByOrderTableId(savedOrderTable.getId()));
+        orders.validateChangeEmpty();
 
         savedOrderTable.setEmpty(orderTableRequest.isEmpty());
 
@@ -75,18 +71,11 @@ public class TableService {
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final int numberOfGuests = orderTableRequest.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
+        savedOrderTable.validateEmpty();
 
-        if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        savedOrderTable.setNumberOfGuests(numberOfGuests);
+        savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return new OrderTableResponse(
                 savedOrderTable.getId(),

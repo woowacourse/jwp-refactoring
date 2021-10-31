@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -38,6 +39,12 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public void validateChangeStatus() {
+        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
     public Long getId() {
         return id;
     }
@@ -59,7 +66,7 @@ public class Order {
     }
 
     public void setOrderStatus(final String orderStatus) {
-        this.orderStatus = orderStatus;
+        this.orderStatus = OrderStatus.valueOf(orderStatus).name();
     }
 
     public LocalDateTime getOrderedTime() {

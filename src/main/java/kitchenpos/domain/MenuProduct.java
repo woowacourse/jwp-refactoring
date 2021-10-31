@@ -33,6 +33,10 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
+    public BigDecimal amount() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -63,9 +67,5 @@ public class MenuProduct {
 
     public void setQuantity(final long quantity) {
         this.quantity = quantity;
-    }
-
-    public BigDecimal amount() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }

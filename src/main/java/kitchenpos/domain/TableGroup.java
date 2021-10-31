@@ -23,6 +23,10 @@ public class TableGroup {
     public TableGroup() {
     }
 
+    public TableGroup(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }

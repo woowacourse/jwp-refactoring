@@ -33,6 +33,40 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void validateEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void validateGroup() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public Long tableGroupId() {
+        if (Objects.nonNull(tableGroup)) {
+            return tableGroup.getId();
+        }
+        return null;
+    }
+
     public Long getId() {
         return id;
     }
@@ -63,12 +97,5 @@ public class OrderTable {
 
     public void setEmpty(final boolean empty) {
         this.empty = empty;
-    }
-
-    public Long tableGroupId() {
-        if (Objects.nonNull(tableGroup)) {
-            return tableGroup.getId();
-        }
-        return null;
     }
 }

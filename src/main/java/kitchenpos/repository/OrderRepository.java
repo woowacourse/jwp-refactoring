@@ -9,8 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    boolean existsByOrderTableIsInAndOrderStatusIsIn(final List<OrderTable> orderTables,
-                                                     final List<String> orderStatuses);
+    List<Order> findAllByOrderTableId(Long orderTableId);
 
-    boolean existsByOrderTableAndOrderStatusIsIn(final OrderTable orderTable, final List<String> orderStatuses);
+    List<Order> findAllByOrderTableIn(List<OrderTable> orderTables);
 }
