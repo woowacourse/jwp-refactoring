@@ -1,7 +1,6 @@
 spring:
-  datasource:
-    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
-    username: sa
+  profiles:
+     active: local
   jpa:
     properties:
       hibernate:
@@ -9,11 +8,6 @@ spring:
     show_sql: true
     hibernate:
       ddl-auto: validate
-  config:
-    activate:
-      on-profile: local
-  flyway:
-    enabled: false
 
 logging:
   level:
@@ -23,3 +17,30 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+---
+
+spring:
+  datasource:
+    url: jdbc:h2:~/test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
+    username: sa
+  config:
+    activate:
+      on-profile: local
+  flyway:
+    enabled: false
+
+---
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;
+    username: sa
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: false
