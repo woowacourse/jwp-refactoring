@@ -30,36 +30,52 @@ public class OrderTable {
         this.empty = builder.empty;
     }
 
+    public void registerTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroupFromTableGroup() {
+        for (Order order : orders) {
+            if (!order.isCompleted()) {
+                throw new IllegalArgumentException();
+            }
+        }
+        this.tableGroup = null;
+        this.empty = false;
+    }
+
+    public void changeEmpty(Boolean empty) {
+        if (Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException();
+        }
+        for (Order order : orders) {
+            if (!order.isCompleted()) {
+                throw new IllegalArgumentException();
+            }
+        }
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(Integer numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException();
+        }
+        if (this.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void makeNotEmpty() {
+        this.empty = false;
+    }
+
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public TableGroup getTableGroup() {
         return tableGroup;
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
-    public void setEmpty(final boolean empty) {
-        this.empty = empty;
     }
 
     public Long getTableGroupId() {
@@ -69,14 +85,12 @@ public class OrderTable {
         return tableGroup.getId();
     }
 
-    public void ungroupFromTableGroup() {
-        for (Order order : orders) {
-            if (!order.isCompleted()) {
-                throw new IllegalArgumentException();
-            }
-        }
-        this.setTableGroup(null);
-        this.setEmpty(false);
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     public static class Builder {

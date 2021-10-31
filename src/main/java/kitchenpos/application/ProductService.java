@@ -25,7 +25,6 @@ public class ProductService {
                 .build();
 
         productRepository.save(newProduct);
-
         return ProductResponse.of(newProduct);
     }
 

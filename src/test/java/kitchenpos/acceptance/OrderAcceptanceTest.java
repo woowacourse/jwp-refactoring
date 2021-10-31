@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("주문 관련 기능")
 class OrderAcceptanceTest extends AcceptanceTest {
 
-    OrderTable 주문_테이블 = new OrderTable();
+    OrderTable 주문_테이블;
 
     Order 주문 = new Order();
 
@@ -38,8 +38,10 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        주문_테이블.setNumberOfGuests(4);
-        주문_테이블.setEmpty(false);
+        주문_테이블 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(false)
+                .build();
         주문_테이블 = orderTableRepository.save(주문_테이블);
 
         주문.setOrderTable(주문_테이블);

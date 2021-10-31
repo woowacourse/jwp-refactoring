@@ -24,8 +24,9 @@ class OrderTest {
     @DisplayName("주문 생성 시 빌더패턴을 사용할 수 있다")
     @Test
     void createOrderWithBuilder() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(2L);
+        OrderTable orderTable = new OrderTable.Builder()
+                .id(2L)
+                .build();
 
         final Order order = new Order.Builder()
                 .id(1L)

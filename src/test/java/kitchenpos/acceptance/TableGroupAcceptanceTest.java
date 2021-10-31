@@ -24,19 +24,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
     TableGroup 테이블_그룹1;
-    OrderTable 주문_테이블1 = new OrderTable();
-    OrderTable 주문_테이블2 = new OrderTable();
+    OrderTable 주문_테이블1;
+    OrderTable 주문_테이블2;
 
     Order 주문1 = new Order();
     Order 주문2 = new Order();
 
     @BeforeEach
     void setUp() {
-        주문_테이블1.setNumberOfGuests(4);
-        주문_테이블1.setEmpty(true);
+        주문_테이블1 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(true)
+                .build();
 
-        주문_테이블2.setNumberOfGuests(2);
-        주문_테이블2.setEmpty(true);
+        주문_테이블2 = new OrderTable.Builder()
+                .numberOfGuests(2)
+                .empty(true)
+                .build();
 
         테이블_그룹1 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
@@ -61,15 +65,16 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void createTableGroup() {
         // given
-        OrderTable 주문_테이블3 = new OrderTable();
-        OrderTable 주문_테이블4 = new OrderTable();
-
-        주문_테이블3.setNumberOfGuests(100);
-        주문_테이블3.setEmpty(true);
+        OrderTable 주문_테이블3 = new OrderTable.Builder()
+                .numberOfGuests(100)
+                .empty(true)
+                .build();
         주문_테이블3 = orderTableRepository.save(주문_테이블3);
 
-        주문_테이블4.setNumberOfGuests(200);
-        주문_테이블4.setEmpty(true);
+        OrderTable 주문_테이블4 = new OrderTable.Builder()
+                .numberOfGuests(200)
+                .empty(true)
+                .build();
         주문_테이블4 = orderTableRepository.save(주문_테이블4);
 
         TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
@@ -109,10 +114,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotCreateTableGroupWhenRequestOrderTableIdDuplicated() {
         // given
-        OrderTable 주문_테이블3 = new OrderTable();
-
-        주문_테이블3.setNumberOfGuests(100);
-        주문_테이블3.setEmpty(true);
+        OrderTable 주문_테이블3 = new OrderTable.Builder()
+                .numberOfGuests(100)
+                .empty(true)
+                .build();
         주문_테이블3 = orderTableRepository.save(주문_테이블3);
 
         TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
@@ -131,15 +136,16 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotCreateTableGroupWhenIsEmptyFalse() {
         // given
-        OrderTable 주문_테이블3 = new OrderTable();
-        OrderTable 주문_테이블4 = new OrderTable();
-
-        주문_테이블3.setNumberOfGuests(100);
-        주문_테이블3.setEmpty(false);
+        OrderTable 주문_테이블3 = new OrderTable.Builder()
+                .numberOfGuests(100)
+                .empty(false)
+                .build();
         주문_테이블3 = orderTableRepository.save(주문_테이블3);
 
-        주문_테이블4.setNumberOfGuests(200);
-        주문_테이블4.setEmpty(true);
+        OrderTable 주문_테이블4 = new OrderTable.Builder()
+                .numberOfGuests(200)
+                .empty(true)
+                .build();
         주문_테이블4 = orderTableRepository.save(주문_테이블4);
 
         TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();
@@ -160,10 +166,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotCreateTableGroupWhenOrderTableAlreayInGroup() {
         // given
-        OrderTable 주문_테이블3 = new OrderTable();
-
-        주문_테이블3.setNumberOfGuests(100);
-        주문_테이블3.setEmpty(true);
+        OrderTable 주문_테이블3 = new OrderTable.Builder()
+                .numberOfGuests(100)
+                .empty(true)
+                .build();
         주문_테이블3 = orderTableRepository.save(주문_테이블3);
 
         TableGroupRequest 테이블_그룹_요청 = new TableGroupRequest();

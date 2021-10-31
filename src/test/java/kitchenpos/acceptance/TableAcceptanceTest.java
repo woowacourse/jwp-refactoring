@@ -3,6 +3,7 @@ package kitchenpos.acceptance;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.ui.request.OrderTableEmptyRequest;
 import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
 import kitchenpos.ui.request.OrderTableRequest;
@@ -16,27 +17,55 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 관련 기능")
 class TableAcceptanceTest extends AcceptanceTest {
 
-    OrderTable 주문_테이블1 = new OrderTable();
-    OrderTable 주문_테이블2 = new OrderTable();
+    OrderTable 주문_테이블1;
+    OrderTable 주문_테이블2;
+    OrderTable 주문_테이블3_테이블_그룹1_소속;
+    OrderTable 주문_테이블4_테이블_그룹1_소속;
+
+    TableGroup 테이블_그룹1;
 
     Order 요리중인_주문 = new Order();
     Order 식사중인_주문 = new Order();
 
     @BeforeEach
     void setUp() {
-        주문_테이블1.setNumberOfGuests(4);
-        주문_테이블1.setEmpty(false);
-        주문_테이블1 = orderTableRepository.save(주문_테이블1);
+        주문_테이블1 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(false)
+                .build();
 
-        주문_테이블2.setNumberOfGuests(2);
-        주문_테이블2.setEmpty(false);
-        주문_테이블2 = orderTableRepository.save(주문_테이블2);
+        주문_테이블2 = new OrderTable.Builder()
+                .numberOfGuests(2)
+                .empty(false)
+                .build();
+
+        주문_테이블3_테이블_그룹1_소속 = new OrderTable.Builder()
+                .numberOfGuests(3)
+                .empty(true)
+                .build();
+
+        주문_테이블4_테이블_그룹1_소속 = new OrderTable.Builder()
+                .numberOfGuests(5)
+                .empty(true)
+                .build();
+
+        테이블_그룹1 = new TableGroup.Builder()
+                .createdDate(LocalDateTime.now())
+                .orderTables(Arrays.asList(주문_테이블3_테이블_그룹1_소속, 주문_테이블4_테이블_그룹1_소속))
+                .build();
+
+        tableGroupRepository.save(테이블_그룹1);
+        orderTableRepository.save(주문_테이블1);
+        orderTableRepository.save(주문_테이블2);
+        orderTableRepository.save(주문_테이블3_테이블_그룹1_소속);
+        orderTableRepository.save(주문_테이블4_테이블_그룹1_소속);
 
         요리중인_주문.setOrderStatus(OrderStatus.COOKING);
         요리중인_주문.setOrderTable(주문_테이블2);
@@ -57,7 +86,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody()).hasSize(4);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블에 대한 정보를 추가한다")
@@ -97,7 +126,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경시, 해당 테이블의 주문 상태가 모두 COMPLETION 아니라면 변경할 수 없다")
     @Test
-    void cannotChangeEmptyStatus() {
+    void cannotChangeEmptyStatusWhenOrderStatusNotCompletion() {
         // given
         OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
         변경할_주문_테이블_EMPTY_요청.setEmpty(true);
@@ -105,6 +134,22 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         // when
         ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 주문_테이블2_ID + "/empty",
+                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경시, 해당 테이블이 TableGroup이 있다면 변경할 수 없다.")
+    @Test
+    void cannotChangeEmptyStatusWhenTableGroupIsNotNull() {
+        // given
+        OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
+        변경할_주문_테이블_EMPTY_요청.setEmpty(true);
+        Long 주문_테이블3_ID = 주문_테이블3_테이블_그룹1_소속.getId();
+
+        // when
+        ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 주문_테이블3_ID + "/empty",
                 HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
 
         // then
@@ -148,9 +193,10 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotChangeNumberOfGuestsIfEmpty() {
         // given
-        OrderTable 비워진_주문_테이블 = new OrderTable();
-        비워진_주문_테이블.setNumberOfGuests(4);
-        비워진_주문_테이블.setEmpty(true);
+        OrderTable 비워진_주문_테이블 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(true)
+                .build();
         비워진_주문_테이블 = orderTableRepository.save(비워진_주문_테이블);
 
         OrderTableNumberOfGuestRequest 변경할_주문_테이블_손님_요청 = new OrderTableNumberOfGuestRequest();

@@ -31,8 +31,8 @@ public class TableGroup {
             if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
                 throw new IllegalArgumentException();
             }
-            orderTable.setTableGroup(this);
-            orderTable.setEmpty(false);
+            orderTable.registerTableGroup(this);
+            orderTable.makeNotEmpty();
         }
     }
 
