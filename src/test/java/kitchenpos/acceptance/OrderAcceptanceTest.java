@@ -13,7 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -22,99 +21,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("주문 관련 기능")
 class OrderAcceptanceTest extends AcceptanceTest {
 
-    OrderTable 비어있지않은_주문_테이블;
-    OrderTable 비어있는_주문_테이블;
+    private OrderTable 차있는_주문_테이블;
+    private OrderTable 비어있는_주문_테이블;
 
-    Order 주문;
+    private OrderLineItem 차있는_주문_테이블_한마리메뉴_중_후라이드_치킨;
 
-    MenuGroup 한마리메뉴;
-    MenuGroup 두마리메뉴;
-
-    Menu 한마리메뉴_중_후라이드치킨;
-    Menu 두마리메뉴_중_양념치킨_간장치킨;
-
-    Product 후라이드치킨;
-    Product 양념치킨;
-    Product 간장치킨;
-
-    MenuProduct 한마리메뉴_후라이드치킨;
-    MenuProduct 두마리메뉴_양념치킨;
-    MenuProduct 두마리메뉴_간장치킨;
-
-    OrderLineItem 비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨;
+    private Order 주문;
 
     @BeforeEach
     void setUp() {
-        한마리메뉴 = new MenuGroup.Builder()
-                .name("한마리메뉴")
-                .build();
-        menuGroupRepository.save(한마리메뉴);
+        super.setUp();
 
-        두마리메뉴 = new MenuGroup.Builder()
-                .name("두마리메뉴")
-                .build();
-        menuGroupRepository.save(두마리메뉴);
-
-        후라이드치킨  = new Product.Builder()
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(15000))
-                .build();
-        productRepository.save(후라이드치킨);
-
-        양념치킨 = new Product.Builder()
-                .name("양념치킨")
-                .price(BigDecimal.valueOf(16000))
-                .build();
-        productRepository.save(양념치킨);
-
-        간장치킨 = new Product.Builder()
-                .name("간장치킨")
-                .price(BigDecimal.valueOf(16000))
-                .build();
-        productRepository.save(간장치킨);
-
-        한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
-                .menu(null)
-                .product(후라이드치킨)
-                .quantity(1L)
-                .build();
-
-        한마리메뉴_중_후라이드치킨 = new Menu.Builder()
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(15000))
-                .menuGroup(한마리메뉴)
-                .menuProducts(Arrays.asList(한마리메뉴_후라이드치킨))
-                .build();
-        menuRepository.save(한마리메뉴_중_후라이드치킨);
-        menuProductRepository.save(한마리메뉴_후라이드치킨);
-
-        두마리메뉴_양념치킨 = new MenuProduct.Builder()
-                .menu(null)
-                .product(양념치킨)
-                .quantity(1L)
-                .build();
-
-        두마리메뉴_간장치킨 = new MenuProduct.Builder()
-                .menu(null)
-                .product(간장치킨)
-                .quantity(1L)
-                .build();
-
-        두마리메뉴_중_양념치킨_간장치킨 = new Menu.Builder()
-                .name("양념+간장치킨")
-                .price(BigDecimal.valueOf(32000))
-                .menuGroup(두마리메뉴)
-                .menuProducts(Arrays.asList(두마리메뉴_양념치킨, 두마리메뉴_간장치킨))
-                .build();
-        menuRepository.save(두마리메뉴_중_양념치킨_간장치킨);
-        menuProductRepository.save(두마리메뉴_양념치킨);
-        menuProductRepository.save(두마리메뉴_간장치킨);
-
-        비어있지않은_주문_테이블 = new OrderTable.Builder()
+        차있는_주문_테이블 = new OrderTable.Builder()
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
-        orderTableRepository.save(비어있지않은_주문_테이블);
+        orderTableRepository.save(차있는_주문_테이블);
 
         비어있는_주문_테이블 = new OrderTable.Builder()
                 .numberOfGuests(0)
@@ -122,20 +44,20 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .build();
         orderTableRepository.save(비어있는_주문_테이블);
 
-        비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨 = new OrderLineItem.Builder()
+        차있는_주문_테이블_한마리메뉴_중_후라이드_치킨 = new OrderLineItem.Builder()
                 .menu(한마리메뉴_중_후라이드치킨)
                 .order(주문)
                 .quantity(1L)
                 .build();
 
         주문 = new Order.Builder()
-                .orderTable(비어있지않은_주문_테이블)
+                .orderTable(차있는_주문_테이블)
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨))
+                .orderLineItems(Arrays.asList(차있는_주문_테이블_한마리메뉴_중_후라이드_치킨))
                 .build();
         orderRepository.save(주문);
-        orderLineItemRepository.save(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨);
+        orderLineItemRepository.save(차있는_주문_테이블_한마리메뉴_중_후라이드_치킨);
     }
 
     @DisplayName("매장에서 발생한 주문들에 대한 정보를 반환한다")
@@ -162,7 +84,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         주문_요청_아이템2.setQuantity(1L);
 
         OrderRequest 주문_요청 = new OrderRequest();
-        주문_요청.setOrderTableId(비어있지않은_주문_테이블.getId());
+        주문_요청.setOrderTableId(차있는_주문_테이블.getId());
         주문_요청.setOrderLineItems(Arrays.asList(주문_요청_아이템1, 주문_요청_아이템2));
 
         // when
@@ -171,7 +93,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         OrderResponse 응답된_주문 = response.getBody();
-        assertThat(응답된_주문.getOrderTableId()).isEqualTo(비어있지않은_주문_테이블.getId());
+        assertThat(응답된_주문.getOrderTableId()).isEqualTo(차있는_주문_테이블.getId());
         assertThat(응답된_주문.getOrderLineItems()).hasSize(2);
     }
 
@@ -205,7 +127,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         유효하지_않은_주문_아이템.setQuantity(1L);
 
         OrderRequest 유효하지_않은_주문 = new OrderRequest();
-        유효하지_않은_주문.setOrderTableId(비어있지않은_주문_테이블.getId());
+        유효하지_않은_주문.setOrderTableId(차있는_주문_테이블.getId());
         유효하지_않은_주문.setOrderLineItems(Arrays.asList(유효하지_않은_주문_아이템));
 
         // when
@@ -224,7 +146,7 @@ class OrderAcceptanceTest extends AcceptanceTest {
         주문_요청_아이템.setQuantity(1L);
 
         OrderRequest 유효하지_않은_주문 = new OrderRequest();
-        유효하지_않은_주문.setOrderTableId(비어있지않은_주문_테이블.getId());
+        유효하지_않은_주문.setOrderTableId(차있는_주문_테이블.getId());
         유효하지_않은_주문.setOrderLineItems(Arrays.asList(주문_요청_아이템, 주문_요청_아이템));
 
         // when
@@ -257,10 +179,10 @@ class OrderAcceptanceTest extends AcceptanceTest {
     void cannotChangeOrderStatusWhenCompletion() {
         // given
         Order 완료된_주문 = new Order.Builder()
-                .orderTable(비어있지않은_주문_테이블)
+                .orderTable(차있는_주문_테이블)
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(비어있지않은_주문_테이블_한마리메뉴_중_후라이드_치킨))
+                .orderLineItems(Arrays.asList(차있는_주문_테이블_한마리메뉴_중_후라이드_치킨))
                 .build();
         완료된_주문.changeOrderStatus(OrderStatus.COMPLETION);
         orderRepository.save(완료된_주문);

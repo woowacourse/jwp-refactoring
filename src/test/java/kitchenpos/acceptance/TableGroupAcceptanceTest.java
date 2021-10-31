@@ -21,24 +21,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("테이블 그룹 관련 기능")
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
-    TableGroup 테이블_그룹1;
+    private OrderTable 주문_테이블1;
+    private OrderTable 주문_테이블2;
 
-    OrderTable 주문_테이블1;
-    OrderTable 주문_테이블2;
+    private TableGroup 테이블_그룹;
 
-    Order 주문1;
-    Order 주문2;
+    private Order 주문1;
+    private Order 주문2;
 
-    MenuGroup 한마리메뉴;
-    Product 후라이드치킨;
-    MenuProduct 한마리메뉴_후라이드치킨;
-    Menu 한마리메뉴_중_후라이드치킨;
-
-    OrderLineItem 주문_테이블1_한마리메뉴_중_후라이트치킨;
-    OrderLineItem 주문_테이블2_한마리메뉴_중_후라이트치킨;
+    private OrderLineItem 주문_테이블1_한마리메뉴_중_후라이트치킨;
+    private OrderLineItem 주문_테이블2_한마리메뉴_중_후라이트치킨;
 
     @BeforeEach
     void setUp() {
+        super.setUp();
+
         주문_테이블1 = new OrderTable.Builder()
                 .numberOfGuests(4)
                 .empty(true)
@@ -49,41 +46,15 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 .empty(true)
                 .build();
 
-        테이블_그룹1 = new TableGroup.Builder()
+        테이블_그룹 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
                 .orderTables(Arrays.asList(주문_테이블1, 주문_테이블2))
                 .build();
-        tableGroupRepository.save(테이블_그룹1);
+        tableGroupRepository.save(테이블_그룹);
         orderTableRepository.save(주문_테이블1);
         orderTableRepository.save(주문_테이블2);
 
-        후라이드치킨  = new Product.Builder()
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(15000))
-                .build();
-        productRepository.save(후라이드치킨);
-
-        한마리메뉴 = new MenuGroup.Builder()
-                .name("한마리메뉴")
-                .build();
-        menuGroupRepository.save(한마리메뉴);
-
-        한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
-                .menu(null)
-                .product(후라이드치킨)
-                .quantity(1L)
-                .build();
-
-        한마리메뉴_중_후라이드치킨 = new Menu.Builder()
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(15000))
-                .menuGroup(한마리메뉴)
-                .menuProducts(Arrays.asList(한마리메뉴_후라이드치킨))
-                .build();
-        menuRepository.save(한마리메뉴_중_후라이드치킨);
-        menuProductRepository.save(한마리메뉴_후라이드치킨);
-
-        주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+        주문_테이블1_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
                 .menu(한마리메뉴_중_후라이드치킨)
                 .order(null)
                 .quantity(1L)
@@ -99,7 +70,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         orderRepository.save(주문1);
         orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
 
-        주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+        주문_테이블2_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
                 .menu(한마리메뉴_중_후라이드치킨)
                 .order(null)
                 .quantity(1L)
@@ -245,7 +216,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void deleteTableGroup() {
         // when
-        Long 테이블_그룹1_ID = 테이블_그룹1.getId();
+        Long 테이블_그룹1_ID = 테이블_그룹.getId();
         testRestTemplate.delete("/api/table-groups/" + 테이블_그룹1_ID);
 
         // then
@@ -267,7 +238,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
                 .build();
         orderRepository.save(요리중인_주문);
-        Long 테이블_그룹1_ID = 테이블_그룹1.getId();
+        Long 테이블_그룹1_ID = 테이블_그룹.getId();
 
         // when
         ResponseEntity<Void> response = testRestTemplate.exchange("/api/table-groups/" + 테이블_그룹1_ID,

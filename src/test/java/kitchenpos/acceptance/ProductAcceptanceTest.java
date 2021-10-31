@@ -16,22 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("상품 관련 기능")
 class ProductAcceptanceTest extends AcceptanceTest {
 
-    Product 후라이드치킨;
-    Product 양념치킨;
-
     @BeforeEach
     void setUp() {
-        후라이드치킨 = new Product.Builder()
-                .name("후라이드치킨")
-                .price(BigDecimal.valueOf(15000))
-                .build();
-        후라이드치킨 = productRepository.save(후라이드치킨);
-
-        양념치킨 = new Product.Builder()
-                .name("양념치킨")
-                .price(BigDecimal.valueOf(16000))
-                .build();
-        양념치킨 = productRepository.save(양념치킨);
+        super.setUp();
     }
 
     @DisplayName("등록된 전체 상품들을 반환한다")
@@ -42,7 +29,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
 
         // then
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).hasSize(2);
+        assertThat(responseEntity.getBody()).hasSize(3);
     }
 
     @DisplayName("새로운 상품을 등록한다")

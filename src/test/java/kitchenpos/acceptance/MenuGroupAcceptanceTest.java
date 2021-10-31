@@ -1,6 +1,5 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.MenuGroup;
 import kitchenpos.ui.request.MenuGroupRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,20 +13,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("메뉴 그룹 관련 기능")
 class MenuGroupAcceptanceTest extends AcceptanceTest {
 
-    MenuGroup 한마리메뉴;
-    MenuGroup 두마리메뉴;
-
     @BeforeEach
     void setUp() {
-        한마리메뉴 = new MenuGroup.Builder()
-                .name("한마리메뉴")
-                .build();
-        menuGroupRepository.save(한마리메뉴);
-
-        두마리메뉴 = new MenuGroup.Builder()
-                .name("두마리메뉴")
-                .build();
-        menuGroupRepository.save(두마리메뉴);
+        super.setUp();
     }
 
     @DisplayName("등록된 전체 메뉴 그룹 카테코리를 반환한다")
