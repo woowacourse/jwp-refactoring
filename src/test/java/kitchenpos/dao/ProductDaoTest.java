@@ -22,8 +22,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DisplayName("Product Dao 테스트")
 @SpringBootTest
-class JdbcTemplateProductDaoTest {
-
+class ProductDaoTest {
     @Autowired
     private ProductDao productDao;
 
