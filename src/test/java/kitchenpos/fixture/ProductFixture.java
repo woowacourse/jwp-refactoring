@@ -5,6 +5,7 @@ import kitchenpos.domain.Product;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProductFixture {
     public static final Product 후라이드치킨;
@@ -16,7 +17,7 @@ public class ProductFixture {
     public static final Product 강정치킨;
 
     static {
-        후라이드치킨 = newInstance(1L, "후라이드치킨", new BigDecimal(16000));
+        후라이드치킨 = newInstance(1L, "후라이드", new BigDecimal(16000));
         양념치킨 = newInstance(2L, "양념치킨", new BigDecimal(16000));
         반반치킨 = newInstance(3L, "반반치킨", new BigDecimal(16000));
         통구이 = newInstance(4L, "통구이", new BigDecimal(16000));
@@ -27,6 +28,12 @@ public class ProductFixture {
 
     public static List<Product> products() {
         return Arrays.asList(후라이드치킨, 양념치킨, 반반치킨, 통구이, 간장치킨, 순살치킨, 강정치킨);
+    }
+
+    public static List<String> productsName() {
+        return products().stream()
+                .map(Product::getName)
+                .collect(Collectors.toList());
     }
 
     private static Product newInstance(Long id, String name, BigDecimal price) {
