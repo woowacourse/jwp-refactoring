@@ -55,8 +55,6 @@ class MenuGroupRestControllerTest {
         given(menuGroupService.create(any(MenuGroupRequest.class)))
             .willReturn(menuGroup);
 
-
-
         mvc.perform(post("/api/menu-groups")
             .content(content)
             .contentType(MediaType.APPLICATION_JSON)
