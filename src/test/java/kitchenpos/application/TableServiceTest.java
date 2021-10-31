@@ -91,7 +91,7 @@ class TableServiceTest {
     void changeEmptyForTableWithNotAllowedOrderStatus(OrderStatus orderStatus) {
         OrderTable orderTable = tableService.create(new OrderTable(false));
         orderRepository.save(
-                new Order(orderTable.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+                new Order(orderTable, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), CHANGE_EMPTY_TRUE))
                 .isInstanceOf(IllegalArgumentException.class);

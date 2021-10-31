@@ -5,18 +5,21 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Transient;
+import kitchenpos.domain.validator.OrderValidator;
 
 @Entity(name = "orders")
 public class Order {
     @Id
     @GeneratedValue
     private Long id;
-    private Long orderTableId;
+    @ManyToOne
+    private OrderTable orderTable;
     private String orderStatus;
     private LocalDateTime orderedTime;
     @Transient
-    private List<OrderLineItem> orderLineItems;
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
@@ -25,17 +28,30 @@ public class Order {
         this(null, null, orderStatus, null, null);
     }
 
-    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(orderTable, null, null, orderLineItems);
     }
 
-    private Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-                  List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, orderStatus, orderedTime, new OrderLineItems(orderLineItems));
+    }
+
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
+                 OrderLineItems orderLineItems) {
         this.id = id;
-        this.orderTableId = orderTableId;
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    public void register(OrderValidator orderValidator) {
+        orderValidator.validate(this);
+
+        orderStatus = OrderStatus.COOKING.name();
+        orderedTime = LocalDateTime.now();
+        orderLineItems.setOrder(this);
     }
 
     public Long getId() {
@@ -46,12 +62,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getOrderTableId() {
-        return orderTableId;
+    public OrderTable getOrderTable() {
+        return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
+    public void setOrderTable(OrderTable orderTable) {
+        this.orderTable = orderTable;
     }
 
     public String getOrderStatus() {
@@ -66,15 +82,11 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
+    public OrderLineItems getOrderLineItems() {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void setOrderLineItems(final OrderLineItems orderLineItems) {
         this.orderLineItems = orderLineItems;
     }
 }

@@ -136,7 +136,7 @@ class TableGroupServiceTest {
         TableGroup tableGroup = tableGroupService.create(new TableGroup(Arrays.asList(table1, table2)));
 
         orderRepository.save(
-                new Order(table1.getId(), orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
+                new Order(table1, orderStatus.name(), LocalDateTime.now(), Collections.emptyList()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
                 .isInstanceOf(IllegalArgumentException.class);
