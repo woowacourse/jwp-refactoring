@@ -30,7 +30,7 @@ public class MenuGroup {
 
     private void validate(String name) {
         if (Objects.isNull(name) || name.isEmpty()) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "name");
+            throw new FieldNotValidException("메뉴 그룹명이 유효하지 않습니다.");
         }
     }
 

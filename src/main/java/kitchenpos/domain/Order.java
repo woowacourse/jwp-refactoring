@@ -59,7 +59,7 @@ public class Order {
 
     private void validate(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "orderTable");
+            throw new FieldNotValidException("주문 테이블이 유효하지 않습니다.");
         }
     }
 

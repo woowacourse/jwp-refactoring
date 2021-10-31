@@ -2,7 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.exception.NonExistentException;
@@ -15,6 +15,9 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.List;
 
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -42,7 +45,11 @@ class OrderLineItemServiceTest extends ServiceTest {
                 CREATE_ORDER_ITEM_REQUEST(1L, 1L),
                 CREATE_ORDER_ITEM_REQUEST(2L, 1L)
         );
-        Order order = new Order(new OrderTable(10, false));
+        Order order = CREATE_ORDER(
+                null,
+                CREATE_ORDER_TABLE(null, null, 10, false),
+                OrderStatus.MEAL.name()
+        );
         given(menuRepository.findById(anyLong())).willThrow(NonExistentException.class);
 
         // when - then

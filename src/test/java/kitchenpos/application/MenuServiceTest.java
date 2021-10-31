@@ -12,6 +12,8 @@ import org.mockito.Mock;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;

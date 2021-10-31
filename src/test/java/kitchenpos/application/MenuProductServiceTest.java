@@ -14,8 +14,13 @@ import org.mockito.Mock;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_MENU;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_PRODUCT;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -40,10 +45,10 @@ class MenuProductServiceTest extends ServiceTest {
     void createFailedProductNotFound() {
         // given
         MenuRequest menuRequest = CREATE_MENU_REQUEST("menu", BigDecimal.TEN, 1L,
-                Arrays.asList(CREATE_MENU_PRODUCT_REQUEST(-1L, 1L))
+                Collections.singletonList(CREATE_MENU_PRODUCT_REQUEST(-1L, 1L))
         );
 
-        Menu menu = new Menu(1L, menuRequest.getName(), menuRequest.getPrice(), new MenuGroup("group"));
+        Menu menu = CREATE_MENU(1L, menuRequest.getName(), menuRequest.getPrice(), new MenuGroup("group"));
 
         given(productRepository.findById(anyLong())).willThrow(NonExistentException.class);
 
@@ -62,8 +67,8 @@ class MenuProductServiceTest extends ServiceTest {
         MenuRequest menuRequest = CREATE_MENU_REQUEST("menu", BigDecimal.valueOf(20000), 1L,
                 Arrays.asList(CREATE_MENU_PRODUCT_REQUEST(1L, 1L))
         );
-        Product product = new Product("product", BigDecimal.TEN);
-        Menu menu = new Menu(1L, menuRequest.getName(), menuRequest.getPrice(), new MenuGroup("group"));
+        Product product = CREATE_PRODUCT(null,"product", BigDecimal.TEN);
+        Menu menu = CREATE_MENU(1L, menuRequest.getName(), menuRequest.getPrice(), new MenuGroup("group"));
 
         given(productRepository.findById(anyLong())).willReturn(Optional.of(product));
 

@@ -56,26 +56,26 @@ public class Menu {
     }
 
     private void validateName(String name) {
-        if (Objects.isNull(name)) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "name");
+        if (Objects.isNull(name) || name.isEmpty()) {
+            throw new FieldNotValidException("메뉴명이 유효하지 않습니다.");
         }
     }
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "price");
+            throw new FieldNotValidException("메뉴의 가격이 유효하지 않습니다.");
         }
     }
 
     private void validateMenuGroup(MenuGroup menuGroup) {
         if (Objects.isNull(menuGroup)) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "menuGroup");
+            throw new FieldNotValidException("메뉴 그룹이 유효하지 않습니다.");
         }
     }
 
     public void validateTotalPrice(BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException("제품 가격에 비해 메뉴의 가격이 큽니다.");
+            throw new IllegalArgumentException("상품 가격에 비해 메뉴의 가격이 큽니다.");
         }
     }
 

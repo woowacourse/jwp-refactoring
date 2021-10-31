@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -57,8 +59,8 @@ public class OrderTableServiceTest extends ServiceTest {
         // given
         Long tableGroupId = 1L;
         List<OrderTable> orderTables = Arrays.asList(
-                new OrderTable(1L, new TableGroup(1L, LocalDateTime.now()), 10, false),
-                new OrderTable(2L, new TableGroup(1L, LocalDateTime.now()), 20, false)
+                CREATE_ORDER_TABLE(1L, CREATE_TABLE_GROUP(1L), 10, false),
+                CREATE_ORDER_TABLE(2L, CREATE_TABLE_GROUP(1L), 20, false)
         );
         List<Order> order = orderTables.stream()
                 .map(Order::new)

@@ -16,6 +16,11 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_REQUEST;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_STATUS_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -81,7 +86,11 @@ public class OrderServiceTest extends ServiceTest {
         // given
         Long orderId = 1L;
         OrderStatusRequest orderStatusRequest = CREATE_ORDER_STATUS_REQUEST(OrderStatus.COOKING.name());
-        Order order = new Order(new OrderTable(10, false), OrderStatus.COMPLETION.name());
+        Order order = CREATE_ORDER(
+                null,
+                CREATE_ORDER_TABLE(null, null, 10, false),
+                OrderStatus.COMPLETION.name()
+        );
         given(orderRepository.findById(orderId)).willReturn(Optional.of(order));
 
         // when- then

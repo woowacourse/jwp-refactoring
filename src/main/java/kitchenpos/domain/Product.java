@@ -39,13 +39,13 @@ public class Product {
 
     private void validateName(String name) {
         if (Objects.isNull(name) || name.isEmpty()) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "name");
+            throw new FieldNotValidException("상품명이 유효하지 않습니다.");
         }
     }
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "price");
+            throw new FieldNotValidException("상품 가격이 유효하지 않습니다.");
         }
     }
 

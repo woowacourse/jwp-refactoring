@@ -22,13 +22,13 @@ public class ProductQuantity {
 
     private void validateProduct(Product product) {
         if (Objects.isNull(product)) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "product");
+            throw new FieldNotValidException("상품이 유효하지 않습니다.");
         }
     }
 
     private void validateQuantity(Long quantity) {
         if (Objects.isNull(quantity)) {
-            throw new FieldNotValidException(this.getClass().getSimpleName(), "quantity");
+            throw new FieldNotValidException("상품 수량이 유효하지 않습니다.");
         }
     }
 

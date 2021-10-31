@@ -15,9 +15,14 @@ import org.mockito.Mock;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_TABLE_GROUP;
+import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_TABLE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -59,9 +64,13 @@ class TableServiceTest extends ServiceTest {
         // given
         Long orderTableId = 1L;
         TableRequest tableRequest = CREATE_TABLE_REQUEST(0, false);
-        OrderTable orderTable = new OrderTable(1L, new TableGroup(1L, LocalDateTime.now()), 10, false);
-        List<Order> orders = Arrays.asList(
-                new Order(new OrderTable(10, false), OrderStatus.MEAL.name())
+        OrderTable orderTable = CREATE_ORDER_TABLE(1L, CREATE_TABLE_GROUP(1L), 10, false);
+        List<Order> orders = Collections.singletonList(
+                CREATE_ORDER(
+                        null,
+                        CREATE_ORDER_TABLE(orderTableId, CREATE_TABLE_GROUP(1L), 10, false),
+                        OrderStatus.MEAL.name()
+                )
         );
 
         given(orderTableRepository.findById(orderTableId)).willReturn(Optional.of(orderTable));
