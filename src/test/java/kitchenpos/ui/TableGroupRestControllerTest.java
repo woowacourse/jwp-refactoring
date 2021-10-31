@@ -6,8 +6,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import kitchenpos.RestControllerTest;
@@ -36,8 +36,8 @@ class TableGroupRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestTableGroup))
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/table-groups/" + requestTableGroup.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestTableGroup)));
     }
 
@@ -46,10 +46,7 @@ class TableGroupRestControllerTest extends RestControllerTest {
     void ungroup() throws Exception {
         Long tableGroupId = 1L;
         doNothing().when(mockTableGroupService).ungroup(tableGroupId);
-        mockMvc.perform(delete("/api/table-groups/{tableGroupId}", tableGroupId)
-                        .accept(MediaType.APPLICATION_JSON)
-                )
-                .andDo(print())
+        mockMvc.perform(delete("/api/table-groups/{tableGroupId}", tableGroupId))
                 .andExpect(status().isNoContent());
     }
 }

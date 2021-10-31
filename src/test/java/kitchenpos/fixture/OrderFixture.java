@@ -46,6 +46,16 @@ public class OrderFixture {
         order.setOrderLineItems(ORDER_LINE_ITEMS);
         return order;
     }
+
+    public static Order createOrder(List<OrderLineItem> orderLineItems) {
+        Order order = new Order();
+        order.setId(ID);
+        order.setOrderTableId(ORDER_TABLE_ID);
+        order.setOrderStatus(ORDER_STATUS);
+        order.setOrderedTime(ORDERED_TIME);
+        order.setOrderLineItems(orderLineItems);
+        return order;
+    }
 }
 
 class OrderLineItemFixture {

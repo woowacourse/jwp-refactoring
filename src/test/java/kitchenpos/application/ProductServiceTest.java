@@ -15,6 +15,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
@@ -29,31 +30,35 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
-    private Product product;
+    @DisplayName("상품 생성")
+    @Nested
+    class CreateProduct {
 
-    @BeforeEach
-    void setUp() {
-        product = createProduct();
-        when(mockProductDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
-    }
+        @BeforeEach
+        void setUp() {
+            when(mockProductDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        }
 
-    @DisplayName("상품을 생성한다.")
-    @Test
-    void create() {
-        Product savedProduct = productService.create(product);
-        assertThat(savedProduct).isEqualTo(product);
-    }
+        @DisplayName("상품을 생성한다.")
+        @Test
+        void create() {
+            Product product = createProduct();
+            Product savedProduct = productService.create(product);
+            assertThat(savedProduct).isEqualTo(product);
+        }
 
-    @DisplayName("상품의 가격은 0 또는 양수이다.")
-    @Test
-    void createWithInvalidPrice() {
-        product.setPrice(BigDecimal.valueOf(-1L));
-        assertThatThrownBy(() -> productService.create(product));
+        @DisplayName("상품의 가격은 음수일 수 없다.")
+        @Test
+        void createWithInvalidPrice() {
+            Product product = createProduct(BigDecimal.valueOf(-1L));
+            assertThatThrownBy(() -> productService.create(product));
+        }
     }
 
     @DisplayName("상품 리스트를 반환한다.")
     @Test
     void list() {
+        Product product = createProduct();
         when(mockProductDao.findAll()).thenReturn(Collections.singletonList(product));
         List<Product> list = productService.list();
         assertAll(

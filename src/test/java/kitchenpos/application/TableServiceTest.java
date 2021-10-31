@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,14 +18,16 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 @ServiceTest
 class TableServiceTest {
@@ -38,24 +41,19 @@ class TableServiceTest {
     @InjectMocks
     private TableService tableService;
 
-    private OrderTable orderTable;
-
-    @BeforeEach
-    void setUp() {
-        orderTable = createOrderTable(1L, null, false);
-        when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
-    }
-
     @DisplayName("테이블을 생성한다.")
     @Test
     void create() {
-        tableService.create(orderTable);
-        verify(mockOrderTableDao).save(orderTable);
+        OrderTable orderTable = createOrderTable();
+        when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        OrderTable savedOrderTable = tableService.create(orderTable);
+        assertThat(savedOrderTable).isEqualTo(orderTable);
     }
 
     @DisplayName("테이블 목록을 반환한다.")
     @Test
     void list() {
+        OrderTable orderTable = createOrderTable();
         when(mockOrderTableDao.findAll()).thenReturn(Collections.singletonList(orderTable));
         List<OrderTable> list = tableService.list();
         assertAll(
@@ -64,68 +62,87 @@ class TableServiceTest {
         );
     }
 
-    @DisplayName("테이블의 empty 상태를 변경한다.")
-    @Test
-    void changeEmpty() {
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
-        when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                any(), Mockito.eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-        ).thenReturn(false);
+    @DisplayName("테이블의 Empty 상태 변경")
+    @Nested
+    class ChangeEmptyStatus {
 
-        OrderTable updateOrderTable = createOrderTable(true);
-        tableService.changeEmpty(orderTable.getId(), updateOrderTable);
+        @Captor
+        private ArgumentCaptor<OrderTable> argument;
+        private OrderTable orderTable;
 
-        ArgumentCaptor<OrderTable> argument = ArgumentCaptor.forClass(OrderTable.class);
-        verify(mockOrderTableDao).save(argument.capture());
-        assertThat(argument.getValue().isEmpty()).isEqualTo(updateOrderTable.isEmpty());
+        @BeforeEach
+        void setUp() {
+            orderTable = createOrderTable(1L, null, true);
+            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
+            when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+            when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
+                    any(), eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            ).thenReturn(false);
+        }
+
+        @DisplayName("테이블의 empty 상태를 변경한다.")
+        @Test
+        void changeEmpty() {
+            tableService.changeEmpty(orderTable.getId(), orderTable);
+
+            verify(mockOrderTableDao).save(argument.capture());
+            assertThat(argument.getValue().isEmpty()).isEqualTo(orderTable.isEmpty());
+        }
+
+        @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
+        @Test
+        void changeEmptyWithGroupedTable() {
+            OrderTable orderTable = createOrderTable(1L, 1L, false);
+            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
+        }
+
+        @DisplayName("조리중이거나, 식사 중 상태의 테이블의 empty 상태를 변경할 수 없다.")
+        @Test
+        void changeEmptyWithInvalidOrderStatus() {
+            when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
+                    any(), eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+            ).thenReturn(true);
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
+        }
     }
 
-    @DisplayName("조리중이거나, 식사 중 상태의 테이블의 empty 상태를 변경할 수 없다.")
-    @Test
-    void changeEmptyWithInvalidOrderStatus() {
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
-        when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                any(), Mockito.eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-        ).thenReturn(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
-    }
+    @DisplayName("테이블의 손님 수 변경")
+    @Nested
+    class ChangeNumberOfGuests {
 
-    @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
-    @Test
-    void changeEmptyWithGroupedTable() {
-        orderTable.setTableGroupId(1L);
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
-        when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                any(), Mockito.eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
-        ).thenReturn(false);
-        assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
-    }
+        @Captor
+        ArgumentCaptor<OrderTable> argument;
+        OrderTable savedOrderTable;
 
-    @DisplayName("테이블의 손님 수를 변경한다.")
-    @Test
-    void changeNumberOfGuests() {
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
+        @BeforeEach
+        void setUp() {
+            savedOrderTable = createOrderTable(1);
+            when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(savedOrderTable));
+        }
 
-        OrderTable updateOrderTable = createOrderTable();
-        tableService.changeNumberOfGuests(orderTable.getId(), updateOrderTable);
+        @DisplayName("테이블의 손님 수를 변경한다.")
+        @Test
+        void changeNumberOfGuests() {
+            OrderTable updateOrderTable = createOrderTable(2);
+            tableService.changeNumberOfGuests(savedOrderTable.getId(), updateOrderTable);
 
-        ArgumentCaptor<OrderTable> argument = ArgumentCaptor.forClass(OrderTable.class);
-        verify(mockOrderTableDao).save(argument.capture());
-        assertThat(argument.getValue().getNumberOfGuests()).isEqualTo(updateOrderTable.getNumberOfGuests());
-    }
+            verify(mockOrderTableDao).save(argument.capture());
+            assertThat(argument.getValue().getNumberOfGuests()).isEqualTo(updateOrderTable.getNumberOfGuests());
+        }
 
-    @DisplayName("테이블의 손님 수를 음수로 변경할 수 없다.")
-    @Test
-    void changeNumberOfGuestsWithInvalid() {
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), createOrderTable(-1)));
-    }
+        @DisplayName("테이블의 손님 수를 음수로 변경할 수 없다.")
+        @Test
+        void changeNumberOfGuestsWithInvalid() {
+            OrderTable updateOrderTable = createOrderTable(-1);
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), updateOrderTable));
+        }
 
-    @DisplayName("비어있는 테이블의 손님 수를 변경할 수 없다.")
-    @Test
-    void changeNumberOfGuestWithEmptyTable() {
-        orderTable.setEmpty(true);
-        when(mockOrderTableDao.findById(orderTable.getId())).thenReturn(Optional.of(orderTable));
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), createOrderTable()));
+        @DisplayName("비어있는 테이블의 손님 수를 변경할 수 없다.")
+        @Test
+        void changeNumberOfGuestWithEmptyTable() {
+            when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(createOrderTable(true)));
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable()));
+        }
     }
 }

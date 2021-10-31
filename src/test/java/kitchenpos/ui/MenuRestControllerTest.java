@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Collections;
@@ -37,8 +37,8 @@ class MenuRestControllerTest extends RestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestMenu))
                 )
-                .andDo(print())
                 .andExpect(status().isCreated())
+                .andExpect(header().string("Location", "/api/menus/" + requestMenu.getId()))
                 .andExpect(content().json(objectMapper.writeValueAsString(requestMenu)));
     }
 
@@ -47,8 +47,7 @@ class MenuRestControllerTest extends RestControllerTest {
     void list() throws Exception {
         List<Menu> expected = Collections.singletonList(createMenu());
         when(mockMenuService.list()).thenReturn(expected);
-        mockMvc.perform(get("/api/menus")
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/api/menus"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(expected)));
     }
