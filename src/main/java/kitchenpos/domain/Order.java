@@ -72,6 +72,17 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException();
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    public boolean isCompleted() {
+        return OrderStatus.COMPLETION.equals(this.orderStatus);
+    }
+
     public Long getId() {
         return id;
     }
@@ -84,39 +95,16 @@ public class Order {
         return orderTable;
     }
 
-    public void setOrderTable(OrderTable orderTable) {
-        this.orderTable = orderTable;
-    }
-
     public OrderStatus getOrderStatus() {
         return orderStatus;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void changeOrderStatus(OrderStatus orderStatus) {
-        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
-            throw new IllegalArgumentException();
-        }
-        this.orderStatus = orderStatus;
-    }
-
-    public boolean isCompleted() {
-        return OrderStatus.COMPLETION.equals(this.orderStatus);
     }
 
     public static class Builder {

@@ -1,9 +1,6 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
 import kitchenpos.ui.request.OrderTableIdRequest;
 import kitchenpos.ui.request.TableGroupRequest;
 import kitchenpos.ui.response.TableGroupResponse;
@@ -15,6 +12,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -24,11 +22,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 class TableGroupAcceptanceTest extends AcceptanceTest {
 
     TableGroup 테이블_그룹1;
+
     OrderTable 주문_테이블1;
     OrderTable 주문_테이블2;
 
-    Order 주문1 = new Order();
-    Order 주문2 = new Order();
+    Order 주문1;
+    Order 주문2;
+
+    MenuGroup 한마리메뉴;
+    Product 후라이드치킨;
+    MenuProduct 한마리메뉴_후라이드치킨;
+    Menu 한마리메뉴_중_후라이드치킨;
+
+    OrderLineItem 주문_테이블1_한마리메뉴_중_후라이트치킨;
+    OrderLineItem 주문_테이블2_한마리메뉴_중_후라이트치킨;
 
     @BeforeEach
     void setUp() {
@@ -50,15 +57,63 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         orderTableRepository.save(주문_테이블1);
         orderTableRepository.save(주문_테이블2);
 
-        주문1.setOrderTable(주문_테이블1);
-        주문1.setOrderStatus(OrderStatus.COMPLETION);
-        주문1.setOrderedTime(LocalDateTime.now());
-        orderRepository.save(주문1);
+        후라이드치킨  = new Product.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .build();
+        productRepository.save(후라이드치킨);
 
-        주문2.setOrderTable(주문_테이블2);
-        주문2.setOrderStatus(OrderStatus.COMPLETION);
-        주문2.setOrderedTime(LocalDateTime.now());
+        한마리메뉴 = new MenuGroup.Builder()
+                .name("한마리메뉴")
+                .build();
+        menuGroupRepository.save(한마리메뉴);
+
+        한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
+                .menu(null)
+                .product(후라이드치킨)
+                .quantity(1L)
+                .build();
+
+        한마리메뉴_중_후라이드치킨 = new Menu.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .menuGroup(한마리메뉴)
+                .menuProducts(Arrays.asList(한마리메뉴_후라이드치킨))
+                .build();
+        menuRepository.save(한마리메뉴_중_후라이드치킨);
+        menuProductRepository.save(한마리메뉴_후라이드치킨);
+
+        주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(null)
+                .quantity(1L)
+                .build();
+
+        주문1 = new Order.Builder()
+                .orderTable(주문_테이블1)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .build();
+        주문1.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(주문1);
+        orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
+
+        주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(null)
+                .quantity(1L)
+                .build();
+
+        주문2 = new Order.Builder()
+                .orderTable(주문_테이블2)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블2_한마리메뉴_중_후라이트치킨))
+                .build();
+        주문2.changeOrderStatus(OrderStatus.COMPLETION);
         orderRepository.save(주문2);
+        orderLineItemRepository.save(주문_테이블2_한마리메뉴_중_후라이트치킨);
     }
 
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 테이블 그룹을 생성한다")
@@ -205,12 +260,13 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
         // when
-        Order 주문3 = new Order();
-        주문3.setOrderTable(주문_테이블1);
-        주문3.setOrderStatus(OrderStatus.COOKING);
-        주문3.setOrderedTime(LocalDateTime.now());
-        orderRepository.save(주문3);
-
+        Order 요리중인_주문 = new Order.Builder()
+                .orderTable(주문_테이블1)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .build();
+        orderRepository.save(요리중인_주문);
         Long 테이블_그룹1_ID = 테이블_그룹1.getId();
 
         // when
