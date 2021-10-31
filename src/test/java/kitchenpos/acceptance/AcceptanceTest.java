@@ -23,6 +23,9 @@ public abstract class AcceptanceTest {
     protected MenuRepository menuRepository;
 
     @Autowired
+    protected MenuProductRepository menuProductRepository;
+
+    @Autowired
     protected MenuGroupRepository menuGroupRepository;
 
     @Autowired

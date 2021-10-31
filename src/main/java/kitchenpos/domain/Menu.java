@@ -28,35 +28,38 @@ public class Menu {
     }
 
     public Menu(Builder builder) {
+        validateMenuProductsPrice(builder.menuProducts, builder.price);
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
         this.menuGroup = builder.menuGroup;
         this.menuProducts = builder.menuProducts;
+        registerMenuToMenuProducts(this.menuProducts);
+    }
+
+    private void validateMenuProductsPrice(List<MenuProduct> menuProducts, BigDecimal price) {
+        if (Objects.isNull(menuProducts)) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal totalPriceOfSingleMenuProduct = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            totalPriceOfSingleMenuProduct = totalPriceOfSingleMenuProduct.add(menuProduct.calculatePrice());
+        }
+
+        if (price.compareTo(totalPriceOfSingleMenuProduct) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public void registerMenuToMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.registerMenu(this);
+        }
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public void setMenuGroup(MenuGroup menuGroup) {
-        this.menuGroup = menuGroup;
-    }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 
     public String getName() {
@@ -68,6 +71,9 @@ public class Menu {
     }
 
     public Long getMenuGroupId() {
+        if (Objects.isNull(menuGroup)) {
+            return null;
+        }
         return menuGroup.getId();
     }
 

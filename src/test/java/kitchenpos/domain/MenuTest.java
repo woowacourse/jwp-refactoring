@@ -11,51 +11,103 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MenuTest {
 
-    @DisplayName("메뉴의 가격은 양수라면 생성 가능하다")
+    private final Product product = new Product.Builder()
+            .name("product")
+            .price(BigDecimal.valueOf(10000))
+            .build();
+
+    private final MenuProduct menuProduct = new MenuProduct.Builder()
+            .product(product)
+            .quantity(1L)
+            .build();
+
+    @DisplayName("메뉴 빌더로 메뉴를 생성할 수 있다.")
     @Test
-    void menuPriceCanBePositive() {
-        Menu menu = new Menu.Builder()
-                .price(BigDecimal.valueOf(15000))
+    void createMenuWithBuilder() {
+        final Menu menu = new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(BigDecimal.valueOf(10000))
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
                 .build();
 
-        assertThat(menu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(15000));
+        assertThat(menu.getId()).isEqualTo(1L);
+        assertThat(menu.getName()).isEqualTo("menu");
+        assertThat(menu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(10000));
+        assertThat(menu.getMenuGroupId()).isNull();
+        assertThat(menu.getMenuProducts()).hasSize(1);
     }
 
     @DisplayName("메뉴의 가격은 null 이거나 음수일 수 없다.")
     @Test
     void menuPriceMustBePositive() {
-        assertThatThrownBy(() ->
-                new Menu.Builder()
-                        .price(null)
-                        .build())
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(null)
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
+                .build()
+        ).isInstanceOf(IllegalArgumentException.class);
 
-        assertThatThrownBy(() ->
-                new Menu.Builder()
-                        .price(BigDecimal.valueOf(-15020))
-                        .build())
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(BigDecimal.valueOf(-10000))
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
+                .build()
+        ).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 빌더로 메뉴를 생성할 수 있다.")
+    @DisplayName("메뉴를 구성하는 MenuProduct는 null일 수 없다.")
     @Test
-    void createMenuWithBuilder() {
-        MenuGroup menuGroup = new MenuGroup.Builder()
-                .id(2L)
-                .build();
-
-        Menu chicken = new Menu.Builder()
+    void menuProductsMustNotBeNull() {
+        assertThatThrownBy(() -> new Menu.Builder()
                 .id(1L)
-                .name("chicken")
+                .name("menu")
                 .price(BigDecimal.valueOf(10000))
-                .menuGroup(menuGroup)
-                .menuProducts(Arrays.asList(new MenuProduct(), new MenuProduct()))
+                .menuGroup(null)
+                .menuProducts(null)
+                .build()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴를 구성하는 MenuProduct의 가격의 총합보다 비싸게 Menu의 Price를 책정할 수 없다.")
+    @Test
+    void menuCannotBeExpensiveThanMenuProductPriceTotal() {
+        assertThatThrownBy(() -> new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(BigDecimal.valueOf(999999999))
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
+                .build()
+        ).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @DisplayName("메뉴를 구성하는 MenuProduct의 가격의 총합보다 같거나 싸게 Menu의 Price를 책정해야 한다.")
+    @Test
+    void menuShouldBeEqualOrCheaperThanMenuProductPriceTotal() {
+        final Menu samePriceMenu = new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(product.getPrice())
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
                 .build();
 
-        assertThat(chicken.getId()).isEqualTo(1L);
-        assertThat(chicken.getName()).isEqualTo("chicken");
-        assertThat(chicken.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(10000));
-        assertThat(chicken.getMenuGroupId()).isEqualTo(2L);
-        assertThat(chicken.getMenuProducts()).hasSize(2);
+        assertThat(samePriceMenu.getPrice()).isEqualByComparingTo(product.getPrice());
+
+        final Menu cheaperPriceMenu = new Menu.Builder()
+                .id(1L)
+                .name("menu")
+                .price(BigDecimal.valueOf(100))
+                .menuGroup(null)
+                .menuProducts(Arrays.asList(menuProduct))
+                .build();
+
+        assertThat(cheaperPriceMenu.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(100));
     }
 }

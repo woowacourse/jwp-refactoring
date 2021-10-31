@@ -48,13 +48,13 @@ public class TableGroupService {
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllById(orderTableIds);
+        final List<OrderTable> foundOrderTables = orderTableRepository.findAllById(orderTableIds);
 
-        if (orderTableIdRequests.size() != savedOrderTables.size()) {
+        if (orderTableIdRequests.size() != foundOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
-        return savedOrderTables;
+        return foundOrderTables;
     }
 
     @Transactional

@@ -29,12 +29,16 @@ class OrderAcceptanceTest extends AcceptanceTest {
     MenuGroup 한마리메뉴;
     MenuGroup 두마리메뉴;
 
-    Menu 한마리메뉴_후라이드치킨 = new Menu();
-    Menu 두마리메뉴_양념_간장치킨 = new Menu();
+    Menu 한마리메뉴_중_후라이드치킨;
+    Menu 두마리메뉴_중_양념치킨_간장치킨;
 
     Product 후라이드치킨;
     Product 양념치킨;
     Product 간장치킨;
+
+    MenuProduct 한마리메뉴_후라이드치킨;
+    MenuProduct 두마리메뉴_양념치킨;
+    MenuProduct 두마리메뉴_간장치킨;
 
     @BeforeEach
     void setUp() {
@@ -77,15 +81,43 @@ class OrderAcceptanceTest extends AcceptanceTest {
                 .build();
         간장치킨 = productRepository.save(간장치킨);
 
-        한마리메뉴_후라이드치킨.setName("후라이드치킨");
-        한마리메뉴_후라이드치킨.setPrice(BigDecimal.valueOf(15000));
-        한마리메뉴_후라이드치킨.setMenuGroup(한마리메뉴);
-        한마리메뉴_후라이드치킨 = menuRepository.save(한마리메뉴_후라이드치킨);
+        한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
+                .menu(null)
+                .product(후라이드치킨)
+                .quantity(1L)
+                .build();
 
-        두마리메뉴_양념_간장치킨.setName("양념+간장치킨");
-        두마리메뉴_양념_간장치킨.setPrice(BigDecimal.valueOf(32000));
-        두마리메뉴_양념_간장치킨.setMenuGroup(두마리메뉴);
-        두마리메뉴_양념_간장치킨 = menuRepository.save(두마리메뉴_양념_간장치킨);
+        한마리메뉴_중_후라이드치킨 = new Menu.Builder()
+                .name("후라이드치킨")
+                .price(BigDecimal.valueOf(15000))
+                .menuGroup(한마리메뉴)
+                .menuProducts(Arrays.asList(한마리메뉴_후라이드치킨))
+                .build();
+        menuRepository.save(한마리메뉴_중_후라이드치킨);
+        menuProductRepository.save(한마리메뉴_후라이드치킨);
+
+        두마리메뉴_양념치킨 = new MenuProduct.Builder()
+                .menu(null)
+                .product(양념치킨)
+                .quantity(1L)
+                .build();
+
+        두마리메뉴_간장치킨 = new MenuProduct.Builder()
+                .menu(null)
+                .product(간장치킨)
+                .quantity(1L)
+                .build();
+
+        두마리메뉴_중_양념치킨_간장치킨 = new Menu.Builder()
+                .name("양념+간장치킨")
+                .price(BigDecimal.valueOf(32000))
+                .menuGroup(두마리메뉴)
+                .menuProducts(Arrays.asList(두마리메뉴_양념치킨, 두마리메뉴_간장치킨))
+                .build();
+        menuRepository.save(두마리메뉴_중_양념치킨_간장치킨);
+        menuProductRepository.save(두마리메뉴_양념치킨);
+        menuProductRepository.save(두마리메뉴_간장치킨);
+
     }
 
     @DisplayName("매장에서 발생한 주문들에 대한 정보를 반환한다")
@@ -104,11 +136,11 @@ class OrderAcceptanceTest extends AcceptanceTest {
     void createOrder() {
         // given
         OrderLineItemRequest 주문3_아이템1 = new OrderLineItemRequest();
-        주문3_아이템1.setMenuId(한마리메뉴_후라이드치킨.getId());
+        주문3_아이템1.setMenuId(한마리메뉴_중_후라이드치킨.getId());
         주문3_아이템1.setQuantity(1L);
 
         OrderLineItemRequest 주문3_아이템2 = new OrderLineItemRequest();
-        주문3_아이템2.setMenuId(두마리메뉴_양념_간장치킨.getId());
+        주문3_아이템2.setMenuId(두마리메뉴_중_양념치킨_간장치킨.getId());
         주문3_아이템2.setQuantity(1L);
 
         OrderRequest 주문3 = new OrderRequest();
