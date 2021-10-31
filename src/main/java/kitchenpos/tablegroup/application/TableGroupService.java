@@ -1,15 +1,12 @@
 package kitchenpos.tablegroup.application;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.order.domain.OrderDao;
-import kitchenpos.ordertable.domain.OrderTableDao;
-import kitchenpos.tablegroup.domain.TableGroupDao;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.ordertable.domain.OrderTable;
 import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.tablegroup.domain.TableGroupDao;
 import kitchenpos.tablegroup.dto.TableGroupCreateResponseDto;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -17,13 +14,11 @@ import org.springframework.util.CollectionUtils;
 @Service
 public class TableGroupService {
 
-    private final OrderDao orderDao;
-    private final OrderTableDao orderTableDao;
+    private final ApplicationEventPublisher publisher;
     private final TableGroupDao tableGroupDao;
 
-    public TableGroupService(final OrderDao orderDao, final OrderTableDao orderTableDao, final TableGroupDao tableGroupDao) {
-        this.orderDao = orderDao;
-        this.orderTableDao = orderTableDao;
+    public TableGroupService(ApplicationEventPublisher publisher, TableGroupDao tableGroupDao) {
+        this.publisher = publisher;
         this.tableGroupDao = tableGroupDao;
     }
 
@@ -34,29 +29,11 @@ public class TableGroupService {
         validateOrderTableSize(orderTables);
 
         List<Long> orderTableIds = parseOrderTableIds(orderTables);
-        List<OrderTable> savedOrderTables = orderTableDao.findAllByIdIn(orderTableIds);
+        publisher.publishEvent(new TableGroupStartedToCreateEvent(orderTables, orderTableIds));
 
-        validateOrderTableSize(orderTables, savedOrderTables);
-
-        validateOrderTablesEmpty(savedOrderTables);
-
-        final TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
+        TableGroup savedTableGroup = tableGroupDao.save(tableGroup);
 
         return new TableGroupCreateResponseDto(savedTableGroup);
-    }
-
-    private void validateOrderTableSize(List<OrderTable> orderTables, List<OrderTable> savedOrderTables) {
-        if (orderTables.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private void validateOrderTablesEmpty(List<OrderTable> savedOrderTables) {
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty()) {
-                throw new IllegalArgumentException();
-            }
-        }
     }
 
     private List<Long> parseOrderTableIds(List<OrderTable> orderTables) {
@@ -73,18 +50,6 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableDao.findAllByTableGroupId(tableGroupId);
-
-        final List<Long> orderTableIds = parseOrderTableIds(orderTables);
-
-        if (orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            orderTableIds, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroupTableGroup();
-            orderTableDao.save(orderTable);
-        }
+        publisher.publishEvent(new TableGroupStartedToUngroupEvent(tableGroupId));
     }
 }
