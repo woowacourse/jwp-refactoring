@@ -14,7 +14,7 @@ public class ProductQuantities {
     public BigDecimal totalPrice() {
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (ProductQuantity productQuantity : productQuantities) {
-            totalPrice = totalPrice.add(productQuantity.multiply());
+            totalPrice = totalPrice.add(productQuantity.multipleProductAndQuantity());
         }
         return totalPrice;
     }

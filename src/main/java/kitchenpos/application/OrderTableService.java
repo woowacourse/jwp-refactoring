@@ -49,7 +49,8 @@ public class OrderTableService {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         for (OrderTable orderTable : orderTables) {
             Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
-            orders.ungroupOf(orderTable);
+            orders.checkNotCompleted();
+            orderTable.ungroup();
         }
     }
 }

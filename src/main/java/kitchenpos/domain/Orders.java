@@ -17,9 +17,4 @@ public class Orders {
                     throw new IllegalArgumentException("아직 조리 혹은 식사 중인 주문이 존재합니다.");
                 });
     }
-
-    public void ungroupOf(OrderTable orderTable) {
-        checkNotCompleted();
-        orderTable.ungroup();
-    }
 }

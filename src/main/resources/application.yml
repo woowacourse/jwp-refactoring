@@ -28,7 +28,7 @@ spring:
     activate:
       on-profile: local
   flyway:
-    enabled: false
+    enabled: true
 
 ---
 

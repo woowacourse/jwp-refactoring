@@ -40,7 +40,7 @@ public class ProductQuantity {
         return quantity;
     }
 
-    public BigDecimal multiply() {
+    public BigDecimal multipleProductAndQuantity() {
         return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 }
