@@ -53,7 +53,11 @@ public class OrderService {
                 .map(OrderLineItem::getMenu)
                 .collect(Collectors.toList());
 
-        if (orderLineItems.size() != menuRepository.countByMenus(menus)) {
+        long count = menus.stream()
+            .map(menu -> menuRepository.countById(menu.getId()))
+            .reduce(0L, Long::sum);
+
+        if (orderLineItems.size() != count) {
             throw new IllegalArgumentException();
         }
 

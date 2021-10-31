@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
 
-    List<MenuProduct> findALlByMenu(Menu menu);
+    List<MenuProduct> findAllByMenu(Menu menu);
 }

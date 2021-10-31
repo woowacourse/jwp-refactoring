@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -73,7 +72,7 @@ class OrderServiceTest {
     void create() {
         given(orderLineItemRepository.findById(anyLong()))
             .willReturn(Optional.of(orderLineItem));
-        given(menuRepository.countByMenus(anyList()))
+        given(menuRepository.countById(anyLong()))
             .willReturn(1L);
         given(orderTableRepository.findById(anyLong()))
             .willReturn(Optional.of(orderTable));

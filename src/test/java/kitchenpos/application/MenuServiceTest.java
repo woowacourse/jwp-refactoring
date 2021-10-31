@@ -102,6 +102,6 @@ class MenuServiceTest {
         menuService.list();
 
         verify(menuRepository).findAll();
-        verify(menuProductRepository, times(2)).findALlByMenu(any(Menu.class));
+        verify(menuProductRepository, times(2)).findAllByMenu(any(Menu.class));
     }
 }
