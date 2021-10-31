@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MenuTest {
 
@@ -39,8 +40,9 @@ class MenuTest {
     @DisplayName("메뉴 빌더로 메뉴를 생성할 수 있다.")
     @Test
     void createMenuWithBuilder() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(2L);
+        MenuGroup menuGroup = new MenuGroup.Builder()
+                .id(2L)
+                .build();
 
         Menu chicken = new Menu.Builder()
                 .id(1L)

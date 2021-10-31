@@ -19,8 +19,9 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
-        final MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(menuGroupRequest.getName());
+        final MenuGroup menuGroup = new MenuGroup.Builder()
+                .name(menuGroupRequest.getName())
+                .build();
         menuGroupRepository.save(menuGroup);
         return MenuGroupResponse.of(menuGroup);
     }

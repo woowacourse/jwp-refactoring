@@ -26,8 +26,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     Order 주문 = new Order();
 
-    MenuGroup 한마리메뉴 = new MenuGroup();
-    MenuGroup 두마리메뉴 = new MenuGroup();
+    MenuGroup 한마리메뉴;
+    MenuGroup 두마리메뉴;
 
     Menu 한마리메뉴_후라이드치킨 = new Menu();
     Menu 두마리메뉴_양념_간장치킨 = new Menu();
@@ -47,11 +47,15 @@ class OrderAcceptanceTest extends AcceptanceTest {
         주문.setOrderedTime(LocalDateTime.now());
         주문 = orderRepository.save(주문);
 
-        한마리메뉴.setName("한마리메뉴");
-        한마리메뉴 = menuGroupRepository.save(한마리메뉴);
+        한마리메뉴 = new MenuGroup.Builder()
+                .name("한마리메뉴")
+                .build();
+        menuGroupRepository.save(한마리메뉴);
 
-        두마리메뉴.setName("두마리메뉴");
-        두마리메뉴 = menuGroupRepository.save(두마리메뉴);
+        두마리메뉴 = new MenuGroup.Builder()
+                .name("두마리메뉴")
+                .build();
+        menuGroupRepository.save(두마리메뉴);
 
         후라이드치킨.setName("후라이드치킨");
         후라이드치킨.setPrice(BigDecimal.valueOf(15000));

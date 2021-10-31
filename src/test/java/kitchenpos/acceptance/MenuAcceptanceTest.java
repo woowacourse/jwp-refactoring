@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("메뉴 관련 기능")
 class MenuAcceptanceTest extends AcceptanceTest {
 
-    MenuGroup 한마리메뉴 = new MenuGroup();
-    MenuGroup 두마리메뉴 = new MenuGroup();
+    MenuGroup 한마리메뉴;
+    MenuGroup 두마리메뉴;
 
     Menu 한마리메뉴_후라이드치킨 = new Menu();
     Menu 두마리메뉴_양념_간장치킨 = new Menu();
@@ -32,10 +32,14 @@ class MenuAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        한마리메뉴.setName("한마리메뉴");
+        한마리메뉴  = new MenuGroup.Builder()
+                .name("한마리메뉴")
+                .build();
         한마리메뉴 = menuGroupRepository.save(한마리메뉴);
 
-        두마리메뉴.setName("두마리메뉴");
+        두마리메뉴 = new MenuGroup.Builder()
+                .name("두마리메뉴")
+                .build();
         두마리메뉴 = menuGroupRepository.save(두마리메뉴);
 
         후라이드치킨.setName("후라이드치킨");
