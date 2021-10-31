@@ -90,11 +90,11 @@ public class Price {
             return false;
         }
         Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        return value.compareTo(price.value) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(value.doubleValue());
     }
 }
