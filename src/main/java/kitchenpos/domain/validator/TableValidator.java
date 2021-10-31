@@ -16,7 +16,7 @@ public class TableValidator {
     }
 
     public void validateUpdateEmpty(OrderTable orderTable) {
-        if (Objects.nonNull(orderTable.getTableGroupId())) {
+        if (Objects.nonNull(orderTable.getTableGroup())) {
             throw new IllegalArgumentException();
         }
 

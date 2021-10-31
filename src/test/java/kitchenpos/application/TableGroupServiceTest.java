@@ -62,10 +62,10 @@ class TableGroupServiceTest {
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getCreatedDate());
-        assertThat(saved.getOrderTables())
+        assertThat(saved.getGroupTables().toList())
                 .hasSize(2)
                 .allMatch(table -> !table.isEmpty())
-                .allMatch(table -> Objects.equals(table.getTableGroupId(), saved.getId()));
+                .allMatch(table -> Objects.equals(table.getTableGroup(), saved));
     }
 
     @Test
@@ -127,7 +127,7 @@ class TableGroupServiceTest {
         List<OrderTable> tables = orderTableRepository.findAllByIdIn(
                 Arrays.asList(table1.getId(), table2.getId()));
         assertThat(tables)
-                .allMatch(table -> Objects.isNull(table.getTableGroupId()))
+                .allMatch(table -> Objects.isNull(table.getTableGroup()))
                 .allMatch(table -> !table.isEmpty());
     }
 

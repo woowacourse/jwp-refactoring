@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class TableValidatorTest {
 
     @BeforeEach
     void setUp() {
-        this.orderTable = new OrderTable(3, false);
+        this.orderTable = new OrderTable(1L, null, 5, true);
     }
 
     @Test
@@ -37,7 +38,10 @@ class TableValidatorTest {
 
     @Test
     void validateUpdateEmptyWhenGrouped() {
-        orderTable.setTableGroupId(1L);
+        OrderTable other = new OrderTable(2L, null, 3, true);
+        TableGroup tableGroup = new TableGroup(Arrays.asList(orderTable, other));
+
+        orderTable.setTableGroup(tableGroup);
         assertThatThrownBy(() -> tableValidator.validateUpdateEmpty(orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
