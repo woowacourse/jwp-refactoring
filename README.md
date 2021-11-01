@@ -23,6 +23,14 @@
 
 ## 요구 사항
 
+### 도메인 로직 분리
+- [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.
+- [ ] MenuService
+- [ ] OrderService
+- [ ] ProductService
+- [ ] TableGroupService
+- [ ] TableService
+
 ### 통합 테스트
 - [x] /api/menus POST success
 - [x] /api/menus GET success
