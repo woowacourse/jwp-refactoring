@@ -21,9 +21,6 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    @OneToMany(mappedBy = "menu")
-    private List<OrderLineItem> orderLineItems;
-
     public Menu() {
     }
 

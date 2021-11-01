@@ -14,6 +14,7 @@ public class OrderLineItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
+
     private Long quantity;
 
     public OrderLineItem() {

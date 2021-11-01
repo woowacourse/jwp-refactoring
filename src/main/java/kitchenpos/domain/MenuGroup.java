@@ -30,6 +30,10 @@ public class MenuGroup {
         return name;
     }
 
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
     public static class Builder {
         private Long id;
         private String name;
