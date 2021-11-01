@@ -23,7 +23,7 @@ import org.springframework.http.MediaType;
 @DisplayName("Menu 인수 테스트")
 public class MenuAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("POST /api/menu-groups")
+    @DisplayName("POST /api/menus")
     @Nested
     class Post {
 
@@ -235,16 +235,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
-        ExtractableResponse<Response> response = RestAssured.given()
-            .log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(menuGroup)
-            .when().post("/api/menu-groups")
-            .then().log().all()
-            .statusCode(CREATED.value())
-            .extract();
-
-        return response.as(MenuGroup.class);
+        return postRequestWithBody("/api/menu-groups", menuGroup).as(MenuGroup.class);
     }
 
     private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
@@ -260,15 +251,6 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
 
-        ExtractableResponse<Response> response = RestAssured.given()
-            .log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(product)
-            .when().post("/api/products")
-            .then().log().all()
-            .statusCode(CREATED.value())
-            .extract();
-
-        return response.as(Product.class);
+        return postRequestWithBody("/api/products", product).as(Product.class);
     }
 }
