@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Optional;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
@@ -70,6 +71,7 @@ public class TableGroupServiceTest extends ServiceTest {
     @DisplayName("단체 지정을 취소할 수 있다.")
     @Test
     void unGroup() {
+        when(tableGroupDao.findById(any())).thenReturn(Optional.of(TableGroupFixture.tableGroup()));
 
         tableGroupService.ungroup(0L);
     }
@@ -78,6 +80,7 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void unGroupExists() {
         when(orderDao.existsByOrderTableIdInAndOrderStatusIn(any(), any())).thenReturn(true);
+        when(tableGroupDao.findById(any())).thenReturn(Optional.of(TableGroupFixture.tableGroup()));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(0L)).
                 isInstanceOf(IllegalArgumentException.class);
