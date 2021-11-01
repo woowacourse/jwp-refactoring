@@ -2,6 +2,49 @@
 
 ## 요구 사항
 
+### 상품
+- POST /api/products
+    - 상품 생성
+- GET /api/products
+    - 상품 목록 조회
+
+### 메뉴 그룹
+- POST /api/menu-groups
+    - 메뉴 그룹 생성
+- GET /api/menu-groups
+    - 메뉴 그룹 목록 조회
+
+### 메뉴
+- POST /api/menus
+    - 메뉴 생성
+- GET /api/menus
+    - 메뉴 목록 조회
+
+### 단체 테이블
+- POST /api/table-groups
+    - 테이블 단체 지정
+- DELETE /api/table-groups/{tableGroupId}
+    - 단체 테이블 해체
+
+### 테이블
+- POST /api/tables
+    - 테이블 생성
+- GET /api/tables
+    - 테이블 목록 조회
+- PUT /api/tables/{orderTableId}/empty
+    - 테이블 상태 수정 - 비어있는지
+- PUT /api/tables/{orderTableId}/number-of-guests
+    - 테이블 상태 수정 - 손님 수
+
+### 주문
+- POST /api/orders
+    - 주문 생성
+- GET /api/orders
+    - 주문 목록 조회
+- PUT /api/orders/{orderId}/order-status
+    - 주문 상태 수정 - 조리, 식사, 계산 완료
+
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
