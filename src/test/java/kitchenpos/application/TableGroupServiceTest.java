@@ -17,6 +17,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.factory.TableGroupFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,19 +49,19 @@ class TableGroupServiceTest {
     @Nested
     class CreateTest {
 
-        OrderTable orderTable1;
-        OrderTable orderTable2;
-        List<OrderTable> orderTables;
+        private OrderTable orderTable1;
+        private OrderTable orderTable2;
+        private List<OrderTable> orderTables;
 
-        OrderTable savedOrderTable1;
-        OrderTable savedOrderTable2;
-        List<OrderTable> savedOrderTables;
+        private OrderTable savedOrderTable1;
+        private OrderTable savedOrderTable2;
+        private List<OrderTable> savedOrderTables;
 
-        List<Long> orderTableIds;
+        private List<Long> orderTableIds;
 
-        TableGroup tableGroup;
+        private TableGroup tableGroup;
 
-        TableGroup savedTableGroup;
+        private TableGroup savedTableGroup;
 
         @BeforeEach
         void setUp() {
@@ -118,7 +119,8 @@ class TableGroupServiceTest {
             TableGroup result = tableGroupService.create(this.tableGroup);
 
             // then
-            verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
+            verify(orderTableDao, times(2))
+                .save(orderTableArgumentCaptor.capture());
             List<OrderTable> orderTableArguments = orderTableArgumentCaptor.getAllValues();
             assertThat(orderTableArguments)
                 .containsExactly(
@@ -138,8 +140,11 @@ class TableGroupServiceTest {
                 .orderTables(Collections.emptyList())
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -151,8 +156,11 @@ class TableGroupServiceTest {
                 .orderTables(Collections.singletonList(orderTable1))
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -163,8 +171,11 @@ class TableGroupServiceTest {
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(
                 Collections.singletonList(savedOrderTable1));
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -181,8 +192,11 @@ class TableGroupServiceTest {
             );
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -199,8 +213,11 @@ class TableGroupServiceTest {
             );
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -208,16 +225,16 @@ class TableGroupServiceTest {
     @Nested
     class UngroupTest {
 
-        OrderTable orderTable1;
-        OrderTable orderTable2;
-        List<OrderTable> orderTables;
+        private OrderTable orderTable1;
+        private OrderTable orderTable2;
+        private List<OrderTable> orderTables;
 
-        List<Long> orderTableIds;
+        private List<Long> orderTableIds;
 
-        TableGroup tableGroup;
-        Long tableGroupId;
+        private TableGroup tableGroup;
+        private Long tableGroupId;
 
-        List<String> notCompletionOrderStatuses;
+        private List<String> notCompletionOrderStatuses;
 
         @BeforeEach
         void setUp() {
@@ -288,8 +305,11 @@ class TableGroupServiceTest {
                 notCompletionOrderStatuses
             )).willReturn(true);
 
-            // when // then
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+            // when
+            ThrowingCallable throwingCallable = () -> tableGroupService.ungroup(tableGroupId);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

@@ -18,6 +18,7 @@ import kitchenpos.domain.Product;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.ProductFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -124,8 +125,11 @@ class MenuServiceTest {
                 .price(null)
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -137,19 +141,25 @@ class MenuServiceTest {
                 .price(new BigDecimal(-1))
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("Menu 생성 실패한다 - menuGroupId 에 해당하는 menuGroup 이 존재하지 않는 경우")
         @Test
-        void createFail_whenMenuGroupIsNotExising() {
+        void createFail_whenMenuGroupIsNotExisting() {
             // given
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -160,8 +170,11 @@ class MenuServiceTest {
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
             given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            //then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -182,8 +195,11 @@ class MenuServiceTest {
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
             given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
 
-            // when // then
-            assertThatThrownBy(() -> menuService.create(menu))
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

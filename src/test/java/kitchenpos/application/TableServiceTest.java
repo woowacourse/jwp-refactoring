@@ -47,9 +47,9 @@ class TableServiceTest {
     @Nested
     class CreateTest {
 
-        OrderTable orderTable;
+        private OrderTable orderTable;
 
-        OrderTable savedOrderTable;
+        private OrderTable savedOrderTable;
 
         @BeforeEach
         void setUp() {

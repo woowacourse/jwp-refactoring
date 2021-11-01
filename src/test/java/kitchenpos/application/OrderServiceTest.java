@@ -27,6 +27,7 @@ import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,22 +74,24 @@ class OrderServiceTest {
     @Nested
     class CreateTest {
 
-        MenuProduct menuProduct;
-        Menu menu;
-        List<Long> menuIds;
-        OrderLineItem orderLineItem;
-        OrderTable orderTable;
-        Order order;
-        Order savedOrder;
+        private List<Long> menuIds;
+
+        private OrderLineItem orderLineItem;
+
+        private OrderTable orderTable;
+
+        private Order order;
+
+        private Order savedOrder;
 
         @BeforeEach
         void setUp() {
-            menuProduct = MenuProductFactory.builder()
+            MenuProduct menuProduct = MenuProductFactory.builder()
                 .productId(1L)
                 .quantity(1L)
                 .build();
 
-            menu = MenuFactory.builder()
+            Menu menu = MenuFactory.builder()
                 .id(1L)
                 .name("후라이드+후라이드")
                 .price(new BigDecimal(19000))
@@ -123,8 +126,8 @@ class OrderServiceTest {
         void create() {
             // given
             given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(
-                Optional.of(orderTable));
+            given(orderTableDao.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
             given(orderDao.save(order)).willReturn(savedOrder);
             given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
 
@@ -145,8 +148,11 @@ class OrderServiceTest {
                 .orderLineItems(Collections.emptyList())
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -156,8 +162,11 @@ class OrderServiceTest {
             // given
             given(menuDao.countByIdIn(menuIds)).willReturn(0L);
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -168,8 +177,11 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(menuIds)).willReturn(1L);
             given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -181,11 +193,14 @@ class OrderServiceTest {
                 .empty(true)
                 .build();
             given(menuDao.countByIdIn(menuIds)).willReturn(1L);
-            given(orderTableDao.findById(order.getOrderTableId())).willReturn(
-                Optional.of(orderTable));
+            given(orderTableDao.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
 
-            // when // then
-            assertThatThrownBy(() -> orderService.create(order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.create(order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -193,13 +208,13 @@ class OrderServiceTest {
     @Nested
     class ChangeTest {
 
-        Long orderId;
+        private Long orderId;
 
-        List<OrderLineItem> orderLineItems;
+        private List<OrderLineItem> orderLineItems;
 
-        Order savedOrder;
+        private Order savedOrder;
 
-        Order order;
+        private Order order;
 
         @BeforeEach
         void setUp() {
@@ -244,8 +259,12 @@ class OrderServiceTest {
             // given
             given(orderDao.findById(orderId)).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+            // when
+            ThrowingCallable throwingCallable =
+                () -> orderService.changeOrderStatus(orderId, order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -258,8 +277,12 @@ class OrderServiceTest {
                 .build();
             given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
 
-            // when // then
-            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, order))
+            // when
+            ThrowingCallable throwingCallable = () -> orderService.changeOrderStatus(orderId,
+                order);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }

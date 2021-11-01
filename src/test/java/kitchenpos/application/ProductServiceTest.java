@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.factory.ProductFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -39,9 +40,9 @@ class ProductServiceTest {
     @Nested
     class CreateTest {
 
-        Product product;
+        private Product product;
 
-        Product savedProduct;
+        private Product savedProduct;
 
         @BeforeEach
         void setUp() {
@@ -77,8 +78,11 @@ class ProductServiceTest {
                 .price(null)
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> productService.create(product))
+            // when
+            ThrowingCallable throwingCallable = () -> productService.create(product);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -90,8 +94,11 @@ class ProductServiceTest {
                 .price(new BigDecimal(-1))
                 .build();
 
-            // when // given
-            assertThatThrownBy(() -> productService.create(product))
+            // when
+            ThrowingCallable throwingCallable = () -> productService.create(product);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
