@@ -59,7 +59,7 @@ public class TableServiceTest {
 
         //when
         orderTable.setEmpty(false);
-        orderTable.setNumberOfGuests(10);
+        orderTable.changeNumberOfGuests(10);
 
         //then
         assertDoesNotThrow(() -> tableService.create(orderTable));
@@ -134,7 +134,7 @@ public class TableServiceTest {
         OrderTable orderTable = new OrderTable();
 
         //when
-        orderTable.setNumberOfGuests(-1);
+        orderTable.changeNumberOfGuests(-1);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -148,7 +148,7 @@ public class TableServiceTest {
         OrderTable orderTable = new OrderTable();
 
         //when
-        orderTable.setNumberOfGuests(5);
+        orderTable.changeNumberOfGuests(5);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(100L, orderTable))
@@ -162,7 +162,7 @@ public class TableServiceTest {
         OrderTable orderTable = new OrderTable();
 
         //when
-        orderTable.setNumberOfGuests(5);
+        orderTable.changeNumberOfGuests(5);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -177,7 +177,7 @@ public class TableServiceTest {
 
         //when
         tableService.changeEmpty(1L, notEmptyTable);
-        orderTable.setNumberOfGuests(5);
+        orderTable.changeNumberOfGuests(5);
 
         //then
         assertDoesNotThrow(() -> tableService.changeNumberOfGuests(1L, orderTable));

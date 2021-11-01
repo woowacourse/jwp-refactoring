@@ -31,6 +31,18 @@ public class OrderTable {
         this(id, null, 0, false);
     }
 
+    public OrderTable(boolean empty) {
+        this(null, null, null, empty);
+    }
+
+    public OrderTable(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public OrderTable(int numberOfGuests, boolean empty) {
+        this(null, null, numberOfGuests, empty);
+    }
+
     public void enrollTableGroup(TableGroup savedTableGroup) {
         this.tableGroup = tableGroup;
     }
@@ -41,6 +53,14 @@ public class OrderTable {
 
     public void releaseTableGroup() {
         this.tableGroup = null;
+    }
+
+    public void enrollId(Long id) {
+        this.id = id;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
     }
 
     public Long getId() {
@@ -61,9 +81,5 @@ public class OrderTable {
 
     public Long getTableGroupId() {
         return tableGroup.getId();
-    }
-
-    public void setEmpty(boolean b) {
-
     }
 }
