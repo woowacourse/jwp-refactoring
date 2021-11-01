@@ -69,6 +69,11 @@ public class Order {
         }
     }
 
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        checkOrderStatus();
+        this.orderStatus = orderStatus;
+    }
+
     public Long getId() {
         return id;
     }
@@ -87,10 +92,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItem() {
         return orderLineItem;
-    }
-
-    public void changeOrderStatus(OrderStatus orderStatus) {
-        checkOrderStatus();
-        this.orderStatus = orderStatus;
     }
 }

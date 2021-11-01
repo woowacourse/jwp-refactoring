@@ -1,13 +1,9 @@
 package kitchenpos.application;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.dao.MenuGroupRepository;
-import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.dao.MenuRepository;
-import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -27,9 +23,7 @@ public class MenuService {
 
     public MenuService(
         final MenuRepository menuRepository,
-        final MenuGroupRepository menuGroupRepository,
         final MenuProductService menuProductService,
-        final ProductRepository productRepository,
         final ProductService productService,
         final MenuGroupService menuGroupService
     ) {
@@ -54,8 +48,9 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(menu);
 
-        menuProductService.saveAll(savedMenu, products, menuRequest.getQuantity());
-
+        List<MenuProduct> menuProducts = menuProductService
+            .saveAll(savedMenu, products, menuRequest.getQuantity());
+        savedMenu.addMenuProducts(menuProducts);
         return savedMenu;
     }
 

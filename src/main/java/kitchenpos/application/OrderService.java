@@ -18,20 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderLineItemService orderLineItemService;
     private final MenuService menuService;
     private final OrderTableService orderTableService;
 
     public OrderService(
         final OrderRepository orderRepository,
-        final OrderLineItemRepository orderLineItemRepository,
         final OrderLineItemService orderLineItemService,
         final MenuService menuService,
         final OrderTableService orderTableService
     ) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderLineItemService = orderLineItemService;
         this.menuService = menuService;
         this.orderTableService = orderTableService;

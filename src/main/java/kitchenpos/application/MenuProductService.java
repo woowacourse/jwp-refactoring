@@ -25,20 +25,6 @@ public class MenuProductService {
             .collect(Collectors.toList());
     }
 
-    public void saveMenu(List<MenuProduct> menuProducts, Menu savedMenu) {
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.addMenu(savedMenu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-
-        savedMenu.addMenuProducts(savedMenuProducts);
-    }
-
-    public List<MenuProduct> findAllByMenu(Menu menu) {
-        return menuProductRepository.findAllByMenu(menu);
-    }
-
     public List<MenuProduct> saveAll(Menu menu, List<Product> products, long quantity) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (Product product : products) {
