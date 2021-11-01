@@ -52,7 +52,7 @@ class ProductServiceTest {
         @Test
         void createWithInvalidPrice() {
             Product product = createProduct(BigDecimal.valueOf(-1L));
-            assertThatThrownBy(() -> productService.create(product));
+            assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 

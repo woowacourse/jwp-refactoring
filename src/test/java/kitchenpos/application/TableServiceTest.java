@@ -91,7 +91,8 @@ class TableServiceTest {
             when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
                     savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
             ).thenReturn(true);
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()));
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
@@ -99,7 +100,8 @@ class TableServiceTest {
         void changeEmptyWithGroupedTable() {
             OrderTable savedOrderTable = createOrderTable(1L, 1L, false);
             when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(savedOrderTable));
-            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()));
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -131,14 +133,16 @@ class TableServiceTest {
         @Test
         void changeNumberOfGuestsWithInvalid() {
             OrderTable updateOrderTable = createOrderTable(-1);
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), updateOrderTable));
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), updateOrderTable))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("비어있는 테이블의 손님 수를 변경할 수 없다.")
         @Test
         void changeNumberOfGuestWithEmptyTable() {
             when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(createOrderTable(true)));
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable()));
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(savedOrderTable.getId(), createOrderTable()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

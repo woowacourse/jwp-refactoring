@@ -69,21 +69,21 @@ class OrderServiceTest {
         void createWithInvalidOrderItemList() {
             Order order = createOrder(Collections.emptyList());
             when(mockMenuDao.countByIdIn(any())).thenReturn((long) order.getOrderLineItems().size());
-            assertThatThrownBy(() -> orderService.create(order));
+            assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 항목의 메뉴가 존재해야 한다.")
         @Test
         void createWithNonexistentMenu() {
             when(mockMenuDao.countByIdIn(any())).thenReturn(0L);
-            assertThatThrownBy(() -> orderService.create(createOrder()));
+            assertThatThrownBy(() -> orderService.create(createOrder())).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 테이블은 비어있지 않아야한다.")
         @Test
         void createWithEmptyTable() {
             when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(createOrderTable(true)));
-            assertThatThrownBy(() -> orderService.create(createOrder()));
+            assertThatThrownBy(() -> orderService.create(createOrder())).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -129,7 +129,8 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusWithInvalidStatus() {
             Order updateOrder = createOrder(savedOrder.getId(), "INVALID_STATUS");
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
@@ -139,7 +140,8 @@ class OrderServiceTest {
             when(mockOrderDao.findById(savedOrder.getId())).thenReturn(Optional.of(savedOrder));
 
             Order updateOrder = createOrder(savedOrder.getId(), OrderStatus.COOKING.name());
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));
+            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }

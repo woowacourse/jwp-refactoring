@@ -71,7 +71,7 @@ class MenuServiceTest {
         void createWithInvalidPrice1() {
             BigDecimal price = BigDecimal.valueOf(-1);
             Menu menu = createMenu(price);
-            assertThatThrownBy(() -> menuService.create(menu));
+            assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("메뉴 상품 가격의 합보다 큰 가격으로 메뉴를 생성할 수 없다.")
@@ -80,7 +80,7 @@ class MenuServiceTest {
             Menu menu = createMenu();
             BigDecimal price = sumOfProductPrice(menu.getMenuProducts()).add(BigDecimal.ONE);
             menu.setPrice(price);
-            assertThatThrownBy(() -> menuService.create(menu));
+            assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("존재하지 않는 메뉴 그룹에 메뉴를 생성할 수 없다.")
@@ -88,7 +88,7 @@ class MenuServiceTest {
         void createWithInvalidMenuGroup() {
             Menu menu = createMenu();
             when(mockMenuGroupDao.existsById(menu.getId())).thenReturn(false);
-            assertThatThrownBy(() -> menuService.create(menu));
+            assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
         }
 
         private BigDecimal sumOfProductPrice(List<MenuProduct> menuProducts) {
