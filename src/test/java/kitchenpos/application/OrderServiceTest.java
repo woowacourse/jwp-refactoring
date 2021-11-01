@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -20,6 +21,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,25 +40,26 @@ class OrderServiceTest {
     private List<OrderLineItem> orderLineItems;
     private Order order;
     private OrderTable orderTable;
+    private Menu menu;
 
     @Mock
-    private MenuRepository menuRepository;
+    private MenuService menuService;
 
     @Mock
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemRepository orderLineItemRepository;
+    private OrderLineItemService orderLineItemService;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderTableService orderTableService;
 
     @BeforeEach
     void setUp() {
         TableGroup tableGroup = new TableGroup(1L);
         orderTable = new OrderTable(1L, tableGroup, 1, false);
         order = new Order(orderTable, OrderStatus.COOKING);
-        Menu menu = Fixtures.makeMenu();
+        menu = Fixtures.makeMenu();
 
         orderLineItem = new OrderLineItem(1L, order, menu, 1L);
 
@@ -70,22 +73,25 @@ class OrderServiceTest {
     @DisplayName("order 생성")
     @Test
     void create() {
-        given(orderLineItemRepository.findById(anyLong()))
-            .willReturn(Optional.of(orderLineItem));
-        given(menuRepository.countById(anyLong()))
-            .willReturn(1L);
-        given(orderTableRepository.findById(anyLong()))
-            .willReturn(Optional.of(orderTable));
+        given(orderTableService.findById(anyLong()))
+            .willReturn(orderTable);
         given(orderRepository.save(any(Order.class)))
             .willReturn(order);
+        given(menuService.findById(anyLong()))
+            .willReturn(menu);
 
-        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(),
-            Collections.singletonList(1L));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1);
+
+        OrderRequest orderRequest =
+            new OrderRequest(
+                1L,
+                OrderStatus.COOKING.name(),
+                Collections.singletonList(orderLineItemRequest));
 
         orderService.create(orderRequest);
 
         verify(orderRepository).save(any(Order.class));
-        verify(orderLineItemRepository).save(any(OrderLineItem.class));
+        verify(orderLineItemService).saveAll(anyList());
     }
 
     @DisplayName("order 불러오기")
@@ -100,7 +106,6 @@ class OrderServiceTest {
         orderService.list();
 
         verify(orderRepository).findAll();
-        verify(orderLineItemRepository).findAllByOrder(any(Order.class));
     }
 
     @DisplayName("주문상태 바꾸기")
@@ -109,12 +114,9 @@ class OrderServiceTest {
         given(orderRepository.findById(anyLong()))
             .willReturn(Optional.of(order));
 
-        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(),
-            Collections.singletonList(1L));
+        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(), null);
 
         orderService.changeOrderStatus(1L, orderRequest);
-
-        verify(orderLineItemRepository).findAllByOrder(any(Order.class));
     }
 
 }

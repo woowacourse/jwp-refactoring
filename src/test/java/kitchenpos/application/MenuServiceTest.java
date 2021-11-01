@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -44,13 +45,13 @@ class MenuServiceTest {
     private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupRepository menuGroupRepository;
+    private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuProductRepository menuProductRepository;
+    private MenuProductService menuProductService;
 
     @Mock
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @BeforeEach
     void setUp() {
@@ -71,23 +72,20 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성")
     @Test
     void create() {
-        given(menuGroupRepository.findById(anyLong()))
-            .willReturn(Optional.of(menuGroup));
-        given(menuProductRepository.findById(anyLong()))
-            .willReturn(Optional.of(menuProduct));
-        given(productRepository.findById(anyLong()))
-            .willReturn(Optional.of(product));
+        given(menuGroupService.findById(anyLong()))
+            .willReturn(menuGroup);
+        given(productService.findById(anyLong()))
+            .willReturn(product);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
-        given(menuProductRepository.save(any(MenuProduct.class)))
-            .willReturn(menuProduct);
 
         MenuRequest menuRequest = new MenuRequest("후라이드치킨", 16000.00, menuGroup.getId(),
-            Collections.singletonList(1L));
+            Collections.singletonList(product.getId()), 1);
 
         menuService.create(menuRequest);
 
         verify(menuRepository).save(any(Menu.class));
+        verify(menuProductService).saveAll(any(Menu.class), anyList(), anyLong());
     }
 
 
@@ -102,6 +100,5 @@ class MenuServiceTest {
         menuService.list();
 
         verify(menuRepository).findAll();
-        verify(menuProductRepository, times(2)).findAllByMenu(any(Menu.class));
     }
 }
