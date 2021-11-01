@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.order;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -41,18 +41,18 @@ public class Order {
     @Column(nullable = false, updatable = false)
     private LocalDateTime orderedTime;
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
-        this.id = id;
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+    protected Order() {
     }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this(null, orderTable, orderStatus, null);
     }
 
-    protected Order() {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        this.id = id;
+        this.orderTable = orderTable;
+        this.orderStatus = orderStatus;
+        this.orderedTime = orderedTime;
     }
 
     public void validateNotCompleted() {

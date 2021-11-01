@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,6 +16,29 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 @DisplayName("Price 도메인 단위테스트")
 class PriceTest {
+
+    static Stream<Arguments> isGreaterOrEqualThan() {
+        return Stream.of(
+            Arguments.of(0, 0, true),
+            Arguments.of(1, 1, true),
+            Arguments.of(4, 4, true),
+            Arguments.of(1, 0, true),
+            Arguments.of(5, 4, true),
+            Arguments.of(0, 1, false),
+            Arguments.of(4, 5, false)
+        );
+    }
+
+    static Stream<Arguments> multiply() {
+        return Stream.of(
+            Arguments.of(0, 0L),
+            Arguments.of(0, 5L),
+            Arguments.of(5, 0L),
+            Arguments.of(5, 5L),
+            Arguments.of(5, 1L),
+            Arguments.of(1, 5L)
+        );
+    }
 
     @DisplayName("생성 - 성공 - value가 null 또는 음수가 아닐 때")
     @CustomParameterizedTest
@@ -40,18 +63,6 @@ class PriceTest {
             .isInstanceOf(InvalidArgumentException.class);
     }
 
-    static Stream<Arguments> isGreaterOrEqualThan() {
-        return Stream.of(
-            Arguments.of(0, 0, true),
-            Arguments.of(1, 1, true),
-            Arguments.of(4, 4, true),
-            Arguments.of(1, 0, true),
-            Arguments.of(5, 4, true),
-            Arguments.of(0, 1, false),
-            Arguments.of(4, 5, false)
-            );
-    }
-
     @DisplayName("price 값 크기 비교 - 성공 - price >= otherPrice 일 때 True, 그 외 False 반환")
     @CustomParameterizedTest
     @MethodSource
@@ -63,17 +74,6 @@ class PriceTest {
         // when
         // then
         assertThat(price.isGreaterOrEqualThan(otherPrice)).isEqualTo(expectedResult);
-    }
-
-    static Stream<Arguments> multiply() {
-        return Stream.of(
-            Arguments.of(0, 0L),
-            Arguments.of(0, 5L),
-            Arguments.of(5, 0L),
-            Arguments.of(5, 5L),
-            Arguments.of(5, 1L),
-            Arguments.of(1, 5L)
-        );
     }
 
     @DisplayName("곱셈 결과 반환 - 성공")

@@ -1,18 +1,22 @@
 package kitchenpos.application;
 
+import java.util.HashSet;
 import java.util.List;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.TableGroup;
+import java.util.Set;
+import java.util.stream.Collectors;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.ordertable.OrderTables;
+import kitchenpos.domain.ordertable.OrderTableRepository;
+import kitchenpos.domain.ordertable.OrderTablesToCreateGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroupRepository;
 import kitchenpos.dto.ordertable.OrderTableRequest;
+import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.dto.tablegroup.TableGroupRequest;
 import kitchenpos.dto.tablegroup.TableGroupResponse;
 import kitchenpos.exception.InvalidStateException;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,8 +40,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final OrderTables orderTables = convertRequestToEntities(tableGroupRequest.getOrderTables());
-        orderTables.validate();
+        final OrderTablesToCreateGroup orderTables = convertToOrderTables(tableGroupRequest.getOrderTables());
 
         final TableGroup tableGroup = new TableGroup();
         tableGroupRepository.save(tableGroup);
@@ -45,43 +48,67 @@ public class TableGroupService {
         orderTables.changeAllEmptyToFalse();
         orderTables.assign(tableGroup);
 
-        return TableGroupResponse.of(tableGroup, orderTables.getOrderTables());
+        return convertToTableGroupResponse(tableGroup, orderTables.getOrderTables());
     }
 
-    private OrderTables convertRequestToEntities(List<OrderTableRequest> orderTableRequests) {
-        final OrderTables orderTables = new OrderTables();
-        for (OrderTableRequest orderTableRequest : orderTableRequests) {
-            final OrderTable foundOrderTable = findOrderTableById(orderTableRequest.getId());
-            orderTables.add(foundOrderTable);
+    private TableGroupResponse convertToTableGroupResponse(TableGroup tableGroup, List<OrderTable> orderTables) {
+        final List<OrderTableResponse> orderTableResponses = convertToOrderTableResponses(orderTables);
+        return new TableGroupResponse(tableGroup, orderTableResponses);
+    }
+
+    private List<OrderTableResponse> convertToOrderTableResponses(List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(OrderTableResponse::new)
+            .collect(Collectors.toList())
+            ;
+    }
+
+    private OrderTablesToCreateGroup convertToOrderTables(List<OrderTableRequest> orderTableRequests) {
+        final List<Long> requestOrderTablesIds = extractOrderTableRequestsIds(orderTableRequests);
+        final List<OrderTable> foundOrderTables = orderTableRepository.findAllByIdIn(requestOrderTablesIds);
+        validateAllOrderTablesExistsInDB(foundOrderTables, requestOrderTablesIds);
+
+        return new OrderTablesToCreateGroup(foundOrderTables);
+    }
+
+    private List<Long> extractOrderTableRequestsIds(List<OrderTableRequest> orderTableRequests) {
+        return orderTableRequests.stream()
+            .map(OrderTableRequest::getId)
+            .collect(Collectors.toList())
+            ;
+    }
+
+    private void validateAllOrderTablesExistsInDB(List<OrderTable> foundOrderTables, List<Long> requestOrderTablesIds) {
+        final Set<Long> orderTableIds = extractOrderTableIds(foundOrderTables);
+        final Set<Long> requestOrderTableIdsDuplicateRemoved = new HashSet<>(requestOrderTablesIds);
+        if (!orderTableIds.containsAll(requestOrderTableIdsDuplicateRemoved)) {
+            throw new NotFoundException("요청 OrderTable Id들 중, DB에 존재하지 않는것이 있습니다.");
         }
-        return orderTables;
     }
 
-    private OrderTable findOrderTableById(Long id) {
-        return orderTableRepository.findById(id)
-            .orElseThrow(() -> new NotFoundException("해당 id의 OrderTable이 없습니다."));
+    private Set<Long> extractOrderTableIds(List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(OrderTable::getId)
+            .collect(Collectors.toSet())
+            ;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final OrderTables orderTables = findOrderTablesByTableGroupId(tableGroupId);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         validateAllOrdersCompleted(orderTables);
-        orderTables.ungroup();
+        ungroupAllOrderTables(orderTables);
     }
 
-    private void validateAllOrdersCompleted(OrderTables orderTables) {
-        if (orderRepository.existsByOrderTableIsInAndOrderStatusIsIn(
-            orderTables.getOrderTables(), OrderStatus.getExceptCompletion())) {
+    private void validateAllOrdersCompleted(List<OrderTable> orderTables) {
+        if (orderRepository.existsByOrderTableInAndOrderStatusIn(orderTables, OrderStatus.getExceptCompletion())) {
             throw new InvalidStateException("COMPLETION 상태가 아닌 Order가 존재합니다.");
         }
     }
 
-    private OrderTables findOrderTablesByTableGroupId(Long tableGroupId) {
-        final OrderTables orderTables = new OrderTables();
-        final List<OrderTable> foundOrderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        for (OrderTable foundOrderTable : foundOrderTables) {
-            orderTables.add(foundOrderTable);
+    private void ungroupAllOrderTables(List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.ungroup();
         }
-        return orderTables;
     }
 }

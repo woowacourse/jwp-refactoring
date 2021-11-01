@@ -2,8 +2,7 @@ package kitchenpos.dto.tablegroup;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.ordertable.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 
 public class TableGroupResponse {
@@ -11,6 +10,14 @@ public class TableGroupResponse {
     private final Long id;
     private final LocalDateTime createdDate;
     private final List<OrderTableResponse> orderTables;
+
+    public TableGroupResponse(TableGroup tableGroup, List<OrderTableResponse> orderTableResponses) {
+        this(
+            tableGroup.getId(),
+            tableGroup.getCreatedDate(),
+            orderTableResponses
+        );
+    }
 
     public TableGroupResponse(
         Long id,
@@ -20,15 +27,6 @@ public class TableGroupResponse {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-    }
-
-    public static TableGroupResponse of(TableGroup tableGroup, List<OrderTable> orderTables) {
-        final List<OrderTableResponse> orderTableResponses = OrderTableResponse.of(orderTables);
-        return new TableGroupResponse(
-            tableGroup.getId(),
-            tableGroup.getCreatedDate(),
-            orderTableResponses
-        );
     }
 
     public Long getId() {

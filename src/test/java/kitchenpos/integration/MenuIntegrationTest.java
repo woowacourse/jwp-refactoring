@@ -11,12 +11,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
-import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuRequest;
+import kitchenpos.dto.menuproduct.MenuProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.NullSource;
@@ -190,7 +190,7 @@ class MenuIntegrationTest extends IntegrationTest {
     void findAll_Success() throws Exception {
         // given
         final MenuGroup menuGroup = MenuGroup을_저장한다("추천메뉴");
-        
+
         final Menu menu1 = Menu를_저장한다("후라이드메뉴", 16_000, menuGroup);
         final Menu menu2 = Menu를_저장한다("양념치킨메뉴", 34_000, menuGroup);
 
@@ -208,7 +208,7 @@ class MenuIntegrationTest extends IntegrationTest {
             .andExpect(header().string(CONTENT_TYPE_NAME, RESPONSE_CONTENT_TYPE))
             .andExpect(jsonPath("$[0].id").value(menu1.getId()))
             .andExpect(jsonPath("$[0].name").value(menu1.getName()))
-            .andExpect(jsonPath("$[0].price").value(menu1.getPrice()))
+            .andExpect(jsonPath("$[0].price").value(menu1.getPriceAsInt()))
             .andExpect(jsonPath("$[0].menuGroupId").value(menuGroup.getId()))
             .andExpect(jsonPath("$[0].menuProducts.length()").value(1))
             .andExpect(jsonPath("$[0].menuProducts[0].seq").value(menu1MenuProduct.getSeq()))
@@ -217,7 +217,7 @@ class MenuIntegrationTest extends IntegrationTest {
             .andExpect(jsonPath("$[0].menuProducts[0].quantity").value(menu1MenuProduct.getQuantityValue()))
             .andExpect(jsonPath("$[1].id").value(menu2.getId()))
             .andExpect(jsonPath("$[1].name").value(menu2.getName()))
-            .andExpect(jsonPath("$[1].price").value(menu2.getPrice()))
+            .andExpect(jsonPath("$[1].price").value(menu2.getPriceAsInt()))
             .andExpect(jsonPath("$[1].menuGroupId").value(menuGroup.getId()))
             .andExpect(jsonPath("$[1].menuProducts.length()").value(1))
             .andExpect(jsonPath("$[1].menuProducts[0].seq").value(menu2MenuProduct.getSeq()))

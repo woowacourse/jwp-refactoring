@@ -2,11 +2,10 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.dto.product.ProductRequest;
 import kitchenpos.dto.product.ProductResponse;
-import kitchenpos.exception.InvalidRequestParamException;
-import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,23 +21,15 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        final Product newProduct = convertRequestToEntity(productRequest);
+        final Product newProduct = new Product(productRequest.getName(), productRequest.getPrice());
         productRepository.save(newProduct);
-        return ProductResponse.of(newProduct);
-    }
-
-    private Product convertRequestToEntity(ProductRequest productRequest) {
-        try {
-            return new Product(productRequest.getName(), productRequest.getPrice());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException(e.getMessage());
-        }
+        return new ProductResponse(newProduct);
     }
 
     public List<ProductResponse> findAll() {
         final List<Product> foundAllProducts = productRepository.findAll();
         return foundAllProducts.stream()
-            .map(ProductResponse::of)
+            .map(ProductResponse::new)
             .collect(Collectors.toList());
     }
 }

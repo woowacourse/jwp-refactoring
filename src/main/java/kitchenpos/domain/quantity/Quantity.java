@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.quantity;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -11,12 +11,12 @@ public class Quantity {
     @Column(name = "quantity", nullable = false)
     private long value;
 
+    protected Quantity() {
+    }
+
     public Quantity(Long value) {
         validate(value);
         this.value = value;
-    }
-
-    protected Quantity() {
     }
 
     private void validate(Long value) {

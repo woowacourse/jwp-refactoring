@@ -2,15 +2,14 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.order.OrderRepository;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.ordertable.OrderTable;
+import kitchenpos.domain.ordertable.OrderTableRepository;
 import kitchenpos.dto.ordertable.OrderTableRequest;
 import kitchenpos.dto.ordertable.OrderTableResponse;
 import kitchenpos.exception.BadRequestException;
-import kitchenpos.exception.InvalidRequestParamException;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,23 +30,15 @@ public class OrderTableService {
 
     @Transactional
     public OrderTableResponse create(final OrderTableRequest orderTableRequest) {
-        final OrderTable orderTable = convertRequestToEntity(orderTableRequest);
+        final OrderTable orderTable = new OrderTable(orderTableRequest.getNumberOfGuests(), orderTableRequest.getEmpty());
         orderTableRepository.save(orderTable);
-        return OrderTableResponse.of(orderTable);
-    }
-
-    private OrderTable convertRequestToEntity(OrderTableRequest orderTableRequest) {
-        try {
-            return new OrderTable(orderTableRequest.getNumberOfGuests(), orderTableRequest.getEmpty());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException(e.getMessage());
-        }
+        return new OrderTableResponse(orderTable);
     }
 
     public List<OrderTableResponse> findAll() {
         final List<OrderTable> foundAllOrderTables = orderTableRepository.findAll();
         return foundAllOrderTables.stream()
-            .map(OrderTableResponse::of)
+            .map(OrderTableResponse::new)
             .collect(Collectors.toList())
             ;
     }
@@ -57,7 +48,7 @@ public class OrderTableService {
         final OrderTable foundOrderTable = findOrderTableById(orderTableId);
         validateOrderTableToChangeEmpty(foundOrderTable);
         foundOrderTable.changeEmpty(orderTableRequest.getEmpty());
-        return OrderTableResponse.of(foundOrderTable);
+        return new OrderTableResponse(foundOrderTable);
     }
 
     private void validateOrderTableToChangeEmpty(OrderTable foundOrderTable) {
@@ -88,20 +79,8 @@ public class OrderTableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest orderTableRequest) {
         final OrderTable foundOrderTable = findOrderTableById(orderTableId);
-        validateNotEmpty(foundOrderTable);
-        changeNumberOfGuests(foundOrderTable, orderTableRequest.getNumberOfGuests());
-        return OrderTableResponse.of(foundOrderTable);
-    }
+        foundOrderTable.changeNumberOfGuests(orderTableRequest.getNumberOfGuests());
 
-    private void validateNotEmpty(OrderTable foundOrderTable) {
-        try {
-            foundOrderTable.validateNotEmpty();
-        } catch (IllegalStateException e) {
-            throw new BadRequestException(e.getMessage());
-        }
-    }
-
-    private void changeNumberOfGuests(OrderTable orderTable, Integer numberOfGuests) {
-        orderTable.changeNumberOfGuests(numberOfGuests);
+        return new OrderTableResponse(foundOrderTable);
     }
 }

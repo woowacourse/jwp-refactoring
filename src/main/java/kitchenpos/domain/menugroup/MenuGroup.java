@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menugroup;
 
 import java.util.Objects;
 import javax.persistence.Column;
@@ -17,16 +17,16 @@ public class MenuGroup {
     @Column(nullable = false)
     private String name;
 
-    public MenuGroup(Long id, String name) {
-        this.id = id;
-        this.name = name;
+    public MenuGroup() {
     }
 
     public MenuGroup(String name) {
         this(null, name);
     }
 
-    protected MenuGroup() {
+    public MenuGroup(Long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Long getId() {

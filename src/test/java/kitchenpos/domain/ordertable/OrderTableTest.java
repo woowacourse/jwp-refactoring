@@ -1,4 +1,4 @@
-package kitchenpos.domain;
+package kitchenpos.domain.ordertable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.stream.Stream;
 import kitchenpos.config.CustomParameterizedTest;
-import kitchenpos.domain.ordertable.OrderTable;
 import kitchenpos.exception.InvalidArgumentException;
 import kitchenpos.exception.InvalidStateException;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +29,24 @@ class OrderTableTest {
         );
     }
 
+    static Stream<Arguments> create_Fail_When_NumberOfGuestsIsNegative() {
+        return Stream.of(
+            Arguments.of(-1, true),
+            Arguments.of(-1, false),
+            Arguments.of(-1_000, true),
+            Arguments.of(-1_000, false)
+        );
+    }
+
+    static Stream<Arguments> changeEmpty_Success() {
+        return Stream.of(
+            Arguments.of(true, false),
+            Arguments.of(false, true),
+            Arguments.of(false, false),
+            Arguments.of(true, true)
+        );
+    }
+
     @DisplayName("생성 - 성공")
     @CustomParameterizedTest
     @MethodSource
@@ -39,15 +56,6 @@ class OrderTableTest {
         // then
         assertThatCode(() -> new OrderTable(numberOfGuests, empty))
             .doesNotThrowAnyException();
-    }
-
-    static Stream<Arguments> create_Fail_When_NumberOfGuestsIsNegative() {
-        return Stream.of(
-            Arguments.of(-1, true),
-            Arguments.of(-1, false),
-            Arguments.of(-1_000, true),
-            Arguments.of(-1_000, false)
-        );
     }
 
     @DisplayName("생성 - 실패 - numberOfGuests가 음수일 때")
@@ -107,12 +115,12 @@ class OrderTableTest {
             .doesNotThrowAnyException();
     }
 
-    @DisplayName("numberOfGuests 변경 - 성공 - 음수, null이 아닐 때")
+    @DisplayName("numberOfGuests 변경 - 성공 - 음수, null이 아니고 empty가 false일 때")
     @CustomParameterizedTest
     @ValueSource(ints = {0, 1, 100})
     void changeNumberOfGuests(Integer newNumberOfGuests) {
         // given
-        final OrderTable orderTable = new OrderTable(0, true);
+        final OrderTable orderTable = new OrderTable(2, false);
 
         // when
         // then
@@ -120,6 +128,22 @@ class OrderTableTest {
             .doesNotThrowAnyException();
 
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(newNumberOfGuests);
+    }
+
+    @DisplayName("numberOfGuests 변경 - 실 - 음수, null이 아니고 empty가 true일 때")
+    @CustomParameterizedTest
+    @ValueSource(ints = {0, 1, 100})
+    void changeNumberOfGuests_Fail_WhenEmptyIsTrue(Integer newNumberOfGuests) {
+        // given
+        final int oldNumberOfGuests = 2;
+        final OrderTable orderTable = new OrderTable(oldNumberOfGuests, true);
+
+        // when
+        // then
+        assertThatThrownBy(() -> orderTable.changeNumberOfGuests(newNumberOfGuests))
+            .isInstanceOf(InvalidStateException.class);
+
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(oldNumberOfGuests);
     }
 
     @DisplayName("numberOfGuests 변경 - 실패 - 음수 또는 null일 때")
@@ -137,15 +161,6 @@ class OrderTableTest {
             .isInstanceOf(InvalidArgumentException.class);
 
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(oldNumberOfGuests);
-    }
-
-    static Stream<Arguments> changeEmpty_Success() {
-        return Stream.of(
-            Arguments.of(true, false),
-            Arguments.of(false, true),
-            Arguments.of(false, false),
-            Arguments.of(true, true)
-        );
     }
 
     @DisplayName("empty값 변경 - 성공 - newEmpty값이 null이 아닐 때")

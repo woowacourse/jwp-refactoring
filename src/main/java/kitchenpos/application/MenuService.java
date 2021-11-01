@@ -3,24 +3,23 @@ package kitchenpos.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menu.MenuRepository;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroupRepository;
+import kitchenpos.domain.menuproduct.MenuProduct;
+import kitchenpos.domain.menuproduct.MenuProductRepository;
 import kitchenpos.domain.price.Price;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.domain.productquantity.ProductQuantities;
 import kitchenpos.domain.productquantity.ProductQuantity;
-import kitchenpos.domain.Quantity;
-import kitchenpos.dto.menu.MenuProductRequest;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.dto.menu.MenuRequest;
-import kitchenpos.dto.menu.MenuProductResponse;
 import kitchenpos.dto.menu.MenuResponse;
-import kitchenpos.exception.InvalidRequestParamException;
+import kitchenpos.dto.menuproduct.MenuProductRequest;
+import kitchenpos.dto.menuproduct.MenuProductResponse;
 import kitchenpos.exception.NotFoundException;
-import kitchenpos.repository.MenuGroupRepository;
-import kitchenpos.repository.MenuProductRepository;
-import kitchenpos.repository.MenuRepository;
-import kitchenpos.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +51,7 @@ public class MenuService {
         productQuantities.validateTotalPriceIsGreaterOrEqualThan(menuPrice);
 
         final MenuGroup foundMenuGroup = findMenuGroupById(menuRequest.getMenuGroupId());
-        final Menu menu = convertRequestToEntity(menuRequest, foundMenuGroup);
+        final Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), foundMenuGroup);
         menuRepository.save(menu);
 
         final List<MenuProduct> menuProducts = createMenuProducts(menu, productQuantities);
@@ -74,14 +73,6 @@ public class MenuService {
     private MenuGroup findMenuGroupById(Long id) {
         return menuGroupRepository.findById(id)
             .orElseThrow(() -> new NotFoundException("해당 id의 MenuGroup이 존재하지 않습니다."));
-    }
-
-    private Menu convertRequestToEntity(MenuRequest menuRequest, MenuGroup menuGroup) {
-        try {
-            return new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
-        } catch (IllegalArgumentException e) {
-            throw new InvalidRequestParamException(e.getMessage());
-        }
     }
 
     private List<MenuProduct> createMenuProducts(Menu menu, ProductQuantities productQuantities) {

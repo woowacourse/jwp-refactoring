@@ -10,7 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.tablegroup.TableGroup;
 import kitchenpos.exception.InvalidArgumentException;
 import kitchenpos.exception.InvalidStateException;
 
@@ -31,23 +31,23 @@ public class OrderTable {
     @Column(nullable = false)
     private Boolean empty;
 
-    public OrderTable(Long id, TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
-        validate(numberOfGuests, empty);
-        this.id = id;
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public OrderTable(TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    protected OrderTable() {
     }
 
     public OrderTable(Integer numberOfGuests, Boolean empty) {
         this(null, null, numberOfGuests, empty);
     }
 
-    protected OrderTable() {
+    public OrderTable(TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
+        this(null, tableGroup, numberOfGuests, empty);
+    }
+
+    public OrderTable(Long id, TableGroup tableGroup, Integer numberOfGuests, Boolean empty) {
+        validate(numberOfGuests, empty);
+        this.id = id;
+        this.tableGroup = tableGroup;
+        this.numberOfGuests = numberOfGuests;
+        this.empty = empty;
     }
 
     private void validate(Integer numberOfGuests, Boolean empty) {
@@ -90,7 +90,7 @@ public class OrderTable {
         }
     }
 
-    public void validateIsEmpty() {
+    public void validateEmpty() {
         if (!empty) {
             throw new InvalidStateException("OrderTable이 비어있지 않습니다.");
         }
@@ -103,6 +103,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(Integer newNumberOfGuests) {
         validateNumberOfGuests(newNumberOfGuests);
+        validateNotEmpty();
         numberOfGuests = newNumberOfGuests;
     }
 
@@ -133,7 +134,12 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void removeTableGroup() {
+    public void ungroup() {
+        removeTableGroup();
+        changeEmpty(false);
+    }
+
+    private void removeTableGroup() {
         tableGroup = null;
     }
 

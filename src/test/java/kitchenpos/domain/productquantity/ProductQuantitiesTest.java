@@ -3,9 +3,9 @@ package kitchenpos.domain.productquantity;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import kitchenpos.domain.Product;
-import kitchenpos.domain.Quantity;
 import kitchenpos.domain.price.Price;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

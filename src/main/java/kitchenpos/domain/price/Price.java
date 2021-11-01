@@ -4,30 +4,62 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import kitchenpos.domain.Quantity;
+import kitchenpos.domain.quantity.Quantity;
 import kitchenpos.exception.InvalidArgumentException;
 
 @Embeddable
 public class Price {
 
+    private static final String PRICE_NEGATIVE_ERROR_MESSAGE = "Price는 0보다 작을 수 없습니다.";
+
     @Column(name = "price", nullable = false)
     private BigDecimal value;
+
+    protected Price() {
+    }
+
+    public Price(BigDecimal value) {
+        validate(value);
+        this.value = value;
+    }
 
     public Price(Integer value) {
         validate(value);
         this.value = BigDecimal.valueOf(value);
     }
 
-    public Price(BigDecimal value) {
-        this(value.intValue());
+    private void validate(Object object) {
+        validateNonNull(object);
+        validateNotNegative(object);
     }
 
-    protected Price() {
+    private void validateNotNegative(Object object) {
+        if (object instanceof Integer) {
+            validateIntegerNotNegative((Integer) object);
+            return;
+        }
+        if (object instanceof BigDecimal) {
+            validateBigDecimalNotNegative((BigDecimal) object);
+            return;
+        }
+        throw new IllegalArgumentException("유효하지 않은 타입입니다.");
     }
 
-    private void validate(Integer value) {
-        if (Objects.isNull(value) || value < 0) {
-            throw new InvalidArgumentException("Price는 null이거나 0보다 작을 수 없습니다.");
+    private void validateIntegerNotNegative(Integer value) {
+        if (value < 0) {
+            throw new InvalidArgumentException(PRICE_NEGATIVE_ERROR_MESSAGE);
+        }
+    }
+
+    private void validateBigDecimalNotNegative(BigDecimal value) {
+        if (value.intValue() < 0) {
+            throw new InvalidArgumentException(PRICE_NEGATIVE_ERROR_MESSAGE);
+        }
+    }
+
+    private void validateNonNull(Object value) {
+        if (Objects.isNull(value)) {
+            throw new InvalidArgumentException("Price는 null일 수 없습니다.");
         }
     }
 
@@ -58,11 +90,11 @@ public class Price {
             return false;
         }
         Price price = (Price) o;
-        return Objects.equals(value, price.value);
+        return value.compareTo(price.value) == 0;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(value);
+        return Objects.hash(value.doubleValue());
     }
 }
