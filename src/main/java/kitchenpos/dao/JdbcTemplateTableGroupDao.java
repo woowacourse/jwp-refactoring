@@ -49,6 +49,15 @@ public class JdbcTemplateTableGroupDao implements TableGroupDao {
     }
 
     @Override
+    public int deleteAll() {
+        final String sql = "DELETE table_group";
+        final SqlParameterSource parameters = new MapSqlParameterSource();
+
+        return jdbcTemplate.update(sql, parameters);
+    }
+
+
+    @Override
     public List<TableGroup> findAll() {
         final String sql = "SELECT id, created_date FROM table_group";
         return jdbcTemplate.query(sql, (resultSet, rowNumber) -> toEntity(resultSet));
