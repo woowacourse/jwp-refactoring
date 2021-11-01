@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.application.dto.ProductResponse;
@@ -20,12 +18,6 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest request) {
-//        final BigDecimal price = request.getPrice();
-//
-//        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-//            throw new IllegalArgumentException();
-//        }
-
         return ProductResponse.of(productRepository.save(request.toEntity()));
     }
 

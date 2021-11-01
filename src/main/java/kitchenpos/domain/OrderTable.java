@@ -14,7 +14,6 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -82,14 +81,14 @@ public class OrderTable {
         this.numberOfGuests = numberOfGuests;
     }
 
+    public void addOrder(Order order) {
+        orders.add(order);
+    }
+
     private void validateNotEmpty() {
         if (isEmpty()) {
             throw new IllegalStateException("빈 테이블입니다.");
         }
-    }
-
-    public void addOrder(Order order) {
-        orders.add(order);
     }
 
     public Long getId() {

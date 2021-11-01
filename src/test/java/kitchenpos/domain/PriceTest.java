@@ -15,7 +15,8 @@ class PriceTest {
     void 생성_시_음수_이면_예외를_반환한다(double input) {
         BigDecimal param = BigDecimal.valueOf(input);
 
-        assertThrows(IllegalArgumentException.class, () -> new Price(param));
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> new Price(param));
+        assertThat(exception.getMessage()).isEqualTo("가격 값이 유효하지 않습니다.");
     }
 
     @ParameterizedTest

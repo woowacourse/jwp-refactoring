@@ -17,20 +17,22 @@ class OrderTest {
     void 생성_시_주문항목이_비어있으면_예외를_반환한다() {
         List<OrderLineItem> emptyItems = Collections.emptyList();
 
-        assertThrows(
+        Exception exception = assertThrows(
             IllegalStateException.class,
             () -> new Order(TableFixtures.createOrderTable(false), emptyItems)
         );
+        assertThat(exception.getMessage()).isEqualTo("주문 항목이 비어있습니다.");
     }
 
     @Test
     void 생성_시_주문_테이블이_빈_테이블이면_예외를_반환한다() {
         OrderTable emptyTable = TableFixtures.createOrderTable(true);
 
-        assertThrows(
+        Exception exception = assertThrows(
             IllegalStateException.class,
             () -> new Order(emptyTable, OrderFixtures.createOrderLineItems())
         );
+        assertThat(exception.getMessage()).isEqualTo("빈 테이블입니다.");
     }
 
     @Test
@@ -45,7 +47,8 @@ class OrderTest {
     void 상태_변경_시_이미_완료된_주문이면_예외를_반환한다() {
         Order completed = OrderFixtures.createOrder(OrderStatus.COMPLETION);
 
-        assertThrows(IllegalStateException.class, () -> completed.changeOrderStatus(OrderStatus.MEAL));
+        Exception exception = assertThrows(IllegalStateException.class, () -> completed.changeOrderStatus(OrderStatus.MEAL));
+        assertThat(exception.getMessage()).isEqualTo("주문 상태가 이미 완료되었습니다.");
     }
 
     @Test

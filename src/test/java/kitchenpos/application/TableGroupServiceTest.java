@@ -3,6 +3,7 @@ package kitchenpos.application;
 import static kitchenpos.fixtures.OrderFixtures.createCompletedOrders;
 import static kitchenpos.fixtures.OrderFixtures.createMealOrders;
 import static kitchenpos.fixtures.TableFixtures.createOrderTable;
+import static kitchenpos.fixtures.TableFixtures.createOrderTables;
 import static kitchenpos.fixtures.TableFixtures.createTableGroup;
 import static kitchenpos.fixtures.TableFixtures.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,6 +16,7 @@ import static org.mockito.Mockito.verify;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
@@ -29,10 +31,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 class TableGroupServiceTest extends ServiceTest {
-
-    @Mock
-    private OrderRepository orderRepository;
-
     @Mock
     private OrderTableRepository orderTableRepository;
 
@@ -53,7 +51,7 @@ class TableGroupServiceTest extends ServiceTest {
 
     @Test
     void 단체_지정을_생성한다() {
-        given(orderTableRepository.findAllByIdIn(any())).willReturn(tableGroup.getOrderTables());
+        given(orderTableRepository.findAllByIdIn(any())).willReturn(createOrderTables(true));
         given(tableGroupRepository.save(any())).willReturn(tableGroup);
 
         TableGroupResponse savedTableGroup = assertDoesNotThrow(() -> tableGroupService.create(request));
@@ -62,37 +60,11 @@ class TableGroupServiceTest extends ServiceTest {
     }
 
     @Test
-    void 생성_시_지정_할_주문_테이블들이_2개_미만_이면_예외를_반환한다() {
-        TableGroupRequest invalidTableGroup = createTableGroupRequest(
-            createTableGroup(Collections.singletonList(TableFixtures.createOrderTable(true)))
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(invalidTableGroup));
-    }
-
-    @Test
     void 생성_시_주문_테이블들이_존재하지_않으면_예외를_반환한다() {
         given(orderTableRepository.findAllByIdIn(any()))
             .willReturn(Collections.singletonList(TableFixtures.createOrderTable(true)));
 
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
-    }
-
-    @Test
-    void 생성_시_주문_테이블들이_비어있으면_예외를_반환한다() {
-        given(orderTableRepository.findAllByIdIn(any())).willReturn(TableFixtures.createOrderTables(false));
-
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
-    }
-
-    @Test
-    void 생성_시_주문_테이블들이_단체_지정_되어있으면_예외를_반환한다() {
-        List<OrderTable> groupedTables = new ArrayList<>();
-        groupedTables.add(TableFixtures.createOrderTable(1L, createTableGroup(), createCompletedOrders(), 10, true));
-        groupedTables.add(TableFixtures.createOrderTable(2L, createTableGroup(), createCompletedOrders(), 10, true));
-        given(orderTableRepository.findAllByIdIn(any())).willReturn(groupedTables);
-
-        assertThrows(IllegalArgumentException.class, () -> tableGroupService.create(request));
+        assertThrows(NoSuchElementException.class, () -> tableGroupService.create(request));
     }
 
     @Test
@@ -112,7 +84,7 @@ class TableGroupServiceTest extends ServiceTest {
         List<OrderTable> groupedTables = new ArrayList<>();
         groupedTables.add(createOrderTable(1L, createTableGroup(), createMealOrders(), 10, true));
         groupedTables.add(createOrderTable(2L, createTableGroup(), createMealOrders(), 10, true));
-        given(orderTableRepository.findAllByTableGroupId(any())).willReturn(tableGroup.getOrderTables());
+        given(orderTableRepository.findAllByTableGroupId(any())).willReturn(groupedTables);
 
         assertThrows(IllegalStateException.class, () -> tableGroupService.ungroup(tableGroup.getId()));
     }
