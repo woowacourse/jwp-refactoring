@@ -47,7 +47,7 @@ class ProductServiceTest {
         assertThat(result.getPrice().toBigInteger()).isEqualTo(product.getPrice().toBigInteger());
     }
 
-    @DisplayName("상품의 가격은 0원 이상이 아니면 예외를 던진다.")
+    @DisplayName("상품 등록시 가격이 0원 미만이면 예외를 던진다.")
     @Test
     void create_price_exception() {
         Product product = new Product(1L, "강정치킨", BigDecimal.valueOf(-17000));

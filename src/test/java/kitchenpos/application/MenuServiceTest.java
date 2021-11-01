@@ -72,7 +72,7 @@ class MenuServiceTest {
         assertThat(resultMenuProduct.getQuantity()).isEqualTo(2L);
     }
 
-    @DisplayName("메뉴 가격이 0원 이상이 아니면 예외를 던진다.")
+    @DisplayName("메뉴 등록시 메뉴 가격이 0원 이상이 아니면 예외를 던진다.")
     @Test
     void create_price_exception() {
         Product savedProduct = productDao.save(new Product(1L, "후라이드 치킨", BigDecimal.valueOf(19000)));
@@ -83,7 +83,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 그룹이 존재하지 않으면 예외를 던진다.")
+    @DisplayName("메뉴 등록시 메뉴 그룹이 존재하지 않으면 예외를 던진다.")
     @Test
     void create_menu_group_not_exist_exception() {
         Product savedProduct = productDao.save(new Product(1L, "후라이드 치킨", BigDecimal.valueOf(19000)));
@@ -93,7 +93,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴에 존재하지 않는 상품이 있다면 예외를 던진다.")
+    @DisplayName("메뉴 등록시 메뉴에 존재하지 않는 상품이 있다면 예외를 던진다.")
     @Test
     void create_product_not_exist_exception() {
         MenuGroup menuGroup = new MenuGroup(1L, "추천 메뉴");
@@ -104,7 +104,7 @@ class MenuServiceTest {
         assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @DisplayName("메뉴 상품들의 가격 합계가 메뉴 가격보다 크다면 예외를 던진다. ")
+    @DisplayName("메뉴 등록시 메뉴 상품들의 가격 합계가 메뉴 가격보다 크다면 예외를 던진다.")
     @Test
     void create_product_price_sum_exception() {
         Product savedProduct = productDao.save(new Product(1L, "후라이드 치킨", BigDecimal.valueOf(19000)));
