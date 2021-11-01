@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProductIntegrationTest extends AbstractIntegrationTest {
 
-    @DisplayName("POST /api/products - 상품의 (이름, 가격)으로 상품을 추가한다.")
+    @DisplayName("POST /api/products - (이름, 가격)으로 상품을 추가한다.")
     @Test
     void create() {
         // given
