@@ -26,7 +26,9 @@
 ### Table `/api/tables`
 - [ ] POST 주문 테이블 생성 
 - [ ] GET 주문 테이블 불러오기
-- [ ] PUT `/{orderTableId}/empty` 주문 테이블 비우기
+- [ ] PUT `/{orderTableId}/empty` 주문 테이블 상태 변경
+  1. 자정된 TableGroup이 없어야한다
+    2. 주문 상태가 COOKING, MEAL이면 안된다
 - [ ] PUT `/{orderTableId}/number-of-guests` 손님 수 수정
 
 

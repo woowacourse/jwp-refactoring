@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuGroupRepository menuGroupRepository;
     private final MenuProductService menuProductService;
-    private final ProductRepository productRepository;
     private final ProductService productService;
     private final MenuGroupService menuGroupService;
 
@@ -36,9 +34,7 @@ public class MenuService {
         final MenuGroupService menuGroupService
     ) {
         this.menuRepository = menuRepository;
-        this.menuGroupRepository = menuGroupRepository;
         this.menuProductService = menuProductService;
-        this.productRepository = productRepository;
         this.productService = productService;
         this.menuGroupService = menuGroupService;
     }

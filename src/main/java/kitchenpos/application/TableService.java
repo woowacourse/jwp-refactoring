@@ -49,12 +49,12 @@ public class TableService {
             .orElseThrow(IllegalArgumentException::new);
 
         if (Objects.nonNull(savedOrderTable.getTableGroup())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("table group이 이미 지정되었습니다.");
         }
 
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(
             orderTableId, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("해당 주문이 이미 조리중입니다.");
         }
 
         savedOrderTable.changeEmpty(orderTableRequest.isEmpty());
@@ -63,8 +63,9 @@ public class TableService {
     }
 
     @Transactional
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
+    public OrderTable changeNumberOfGuests(final Long orderTableId,
+        final OrderTableRequest orderTableRequest) {
+        final int numberOfGuests = orderTableRequest.getNumberOfGuests();
 
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
@@ -74,7 +75,7 @@ public class TableService {
             .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("테이블이 이미 존재합니다.");
         }
 
         return orderTableRepository.save(savedOrderTable);
