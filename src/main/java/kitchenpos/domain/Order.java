@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ public class Order {
     @JoinColumn(name = "order_table_id", foreignKey = @ForeignKey(name = "fk_orders_order_table"))
     private OrderTable orderTable;
 
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
     @OneToMany(mappedBy = "order")
