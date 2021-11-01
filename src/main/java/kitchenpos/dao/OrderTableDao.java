@@ -15,4 +15,7 @@ public interface OrderTableDao {
     List<OrderTable> findAllByIdIn(List<Long> ids);
 
     List<OrderTable> findAllByTableGroupId(Long tableGroupId);
+
+    int deleteAll();
 }
+
