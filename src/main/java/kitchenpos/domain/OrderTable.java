@@ -47,7 +47,7 @@ public class OrderTable {
         if (!isEmpty()) {
             throw new IllegalStateException("빈 테이블이 아닙니다.");
         }
-        if (this.tableGroup != null) {
+        if (isGrouped()) {
             throw new IllegalStateException("이미 단체 지정된 테이블입니다.");
         }
         this.tableGroup = tableGroup;
@@ -66,7 +66,7 @@ public class OrderTable {
     }
 
     public void changeEmpty(boolean empty) {
-        if (this.tableGroup != null) {
+        if (isGrouped()) {
             throw new IllegalStateException("이미 단체 지정된 테이블입니다.");
         }
         orders.forEach(Order::validateCompleted);
@@ -75,7 +75,7 @@ public class OrderTable {
 
     public void changeNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("고객 수는 양수여야 합니다.");
+            throw new IllegalArgumentException("입력값이 유효하지 않습니다.");
         }
         validateNotEmpty();
         this.numberOfGuests = numberOfGuests;

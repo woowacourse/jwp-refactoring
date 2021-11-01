@@ -26,10 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class TableServiceTest extends ServiceTest {
-
-    @Mock
-    private OrderRepository orderRepository;
-
     @Mock
     private OrderTableRepository orderTableRepository;
 
@@ -80,26 +76,6 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    void 상태_변경_시_주문_테이블이_단체_지정되어_있으면_예외를_반환한다() {
-        OrderTable groupedTable = TableFixtures.createOrderTable(
-            1L, TableFixtures.createTableGroup(), OrderFixtures.createCompletedOrders(), 10, true
-        );
-        given(orderTableRepository.findById(any())).willReturn(Optional.of(groupedTable));
-
-        assertThrows(IllegalStateException.class, () -> tableService.changeEmpty(groupedTable.getId(), false));
-    }
-
-    @Test
-    void 상태_변경_시_완료되지_않은_주문이_있으면_예외를_반환한다() {
-        OrderTable notCompletedTable = TableFixtures.createOrderTable(
-            1L, null, OrderFixtures.createMealOrders(), 10, true
-        );
-        given(orderTableRepository.findById(any())).willReturn(Optional.of(notCompletedTable));
-
-        assertThrows(IllegalStateException.class, () -> tableService.changeEmpty(notCompletedTable.getId(), false));
-    }
-
-    @Test
     void 주문_테이블의_손님_수를_변경한다() {
         OrderTable crowdTable = TableFixtures.createOrderTable(1L, null, OrderFixtures.createMealOrders(), 3000, false);
         given(orderTableRepository.findById(any())).willReturn(Optional.of(nonEmptyTable));
@@ -109,32 +85,12 @@ public class TableServiceTest extends ServiceTest {
     }
 
     @Test
-    void 손님_수_변경_시_손님_수가_음수이면_예외를_반환한다() {
-        given(orderTableRepository.findById(any())).willReturn(Optional.of(nonEmptyTable));
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), -1)
-        );
-    }
-
-    @Test
     void 손님_수_변경_시_주문_테이블이_존재하지_않으면_예외를_반환한다() {
         given(orderTableRepository.findById(any())).willReturn(Optional.empty());
 
         assertThrows(
             NoSuchElementException.class,
             () -> tableService.changeNumberOfGuests(nonEmptyTable.getId(), 3000)
-        );
-    }
-
-    @Test
-    void 손님_수_변경_시_빈_테이블이면_예외를_반환한다() {
-        given(orderTableRepository.findById(any())).willReturn(Optional.of(emptyTable));
-
-        assertThrows(
-            IllegalStateException.class,
-            () -> tableService.changeNumberOfGuests(emptyTable.getId(), 3000)
         );
     }
 }
