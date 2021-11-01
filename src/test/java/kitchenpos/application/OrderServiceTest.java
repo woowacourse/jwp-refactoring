@@ -12,13 +12,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.generator.OrderGenerator;
 import kitchenpos.generator.TableGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +29,7 @@ import org.mockito.Mock;
 public class OrderServiceTest extends ServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
     private OrderDao orderDao;
@@ -46,7 +46,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 등록")
     @Test
     void create() {
-        when(menuDao.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
+        when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
         when(orderTableDao.findById(1L)).thenReturn(
             Optional.of(TableGenerator.newInstance(1L, 1L, 4, false)));
         when(orderDao.save(any(Order.class))).thenAnswer(invocation -> {
@@ -87,7 +87,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundMenu() {
-        when(menuDao.countByIdIn(Collections.singletonList(1L))).thenReturn(0L);
+        when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(0L);
 
         OrderLineItem orderLineItem = OrderGenerator.newOrderLineItem(1L, 1);
         Order order = OrderGenerator.newInstance(1L, Collections.singletonList(orderLineItem));
@@ -98,7 +98,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundOrderTable() {
-        when(menuDao.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
+        when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
         when(orderTableDao.findById(1L)).thenReturn(Optional.empty());
 
         OrderLineItem orderLineItem = OrderGenerator.newOrderLineItem(1L, 1);
@@ -110,7 +110,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("비어있는 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithEmptyOrderTable() {
-        when(menuDao.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
+        when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
         when(orderTableDao.findById(1L)).thenReturn(
             Optional.of(TableGenerator.newInstance(1L, 1L, 4, true)));
 

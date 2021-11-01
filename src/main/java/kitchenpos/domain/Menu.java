@@ -2,52 +2,95 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
+@Entity
 public class Menu {
 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
     private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private Price price;
+    @ManyToOne
+    @JoinColumn(name = "menu_group_id")
+    private MenuGroup menuGroup;
+    @Embedded
+    private MenuProducts menuProducts;
+
+    protected Menu() {
+    }
+
+    public Menu(final String name, final BigDecimal price, final MenuGroup menuGroup) {
+        this(null, name, price, menuGroup);
+    }
+
+    public Menu(final Long id, final String name, final BigDecimal price,
+                final MenuGroup menuGroup) {
+        this(id, name, new Price(price), menuGroup);
+    }
+
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup) {
+        this(id, name, price, menuGroup, new MenuProducts());
+    }
+
+    public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup,
+                final MenuProducts menuProducts) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
+    }
+
+    public void addProduct(final Product product, final long quantity) {
+        validateToAddProduct(product, quantity);
+        menuProducts.add(new MenuProduct(this, product, quantity));
+    }
+
+    private void validateToAddProduct(final Product product, final long quantity) {
+        BigDecimal newTotalPrice = menuProducts.totalPrice()
+            .add(totalPriceOfNewProduct(product, quantity));
+        if (price.isBiggerThan(newTotalPrice)) {
+            throw new IllegalArgumentException(String.format(
+                "메뉴 가격은 상품 가격의 합보다 클 수 없습니다.(메뉴 가격: %d, 상품 가격: %d",
+                price.getValue().intValue(),
+                newTotalPrice.intValue()
+            ));
+        }
+    }
+
+    private BigDecimal totalPriceOfNewProduct(final Product newProduct, final long quantity) {
+        return newProduct.getPrice()
+            .getValue()
+            .multiply(BigDecimal.valueOf(quantity));
+    }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    public MenuGroup getMenuGroup() {
+        return menuGroup;
     }
 
-    public Long getMenuGroupId() {
-        return menuGroupId;
-    }
-
-    public void setMenuGroupId(final Long menuGroupId) {
-        this.menuGroupId = menuGroupId;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
+    public MenuProducts getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }
