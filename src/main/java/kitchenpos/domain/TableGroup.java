@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class TableGroup {
@@ -13,8 +12,8 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
@@ -23,17 +22,7 @@ public class TableGroup {
         this.id = builder.id;
         this.createdDate = builder.createdDate;
         this.orderTables = builder.orderTables;
-        registerOrderTables(builder.orderTables);
-    }
-
-    private void registerOrderTables(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
-            }
-            orderTable.registerTableGroup(this);
-            orderTable.makeNotEmpty();
-        }
+        this.orderTables.registerTableGroup(this);
     }
 
     public Long getId() {
@@ -45,13 +34,13 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
     public static class Builder {
         private Long id;
         private LocalDateTime createdDate;
-        private List<OrderTable> orderTables;
+        private OrderTables orderTables;
 
         public Builder() {
         }
@@ -66,7 +55,7 @@ public class TableGroup {
             return this;
         }
 
-        public Builder orderTables(List<OrderTable> orderTables) {
+        public Builder orderTables(OrderTables orderTables) {
             this.orderTables = orderTables;
             return this;
         }

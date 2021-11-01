@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,8 +16,8 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
+    @Embedded
+    private Orders orders;
 
     public OrderTable() {
     }
@@ -35,9 +34,7 @@ public class OrderTable {
     }
 
     public void ungroupFromTableGroup() {
-        for (Order order : orders) {
-            checkOrderIsCompleted(order);
-        }
+        this.orders.checkAllOrderCompleted();
         this.tableGroup = null;
         this.empty = false;
     }
@@ -46,17 +43,8 @@ public class OrderTable {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException();
         }
-        for (Order order : orders) {
-            checkOrderIsCompleted(order);
-        }
+        this.orders.checkAllOrderCompleted();
         this.empty = empty;
-    }
-
-    private void checkOrderIsCompleted(Order order) {
-        if (order.isCompleted()) {
-            return;
-        }
-        throw new IllegalArgumentException();
     }
 
     public void changeNumberOfGuests(Integer numberOfGuests) {

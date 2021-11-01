@@ -20,9 +20,16 @@ public class Product {
     }
 
     private Product(Builder builder) {
+        validatePrice(builder.price);
         this.id = builder.id;
         this.name = builder.name;
         this.price = builder.price;
+    }
+
+    private void validatePrice(BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -56,9 +63,6 @@ public class Product {
         }
 
         public Builder price(BigDecimal price) {
-            if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException();
-            }
             this.price = price;
             return this;
         }

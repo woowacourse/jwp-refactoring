@@ -23,8 +23,8 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     public Order() {
     }
@@ -37,8 +37,8 @@ public class Order {
         this.orderTable = builder.orderTable;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
-        this.orderLineItems = builder.orderLineItems;
-        registerOrderToOrderLineItems(this.orderLineItems);
+        this.orderLineItems = new OrderLineItems(builder.orderLineItems);
+        this.orderLineItems.registerOrder(this);
     }
 
     private void validateOrderTable(OrderTable orderTable) {
@@ -64,12 +64,6 @@ public class Order {
             return;
         }
         throw new IllegalArgumentException();
-    }
-
-    private void registerOrderToOrderLineItems(List<OrderLineItem> orderLineItems) {
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.registerOrder(this);
-        }
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -104,7 +98,7 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getOrderLineItems();
     }
 
     public static class Builder {

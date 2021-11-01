@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
@@ -28,7 +29,7 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final List<OrderTable> orderTables = findOrderTables(tableGroupRequest.getOrderTables());
+        final OrderTables orderTables = findOrderTables(tableGroupRequest.getOrderTables());
         final TableGroup tableGroup = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
                 .orderTables(orderTables)
@@ -38,7 +39,7 @@ public class TableGroupService {
         return TableGroupResponse.of(tableGroup);
     }
 
-    private List<OrderTable> findOrderTables(List<OrderTableIdRequest> orderTableIdRequests) {
+    private OrderTables findOrderTables(List<OrderTableIdRequest> orderTableIdRequests) {
         if (CollectionUtils.isEmpty(orderTableIdRequests) || orderTableIdRequests.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -47,10 +48,8 @@ public class TableGroupService {
                 .map(OrderTableIdRequest::getId)
                 .collect(Collectors.toList());
 
-        final List<OrderTable> foundOrderTables = orderTableRepository.findAllById(orderTableIds);
-        if (orderTableIdRequests.size() != foundOrderTables.size()) {
-            throw new IllegalArgumentException();
-        }
+        final OrderTables foundOrderTables = new OrderTables(orderTableRepository.findAllById(orderTableIds));
+        foundOrderTables.checkSameSize(orderTableIdRequests.size());
         return foundOrderTables;
     }
 

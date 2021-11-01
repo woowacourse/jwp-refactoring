@@ -58,16 +58,18 @@ public class MenuService {
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
-            final Product product = productRepository.findById(menuProductRequest.getProductId())
-                    .orElseThrow(IllegalArgumentException::new);
-
             final MenuProduct menuProduct = new MenuProduct.Builder()
-                    .product(product)
+                    .product(findProductById(menuProductRequest.getProductId()))
                     .quantity(menuProductRequest.getQuantity())
                     .build();
             menuProducts.add(menuProduct);
         }
         return menuProducts;
+    }
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuResponse> list() {

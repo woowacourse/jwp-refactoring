@@ -60,7 +60,7 @@ class TableAcceptanceTest extends AcceptanceTest {
 
         테이블_그룹1 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(Arrays.asList(테이블_그룹1_소속_주문_테이블3, 테이블_그룹1_소속_주문_테이블4))
+                .orderTables(new OrderTables(Arrays.asList(테이블_그룹1_소속_주문_테이블3, 테이블_그룹1_소속_주문_테이블4)))
                 .build();
 
         tableGroupRepository.save(테이블_그룹1);

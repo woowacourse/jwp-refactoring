@@ -18,8 +18,8 @@ public class Menu {
     @ManyToOne(fetch = FetchType.LAZY)
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
+    @Embedded
+    private MenuProducts menuProducts;
 
     public Menu() {
     }
@@ -31,8 +31,8 @@ public class Menu {
         this.name = builder.name;
         this.price = builder.price;
         this.menuGroup = builder.menuGroup;
-        this.menuProducts = builder.menuProducts;
-        registerMenuToMenuProducts(this.menuProducts);
+        this.menuProducts = new MenuProducts(builder.menuProducts);
+        this.menuProducts.registerMenu(this);
     }
 
     private void validatePrice(BigDecimal price) {
@@ -59,12 +59,6 @@ public class Menu {
         return totalPriceOfSingleMenuProduct;
     }
 
-    public void registerMenuToMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.registerMenu(this);
-        }
-    }
-
     public Long getId() {
         return id;
     }
@@ -85,7 +79,7 @@ public class Menu {
     }
 
     public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+        return menuProducts.getMenuProducts();
     }
 
     public static class Builder {

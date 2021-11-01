@@ -1,7 +1,9 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class MenuGroup {
@@ -10,9 +12,6 @@ public class MenuGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "menuGroup")
-    private List<Menu> menus;
 
     public MenuGroup() {
     }
@@ -28,10 +27,6 @@ public class MenuGroup {
 
     public String getName() {
         return name;
-    }
-
-    public List<Menu> getMenus() {
-        return menus;
     }
 
     public static class Builder {

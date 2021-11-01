@@ -27,12 +27,12 @@ public class OrderLineItem {
         this.quantity = builder.quantity;
     }
 
-    public Long getSeq() {
-        return seq;
-    }
-
     public void registerOrder(Order order) {
         this.order = order;
+    }
+
+    public Long getSeq() {
+        return seq;
     }
 
     public Long getMenuId() {
@@ -41,14 +41,6 @@ public class OrderLineItem {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
-    }
-
-    public void setMenu(Menu menu) {
-        this.menu = menu;
     }
 
     public Long getOrderId() {
