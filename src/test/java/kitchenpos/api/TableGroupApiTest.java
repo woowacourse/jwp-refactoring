@@ -3,17 +3,18 @@ package kitchenpos.api;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.dao.JdbcTemplateTableGroupDao;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.generator.TableGenerator;
-import kitchenpos.generator.TableGroupGenerator;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,10 @@ public class TableGroupApiTest extends ApiTest {
     private static final String BASE_URL = "/api/table-groups";
 
     @Autowired
-    private JdbcTemplateTableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @Autowired
-    private JdbcTemplateOrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     private List<TableGroup> tableGroups;
     private List<OrderTable> orderTables;
@@ -44,21 +45,26 @@ public class TableGroupApiTest extends ApiTest {
         orderTables = new ArrayList<>();
         tableGroups = new ArrayList<>();
 
-        orderTables.add(orderTableDao.save(TableGenerator.newInstance(0, true)));
-        orderTables.add(orderTableDao.save(TableGenerator.newInstance(0, true)));
-        tableGroups.add(tableGroupDao.save(TableGroupGenerator.newInstance(LocalDateTime.now())));
+        orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
+        orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
+        tableGroups.add(
+            tableGroupRepository.save(new TableGroup(Collections.emptyList()))
+        );
     }
 
     @DisplayName("단체 지정 등록")
     @Test
     void postTableGroups() {
-        TableGroup request = TableGroupGenerator.newInstance(Arrays.asList(
-            orderTables.get(0).getId(),
-            orderTables.get(1).getId()
+        TableGroup request = new TableGroup(Arrays.asList(
+            orderTables.get(0),
+            orderTables.get(1)
         ));
-        ResponseEntity<TableGroup> responseEntity = testRestTemplate.postForEntity(BASE_URL,
-            request, TableGroup.class);
-        TableGroup response = responseEntity.getBody();
+        ResponseEntity<TableGroupResponse> responseEntity = testRestTemplate.postForEntity(BASE_URL,
+            request, TableGroupResponse.class);
+        TableGroupResponse response = responseEntity.getBody();
+        List<OrderTableResponse> expected = orderTables.stream()
+            .map(OrderTableResponse::from)
+            .collect(Collectors.toList());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
@@ -66,8 +72,8 @@ public class TableGroupApiTest extends ApiTest {
             .hasSameSizeAs(orderTables)
             .usingRecursiveFieldByFieldElementComparator()
             .usingElementComparatorIgnoringFields("id", "tableGroupId", "empty")
-            .hasSameElementsAs(orderTables);
-        for (OrderTable orderTable : response.getOrderTables()) {
+            .hasSameElementsAs(expected);
+        for (OrderTableResponse orderTable : response.getOrderTables()) {
             assertThat(orderTable.getTableGroupId()).isEqualTo(response.getId());
             assertThat(orderTable.isEmpty()).isFalse();
         }

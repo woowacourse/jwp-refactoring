@@ -67,9 +67,7 @@ public class ProductApiTest extends ApiTest {
             ProductResponse[].class
         );
         ProductResponse[] actual = responseEntity.getBody();
-        List<ProductResponse> expected = products.stream()
-            .map(ProductResponse::from)
-            .collect(Collectors.toList());
+        List<ProductResponse> expected = ProductResponse.listFrom(products);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()

@@ -74,9 +74,7 @@ public class ProductServiceTest extends ServiceTest {
         when(productRepository.findAll()).thenReturn(products);
 
         List<ProductResponse> actual = productService.list();
-        List<ProductResponse> expected = products.stream()
-            .map(ProductResponse::from)
-            .collect(Collectors.toList());
+        List<ProductResponse> expected = ProductResponse.listFrom(products);
 
         verify(productRepository, times(1)).findAll();
         assertThat(actual).hasSameSizeAs(expected)

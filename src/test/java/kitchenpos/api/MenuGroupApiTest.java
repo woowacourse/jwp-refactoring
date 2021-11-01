@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,14 +38,14 @@ public class MenuGroupApiTest extends ApiTest {
     @DisplayName("메뉴 그룹 등록")
     @Test
     void postMenuGroup() {
-        MenuGroup request = new MenuGroup("추천메뉴");
+        MenuGroupRequest request = new MenuGroupRequest("추천메뉴");
 
-        ResponseEntity<MenuGroup> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<MenuGroupResponse> responseEntity = testRestTemplate.postForEntity(
             BASE_URL,
             request,
-            MenuGroup.class
+            MenuGroupResponse.class
         );
-        MenuGroup response = responseEntity.getBody();
+        MenuGroupResponse response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
@@ -55,15 +57,15 @@ public class MenuGroupApiTest extends ApiTest {
     @DisplayName("메뉴 목록 조회")
     @Test
     void getMenuGroups() {
-        ResponseEntity<MenuGroup[]> responseEntity = testRestTemplate.getForEntity(
+        ResponseEntity<MenuGroupResponse[]> responseEntity = testRestTemplate.getForEntity(
             BASE_URL,
-            MenuGroup[].class
+            MenuGroupResponse[].class
         );
-        MenuGroup[] response = responseEntity.getBody();
+        MenuGroupResponse[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response).usingRecursiveFieldByFieldElementComparator()
             .hasSameSizeAs(menuGroups)
-            .containsAll(menuGroups);
+            .containsAll(MenuGroupResponse.listFrom(menuGroups));
     }
 }

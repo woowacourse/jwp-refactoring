@@ -51,58 +51,64 @@ public class MenuServiceTest extends ServiceTest {
     @DisplayName("메뉴 등록")
     @Test
     void create() {
+        long menuGroupId = 1L;
+        long productId = 2L;
+        long menuId = 3L;
+        long seq = 4L;
         MenuRequest request = new MenuRequest(
             "후라이드+후라이드",
             BigDecimal.valueOf(19000),
-            1L,
-            Collections.singletonList(new MenuProductRequest(1L, 2))
+            menuGroupId,
+            Collections.singletonList(new MenuProductRequest(productId, 2))
         );
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
-            long newId = 2L;
             return new Menu(
-                newId,
+                menuId,
                 menu.getName(),
                 menu.getPrice(),
                 menu.getMenuGroup(),
-                new MenuProducts(
-                    menu.getMenuProducts()
-                        .getElements()
-                        .stream()
-                        .map(menuProduct -> new MenuProduct(
-                            3L,
-                            new Menu(newId, menu.getName(), menu.getPrice(), menu.getMenuGroup()),
-                            new Product(menuProduct.getProduct().getId(),
-                                "후라이드",
-                                BigDecimal.valueOf(16000)
-                            ),
-                            2L
-                        )).collect(Collectors.toList())
-                )
+                newMenuProductsOf(menu, seq, menuId)
             );
         });
         when(menuGroupRepository.findById(request.getMenuGroupId())).thenReturn(
-            Optional.of(new MenuGroup(1L, "두마리메뉴"))
+            Optional.of(new MenuGroup(menuGroupId, "두마리메뉴"))
         );
-        when(productRepository.findById(1L)).thenAnswer(invocation ->
-            Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
+        when(productRepository.findById(productId)).thenAnswer(invocation ->
+            Optional.of(new Product(productId, "후라이드", BigDecimal.valueOf(16000)))
         );
 
         MenuResponse actual = menuService.create(request);
-
         MenuResponse expected = new MenuResponse(
-            2L,
+            menuId,
             request.getName(),
             request.getPrice(),
             request.getMenuGroupId(),
             Collections.singletonList(new MenuProductResponse(
-                3L, 2L, 1L, 2
+                seq, menuId, productId, 2
             ))
         );
 
         verify(menuRepository, times(1)).save(any(Menu.class));
         assertThat(actual).usingRecursiveComparison()
             .isEqualTo(expected);
+    }
+
+    private MenuProducts newMenuProductsOf(final Menu menu, final long seq, final long menuId) {
+        return new MenuProducts(
+            menu.getMenuProducts()
+                .getElements()
+                .stream()
+                .map(menuProduct -> new MenuProduct(
+                    seq,
+                    new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup()),
+                    new Product(menuProduct.getProduct().getId(),
+                        "후라이드",
+                        BigDecimal.valueOf(16000)
+                    ),
+                    2L
+                )).collect(Collectors.toList())
+        );
     }
 
     @DisplayName("가격이 음수인 메뉴 등록시 예외 처리")
@@ -204,6 +210,5 @@ public class MenuServiceTest extends ServiceTest {
         assertThat(actual).hasSameSizeAs(expected)
             .usingRecursiveFieldByFieldElementComparator()
             .isEqualTo(expected);
-
     }
 }

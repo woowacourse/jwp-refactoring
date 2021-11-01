@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -17,8 +16,8 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.generator.OrderGenerator;
-import kitchenpos.generator.TableGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +39,7 @@ public class OrderApiTest extends ApiTest {
     private MenuRepository menuRepository;
 
     @Autowired
-    private JdbcTemplateOrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Autowired
     private JdbcTemplateOrderDao orderDao;
@@ -61,7 +60,7 @@ public class OrderApiTest extends ApiTest {
 
         menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup));
-        orderTable = orderTableDao.save(TableGenerator.newInstance(0, false));
+        orderTable = orderTableRepository.save(new OrderTable(0, false));
         order = orderDao.save(OrderGenerator.newInstance(
             orderTable.getId(),
             OrderStatus.COOKING.name(),

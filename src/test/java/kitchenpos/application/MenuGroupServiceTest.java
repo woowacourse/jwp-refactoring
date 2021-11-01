@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.dto.request.MenuGroupRequest;
@@ -58,9 +57,7 @@ public class MenuGroupServiceTest extends ServiceTest {
         when(menuGroupRepository.findAll()).thenReturn(menuGroups);
 
         List<MenuGroupResponse> actual = menuGroupService.list();
-        List<MenuGroupResponse> expected = menuGroups.stream()
-            .map(MenuGroupResponse::from)
-            .collect(Collectors.toList());
+        List<MenuGroupResponse> expected = MenuGroupResponse.listFrom(menuGroups);
 
         verify(menuGroupRepository, times(1)).findAll();
         assertThat(actual).hasSameSizeAs(expected)

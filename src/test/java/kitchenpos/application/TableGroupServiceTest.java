@@ -14,13 +14,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.generator.TableGenerator;
-import kitchenpos.generator.TableGroupGenerator;
+import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupRequest.OrderTableOfGroupRequest;
+import kitchenpos.dto.response.OrderTableResponse;
+import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,10 +34,10 @@ public class TableGroupServiceTest extends ServiceTest {
     private OrderDao orderDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -44,46 +46,61 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void create() {
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, null, 0, true),
-            TableGenerator.newInstance(2L, null, 0, true)
+            new OrderTable(1L, null, 0, true),
+            new OrderTable(2L, null, 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+        long newTableGroupId = 1L;
+        when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             orderTables);
-        when(tableGroupDao.save(any(TableGroup.class))).thenAnswer(invocation -> {
+        when(tableGroupRepository.save(any(TableGroup.class))).thenAnswer(invocation -> {
             TableGroup tableGroup = invocation.getArgument(0);
-            return TableGroupGenerator.newInstance(1L, tableGroup.getCreatedDate());
+            return new TableGroup(newTableGroupId, tableGroup.getOrderTables());
         });
 
-        TableGroup actual = tableGroupService.create(
-            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables)));
+        TableGroupResponse actual = tableGroupService.create(
+            new TableGroupRequest(orderTableRequestFromEntity(orderTables))
+        );
+        List<OrderTableResponse> expectedOrderTablesResponse = orderTables.stream()
+            .map(orderTable -> newOrderTableResponse(newTableGroupId, orderTable))
+            .collect(Collectors.toList());
+        TableGroupResponse expected = new TableGroupResponse(1L, expectedOrderTablesResponse);
 
-        verify(tableGroupDao, times(1)).save(any(TableGroup.class));
-        verify(orderTableDao, times(orderTables.size())).save(
+        verify(tableGroupRepository, times(1)).save(any(TableGroup.class));
+        verify(orderTableRepository, times(orderTables.size())).save(
             argThat(orderTable ->
-                !orderTable.isEmpty() && Objects.nonNull(orderTable.getTableGroupId())
+                !orderTable.isEmpty() && Objects.nonNull(orderTable.getTableGroup().getId())
             )
         );
-        assertThat(actual.getId()).isNotNull();
-        assertThat(actual.getOrderTables())
-            .hasSameSizeAs(orderTables)
-            .usingRecursiveFieldByFieldElementComparator()
-            .usingElementComparatorIgnoringFields("id", "tableGroupId", "empty")
-            .hasSameElementsAs(orderTables);
-        for (OrderTable orderTable : actual.getOrderTables()) {
-            assertThat(orderTable.getTableGroupId()).isEqualTo(actual.getId());
-            assertThat(orderTable.isEmpty()).isFalse();
-        }
+        assertThat(actual).usingRecursiveComparison()
+            .isEqualTo(expected);
+    }
+
+    private OrderTableResponse newOrderTableResponse(final long newTableGroupId,
+                                                     final OrderTable orderTable) {
+        return new OrderTableResponse(
+            orderTable.getId(),
+            newTableGroupId,
+            orderTable.getNumberOfGuests().getValue(),
+            orderTable.isEmpty()
+        );
+    }
+
+    private List<OrderTableOfGroupRequest> orderTableRequestFromEntity(
+        final List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(orderTable -> new OrderTableOfGroupRequest(orderTable.getId()))
+            .collect(Collectors.toList());
     }
 
     @DisplayName("1개 이하의 주문 테이블로 단체 지정을 등록할 경우 예외 처리")
     @Test
     void createWhenOrderTableSizeIsLessThan2() {
         List<OrderTable> orderTables = Collections.singletonList(
-            TableGenerator.newInstance(1L, null, 0, true)
+            new OrderTable(1L, null, 0, true)
         );
 
         assertThatThrownBy(() -> tableGroupService.create(
-            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+            new TableGroupRequest(orderTableRequestFromEntity(orderTables))
         )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -91,15 +108,15 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWhenSomeOrderTablesCannotBeFound() {
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, null, 0, true),
-            TableGenerator.newInstance(2L, null, 0, true)
+            new OrderTable(1L, null, 0, true),
+            new OrderTable(2L, null, 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+        when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             Collections.singletonList(orderTables.get(0))
         );
 
         assertThatThrownBy(() -> tableGroupService.create(
-            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+            new TableGroupRequest(orderTableRequestFromEntity(orderTables))
         )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -107,15 +124,15 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWhenSomeOrderTablesAreNotEmpty() {
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, null, 0, true),
-            TableGenerator.newInstance(2L, null, 0, false)
+            new OrderTable(1L, null, 0, true),
+            new OrderTable(2L, null, 0, false)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+        when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             orderTables
         );
 
         assertThatThrownBy(() -> tableGroupService.create(
-            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+            new TableGroupRequest(orderTableRequestFromEntity(orderTables))
         )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -123,15 +140,15 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void createWhenSomeOrderTablesAreAlreadyDesignatedAsGroup() {
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, null, 0, true),
-            TableGenerator.newInstance(2L, 1L, 0, true)
+            new OrderTable(1L, null, 0, true),
+            new OrderTable(2L, new TableGroup(1L, null), 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+        when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             orderTables
         );
 
         assertThatThrownBy(() -> tableGroupService.create(
-            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+            new TableGroupRequest(orderTableRequestFromEntity(orderTables))
         )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
@@ -140,10 +157,10 @@ public class TableGroupServiceTest extends ServiceTest {
     void ungroup() {
         long tableGroupId = 1L;
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, tableGroupId, 0, false),
-            TableGenerator.newInstance(2L, tableGroupId, 0, false)
+            new OrderTable(1L, null, 0, false),
+            new OrderTable(2L, null, 0, false)
         );
-        when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        when(orderTableRepository.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
         when(
             orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 convertIdsFromOrderTables(orderTables),
@@ -153,9 +170,9 @@ public class TableGroupServiceTest extends ServiceTest {
 
         tableGroupService.ungroup(tableGroupId);
 
-        verify(orderTableDao, times(orderTables.size())).save(
+        verify(orderTableRepository, times(orderTables.size())).save(
             argThat(orderTable ->
-                !orderTable.isEmpty() && Objects.isNull(orderTable.getTableGroupId())
+                !orderTable.isEmpty() && Objects.isNull(orderTable.getTableGroup())
             )
         );
     }
@@ -165,10 +182,10 @@ public class TableGroupServiceTest extends ServiceTest {
     void deleteWithNotFoundTableGroup() {
         long tableGroupId = 1L;
         List<OrderTable> orderTables = Arrays.asList(
-            TableGenerator.newInstance(1L, tableGroupId, 0, false),
-            TableGenerator.newInstance(2L, tableGroupId, 0, false)
+            new OrderTable(1L, null, 0, false),
+            new OrderTable(2L, null, 0, false)
         );
-        when(orderTableDao.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        when(orderTableRepository.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
         when(
             orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 convertIdsFromOrderTables(orderTables),

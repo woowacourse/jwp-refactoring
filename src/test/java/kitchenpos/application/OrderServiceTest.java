@@ -14,13 +14,14 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.generator.OrderGenerator;
-import kitchenpos.generator.TableGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -38,7 +39,7 @@ public class OrderServiceTest extends ServiceTest {
     private OrderLineItemDao orderLineItemDao;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -47,8 +48,8 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void create() {
         when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
-        when(orderTableDao.findById(1L)).thenReturn(
-            Optional.of(TableGenerator.newInstance(1L, 1L, 4, false)));
+        when(orderTableRepository.findById(1L)).thenReturn(
+            Optional.of(new OrderTable(1L, new TableGroup(1L, Collections.emptyList()), 4, false)));
         when(orderDao.save(any(Order.class))).thenAnswer(invocation -> {
             Order order = invocation.getArgument(0);
             return OrderGenerator.newInstance(1L, order.getOrderTableId(), order.getOrderStatus(),
@@ -99,7 +100,7 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void createWithNotFoundOrderTable() {
         when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
-        when(orderTableDao.findById(1L)).thenReturn(Optional.empty());
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.empty());
 
         OrderLineItem orderLineItem = OrderGenerator.newOrderLineItem(1L, 1);
         Order order = OrderGenerator.newInstance(1L, Collections.singletonList(orderLineItem));
@@ -111,8 +112,8 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void createWithEmptyOrderTable() {
         when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
-        when(orderTableDao.findById(1L)).thenReturn(
-            Optional.of(TableGenerator.newInstance(1L, 1L, 4, true)));
+        when(orderTableRepository.findById(1L)).thenReturn(
+            Optional.of(new OrderTable(1L, new TableGroup(1L, Collections.emptyList()), 4, true)));
 
         OrderLineItem orderLineItem = OrderGenerator.newOrderLineItem(1L, 1);
         Order order = OrderGenerator.newInstance(1L, Collections.singletonList(orderLineItem));
