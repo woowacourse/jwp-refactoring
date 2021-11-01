@@ -32,7 +32,7 @@ public class OrderTable {
     }
 
     public OrderTable(boolean empty) {
-        this(null, null, null, empty);
+        this(null, null, 0, empty);
     }
 
     public OrderTable(int numberOfGuests) {
