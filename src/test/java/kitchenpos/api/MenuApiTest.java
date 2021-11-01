@@ -10,14 +10,13 @@ import java.util.List;
 import kitchenpos.dao.JdbcTemplateMenuDao;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
-import kitchenpos.dao.JdbcTemplateProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.generator.MenuGenerator;
 import kitchenpos.generator.MenuGroupGenerator;
-import kitchenpos.generator.ProductGenerator;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +33,7 @@ public class MenuApiTest extends ApiTest {
     private JdbcTemplateMenuGroupDao menuGroupDao;
 
     @Autowired
-    private JdbcTemplateProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private JdbcTemplateMenuDao menuDao;
@@ -57,8 +56,8 @@ public class MenuApiTest extends ApiTest {
 
         menuGroup = menuGroupDao.save(MenuGroupGenerator.newInstance("두마리메뉴"));
 
-        products.add(productDao.save(ProductGenerator.newInstance("후라이드", 16000)));
-        products.add(productDao.save(ProductGenerator.newInstance("양념치킨", 16000)));
+        products.add(productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000))));
+        products.add(productRepository.save(new Product("양념치킨", BigDecimal.valueOf(16000))));
 
         menus.add(menuDao.save(MenuGenerator.newInstance(
             "후라이드치킨",
@@ -99,9 +98,10 @@ public class MenuApiTest extends ApiTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
         assertThat(response.getId()).isEqualTo(response.getMenuProducts().get(0).getMenuId());
-        assertThat(response).usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
-                BigDecimal.class)
-            .usingRecursiveComparison()
+        assertThat(response).usingComparatorForType(
+            BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
+                BigDecimal.class
+            ).usingRecursiveComparison()
             .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
             .isEqualTo(request);
     }

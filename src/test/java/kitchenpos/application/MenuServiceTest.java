@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -14,11 +15,11 @@ import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.generator.MenuGenerator;
-import kitchenpos.generator.ProductGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,7 +37,7 @@ public class MenuServiceTest extends ServiceTest {
     private MenuProductDao menuProductDao;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private MenuService menuService;
@@ -70,8 +71,8 @@ public class MenuServiceTest extends ServiceTest {
             );
         });
         when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(1L)).thenAnswer(invocation ->
-            Optional.of(ProductGenerator.newInstance(1L, "후라이드", 16000))
+        when(productRepository.findById(1L)).thenAnswer(invocation ->
+            Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
         );
 
         Menu actual = menuService.create(menuToCreate);
@@ -119,8 +120,8 @@ public class MenuServiceTest extends ServiceTest {
             Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2))
         );
         when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(1L)).thenAnswer(
-            invocation -> Optional.of(ProductGenerator.newInstance(1L, "후라이드", 16000))
+        when(productRepository.findById(1L)).thenAnswer(
+            invocation -> Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
         );
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
@@ -145,7 +146,7 @@ public class MenuServiceTest extends ServiceTest {
         Menu menuToCreate = MenuGenerator.newInstance("후라이드+후라이드", 19000, 1L,
             Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2)));
         when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
-        when(productDao.findById(1L)).thenAnswer(invocation -> Optional.empty());
+        when(productRepository.findById(1L)).thenAnswer(invocation -> Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
             IllegalArgumentException.class);
