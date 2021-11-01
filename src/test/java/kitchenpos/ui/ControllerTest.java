@@ -12,8 +12,10 @@ public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
     @Autowired
     protected ObjectMapper objectMapper;
+
     @Autowired
     private WebApplicationContext wac;
 
