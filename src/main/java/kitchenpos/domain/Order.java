@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Order {
     private Long id;
@@ -60,5 +61,9 @@ public class Order {
 
     public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
         this.orderLineItems = orderLineItems;
+    }
+
+    public List<Long> getMenuIds() {
+        return orderLineItems.stream().map(OrderLineItem::getMenuId).collect(Collectors.toList());
     }
 }
