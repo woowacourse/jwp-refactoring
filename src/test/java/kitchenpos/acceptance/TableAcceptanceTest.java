@@ -1,8 +1,10 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.*;
+import kitchenpos.ui.request.OrderTableEmptyRequest;
+import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,96 +14,168 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 관련 기능")
 class TableAcceptanceTest extends AcceptanceTest {
 
-    OrderTable 주문_테이블1 = new OrderTable();
-    OrderTable 주문_테이블2 = new OrderTable();
+    private OrderTable 테이블_그룹_없음_주문_테이블1;
+    private OrderTable 테이블_그룹_없음_주문_테이블2;
 
-    Order 요리중인_주문 = new Order();
-    Order 식사중인_주문 = new Order();
+    private TableGroup 테이블_그룹1;
+    private OrderTable 테이블_그룹1_소속_주문_테이블3;
+    private OrderTable 테이블_그룹1_소속_주문_테이블4;
+
+    private Order 주문_테이블1_요리중인_주문;
+    private Order 주문_테이블2_식사중인_주문;
+
+    private OrderLineItem 주문_테이블1_한마리메뉴_중_후라이트치킨;
+    private OrderLineItem 주문_테이블2_한마리메뉴_중_후라이트치킨;
 
     @BeforeEach
     void setUp() {
-        주문_테이블1.setNumberOfGuests(4);
-        주문_테이블1.setEmpty(false);
-        주문_테이블1 = orderTableDao.save(주문_테이블1);
+        super.setUp();
 
-        주문_테이블2.setNumberOfGuests(2);
-        주문_테이블2.setEmpty(false);
-        주문_테이블2 = orderTableDao.save(주문_테이블2);
+        테이블_그룹_없음_주문_테이블1 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(false)
+                .build();
 
-        요리중인_주문.setOrderStatus(OrderStatus.COOKING.name());
-        요리중인_주문.setOrderTableId(주문_테이블2.getId());
-        요리중인_주문.setOrderedTime(LocalDateTime.now());
-        orderDao.save(요리중인_주문);
+        테이블_그룹_없음_주문_테이블2 = new OrderTable.Builder()
+                .numberOfGuests(2)
+                .empty(false)
+                .build();
 
-        식사중인_주문.setOrderStatus(OrderStatus.MEAL.name());
-        식사중인_주문.setOrderTableId(주문_테이블2.getId());
-        식사중인_주문.setOrderedTime(LocalDateTime.now());
-        orderDao.save(식사중인_주문);
+        테이블_그룹1_소속_주문_테이블3 = new OrderTable.Builder()
+                .numberOfGuests(3)
+                .empty(true)
+                .build();
+
+        테이블_그룹1_소속_주문_테이블4 = new OrderTable.Builder()
+                .numberOfGuests(5)
+                .empty(true)
+                .build();
+
+        테이블_그룹1 = new TableGroup.Builder()
+                .createdDate(LocalDateTime.now())
+                .orderTables(new OrderTables(Arrays.asList(테이블_그룹1_소속_주문_테이블3, 테이블_그룹1_소속_주문_테이블4)))
+                .build();
+
+        tableGroupRepository.save(테이블_그룹1);
+        orderTableRepository.save(테이블_그룹_없음_주문_테이블1);
+        orderTableRepository.save(테이블_그룹_없음_주문_테이블2);
+        orderTableRepository.save(테이블_그룹1_소속_주문_테이블3);
+        orderTableRepository.save(테이블_그룹1_소속_주문_테이블4);
+
+        주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(주문_테이블1_요리중인_주문)
+                .quantity(1L)
+                .build();
+
+        주문_테이블1_요리중인_주문 = new Order.Builder()
+                .orderTable(테이블_그룹_없음_주문_테이블1)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .build();
+        orderRepository.save(주문_테이블1_요리중인_주문);
+        orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
+
+        주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
+                .menu(한마리메뉴_중_후라이드치킨)
+                .order(주문_테이블2_식사중인_주문)
+                .quantity(1L)
+                .build();
+
+        주문_테이블2_식사중인_주문 = new Order.Builder()
+                .orderTable(테이블_그룹_없음_주문_테이블2)
+                .orderStatus(OrderStatus.COOKING)
+                .orderedTime(LocalDateTime.now())
+                .orderLineItems(Arrays.asList(주문_테이블2_한마리메뉴_중_후라이트치킨))
+                .build();
+        주문_테이블2_식사중인_주문.changeOrderStatus(OrderStatus.MEAL);
+        orderRepository.save(주문_테이블2_식사중인_주문);
+        orderLineItemRepository.save(주문_테이블2_한마리메뉴_중_후라이트치킨);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블들에 대한 정보를 반환한다")
     @Test
     void getOrders() {
         // when
-        ResponseEntity<OrderTable[]> response = testRestTemplate.getForEntity("/api/tables", OrderTable[].class);
+        ResponseEntity<OrderTableResponse[]> response = testRestTemplate.getForEntity("/api/tables", OrderTableResponse[].class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(2);
+        assertThat(response.getBody()).hasSize(4);
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블에 대한 정보를 추가한다")
     @Test
     void createOrder() {
         // given
-        OrderTable 주문_테이블3 = new OrderTable();
-        주문_테이블3.setNumberOfGuests(0);
-        주문_테이블3.setEmpty(true);
+        OrderTableRequest 주문_테이블3_요청 = new OrderTableRequest();
+        주문_테이블3_요청.setNumberOfGuests(0);
+        주문_테이블3_요청.setEmpty(true);
 
         // when
-        ResponseEntity<OrderTable> response = testRestTemplate.postForEntity("/api/tables", 주문_테이블3, OrderTable.class);
+        ResponseEntity<OrderTableResponse> response = testRestTemplate.postForEntity("/api/tables", 주문_테이블3_요청, OrderTableResponse.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        OrderTable 응답된_주문_테이블 = response.getBody();
+        OrderTableResponse 응답된_주문_테이블 = response.getBody();
         assertThat(응답된_주문_테이블.getNumberOfGuests()).isZero();
-        assertThat(응답된_주문_테이블.isEmpty()).isTrue();
+        assertThat(응답된_주문_테이블.getEmpty()).isTrue();
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경한다")
     @Test
     void changeEmptyStatus() {
         // given
-        OrderTable 변경할_주문_테이블 = new OrderTable();
-        변경할_주문_테이블.setEmpty(true);
-        Long 주문_테이블1_ID = 주문_테이블1.getId();
+        OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
+        변경할_주문_테이블_EMPTY_요청.setEmpty(true);
+        Long 주문_테이블1_ID = 테이블_그룹_없음_주문_테이블1.getId();
+        주문_테이블1_요리중인_주문.changeOrderStatus(OrderStatus.COMPLETION);
+        orderRepository.save(주문_테이블1_요리중인_주문);
 
         // when
-        testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/empty", 변경할_주문_테이블);
+        testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/empty", 변경할_주문_테이블_EMPTY_요청);
 
         // then
-        OrderTable 변경된_주문_테이블1 = orderTableDao.findById(주문_테이블1_ID).get();
+        OrderTable 변경된_주문_테이블1 = orderTableRepository.findById(주문_테이블1_ID).get();
         assertThat(변경된_주문_테이블1.getId()).isEqualTo(주문_테이블1_ID);
         assertThat(변경된_주문_테이블1.isEmpty()).isTrue();
     }
 
     @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경시, 해당 테이블의 주문 상태가 모두 COMPLETION 아니라면 변경할 수 없다")
     @Test
-    void cannotChangeEmptyStatus() {
+    void cannotChangeEmptyStatusWhenOrderStatusNotCompletion() {
         // given
-        OrderTable 변경할_주문_테이블 = new OrderTable();
-        변경할_주문_테이블.setEmpty(true);
-        Long 주문_테이블2_ID = 주문_테이블2.getId();
+        OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
+        변경할_주문_테이블_EMPTY_요청.setEmpty(true);
+        Long 주문_테이블2_ID = 테이블_그룹_없음_주문_테이블2.getId();
 
         // when
         ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 주문_테이블2_ID + "/empty",
-                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블), Void.class);
+                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
+
+        // then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @DisplayName("매장에서 주문이 발생하는 테이블 중 tableId에 해당하는 테이블의 empty 여부를 변경시, 해당 테이블이 TableGroup이 있다면 변경할 수 없다.")
+    @Test
+    void cannotChangeEmptyStatusWhenTableGroupIsNotNull() {
+        // given
+        OrderTableEmptyRequest 변경할_주문_테이블_EMPTY_요청 = new OrderTableEmptyRequest();
+        변경할_주문_테이블_EMPTY_요청.setEmpty(true);
+        Long 주문_테이블3_ID = 테이블_그룹1_소속_주문_테이블3.getId();
+
+        // when
+        ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 주문_테이블3_ID + "/empty",
+                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_EMPTY_요청), Void.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -111,15 +185,15 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void changeNumberOfGuests() {
         // given
-        OrderTable 변경할_주문_테이블 = new OrderTable();
-        변경할_주문_테이블.setNumberOfGuests(100);
-        Long 주문_테이블1_ID = 주문_테이블1.getId();
+        OrderTableNumberOfGuestRequest 변경할_주문_테이블_손님_요청 = new OrderTableNumberOfGuestRequest();
+        변경할_주문_테이블_손님_요청.setNumberOfGuests(100);
+        Long 주문_테이블1_ID = 테이블_그룹_없음_주문_테이블1.getId();
 
         // when
-        testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/number-of-guests", 변경할_주문_테이블);
+        testRestTemplate.put("/api/tables/" + 주문_테이블1_ID + "/number-of-guests", 변경할_주문_테이블_손님_요청);
 
         // then
-        OrderTable 변경된_주문_테이블1 = orderTableDao.findById(주문_테이블1_ID).get();
+        OrderTable 변경된_주문_테이블1 = orderTableRepository.findById(주문_테이블1_ID).get();
         assertThat(변경된_주문_테이블1.getId()).isEqualTo(주문_테이블1_ID);
         assertThat(변경된_주문_테이블1.getNumberOfGuests()).isEqualTo(100);
     }
@@ -128,13 +202,13 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotChangeNumberOfGuestsToNegative() {
         // given
-        OrderTable 변경할_주문_테이블 = new OrderTable();
-        변경할_주문_테이블.setNumberOfGuests(-1000);
-        Long 주문_테이블1_ID = 주문_테이블1.getId();
+        OrderTableNumberOfGuestRequest 변경할_주문_테이블_손님_요청 = new OrderTableNumberOfGuestRequest();
+        변경할_주문_테이블_손님_요청.setNumberOfGuests(-1000);
+        Long 주문_테이블1_ID = 테이블_그룹_없음_주문_테이블1.getId();
 
         // when
         ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 주문_테이블1_ID + "/number-of-guests",
-                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블), Void.class);
+                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_손님_요청), Void.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -144,18 +218,19 @@ class TableAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotChangeNumberOfGuestsIfEmpty() {
         // given
-        OrderTable 비워진_주문_테이블 = new OrderTable();
-        비워진_주문_테이블.setNumberOfGuests(4);
-        비워진_주문_테이블.setEmpty(true);
-        비워진_주문_테이블 = orderTableDao.save(비워진_주문_테이블);
+        OrderTable 비워진_주문_테이블 = new OrderTable.Builder()
+                .numberOfGuests(4)
+                .empty(true)
+                .build();
+        비워진_주문_테이블 = orderTableRepository.save(비워진_주문_테이블);
 
-        OrderTable 변경할_주문_테이블 = new OrderTable();
-        변경할_주문_테이블.setNumberOfGuests(1000);
+        OrderTableNumberOfGuestRequest 변경할_주문_테이블_손님_요청 = new OrderTableNumberOfGuestRequest();
+        변경할_주문_테이블_손님_요청.setNumberOfGuests(100);
         Long 비워진_주문_테이블_ID = 비워진_주문_테이블.getId();
 
         // when
         ResponseEntity<Void> response = testRestTemplate.exchange("/api/tables/" + 비워진_주문_테이블_ID + "/number-of-guests",
-                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블), Void.class);
+                HttpMethod.PUT, new HttpEntity<>(변경할_주문_테이블_손님_요청), Void.class);
 
         // then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
