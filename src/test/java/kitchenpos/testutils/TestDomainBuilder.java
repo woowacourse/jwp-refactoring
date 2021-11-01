@@ -22,6 +22,10 @@ public class TestDomainBuilder {
         return new MenuBuilder();
     }
 
+    public static MenuProductBuilder menuProductBuilder() {
+        return new MenuProductBuilder();
+    }
+
     public static class ProductBuilder {
         private Long id;
         private String name;
@@ -113,6 +117,42 @@ public class TestDomainBuilder {
             menu.setMenuGroupId(menuGroupId);
             menu.setMenuProducts(menuProducts);
             return menu;
+        }
+    }
+
+    public static class MenuProductBuilder {
+        private Long seq;
+        private Long menuId;
+        private Long productId;
+        private long quantity;
+
+        public MenuProductBuilder seq(Long seq) {
+            this.seq = seq;
+            return this;
+        }
+
+        public MenuProductBuilder menuId(Long menuId) {
+            this.menuId = menuId;
+            return this;
+        }
+
+        public MenuProductBuilder productId(Long productId) {
+            this.productId = productId;
+            return this;
+        }
+
+        public MenuProductBuilder quantity(long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public MenuProduct build() {
+            MenuProduct menuProduct = new MenuProduct();
+            menuProduct.setSeq(seq);
+            menuProduct.setMenuId(menuId);
+            menuProduct.setProductId(productId);
+            menuProduct.setQuantity(quantity);
+            return menuProduct;
         }
     }
 }

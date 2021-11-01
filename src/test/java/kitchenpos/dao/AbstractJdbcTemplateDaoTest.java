@@ -23,4 +23,16 @@ public abstract class AbstractJdbcTemplateDaoTest {
         databasePopulator.addScript(new ClassPathResource("/db/migration/V1__Initialize_project_tables.sql"));
         databasePopulator.execute(dataSource);
     }
+
+    protected void turnOffReferentialIntegrity() {
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.addScript(new ClassPathResource("referential_integrity_off.sql"));
+        databasePopulator.execute(dataSource);
+    }
+
+    protected void turnOnReferentialIntegrity() {
+        ResourceDatabasePopulator databasePopulator = new ResourceDatabasePopulator();
+        databasePopulator.addScript(new ClassPathResource("referential_integrity_on.sql"));
+        databasePopulator.execute(dataSource);
+    }
 }
