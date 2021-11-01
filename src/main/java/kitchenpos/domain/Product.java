@@ -30,6 +30,10 @@ public class Product {
         this(id, null, null);
     }
 
+    public Product(String name, BigDecimal price) {
+        this(null, name, price);
+    }
+
     public Long getId() {
         return id;
     }
