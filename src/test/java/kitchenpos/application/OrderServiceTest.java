@@ -3,6 +3,7 @@ package kitchenpos.application;
 import kitchenpos.annotation.IntegrationTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +42,7 @@ class OrderServiceTest {
         notEmptyTable.setEmpty(false);
 
         mealStatusOrder = new Order();
-        mealStatusOrder.setOrderStatus("MEAL");
+        mealStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
 
         completionStatusOrder = new Order();
         completionStatusOrder.setOrderStatus("COMPLETION");
@@ -111,7 +112,7 @@ class OrderServiceTest {
         //when & then
         Order savedOrder = orderService.create(order);
         for (OrderLineItem lineItem : savedOrder.getOrderLineItems()) {
-            assertThat(lineItem.getOrderId()).isNotNull();
+            assertThat(lineItem.getOrderId()).isEqualTo(savedOrder.getId());
         }
     }
 
@@ -155,6 +156,8 @@ class OrderServiceTest {
 
         //then
         assertDoesNotThrow(() -> orderService.changeOrderStatus(savedOrder.getId(), mealStatusOrder));
+        Order statusChangedOrder = orderService.changeOrderStatus(savedOrder.getId(), mealStatusOrder);
+        assertThat(statusChangedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @Test

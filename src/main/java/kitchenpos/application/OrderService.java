@@ -53,7 +53,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setId(null); // 기존에 이미 null인데 왜 다시 한 번 해주는걸까? 확실하게 해주기 위해서??
+        order.setId(null);
 
         final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
@@ -62,7 +62,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        order.setOrderTableId(orderTable.getId()); // 이건 왜 존재해야 할까?? 없어도 될텐데.. 이해를 돕기위함 일까?
+        order.setOrderTableId(orderTable.getId());
         order.setOrderStatus(OrderStatus.COOKING.name());
         order.setOrderedTime(LocalDateTime.now());
 

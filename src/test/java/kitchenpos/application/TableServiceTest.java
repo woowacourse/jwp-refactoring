@@ -58,7 +58,7 @@ public class TableServiceTest {
         OrderTable orderTable = new OrderTable();
 
         //when
-        orderTable.setEmpty(true);
+        orderTable.setEmpty(false);
         orderTable.setNumberOfGuests(10);
 
         //then

@@ -28,8 +28,8 @@ class MenuServiceTest {
     @Autowired
     private MenuService menuService;
 
-    private final static Long VALID_MENU_GROUP_ID = 1L;
-    private final static Long INVALID_MENU_GROUP_ID = 1000L;
+    private static final Long VALID_MENU_GROUP_ID = 1L;
+    private static final Long INVALID_MENU_GROUP_ID = 1000L;
 
     private MenuProduct validMenuProduct;
     private MenuProduct invalidMenuProduct;

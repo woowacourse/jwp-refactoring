@@ -83,8 +83,6 @@ public class TableGroupService {
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroupId(null);
             orderTable.setEmpty(false);
-            // 왜 false로 두지?? 진행 중인 Order에 속하지 않으니 true인 것 아닌가 ? 그룹을 해제한다고 false 두는 것이 아니라
-            // 따로 해제 시켜야만 하게끔 한 듯
             orderTableDao.save(orderTable);
         }
     }
