@@ -31,6 +31,18 @@ public class OrderTable {
         this(id, null, 0, false);
     }
 
+    public void enrollTableGroup(TableGroup savedTableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void grouped(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void releaseTableGroup() {
+        this.tableGroup = null;
+    }
+
     public Long getId() {
         return id;
     }
@@ -45,5 +57,13 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public Long getTableGroupId() {
+        return tableGroup.getId();
+    }
+
+    public void setEmpty(boolean b) {
+
     }
 }
