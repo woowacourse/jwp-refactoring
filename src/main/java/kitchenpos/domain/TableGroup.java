@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 public class TableGroup {
@@ -16,6 +17,8 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreationTimestamp
     private LocalDateTime createdDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")

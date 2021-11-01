@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +14,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     private TableGroup tableGroup;
 
@@ -64,6 +66,6 @@ public class OrderTable {
 
     public void ungroup() {
         this.tableGroup = null;
-        this.empty = false;
+        this.empty = true;
     }
 }
