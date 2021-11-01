@@ -26,6 +26,10 @@ public class Product {
         this.price = price;
     }
 
+    public Product(Long id) {
+        this(id, null, null);
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,8 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.annotation.IntegrationTest;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +51,7 @@ class MenuServiceTest {
         Menu menu = new Menu();
         menu.setName("올바르지않은가격의메뉴");
         menu.setMenuGroupId(1L);
-        menu.setMenuProducts(Collections.singletonList(validMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
 
         //when
         menu.setPrice(price);
@@ -77,7 +75,7 @@ class MenuServiceTest {
         Menu menu = new Menu();
         menu.setName("menuGroup이상있는메뉴");
         menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuProducts(Collections.singletonList(validMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
 
         //when
         menu.setMenuGroupId(INVALID_MENU_GROUP_ID);
@@ -97,7 +95,7 @@ class MenuServiceTest {
         menu.setMenuGroupId(VALID_MENU_GROUP_ID);
 
         //when
-        menu.setMenuProducts(Collections.singletonList(invalidMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(invalidMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -110,7 +108,7 @@ class MenuServiceTest {
         //given
         Menu menu = new Menu();
         menu.setName("총product비용보다비싼메뉴");
-        menu.setMenuProducts(Collections.singletonList(validMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
         menu.setMenuGroupId(VALID_MENU_GROUP_ID);
 
         //when
@@ -127,7 +125,7 @@ class MenuServiceTest {
         //given
         Menu menu = new Menu();
         menu.setName("Menu");
-        menu.setMenuProducts(Collections.singletonList(validMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
         menu.setMenuGroupId(VALID_MENU_GROUP_ID);
         menu.setPrice(BigDecimal.valueOf(10000));
 
@@ -141,7 +139,7 @@ class MenuServiceTest {
         //given
         Menu menu = new Menu();
         menu.setName("Menu");
-        menu.setMenuProducts(Collections.singletonList(validMenuProduct));
+        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
         menu.setMenuGroupId(VALID_MENU_GROUP_ID);
         menu.setPrice(BigDecimal.valueOf(10000));
 
