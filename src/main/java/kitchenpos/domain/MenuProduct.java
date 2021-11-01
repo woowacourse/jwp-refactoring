@@ -1,10 +1,34 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class MenuProduct {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long seq;
+
     private Long menuId;
+
     private Long productId;
+
     private long quantity;
+
+    protected MenuProduct() {
+    }
+
+    public MenuProduct(Long seq, long quantity) {
+        this.seq = seq;
+        this.quantity = quantity;
+    }
+
+    public MenuProduct(long quantity) {
+        this(null, quantity);
+    }
 
     public Long getSeq() {
         return seq;
