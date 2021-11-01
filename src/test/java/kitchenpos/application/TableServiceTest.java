@@ -1,33 +1,28 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ServiceTest
 class TableServiceTest {
@@ -44,8 +39,8 @@ class TableServiceTest {
     @DisplayName("테이블을 생성한다.")
     @Test
     void create() {
-        OrderTable orderTable = createOrderTable();
         when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+        OrderTable orderTable = createOrderTable();
         OrderTable savedOrderTable = tableService.create(orderTable);
         assertThat(savedOrderTable).isEqualTo(orderTable);
     }
@@ -68,42 +63,43 @@ class TableServiceTest {
 
         @Captor
         private ArgumentCaptor<OrderTable> argument;
-        private OrderTable orderTable;
+        private OrderTable savedOrderTable;
 
         @BeforeEach
         void setUp() {
-            orderTable = createOrderTable(1L, null, true);
-            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
+            savedOrderTable = createOrderTable(1L, null, true);
+            when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(savedOrderTable));
             when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
             when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                    any(), eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
             ).thenReturn(false);
         }
 
         @DisplayName("테이블의 empty 상태를 변경한다.")
         @Test
         void changeEmpty() {
-            tableService.changeEmpty(orderTable.getId(), orderTable);
+            OrderTable updateOrderTable = createOrderTable(false);
+            tableService.changeEmpty(savedOrderTable.getId(), updateOrderTable);
 
             verify(mockOrderTableDao).save(argument.capture());
-            assertThat(argument.getValue().isEmpty()).isEqualTo(orderTable.isEmpty());
-        }
-
-        @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
-        @Test
-        void changeEmptyWithGroupedTable() {
-            OrderTable orderTable = createOrderTable(1L, 1L, false);
-            when(mockOrderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
+            assertThat(argument.getValue().isEmpty()).isEqualTo(savedOrderTable.isEmpty());
         }
 
         @DisplayName("조리중이거나, 식사 중 상태의 테이블의 empty 상태를 변경할 수 없다.")
         @Test
         void changeEmptyWithInvalidOrderStatus() {
             when(mockOrderDao.existsByOrderTableIdAndOrderStatusIn(
-                    any(), eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
+                    savedOrderTable.getId(), Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
             ).thenReturn(true);
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTable()));
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()));
+        }
+
+        @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
+        @Test
+        void changeEmptyWithGroupedTable() {
+            OrderTable savedOrderTable = createOrderTable(1L, 1L, false);
+            when(mockOrderTableDao.findById(savedOrderTable.getId())).thenReturn(Optional.of(savedOrderTable));
+            assertThatThrownBy(() -> tableService.changeEmpty(savedOrderTable.getId(), createOrderTable()));
         }
     }
 
