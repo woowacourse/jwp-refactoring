@@ -23,12 +23,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 
-@MockitoSettings(strictness = Strictness.LENIENT)
+@MockitoSettings
 class MenuServiceTest {
 
     @Mock
@@ -133,12 +134,28 @@ class MenuServiceTest {
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
-        @DisplayName("Menu 생성 실패한다 - price 가 음수인 경우")
+        @DisplayName("Menu 를 생성한다 - price 가 0인 경우")
         @Test
         void createFail_whenPriceIsNegative() {
             // given
             menu = MenuFactory.copy(menu)
-                .price(new BigDecimal(-1))
+                .price(new BigDecimal(0))
+                .build();
+
+            // when
+            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+
+            // then
+            assertThatThrownBy(throwingCallable)
+                .isExactlyInstanceOf(IllegalArgumentException.class);
+        }
+        @DisplayName("Menu 생성 실패한다 - price 가 음수인 경우")
+        @ParameterizedTest(name = "{displayName} : {arguments}")
+        @ValueSource(ints = {-1, -10, -100})
+        void createFail_whenPriceIsNegative(int val) {
+            // given
+            menu = MenuFactory.copy(menu)
+                .price(new BigDecimal(val))
                 .build();
 
             // when
