@@ -24,7 +24,12 @@ public class TableGenerator {
         return newInstance(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public static OrderTable newInstance(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
+    public static OrderTable newInstance(
+        Long id,
+        Long tableGroupId,
+        int numberOfGuests,
+        boolean empty
+    ) {
         OrderTable orderTable = new OrderTable();
         orderTable.setId(id);
         orderTable.setTableGroupId(tableGroupId);

@@ -27,7 +27,9 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹 등록")
     @Test
     void create() {
-        when(menuGroupDao.save(any(MenuGroup.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(menuGroupDao.save(any(MenuGroup.class))).thenAnswer(
+            invocation -> invocation.getArgument(0)
+        );
 
         MenuGroup menuGroup = MenuGroupGenerator.newInstance("추천메뉴");
         MenuGroup actual = menuGroupService.create(menuGroup);

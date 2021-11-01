@@ -39,7 +39,11 @@ public class MenuGroupApiTest extends ApiTest {
     void postMenuGroup() {
         MenuGroup request = MenuGroupGenerator.newInstance("추천메뉴");
 
-        ResponseEntity<MenuGroup> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, MenuGroup.class);
+        ResponseEntity<MenuGroup> responseEntity = testRestTemplate.postForEntity(
+            BASE_URL,
+            request,
+            MenuGroup.class
+        );
         MenuGroup response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -52,7 +56,10 @@ public class MenuGroupApiTest extends ApiTest {
     @DisplayName("메뉴 목록 조회")
     @Test
     void getMenuGroups() {
-        ResponseEntity<MenuGroup[]> responseEntity = testRestTemplate.getForEntity(BASE_URL, MenuGroup[].class);
+        ResponseEntity<MenuGroup[]> responseEntity = testRestTemplate.getForEntity(
+            BASE_URL,
+            MenuGroup[].class
+        );
         MenuGroup[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);

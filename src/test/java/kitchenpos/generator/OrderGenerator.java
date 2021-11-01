@@ -18,11 +18,20 @@ public class OrderGenerator {
         return newInstance(null, orderStatus, null);
     }
 
-    public static Order newInstance(Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public static Order newInstance(
+        Long orderTableId,
+        String orderStatus,
+        LocalDateTime orderedTime
+    ) {
         return newInstance(null, orderTableId, orderStatus, orderedTime);
     }
 
-    public static Order newInstance(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime) {
+    public static Order newInstance(
+        Long id,
+        Long orderTableId,
+        String orderStatus,
+        LocalDateTime orderedTime
+    ) {
         Order order = new Order();
         order.setId(id);
         order.setOrderTableId(orderTableId);
@@ -39,7 +48,12 @@ public class OrderGenerator {
         return newOrderLineItem(null, orderId, menuId, quantity);
     }
 
-    public static OrderLineItem newOrderLineItem(Long seq, Long orderId, Long menuId, long quantity) {
+    public static OrderLineItem newOrderLineItem(
+        Long seq,
+        Long orderId,
+        Long menuId,
+        long quantity
+    ) {
         OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.setSeq(seq);
         orderLineItem.setOrderId(orderId);

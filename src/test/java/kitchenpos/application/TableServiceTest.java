@@ -65,13 +65,22 @@ public class TableServiceTest extends ServiceTest {
             savedOrderTable.getId(),
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
         ).thenReturn(false);
-        when(orderTableDao.save(any(OrderTable.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderTableDao.save(any(OrderTable.class))).thenAnswer(
+            invocation -> invocation.getArgument(0)
+        );
 
         OrderTable orderTable = TableGenerator.newInstance(false);
-        OrderTable changedOrderTable = tableService.changeEmpty(savedOrderTable.getId(), orderTable);
+        OrderTable changedOrderTable = tableService.changeEmpty(
+            savedOrderTable.getId(),
+            orderTable
+        );
 
-        OrderTable expected = TableGenerator.newInstance(savedOrderTable.getId(), savedOrderTable.getTableGroupId(), savedOrderTable.getNumberOfGuests(),
-            orderTable.isEmpty());
+        OrderTable expected = TableGenerator.newInstance(
+            savedOrderTable.getId(),
+            savedOrderTable.getTableGroupId(),
+            savedOrderTable.getNumberOfGuests(),
+            orderTable.isEmpty()
+        );
         verify(orderTableDao, times(1)).save(any(OrderTable.class));
         assertThat(changedOrderTable).usingRecursiveComparison()
             .isEqualTo(expected);
@@ -84,7 +93,9 @@ public class TableServiceTest extends ServiceTest {
         when(orderTableDao.findById(idToChange)).thenReturn(Optional.empty());
 
         OrderTable orderTable = TableGenerator.newInstance(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(
+            IllegalArgumentException.class
+        );
     }
 
     @DisplayName("단체로 등록된 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
@@ -94,7 +105,9 @@ public class TableServiceTest extends ServiceTest {
         when(orderTableDao.findById(1L)).thenReturn(Optional.of(savedOrderTable));
 
         OrderTable orderTable = TableGenerator.newInstance(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(
+            IllegalArgumentException.class
+        );
     }
 
     @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
@@ -108,7 +121,9 @@ public class TableServiceTest extends ServiceTest {
         ).thenReturn(true);
 
         OrderTable orderTable = TableGenerator.newInstance(true);
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableService.changeEmpty(1L, orderTable)).isExactlyInstanceOf(
+            IllegalArgumentException.class
+        );
     }
 
     @DisplayName("주문 테이블 방문한 손님 수 수정")
@@ -116,7 +131,9 @@ public class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         OrderTable savedOrderTable = TableGenerator.newInstance(1L, null, 0, false);
         when(orderTableDao.findById(1L)).thenReturn(Optional.of(savedOrderTable));
-        when(orderTableDao.save(any(OrderTable.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(orderTableDao.save(any(OrderTable.class))).thenAnswer(
+            invocation -> invocation.getArgument(0)
+        );
 
         OrderTable orderTable = TableGenerator.newInstance(4);
         OrderTable changedOrderTable = tableService.changeNumberOfGuests(1L, orderTable);
@@ -135,7 +152,9 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeNumberOfGuestsWithNegativeNumber() {
         OrderTable orderTable = TableGenerator.newInstance(-1);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeNumberOfGuests(1L, orderTable)
+        ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("등록되지 않은 주문 테이블의 방문한 손님 수를 수정할 경우 예외 처리")
@@ -144,7 +163,9 @@ public class TableServiceTest extends ServiceTest {
         when(orderTableDao.findById(1L)).thenReturn(Optional.empty());
 
         OrderTable orderTable = TableGenerator.newInstance(4);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeNumberOfGuests(1L, orderTable)
+        ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("비어있는 주문 테이블의 방문한 손님 수를 수정할 경우 예외 처리")
@@ -154,6 +175,8 @@ public class TableServiceTest extends ServiceTest {
         when(orderTableDao.findById(1L)).thenReturn(Optional.of(savedOrderTable));
 
         OrderTable orderTable = TableGenerator.newInstance(4);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(
+            () -> tableService.changeNumberOfGuests(1L, orderTable)
+        ).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 }

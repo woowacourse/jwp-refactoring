@@ -60,26 +60,47 @@ public class MenuApiTest extends ApiTest {
         products.add(productDao.save(ProductGenerator.newInstance("후라이드", 16000)));
         products.add(productDao.save(ProductGenerator.newInstance("양념치킨", 16000)));
 
-        menus.add(menuDao.save(MenuGenerator.newInstance("후라이드치킨", 16000, menuGroup.getId(), Collections.emptyList())));
-        menus.add(menuDao.save(MenuGenerator.newInstance("양념치킨", 16000, menuGroup.getId(), Collections.emptyList())));
+        menus.add(menuDao.save(MenuGenerator.newInstance(
+            "후라이드치킨",
+            16000,
+            menuGroup.getId(),
+            Collections.emptyList()
+        )));
+        menus.add(menuDao.save(MenuGenerator.newInstance(
+            "양념치킨",
+            16000,
+            menuGroup.getId(),
+            Collections.emptyList()
+        )));
 
-        menuProducts.add(menuProductDao.save(MenuGenerator.newMenuProduct(menus.get(0).getId(), products.get(0).getId(), 1)));
-        menuProducts.add(menuProductDao.save(MenuGenerator.newMenuProduct(menus.get(1).getId(), products.get(1).getId(), 1)));
+        menuProducts.add(menuProductDao.save(MenuGenerator.newMenuProduct(
+            menus.get(0).getId(),
+            products.get(0).getId(),
+            1)
+        ));
+        menuProducts.add(menuProductDao.save(MenuGenerator.newMenuProduct(
+            menus.get(1).getId(),
+            products.get(1).getId(),
+            1)
+        ));
     }
 
     @DisplayName("메뉴 등록")
     @Test
     void postMenu() {
         MenuProduct menuProduct = MenuGenerator.newMenuProduct(products.get(0).getId(), 2);
-        Menu request = MenuGenerator.newInstance("후라이드+후라이드", 19000, menuGroup.getId(), Collections.singletonList(menuProduct));
+        Menu request = MenuGenerator.newInstance("후라이드+후라이드", 19000, menuGroup.getId(),
+            Collections.singletonList(menuProduct));
 
-        ResponseEntity<Menu> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, Menu.class);
+        ResponseEntity<Menu> responseEntity = testRestTemplate.postForEntity(BASE_URL, request,
+            Menu.class);
         Menu response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
         assertThat(response.getId()).isEqualTo(response.getMenuProducts().get(0).getMenuId());
-        assertThat(response).usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+        assertThat(response).usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
+                BigDecimal.class)
             .usingRecursiveComparison()
             .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
             .isEqualTo(request);
@@ -88,7 +109,10 @@ public class MenuApiTest extends ApiTest {
     @DisplayName("메뉴 목록 조회")
     @Test
     void getMenus() {
-        ResponseEntity<Menu[]> responseEntity = testRestTemplate.getForEntity(BASE_URL, Menu[].class);
+        ResponseEntity<Menu[]> responseEntity = testRestTemplate.getForEntity(
+            BASE_URL,
+            Menu[].class
+        );
         Menu[] response = responseEntity.getBody();
 
         List<Menu> expected = new ArrayList<>();

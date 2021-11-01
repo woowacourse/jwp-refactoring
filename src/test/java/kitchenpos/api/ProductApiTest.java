@@ -40,13 +40,16 @@ public class ProductApiTest extends ApiTest {
     void postProduct() {
         Product request = ProductGenerator.newInstance("강정치킨", 17000);
 
-        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, Product.class);
+        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(BASE_URL, request,
+            Product.class);
         Product response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
-        assertThat(response).usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
-            .usingRecursiveComparison()
+        assertThat(response).usingComparatorForType(
+                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
+                BigDecimal.class
+            ).usingRecursiveComparison()
             .ignoringFields("id")
             .isEqualTo(request);
     }
@@ -54,7 +57,10 @@ public class ProductApiTest extends ApiTest {
     @DisplayName("상품 목록 조회")
     @Test
     void getProducts() {
-        ResponseEntity<Product[]> responseEntity = testRestTemplate.getForEntity(BASE_URL, Product[].class);
+        ResponseEntity<Product[]> responseEntity = testRestTemplate.getForEntity(
+            BASE_URL,
+            Product[].class
+        );
         Product[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);

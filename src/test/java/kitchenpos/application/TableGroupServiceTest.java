@@ -47,13 +47,15 @@ public class TableGroupServiceTest extends ServiceTest {
             TableGenerator.newInstance(1L, null, 0, true),
             TableGenerator.newInstance(2L, null, 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(orderTables);
+        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+            orderTables);
         when(tableGroupDao.save(any(TableGroup.class))).thenAnswer(invocation -> {
             TableGroup tableGroup = invocation.getArgument(0);
             return TableGroupGenerator.newInstance(1L, tableGroup.getCreatedDate());
         });
 
-        TableGroup actual = tableGroupService.create(TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables)));
+        TableGroup actual = tableGroupService.create(
+            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables)));
 
         verify(tableGroupDao, times(1)).save(any(TableGroup.class));
         verify(orderTableDao, times(orderTables.size())).save(
@@ -76,10 +78,13 @@ public class TableGroupServiceTest extends ServiceTest {
     @DisplayName("1개 이하의 주문 테이블로 단체 지정을 등록할 경우 예외 처리")
     @Test
     void createWhenOrderTableSizeIsLessThan2() {
-        List<OrderTable> orderTables = Collections.singletonList(TableGenerator.newInstance(1L, null, 0, true));
+        List<OrderTable> orderTables = Collections.singletonList(
+            TableGenerator.newInstance(1L, null, 0, true)
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(
+            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+        )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("등록되지 않은 테이블로 단체 지정을 등록할 경우 예외 처리")
@@ -89,10 +94,13 @@ public class TableGroupServiceTest extends ServiceTest {
             TableGenerator.newInstance(1L, null, 0, true),
             TableGenerator.newInstance(2L, null, 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(Collections.singletonList(orderTables.get(0)));
+        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+            Collections.singletonList(orderTables.get(0))
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(
+            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+        )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("비어있지 않은 테이블로 단체 지정을 등록할 경우 예외 처리")
@@ -102,10 +110,13 @@ public class TableGroupServiceTest extends ServiceTest {
             TableGenerator.newInstance(1L, null, 0, true),
             TableGenerator.newInstance(2L, null, 0, false)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(orderTables);
+        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+            orderTables
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(
+            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+        )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("이미 단체 지정이 된 테이블을 단체 지정으로 등록할 경우 예외 처리")
@@ -115,10 +126,13 @@ public class TableGroupServiceTest extends ServiceTest {
             TableGenerator.newInstance(1L, null, 0, true),
             TableGenerator.newInstance(2L, 1L, 0, true)
         );
-        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(orderTables);
+        when(orderTableDao.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
+            orderTables
+        );
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))))
-            .isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> tableGroupService.create(
+            TableGroupGenerator.newInstance(convertIdsFromOrderTables(orderTables))
+        )).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("단체 지정 제거")

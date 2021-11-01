@@ -31,7 +31,9 @@ public class ProductServiceTest extends ServiceTest {
     @ValueSource(ints = {0, 1, 17000})
     @ParameterizedTest
     void create(int price) {
-        when(productDao.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(productDao.save(any(Product.class))).thenAnswer(
+            invocation -> invocation.getArgument(0)
+        );
 
         Product product = ProductGenerator.newInstance("강정치킨", price);
         Product actual = productService.create(product);
@@ -46,7 +48,9 @@ public class ProductServiceTest extends ServiceTest {
     void createWithInvalidPrice(int price) {
         Product product = ProductGenerator.newInstance("강정치킨", price);
 
-        assertThatThrownBy(() -> productService.create(product)).isExactlyInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(product)).isExactlyInstanceOf(
+            IllegalArgumentException.class
+        );
         verify(productDao, times(0)).save(any(Product.class));
     }
 

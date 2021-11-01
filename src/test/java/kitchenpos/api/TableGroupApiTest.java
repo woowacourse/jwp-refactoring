@@ -52,8 +52,12 @@ public class TableGroupApiTest extends ApiTest {
     @DisplayName("단체 지정 등록")
     @Test
     void postTableGroups() {
-        TableGroup request = TableGroupGenerator.newInstance(Arrays.asList(orderTables.get(0).getId(), orderTables.get(1).getId()));
-        ResponseEntity<TableGroup> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, TableGroup.class);
+        TableGroup request = TableGroupGenerator.newInstance(Arrays.asList(
+            orderTables.get(0).getId(),
+            orderTables.get(1).getId()
+        ));
+        ResponseEntity<TableGroup> responseEntity = testRestTemplate.postForEntity(BASE_URL,
+            request, TableGroup.class);
         TableGroup response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);

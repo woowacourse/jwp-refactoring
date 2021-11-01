@@ -63,17 +63,28 @@ public class OrderApiTest extends ApiTest {
         menuGroup = menuGroupDao.save(MenuGroupGenerator.newInstance("두마리메뉴"));
         menu = menuDao.save(MenuGenerator.newInstance("후라이드치킨", 16000, menuGroup.getId()));
         orderTable = orderTableDao.save(TableGenerator.newInstance(0, false));
-        order = orderDao.save(OrderGenerator.newInstance(orderTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now()));
-        orderLineItem = orderLineItemDao.save(OrderGenerator.newOrderLineItem(order.getId(), menu.getId(), 1));
+        order = orderDao.save(OrderGenerator.newInstance(
+            orderTable.getId(),
+            OrderStatus.COOKING.name(),
+            LocalDateTime.now()));
+        orderLineItem = orderLineItemDao.save(
+            OrderGenerator.newOrderLineItem(order.getId(), menu.getId(), 1));
     }
 
     @DisplayName("주문 등록")
     @Test
     void postOrder() {
         OrderLineItem orderLineItemRequest = OrderGenerator.newOrderLineItem(menu.getId(), 1);
-        Order request = OrderGenerator.newInstance(orderTable.getId(), Collections.singletonList(orderLineItemRequest));
+        Order request = OrderGenerator.newInstance(
+            orderTable.getId(),
+            Collections.singletonList(orderLineItemRequest)
+        );
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(BASE_URL, request, Order.class);
+        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+            BASE_URL,
+            request,
+            Order.class
+        );
         Order response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -90,7 +101,10 @@ public class OrderApiTest extends ApiTest {
     @DisplayName("주문 조회")
     @Test
     void getOrder() {
-        ResponseEntity<Order[]> responseEntity = testRestTemplate.getForEntity(BASE_URL, Order[].class);
+        ResponseEntity<Order[]> responseEntity = testRestTemplate.getForEntity(
+            BASE_URL,
+            Order[].class
+        );
         Order[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
