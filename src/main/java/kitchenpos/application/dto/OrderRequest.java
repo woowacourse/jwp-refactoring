@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.domain.OrderStatus;
 
 public class OrderRequest {
+
     private Long orderTableId;
     private OrderStatus orderStatus;
     private List<OrderLineItemRequest> orderLineItems;

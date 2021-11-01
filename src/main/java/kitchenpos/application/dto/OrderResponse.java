@@ -8,6 +8,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 
 public class OrderResponse {
+
     private Long id;
     private OrderTable orderTable;
     private OrderStatus orderStatus;

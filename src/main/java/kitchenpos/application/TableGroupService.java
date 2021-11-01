@@ -2,20 +2,18 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import kitchenpos.application.dto.TableGroupRequest;
 import kitchenpos.application.dto.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class TableGroupService {
+
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 

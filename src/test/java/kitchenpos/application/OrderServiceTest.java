@@ -19,7 +19,6 @@ import kitchenpos.application.dto.OrderRequest;
 import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.TableFixtures;

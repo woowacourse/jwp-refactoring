@@ -5,6 +5,7 @@ import kitchenpos.application.dto.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixtures {
+
     private static final long MENU_GROUP_ID = 1L;
     private static final String MENU_GROUP_NAME = "기본 메뉴 그룹";
 

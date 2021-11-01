@@ -1,10 +1,10 @@
 package kitchenpos.application.dto;
 
-import java.math.BigDecimal;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class ProductResponse {
+
     private Long id;
     private String name;
     private Price price;

@@ -13,6 +13,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class TableFixtures {
+
     private static final long TABLE_GROUP_ID = 1L;
     private static final int NUMBER_OF_GUESTS = 10;
     private static final long ORDER_TABLE_ID = 1L;

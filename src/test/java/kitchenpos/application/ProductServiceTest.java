@@ -1,14 +1,12 @@
 package kitchenpos.application;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
-import kitchenpos.application.dto.ProductRequest;
 import kitchenpos.domain.Product;
 import kitchenpos.fixtures.ProductFixtures;
 import kitchenpos.repository.ProductRepository;

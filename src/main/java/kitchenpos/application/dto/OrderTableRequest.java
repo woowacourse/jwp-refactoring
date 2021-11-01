@@ -3,6 +3,7 @@ package kitchenpos.application.dto;
 import kitchenpos.domain.OrderTable;
 
 public class OrderTableRequest {
+
     private int numberOfGuests;
     private boolean empty;
 
@@ -11,11 +12,11 @@ public class OrderTableRequest {
         this.empty = empty;
     }
 
-    public OrderTable toEntity() {
-        return new OrderTable(numberOfGuests, empty);
+    public OrderTableRequest() {
     }
 
-    public OrderTableRequest() {
+    public OrderTable toEntity() {
+        return new OrderTable(numberOfGuests, empty);
     }
 
     public int getNumberOfGuests() {

@@ -1,10 +1,9 @@
 package kitchenpos.application.dto;
 
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
+
     private List<Long> orderTableIds;
 
     public TableGroupRequest(List<Long> orderTableIds) {

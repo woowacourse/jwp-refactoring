@@ -1,6 +1,7 @@
 package kitchenpos.application.dto;
 
 public class MenuProductRequest {
+
     private Long productId;
     private Long quantity;
 

@@ -11,6 +11,7 @@ import kitchenpos.fixtures.TableFixtures;
 import org.junit.jupiter.api.Test;
 
 public class TableGroupTest {
+
     @Test
     void 단체_지정을_생성한다() {
         List<OrderTable> orderTables = TableFixtures.createOrderTables(true);

@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -17,7 +16,6 @@ import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.TableFixtures;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class TableServiceTest extends ServiceTest {
+
     @Mock
     private OrderTableRepository orderTableRepository;
 

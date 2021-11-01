@@ -4,6 +4,7 @@ import java.util.List;
 import kitchenpos.domain.Price;
 
 public class MenuRequest {
+
     private String name;
     private Price price;
     private Long menuGroupId;

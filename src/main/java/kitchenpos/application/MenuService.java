@@ -8,7 +8,6 @@ import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -18,16 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
+
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
-            final MenuRepository menuRepository,
-            final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
+        final MenuRepository menuRepository,
+        final MenuGroupRepository menuGroupRepository,
+        final MenuProductRepository menuProductRepository,
+        final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
@@ -42,8 +42,8 @@ public class MenuService {
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
             .map(it -> new MenuProduct(
-                productRepository.findById(it.getProductId()).orElseThrow(NoSuchElementException::new),
-                it.getProductId()
+                    productRepository.findById(it.getProductId()).orElseThrow(NoSuchElementException::new),
+                    it.getProductId()
                 )
             )
             .collect(Collectors.toList());

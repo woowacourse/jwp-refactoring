@@ -3,6 +3,7 @@ package kitchenpos.application.dto;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuProductResponse {
+
     private Long seq;
     private ProductResponse product;
     private Long quantity;

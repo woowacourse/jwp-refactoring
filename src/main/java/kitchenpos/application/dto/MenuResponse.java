@@ -6,6 +6,7 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.Price;
 
 public class MenuResponse {
+
     private Long id;
     private String name;
     private Price price;

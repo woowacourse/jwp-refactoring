@@ -6,13 +6,13 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dto.OrderTableRequest;
 import kitchenpos.application.dto.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
+
     private final OrderTableRepository orderTableRepository;
 
     public TableService(final OrderTableRepository orderTableRepository) {
@@ -33,7 +33,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         savedOrderTable.changeEmpty(empty);
 
@@ -43,7 +43,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
-                .orElseThrow(NoSuchElementException::new);
+            .orElseThrow(NoSuchElementException::new);
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 

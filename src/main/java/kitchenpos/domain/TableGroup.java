@@ -1,7 +1,6 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -12,6 +11,7 @@ import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
+
     private static final int MIN_GROUP_SIZE = 2;
 
     @Id

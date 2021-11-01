@@ -3,6 +3,7 @@ package kitchenpos.application.dto;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupRequest {
+
     private String name;
 
     public MenuGroupRequest(String name) {

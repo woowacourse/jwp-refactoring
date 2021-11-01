@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 
 public class TableGroupResponse {
+
     private Long id;
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
