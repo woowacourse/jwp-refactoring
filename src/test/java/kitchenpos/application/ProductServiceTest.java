@@ -1,5 +1,11 @@
 package kitchenpos.application;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.BDDMockito.given;
+
+import java.math.BigDecimal;
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
@@ -10,14 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertIterableEquals;
-import static org.mockito.BDDMockito.given;
-
-@DisplayName("ProductServiceTest 테스트")
+@DisplayName("ProductService 테스트")
 @ExtendWith(MockitoExtension.class)
 public class ProductServiceTest {
 

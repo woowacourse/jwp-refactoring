@@ -1,9 +1,8 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.MenuGroup;
-
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupFixture {
 

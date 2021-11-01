@@ -1,5 +1,13 @@
 package kitchenpos.application;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.BDDMockito.given;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
@@ -17,15 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.BDDMockito.given;
 
 
 @DisplayName("MenuService 테스트")
@@ -96,8 +95,10 @@ public class MenuServiceTest {
 
         MenuProduct expected_메뉴1_상품1 = menuProductFixture.메뉴_상품_생성(1L, 메뉴1.getId(), 1L, 1);
         MenuProduct expected_메뉴1_상품2 = menuProductFixture.메뉴_상품_생성(2L, 메뉴2.getId(), 2L, 1);
-        given(menuProductDao.findAllByMenuId(메뉴1.getId())).willReturn(Collections.singletonList(expected_메뉴1_상품1));
-        given(menuProductDao.findAllByMenuId(메뉴2.getId())).willReturn(Collections.singletonList(expected_메뉴1_상품2));
+        given(menuProductDao.findAllByMenuId(메뉴1.getId()))
+                .willReturn(Collections.singletonList(expected_메뉴1_상품1));
+        given(menuProductDao.findAllByMenuId(메뉴2.getId()))
+                .willReturn(Collections.singletonList(expected_메뉴1_상품2));
 
         // when
         List<Menu> actual = menuService.list();
