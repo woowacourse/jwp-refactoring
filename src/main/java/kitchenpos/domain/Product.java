@@ -1,13 +1,11 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import kitchenpos.exception.KitchenException;
 
 @Entity
 public class Product {
@@ -20,21 +18,19 @@ public class Product {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     public Product() {
     }
 
-    public Product(Long id, String name, BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new KitchenException("상품 가격은 1원 이상입니다.");
-        }
+    public Product(Long id, String name, Long price) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.price = Price.of(price);
     }
 
-    public Product(String name, BigDecimal price) {
+    public Product(String name, Long price) {
         this(null, name, price);
     }
 
@@ -46,7 +42,7 @@ public class Product {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

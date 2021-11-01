@@ -1,6 +1,5 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.exception.KitchenException;
 
@@ -14,16 +13,16 @@ public class MenuProducts {
     }
 
     private void validate(Menu menu) {
-        BigDecimal sum = calculateSum();
-        if (sum.compareTo(menu.getPrice()) < 0) {
+        Price sum = calculateSum();
+        if (sum.isLessThan(menu.getPrice())) {
             throw new KitchenException("메뉴 가격은 메뉴에 속한 상품들의 가격 총액보다 낮아야 합니다.");
         }
     }
 
-    private BigDecimal calculateSum() {
+    private Price calculateSum() {
         return menuProducts.stream()
             .map(MenuProduct::calculateTotalPrice)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
+            .reduce(Price.of(0L), Price::add);
     }
 
     private List<MenuProduct> updateMenu(List<MenuProduct> menuProducts, Menu menu) {

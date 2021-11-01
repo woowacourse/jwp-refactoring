@@ -1,20 +1,19 @@
 package kitchenpos.dto.request;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MenuCreateRequest {
 
     private String name;
-    private BigDecimal price;
+    private Long price;
     private Long menuGroupId;
     private List<MenuProductCreateRequest> menuProducts;
 
     public MenuCreateRequest() {
     }
 
-    public MenuCreateRequest(String name, BigDecimal price, Long menuGroupId,
+    public MenuCreateRequest(String name, Long price, Long menuGroupId,
         List<MenuProductCreateRequest> menuProducts) {
         this.name = name;
         this.price = price;
@@ -26,7 +25,7 @@ public class MenuCreateRequest {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Long getPrice() {
         return price;
     }
 

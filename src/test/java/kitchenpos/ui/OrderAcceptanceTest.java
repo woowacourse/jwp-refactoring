@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -92,14 +91,14 @@ class OrderAcceptanceTest extends AcceptanceTest {
         MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
             menuGroupRequest)
             .as(MenuGroupResponse.class);
-        ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
+        ProductRequest productRequest = new ProductRequest("product", 1000L);
         ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
             productRequest).as(
             ProductResponse.class);
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             productResponse.getId(), 10L);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
-            BigDecimal.valueOf(5000),
+            5000L,
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);
@@ -180,14 +179,14 @@ class OrderAcceptanceTest extends AcceptanceTest {
         MenuGroupResponse menuGroupResponse = makeResponse("/api/menu-groups/", TestMethod.POST,
             menuGroupRequest)
             .as(MenuGroupResponse.class);
-        ProductRequest productRequest = new ProductRequest("product", BigDecimal.valueOf(1000));
+        ProductRequest productRequest = new ProductRequest("product", 1000L);
         ProductResponse productResponse = makeResponse("/api/products", TestMethod.POST,
             productRequest).as(
             ProductResponse.class);
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             productResponse.getId(), 10L);
         MenuCreateRequest menuCreateRequest = new MenuCreateRequest("menu",
-            BigDecimal.valueOf(5000),
+            5000L,
             menuGroupResponse.getId(), Collections.singletonList(menuProductCreateRequest));
         MenuResponse menuResponse = makeResponse("/api/menus", TestMethod.POST, menuCreateRequest)
             .as(MenuResponse.class);

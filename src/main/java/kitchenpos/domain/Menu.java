@@ -1,10 +1,9 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -13,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.exception.KitchenException;
 
 @Entity
 public class Menu {
@@ -26,7 +24,8 @@ public class Menu {
     private String name;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_group_id", nullable = false)
@@ -38,15 +37,12 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup, null);
+    public Menu(String name, long price, MenuGroup menuGroup) {
+        this(null, name, Price.of(price), menuGroup, null);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new KitchenException("메뉴 금액은 1원 이상입니다.");
-        }
         this.id = id;
         this.name = name;
         this.price = price;
@@ -62,7 +58,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
@@ -33,11 +32,11 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         MenuResponse created = menuService.create(request);
@@ -53,11 +52,11 @@ class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         menuService.create(request);

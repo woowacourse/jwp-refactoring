@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import kitchenpos.dto.request.ProductRequest;
 import kitchenpos.dto.response.ProductResponse;
@@ -20,8 +19,8 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 생성한다.")
     @Test
     void create() {
-        int price = 1000;
-        ProductRequest product = new ProductRequest("productName", BigDecimal.valueOf(price));
+        long price = 1000L;
+        ProductRequest product = new ProductRequest("productName", price);
         ProductResponse created = productService.create(product);
 
         assertAll(
@@ -34,7 +33,7 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 목록을 불러온다.")
     @Test
     void list() {
-        ProductRequest product = new ProductRequest("productName1", BigDecimal.valueOf(1000));
+        ProductRequest product = new ProductRequest("productName1", 1000L);
         productService.create(product);
         productService.create(product);
 

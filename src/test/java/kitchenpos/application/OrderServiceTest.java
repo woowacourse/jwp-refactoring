@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.MenuGroupRepository;
@@ -44,7 +43,7 @@ class OrderServiceTest extends ServiceTest {
     void create() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
+        Menu menu = menuRepository.save(new Menu("menu", 1000L, menuGroup));
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menu.getId(), 2L);
 
@@ -64,7 +63,7 @@ class OrderServiceTest extends ServiceTest {
     void list() {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
+        Menu menu = menuRepository.save(new Menu("menu", 1000L, menuGroup));
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menu.getId(), 2L);
 
@@ -83,7 +82,7 @@ class OrderServiceTest extends ServiceTest {
     void changeOrderStatus(OrderStatus input, OrderStatus expected) {
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Menu menu = menuRepository.save(new Menu("menu", BigDecimal.valueOf(1000), menuGroup));
+        Menu menu = menuRepository.save(new Menu("menu", 1000L, menuGroup));
         OrderLineItemCreateRequest orderLineItemCreateRequest = new OrderLineItemCreateRequest(
             menu.getId(), 2L);
 

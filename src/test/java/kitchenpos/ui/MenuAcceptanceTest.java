@@ -31,11 +31,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         MenuResponse response = makeResponse("/api/menus", TestMethod.POST, request)
@@ -44,7 +44,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         assertAll(
             () -> assertThat(response.getId()).isNotNull(),
             () -> assertThat(response.getName()).isEqualTo(request.getName()),
-            () -> assertThat(response.getPrice()).isEqualTo(request.getPrice())
+            () -> assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(request.getPrice()))
         );
     }
 
@@ -52,11 +52,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_price() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(-500),
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
@@ -67,11 +67,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @DisplayName("Menu 생성 실패 - 메뉴 그룹이 존재하지 않는다.")
     @Test
     void create_fail_menu_group_non_exist() {
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(-500),
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
             999L, Collections.singletonList(menuProductCreateRequest));
 
         int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
@@ -85,7 +85,7 @@ class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(999L, 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(-500),
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
@@ -97,11 +97,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void create_fail_menu_price_more_than_total_menu_product_price() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(200000),
+        MenuCreateRequest request = new MenuCreateRequest("menu", 200000L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
@@ -113,11 +113,11 @@ class MenuAcceptanceTest extends AcceptanceTest {
     @Test
     void list() {
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
-        Product product = productRepository.save(new Product("product", BigDecimal.valueOf(1000)));
+        Product product = productRepository.save(new Product("product", 1000L));
 
         MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
             product.getId(), 10L);
-        MenuCreateRequest request = new MenuCreateRequest("menu", BigDecimal.valueOf(5000),
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
             menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
 
         makeResponse("/api/menus", TestMethod.POST, request)

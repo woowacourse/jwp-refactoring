@@ -16,7 +16,7 @@ public class MenuResponse {
     }
 
     public static MenuResponse of(Menu menu) {
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice());
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice().bigDecimalValue());
     }
 
     public Long getId() {

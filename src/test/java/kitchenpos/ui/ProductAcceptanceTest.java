@@ -3,7 +3,6 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.dto.request.ProductRequest;
@@ -18,8 +17,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("Product 생성")
     @Test
     void create() {
-        int price = 1000;
-        ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(price));
+        long price = 1000L;
+        ProductRequest request = new ProductRequest("product", price);
         ProductResponse response = makeResponse("/api/products", TestMethod.POST, request).as(
             ProductResponse.class);
 
@@ -33,7 +32,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("Product 생성 실패 - price가 0보다 작다.")
     @Test
     void create_fail_price_type() {
-        ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(-500));
+        ProductRequest request = new ProductRequest("product", -500L);
 
         int actual = makeResponse("/api/products", TestMethod.POST, request).statusCode();
 
@@ -43,7 +42,7 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("Product 리스트를 불러온다.")
     @Test
     void list() {
-        ProductRequest request = new ProductRequest("product", BigDecimal.valueOf(1000));
+        ProductRequest request = new ProductRequest("product", 1000L);
         makeResponse("/api/products", TestMethod.POST, request).as(ProductResponse.class);
         makeResponse("/api/products", TestMethod.POST, request).as(ProductResponse.class);
 
