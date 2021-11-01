@@ -1,17 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.OrderFixture.createOrder;
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
@@ -23,11 +11,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static kitchenpos.fixture.OrderFixture.createOrder;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ServiceTest
 class OrderServiceTest {
@@ -63,7 +60,6 @@ class OrderServiceTest {
         void create() {
             Order order = createOrder();
             when(mockMenuDao.countByIdIn(any())).thenReturn((long) order.getOrderLineItems().size());
-
             Order savedOrder = orderService.create(order);
             assertThat(savedOrder).isEqualTo(order);
         }
@@ -113,9 +109,9 @@ class OrderServiceTest {
         private Order savedOrder;
 
         @BeforeEach
-        void setUp(){
+        void setUp() {
             savedOrder = createOrder();
-            when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+            when(mockOrderDao.findById(savedOrder.getId())).thenReturn(Optional.of(savedOrder));
         }
 
         @DisplayName("주문의 상태를 변경한다.")
@@ -139,8 +135,8 @@ class OrderServiceTest {
         @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
         @Test
         void changeOrderStatusInCompletion() {
-            Order savedOrder = createOrder(OrderStatus.COMPLETION);
-            when(mockOrderDao.findById(any())).thenReturn(Optional.of(savedOrder));
+            Order savedOrder = createOrder(OrderStatus.COMPLETION.name());
+            when(mockOrderDao.findById(savedOrder.getId())).thenReturn(Optional.of(savedOrder));
 
             Order updateOrder = createOrder(savedOrder.getId(), OrderStatus.COOKING.name());
             assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), updateOrder));

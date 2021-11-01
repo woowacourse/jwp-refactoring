@@ -1,29 +1,14 @@
 package kitchenpos.fixture;
 
-import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+
+import java.math.BigDecimal;
 
 public class ProductFixture {
 
     private static final Long ID = 1L;
     private static final String NAME = "PRODUCT_NAME";
     private static final BigDecimal PRICE = BigDecimal.TEN;
-
-    public static Product createProduct() {
-        Product product = new Product();
-        product.setId(ID);
-        product.setName(NAME);
-        product.setPrice(PRICE);
-        return product;
-    }
-
-    public static Product createProduct(Long id) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(NAME);
-        product.setPrice(PRICE);
-        return product;
-    }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
         Product product = new Product();
@@ -33,11 +18,15 @@ public class ProductFixture {
         return product;
     }
 
+    public static Product createProduct() {
+        return createProduct(ID, NAME, PRICE);
+    }
+
+    public static Product createProduct(Long id) {
+        return createProduct(id, NAME, PRICE);
+    }
+
     public static Product createProduct(BigDecimal price) {
-        Product product = new Product();
-        product.setId(ID);
-        product.setName(NAME);
-        product.setPrice(price);
-        return product;
+        return createProduct(ID, NAME, price);
     }
 }

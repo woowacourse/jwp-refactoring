@@ -1,17 +1,5 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenu;
-import static kitchenpos.fixture.ProductFixture.createProduct;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import kitchenpos.ServiceTest;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
@@ -27,6 +15,19 @@ import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.ProductFixture.createProduct;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ServiceTest
 class MenuServiceTest {
@@ -85,8 +86,9 @@ class MenuServiceTest {
         @DisplayName("존재하지 않는 메뉴 그룹에 메뉴를 생성할 수 없다.")
         @Test
         void createWithInvalidMenuGroup() {
-            when(mockMenuGroupDao.existsById(any())).thenReturn(false);
-            assertThatThrownBy(() -> menuService.create(createMenu()));
+            Menu menu = createMenu();
+            when(mockMenuGroupDao.existsById(menu.getId())).thenReturn(false);
+            assertThatThrownBy(() -> menuService.create(menu));
         }
 
         private BigDecimal sumOfProductPrice(List<MenuProduct> menuProducts) {
@@ -104,7 +106,7 @@ class MenuServiceTest {
     void list() {
         Menu menu = createMenu();
         when(mockMenuDao.findAll()).thenReturn(Collections.singletonList(menu));
-        when(mockMenuProductDao.findAllByMenuId(any())).thenReturn(menu.getMenuProducts());
+        when(mockMenuProductDao.findAllByMenuId(menu.getId())).thenReturn(menu.getMenuProducts());
         List<Menu> list = menuService.list();
         assertAll(
                 () -> assertThat(list).hasSize(1),
