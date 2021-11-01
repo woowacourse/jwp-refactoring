@@ -47,18 +47,10 @@ public class OrderService {
             ))
             .collect(Collectors.toList());
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
             .orElseThrow(NoSuchElementException::new);
 
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-
-        final Order savedOrder = orderRepository.save(Order.newOf(orderTable, orderLineItems));
+        final Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
         orderLineItemRepository.saveAll(orderLineItems);
 
         return OrderResponse.of(savedOrder);

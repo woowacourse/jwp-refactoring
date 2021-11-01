@@ -19,9 +19,7 @@ public class OrderFixtures {
     private static final long ORDER_TABLE_ID = 1L;
     private static final OrderStatus ORDER_STATUS = OrderStatus.COOKING;
     private static final long ORDER_ID = 1L;
-    private static final long MENU_ID = 1L;
     private static final long QUANTITY = 1L;
-    private static final long SEQ = 1L;
 
     public static Order createOrder(
         Long id,

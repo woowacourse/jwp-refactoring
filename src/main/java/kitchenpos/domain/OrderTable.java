@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -59,7 +58,7 @@ public class OrderTable {
         if (this.tableGroup == null) {
             throw new IllegalStateException("아직 단체 지정되지 않은 테이블입니다.");
         }
-        orders.forEach(Order::validateNotCompleted);
+        orders.forEach(Order::validateCompleted);
         this.tableGroup = null;
     }
 
@@ -71,7 +70,7 @@ public class OrderTable {
         if (this.tableGroup != null) {
             throw new IllegalStateException("이미 단체 지정된 테이블입니다.");
         }
-        orders.forEach(Order::validateNotCompleted);
+        orders.forEach(Order::validateCompleted);
         this.empty = empty;
     }
 

@@ -71,15 +71,6 @@ class OrderServiceTest extends ServiceTest {
     }
 
     @Test
-    void 생성_시_주문_항목이_비어있으면_예외를_반환한다() {
-        OrderRequest emptyOrder = createOrderRequest(
-            createOrder(1L, TableFixtures.createOrderTable(true), OrderStatus.COOKING, Collections.emptyList())
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(emptyOrder));
-    }
-
-    @Test
     void 생성_시_주문_항목의_수와_메뉴의_수가_일치하지_않으면_예외를_반환한다() {
         given(menuRepository.findById(any())).willReturn(Optional.empty());
 
@@ -92,15 +83,6 @@ class OrderServiceTest extends ServiceTest {
         given(orderTableRepository.findById(any())).willReturn(Optional.empty());
 
         assertThrows(NoSuchElementException.class, () -> orderService.create(request));
-    }
-
-    @Test
-    void 생성_시_주문_테이블이_빈_테이블이면_예외를_반환한다() {
-        OrderTable emptyTable = TableFixtures.createOrderTable(true);
-        given(menuRepository.findById(any())).willReturn(Optional.of(MenuFixtures.createMenu()));
-        given(orderTableRepository.findById(any())).willReturn(Optional.of(emptyTable));
-
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(request));
     }
 
     @Test
@@ -133,18 +115,6 @@ class OrderServiceTest extends ServiceTest {
         assertThrows(
             NoSuchElementException.class,
             () -> orderService.changeOrderStatus(this.order.getId(), completedOrder)
-        );
-    }
-
-    @Test
-    void 상태_변경_시_완료된_주문_변경_시_예외를_반환한다() {
-        Order completedOrder = createOrder(OrderStatus.COMPLETION);
-        ChangeOrderStatusRequest changeRequest = new ChangeOrderStatusRequest(OrderStatus.COOKING);
-        given(orderRepository.findById(any())).willReturn(Optional.of(completedOrder));
-
-        assertThrows(
-            IllegalStateException.class,
-            () -> orderService.changeOrderStatus(this.order.getId(), changeRequest)
         );
     }
 }

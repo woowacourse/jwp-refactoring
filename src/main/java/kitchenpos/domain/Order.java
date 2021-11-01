@@ -42,22 +42,20 @@ public class Order {
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+
+        validateCreation(orderTable, orderLineItems);
+
+        orderTable.addOrder(this);
+        for (OrderLineItem item : orderLineItems) {
+            item.belongsTo(this);
+        }
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
     public Order() {
-    }
-
-    public static Order newOf(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
-        orderTable.addOrder(order);
-        for (OrderLineItem item : orderLineItems) {
-            item.belongsTo(order);
-        }
-        return order;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {
@@ -67,9 +65,19 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public void validateNotCompleted() {
+    public void validateCompleted() {
         if (!orderStatus.isCompleted()) {
             throw new IllegalStateException("주문 상태가 완료되지 않았습니다.");
+        }
+    }
+
+    private void validateCreation(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        if (orderLineItems.isEmpty()) {
+            throw new IllegalStateException("주문 항목이 비어있습니다.");
+        }
+
+        if (orderTable.isEmpty()) {
+            throw new IllegalStateException("빈 테이블입니다.");
         }
     }
 
