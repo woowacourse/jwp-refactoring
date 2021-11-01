@@ -1,6 +1,11 @@
 package kitchenpos;
 
 import java.util.stream.Stream;
+import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.MenuService;
+import kitchenpos.application.OrderService;
+import kitchenpos.application.ProductService;
+import kitchenpos.application.TableService;
 import kitchenpos.common.DatabaseInitializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,6 +17,21 @@ public class IntegrationTest {
 
     @Autowired
     private DatabaseInitializer databaseInitializer;
+
+    @Autowired
+    protected TableService tableService;
+
+    @Autowired
+    protected OrderService orderService;
+
+    @Autowired
+    protected MenuService menuService;
+
+    @Autowired
+    protected ProductService productService;
+
+    @Autowired
+    protected MenuGroupService menuGroupService;
 
     @BeforeEach
     void setUp() {
