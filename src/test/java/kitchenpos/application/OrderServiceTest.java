@@ -191,7 +191,7 @@ class OrderServiceTest {
         }
     }
 
-    @DisplayName("모든 Product를 조회한다.")
+    @DisplayName("모든 Order를 조회한다.")
     @Test
     void list() {
         // given

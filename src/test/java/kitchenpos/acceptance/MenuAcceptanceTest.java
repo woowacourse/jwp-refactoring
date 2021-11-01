@@ -11,8 +11,6 @@ import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -20,18 +18,10 @@ import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 @DisplayName("Menu 인수 테스트")
 public class MenuAcceptanceTest extends AcceptanceTest {
-
-    @Autowired
-    private MenuGroupDao menuGroupDao;
-
-    @Autowired
-    private ProductDao productDao;
 
     @DisplayName("POST /api/menu-groups")
     @Nested
@@ -41,10 +31,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNull() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -70,10 +60,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNegative() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -99,8 +89,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void noExistMenuGroupId() {
             // given
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -126,7 +116,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void noExistProduct() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(-1L, 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(-2L, 1);
@@ -152,10 +142,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void menuPriceNotMatch() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -181,10 +171,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void success() {
             // given
-            MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
-            Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -245,7 +235,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
-        return menuGroup;
+        ExtractableResponse<Response> response = RestAssured.given()
+            .log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(menuGroup)
+            .when().post("/api/menu-groups")
+            .then().log().all()
+            .statusCode(CREATED.value())
+            .extract();
+
+        return response.as(MenuGroup.class);
     }
 
     private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
@@ -261,6 +260,15 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
 
-        return product;
+        ExtractableResponse<Response> response = RestAssured.given()
+            .log().all()
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .body(product)
+            .when().post("/api/products")
+            .then().log().all()
+            .statusCode(CREATED.value())
+            .extract();
+
+        return response.as(Product.class);
     }
 }
