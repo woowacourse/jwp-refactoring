@@ -64,6 +64,7 @@ public class MenuServiceTest extends ServiceTest {
         expected.setPrice(menuToCreate.getPrice());
         expected.setMenuGroupId(1L);
         expected.setMenuProducts(Collections.singletonList(MenuGenerator.newMenuProduct(3L, 2L, 1L, 2)));
+
         verify(menuDao, times(1)).save(menuToCreate);
         verify(menuProductDao, times(1)).save(any(MenuProduct.class));
         assertThat(actual).usingRecursiveComparison()

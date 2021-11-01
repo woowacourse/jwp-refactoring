@@ -18,6 +18,7 @@ import kitchenpos.dao.OrderLineItemDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
 import kitchenpos.generator.OrderGenerator;
 import kitchenpos.generator.TableGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -115,8 +116,8 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void list() {
         List<Order> orders = Arrays.asList(
-            OrderGenerator.newInstance(1L, 1L, "COOKING", LocalDateTime.now()),
-            OrderGenerator.newInstance(2L, 2L, "COOKING", LocalDateTime.now())
+            OrderGenerator.newInstance(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now()),
+            OrderGenerator.newInstance(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now())
         );
         when(orderDao.findAll()).thenReturn(orders);
         when(orderLineItemDao.findAllByOrderId(any(Long.class))).thenAnswer(invocation -> Arrays.asList(
@@ -139,9 +140,9 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatus() {
         long idToChange = 1L;
-        when(orderDao.findById(idToChange)).thenReturn(Optional.of(OrderGenerator.newInstance(1L, 1L, "COOKING", LocalDateTime.now())));
+        when(orderDao.findById(idToChange)).thenReturn(Optional.of(OrderGenerator.newInstance(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now())));
 
-        String orderStatus = "MEAL";
+        String orderStatus = OrderStatus.MEAL.name();
         Order order = OrderGenerator.newInstance(orderStatus);
         Order actual = orderService.changeOrderStatus(idToChange, order);
 
@@ -154,7 +155,7 @@ public class OrderServiceTest extends ServiceTest {
         long idToChange = 1L;
         when(orderDao.findById(idToChange)).thenReturn(Optional.empty());
 
-        String orderStatus = "MEAL";
+        String orderStatus = OrderStatus.MEAL.name();
         Order order = OrderGenerator.newInstance(orderStatus);
         assertThatThrownBy(() -> orderService.changeOrderStatus(idToChange, order)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
@@ -163,9 +164,9 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void changeOrderStatusWith() {
         long idToChange = 1L;
-        when(orderDao.findById(idToChange)).thenReturn(Optional.of(OrderGenerator.newInstance(1L, 1L, "COMPLETION", LocalDateTime.now())));
+        when(orderDao.findById(idToChange)).thenReturn(Optional.of(OrderGenerator.newInstance(1L, 1L, OrderStatus.COMPLETION.name(), LocalDateTime.now())));
 
-        String orderStatus = "MEAL";
+        String orderStatus = OrderStatus.MEAL.name();
         Order order = OrderGenerator.newInstance(orderStatus);
         assertThatThrownBy(() -> orderService.changeOrderStatus(idToChange, order)).isExactlyInstanceOf(IllegalArgumentException.class);
     }
