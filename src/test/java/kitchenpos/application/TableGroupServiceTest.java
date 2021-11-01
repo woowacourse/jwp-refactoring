@@ -69,7 +69,8 @@ class TableGroupServiceTest {
                     createOrderTable(2L, 2L, true)
             );
             when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup));
+            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정 대상 테이블의 개수는 2개 이상이다.")
@@ -77,7 +78,8 @@ class TableGroupServiceTest {
         void createWithInvalidOrderTable2() {
             TableGroup tableGroup = createTableGroup(createOrderTable(1L, null, true));
             when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup));
+            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정 대상 테이블은 비어있어야한다.")
@@ -85,7 +87,8 @@ class TableGroupServiceTest {
         void createWithInvalidOrderTable3() {
             TableGroup tableGroup = createTableGroup(createOrderTable(false), createOrderTable(false));
             when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup));
+            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -127,7 +130,8 @@ class TableGroupServiceTest {
             when(mockOrderDao.existsByOrderTableIdInAndOrderStatusIn(
                     any(), eq(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())))
             ).thenReturn(true);
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()));
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 }
