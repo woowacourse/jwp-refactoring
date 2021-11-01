@@ -10,8 +10,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class IntegrationTemplate {
 
-    @Autowired
-    protected TestRestTemplate testRestTemplate;
+    private final TestRestTemplate testRestTemplate;
+
+    public IntegrationTemplate(TestRestTemplate testRestTemplate) {
+        this.testRestTemplate = testRestTemplate;
+    }
 
     public <T> ResponseEntity<T> get(String url, Class<T> responseType) {
         return testRestTemplate.getForEntity(

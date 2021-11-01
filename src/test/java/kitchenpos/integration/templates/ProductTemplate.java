@@ -7,9 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductTemplate extends IntegrationTemplate {
+public class ProductTemplate {
 
     public static final String PRODUCT_URL = "/api/products";
+
+    private final IntegrationTemplate integrationTemplate;
+
+    public ProductTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
 
     public ResponseEntity<Product> create(String name, BigDecimal price) {
         Product product = ProductFactory.builder()
@@ -17,7 +23,7 @@ public class ProductTemplate extends IntegrationTemplate {
             .price(price)
             .build();
 
-        return post(
+        return integrationTemplate.post(
             PRODUCT_URL,
             product,
             Product.class
@@ -25,7 +31,7 @@ public class ProductTemplate extends IntegrationTemplate {
     }
 
     public ResponseEntity<Product[]> list() {
-        return get(
+        return integrationTemplate.get(
             PRODUCT_URL,
             Product[].class
         );

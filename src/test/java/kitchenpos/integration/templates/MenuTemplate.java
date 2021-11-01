@@ -9,9 +9,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class MenuTemplate extends IntegrationTemplate {
+public class MenuTemplate {
 
     public static final String MENU_URL = "/api/menus";
+
+    private final IntegrationTemplate integrationTemplate;
+
+    public MenuTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
 
     public ResponseEntity<Menu> create(String name,
                                        BigDecimal price,
@@ -24,7 +30,7 @@ public class MenuTemplate extends IntegrationTemplate {
             .menuProducts(menuProducts)
             .build();
 
-        return post(
+        return integrationTemplate.post(
             MENU_URL,
             menu,
             Menu.class
@@ -32,7 +38,7 @@ public class MenuTemplate extends IntegrationTemplate {
     }
 
     public ResponseEntity<Menu[]> list() {
-        return get(
+        return integrationTemplate.get(
             MENU_URL,
             Menu[].class
         );

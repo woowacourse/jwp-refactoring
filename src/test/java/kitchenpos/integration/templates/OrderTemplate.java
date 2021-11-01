@@ -8,10 +8,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTemplate extends IntegrationTemplate {
+public class OrderTemplate {
 
     public static final String ORDER_URL = "/api/orders";
     public static final String ORDER_STATUS_URL = ORDER_URL + "/{orderId}/order-status";
+
+    private final IntegrationTemplate integrationTemplate;
+
+    public OrderTemplate(IntegrationTemplate integrationTemplate) {
+        this.integrationTemplate = integrationTemplate;
+    }
 
     public ResponseEntity<Order> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         Order order = OrderFactory.builder()
@@ -19,7 +25,7 @@ public class OrderTemplate extends IntegrationTemplate {
             .orderLineItems(orderLineItems)
             .build();
 
-        return post(
+        return integrationTemplate.post(
             ORDER_URL,
             order,
             Order.class
@@ -27,14 +33,14 @@ public class OrderTemplate extends IntegrationTemplate {
     }
 
     public ResponseEntity<Order[]> list() {
-        return get(
+        return integrationTemplate.get(
             ORDER_URL,
             Order[].class
         );
     }
 
     public ResponseEntity<Order> changeOrderStatus(Long orderId, Order order) {
-        return put(
+        return integrationTemplate.put(
             ORDER_STATUS_URL,
             orderId,
             order,
