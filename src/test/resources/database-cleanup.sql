@@ -35,6 +35,15 @@ TRUNCATE TABLE order_table;
 TRUNCATE TABLE table_group;
 TRUNCATE TABLE product;
 
+ALTER TABLE orders AUTO_INCREMENT = 1;
+ALTER TABLE order_line_item AUTO_INCREMENT = 1;
+ALTER TABLE menu AUTO_INCREMENT = 1;
+ALTER TABLE menu_group AUTO_INCREMENT = 1;
+ALTER TABLE menu_product AUTO_INCREMENT = 1;
+ALTER TABLE order_table AUTO_INCREMENT = 1;
+ALTER TABLE table_group AUTO_INCREMENT = 1;
+ALTER TABLE product AUTO_INCREMENT = 1;
+
 ALTER TABLE orders
     ADD CONSTRAINT fk_orders_order_table
         FOREIGN KEY (order_table_id) REFERENCES order_table (id);
