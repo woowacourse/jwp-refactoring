@@ -17,6 +17,7 @@ import static kitchenpos.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -36,14 +37,7 @@ class ProductServiceTest {
         Product product = createProduct();
         when(productDao.save(any())).thenReturn(createProduct(1L));
 
-        Product actual = productService.create(product);
-
-        verify(productDao).save(any(Product.class));
-        assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isNotNull(),
-                () -> assertThat(actual.getPrice()).isNotNull()
-        );
+        assertDoesNotThrow(() -> productService.create(product));
     }
 
     @DisplayName("상품의 가격이 0원 미만일 경우 생성할 수 없다.")

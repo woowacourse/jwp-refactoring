@@ -23,7 +23,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,12 +43,7 @@ class TableServiceTest {
         OrderTable orderTable = createOrderTable();
         when(orderTableDao.save(any())).thenReturn(createOrderTable(1L));
 
-        OrderTable actual = tableService.create(orderTable);
-
-        verify(orderTableDao).save(any(OrderTable.class));
-        assertAll(
-                () -> assertThat(actual.getId()).isNotNull()
-        );
+        assertDoesNotThrow(() -> tableService.create(orderTable));
     }
 
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
@@ -62,7 +56,6 @@ class TableServiceTest {
 
         List<OrderTable> actual = tableService.list();
 
-        verify(orderTableDao).findAll();
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual).containsExactly(orderTable1, orderTable2)
@@ -124,7 +117,6 @@ class TableServiceTest {
             when(orderTableDao.save(any())).thenReturn(orderTable);
 
             assertDoesNotThrow(this::subject);
-            verify(orderTableDao).save(any());
         }
     }
 
@@ -178,7 +170,6 @@ class TableServiceTest {
             when(orderTableDao.save(any())).thenReturn(orderTable);
 
             assertDoesNotThrow(this::subject);
-            verify(orderTableDao).save(any());
         }
     }
 }

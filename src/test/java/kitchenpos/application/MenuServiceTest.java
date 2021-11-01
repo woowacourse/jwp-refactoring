@@ -26,8 +26,9 @@ import static kitchenpos.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -56,7 +57,6 @@ class MenuServiceTest {
 
         List<Menu> actual = menuService.list();
 
-        verify(menuDao).findAll();
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual).containsExactly(menu1, menu2)
@@ -131,16 +131,7 @@ class MenuServiceTest {
             when(menuDao.save(any())).thenReturn(createMenu(1L));
             when(menuProductDao.save(any())).thenReturn(createMenuProduct(product, 1));
 
-            Menu actual = menuService.create(menu);
-
-            verify(menuDao).save(any());
-            verify(menuProductDao, times(2)).save(any());
-            assertAll(
-                    () -> assertThat(actual).isNotNull(),
-                    () -> assertThat(actual.getId()).isNotNull(),
-                    () -> assertThat(actual.getMenuGroupId()).isNotNull(),
-                    () -> assertThat(actual.getMenuProducts()).hasSize(2)
-            );
+            assertDoesNotThrow(() -> menuService.create(menu));
         }
     }
 }

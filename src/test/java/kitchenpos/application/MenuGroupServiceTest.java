@@ -15,8 +15,7 @@ import java.util.List;
 import static kitchenpos.MenuFixture.createMenuGroup;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,11 +35,7 @@ class MenuGroupServiceTest {
 
         MenuGroup actual = menuGroupService.create(menuGroup);
 
-        verify(menuGroupDao).save(any(MenuGroup.class));
-        assertAll(
-                () -> assertThat(actual.getId()).isNotNull(),
-                () -> assertThat(actual.getName()).isNotNull()
-        );
+        assertDoesNotThrow(() -> menuGroupService.create(menuGroup));
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
@@ -52,7 +47,6 @@ class MenuGroupServiceTest {
 
         List<MenuGroup> actual = menuGroupService.list();
 
-        verify(menuGroupDao).findAll();
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual).containsExactly(menuGroup1, menuGroup2)

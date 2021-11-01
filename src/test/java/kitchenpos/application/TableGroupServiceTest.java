@@ -111,8 +111,6 @@ class TableGroupServiceTest {
             when(orderTableDao.save(any())).thenReturn(createOrderTable());
 
             assertDoesNotThrow(this::subject);
-            verify(tableGroupDao).save(any());
-            verify(orderTableDao, times(2)).save(any());
         }
     }
 

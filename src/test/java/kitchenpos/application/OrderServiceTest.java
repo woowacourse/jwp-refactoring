@@ -59,7 +59,6 @@ class OrderServiceTest {
 
         List<Order> actual = orderService.list();
 
-        verify(orderDao).findAll();
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual).containsExactly(order1, order2)
@@ -135,8 +134,6 @@ class OrderServiceTest {
             when(orderLineItemDao.save(any())).thenReturn(createOrderLineItem());
 
             assertDoesNotThrow(this::subject);
-            verify(orderDao).save(any());
-            verify(orderLineItemDao, times(2)).save(any());
         }
     }
 
@@ -184,7 +181,6 @@ class OrderServiceTest {
             when(orderLineItemDao.findAllByOrderId(any())).thenReturn(Arrays.asList(orderLineItem1, orderLineItem2));
 
             assertDoesNotThrow(this::subject);
-            verify(orderDao).save(any());
         }
     }
 }
