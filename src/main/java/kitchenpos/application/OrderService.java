@@ -2,21 +2,17 @@ package kitchenpos.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-import kitchenpos.dao.MenuRepository;
 import kitchenpos.dao.OrderLineItemRepository;
 import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderLineItemRequest;
 import kitchenpos.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrderService {
@@ -43,15 +39,27 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        final List<OrderLineItem> orderLineItems =
-            orderLineItemService.findAllByIds(orderRequest.getOrderLineItemIds());
+        OrderTable orderTable = orderTableService.findById(orderRequest.getOrderTableId());
+        OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
+
+        Order order = new Order(orderTable, orderStatus);
+
+        Order savedOrder = orderRepository.save(order);
+
+        List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+        for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
+            Menu menu = menuService.findById(orderLineItemRequest.getMenuId());
+            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemRequest.getQuantity());
+            orderLineItems.add(orderLineItem);
+
+        }
 
         menuService.checkCount(orderLineItems);
-        OrderTable orderTable = orderTableService.findOrderTable(orderRequest.getOrderTableId());
 
-        Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        orderLineItemService.saveAll(orderLineItems);
 
-        return orderRepository.save(order);
+        return savedOrder;
     }
 
     public List<Order> list() {

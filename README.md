@@ -10,7 +10,7 @@
 - [ ] POST 메뉴 생성
 - [ ] GET 메뉴 불러오기
 
-### Order(주문) `/api/orders`
+### Order(주문) `/api/order`
 - [ ] POST 주문 생성
 - [ ] GET 주문 불러오기
 - [ ] PUT `/{orderId}/order-status` 주문 수정하기

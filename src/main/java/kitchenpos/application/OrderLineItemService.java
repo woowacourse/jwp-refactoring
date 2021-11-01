@@ -28,4 +28,8 @@ public class OrderLineItemService {
 
         return orderLineItems;
     }
+
+    public void saveAll(List<OrderLineItem> orderLineItems) {
+        orderLineItemRepository.saveAll(orderLineItems);
+    }
 }

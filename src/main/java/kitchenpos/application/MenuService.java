@@ -80,4 +80,9 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
     }
+
+    public Menu findById(long menuId) {
+        return menuRepository.findById(menuId)
+            .orElseThrow(IllegalArgumentException::new);
+    }
 }

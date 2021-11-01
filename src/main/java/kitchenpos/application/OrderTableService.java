@@ -15,13 +15,13 @@ public class OrderTableService {
     }
 
 
-    public OrderTable findOrderTable(Long orderTableId) {
+    public OrderTable findById(Long orderTableId) {
         final OrderTable orderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
-
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+//
+//        if (orderTable.isEmpty()) {
+//            throw new IllegalArgumentException();
+//        }
 
         return orderTable;
     }

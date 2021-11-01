@@ -18,7 +18,7 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
     private final List<OrderTable> orderTables = new ArrayList<>();
 
     public TableGroup() {

@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +15,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 
-@Entity
+@Entity(name = "Orders")
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     private OrderTable orderTable;
     @Enumerated
@@ -29,8 +31,8 @@ public class Order {
     @CreationTimestamp
     private LocalDateTime orderedTime;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    private List<OrderLineItem> orderLineItem = new ArrayList<>();
 
     public Order() {
 
@@ -41,8 +43,8 @@ public class Order {
     }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus,
-        List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, orderStatus, orderLineItems);
+        List<OrderLineItem> orderLineItem) {
+        this(null, orderTable, orderStatus, orderLineItem);
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus) {
@@ -50,15 +52,15 @@ public class Order {
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus,
-        List<OrderLineItem> orderLineItems) {
+        List<OrderLineItem> orderLineItem) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderLineItems.addAll(orderLineItems);
+        this.orderLineItem.addAll(orderLineItem);
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems.addAll(orderLineItems);
+        this.orderLineItem.addAll(orderLineItems);
     }
 
     public void checkOrderStatus() {
@@ -83,8 +85,8 @@ public class Order {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItem> getOrderLineItem() {
+        return orderLineItem;
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

@@ -92,7 +92,7 @@ class OrderServiceTest {
     @Test
     void list() {
         List<Order> orders = new ArrayList<>();
-        orders.add(order);
+        orders.add(this.order);
 
         given(orderRepository.findAll())
             .willReturn(orders);

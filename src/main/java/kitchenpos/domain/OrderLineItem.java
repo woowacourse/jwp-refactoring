@@ -1,6 +1,8 @@
 package kitchenpos.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,16 +15,22 @@ public class OrderLineItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Order order;
 
-    @ManyToOne
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
     private long quantity;
 
     public OrderLineItem() {
 
+    }
+
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        this(null, order, menu, quantity);
     }
 
     public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {

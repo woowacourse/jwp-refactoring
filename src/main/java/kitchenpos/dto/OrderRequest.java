@@ -4,15 +4,19 @@ import java.util.List;
 
 public class OrderRequest {
 
-    private final Long orderTableId;
-    private final String orderStatus;
-    private final List<Long> orderLineItemIds;
+    private Long orderTableId;
+    private String orderStatus;
+    private List<OrderLineItemRequest> orderLineItemRequests;
+
+    public OrderRequest() {
+
+    }
 
     public OrderRequest(Long orderTableId, String orderStatus,
-        List<Long> orderLineItemIds) {
+        List<OrderLineItemRequest> orderLineItemRequests) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
-        this.orderLineItemIds = orderLineItemIds;
+        this.orderLineItemRequests = orderLineItemRequests;
     }
 
     public Long getOrderTableId() {
@@ -23,7 +27,7 @@ public class OrderRequest {
         return orderStatus;
     }
 
-    public List<Long> getOrderLineItemIds() {
-        return orderLineItemIds;
+    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+        return orderLineItemRequests;
     }
 }
