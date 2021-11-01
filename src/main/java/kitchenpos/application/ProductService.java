@@ -30,19 +30,23 @@ public class ProductService {
     public List<Product> list() {
         return productRepository.findAll();
     }
+//
+//    public void checkPrice(List<Product> products, Menu menu) {
+//        BigDecimal sum = BigDecimal.ZERO;
+//        for (final Product product : products) {
+//
+//            sum = sum
+//                .add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+//        }
+//
+//        BigDecimal price = menu.getPrice();
+//        if (price.compareTo(sum) > 0) {
+//            throw new IllegalArgumentException();
+//        }
+//    }
 
-    public void checkPrice(List<MenuProduct> menuProducts, Menu menu) {
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = productRepository.findById(menuProduct.getProduct().getId())
-                .orElseThrow(IllegalArgumentException::new);
-            sum = sum
-                .add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        BigDecimal price = menu.getPrice();
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+    public Product findById(Long id) {
+        return productRepository.findById(id)
+            .orElseThrow(IllegalArgumentException::new);
     }
 }

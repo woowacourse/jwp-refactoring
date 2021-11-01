@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import kitchenpos.dao.MenuProductRepository;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,5 +37,13 @@ public class MenuProductService {
 
     public List<MenuProduct> findAllByMenu(Menu menu) {
         return menuProductRepository.findAllByMenu(menu);
+    }
+
+    public List<MenuProduct> saveAll(Menu menu, List<Product> products, long quantity) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
+        for (Product product : products) {
+            menuProducts.add(new MenuProduct(menu, product, quantity));
+        }
+        return menuProductRepository.saveAll(menuProducts);
     }
 }

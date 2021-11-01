@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
@@ -9,7 +10,7 @@ import javax.persistence.ManyToOne;
 public class OrderLineItem {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @ManyToOne
@@ -17,6 +18,7 @@ public class OrderLineItem {
 
     @ManyToOne
     private Menu menu;
+
     private long quantity;
 
     public OrderLineItem() {

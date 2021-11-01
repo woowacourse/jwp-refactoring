@@ -4,16 +4,22 @@ import java.util.List;
 
 public class MenuRequest {
 
-    private final String name;
-    private final double price;
-    private final Long menuGroupId;
-    private final List<Long> menuProductIds;
+    private String name;
+    private double price;
+    private Long menuGroupId;
+    private List<Long> productIds;
+    private long quantity;
 
-    public MenuRequest(String name, double price, Long menuGroupId, List<Long> menuProductIds) {
+    public MenuRequest() {
+
+    }
+
+    public MenuRequest(String name, double price, Long menuGroupId, List<Long> productIds, long quantity) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProductIds = menuProductIds;
+        this.productIds = productIds;
+        this.quantity = quantity;
     }
 
     public String getName() {
@@ -28,7 +34,11 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<Long> getMenuProductIds() {
-        return menuProductIds;
+    public List<Long> getProductIds() {
+        return productIds;
+    }
+
+    public long getQuantity() {
+        return quantity;
     }
 }

@@ -3,10 +3,12 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,11 +18,11 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Order {
 
     @Id
-    @GeneratedValue
-    private final Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    private final OrderTable orderTable;
+    private OrderTable orderTable;
     @Enumerated
     private OrderStatus orderStatus;
 
@@ -28,7 +30,11 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private final List<OrderLineItem> orderLineItems;
+    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+    public Order() {
+
+    }
 
     public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this(orderTable, orderStatus, new ArrayList<>());
@@ -48,11 +54,17 @@ public class Order {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
+        this.orderLineItems.addAll(orderLineItems);
     }
 
     public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
         this.orderLineItems.addAll(orderLineItems);
+    }
+
+    public void checkOrderStatus() {
+        if (Objects.equals(OrderStatus.COMPLETION, this.orderStatus)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
@@ -75,7 +87,8 @@ public class Order {
         return orderLineItems;
     }
 
-    public void changeOrderStatus(String name) {
-        this.orderStatus = OrderStatus.valueOf(name);
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        checkOrderStatus();
+        this.orderStatus = orderStatus;
     }
 }
