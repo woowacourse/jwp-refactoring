@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
@@ -16,8 +15,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.generator.MenuGenerator;
-import kitchenpos.generator.MenuGroupGenerator;
 import kitchenpos.generator.OrderGenerator;
 import kitchenpos.generator.TableGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +34,7 @@ public class OrderApiTest extends ApiTest {
     private static final String BASE_URL = "/api/orders";
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private JdbcTemplateMenuDao menuDao;
@@ -60,7 +59,7 @@ public class OrderApiTest extends ApiTest {
     void setUp() throws SQLException {
         super.setUp();
 
-        menuGroup = menuGroupDao.save(MenuGroupGenerator.newInstance("두마리메뉴"));
+        menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         menu = menuDao.save(MenuGenerator.newInstance("후라이드치킨", 16000, menuGroup.getId()));
         orderTable = orderTableDao.save(TableGenerator.newInstance(0, false));
         order = orderDao.save(OrderGenerator.newInstance(

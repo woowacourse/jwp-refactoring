@@ -8,15 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.dao.JdbcTemplateMenuDao;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateMenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.generator.MenuGenerator;
-import kitchenpos.generator.MenuGroupGenerator;
 import org.assertj.core.util.BigDecimalComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +29,7 @@ public class MenuApiTest extends ApiTest {
     private static final String BASE_URL = "/api/menus";
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
     private ProductRepository productRepository;
@@ -54,7 +53,7 @@ public class MenuApiTest extends ApiTest {
         menus = new ArrayList<>();
         menuProducts = new ArrayList<>();
 
-        menuGroup = menuGroupDao.save(MenuGroupGenerator.newInstance("두마리메뉴"));
+        menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
 
         products.add(productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000))));
         products.add(productRepository.save(new Product("양념치킨", BigDecimal.valueOf(16000))));
@@ -99,7 +98,7 @@ public class MenuApiTest extends ApiTest {
         assertThat(response.getId()).isNotNull();
         assertThat(response.getId()).isEqualTo(response.getMenuProducts().get(0).getMenuId());
         assertThat(response).usingComparatorForType(
-            BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
+                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
                 BigDecimal.class
             ).usingRecursiveComparison()
             .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")

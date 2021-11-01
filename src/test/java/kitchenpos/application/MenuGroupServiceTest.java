@@ -8,9 +8,11 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
+import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.generator.MenuGroupGenerator;
+import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -19,7 +21,7 @@ import org.mockito.Mock;
 public class MenuGroupServiceTest extends ServiceTest {
 
     @Mock
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
@@ -27,27 +29,42 @@ public class MenuGroupServiceTest extends ServiceTest {
     @DisplayName("메뉴 그룹 등록")
     @Test
     void create() {
-        when(menuGroupDao.save(any(MenuGroup.class))).thenAnswer(
-            invocation -> invocation.getArgument(0)
+        Long idToSave = 1L;
+        when(menuGroupRepository.save(any(MenuGroup.class))).thenAnswer(invocation -> {
+                MenuGroup menuGroup = invocation.getArgument(0);
+                return new MenuGroup(idToSave, menuGroup.getName());
+            }
         );
 
-        MenuGroup menuGroup = MenuGroupGenerator.newInstance("추천메뉴");
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupRequest request = new MenuGroupRequest("추천메뉴");
+        MenuGroupResponse actual = menuGroupService.create(request);
+        MenuGroupResponse expected = MenuGroupResponse.from(
+            new MenuGroup(idToSave, request.getName())
+        );
 
-        verify(menuGroupDao, times(1)).save(menuGroup);
-        assertThat(actual).isEqualTo(menuGroup);
+        verify(menuGroupRepository, times(1)).save(any(MenuGroup.class));
+        assertThat(actual).usingRecursiveComparison()
+            .isEqualTo(expected);
     }
 
     @DisplayName("메뉴 그룹 목록 조회")
     @Test
     void list() {
-        List<MenuGroup> expected = Arrays.asList(new MenuGroup(), new MenuGroup(), new MenuGroup());
-        when(menuGroupDao.findAll()).thenReturn(expected);
+        List<MenuGroup> menuGroups = Arrays.asList(
+            new MenuGroup(1L, "두마리메뉴"),
+            new MenuGroup(2L, "한마리메뉴"),
+            new MenuGroup(3L, "순살파닭두마리메뉴")
+        );
+        when(menuGroupRepository.findAll()).thenReturn(menuGroups);
 
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
+        List<MenuGroupResponse> expected = menuGroups.stream()
+            .map(MenuGroupResponse::from)
+            .collect(Collectors.toList());
 
-        verify(menuGroupDao, times(1)).findAll();
+        verify(menuGroupRepository, times(1)).findAll();
         assertThat(actual).hasSameSizeAs(expected)
+            .usingRecursiveFieldByFieldElementComparator()
             .containsExactlyElementsOf(expected);
     }
 }

@@ -13,11 +13,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.generator.MenuGenerator;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +31,7 @@ public class MenuServiceTest extends ServiceTest {
     private MenuDao menuDao;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Mock
     private MenuProductDao menuProductDao;
@@ -70,7 +70,7 @@ public class MenuServiceTest extends ServiceTest {
                 (int) menuProduct.getQuantity()
             );
         });
-        when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
+        when(menuGroupRepository.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
         when(productRepository.findById(1L)).thenAnswer(invocation ->
             Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
         );
@@ -119,7 +119,7 @@ public class MenuServiceTest extends ServiceTest {
             1L,
             Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2))
         );
-        when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
+        when(menuGroupRepository.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
         when(productRepository.findById(1L)).thenAnswer(
             invocation -> Optional.of(new Product(1L, "후라이드", BigDecimal.valueOf(16000)))
         );
@@ -134,7 +134,7 @@ public class MenuServiceTest extends ServiceTest {
     void createWithNotFoundMenuGroup() {
         Menu menuToCreate = MenuGenerator.newInstance("후라이드+후라이드", 19000, 1L,
             Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2)));
-        when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(false);
+        when(menuGroupRepository.existsById(menuToCreate.getMenuGroupId())).thenReturn(false);
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(
             IllegalArgumentException.class);
@@ -145,7 +145,7 @@ public class MenuServiceTest extends ServiceTest {
     void createWithNotFoundProduct() {
         Menu menuToCreate = MenuGenerator.newInstance("후라이드+후라이드", 19000, 1L,
             Collections.singletonList(MenuGenerator.newMenuProduct(1L, 2)));
-        when(menuGroupDao.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
+        when(menuGroupRepository.existsById(menuToCreate.getMenuGroupId())).thenReturn(true);
         when(productRepository.findById(1L)).thenAnswer(invocation -> Optional.empty());
 
         assertThatThrownBy(() -> menuService.create(menuToCreate)).isExactlyInstanceOf(

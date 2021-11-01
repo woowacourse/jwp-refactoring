@@ -5,9 +5,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.generator.MenuGroupGenerator;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,7 @@ public class MenuGroupApiTest extends ApiTest {
     private static final String BASE_URL = "/api/menu-groups";
 
     @Autowired
-    private JdbcTemplateMenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     private List<MenuGroup> menuGroups;
 
@@ -30,14 +29,14 @@ public class MenuGroupApiTest extends ApiTest {
         super.setUp();
         menuGroups = new ArrayList<>();
 
-        menuGroups.add(menuGroupDao.save(MenuGroupGenerator.newInstance("두마리메뉴")));
-        menuGroups.add(menuGroupDao.save(MenuGroupGenerator.newInstance("한마리메뉴")));
+        menuGroups.add(menuGroupRepository.save(new MenuGroup("두마리메뉴")));
+        menuGroups.add(menuGroupRepository.save(new MenuGroup("한마리메뉴")));
     }
 
     @DisplayName("메뉴 그룹 등록")
     @Test
     void postMenuGroup() {
-        MenuGroup request = MenuGroupGenerator.newInstance("추천메뉴");
+        MenuGroup request = new MenuGroup("추천메뉴");
 
         ResponseEntity<MenuGroup> responseEntity = testRestTemplate.postForEntity(
             BASE_URL,
