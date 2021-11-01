@@ -58,8 +58,7 @@ public class MenuService {
 
         final Menu savedMenu = menuRepository.save(menu);
 
-        savedMenu.addMenuProducts(
-            menuProductService.saveAll(savedMenu, products, menuRequest.getQuantity()));
+        menuProductService.saveAll(savedMenu, products, menuRequest.getQuantity());
 
         return savedMenu;
     }
