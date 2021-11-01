@@ -39,17 +39,17 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void createPost() {
             // given
-            OrderTable orderTable = OrderTable을_생성한다(2);
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            OrderTable orderTable = HTTP_요청을_통해_OrderTable을_생성한다(2);
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-            Menu menu2 = Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+            Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -76,17 +76,17 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void noOrderLineItem() {
             // given
-            OrderTable orderTable = OrderTable을_생성한다(2);
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            OrderTable orderTable = HTTP_요청을_통해_OrderTable을_생성한다(2);
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            Menu menu = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
 
             Order order = Order를_생성한다(orderTable.getId(), new ArrayList<>());
 
@@ -108,17 +108,17 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void orderLineItemCountNonMatchWithMenu() {
             // given
-            OrderTable orderTable = OrderTable을_생성한다(2);
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            OrderTable orderTable = HTTP_요청을_통해_OrderTable을_생성한다(2);
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            Menu menu = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu.getId(), 1);
@@ -143,16 +143,16 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void orderTableNotFound() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-            Menu menu2 = Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+            Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -177,18 +177,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void orderTableStatusEmpty() {
             // given
-            OrderTable orderTable = OrderTable을_생성한다(2, true);
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            OrderTable orderTable = HTTP_요청을_통해_OrderTable을_생성한다(2, true);
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-            Menu menu2 = Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+            Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -256,7 +256,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void alreadyCompletionStatusException() {
             // given
-            Order order = httpRequest를_통해_Order를_생성한다();
+            Order order = HTTP_요청을_통해_Order를_생성한다();
             Order statusOrder = Status_변화용_Order를_생성한다(COMPLETION);
 
             putRequestWithBody(String.format("/api/orders/%d/order-status", order.getId()), statusOrder);
@@ -279,7 +279,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         @Test
         void success() {
             // given
-            Order order = httpRequest를_통해_Order를_생성한다();
+            Order order = HTTP_요청을_통해_Order를_생성한다();
             Order statusOrder = Status_변화용_Order를_생성한다(COMPLETION);
 
             // when
@@ -301,18 +301,18 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    private Order httpRequest를_통해_Order를_생성한다() {
-        OrderTable orderTable = OrderTable을_생성한다(2);
-        MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+    private Order HTTP_요청을_통해_Order를_생성한다() {
+        OrderTable orderTable = HTTP_요청을_통해_OrderTable을_생성한다(2);
+        MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-        Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-        Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+        Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+        Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
         MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
         MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
         List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-        Menu menu1 = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-        Menu menu2 = Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+        Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+        Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
         OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
         OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -338,11 +338,11 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return order;
     }
 
-    private OrderTable OrderTable을_생성한다(int numberOfGuests) {
-        return OrderTable을_생성한다(numberOfGuests, false);
+    private OrderTable HTTP_요청을_통해_OrderTable을_생성한다(int numberOfGuests) {
+        return HTTP_요청을_통해_OrderTable을_생성한다(numberOfGuests, false);
     }
 
-    private OrderTable OrderTable을_생성한다(int numberOfGuests, boolean isEmpty) {
+    private OrderTable HTTP_요청을_통해_OrderTable을_생성한다(int numberOfGuests, boolean isEmpty) {
         OrderTable orderTable = new OrderTable();
         orderTable.setNumberOfGuests(numberOfGuests);
         orderTable.setEmpty(isEmpty);
@@ -358,7 +358,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return orderLineItem;
     }
 
-    private Menu Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    private Menu HTTP_요청을_통해_Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setName(name);
         menu.setPrice(BigDecimal.valueOf(price));
@@ -368,7 +368,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return postRequestWithBody("/api/menus", menu).as(Menu.class);
     }
 
-    private MenuGroup MenuGroup을_생성한다(String name) {
+    private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
@@ -383,7 +383,7 @@ public class OrderAcceptanceTest extends AcceptanceTest {
         return menuProduct;
     }
 
-    private Product Product를_생성한다(String name, int price) {
+    private Product HTTP_요청을_통해_Product를_생성한다(String name, int price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));

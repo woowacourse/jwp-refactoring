@@ -31,10 +31,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNull() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -60,10 +60,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNegative() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -89,8 +89,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void noExistMenuGroupId() {
             // given
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -116,7 +116,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void noExistProduct() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(-1L, 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(-2L, 1);
@@ -142,10 +142,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void menuPriceNotMatch() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -171,10 +171,10 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void success() {
             // given
-            MenuGroup menuGroup = MenuGroup을_생성한다("엄청난 그룹");
+            MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = Product를_생성한다("치즈버거", 1_600);
+            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -231,7 +231,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         return menu;
     }
 
-    private MenuGroup MenuGroup을_생성한다(String name) {
+    private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(name);
 
@@ -246,7 +246,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         return menuProduct;
     }
 
-    private Product Product를_생성한다(String name, int price) {
+    private Product HTTP_요청을_통해_Product를_생성한다(String name, int price) {
         Product product = new Product();
         product.setName(name);
         product.setPrice(BigDecimal.valueOf(price));
