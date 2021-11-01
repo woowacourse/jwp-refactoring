@@ -118,7 +118,7 @@ class OrderServiceTest {
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 6_600, menuGroup.getId(), menuProducts));
+            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -145,7 +145,7 @@ class OrderServiceTest {
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 6_600, menuGroup.getId(), menuProducts));
+            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -172,7 +172,7 @@ class OrderServiceTest {
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 6_600, menuGroup.getId(), menuProducts));
+            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -263,7 +263,7 @@ class OrderServiceTest {
         List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
         Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-        Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 6_600, menuGroup.getId(), menuProducts));
+        Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
 
         OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
         OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
