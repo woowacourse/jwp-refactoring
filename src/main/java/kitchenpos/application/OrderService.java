@@ -59,7 +59,8 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
 
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw
+                new IllegalArgumentException();
         }
 
         order.setOrderTableId(orderTable.getId());

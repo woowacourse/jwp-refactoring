@@ -79,6 +79,14 @@ public class JdbcTemplateOrderDao implements OrderDao {
         return jdbcTemplate.queryForObject(sql, parameters, Boolean.class);
     }
 
+    @Override
+    public int deleteAll(){
+        final String sql = "DELETE orders";
+        final SqlParameterSource parameters = new MapSqlParameterSource();
+
+        return jdbcTemplate.update(sql, parameters);
+    }
+
     private Order select(final Long id) {
         final String sql = "SELECT id, order_table_id, order_status, ordered_time FROM orders WHERE id = (:id)";
         final SqlParameterSource parameters = new MapSqlParameterSource()

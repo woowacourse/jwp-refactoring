@@ -15,4 +15,6 @@ public interface OrderDao {
     boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId, List<String> orderStatuses);
 
     boolean existsByOrderTableIdInAndOrderStatusIn(List<Long> orderTableIds, List<String> orderStatuses);
+
+    int deleteAll();
 }
