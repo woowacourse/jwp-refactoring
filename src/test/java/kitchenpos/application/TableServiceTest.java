@@ -189,7 +189,7 @@ public class TableServiceTest {
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);
 
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
         tableService.changeEmpty(1L, notEmptyTable);
         order.setOrderTableId(1L);
 

@@ -27,6 +27,10 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public OrderTable(Long id) {
+        this(id, null, 0, false);
+    }
+
     public Long getId() {
         return id;
     }

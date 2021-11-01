@@ -195,7 +195,7 @@ class TableGroupServiceTest {
         orderLineItem.setMenuId(1L);
         orderLineItem.setQuantity(1);
 
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
         order.setOrderTableId(1L);
 
         return orderService.create(order);

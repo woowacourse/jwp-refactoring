@@ -21,16 +21,25 @@ public class Order {
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order")
-    private final List<OrderLineItem> orderLineItems = new ArrayList<>();
+    private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
-    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
+    }
+
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+    }
+
+    public Order(String orderStatus) {
+        this(null, null, OrderStatus.valueOf(orderStatus).name(), null, null);
     }
 
     public Long getId() {
@@ -51,5 +60,21 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public Long getOrderTableId() {
+        return orderTable.getId();
+    }
+
+    public void enrollId(Long id) {
+        this.id = id;
+    }
+
+    public void enrollOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
+    }
+
+    public void changeStatus(String status) {
+        this.orderStatus = status;
     }
 }

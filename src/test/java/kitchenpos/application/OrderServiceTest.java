@@ -56,7 +56,7 @@ class OrderServiceTest {
         order.setOrderTableId(1L);
 
         //when
-        order.setOrderLineItems(Collections.emptyList());
+        order.enrollOrderLineItems(Collections.emptyList());
 
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -71,7 +71,7 @@ class OrderServiceTest {
         order.setOrderTableId(1L);
 
         //when
-        order.setOrderLineItems(Arrays.asList(orderLineItem, orderLineItem));
+        order.enrollOrderLineItems(Arrays.asList(orderLineItem, orderLineItem));
 
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -83,7 +83,7 @@ class OrderServiceTest {
     public void emptyOrderTableOrderException() {
         //given
         Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
 
         //when
         order.setOrderTableId(1L);
@@ -193,7 +193,7 @@ class OrderServiceTest {
 
     private Order creatableOrder() {
         Order order = new Order();
-        order.setOrderLineItems(Collections.singletonList(orderLineItem));
+        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
         tableService.changeEmpty(1L, notEmptyTable);
         order.setOrderTableId(1L);
 

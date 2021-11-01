@@ -9,11 +9,11 @@ public class MenuGroupCreateRequest {
     protected MenuGroupCreateRequest() {
     }
 
-    public String getName() {
-        return name;
-    }
-
     public MenuGroup toEntity() {
         return new MenuGroup(name);
+    }
+
+    public String getName() {
+        return name;
     }
 }

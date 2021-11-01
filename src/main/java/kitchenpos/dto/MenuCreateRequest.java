@@ -19,6 +19,20 @@ public class MenuCreateRequest {
     protected  MenuCreateRequest() {
     }
 
+    public Menu toEntity() {
+        return new Menu(
+                name,
+                price,
+                new MenuGroup(menuGroupId),
+                this.menuProducts.stream()
+                        .map(product -> new MenuProduct(
+                                new Product(product.productId),
+                                product.quantity)
+                        )
+                        .collect(Collectors.toList())
+        );
+    }
+
     public String getName() {
         return name;
     }
@@ -33,20 +47,6 @@ public class MenuCreateRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
-    }
-
-    public Menu toEntity() {
-        return new Menu(
-                name,
-                price,
-                new MenuGroup(menuGroupId),
-                this.menuProducts.stream()
-                    .map(product -> new MenuProduct(
-                            new Product(product.productId),
-                            product.quantity)
-                    )
-                    .collect(Collectors.toList())
-        );
     }
 
     public static class MenuProductRequest {
