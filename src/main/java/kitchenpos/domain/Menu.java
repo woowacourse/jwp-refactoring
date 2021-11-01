@@ -1,8 +1,7 @@
 package kitchenpos.domain;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -26,27 +25,41 @@ public class Menu {
     @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts;
 
-    private String name;
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup,
+    private String name;
+
+    public Menu(Long id, String name, Price price, MenuGroup menuGroup,
         List<MenuProduct> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+
+        validatePrice(menuProducts);
+        for (MenuProduct menuProduct : menuProducts) {
+            menuProduct.belongsTo(this);
+        }
+    }
+
+    public Menu(String name, Price price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroup, menuProducts);
     }
 
     public Menu() {
     }
 
-    public static Menu newOf(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu(null, name, price, menuGroup, menuProducts);
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.belongsTo(menu);
+    private void validatePrice(List<MenuProduct> menuProducts) {
+        Price sum = menuProducts.stream()
+            .map(it -> it.getProduct().getPrice())
+            .reduce(Price::sum)
+            .orElseGet(() -> Price.ZERO);
+
+        if (price.isGreater(sum)) {
+            throw new IllegalStateException("메뉴의 가격은 상품들의 가격 합보다 클 수 없습니다.");
         }
-        return menu;
     }
 
     public Long getId() {
@@ -65,7 +78,7 @@ public class Menu {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 }

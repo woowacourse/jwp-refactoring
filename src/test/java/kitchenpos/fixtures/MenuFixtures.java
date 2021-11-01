@@ -9,6 +9,7 @@ import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 
 public class MenuFixtures {
@@ -27,7 +28,7 @@ public class MenuFixtures {
         MenuGroup menuGroup,
         List<MenuProduct> menuProducts
     ) {
-        return new Menu(id, name, BigDecimal.valueOf(price * 100, 2), menuGroup, menuProducts);
+        return new Menu(id, name, new Price(BigDecimal.valueOf(price)), menuGroup, menuProducts);
     }
 
     public static Menu createMenu() {

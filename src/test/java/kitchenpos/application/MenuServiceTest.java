@@ -77,25 +77,6 @@ public class MenuServiceTest extends ServiceTest {
     }
 
     @Test
-    void 생성_시_가격이_음수이면_예외를_반환한다() {
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(createMenuRequest(createMenu(-1))));
-    }
-
-    @Test
-    void 생성_시_가격이_메뉴_상품들의_가격보다_크면_예외를_반환한다() {
-        List<MenuProduct> menuProducts = MenuFixtures.createMenu().getMenuProducts();
-        BigDecimal price = ProductFixtures.createProduct().getPrice();
-        int priceSum = menuProducts.size() * price.intValue();
-        given(menuGroupRepository.findById(any())).willReturn(Optional.of(MenuGroupFixtures.createMenuGroup()));
-        given(productRepository.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> menuService.create(createMenuRequest(createMenu(priceSum + 1)))
-        );
-    }
-
-    @Test
     void 메뉴_리스트를_반환한다() {
         given(menuRepository.findAll()).willReturn(Collections.singletonList(menu));
 

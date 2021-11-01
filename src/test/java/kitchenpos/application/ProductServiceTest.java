@@ -41,13 +41,6 @@ class ProductServiceTest extends ServiceTest {
     }
 
     @Test
-    void 생성_시_가격이_음수이면_예외를_반환한다() {
-        ProductRequest invalidRequest = ProductFixtures.createProductRequest(-1);
-
-        assertThrows(IllegalArgumentException.class, () -> productService.create(invalidRequest));
-    }
-
-    @Test
     void 상품_리스트를_반환한다() {
         given(productRepository.findAll()).willReturn(Collections.singletonList(product));
 

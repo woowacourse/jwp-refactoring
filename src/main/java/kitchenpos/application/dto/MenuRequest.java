@@ -1,15 +1,15 @@
 package kitchenpos.application.dto;
 
-import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.domain.Price;
 
 public class MenuRequest {
     private String name;
-    private BigDecimal price;
+    private Price price;
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroupId,
+    public MenuRequest(String name, Price price, Long menuGroupId,
         List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
@@ -24,7 +24,7 @@ public class MenuRequest {
         return name;
     }
 
-    public BigDecimal getPrice() {
+    public Price getPrice() {
         return price;
     }
 

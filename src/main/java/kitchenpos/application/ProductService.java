@@ -20,11 +20,11 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
+//        final BigDecimal price = request.getPrice();
+//
+//        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+//            throw new IllegalArgumentException();
+//        }
 
         return ProductResponse.of(productRepository.save(request.toEntity()));
     }

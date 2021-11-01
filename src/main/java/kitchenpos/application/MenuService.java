@@ -1,16 +1,14 @@
 package kitchenpos.application;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import kitchenpos.application.dto.MenuRequest;
 import kitchenpos.application.dto.MenuResponse;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.Price;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
@@ -39,14 +37,9 @@ public class MenuService {
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        final BigDecimal price = request.getPrice();
-
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
             .orElseThrow(NoSuchElementException::new);
+
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
             .map(it -> new MenuProduct(
                 productRepository.findById(it.getProductId()).orElseThrow(NoSuchElementException::new),
@@ -55,18 +48,8 @@ public class MenuService {
             )
             .collect(Collectors.toList());
 
-        BigDecimal sum = BigDecimal.ZERO;
-        for (final MenuProduct menuProduct : menuProducts) {
-            final Product product = menuProduct.getProduct();
-            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
-
         final Menu savedMenu = menuRepository.save(
-            Menu.newOf(request.getName(), request.getPrice(), menuGroup, menuProducts)
+            new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts)
         );
         menuProductRepository.saveAll(menuProducts);
 
