@@ -2,10 +2,6 @@ package kitchenpos.integration;
 
 import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.application.response.TableGroupResponse;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.api.TableGroupApi;
 import kitchenpos.integration.utils.MockMvcResponse;

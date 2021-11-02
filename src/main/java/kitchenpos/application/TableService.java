@@ -38,12 +38,7 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        final Optional<Order> unableEmpty = savedOrderTable.getOrders()
-            .stream()
-            .filter(Order::unableUngroup)
-            .findAny();
-
-        if (unableEmpty.isPresent()) {
+        if (savedOrderTable.isChangeable()) {
             throw new IllegalArgumentException();
         }
 

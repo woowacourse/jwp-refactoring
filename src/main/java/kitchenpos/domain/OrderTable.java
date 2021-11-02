@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -96,5 +97,13 @@ public class OrderTable {
     public void startOrder(Order order) {
         this.orders.add(order);
         order.startOrder(this);
+    }
+
+    public boolean isChangeable() {
+        return orders
+            .stream()
+            .filter(Order::unableUngroup)
+            .findAny()
+            .isPresent();
     }
 }
