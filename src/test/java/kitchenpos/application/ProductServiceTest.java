@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -9,6 +10,8 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.factory.ProductFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,25 +47,29 @@ class ProductServiceTest {
 
         private Product savedProduct;
 
+        private ProductRequest productRequest;
+
         @BeforeEach
         void setUp() {
             product = ProductFactory.builder()
                 .price(new BigDecimal(17000))
                 .build();
+
             savedProduct = ProductFactory.copy(product)
                 .id(1L)
                 .build();
 
+            productRequest = ProductFactory.dto(product);
         }
 
         @DisplayName("Product 를 생성한다")
         @Test
         void create() {
             // given
-            given(productDao.save(product)).willReturn(savedProduct);
+            given(productDao.save(refEq(product))).willReturn(savedProduct);
 
             // when
-            Product result = productService.create(product);
+            ProductResponse result = productService.create(productRequest);
 
             // then
             assertThat(result)
@@ -77,9 +84,10 @@ class ProductServiceTest {
             product = ProductFactory.copy(product)
                 .price(null)
                 .build();
+            productRequest = ProductFactory.dto(product);
 
             // when
-            ThrowingCallable throwingCallable = () -> productService.create(product);
+            ThrowingCallable throwingCallable = () -> productService.create(productRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -93,9 +101,10 @@ class ProductServiceTest {
             product = ProductFactory.copy(product)
                 .price(new BigDecimal(-1))
                 .build();
+            productRequest = ProductFactory.dto(product);
 
             // when
-            ThrowingCallable throwingCallable = () -> productService.create(product);
+            ThrowingCallable throwingCallable = () -> productService.create(productRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
