@@ -1,6 +1,5 @@
 package kitchenpos.factory;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;

@@ -3,7 +3,6 @@ package kitchenpos.integration.templates;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
-import kitchenpos.factory.OrderTableFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderLineItemRequest;
-import kitchenpos.dto.OrderLineItemResponse;
 
 public class OrderLineItemFactory {
 

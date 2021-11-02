@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.integration.annotation.IntegrationTest;

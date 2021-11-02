@@ -28,7 +28,7 @@
   - [x] Product
   - [x] OrderTable
   - [x] TableGroup
-  - [ ] Order
+  - [x] Order
   - [ ] Menu
   - [ ] MenuGroup
 - [ ] JPA 로 마이그레이션, Repository 적용
