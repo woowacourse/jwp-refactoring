@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.factory.KitchenPosFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    private static final Product standardProduct = new Product();
-    private static final List<Product> standardProducts = new ArrayList<>();
+    private static final Product standardProduct = KitchenPosFactory.getStandardProduct();
+    private static final List<Product> standardProducts = KitchenPosFactory.getStandardProducts();
 
     @Mock
     private ProductDao productDao;
@@ -33,11 +34,8 @@ class ProductServiceTest {
     private ProductService productService;
 
     @BeforeAll
-    static void beforeSetUp() {
-        standardProduct.setId(1L);
-        standardProduct.setName("상품 이름");
-        standardProduct.setPrice(new BigDecimal(1000));
-        standardProducts.add(standardProduct);
+    static void beforeSetup() {
+
     }
 
     @Test

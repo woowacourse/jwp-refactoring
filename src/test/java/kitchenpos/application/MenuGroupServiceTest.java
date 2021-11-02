@@ -5,8 +5,10 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.factory.KitchenPosFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,21 +20,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
 
-    private static final MenuGroup standardMenuGroup = new MenuGroup();
-    private static final List<MenuGroup> standardMenuGroups = new ArrayList<>();
+    private static final MenuGroup standardMenuGroup = KitchenPosFactory.getStandardMenuGroup();
+    private static final List<MenuGroup> standardMenuGroups = KitchenPosFactory.getStandardMenuGroups();
 
     @Mock
     private MenuGroupDao menuGroupDao;
 
     @InjectMocks
     private MenuGroupService menuGroupService;
-
-    @BeforeAll
-    static void beforeSetUp() {
-        standardMenuGroup.setId(1L);
-        standardMenuGroup.setName("메뉴이름");
-        standardMenuGroups.add(standardMenuGroup);
-    }
 
     @Test
     @DisplayName("그룹 생성 테스트")

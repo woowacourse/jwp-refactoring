@@ -12,15 +12,14 @@
 
 ### 메뉴
 
-- [ ] 메뉴 생성
-  - [ ] id, name, price, menuGroup, menuProducts로 구성됨
-  - [ ] 가격이 비어있거나 0보다 작으면 에러 처리
-  - [ ] 메뉴그룹ID가 없다면 에러처리
-  - [ ] 문제없는 연산을 위한 BigDecimal을 이용해 계산한다.
-  - [ ] MenuProducts는 seq, menuId, ProductId, quantity로 구성됨
-  - [ ] ProductId가 없다면 에러 처리
-  - [ ] 메뉴의 합과 db에서 가져온 데이터의 합이 다르다면 에러처리
-- [ ] 모든 메뉴 가져오기
+- [x] 메뉴 생성
+  - [x] id, name, price, menuGroup, menuProducts로 구성됨
+  - [x] 메뉴가격이 비어있거나 0보다 작으면 에러 처리
+  - [x] 메뉴그룹ID가 없다면 에러처리
+  - [x] MenuProducts는 seq, menuId, ProductId, quantity로 구성됨
+  - [x] ProductId가 db에 없다면 에러 처리
+  - [x] 메뉴의 합이 db에서 가져온 상품의의 합보다 크다면 에러처리
+- [x] 모든 메뉴 가져오기
 
 
 
@@ -75,7 +74,7 @@
   - [ ] db에 저장된 테이블 정보와 다르다면 에러 처리.
   - [ ] 이미 id가 지정되어 있다면 에러처리
 - [ ] 그룹 해제
-  - [ ] 식사중이나 요리중이면 에러 처리
+  - [ ] 식사중이거나 요리중이면 에러 처리
 
 
 
