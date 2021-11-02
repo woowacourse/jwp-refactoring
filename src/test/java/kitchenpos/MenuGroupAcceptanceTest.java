@@ -16,12 +16,9 @@ import org.springframework.http.MediaType;
 @DisplayName("메뉴 그룹 기능")
 public class MenuGroupAcceptanceTest extends ApplicationTest {
 
-    private final MenuGroup 기본_메뉴_그룹 = new MenuGroup();
-
     @BeforeEach
     public void setUp() {
         super.setUp();
-        기본_메뉴_그룹.setName("기본메뉴그룹");
         메뉴_그룹_생성(기본_메뉴_그룹);
     }
 
@@ -38,7 +35,6 @@ public class MenuGroupAcceptanceTest extends ApplicationTest {
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
-        assertThat(menuGroup).usingRecursiveComparison().ignoringFields("id").isEqualTo(responseMenuGroup);
     }
 
     @DisplayName("전체 메뉴그룹을 불러오는데 성공하면, 200 응답을 받는다.")
@@ -56,7 +52,7 @@ public class MenuGroupAcceptanceTest extends ApplicationTest {
         assertThat(menuGroups).hasSize(5);  // defaultData 4 + insertData 1
     }
 
-    private ExtractableResponse<Response> 메뉴_그룹_생성(final MenuGroup menuGroup) {
+    public static ExtractableResponse<Response> 메뉴_그룹_생성(final MenuGroup menuGroup) {
         return RestAssured
             .given().log().all()
             .body(menuGroup)
