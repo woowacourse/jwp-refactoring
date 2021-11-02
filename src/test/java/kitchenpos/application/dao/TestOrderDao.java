@@ -1,4 +1,4 @@
-package kitchenpos.service.dao;
+package kitchenpos.application.dao;
 
 import java.util.Comparator;
 import java.util.List;
@@ -7,7 +7,6 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.Order;
 
 public class TestOrderDao extends TestAbstractDao<Order> implements OrderDao {
-
 
     @Override
     public boolean existsByOrderTableIdAndOrderStatusIn(Long orderTableId,

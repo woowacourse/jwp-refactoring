@@ -1,4 +1,4 @@
-package kitchenpos.service.dao;
+package kitchenpos.application.dao;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;

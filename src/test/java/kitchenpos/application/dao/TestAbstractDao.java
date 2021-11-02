@@ -1,4 +1,4 @@
-package kitchenpos.service.dao;
+package kitchenpos.application.dao;
 
 import static java.util.stream.Collectors.toList;
 
@@ -19,19 +19,21 @@ abstract class TestAbstractDao<T> {
         this.incrementId = new AtomicLong(1L);
         this.database = new TreeMap<>();
     }
-    
+
     public TestAbstractDao(AtomicLong incrementId, Map<Long, T> database) {
         this.incrementId = incrementId;
         this.database = database;
     }
 
-    public T save(T entity){
+    public T save(T entity) {
         long entityId = incrementId.getAndIncrement();
         setIdConsumer().accept(entity, entityId);
         database.put(entityId, entity);
         return entity;
 
-    };
+    }
+
+    ;
 
     protected abstract BiConsumer<T, Long> setIdConsumer();
 
@@ -39,7 +41,7 @@ abstract class TestAbstractDao<T> {
         return Optional.ofNullable(database.get(id));
     }
 
-    public List<T> findAll(){
+    public List<T> findAll() {
         return database.values().stream()
             .sorted(comparatorForSort())
             .collect(toList());
@@ -53,7 +55,7 @@ abstract class TestAbstractDao<T> {
             .count();
     }
 
-    public boolean existsById(Long id){
+    public boolean existsById(Long id) {
         return database.containsKey(id);
     }
 }

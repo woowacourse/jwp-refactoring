@@ -1,4 +1,4 @@
-package kitchenpos.service.dao;
+package kitchenpos.application.dao;
 
 import java.util.Comparator;
 import java.util.function.BiConsumer;
@@ -6,6 +6,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 
 public class TestMenuGroupDao extends TestAbstractDao<MenuGroup> implements MenuGroupDao {
+
     @Override
     protected BiConsumer<MenuGroup, Long> setIdConsumer() {
         return MenuGroup::setId;
