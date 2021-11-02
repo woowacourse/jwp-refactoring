@@ -6,6 +6,10 @@ import static org.mockito.BDDMockito.given;
 import kitchenpos.dao.JdbcTemplateMenuGroupDao;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
+import kitchenpos.dao.OrderDao;
+import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.TableGroupDao;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,13 +21,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class TableGroupServiceTest {
 
     @Mock
-    private JdbcTemplateOrderDao jdbcTemplateOrderDao;
+    private OrderDao orderDao;
 
     @Mock
-    JdbcTemplateOrderTableDao jdbcTemplateOrderTableDao;
+    OrderTableDao orderTableDao;
 
     @Mock
-    private JdbcTemplateMenuGroupDao jdbcTemplateMenuGroupDao;
+    private TableGroupDao tableGroupDao;
 
     @InjectMocks
     private TableGroupService tableGroupService;

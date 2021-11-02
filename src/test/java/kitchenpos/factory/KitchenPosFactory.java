@@ -114,4 +114,10 @@ public class KitchenPosFactory {
         standardOrderTable.setNumberOfGuests(1);
         return standardOrderTable;
     }
+
+    public static List<OrderTable> getStandardOrderTables() {
+        List<OrderTable> standardOrderTables = new ArrayList<>();
+        standardOrderTables.add(getStandardOrderTable());
+        return standardOrderTables;
+    }
 }

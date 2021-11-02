@@ -25,12 +25,12 @@
 
 ### 주문
 
-- [ ] 주문 생성
+- [x] 주문 생성
   - [x] 주문은 id, OrderTableId, orderStatus, orderedTime, OrderLineItems로 구성됨
   - [x] OrderLineITem은 seq, orderId, menuId, quantity로 구성됨
-  - [ ] orderLineItems가 비어있다면 에러 처리
-  - [ ] orderLineItems와 DB의 메뉴가 일치하지 않으면 에러 처리
-   - [ ] orderTable이 없거나 내용이 비어있다면 에러 처리
+  - [x] orderLineItems가 비어있다면 에러 처리
+  - [x] orderLineItems와 DB의 메뉴가 일치하지 않으면 에러 처리
+   - [x] orderTable이 없거나 내용이 비어있다면 에러 처리
 - [x] 모든 주문 가져오기
 - [x] 주문 수정하기
   - [x] 주문번호를 이용하여 주문내역 수정
@@ -50,18 +50,18 @@
 
 ### 테이블
 
-- [ ] 테이블 생성
-  - [ ] OrderTable은 id, TableGroupId, memberOfGuests, empty로 구성됨
-- [ ] 테이블 리스트 가져오기
-- [ ] 빈 테이블로 변경
-  - [ ] id를 이용해 빈 테이블로 변경한다
-  - [ ] 잘못된 id가 들어오면 에러 처리
-  - [ ] 저장된 테이블에 그룹ID가 포함되어 있다면 에러처리
-  - [ ] 저장된 테이블이 요리중이거나 식사중이라면 에러 처리
-- [ ] 테이블의 인원을 변경한다.
-  - [ ] 인원이 0보다 적으면 에러 처리
-  - [ ] 잘못된 id가 들어오면 에러 처리
-  - [ ] 저장된 테이블이 비어있다면 에러 처리
+- [x] 테이블 생성
+  - [x] OrderTable은 id, TableGroupId, memberOfGuests, empty로 구성됨
+- [x] 테이블 리스트 가져오기
+- [x] 빈 테이블로 변경
+  - [x] id를 이용해 빈 테이블로 변경한다
+  - [x] 잘못된 id가 들어오면 에러 처리
+  - [x] 저장된 테이블에 그룹ID가 포함되어 있다면 에러처리
+  - [x] 저장된 테이블이 요리중이거나 식사중이라면 에러 처리
+- [x] 테이블의 인원을 변경한다.
+  - [x] 인원이 0보다 적으면 에러 처리
+  - [x] 잘못된 id가 들어오면 에러 처리
+  - [x] 저장된 테이블이 비어있다면 에러 처리
 
 
 ### 단체
