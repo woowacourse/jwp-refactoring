@@ -3,6 +3,8 @@ package kitchenpos.integration.templates;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.factory.OrderFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -19,32 +21,33 @@ public class OrderTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<Order> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
+    public ResponseEntity<OrderResponse> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         Order order = OrderFactory.builder()
             .orderTableId(orderTableId)
             .orderLineItems(orderLineItems)
             .build();
+        OrderRequest orderRequest = OrderFactory.dto(order);
 
         return integrationTemplate.post(
             ORDER_URL,
-            order,
-            Order.class
+            orderRequest,
+            OrderResponse.class
         );
     }
 
-    public ResponseEntity<Order[]> list() {
+    public ResponseEntity<OrderResponse[]> list() {
         return integrationTemplate.get(
             ORDER_URL,
-            Order[].class
+            OrderResponse[].class
         );
     }
 
-    public ResponseEntity<Order> changeOrderStatus(Long orderId, Order order) {
+    public ResponseEntity<OrderResponse> changeOrderStatus(Long orderId, OrderRequest orderRequest) {
         return integrationTemplate.put(
             ORDER_STATUS_URL,
             orderId,
-            order,
-            Order.class
+            orderRequest,
+            OrderResponse.class
         );
     }
 }

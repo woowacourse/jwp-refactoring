@@ -13,8 +13,11 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.factory.MenuProductFactory;
+import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
@@ -70,10 +73,11 @@ class OrderIntegrationTest {
         assertThat(menuGroup).isNotNull();
         Long menuGroupId = menuGroup.getId();
 
-        Product product = productTemplate.create(
-            "강정치킨",
-            new BigDecimal(17000)
-        ).getBody();
+        Product product = productTemplate
+            .create(
+                "강정치킨",
+                new BigDecimal(17000))
+            .getBody();
         assertThat(product).isNotNull();
         Long productId = product.getId();
 
@@ -82,12 +86,13 @@ class OrderIntegrationTest {
             .quantity(2L)
             .build();
 
-        Menu menu = menuTemplate.create(
-            "후라이드+후라이드",
-            new BigDecimal(19000),
-            menuGroupId,
-            Collections.singletonList(menuProduct)
-        ).getBody();
+        Menu menu = menuTemplate
+            .create(
+                "후라이드+후라이드",
+                new BigDecimal(19000),
+                menuGroupId,
+                Collections.singletonList(menuProduct))
+            .getBody();
         assertThat(menu).isNotNull();
         Long menuId = menu.getId();
 
@@ -101,21 +106,21 @@ class OrderIntegrationTest {
     @Test
     void create() {
         // given // when
-        ResponseEntity<Order> orderResponseEntity = orderTemplate
+        ResponseEntity<OrderResponse> orderResponseEntity = orderTemplate
             .create(
                 orderTableId,
                 Collections.singletonList(orderLineItem)
             );
         HttpStatus statusCode = orderResponseEntity.getStatusCode();
         URI location = orderResponseEntity.getHeaders().getLocation();
-        Order body = orderResponseEntity.getBody();
+        OrderResponse body = orderResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
         assertThat(body).isNotNull();
         assertThat(body.getId()).isNotNull();
         assertThat(body.getOrderTableId()).isEqualTo(orderTableId);
-        assertThat(body.getOrderLineItems().get(0))
+        assertThat(body.getOrderLineItemResponses()).first()
             .usingRecursiveComparison()
             .ignoringExpectedNullFields()
             .isEqualTo(orderLineItem);
@@ -126,17 +131,18 @@ class OrderIntegrationTest {
     @Test
     void list() {
         // given
-        Order order = orderTemplate.create(
-            orderTableId,
-            Collections.singletonList(orderLineItem)
-        ).getBody();
-        assertThat(order).isNotNull();
-        Long orderId = order.getId();
+        OrderResponse orderResponse = orderTemplate
+            .create(
+                orderTableId,
+                Collections.singletonList(orderLineItem))
+            .getBody();
+        assertThat(orderResponse).isNotNull();
+        Long orderId = orderResponse.getId();
 
         // when
-        ResponseEntity<Order[]> orderResponseEntity = orderTemplate.list();
+        ResponseEntity<OrderResponse[]> orderResponseEntity = orderTemplate.list();
         HttpStatus statusCode = orderResponseEntity.getStatusCode();
-        Order[] body = orderResponseEntity.getBody();
+        OrderResponse[] body = orderResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
@@ -150,22 +156,25 @@ class OrderIntegrationTest {
     @Test
     void changeOrderStatus() {
         // given
-        Order order = orderTemplate.create(
-            orderTableId,
-            Collections.singletonList(orderLineItem)
-        ).getBody();
-        assertThat(order).isNotNull();
-        Long orderId = order.getId();
+        OrderResponse orderResponse = orderTemplate
+            .create(
+                orderTableId,
+                Collections.singletonList(orderLineItem))
+            .getBody();
+        assertThat(orderResponse).isNotNull();
+        Long orderId = orderResponse.getId();
 
         // when
-        order.setOrderStatus(OrderStatus.MEAL.name());
+        OrderRequest orderRequest = new OrderRequest(null, null, OrderStatus.MEAL.name(), null,
+            null);
 
-        ResponseEntity<Order> orderResponseEntity = orderTemplate.changeOrderStatus(
-            orderId,
-            order
-        );
+        ResponseEntity<OrderResponse> orderResponseEntity = orderTemplate
+            .changeOrderStatus(
+                orderId,
+                orderRequest
+            );
         HttpStatus statusCode = orderResponseEntity.getStatusCode();
-        Order body = orderResponseEntity.getBody();
+        OrderResponse body = orderResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);

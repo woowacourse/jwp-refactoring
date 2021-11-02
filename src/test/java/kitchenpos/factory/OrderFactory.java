@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.OrderRequest;
 
 public class OrderFactory {
 
@@ -43,6 +44,16 @@ public class OrderFactory {
         );
     }
 
+    public static OrderRequest dto(Order order) {
+        return new OrderRequest(
+            order.getId(),
+            order.getOrderTableId(),
+            order.getOrderStatus(),
+            order.getOrderedTime(),
+            OrderLineItemFactory.dtoList(order.getOrderLineItems())
+        );
+    }
+
     public OrderFactory id(Long id) {
         this.id = id;
         return this;
@@ -69,12 +80,6 @@ public class OrderFactory {
     }
 
     public Order build() {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(orderedTime);
-        order.setOrderLineItems(orderLineItems);
-        return order;
+        return new Order(id, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
 }

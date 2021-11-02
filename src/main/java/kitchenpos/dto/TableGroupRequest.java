@@ -7,15 +7,15 @@ public class TableGroupRequest {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableRequest> orderTables;
+    private List<OrderTableRequest> orderTableRequests;
 
     public TableGroupRequest(Long id,
                              LocalDateTime createdDate,
-                             List<OrderTableRequest> orderTables
+                             List<OrderTableRequest> orderTableRequests
     ) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
+        this.orderTableRequests = orderTableRequests;
     }
 
     public Long getId() {
@@ -26,7 +26,7 @@ public class TableGroupRequest {
         return createdDate;
     }
 
-    public List<OrderTableRequest> getOrderTables() {
-        return orderTables;
+    public List<OrderTableRequest> getOrderTableRequests() {
+        return orderTableRequests;
     }
 }

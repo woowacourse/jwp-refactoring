@@ -47,6 +47,12 @@ public class OrderTableFactory {
         );
     }
 
+    public static List<OrderTable> copyList(List<OrderTableResponse> orderTableResponses) {
+        return orderTableResponses.stream()
+            .map(OrderTableFactory::copy)
+            .collect(Collectors.toList());
+    }
+
     public static OrderTableRequest dto(OrderTable orderTable) {
         return new OrderTableRequest(
             orderTable.getId(),

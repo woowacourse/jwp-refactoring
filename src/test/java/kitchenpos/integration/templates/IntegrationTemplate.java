@@ -30,8 +30,8 @@ public class IntegrationTemplate {
         );
     }
 
-    public <T, P> ResponseEntity<T> put(String url, P pathVariable, T request,
-                                        Class<T> responseType) {
+    public <T, P, E> ResponseEntity<P> put(String url, E pathVariable, T request,
+                                        Class<P> responseType) {
         return testRestTemplate.exchange(
             url,
             HttpMethod.PUT,

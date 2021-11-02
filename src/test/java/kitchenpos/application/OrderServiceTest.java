@@ -2,10 +2,8 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +20,8 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderFactory;
@@ -58,17 +58,24 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        OrderLineItem orderLineItem = OrderLineItemFactory.builder().build();
         Order order = OrderFactory.builder().build();
+        List<OrderLineItem> orderLineItems =
+            Collections.singletonList(OrderLineItemFactory.builder().build());
         given(orderDao.findAll()).willReturn(Collections.singletonList(order));
-        given(orderLineItemDao.findAllByOrderId(order.getId())).willReturn(
-            Collections.singletonList(orderLineItem));
+        given(orderLineItemDao.findAllByOrderId(order.getId())).willReturn(orderLineItems);
 
         // when
-        List<Order> result = orderService.list();
+        List<OrderResponse> result = orderService.list();
 
         // then
-        assertThat(result).containsExactly(order);
+        assertThat(result).first()
+            .usingRecursiveComparison()
+            .ignoringFields("orderLineItemResponses")
+            .isEqualTo(order);
+        assertThat(result).first()
+            .extracting("orderLineItemResponses")
+            .usingRecursiveComparison()
+            .isEqualTo(orderLineItems);
     }
 
     @Nested
@@ -83,6 +90,8 @@ class OrderServiceTest {
         private Order order;
 
         private Order savedOrder;
+
+        private OrderRequest orderRequest;
 
         @BeforeEach
         void setUp() {
@@ -101,17 +110,21 @@ class OrderServiceTest {
             menuIds = Collections.singletonList(menu.getId());
 
             orderLineItem = OrderLineItemFactory.builder()
+                .seq(1L)
                 .menuId(menu.getId())
                 .quantity(1L)
                 .build();
 
             orderTable = OrderTableFactory.builder()
+                .id(1L)
                 .numberOfGuests(2)
                 .empty(false)
                 .build();
 
             order = OrderFactory.builder()
                 .orderTableId(orderTable.getId())
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderedTime(LocalDateTime.now())
                 .orderLineItems(Collections.singletonList(orderLineItem))
                 .build();
 
@@ -119,6 +132,8 @@ class OrderServiceTest {
                 .id(1L)
                 .orderStatus(OrderStatus.COOKING.name())
                 .build();
+
+            orderRequest = OrderFactory.dto(order);
         }
 
         @DisplayName("Order 를 생성한다")
@@ -128,16 +143,20 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(menuIds)).willReturn(1L);
             given(orderTableDao.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
-            given(orderDao.save(order)).willReturn(savedOrder);
-            given(orderLineItemDao.save(orderLineItem)).willReturn(orderLineItem);
+            given(orderDao.save(any(Order.class))).willReturn(savedOrder);
+            given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(orderLineItem);
 
             // when
-            Order result = orderService.create(order);
+            OrderResponse result = orderService.create(orderRequest);
 
             // then
-            assertThat(result)
+            assertThat(result.getId()).isEqualTo(savedOrder.getId());
+            assertThat(result.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId());
+            assertThat(result.getOrderStatus()).isEqualTo(savedOrder.getOrderStatus());
+            assertThat(result.getOrderedTime()).isEqualTo(savedOrder.getOrderedTime());
+            assertThat(result.getOrderLineItemResponses())
                 .usingRecursiveComparison()
-                .isEqualTo(savedOrder);
+                .isEqualTo(savedOrder.getOrderLineItems());
         }
 
         @DisplayName("Order 생성 실패한다 - orderLineItems 가 비어있는 경우")
@@ -147,9 +166,10 @@ class OrderServiceTest {
             order = OrderFactory.copy(order)
                 .orderLineItems(Collections.emptyList())
                 .build();
+            orderRequest = OrderFactory.dto(order);
 
             // when
-            ThrowingCallable throwingCallable = () -> orderService.create(order);
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -163,7 +183,7 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(menuIds)).willReturn(0L);
 
             // when
-            ThrowingCallable throwingCallable = () -> orderService.create(order);
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -178,7 +198,7 @@ class OrderServiceTest {
             given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
             // when
-            ThrowingCallable throwingCallable = () -> orderService.create(order);
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -197,7 +217,7 @@ class OrderServiceTest {
                 .willReturn(Optional.of(orderTable));
 
             // when
-            ThrowingCallable throwingCallable = () -> orderService.create(order);
+            ThrowingCallable throwingCallable = () -> orderService.create(orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -212,17 +232,17 @@ class OrderServiceTest {
 
         private List<OrderLineItem> orderLineItems;
 
-        private Order savedOrder;
-
         private Order order;
+
+        private OrderRequest orderRequest;
 
         @BeforeEach
         void setUp() {
             orderId = 1L;
 
-            orderLineItems = Collections.singletonList(mock(OrderLineItem.class));
+            orderLineItems = Collections.singletonList(OrderLineItemFactory.builder().build());
 
-            savedOrder = OrderFactory.builder()
+            order = OrderFactory.builder()
                 .id(orderId)
                 .orderTableId(1L)
                 .orderStatus(OrderStatus.COOKING.name())
@@ -230,27 +250,22 @@ class OrderServiceTest {
                 .orderLineItems(orderLineItems)
                 .build();
 
-            order = OrderFactory.copy(savedOrder)
-                .orderStatus(OrderStatus.MEAL.name())
-                .build();
+            orderRequest = OrderFactory.dto(order);
         }
 
         @DisplayName("Order 의 상태를 변경한다")
         @Test
         void changeOrderStatus() {
             // given
-            given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
+            given(orderDao.findById(orderId)).willReturn(Optional.of(order));
+            given(orderDao.save(order)).willReturn(order);
             given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
             // when
-            Order result = orderService.changeOrderStatus(orderId, order);
+            OrderResponse result = orderService.changeOrderStatus(orderId, orderRequest);
 
             // then
-            verify(orderDao, times(1)).save(savedOrder);
-            assertThat(result)
-                .usingRecursiveComparison()
-                .ignoringExpectedNullFields()
-                .isEqualTo(order);
+            assertThat(result.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
         }
 
         @DisplayName("Order 상태 변경 실패한다 - orderId 에 대한 order 가 존재하지 않는 경우")
@@ -261,7 +276,7 @@ class OrderServiceTest {
 
             // when
             ThrowingCallable throwingCallable =
-                () -> orderService.changeOrderStatus(orderId, order);
+                () -> orderService.changeOrderStatus(orderId, orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -272,14 +287,14 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusFail_whenOrderIsAlreadyCompleted() {
             // given
-            savedOrder = OrderFactory.copy(savedOrder)
+            order = OrderFactory.copy(order)
                 .orderStatus(OrderStatus.COMPLETION.name())
                 .build();
-            given(orderDao.findById(orderId)).willReturn(Optional.of(savedOrder));
+            given(orderDao.findById(orderId)).willReturn(Optional.of(order));
 
             // when
-            ThrowingCallable throwingCallable = () -> orderService.changeOrderStatus(orderId,
-                order);
+            ThrowingCallable throwingCallable =
+                () -> orderService.changeOrderStatus(orderId, orderRequest);
 
             // then
             assertThatThrownBy(throwingCallable)

@@ -4,11 +4,13 @@ import static kitchenpos.integration.templates.TableGroupTemplate.TABLE_GROUP_UR
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.net.URI;
+import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.factory.OrderTableFactory;
+import kitchenpos.factory.TableGroupFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.OrderTableTemplate;
 import kitchenpos.integration.templates.TableGroupTemplate;
@@ -59,10 +61,10 @@ class TableGroupIntegrationTest {
     void create() {
         // given // when
         ResponseEntity<TableGroupResponse> tableGroupResponse = tableGroupTemplate
-            .create(
+            .create(Arrays.asList(
                 orderTable1,
                 orderTable2
-            );
+            ));
         HttpStatus statusCode = tableGroupResponse.getStatusCode();
         URI location = tableGroupResponse.getHeaders().getLocation();
         TableGroupResponse body = tableGroupResponse.getBody();
@@ -71,7 +73,7 @@ class TableGroupIntegrationTest {
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
         assertThat(body).isNotNull();
         assertThat(body.getId()).isNotNull();
-        assertThat(body.getOrderTables())
+        assertThat(body.getOrderTableResponses())
             .extracting("id")
             .contains(
                 orderTable1.getId(),
@@ -85,16 +87,12 @@ class TableGroupIntegrationTest {
     void ungroup() {
         // given
         TableGroupResponse tableGroupResponse = tableGroupTemplate
-            .create(
+            .create(Arrays.asList(
                 orderTable1,
-                orderTable2)
+                orderTable2))
             .getBody();
         assertThat(tableGroupResponse).isNotNull();
-        TableGroup createdTableGroup = new TableGroup(
-            tableGroupResponse.getId(),
-            tableGroupResponse.getCreatedDate(),
-            tableGroupResponse.getOrderTables()
-        );
+        TableGroup createdTableGroup = TableGroupFactory.copy(tableGroupResponse).build();
 
         // when
         ResponseEntity<Void> responseEntity = tableGroupTemplate

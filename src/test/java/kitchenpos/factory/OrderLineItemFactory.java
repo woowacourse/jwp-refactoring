@@ -1,6 +1,10 @@
 package kitchenpos.factory;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderLineItemResponse;
 
 public class OrderLineItemFactory {
 
@@ -33,6 +37,21 @@ public class OrderLineItemFactory {
         );
     }
 
+    public static OrderLineItemRequest dto(OrderLineItem orderLineItem) {
+        return new OrderLineItemRequest(
+            orderLineItem.getSeq(),
+            orderLineItem.getOrderId(),
+            orderLineItem.getMenuId(),
+            orderLineItem.getQuantity()
+        );
+    }
+
+    public static List<OrderLineItemRequest> dtoList(List<OrderLineItem> orderLineItems) {
+        return orderLineItems.stream()
+            .map(OrderLineItemFactory::dto)
+            .collect(Collectors.toList());
+    }
+
     public OrderLineItemFactory seq(Long seq) {
         this.seq = seq;
         return this;
@@ -54,11 +73,6 @@ public class OrderLineItemFactory {
     }
 
     public OrderLineItem build() {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return new OrderLineItem(seq, orderId, menuId, quantity);
     }
 }

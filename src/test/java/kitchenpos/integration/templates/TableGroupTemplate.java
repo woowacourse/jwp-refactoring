@@ -1,9 +1,12 @@
 package kitchenpos.integration.templates;
 
 import java.util.Arrays;
+import java.util.List;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
+import kitchenpos.factory.OrderTableFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +22,13 @@ public class TableGroupTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<TableGroupResponse> create(OrderTable... tables) {
-        TableGroup tableGroup = new TableGroup(tables);
+    public ResponseEntity<TableGroupResponse> create(List<OrderTable> tables) {
+        TableGroupRequest tableGroupRequet =
+            new TableGroupRequest(null, null, OrderTableFactory.dtoList(tables));
 
         return integrationTemplate.post(
             TABLE_GROUP_URL,
-            tableGroup,
+            tableGroupRequet,
             TableGroupResponse.class
         );
     }

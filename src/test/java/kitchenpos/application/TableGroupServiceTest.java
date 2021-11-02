@@ -120,7 +120,6 @@ class TableGroupServiceTest {
         void create() {
             // given
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
-            // TODO change any()
             given(tableGroupDao.save(any(TableGroup.class))).willReturn(savedTableGroup);
 
             // when
@@ -135,9 +134,11 @@ class TableGroupServiceTest {
                     savedOrderTable1,
                     savedOrderTable2
                 );
-            assertThat(result)
+            assertThat(result.getId()).isEqualTo(savedTableGroup.getId());
+            assertThat(result.getCreatedDate()).isEqualTo(savedTableGroup.getCreatedDate());
+            assertThat(result.getOrderTableResponses())
                 .usingRecursiveComparison()
-                .isEqualTo(savedTableGroup);
+                .isEqualTo(savedTableGroup.getOrderTables());
         }
 
         @DisplayName("TableGroup 생성 실패한다 - 요청한 orderTables 가 비어있는 경우")

@@ -2,9 +2,11 @@ package kitchenpos.factory;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 
 public class TableGroupFactory {
 
@@ -31,6 +33,14 @@ public class TableGroupFactory {
             tableGroup.getId(),
             tableGroup.getCreatedDate(),
             tableGroup.getOrderTables()
+        );
+    }
+
+    public static TableGroupFactory copy(TableGroupResponse tableGroupResponse) {
+        return new TableGroupFactory(
+            tableGroupResponse.getId(),
+            tableGroupResponse.getCreatedDate(),
+            OrderTableFactory.copyList(tableGroupResponse.getOrderTableResponses())
         );
     }
 
