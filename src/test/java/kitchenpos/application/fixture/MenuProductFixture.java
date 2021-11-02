@@ -1,7 +1,7 @@
-package kitchenpos.service.fixture;
+package kitchenpos.application.fixture;
 
+import kitchenpos.application.dao.TestMenuProductDao;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.service.dao.TestMenuProductDao;
 
 public class MenuProductFixture {
 
@@ -18,7 +18,7 @@ public class MenuProductFixture {
         this.testMenuProductDao = testMenuProductDao;
     }
 
-    public static MenuProductFixture createFixture(){
+    public static MenuProductFixture createFixture() {
         MenuProductFixture menuProductFixture = new MenuProductFixture(new TestMenuProductDao());
         menuProductFixture.createMenuProduct();
         return menuProductFixture;

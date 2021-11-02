@@ -1,12 +1,12 @@
-package kitchenpos.service.fixture;
+package kitchenpos.application.fixture;
 
 import static java.util.Collections.unmodifiableList;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dao.TestMenuDao;
 import kitchenpos.domain.Menu;
-import kitchenpos.service.dao.TestMenuDao;
 
 public class MenuFixture {
 
@@ -54,7 +54,7 @@ public class MenuFixture {
         return testMenuDao;
     }
 
-    public List<Menu> getFixtures(){
+    public List<Menu> getFixtures() {
         return unmodifiableList(fixtures);
     }
 }

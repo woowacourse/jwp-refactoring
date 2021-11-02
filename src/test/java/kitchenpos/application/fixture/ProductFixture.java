@@ -1,10 +1,10 @@
-package kitchenpos.service.fixture;
+package kitchenpos.application.fixture;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dao.TestProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.service.dao.TestProductDao;
 
 public class ProductFixture {
 
@@ -51,7 +51,7 @@ public class ProductFixture {
         return testProductDao;
     }
 
-    public List<Product> getFixtures(){
+    public List<Product> getFixtures() {
         return fixtures;
     }
 }

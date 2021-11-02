@@ -1,11 +1,11 @@
-package kitchenpos.service.fixture;
+package kitchenpos.application.fixture;
 
 import static java.util.Collections.unmodifiableList;
 
 import java.util.Arrays;
 import java.util.List;
+import kitchenpos.application.dao.TestMenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.service.dao.TestMenuGroupDao;
 
 public class MenuGroupFixture {
 
@@ -19,13 +19,11 @@ public class MenuGroupFixture {
 
     private MenuGroupFixture(TestMenuGroupDao testMenuGroupDao) {
         this.testMenuGroupDao = testMenuGroupDao;
-        createMenuGroup();
     }
 
     public static MenuGroupFixture createFixture() {
         MenuGroupFixture menuGroupFixture = new MenuGroupFixture(new TestMenuGroupDao());
         menuGroupFixture.fixtures = menuGroupFixture.createMenuGroup();
-
         return menuGroupFixture;
     }
 
@@ -37,6 +35,7 @@ public class MenuGroupFixture {
             saveMenuGroup("신메뉴")
         );
     }
+
     private MenuGroup saveMenuGroup(String menuGroupName) {
         MenuGroup menuGroup = new MenuGroup();
         menuGroup.setName(menuGroupName);
@@ -47,7 +46,7 @@ public class MenuGroupFixture {
         return testMenuGroupDao;
     }
 
-    public List<MenuGroup> getFixtures(){
+    public List<MenuGroup> getFixtures() {
         return unmodifiableList(fixtures);
     }
 }
