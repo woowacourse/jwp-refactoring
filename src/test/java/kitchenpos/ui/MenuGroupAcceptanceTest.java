@@ -5,40 +5,43 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.request.MenuGroupRequest;
+import kitchenpos.dto.response.MenuGroupResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("MenuGroup 인수 테스트")
 class MenuGroupAcceptanceTest extends AcceptanceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup("menu-group");
-        MenuGroup created = makeResponse("/api/menu-groups/", TestMethod.POST, menuGroup)
-            .as(MenuGroup.class);
+        MenuGroupRequest request = new MenuGroupRequest("menu-group");
+        MenuGroupResponse response = makeResponse("/api/menu-groups/", TestMethod.POST, request)
+            .as(MenuGroupResponse.class);
 
         assertAll(
-            () -> assertThat(created.getId()).isNotNull(),
-            () -> assertThat(created.getName()).isEqualTo(menuGroup.getName())
+            () -> assertThat(response.getId()).isNotNull(),
+            () -> assertThat(response.getName()).isEqualTo(request.getName())
         );
-
-        System.out.println(created.getId());
     }
 
     @Test
     void list() {
-        MenuGroup menuGroup1 = new MenuGroup("menu-group1");
-        MenuGroup menuGroup2 = new MenuGroup("menu-group2");
-        makeResponse("/api/menu-groups/", TestMethod.POST, menuGroup1);
-        makeResponse("/api/menu-groups/", TestMethod.POST, menuGroup2);
+        MenuGroupRequest request = new MenuGroupRequest("menu-group");
+        makeResponse("/api/menu-groups/", TestMethod.POST, request)
+            .as(MenuGroupResponse.class);
+        makeResponse("/api/menu-groups/", TestMethod.POST, request)
+            .as(MenuGroupResponse.class);
 
-        List<MenuGroup> menuGroups = makeResponse("/api/menu-groups/", TestMethod.GET).jsonPath()
-            .getList(".", MenuGroup.class);
+        List<MenuGroupResponse> responses = makeResponse("/api/menu-groups/", TestMethod.GET)
+            .jsonPath()
+            .getList(".", MenuGroupResponse.class);
 
         assertAll(
-            () -> assertThat(menuGroups.size()).isEqualTo(2),
-            () -> assertThat(menuGroups.stream()
-                .map(MenuGroup::getName).collect(Collectors.toList()))
-                .containsExactly(menuGroup1.getName(), menuGroup2.getName())
+            () -> assertThat(responses.size()).isEqualTo(2),
+            () -> assertThat(responses.stream()
+                .map(MenuGroupResponse::getName).collect(Collectors.toList()))
+                .containsExactly("menu-group", "menu-group")
         );
     }
 }

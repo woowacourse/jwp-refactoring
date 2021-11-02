@@ -1,111 +1,71 @@
 package kitchenpos.application;
 
-import kitchenpos.KitchenException;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Menus;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.request.OrderCreateRequest;
+import kitchenpos.dto.request.OrderStatusChangeRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.exception.KitchenException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
-    private final MenuDao menuDao;
-    private final OrderDao orderDao;
-    private final OrderLineItemDao orderLineItemDao;
-    private final OrderTableDao orderTableDao;
+
+    private final MenuRepository menuRepository;
+    private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
+    private final OrderTableRepository orderTableRepository;
 
     public OrderService(
-            final MenuDao menuDao,
-            final OrderDao orderDao,
-            final OrderLineItemDao orderLineItemDao,
-            final OrderTableDao orderTableDao
+        final MenuRepository menuRepository,
+        final OrderRepository orderRepository,
+        final OrderLineItemRepository orderLineItemRepository,
+        final OrderTableRepository orderTableRepository
     ) {
-        this.menuDao = menuDao;
-        this.orderDao = orderDao;
-        this.orderLineItemDao = orderLineItemDao;
-        this.orderTableDao = orderTableDao;
+        this.menuRepository = menuRepository;
+        this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
+        this.orderTableRepository = orderTableRepository;
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
+    public OrderResponse create(final OrderCreateRequest request) {
+        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
+            .orElseThrow(() -> new KitchenException("존재하지 않는 테이블에 배정되어 있습니다."));
 
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new KitchenException("주문 항목이 비어있습니다.");
-        }
+        Menus menus = new Menus(menuRepository.findAllByIdIn(request.getMenuIds()));
+        List<OrderLineItem> orderLineItemList = menus.convertToOrderLineItem(request);
 
-        final List<Long> menuIds = orderLineItems.stream()
-                .map(OrderLineItem::getMenuId)
-                .collect(Collectors.toList());
-
-        if (orderLineItems.size() != menuDao.countByIdIn(menuIds)) {
-            throw new KitchenException("존재하지 않는 메뉴가 포함되어 있습니다.");
-        }
-
-        order.setId(null);
-
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
-                .orElseThrow(() -> new KitchenException("존재하지 않는 테이블에 배정되어 있습니다."));
-
-        if (orderTable.isEmpty()) {
-            throw new KitchenException("배정된 테이블은 빈 테이블입니다.");
-        }
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = orderDao.save(order);
-
-        final Long orderId = savedOrder.getId();
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
-            savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
-        }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-
-        return savedOrder;
+        Order savedOrder = orderRepository
+            .save(new Order(orderTable, LocalDateTime.now()));
+        OrderLineItems orderLineItems = new OrderLineItems(orderLineItemList, savedOrder);
+        orderLineItemRepository.saveAll(orderLineItems.getOrderLineItems());
+        return OrderResponse.of(savedOrder);
     }
 
-    public List<Order> list() {
-        final List<Order> orders = orderDao.findAll();
-
-        for (final Order order : orders) {
-            order.setOrderLineItems(orderLineItemDao.findAllByOrderId(order.getId()));
-        }
-
-        return orders;
+    public List<OrderResponse> list() {
+        return orderRepository.findAll().stream()
+            .map(OrderResponse::of)
+            .collect(Collectors.toList());
     }
 
     @Transactional
-    public Order changeOrderStatus(final Long orderId, final Order order) {
-        final Order savedOrder = orderDao.findById(orderId)
-                .orElseThrow(() -> new KitchenException("존재하지 않는 주문입니다."));
-
-        if (Objects.equals(OrderStatus.COMPLETION.name(), savedOrder.getOrderStatus())) {
-            throw new KitchenException("이미 완료된 주문입니다.");
-        }
-
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
-        savedOrder.setOrderStatus(orderStatus.name());
-
-        orderDao.save(savedOrder);
-
-        savedOrder.setOrderLineItems(orderLineItemDao.findAllByOrderId(orderId));
-
-        return savedOrder;
+    public OrderResponse changeOrderStatus(final Long orderId,
+        final OrderStatusChangeRequest request) {
+        final Order savedOrder = orderRepository.findById(orderId)
+            .orElseThrow(() -> new KitchenException("존재하지 않는 주문입니다."));
+        savedOrder.changeOrderStatus(request.getOrderStatus());
+        return OrderResponse.of(savedOrder);
     }
 }

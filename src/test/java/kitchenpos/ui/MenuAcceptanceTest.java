@@ -3,34 +3,130 @@ package kitchenpos.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
+import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.ProductRepository;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.request.MenuCreateRequest;
+import kitchenpos.dto.request.MenuProductCreateRequest;
+import kitchenpos.dto.response.MenuResponse;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 
+@DisplayName("Menu 인수 테스트")
 class MenuAcceptanceTest extends AcceptanceTest {
 
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @DisplayName("Menu를 생성한다.")
     @Test
     void create() {
-        Menu menu = menu();
-        Menu created = makeResponse("/api/menus", TestMethod.POST, menu)
-            .as(Menu.class);
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        Product product = productRepository.save(new Product("product", 1000L));
+
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
+            menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
+
+        MenuResponse response = makeResponse("/api/menus", TestMethod.POST, request)
+            .as(MenuResponse.class);
 
         assertAll(
-            () -> assertThat(created.getId()).isNotNull(),
-            () -> assertThat(created.getName()).isEqualTo("menu"),
-            () -> assertThat(created.getMenuProducts().size()).isEqualTo(1)
+            () -> assertThat(response.getId()).isNotNull(),
+            () -> assertThat(response.getName()).isEqualTo(request.getName()),
+            () -> assertThat(response.getPrice()).isEqualTo(BigDecimal.valueOf(request.getPrice()))
         );
     }
 
+    @DisplayName("Menu 생성 실패 - 금액이 0보다 작다.")
     @Test
-    void list() {
-        Menu menu = menu();
-        makeResponse("/api/menus", TestMethod.POST, menu);
+    void create_fail_price() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        Product product = productRepository.save(new Product("product", 1000L));
 
-        List<Menu> menus = makeResponse("/api/menus", TestMethod.GET).jsonPath()
-            .getList(".", Menu.class);
-        assertThat(menus.size()).isEqualTo(1);
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
+            menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
+
+        int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
+
+        assertThat(actual).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
+    @DisplayName("Menu 생성 실패 - 메뉴 그룹이 존재하지 않는다.")
+    @Test
+    void create_fail_menu_group_non_exist() {
+        Product product = productRepository.save(new Product("product", 1000L));
 
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
+            999L, Collections.singletonList(menuProductCreateRequest));
+
+        int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
+
+        assertThat(actual).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("Menu 생성 실패 - 메뉴 상품이 존재하지 않는다.")
+    @Test
+    void create_fail_menu_product_non_exist() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(999L, 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", -500L,
+            menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
+
+        int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
+
+        assertThat(actual).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("Menu 생성 실패 - 메뉴 가격이 메뉴 상품들 총액보다 높다.")
+    @Test
+    void create_fail_menu_price_more_than_total_menu_product_price() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        Product product = productRepository.save(new Product("product", 1000L));
+
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", 200000L,
+            menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
+
+        int actual = makeResponse("/api/menus", TestMethod.POST, request).statusCode();
+
+        assertThat(actual).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("Menu 리스트를 불러온다.")
+    @Test
+    void list() {
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("menuGroup"));
+        Product product = productRepository.save(new Product("product", 1000L));
+
+        MenuProductCreateRequest menuProductCreateRequest = new MenuProductCreateRequest(
+            product.getId(), 10L);
+        MenuCreateRequest request = new MenuCreateRequest("menu", 5000L,
+            menuGroup.getId(), Collections.singletonList(menuProductCreateRequest));
+
+        makeResponse("/api/menus", TestMethod.POST, request)
+            .as(MenuResponse.class);
+        makeResponse("/api/menus", TestMethod.POST, request)
+            .as(MenuResponse.class);
+
+        List<MenuResponse> responses = makeResponse("/api/menus", TestMethod.GET).jsonPath()
+            .getList(".", MenuResponse.class);
+        assertThat(responses.size()).isEqualTo(2);
+    }
 }

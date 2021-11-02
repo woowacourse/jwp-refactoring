@@ -3,9 +3,9 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.dto.request.ProductRequest;
+import kitchenpos.dto.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +19,9 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품을 생성한다.")
     @Test
     void create() {
-        int price = 1000;
-        Product product = new Product("productName", BigDecimal.valueOf(price));
-        Product created = productService.create(product);
+        long price = 1000L;
+        ProductRequest product = new ProductRequest("productName", price);
+        ProductResponse created = productService.create(product);
 
         assertAll(
             () -> assertThat(created.getId()).isNotNull(),
@@ -33,12 +33,11 @@ class ProductServiceTest extends ServiceTest {
     @DisplayName("상품 목록을 불러온다.")
     @Test
     void list() {
-        Product product1 = new Product("productName1", BigDecimal.valueOf(1000));
-        Product product2 = new Product("productName2", BigDecimal.valueOf(1000));
-        productService.create(product1);
-        productService.create(product2);
+        ProductRequest product = new ProductRequest("productName1", 1000L);
+        productService.create(product);
+        productService.create(product);
 
-        List<Product> products = productService.list();
+        List<ProductResponse> products = productService.list();
         assertThat(products.size()).isEqualTo(2);
     }
 }
