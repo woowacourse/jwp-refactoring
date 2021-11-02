@@ -1,15 +1,14 @@
 package kitchenpos.application;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Objects;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class ProductService {
@@ -37,7 +36,8 @@ public class ProductService {
         return ProductResponse.of(savedProduct);
     }
 
-    public List<Product> list() {
-        return productDao.findAll();
+    public List<ProductResponse> list() {
+        List<Product> products = productDao.findAll();
+        return ProductResponse.listOf(products);
     }
 }
