@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
@@ -24,8 +23,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
-    private static final Product standardProduct = KitchenPosFactory.getStandardProduct();
-    private static final List<Product> standardProducts = KitchenPosFactory.getStandardProducts();
+    private final Product standardProduct = KitchenPosFactory.getStandardProduct();
+    private final List<Product> standardProducts = KitchenPosFactory.getStandardProducts();
 
     @Mock
     private ProductDao productDao;

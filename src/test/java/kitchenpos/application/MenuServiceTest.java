@@ -28,8 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
-    private static final Menu standardMenu = KitchenPosFactory.getStandardMenu();
-    private static final List<Menu> standardMenus = KitchenPosFactory.getStandardMenus();
+    private final Menu standardMenu = KitchenPosFactory.getStandardMenu();
+    private final List<Menu> standardMenus = KitchenPosFactory.getStandardMenus();
 
     @Mock
     private MenuDao menuDao;

@@ -1,11 +1,16 @@
 package kitchenpos.factory;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 
 public class KitchenPosFactory {
@@ -68,5 +73,45 @@ public class KitchenPosFactory {
         List<Menu> standardMenus = new ArrayList<>();
         standardMenus.add(getStandardMenu());
         return standardMenus;
+    }
+
+    public static Order getStandardOrder() {
+        Order standardOrder = new Order();
+        standardOrder.setId(1L);
+        standardOrder.setOrderTableId(1L);
+        standardOrder.setOrderedTime(LocalDateTime.now());
+        standardOrder.setOrderLineItems(getStandardOrderLineItems());
+        standardOrder.setOrderStatus(OrderStatus.COOKING.name());
+        return standardOrder;
+    }
+
+    public static List<Order> getStandardOrders() {
+        List<Order> standardOrders = new ArrayList<>();
+        standardOrders.add(getStandardOrder());
+        return standardOrders;
+    }
+
+    public static OrderLineItem getStandardOrderLineItem() {
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setOrderId(1L);
+        orderLineItem.setMenuId(1L);
+        orderLineItem.setQuantity(1L);
+        orderLineItem.setSeq(1L);
+        return orderLineItem;
+    }
+
+    public static List<OrderLineItem> getStandardOrderLineItems() {
+        List<OrderLineItem> standardOrderLineItems = new ArrayList<>();
+        standardOrderLineItems.add(getStandardOrderLineItem());
+        return standardOrderLineItems;
+    }
+
+    public static OrderTable getStandardOrderTable() {
+        OrderTable standardOrderTable = new OrderTable();
+        standardOrderTable.setId(1L);
+        standardOrderTable.setTableGroupId(1L);
+        standardOrderTable.setEmpty(false);
+        standardOrderTable.setNumberOfGuests(1);
+        return standardOrderTable;
     }
 }

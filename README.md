@@ -26,16 +26,16 @@
 ### 주문
 
 - [ ] 주문 생성
-  - [ ] 주문은 id, OrderTableId, orderStatus, orderedTime, OrderLineItems로 구성됨
-  - [ ] OrderLineITem은 seq, orderId, menuId, quantity로 구성됨
+  - [x] 주문은 id, OrderTableId, orderStatus, orderedTime, OrderLineItems로 구성됨
+  - [x] OrderLineITem은 seq, orderId, menuId, quantity로 구성됨
   - [ ] orderLineItems가 비어있다면 에러 처리
   - [ ] orderLineItems와 DB의 메뉴가 일치하지 않으면 에러 처리
- - [ ] orderTable이 없거나 내용이 비어있다면 에러 처리
-- [ ] 모든 주문 가져오기
-- [ ] 주문 수정하기
-  - [ ] 주문번호를 이용하여 주문내역 수정
-  - [ ] 주문번호로 조회시 없다면 에러 출력
-  - [ ] 주문이 완료된 상태라면 에러 처리
+   - [ ] orderTable이 없거나 내용이 비어있다면 에러 처리
+- [x] 모든 주문 가져오기
+- [x] 주문 수정하기
+  - [x] 주문번호를 이용하여 주문내역 수정
+  - [x] 주문번호로 조회시 없다면 에러 출력
+  - [x] 주문이 완료된 상태라면 에러 처리
 
 
 
