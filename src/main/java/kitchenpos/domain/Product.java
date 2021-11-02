@@ -13,7 +13,8 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    private String name;
+    @Embedded
+    private Name name;
     @Embedded
     private Price price;
 
@@ -30,7 +31,7 @@ public class Product {
 
     public Product(final Long id, final String name, final Price price) {
         this.id = id;
-        this.name = name;
+        this.name = new Name(name);
         this.price = price;
     }
 
@@ -39,7 +40,7 @@ public class Product {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public Price getPrice() {

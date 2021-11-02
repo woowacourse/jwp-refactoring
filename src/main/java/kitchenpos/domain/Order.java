@@ -3,14 +3,16 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -24,34 +26,38 @@ public class Order {
     @JoinColumn(name = "order_table_id")
     @ManyToOne
     private OrderTable orderTable;
-    private String orderStatus;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
     @CreatedDate
     private LocalDateTime orderedTime;
-    @OneToMany(mappedBy = "order")
-    private List<OrderLineItem> orderLineItems;
+    @Embedded
+    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
     public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING.name(), orderLineItems);
+        this(null, orderTable, OrderStatus.COOKING, orderLineItems);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final String orderStatus,
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
                  final List<OrderLineItem> orderLineItems) {
+        this(id, orderTable, orderStatus, new OrderLineItems(orderLineItems));
+    }
+
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
+                 final OrderLineItems orderLineItems) {
         validateToConstruct(orderTable, orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
         orderTable.addOrder(this);
-        for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(this);
-        }
+        orderLineItems.setOrder(this);
     }
 
     private void validateToConstruct(final OrderTable orderTable,
-                                     final List<OrderLineItem> orderLineItems) {
+                                     final OrderLineItems orderLineItems) {
         validateOrderTable(orderTable);
         validateOrderLineItemsSize(orderLineItems);
     }
@@ -65,20 +71,20 @@ public class Order {
         }
     }
 
-    private void validateOrderLineItemsSize(final List<OrderLineItem> orderLineItems) {
-        if (orderLineItems.size() == 0) {
+    private void validateOrderLineItemsSize(final OrderLineItems orderLineItems) {
+        if (orderLineItems.isEmpty()) {
             throw new IllegalArgumentException("주문 항목은 1개이상 입니다.");
         }
     }
 
-    public void changeOrder(final String newOrderStatus) {
-        if (Objects.equals(OrderStatus.COMPLETION.name(), orderStatus)) {
+    public void changeOrder(final OrderStatus newOrderStatus) {
+        if (Objects.equals(OrderStatus.COMPLETION, orderStatus)) {
             throw new IllegalArgumentException();
         }
         this.orderStatus = newOrderStatus;
     }
 
-    public boolean isOrderStatusIn(final List<String> orderStatuses) {
+    public boolean isOrderStatusIn(final List<OrderStatus> orderStatuses) {
         return orderStatuses.stream()
             .anyMatch(orderStatus -> orderStatus.equals(this.orderStatus));
     }
@@ -91,7 +97,7 @@ public class Order {
         return orderTable;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -100,6 +106,6 @@ public class Order {
     }
 
     public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+        return orderLineItems.getElements();
     }
 }

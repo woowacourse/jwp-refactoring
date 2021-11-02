@@ -85,7 +85,7 @@ public class OrderService {
             .orElseThrow(IllegalArgumentException::new);
         OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
 
-        savedOrder.changeOrder(orderStatus.name());
+        savedOrder.changeOrder(orderStatus);
         return OrderResponse.from(savedOrder);
     }
 }

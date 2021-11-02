@@ -213,7 +213,7 @@ public class OrderServiceTest extends ServiceTest {
             new Order(
                 1L,
                 orderTable1,
-                OrderStatus.COMPLETION.name(),
+                OrderStatus.COMPLETION,
                 Collections.singletonList(new OrderLineItem(menu, 2L))
             )
         ));

@@ -15,7 +15,8 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-    private String name;
+    @Embedded
+    private Name name;
     @Embedded
     private Price price;
     @ManyToOne
@@ -43,7 +44,7 @@ public class Menu {
     public Menu(final Long id, final String name, final Price price, final MenuGroup menuGroup,
                 final MenuProducts menuProducts) {
         this.id = id;
-        this.name = name;
+        this.name = new Name(name);
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
@@ -77,7 +78,7 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public Price getPrice() {

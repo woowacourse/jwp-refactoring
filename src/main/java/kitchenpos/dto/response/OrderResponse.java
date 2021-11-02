@@ -33,7 +33,7 @@ public class OrderResponse {
     public static OrderResponse from(final Order order) {
         return new OrderResponse(
             order.getId(),
-            order.getOrderStatus(),
+            order.getOrderStatus().name(),
             order.getOrderedTime(),
             OrderLineItemResponse.listFrom(order.getOrderLineItems())
         );

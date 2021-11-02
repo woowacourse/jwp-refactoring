@@ -105,7 +105,7 @@ public class OrderApiTest extends ApiTest {
         OrderResponse actualOrderLineItem = response[0];
         assertThat(actualOrderLineItem).usingRecursiveComparison()
             .ignoringFields("orderLineItems")
-            .isEqualTo(order);
+            .isEqualTo(OrderResponse.from(order));
         assertThat(actualOrderLineItem.getOrderLineItems()).hasSize(1);
         assertThat(actualOrderLineItem.getOrderLineItems().get(0)).usingRecursiveComparison()
             .isEqualTo(OrderLineItemResponse.from(orderLineItem));
