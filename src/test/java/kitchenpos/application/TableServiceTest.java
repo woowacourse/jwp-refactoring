@@ -155,7 +155,7 @@ class TableServiceTest extends IntegrationTest {
             .orderTableId(orderTable.getId())
             .orderLineItems(Collections.singletonList(TOrderLineItem.builder()
                 .menuId(menu.getId())
-                .quantity(1)
+                .quantity(1L)
                 .build()
             )).build());
 
@@ -196,7 +196,7 @@ class TableServiceTest extends IntegrationTest {
             .orderTableId(orderTable.getId())
             .orderLineItems(Collections.singletonList(TOrderLineItem.builder()
                 .menuId(menu.getId())
-                .quantity(1)
+                .quantity(1L)
                 .build()
             )).build());
 

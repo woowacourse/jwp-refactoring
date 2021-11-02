@@ -39,7 +39,7 @@ public class IntegrationTest {
     protected TableGroupService tableGroupService;
 
     @BeforeEach
-    void setUp() {
+    void clean() {
         databaseInitializer.clear();
     }
 

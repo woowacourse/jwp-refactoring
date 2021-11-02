@@ -13,7 +13,7 @@ public class TOrderLineItem {
         private Long seq;
         private Long orderId;
         private Long menuId;
-        private long quantity;
+        private Long quantity;
 
         public Builder seq(Long seq) {
             this.seq = seq;
@@ -30,7 +30,7 @@ public class TOrderLineItem {
             return this;
         }
 
-        public Builder quantity(long quantity) {
+        public Builder quantity(Long quantity) {
             this.quantity = quantity;
             return this;
         }
