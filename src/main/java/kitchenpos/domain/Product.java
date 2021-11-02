@@ -1,19 +1,23 @@
 package kitchenpos.domain;
 
+import javax.persistence.Embedded;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public class Product {
     private Long id;
     private String name;
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     public Product(String name, BigDecimal price) {
         this(0L, name, price);
     }
 
     public Product(Long id, String name, BigDecimal price) {
-        validatePrice(price);
+        this(id, name, new Price(price));
+    }
+
+    public Product(Long id, String name, Price price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -36,16 +40,10 @@ public class Product {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
-    public void setPrice(final BigDecimal price) {
+    public void setPrice(final Price price) {
         this.price = price;
-    }
-
-    public void validatePrice(BigDecimal price) {
-        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
-        }
     }
 }

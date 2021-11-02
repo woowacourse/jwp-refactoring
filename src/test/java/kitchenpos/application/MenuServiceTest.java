@@ -5,6 +5,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -109,7 +110,7 @@ class MenuServiceTest {
         @Test
         void createExceptionIfExceedPrice() {
             product.setId(1L);
-            product.setPrice(BigDecimal.ONE);
+            product.setPrice(new Price(BigDecimal.ONE));
             menu.setPrice(BigDecimal.TEN);
             menu.setMenuProducts(Arrays.asList(createMenuProduct(product, 1), createMenuProduct(product, 2)));
             when(menuGroupDao.existsById(any())).thenReturn(true);
@@ -123,7 +124,7 @@ class MenuServiceTest {
         @Test
         void create() {
             product.setId(1L);
-            product.setPrice(BigDecimal.TEN);
+            product.setPrice(new Price(BigDecimal.TEN));
             menu.setPrice(BigDecimal.ONE);
             menu.setMenuProducts(Arrays.asList(createMenuProduct(product, 1), createMenuProduct(product, 2)));
             when(menuGroupDao.existsById(any())).thenReturn(true);
