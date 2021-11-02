@@ -13,6 +13,8 @@ import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.request.TableGroupRequest;
+import kitchenpos.dto.request.TableGroupRequest.OrderTableOfGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,19 +50,22 @@ public class TableGroupApiTest extends ApiTest {
         orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
         orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
         tableGroups.add(
-            tableGroupRepository.save(new TableGroup(Collections.emptyList()))
+            tableGroupRepository.save(new TableGroup(orderTables))
         );
     }
 
     @DisplayName("단체 지정 등록")
     @Test
     void postTableGroups() {
-        TableGroup request = new TableGroup(Arrays.asList(
-            orderTables.get(0),
-            orderTables.get(1)
+        TableGroupRequest request = new TableGroupRequest(Arrays.asList(
+            new OrderTableOfGroupRequest(orderTables.get(0).getId()),
+            new OrderTableOfGroupRequest(orderTables.get(1).getId())
         ));
-        ResponseEntity<TableGroupResponse> responseEntity = testRestTemplate.postForEntity(BASE_URL,
-            request, TableGroupResponse.class);
+        ResponseEntity<TableGroupResponse> responseEntity = testRestTemplate.postForEntity(
+            BASE_URL,
+            request,
+            TableGroupResponse.class
+        );
         TableGroupResponse response = responseEntity.getBody();
         List<OrderTableResponse> expected = orderTables.stream()
             .map(OrderTableResponse::from)

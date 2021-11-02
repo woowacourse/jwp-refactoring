@@ -8,10 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
@@ -21,6 +19,7 @@ import kitchenpos.dto.request.OrderTableEmptyRequest;
 import kitchenpos.dto.request.OrderTableNumberOfGuestsRequest;
 import kitchenpos.dto.request.OrderTableRequest;
 import kitchenpos.dto.response.OrderTableResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -36,6 +35,15 @@ public class TableServiceTest extends ServiceTest {
 
     @InjectMocks
     private TableService tableService;
+
+    private OrderTable orderTable1;
+
+    @BeforeEach
+    void setUp() {
+        orderTable1 = new OrderTable(1L, null, 4, true);
+        OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
+        TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+    }
 
     @DisplayName("주문 테이블 등록")
     @Test
@@ -118,13 +126,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("단체로 등록된 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
     @Test
     void changeEmptyWithTableDesignatedAsGroup() {
-        OrderTable savedOrderTable = new OrderTable(
-            1L,
-            new TableGroup(1L, Collections.emptyList()),
-            0,
-            true
-        );
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(savedOrderTable));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
         assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isExactlyInstanceOf(

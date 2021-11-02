@@ -3,7 +3,6 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -11,7 +10,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.domain.OrderStatus;
@@ -23,6 +22,7 @@ import kitchenpos.dto.request.TableGroupRequest;
 import kitchenpos.dto.request.TableGroupRequest.OrderTableOfGroupRequest;
 import kitchenpos.dto.response.OrderTableResponse;
 import kitchenpos.dto.response.TableGroupResponse;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,47 +42,38 @@ public class TableGroupServiceTest extends ServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
+
+    @BeforeEach
+    void setUp() {
+        orderTable1 = new OrderTable(1L, null, 4, true);
+        orderTable2 = new OrderTable(2L, null, 4, true);
+    }
+
     @DisplayName("단체 지정 저장")
     @Test
     void create() {
-        List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, null, 0, true),
-            new OrderTable(2L, null, 0, true)
-        );
-        long newTableGroupId = 1L;
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
-            orderTables);
-        when(tableGroupRepository.save(any(TableGroup.class))).thenAnswer(invocation -> {
-            TableGroup tableGroup = invocation.getArgument(0);
-            return new TableGroup(newTableGroupId, tableGroup.getOrderTables());
-        });
+            orderTables
+        );
+        when(tableGroupRepository.save(any(TableGroup.class))).thenAnswer(
+            invocation -> invocation.getArgument(0)
+        );
 
         TableGroupResponse actual = tableGroupService.create(
             new TableGroupRequest(orderTableRequestFromEntity(orderTables))
         );
-        List<OrderTableResponse> expectedOrderTablesResponse = orderTables.stream()
-            .map(orderTable -> newOrderTableResponse(newTableGroupId, orderTable))
-            .collect(Collectors.toList());
+        List<OrderTableResponse> expectedOrderTablesResponse = OrderTableResponse.listFrom(
+            orderTables
+        );
         TableGroupResponse expected = new TableGroupResponse(1L, expectedOrderTablesResponse);
 
         verify(tableGroupRepository, times(1)).save(any(TableGroup.class));
-        verify(orderTableRepository, times(orderTables.size())).save(
-            argThat(orderTable ->
-                !orderTable.isEmpty() && Objects.nonNull(orderTable.getTableGroup().getId())
-            )
-        );
         assertThat(actual).usingRecursiveComparison()
+            .ignoringFields("id")
             .isEqualTo(expected);
-    }
-
-    private OrderTableResponse newOrderTableResponse(final long newTableGroupId,
-                                                     final OrderTable orderTable) {
-        return new OrderTableResponse(
-            orderTable.getId(),
-            newTableGroupId,
-            orderTable.getNumberOfGuests().getValue(),
-            orderTable.isEmpty()
-        );
     }
 
     private List<OrderTableOfGroupRequest> orderTableRequestFromEntity(
@@ -139,10 +130,8 @@ public class TableGroupServiceTest extends ServiceTest {
     @DisplayName("이미 단체 지정이 된 테이블을 단체 지정으로 등록할 경우 예외 처리")
     @Test
     void createWhenSomeOrderTablesAreAlreadyDesignatedAsGroup() {
-        List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, null, 0, true),
-            new OrderTable(2L, new TableGroup(1L, null), 0, true)
-        );
+        TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             orderTables
         );
@@ -156,11 +145,12 @@ public class TableGroupServiceTest extends ServiceTest {
     @Test
     void ungroup() {
         long tableGroupId = 1L;
-        List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, null, 0, false),
-            new OrderTable(2L, null, 0, false)
+        TableGroup tableGroup = new TableGroup(
+            tableGroupId,
+            Arrays.asList(orderTable1, orderTable2)
         );
-        when(orderTableRepository.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
         when(
             orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 convertIdsFromOrderTables(orderTables),
@@ -170,22 +160,22 @@ public class TableGroupServiceTest extends ServiceTest {
 
         tableGroupService.ungroup(tableGroupId);
 
-        verify(orderTableRepository, times(orderTables.size())).save(
-            argThat(orderTable ->
-                !orderTable.isEmpty() && Objects.isNull(orderTable.getTableGroup())
-            )
-        );
+        for (OrderTable orderTable : orderTables) {
+            assertThat(orderTable.getTableGroup()).isNull();
+            assertThat(orderTable.isEmpty()).isFalse();
+        }
     }
 
     @DisplayName("조리나 식사 상태인 테이블이 있는 단체 지정을 제거할 경우 예외 처리")
     @Test
     void deleteWithNotFoundTableGroup() {
         long tableGroupId = 1L;
-        List<OrderTable> orderTables = Arrays.asList(
-            new OrderTable(1L, null, 0, false),
-            new OrderTable(2L, null, 0, false)
+        TableGroup tableGroup = new TableGroup(
+            tableGroupId,
+            Arrays.asList(orderTable1, orderTable2)
         );
-        when(orderTableRepository.findAllByTableGroupId(tableGroupId)).thenReturn(orderTables);
+        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
         when(
             orderDao.existsByOrderTableIdInAndOrderStatusIn(
                 convertIdsFromOrderTables(orderTables),

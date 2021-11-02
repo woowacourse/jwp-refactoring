@@ -22,6 +22,7 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.generator.OrderGenerator;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -44,12 +45,22 @@ public class OrderServiceTest extends ServiceTest {
     @InjectMocks
     private OrderService orderService;
 
+    private OrderTable orderTable1;
+    private OrderTable orderTable2;
+    private TableGroup tableGroup;
+
+    @BeforeEach
+    void setUp() {
+        orderTable1 = new OrderTable(1L, null, 4, true);
+        orderTable2 = new OrderTable(2L, null, 4, true);
+        tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+    }
+
     @DisplayName("주문 등록")
     @Test
     void create() {
         when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
-        when(orderTableRepository.findById(1L)).thenReturn(
-            Optional.of(new OrderTable(1L, new TableGroup(1L, Collections.emptyList()), 4, false)));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
         when(orderDao.save(any(Order.class))).thenAnswer(invocation -> {
             Order order = invocation.getArgument(0);
             return OrderGenerator.newInstance(1L, order.getOrderTableId(), order.getOrderStatus(),
@@ -112,8 +123,9 @@ public class OrderServiceTest extends ServiceTest {
     @Test
     void createWithEmptyOrderTable() {
         when(menuRepository.countByIdIn(Collections.singletonList(1L))).thenReturn(1L);
-        when(orderTableRepository.findById(1L)).thenReturn(
-            Optional.of(new OrderTable(1L, new TableGroup(1L, Collections.emptyList()), 4, true)));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(
+            new OrderTable(3L, null, 4, true)
+        ));
 
         OrderLineItem orderLineItem = OrderGenerator.newOrderLineItem(1L, 1);
         Order order = OrderGenerator.newInstance(1L, Collections.singletonList(orderLineItem));
@@ -133,7 +145,8 @@ public class OrderServiceTest extends ServiceTest {
             invocation -> Arrays.asList(
                 OrderGenerator.newOrderLineItem(1L, invocation.getArgument(0), 1L, 1),
                 OrderGenerator.newOrderLineItem(2L, invocation.getArgument(0), 2L, 1)
-            ));
+            )
+        );
 
         List<Order> actual = orderService.list();
 
@@ -151,7 +164,8 @@ public class OrderServiceTest extends ServiceTest {
     void changeOrderStatus() {
         long idToChange = 1L;
         when(orderDao.findById(idToChange)).thenReturn(Optional.of(
-            OrderGenerator.newInstance(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now())));
+            OrderGenerator.newInstance(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now())
+        ));
 
         String orderStatus = OrderStatus.MEAL.name();
         Order order = OrderGenerator.newInstance(orderStatus);
