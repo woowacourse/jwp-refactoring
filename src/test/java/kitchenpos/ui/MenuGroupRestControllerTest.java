@@ -10,9 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.Constructor;
+import kitchenpos.ObjectMapperForTest;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.ui.request.MenuGroupRequest;
+import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MenuGroupRestController.class)
-class MenuGroupRestControllerTest extends Constructor {
+class MenuGroupRestControllerTest extends ObjectMapperForTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,9 +36,9 @@ class MenuGroupRestControllerTest extends Constructor {
     @Test
     void create() throws Exception {
         //given
-        MenuGroup menuGroup = menuGroupConstructor("마크 정식");
-        MenuGroup expected = menuGroupConstructor(1L, "마크 정식");
-        given(menuGroupService.create(any(MenuGroup.class))).willReturn(expected);
+        MenuGroupRequest menuGroup = new MenuGroupRequest("마크 정식");
+        MenuGroupResponse expected = new MenuGroupResponse(1L, "마크 정식");
+        given(menuGroupService.create(any(MenuGroupRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(post("/api/menu-groups")
@@ -56,9 +57,9 @@ class MenuGroupRestControllerTest extends Constructor {
     @Test
     void readAll() throws Exception {
         //given
-        List<MenuGroup> expected = Arrays.asList(
-            menuGroupConstructor("마크 정식"),
-            menuGroupConstructor("안주 3종 세트")
+        List<MenuGroupResponse> expected = Arrays.asList(
+            new MenuGroupResponse(1L, "마크 정식"),
+            new MenuGroupResponse(2L, "안주 3종 세트")
         );
         given(menuGroupService.list()).willReturn(expected);
 

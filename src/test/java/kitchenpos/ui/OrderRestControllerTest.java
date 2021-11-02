@@ -13,11 +13,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.Constructor;
+import java.util.stream.Collectors;
+import kitchenpos.ObjectMapperForTest;
 import kitchenpos.application.OrderService;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
+import kitchenpos.ui.request.OrderLineItemRequest;
+import kitchenpos.ui.request.OrderRequest;
+import kitchenpos.ui.response.OrderLineItemResponse;
+import kitchenpos.ui.response.OrderResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(OrderRestController.class)
-class OrderRestControllerTest extends Constructor {
+class OrderRestControllerTest extends ObjectMapperForTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,10 +44,13 @@ class OrderRestControllerTest extends Constructor {
     @Test
     void create() throws Exception {
         //given
-        List<OrderLineItem> 주문_목록_생성 = 주문_목록_생성();
-        Order order = orderConstructor(주문_목록_생성);
-        Order expected = orderConstructor(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), 주문_목록_생성);
-        given(orderService.create(any(Order.class))).willReturn(expected);
+        List<OrderLineItemRequest> 주문_목록_생성 = 주문_목록_생성();
+        OrderRequest order = new OrderRequest(1L, 주문_목록_생성);
+        List<OrderLineItemResponse> collect = 주문_목록_생성.stream()
+            .map(value -> new OrderLineItemResponse(1L, 1L, value.getMenuId(), value.getQuantity()))
+            .collect(Collectors.toList());
+        OrderResponse expected = new OrderResponse(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now().toString(), collect);
+        given(orderService.create(any(OrderRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(post("/api/orders")
@@ -57,11 +64,11 @@ class OrderRestControllerTest extends Constructor {
             .andExpect(content().string(objectToJson(expected)));
     }
 
-    private List<OrderLineItem> 주문_목록_생성() {
-        OrderLineItem 후라이드_치킨 = orderLineItemConstructor(1L, 1L, 1L, 1);
-        OrderLineItem 모짜_치즈볼_5pc = orderLineItemConstructor(2L, 2L, 2L, 5);
-        OrderLineItem 치킨윙_4pc = orderLineItemConstructor(3L, 3L, 3L, 4);
-        OrderLineItem 맥주_500_cc = orderLineItemConstructor(4L, 4L, 4L, 1);
+    private List<OrderLineItemRequest> 주문_목록_생성() {
+        OrderLineItemRequest 후라이드_치킨 = new OrderLineItemRequest(1L, 1L);
+        OrderLineItemRequest 모짜_치즈볼_5pc = new OrderLineItemRequest(2L, 5L);
+        OrderLineItemRequest 치킨윙_4pc = new OrderLineItemRequest(3L, 4L);
+        OrderLineItemRequest 맥주_500_cc = new OrderLineItemRequest(4L, 1L);
 
         return Arrays.asList(후라이드_치킨, 모짜_치즈볼_5pc, 치킨윙_4pc, 맥주_500_cc);
     }
@@ -70,15 +77,15 @@ class OrderRestControllerTest extends Constructor {
     @Test
     void readAll() throws Exception {
         //given
-        OrderLineItem 후라이드_치킨 = orderLineItemConstructor(1L, 1L, 1L, 1);
-        OrderLineItem 모짜_치즈볼_5pc = orderLineItemConstructor(2L, 2L, 2L, 5);
-        OrderLineItem 치킨윙_4pc = orderLineItemConstructor(3L, 3L, 3L, 4);
-        OrderLineItem 맥주_500_cc = orderLineItemConstructor(4L, 4L, 4L, 1);
-        List<OrderLineItem> orderLineItemsA = Arrays.asList(후라이드_치킨, 맥주_500_cc);
-        List<OrderLineItem> orderLineItemsB = Arrays.asList(모짜_치즈볼_5pc, 치킨윙_4pc, 맥주_500_cc);
-        Order orderA = orderConstructor(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItemsA);
-        Order orderB = orderConstructor(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItemsB);
-        List<Order> expected = Arrays.asList(orderA, orderB);
+        OrderLineItemResponse 후라이드_치킨 = new OrderLineItemResponse(1L, 1L, 1L, 1L);
+        OrderLineItemResponse 모짜_치즈볼_5pc = new OrderLineItemResponse(2L, 2L, 2L, 5L);
+        OrderLineItemResponse 치킨윙_4pc = new OrderLineItemResponse(3L, 3L, 3L, 4L);
+        OrderLineItemResponse 맥주_500_cc = new OrderLineItemResponse(4L, 4L, 4L, 1L);
+        List<OrderLineItemResponse> orderLineItemsA = Arrays.asList(후라이드_치킨, 맥주_500_cc);
+        List<OrderLineItemResponse> orderLineItemsB = Arrays.asList(모짜_치즈볼_5pc, 치킨윙_4pc, 맥주_500_cc);
+        OrderResponse orderA = new OrderResponse(1L, 1L, OrderStatus.COOKING.name(), LocalDateTime.now().toString(), orderLineItemsA);
+        OrderResponse orderB = new OrderResponse(2L, 2L, OrderStatus.COOKING.name(), LocalDateTime.now().toString(), orderLineItemsB);
+        List<OrderResponse> expected = Arrays.asList(orderA, orderB);
 
         given(orderService.list()).willReturn(expected);
 
@@ -95,9 +102,12 @@ class OrderRestControllerTest extends Constructor {
     void changeOrderStatus() throws Exception {
         //given
         Long orderId = 1L;
-        List<OrderLineItem> 주문_목록_생성 = 주문_목록_생성();
-        Order order = orderConstructor(주문_목록_생성);
-        Order expected = orderConstructor(orderId, 1L, OrderStatus.MEAL.name(), LocalDateTime.now(), 주문_목록_생성);
+        List<OrderLineItemRequest> 주문_목록_생성 = 주문_목록_생성();
+        List<OrderLineItemResponse> collect = 주문_목록_생성.stream()
+            .map(value -> new OrderLineItemResponse(1L, 1L, value.getMenuId(), value.getQuantity()))
+            .collect(Collectors.toList());
+        OrderRequest order = new OrderRequest(1L, 주문_목록_생성);
+        OrderResponse expected = new OrderResponse(orderId, 1L, OrderStatus.MEAL.name(), LocalDateTime.now().toString(), collect);
         given(orderService.changeOrderStatus(anyLong(), any(Order.class))).willReturn(expected);
 
         //when

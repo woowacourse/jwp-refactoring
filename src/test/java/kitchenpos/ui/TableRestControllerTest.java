@@ -12,9 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.Constructor;
+import kitchenpos.ObjectMapperForTest;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.TableChangeEmptyRequest;
+import kitchenpos.ui.request.TableChangeNumberOfGuestsRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(TableRestController.class)
-class TableRestControllerTest extends Constructor {
+class TableRestControllerTest extends ObjectMapperForTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,9 +40,9 @@ class TableRestControllerTest extends Constructor {
     @Test
     void create() throws Exception {
         //given
-        OrderTable orderTable = orderTableConstructor(5);
-        OrderTable expected = orderTableConstructor(1L, 1L, 5, true);
-        given(tableService.create(any(OrderTable.class))).willReturn(expected);
+        OrderTableRequest orderTable = new OrderTableRequest(5L);
+        OrderTableResponse expected = new OrderTableResponse(1L, 1L, 5, true);
+        given(tableService.create(any(OrderTableRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(post("/api/tables")
@@ -58,11 +61,11 @@ class TableRestControllerTest extends Constructor {
     @Test
     void readAll() throws Exception {
         //given
-        OrderTable 테이블_A = orderTableConstructor(1L, 1L, 2, true);
-        OrderTable 테이블_B = orderTableConstructor(2L, 1L, 2, false);
-        OrderTable 테이블_C = orderTableConstructor(3L, 2L, 4, true);
-        OrderTable 테이블_D = orderTableConstructor(4L, 2L, 6, false);
-        List<OrderTable> expected = Arrays.asList(테이블_A, 테이블_B, 테이블_C, 테이블_D);
+        OrderTableResponse 테이블_A = new OrderTableResponse(1L, 1L, 2, true);
+        OrderTableResponse 테이블_B = new OrderTableResponse(2L, 1L, 2, false);
+        OrderTableResponse 테이블_C = new OrderTableResponse(3L, 2L, 4, true);
+        OrderTableResponse 테이블_D = new OrderTableResponse(4L, 2L, 6, false);
+        List<OrderTableResponse> expected = Arrays.asList(테이블_A, 테이블_B, 테이블_C, 테이블_D);
         given(tableService.list()).willReturn(expected);
 
         //when
@@ -78,9 +81,9 @@ class TableRestControllerTest extends Constructor {
     void changeEmptyTrue() throws Exception {
         //given
         Long orderTableId = 4L;
-        OrderTable notEmptyTable = orderTableConstructor(5, false);
-        OrderTable expected = orderTableConstructor(orderTableId, null, 5, false);
-        given(tableService.changeEmpty(anyLong(), any(OrderTable.class))).willReturn(expected);
+        TableChangeEmptyRequest notEmptyTable = new TableChangeEmptyRequest(false);
+        OrderTableResponse expected = new OrderTableResponse(orderTableId, null, 5, false);
+        given(tableService.changeEmpty(anyLong(), any(TableChangeEmptyRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(put(String.format("/api/tables/%s/empty", orderTableId))
@@ -100,9 +103,9 @@ class TableRestControllerTest extends Constructor {
     void changeNumberOfGuests() throws Exception {
         //given
         Long orderTableId = 4L;
-        OrderTable changeNumberOfGuestTable = orderTableConstructor(8, false);
-        OrderTable expected = orderTableConstructor(orderTableId, null, 8, false);
-        given(tableService.changeNumberOfGuests(anyLong(), any(OrderTable.class))).willReturn(expected);
+        TableChangeNumberOfGuestsRequest changeNumberOfGuestTable = new TableChangeNumberOfGuestsRequest(8);
+        OrderTableResponse expected = new OrderTableResponse(orderTableId, null, 8, false);
+        given(tableService.changeNumberOfGuests(anyLong(), any(TableChangeNumberOfGuestsRequest.class))).willReturn(expected);
 
         //when
         ResultActions response = mockMvc.perform(put(String.format("/api/tables/%s/number-of-guests", orderTableId))
