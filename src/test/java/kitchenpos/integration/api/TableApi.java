@@ -1,9 +1,14 @@
 package kitchenpos.integration.api;
 
 import java.util.List;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
+import kitchenpos.ui.request.OrderTableChangeEmptyRequest;
+import kitchenpos.ui.request.OrderTableChangeGuestsRequest;
+import kitchenpos.ui.request.OrderTableCreateRequest;
+import kitchenpos.ui.request.OrderTableRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,38 +20,37 @@ public class TableApi {
     @Autowired
     private MockMvcUtils mockMvcUtils;
 
-    public MockMvcResponse<OrderTable> 테이블_등록(OrderTable orderTable) {
+    public MockMvcResponse<OrderTableResponse> 테이블_등록(OrderTableCreateRequest orderTable) {
         return mockMvcUtils.request()
             .post(BASE_URL)
             .content(orderTable)
-            .asSingleResult(OrderTable.class);
+            .asSingleResult(OrderTableResponse.class);
     }
 
-    public MockMvcResponse<OrderTable> 테이블_등록(int numberOfGuests, boolean empty) {
-        return 테이블_등록(new OrderTable(numberOfGuests, empty));
+    public MockMvcResponse<OrderTableResponse> 테이블_등록(int numberOfGuests, boolean empty) {
+        return 테이블_등록(OrderTableCreateRequest.create(numberOfGuests, empty));
     }
 
-    public MockMvcResponse<List<OrderTable>> 테이블_조회() {
+    public MockMvcResponse<List<OrderTableResponse>> 테이블_조회() {
         return mockMvcUtils.request()
             .get(BASE_URL)
-            .asMultiResult(OrderTable.class);
+            .asMultiResult(OrderTableResponse.class);
     }
 
-    public MockMvcResponse<OrderTable> 테이블_빈자리_수정(Long id, boolean empty) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(empty);
+    public MockMvcResponse<OrderTableResponse> 테이블_빈자리_수정(Long id, boolean empty) {
+        final OrderTableChangeEmptyRequest request = OrderTableChangeEmptyRequest.create(empty);
         return mockMvcUtils.request()
             .put(BASE_URL+"/{orderTableId}/empty", id)
-            .content(orderTable)
-            .asSingleResult(OrderTable.class);
+            .content(request)
+            .asSingleResult(OrderTableResponse.class);
     }
 
-    public MockMvcResponse<OrderTable> 테이블_손님수_수정(Long id, int numberOfGuests) {
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(numberOfGuests);
+    public MockMvcResponse<OrderTableResponse> 테이블_손님수_수정(Long id, int numberOfGuests) {
+        final OrderTableChangeGuestsRequest request = OrderTableChangeGuestsRequest
+            .create(numberOfGuests);
         return mockMvcUtils.request()
             .put(BASE_URL+"/{orderTableId}/number-of-guests", id)
-            .content(orderTable)
-            .asSingleResult(OrderTable.class);
+            .content(request)
+            .asSingleResult(OrderTableResponse.class);
     }
 }

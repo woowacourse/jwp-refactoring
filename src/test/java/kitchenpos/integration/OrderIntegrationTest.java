@@ -2,7 +2,9 @@ package kitchenpos.integration;
 
 import static kitchenpos.integration.api.texture.ProductTexture.*;
 
+import java.util.Arrays;
 import java.util.Collections;
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
@@ -14,6 +16,8 @@ import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.ui.request.MenuProductRequest;
 import kitchenpos.application.response.MenuResponse;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderLineItemRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,8 +56,8 @@ public class OrderIntegrationTest extends IntegrationTest {
         final Long orderTableId = tableApi.테이블_등록(2, false).getContent().getId();
 
         //when
-        final MockMvcResponse<Order> result = orderApi.주문(
-            new Order(orderTableId, Collections.singletonList(new OrderLineItem(기본_메뉴.getId(), 3)))
+        final MockMvcResponse<OrderResponse> result = orderApi.주문(
+            OrderCreateRequest.create(orderTableId, Collections.singletonList(OrderLineItemRequest.create(기본_메뉴.getId(), 3)))
         );
 
         //then
@@ -66,12 +70,12 @@ public class OrderIntegrationTest extends IntegrationTest {
         //given
         final Long orderTableId = tableApi.테이블_등록(2, false).getContent().getId();
 
-        final Order order = orderApi.주문(
-            new Order(orderTableId, Collections.singletonList(new OrderLineItem(기본_메뉴.getId(), 3)))
+        final OrderResponse order = orderApi.주문(
+            OrderCreateRequest.create(orderTableId, Collections.singletonList(OrderLineItemRequest.create(기본_메뉴.getId(), 3)))
         ).getContent();
 
         //when
-        final MockMvcResponse<Order> result = orderApi
+        final MockMvcResponse<OrderResponse> result = orderApi
             .주문_상태_변경(order.getId(), OrderStatus.COMPLETION);
 
         //then
