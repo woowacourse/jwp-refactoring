@@ -1,12 +1,12 @@
-package kitchenpos.service;
+package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import kitchenpos.application.MenuGroupService;
+import kitchenpos.application.fixture.MenuGroupFixture;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.service.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,14 +14,12 @@ import org.junit.jupiter.api.Test;
 @DisplayName("메뉴 그룹 기능에서")
 public class MenuGroupServiceTest {
 
-    private MenuGroupFixture menuGroupFixture;
     private MenuGroupDao menuGroupDao;
     private MenuGroupService menuGroupService;
 
     @BeforeEach
     void setUp() {
-        menuGroupFixture = MenuGroupFixture.createFixture();
-        menuGroupDao = menuGroupFixture.getTestMenuGroupDao();
+        menuGroupDao = MenuGroupFixture.createFixture().getTestMenuGroupDao();
         menuGroupService = new MenuGroupService(menuGroupDao);
     }
 
@@ -44,15 +42,17 @@ public class MenuGroupServiceTest {
     @Test
     void menuGroupListTest() {
         //given
-        List<MenuGroup> expectedFixtures = menuGroupFixture.getFixtures();
+        List<MenuGroup> expectedFixtures = MenuGroupFixture.createFixture().getFixtures();
 
         //when & then
         List<MenuGroup> list = menuGroupService.list();
 
-        assertThat(expectedFixtures.size()).isEqualTo(list.size());
-        expectedFixtures.forEach(
-            menuGroup -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
-                .contains(menuGroup)
+        assertAll(
+            () -> assertThat(expectedFixtures.size()).isEqualTo(list.size()),
+            () -> expectedFixtures.forEach(
+                menuGroup -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
+                    .contains(menuGroup)
+            )
         );
     }
 }
