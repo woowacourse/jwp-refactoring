@@ -33,8 +33,6 @@ abstract class TestAbstractDao<T> {
 
     }
 
-    ;
-
     protected abstract BiConsumer<T, Long> setIdConsumer();
 
     public Optional<T> findById(Long id) {
@@ -51,6 +49,7 @@ abstract class TestAbstractDao<T> {
 
     public long countByIdIn(List<Long> ids) {
         return ids.stream()
+            .distinct()
             .filter(database::containsKey)
             .count();
     }
