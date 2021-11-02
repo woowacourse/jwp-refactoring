@@ -1,6 +1,7 @@
 package kitchenpos.integration;
 
 import java.util.List;
+import kitchenpos.application.response.OrderTableResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.utils.MockMvcResponse;
@@ -17,10 +18,10 @@ public class TableIntegrationTest extends IntegrationTest {
     @Test
     public void 테이블_등록_성공() {
         //when
-        final MockMvcResponse<OrderTable> result = tableApi.테이블_등록(2, false);
+        final MockMvcResponse<OrderTableResponse> result = tableApi.테이블_등록(2, false);
 
         //then
-        Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
+        Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(result.getContent().getNumberOfGuests()).isEqualTo(2);
         Assertions.assertThat(result.getContent().isEmpty()).isFalse();
     }
@@ -28,7 +29,7 @@ public class TableIntegrationTest extends IntegrationTest {
     @Test
     public void 테이블_조회_성공() {
         //when
-        final MockMvcResponse<List<OrderTable>> result = tableApi.테이블_조회();
+        final MockMvcResponse<List<OrderTableResponse>> result = tableApi.테이블_조회();
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
@@ -39,10 +40,10 @@ public class TableIntegrationTest extends IntegrationTest {
     @Test
     public void 테이블_빈자리_수정() {
         //given
-        final OrderTable originalTable = tableApi.테이블_등록(2, false).getContent();
+        final OrderTableResponse originalTable = tableApi.테이블_등록(2, false).getContent();
 
         //when
-        final MockMvcResponse<OrderTable> result = tableApi.테이블_빈자리_수정(originalTable.getId(), true);
+        final MockMvcResponse<OrderTableResponse> result = tableApi.테이블_빈자리_수정(originalTable.getId(), true);
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
@@ -53,10 +54,10 @@ public class TableIntegrationTest extends IntegrationTest {
     @Test
     public void 테이블_손님수_수정() {
         //given
-        final OrderTable originalTable = tableApi.테이블_등록(2, false).getContent();
+        final OrderTableResponse originalTable = tableApi.테이블_등록(2, false).getContent();
 
         //when
-        final MockMvcResponse<OrderTable> result = tableApi.테이블_손님수_수정(originalTable.getId(), 4);
+        final MockMvcResponse<OrderTableResponse> result = tableApi.테이블_손님수_수정(originalTable.getId(), 4);
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);

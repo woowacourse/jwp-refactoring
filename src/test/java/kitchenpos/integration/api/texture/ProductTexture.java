@@ -2,18 +2,19 @@ package kitchenpos.integration.api.texture;
 
 import java.math.BigDecimal;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductCreateRequest;
 
 public enum ProductTexture {
-    강정치킨(new Product("강정치킨", new BigDecimal(17000))),
-    민초치킨(new Product("민초치킨", new BigDecimal(18000)));
+    강정치킨(ProductCreateRequest.create("강정치킨", new BigDecimal(17000))),
+    민초치킨(ProductCreateRequest.create("민초치킨", new BigDecimal(18000)));
 
-    private final Product product;
+    private final ProductCreateRequest product;
 
-    ProductTexture(Product product) {
+    ProductTexture(ProductCreateRequest product) {
         this.product = product;
     }
 
-    public Product getProduct() {
+    public ProductCreateRequest getProduct() {
         return product;
     }
 }

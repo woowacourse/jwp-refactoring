@@ -2,17 +2,14 @@ package kitchenpos.integration;
 
 import static kitchenpos.integration.api.texture.ProductTexture.*;
 
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.integration.api.MenuApi;
 import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.api.ProductApi;
-import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.application.response.MenuResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,10 +31,10 @@ public class MenuIntegrationTest extends IntegrationTest {
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
         final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
 
-        final MenuProduct menuProduct = new MenuProduct(productId, 1);
+        final MenuProductRequest menuProduct = MenuProductRequest.create(productId, 1L);
 
         //when
-        final MockMvcResponse<Menu> result = menuApi.메뉴_등록(민초치킨,
+        final MockMvcResponse<MenuResponse> result = menuApi.메뉴_등록(민초치킨,
             menuGroupId,
                 Collections.singletonList(menuProduct));
 
@@ -51,10 +48,10 @@ public class MenuIntegrationTest extends IntegrationTest {
         //given
         final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
 
-        final MenuProduct menuProduct = new MenuProduct(productId, 1);
+        final MenuProductRequest menuProduct = MenuProductRequest.create(productId, 1L);
 
         //when
-        final MockMvcResponse<Menu> result = menuApi.메뉴_등록(민초치킨, Long.MAX_VALUE, Collections.singletonList(menuProduct));
+        final MockMvcResponse<MenuResponse> result = menuApi.메뉴_등록(민초치킨, Long.MAX_VALUE, Collections.singletonList(menuProduct));
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -64,11 +61,10 @@ public class MenuIntegrationTest extends IntegrationTest {
     public void 메뉴_등록_실패_notFoundProduct() {
         //given
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
-        final Long productId = productApi.상품_등록(민초치킨).getContent().getId();
-        final MenuProduct menuProduct = new MenuProduct(productId, 1);
+        final MenuProductRequest menuProduct = MenuProductRequest.create(Long.MAX_VALUE, 1L);
 
         // when
-        final MockMvcResponse<Menu> result = menuApi.메뉴_등록(민초치킨, menuGroupId,
+        final MockMvcResponse<MenuResponse> result = menuApi.메뉴_등록(민초치킨, menuGroupId,
             Collections.singletonList(menuProduct));
 
         // then
@@ -80,10 +76,10 @@ public class MenuIntegrationTest extends IntegrationTest {
     public void 메뉴_등록_실패_wrongPrice() {
         //given
         final Long menuGroupId = menuGroupApi.메뉴_그룹_등록("존맛탱").getContent().getId();
-        final MenuProduct menuProduct = new MenuProduct(Long.MAX_VALUE, 1);
+        final MenuProductRequest menuProduct = MenuProductRequest.create(Long.MAX_VALUE, 1L);
 
         // when
-        final MockMvcResponse<Menu> result = menuApi.메뉴_등록(
+        final MockMvcResponse<MenuResponse> result = menuApi.메뉴_등록(
             민초치킨,
             menuGroupId,
             Collections.singletonList(menuProduct));
@@ -95,13 +91,13 @@ public class MenuIntegrationTest extends IntegrationTest {
     @Test
     public void 메뉴_조회() {
         //when
-        final MockMvcResponse<List<Menu>> result = menuApi.메뉴_조회();
+        final MockMvcResponse<List<MenuResponse>> result = menuApi.메뉴_조회();
 
         //then
         Assertions.assertThat(result.getHttpStatus()).isEqualTo(HttpStatus.OK);
         Assertions.assertThat(result.getContent()).hasSize(6);
         Assertions.assertThat(result.getContent())
-            .extracting(Menu::getName)
+            .extracting(MenuResponse::getName)
             .containsExactlyInAnyOrder("후라이드치킨", "양념치킨", "반반치킨", "통구이", "간장치킨", "순살치킨");
     }
 }

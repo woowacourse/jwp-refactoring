@@ -1,10 +1,14 @@
 package kitchenpos.integration.api;
 
 import java.util.Arrays;
+import kitchenpos.application.response.OrderTableResponse;
+import kitchenpos.application.response.TableGroupResponse;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
+import kitchenpos.ui.request.OrderTableRequest;
+import kitchenpos.ui.request.TableGroupCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,17 +20,17 @@ public class TableGroupApi {
     @Autowired
     private MockMvcUtils mockMvcUtils;
 
-    public MockMvcResponse<TableGroup> 테이블_그룹_등록(TableGroup tableGroup) {
+    public MockMvcResponse<TableGroupResponse> 테이블_그룹_등록(TableGroupCreateRequest tableGroup) {
         return mockMvcUtils.request()
             .post(BASE_URL)
             .content(tableGroup)
-            .asSingleResult(TableGroup.class);
+            .asSingleResult(TableGroupResponse.class);
     }
 
-    public MockMvcResponse<TableGroup> 테이블_그룹_등록(OrderTable ... orderTables) {
-        final TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Arrays.asList(orderTables));
-        return 테이블_그룹_등록(tableGroup);
+    public MockMvcResponse<TableGroupResponse> 테이블_그룹_등록(Long... orderTableIds) {
+        final TableGroupCreateRequest request = TableGroupCreateRequest
+            .create(OrderTableRequest.create(orderTableIds));
+        return 테이블_그룹_등록(request);
     }
 
     public MockMvcResponse<Void> 테이블_그룹_목록_삭제(Long id) {

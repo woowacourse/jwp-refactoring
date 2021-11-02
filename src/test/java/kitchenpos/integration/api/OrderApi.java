@@ -1,9 +1,12 @@
 package kitchenpos.integration.api;
 
+import kitchenpos.application.response.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
+import kitchenpos.ui.request.OrderCreateRequest;
+import kitchenpos.ui.request.OrderStatusRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,19 +18,18 @@ public class OrderApi {
     @Autowired
     private MockMvcUtils mockMvcUtils;
 
-    public MockMvcResponse<Order> 주문(Order order) {
+    public MockMvcResponse<OrderResponse> 주문(OrderCreateRequest order) {
         return mockMvcUtils.request()
             .post(BASE_URL)
             .content(order)
-            .asSingleResult(Order.class);
+            .asSingleResult(OrderResponse.class);
     }
 
-    public MockMvcResponse<Order> 주문_상태_변경(Long orderId, OrderStatus orderStatus) {
-        final Order order = new Order();
-        order.setOrderStatus(orderStatus.name());
+    public MockMvcResponse<OrderResponse> 주문_상태_변경(Long orderId, OrderStatus orderStatus) {
+        final OrderStatusRequest orderStatusRequest = OrderStatusRequest.create(orderStatus);
         return mockMvcUtils.request()
             .put(BASE_URL + "/{orderId}/order-status", orderId)
-            .content(order)
-            .asSingleResult(Order.class);
+            .content(orderStatusRequest)
+            .asSingleResult(OrderResponse.class);
     }
 }
