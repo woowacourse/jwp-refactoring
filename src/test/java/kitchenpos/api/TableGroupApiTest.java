@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,9 +48,7 @@ public class TableGroupApiTest extends ApiTest {
 
         orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
         orderTables.add(orderTableRepository.save(new OrderTable(0, true)));
-        tableGroups.add(
-            tableGroupRepository.save(new TableGroup(orderTables))
-        );
+        tableGroups.add(tableGroupRepository.save(new TableGroup(orderTables)));
     }
 
     @DisplayName("단체 지정 등록")

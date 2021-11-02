@@ -61,27 +61,15 @@ public class MenuApiTest extends ApiTest {
         products.add(productRepository.save(new Product("후라이드", BigDecimal.valueOf(16000))));
         products.add(productRepository.save(new Product("양념치킨", BigDecimal.valueOf(16000))));
 
-        menus.add(menuRepository.save(new Menu(
-            "후라이드치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
-        )));
-        menus.add(menuRepository.save(new Menu(
-            "양념치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
-        )));
+        menus.add(menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000),
+            menuGroup)));
+        menus.add(menuRepository.save(new Menu("양념치킨", BigDecimal.valueOf(16000),
+            menuGroup)));
 
-        menuProducts.add(menuProductRepository.save(new MenuProduct(
-            menus.get(0),
-            products.get(0),
-            1)
-        ));
-        menuProducts.add(menuProductRepository.save(new MenuProduct(
-            menus.get(1),
-            products.get(1),
-            1)
-        ));
+        menuProducts.add(menuProductRepository.save(new MenuProduct(menus.get(0), products.get(0),
+            1)));
+        menuProducts.add(menuProductRepository.save(new MenuProduct(menus.get(1), products.get(1),
+            1)));
     }
 
     @DisplayName("메뉴 등록")
@@ -94,19 +82,15 @@ public class MenuApiTest extends ApiTest {
             Collections.singletonList(new MenuProductRequest(products.get(0).getId(), 2))
         );
 
-        ResponseEntity<MenuResponse> responseEntity = testRestTemplate.postForEntity(
-            BASE_URL,
-            request,
-            MenuResponse.class
-        );
+        ResponseEntity<MenuResponse> responseEntity = testRestTemplate.postForEntity(BASE_URL,
+            request, MenuResponse.class);
         MenuResponse response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
         assertThat(response.getId()).isEqualTo(response.getMenuProducts().get(0).getMenuId());
         assertThat(response).usingComparatorForType(
-                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
-                BigDecimal.class
+                BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class
             ).usingRecursiveComparison()
             .ignoringFields("id", "menuProducts.seq", "menuProducts.menuId")
             .isEqualTo(request);
@@ -124,11 +108,8 @@ public class MenuApiTest extends ApiTest {
         List<MenuResponse> expected = new ArrayList<>();
         for (int i = 0; i < menus.size(); i++) {
             Menu menuToAdd = menus.get(i);
-            MenuResponse menu = new MenuResponse(
-                menuToAdd.getId(),
-                menuToAdd.getName(),
-                menuToAdd.getPrice().getValue(),
-                menuToAdd.getMenuGroup().getId(),
+            MenuResponse menu = new MenuResponse(menuToAdd.getId(), menuToAdd.getName(),
+                menuToAdd.getPrice().getValue(), menuToAdd.getMenuGroup().getId(),
                 Collections.singletonList(MenuProductResponse.from(menuProducts.get(i)))
             );
             expected.add(menu);
@@ -137,9 +118,7 @@ public class MenuApiTest extends ApiTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response).hasSize(2);
         assertThat(response).usingRecursiveFieldByFieldElementComparator()
-            .usingComparatorForType(
-                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
-                BigDecimal.class
-            ).containsAll(expected);
+            .usingComparatorForType(BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class)
+            .containsAll(expected);
     }
 }

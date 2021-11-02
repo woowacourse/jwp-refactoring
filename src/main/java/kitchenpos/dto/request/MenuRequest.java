@@ -13,12 +13,8 @@ public class MenuRequest {
     protected MenuRequest() {
     }
 
-    public MenuRequest(
-        final String name,
-        final BigDecimal price,
-        final Long menuGroupId,
-        final List<MenuProductRequest> menuProducts
-    ) {
+    public MenuRequest(final String name, final BigDecimal price, final Long menuGroupId,
+                       final List<MenuProductRequest> menuProducts) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

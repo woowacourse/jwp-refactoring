@@ -12,8 +12,7 @@ public class TableGroupResponse {
     protected TableGroupResponse() {
     }
 
-    public TableGroupResponse(final Long id,
-                              final List<OrderTableResponse> orderTables) {
+    public TableGroupResponse(final Long id, final List<OrderTableResponse> orderTables) {
         this.id = id;
         this.orderTables = orderTables;
     }

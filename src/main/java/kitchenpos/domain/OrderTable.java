@@ -1,5 +1,8 @@
 package kitchenpos.domain;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -8,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -20,6 +24,8 @@ public class OrderTable {
     private TableGroup tableGroup;
     @Embedded
     private NumberOfGuests numberOfGuests;
+    @OneToMany(mappedBy = "orderTable")
+    private List<Order> orders;
     private boolean empty;
 
     protected OrderTable() {
@@ -44,6 +50,7 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+        this.orders = new ArrayList<>();
     }
 
     public void changeEmpty(final boolean empty) {
@@ -54,6 +61,10 @@ public class OrderTable {
     private void validateToChangeEmpty() {
         if (isIncludedInGroup()) {
             throw new IllegalArgumentException("단체 지정이 된 테이블은 빈 상태를 수정할 수 없습니다.");
+        }
+        if (containsOrderStatusIn(Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        )) {
+            throw new IllegalArgumentException();
         }
     }
 
@@ -72,8 +83,19 @@ public class OrderTable {
         }
     }
 
+    public void addOrder(final Order order) {
+        if (!orders.contains(order)) {
+            orders.add(order);
+        }
+    }
+
     public void changeTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
+    }
+
+    public boolean containsOrderStatusIn(final List<String> orderStatuses) {
+        return orders.stream()
+            .anyMatch(order -> order.isOrderStatusIn(orderStatuses));
     }
 
     public Long getId() {
@@ -86,6 +108,10 @@ public class OrderTable {
 
     public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
     public boolean isEmpty() {

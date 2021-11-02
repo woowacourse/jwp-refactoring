@@ -56,20 +56,13 @@ public class MenuServiceTest extends ServiceTest {
         long menuId = 3L;
         long seq = 4L;
         MenuRequest request = new MenuRequest(
-            "후라이드+후라이드",
-            BigDecimal.valueOf(19000),
-            menuGroupId,
-            Collections.singletonList(new MenuProductRequest(productId, 2))
+            "후라이드+후라이드", BigDecimal.valueOf(19000),
+            menuGroupId, Collections.singletonList(new MenuProductRequest(productId, 2))
         );
         when(menuRepository.save(any(Menu.class))).thenAnswer(invocation -> {
             Menu menu = invocation.getArgument(0);
-            return new Menu(
-                menuId,
-                menu.getName(),
-                menu.getPrice(),
-                menu.getMenuGroup(),
-                newMenuProductsOf(menu, seq, menuId)
-            );
+            return new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup(),
+                newMenuProductsOf(menu, seq, menuId));
         });
         when(menuGroupRepository.findById(request.getMenuGroupId())).thenReturn(
             Optional.of(new MenuGroup(menuGroupId, "두마리메뉴"))
@@ -79,15 +72,9 @@ public class MenuServiceTest extends ServiceTest {
         );
 
         MenuResponse actual = menuService.create(request);
-        MenuResponse expected = new MenuResponse(
-            menuId,
-            request.getName(),
-            request.getPrice(),
+        MenuResponse expected = new MenuResponse(menuId, request.getName(), request.getPrice(),
             request.getMenuGroupId(),
-            Collections.singletonList(new MenuProductResponse(
-                seq, menuId, productId, 2
-            ))
-        );
+            Collections.singletonList(new MenuProductResponse(seq, menuId, productId, 2)));
 
         verify(menuRepository, times(1)).save(any(Menu.class));
         assertThat(actual).usingRecursiveComparison()
@@ -102,7 +89,8 @@ public class MenuServiceTest extends ServiceTest {
                 .map(menuProduct -> new MenuProduct(
                     seq,
                     new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup()),
-                    new Product(menuProduct.getProduct().getId(),
+                    new Product(
+                        menuProduct.getProduct().getId(),
                         "후라이드",
                         BigDecimal.valueOf(16000)
                     ),

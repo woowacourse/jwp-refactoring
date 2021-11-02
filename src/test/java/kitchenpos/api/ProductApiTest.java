@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.ProductRequest;
@@ -52,8 +51,7 @@ public class ProductApiTest extends ApiTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(actual.getId()).isNotNull();
         assertThat(actual).usingComparatorForType(
-                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
-                BigDecimal.class
+                BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class
             ).usingRecursiveComparison()
             .ignoringFields("id")
             .isEqualTo(request);
@@ -72,8 +70,7 @@ public class ProductApiTest extends ApiTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(actual).usingRecursiveFieldByFieldElementComparator()
             .usingComparatorForType(
-                BigDecimalComparator.BIG_DECIMAL_COMPARATOR,
-                BigDecimal.class
+                BigDecimalComparator.BIG_DECIMAL_COMPARATOR, BigDecimal.class
             ).hasSameSizeAs(expected)
             .containsAll(expected);
     }

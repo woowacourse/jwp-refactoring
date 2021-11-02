@@ -30,10 +30,9 @@ public class MenuGroupServiceTest extends ServiceTest {
     void create() {
         Long idToSave = 1L;
         when(menuGroupRepository.save(any(MenuGroup.class))).thenAnswer(invocation -> {
-                MenuGroup menuGroup = invocation.getArgument(0);
-                return new MenuGroup(idToSave, menuGroup.getName());
-            }
-        );
+            MenuGroup menuGroup = invocation.getArgument(0);
+            return new MenuGroup(idToSave, menuGroup.getName());
+        });
 
         MenuGroupRequest request = new MenuGroupRequest("추천메뉴");
         MenuGroupResponse actual = menuGroupService.create(request);

@@ -7,11 +7,15 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -26,9 +30,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 public class TableServiceTest extends ServiceTest {
-
-    @Mock
-    private OrderDao orderDao;
 
     @Mock
     private OrderTableRepository orderTableRepository;
@@ -95,10 +96,6 @@ public class TableServiceTest extends ServiceTest {
     void changeEmpty() {
         OrderTable savedOrderTable = new OrderTable(1L, null, 0, true);
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(savedOrderTable));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            savedOrderTable.getId(),
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
-        ).thenReturn(false);
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
         OrderTableResponse actual = tableService.changeEmpty(
@@ -137,12 +134,10 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
     @Test
     void changeEmptyWithCookingOrMealStatus() {
-        OrderTable savedOrderTable = new OrderTable(1L, null, 0, true);
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(savedOrderTable));
-        when(orderDao.existsByOrderTableIdAndOrderStatusIn(
-            savedOrderTable.getId(),
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))
-        ).thenReturn(true);
+        Menu menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
+        Order order = new Order(orderTable1,
+            Collections.singletonList(new OrderLineItem(menu, 2L)));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);
         assertThatThrownBy(() -> tableService.changeEmpty(1L, request)).isExactlyInstanceOf(

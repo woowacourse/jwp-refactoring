@@ -1,9 +1,6 @@
 package kitchenpos.application;
 
-import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.OrderTableEmptyRequest;
@@ -16,12 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TableService {
 
-    private final OrderDao orderDao;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(final OrderDao orderDao,
-                        final OrderTableRepository orderTableRepository) {
-        this.orderDao = orderDao;
+    public TableService(final OrderTableRepository orderTableRepository) {
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -39,13 +33,6 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable savedOrderTable = findOrderTable(orderTableId);
-
-        //TODO: Order 리팩터링시 수정하기
-        if (orderDao.existsByOrderTableIdAndOrderStatusIn(
-            orderTableId, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {
-            throw new IllegalArgumentException();
-        }
-
         savedOrderTable.changeEmpty(orderTableEmptyRequest.isEmpty());
 
         return OrderTableResponse.from(savedOrderTable);

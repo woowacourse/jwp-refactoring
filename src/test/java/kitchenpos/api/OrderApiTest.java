@@ -4,10 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Collections;
-import kitchenpos.dao.JdbcTemplateOrderDao;
-import kitchenpos.dao.JdbcTemplateOrderLineItemDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Order;
@@ -16,8 +13,14 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
-import kitchenpos.generator.OrderGenerator;
+import kitchenpos.dto.request.OrderRequest;
+import kitchenpos.dto.request.OrderRequest.OrderLineItemRequest;
+import kitchenpos.dto.request.OrderStatusRequest;
+import kitchenpos.dto.response.OrderResponse;
+import kitchenpos.dto.response.OrderResponse.OrderLineItemResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,12 +45,11 @@ public class OrderApiTest extends ApiTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private JdbcTemplateOrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Autowired
-    private JdbcTemplateOrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
-    private MenuGroup menuGroup;
     private Menu menu;
     private OrderTable orderTable;
     private Order order;
@@ -58,32 +60,26 @@ public class OrderApiTest extends ApiTest {
     void setUp() throws SQLException {
         super.setUp();
 
-        menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
+        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup));
         orderTable = orderTableRepository.save(new OrderTable(0, false));
-        order = orderDao.save(OrderGenerator.newInstance(
-            orderTable.getId(),
-            OrderStatus.COOKING.name(),
-            LocalDateTime.now()));
-        orderLineItem = orderLineItemDao.save(
-            OrderGenerator.newOrderLineItem(order.getId(), menu.getId(), 1));
+        order = orderRepository.save(
+            new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 1L)))
+        );
+        orderLineItem = orderLineItemRepository.save(order.getOrderLineItems().get(0));
     }
 
     @DisplayName("주문 등록")
     @Test
     void postOrder() {
-        OrderLineItem orderLineItemRequest = OrderGenerator.newOrderLineItem(menu.getId(), 1);
-        Order request = OrderGenerator.newInstance(
-            orderTable.getId(),
-            Collections.singletonList(orderLineItemRequest)
-        );
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(menu.getId(), 1L);
+        OrderRequest request = new OrderRequest(orderTable.getId(),
+            Collections.singletonList(orderLineItemRequest));
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
-            BASE_URL,
-            request,
-            Order.class
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
+            BASE_URL, request, OrderResponse.class
         );
-        Order response = responseEntity.getBody();
+        OrderResponse response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getId()).isNotNull();
@@ -99,34 +95,31 @@ public class OrderApiTest extends ApiTest {
     @DisplayName("주문 조회")
     @Test
     void getOrder() {
-        ResponseEntity<Order[]> responseEntity = testRestTemplate.getForEntity(
-            BASE_URL,
-            Order[].class
+        ResponseEntity<OrderResponse[]> responseEntity = testRestTemplate.getForEntity(
+            BASE_URL, OrderResponse[].class
         );
-        Order[] response = responseEntity.getBody();
+        OrderResponse[] response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response).hasSize(1);
-        Order actualOrderLineItem = response[0];
+        OrderResponse actualOrderLineItem = response[0];
         assertThat(actualOrderLineItem).usingRecursiveComparison()
             .ignoringFields("orderLineItems")
             .isEqualTo(order);
         assertThat(actualOrderLineItem.getOrderLineItems()).hasSize(1);
         assertThat(actualOrderLineItem.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(orderLineItem);
+            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
     }
 
     @DisplayName("주문 상태 수정")
     @Test
     void putOrderOrderStatus() {
-        Order request = OrderGenerator.newInstance(OrderStatus.MEAL.name());
-        ResponseEntity<Order> responseEntity = testRestTemplate.exchange(
-            BASE_URL + "/" + order.getId() + "/order-status",
-            HttpMethod.PUT,
-            new HttpEntity<>(request, new HttpHeaders()),
-            Order.class
+        OrderStatusRequest request = new OrderStatusRequest(OrderStatus.MEAL.name());
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.exchange(
+            BASE_URL + "/" + order.getId() + "/order-status", HttpMethod.PUT,
+            new HttpEntity<>(request, new HttpHeaders()), OrderResponse.class
         );
-        Order response = responseEntity.getBody();
+        OrderResponse response = responseEntity.getBody();
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getOrderStatus()).isEqualTo(request.getOrderStatus());
@@ -135,6 +128,6 @@ public class OrderApiTest extends ApiTest {
             .isEqualTo(order);
         assertThat(response.getOrderLineItems()).hasSize(1);
         assertThat(response.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(orderLineItem);
+            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
     }
 }

@@ -7,13 +7,16 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
@@ -31,9 +34,6 @@ import org.mockito.Mock;
 public class TableGroupServiceTest extends ServiceTest {
 
     @Mock
-    private OrderDao orderDao;
-
-    @Mock
     private OrderTableRepository orderTableRepository;
 
     @Mock
@@ -44,11 +44,13 @@ public class TableGroupServiceTest extends ServiceTest {
 
     private OrderTable orderTable1;
     private OrderTable orderTable2;
+    private Menu menu;
 
     @BeforeEach
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         orderTable2 = new OrderTable(2L, null, 4, true);
+        menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
     }
 
     @DisplayName("단체 지정 저장")
@@ -151,12 +153,6 @@ public class TableGroupServiceTest extends ServiceTest {
         );
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
-        when(
-            orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                convertIdsFromOrderTables(orderTables),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
-            )
-        ).thenReturn(false);
 
         tableGroupService.ungroup(tableGroupId);
 
@@ -174,16 +170,12 @@ public class TableGroupServiceTest extends ServiceTest {
             tableGroupId,
             Arrays.asList(orderTable1, orderTable2)
         );
-        List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
+        Order order = new Order(orderTable1,
+            Collections.singletonList(new OrderLineItem(menu, 2L)));
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
-        when(
-            orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                convertIdsFromOrderTables(orderTables),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
-            )
-        ).thenReturn(true);
 
-        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId));
+        assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
+            .isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     private List<Long> convertIdsFromOrderTables(final List<OrderTable> orderTables) {

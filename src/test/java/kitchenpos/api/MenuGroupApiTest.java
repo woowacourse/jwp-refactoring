@@ -41,9 +41,7 @@ public class MenuGroupApiTest extends ApiTest {
         MenuGroupRequest request = new MenuGroupRequest("추천메뉴");
 
         ResponseEntity<MenuGroupResponse> responseEntity = testRestTemplate.postForEntity(
-            BASE_URL,
-            request,
-            MenuGroupResponse.class
+            BASE_URL, request, MenuGroupResponse.class
         );
         MenuGroupResponse response = responseEntity.getBody();
 
@@ -58,8 +56,7 @@ public class MenuGroupApiTest extends ApiTest {
     @Test
     void getMenuGroups() {
         ResponseEntity<MenuGroupResponse[]> responseEntity = testRestTemplate.getForEntity(
-            BASE_URL,
-            MenuGroupResponse[].class
+            BASE_URL, MenuGroupResponse[].class
         );
         MenuGroupResponse[] response = responseEntity.getBody();
 

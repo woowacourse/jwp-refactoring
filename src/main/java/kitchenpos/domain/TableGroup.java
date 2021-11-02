@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
@@ -78,11 +79,25 @@ public class TableGroup {
     }
 
     public void removeAllOrderTables() {
+        validateToRemoveAllOrderTables();
         for (final OrderTable orderTable : orderTables) {
             orderTable.changeTableGroup(null);
             orderTable.changeEmpty(false);
         }
         orderTables = null;
+    }
+
+    private void validateToRemoveAllOrderTables() {
+        if (containsOrderStatusIn(
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name())
+        )) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private boolean containsOrderStatusIn(final List<String> orderStatuses) {
+        return orderTables.stream()
+            .anyMatch(orderTable -> orderTable.containsOrderStatusIn(orderStatuses));
     }
 
     public Long getId() {

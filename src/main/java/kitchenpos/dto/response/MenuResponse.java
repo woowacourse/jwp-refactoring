@@ -17,18 +17,19 @@ public class MenuResponse {
     protected MenuResponse() {
     }
 
-    public MenuResponse(
-        final Long id,
-        final String name,
-        final BigDecimal price,
-        final Long menuGroupId,
-        final List<MenuProductResponse> menuProducts
-    ) {
+    public MenuResponse(final Long id, final String name, final BigDecimal price,
+                        final Long menuGroupId, final List<MenuProductResponse> menuProducts) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public static List<MenuResponse> listFrom(final List<Menu> menus) {
+        return menus.stream()
+            .map(MenuResponse::from)
+            .collect(Collectors.toList());
     }
 
     public static MenuResponse from(final Menu menu) {
