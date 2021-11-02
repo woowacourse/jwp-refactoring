@@ -6,6 +6,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.factory.OrderFactory;
+import kitchenpos.factory.OrderLineItemFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -22,11 +23,13 @@ public class OrderTemplate {
     }
 
     public ResponseEntity<OrderResponse> create(Long orderTableId, List<OrderLineItem> orderLineItems) {
-        Order order = OrderFactory.builder()
-            .orderTableId(orderTableId)
-            .orderLineItems(orderLineItems)
-            .build();
-        OrderRequest orderRequest = OrderFactory.dto(order);
+        OrderRequest orderRequest = new OrderRequest(
+            null,
+            orderTableId,
+            null,
+            null,
+            OrderLineItemFactory.dtoList(orderLineItems)
+        );
 
         return integrationTemplate.post(
             ORDER_URL,

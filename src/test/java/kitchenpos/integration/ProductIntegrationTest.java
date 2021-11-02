@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.net.URI;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductResponse;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.ProductTemplate;
 import org.junit.jupiter.api.BeforeEach;
@@ -74,9 +75,9 @@ class ProductIntegrationTest {
             );
 
         // when
-        ResponseEntity<Product[]> productResponseEntity = productTemplate.list();
+        ResponseEntity<ProductResponse[]> productResponseEntity = productTemplate.list();
         HttpStatus statusCode = productResponseEntity.getStatusCode();
-        Product[] body = productResponseEntity.getBody();
+        ProductResponse[] body = productResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);

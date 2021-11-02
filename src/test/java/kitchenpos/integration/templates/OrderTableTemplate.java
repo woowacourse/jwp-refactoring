@@ -21,7 +21,8 @@ public class OrderTableTemplate {
     }
 
     public ResponseEntity<OrderTableResponse> create(int numberOfGuests, boolean isEmpty) {
-        OrderTableRequest orderTableRequest = new OrderTableRequest(null, null, numberOfGuests, isEmpty);
+        OrderTableRequest orderTableRequest =
+            new OrderTableRequest(null, null, numberOfGuests, isEmpty);
 
         return integrationTemplate.post(
             TABLE_URL,

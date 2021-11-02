@@ -21,9 +21,9 @@ public class MenuTemplate {
     }
 
     public ResponseEntity<MenuResponse> create(String name,
-                                       BigDecimal price,
-                                       Long menuGroupId,
-                                       List<MenuProduct> menuProducts) {
+                                               BigDecimal price,
+                                               Long menuGroupId,
+                                               List<MenuProduct> menuProducts) {
         MenuRequest menuRequest = new MenuRequest(
             null,
             name,
