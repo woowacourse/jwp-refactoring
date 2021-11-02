@@ -3,19 +3,18 @@ package kitchenpos.acceptance.order;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,67 +30,48 @@ class OrderAcceptanceTest extends AcceptanceTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable table = new OrderTable();
-        table.setNumberOfGuests(0);
-        table.setEmpty(false);
-        savedOrderTable = orderTableDao.save(table);
+        OrderTable table = new OrderTable(null, 0, false);
+        savedOrderTable = orderTableRepository.save(table);
 
-        MenuGroup recommendation = new MenuGroup();
-        recommendation.setName("추천메뉴");
-        MenuGroup savedMenuGroup = menuGroupDao.save(recommendation);
+        MenuGroup recommendation = new MenuGroup("추천메뉴");
+        MenuGroup savedMenuGroup = menuGroupRepository.save(recommendation);
 
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
-        chicken.setPrice(BigDecimal.valueOf(17000));
-        Product savedChicken = productDao.save(chicken);
+        Product chicken = new Product("강정치킨", BigDecimal.valueOf(17000));
+        Product savedChicken = productRepository.save(chicken);
 
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(savedChicken.getId());
-        menuProduct.setQuantity(2);
-
-        Menu halfHalf = new Menu();
-        halfHalf.setName("후라이드+후라이드");
-        halfHalf.setPrice(BigDecimal.valueOf(19000));
-        halfHalf.setMenuGroupId(savedMenuGroup.getId());
-        halfHalf.setMenuProducts(Arrays.asList(menuProduct));
-        savedMenu = menuDao.save(halfHalf);
+        Menu halfHalf = new Menu("후라이드+후라이드", BigDecimal.valueOf(19000), savedMenuGroup);
+        savedMenu = menuRepository.save(halfHalf);
     }
 
     @DisplayName("주문 등록 성공")
     @Test
     void create() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Arrays.asList(orderLineItemRequest));
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/orders",
-                order,
-                Order.class
+                orderRequest,
+                OrderResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Order response = responseEntity.getBody();
+        OrderResponse response = responseEntity.getBody();
         assertThat(response.getId()).isEqualTo(1);
         assertThat(response.getOrderTableId()).isEqualTo(savedOrderTable.getId());
         assertThat(response.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
-        assertThat(response.getOrderLineItems()).hasSize(1);
+        assertThat(response.getOrderLineItemResponses()).hasSize(1);
     }
 
     @DisplayName("주문 등록 실패 - 메뉴가 1개 미만")
     @Test
     void createByMenuLessThanOne() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        order.setOrderLineItems(Arrays.asList());
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Arrays.asList());
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/orders",
-                order,
-                Order.class
+                orderRequest,
+                OrderResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -100,17 +80,13 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 등록 실패 - 잘못된 메뉴 아이디")
     @Test
     void createByIncorrectMenuId() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(100L);
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(100L, 2);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Arrays.asList(orderLineItemRequest));
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/orders",
-                order,
-                Order.class
+                orderRequest,
+                OrderResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -119,17 +95,13 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 등록 실패 - 잘못된 테이블 아이디")
     @Test
     void createByIncorrectTableId() {
-        Order order = new Order();
-        order.setOrderTableId(100L);
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        OrderRequest orderRequest = new OrderRequest(100L, Arrays.asList(orderLineItemRequest));
 
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/orders",
-                order,
-                Order.class
+                orderRequest,
+                OrderResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -138,23 +110,16 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 등록 실패 - 잘못된 테이블 상태")
     @Test
     void createByIncorrectTableState() {
-        Order order = new Order();
+        OrderTable table = new OrderTable(null, 0, true);
+        savedOrderTable = orderTableRepository.save(table);
 
-        OrderTable table = new OrderTable();
-        table.setNumberOfGuests(0);
-        table.setEmpty(true);
-        savedOrderTable = orderTableDao.save(table);
-        order.setOrderTableId(savedOrderTable.getId());
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(savedMenu.getId(), 2);
+        OrderRequest orderRequest = new OrderRequest(savedOrderTable.getId(), Arrays.asList(orderLineItemRequest));
 
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-
-        ResponseEntity<Order> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<OrderResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/orders",
-                order,
-                Order.class
+                orderRequest,
+                OrderResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -163,15 +128,8 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 목록 조회")
     @Test
     void list() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
+        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        orderRepository.save(order);
 
         ResponseEntity<List<Order>> responseEntity = testRestTemplate.exchange(
                 "/api/orders",
@@ -184,50 +142,37 @@ class OrderAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Order> response = responseEntity.getBody();
         assertThat(response).hasSize(1);
-        List<Long> ids = response.stream().map(Order::getId).collect(Collectors.toList());
-        assertThat(ids).containsExactlyInAnyOrder(1L);
+        assertThat(response)
+                .extracting(Order::getId)
+                .containsExactlyInAnyOrder(1L);
     }
 
     @DisplayName("주문 상태 변경 성공")
     @Test
     void changeOrderStatus() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = orderDao.save(order);
-        Order order2 = new Order();
-        order2.setOrderStatus(OrderStatus.MEAL.name());
+        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());
 
-        testRestTemplate.put("/api/orders/" + savedOrder.getId() + "/order-status", order2);
+        testRestTemplate.put("/api/orders/" + savedOrder.getId() + "/order-status", orderRequest);
 
-        savedOrder = orderDao.findById(savedOrder.getId()).orElseThrow(IllegalArgumentException::new);
+        savedOrder = orderRepository.findById(savedOrder.getId()).orElseThrow(IllegalArgumentException::new);
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
     }
 
     @DisplayName("주문 상태 변경 실패 - 잘못된 주문 아이디")
     @Test
     void changeOrderStatusByIncorrectOrderId() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-        orderDao.save(order);
-        Order order2 = new Order();
-        order2.setOrderStatus(OrderStatus.MEAL.name());
+        Order order = new Order(savedOrderTable, OrderStatus.COOKING.name());
+        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/api/orders/" + 100 + "/order-status",
                 HttpMethod.PUT,
-                new HttpEntity<>(order2),
+                new HttpEntity<>(orderRequest),
                 Void.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -236,22 +181,15 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @DisplayName("주문 상태 변경 실패 - 잘못된 주문 상태")
     @Test
     void changeOrderStatusByIncorrectOrderState() {
-        Order order = new Order();
-        order.setOrderTableId(savedOrderTable.getId());
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(savedMenu.getId());
-        orderLineItem.setQuantity(2);
-        order.setOrderLineItems(Arrays.asList(orderLineItem));
-        order.setOrderStatus(OrderStatus.COMPLETION.name());
-        order.setOrderedTime(LocalDateTime.now());
-        Order savedOrder = orderDao.save(order);
-        Order order2 = new Order();
-        order2.setOrderStatus(OrderStatus.MEAL.name());
+        Order order = new Order(savedOrderTable, OrderStatus.COMPLETION.name());
+        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+        OrderRequest orderRequest = new OrderRequest(OrderStatus.MEAL.name());
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
                 "/api/orders/" + savedOrder.getId() + "/order-status",
                 HttpMethod.PUT,
-                new HttpEntity<>(order2),
+                new HttpEntity<>(orderRequest),
                 Void.class);
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -4,9 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.acceptance.AcceptanceTest;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,18 +20,16 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 등록 성공")
     @Test
     void create() {
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
-        chicken.setPrice(BigDecimal.valueOf(17000));
+        ProductRequest chicken = new ProductRequest("강정치킨", BigDecimal.valueOf(17000));
 
-        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/products",
                 chicken,
-                Product.class
+                ProductResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        Product response = responseEntity.getBody();
+        ProductResponse response = responseEntity.getBody();
         assertThat(response.getId()).isEqualTo(1);
         assertThat(response.getName()).isEqualTo("강정치킨");
         assertThat(response.getPrice()).isEqualByComparingTo(BigDecimal.valueOf(17000));
@@ -39,13 +38,12 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 등록 실패 - 가격 부재")
     @Test
     void createByNullPrice() {
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
+        ProductRequest chicken = new ProductRequest("강정치킨", null);
 
-        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/products",
                 chicken,
-                Product.class
+                ProductResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -54,14 +52,12 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 등록 실패 - 가격 0 미만")
     @Test
     void createByNegativePrice() {
-        Product chicken = new Product();
-        chicken.setName("강정치킨");
-        chicken.setPrice(BigDecimal.valueOf(-1));
+        ProductRequest chicken = new ProductRequest("강정치킨", BigDecimal.valueOf(-1));
 
-        ResponseEntity<Product> responseEntity = testRestTemplate.postForEntity(
+        ResponseEntity<ProductResponse> responseEntity = testRestTemplate.postForEntity(
                 "/api/products",
                 chicken,
-                Product.class
+                ProductResponse.class
         );
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -70,15 +66,11 @@ class ProductAcceptanceTest extends AcceptanceTest {
     @DisplayName("상품 목록 조회")
     @Test
     void list() {
-        Product chicken1 = new Product();
-        chicken1.setName("강정치킨");
-        chicken1.setPrice(BigDecimal.valueOf(17000));
-        Product chicken2 = new Product();
-        chicken2.setName("간장치킨");
-        chicken2.setPrice(BigDecimal.valueOf(17000));
+        Product chicken1 = new Product("강정치킨", BigDecimal.valueOf(17000));
+        Product chicken2 = new Product("간장치킨", BigDecimal.valueOf(17000));
 
-        productDao.save(chicken1);
-        productDao.save(chicken2);
+        productRepository.save(chicken1);
+        productRepository.save(chicken2);
 
         ResponseEntity<List<Product>> responseEntity = testRestTemplate.exchange(
                 "/api/products",
@@ -91,7 +83,8 @@ class ProductAcceptanceTest extends AcceptanceTest {
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<Product> response = responseEntity.getBody();
         assertThat(response).hasSize(2);
-        List<String> names = response.stream().map(Product::getName).collect(Collectors.toList());
-        assertThat(names).containsExactlyInAnyOrder("강정치킨", "간장치킨");
+        assertThat(response)
+                .extracting(Product::getName)
+                .containsExactlyInAnyOrder("강정치킨", "간장치킨");
     }
 }
