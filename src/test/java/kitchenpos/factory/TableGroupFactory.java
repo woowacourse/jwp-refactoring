@@ -49,10 +49,6 @@ public class TableGroupFactory {
     }
 
     public TableGroup build() {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(id);
-        tableGroup.setCreatedDate(createdDate);
-        tableGroup.setOrderTables(orderTables);
-        return tableGroup;
+        return new TableGroup(id, createdDate, orderTables);
     }
 }

@@ -19,10 +19,7 @@ public class TableGroupTemplate {
     }
 
     public ResponseEntity<TableGroup> create(OrderTable... tables) {
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(
-            Arrays.asList(tables)
-        );
+        TableGroup tableGroup = new TableGroup(tables);
 
         return integrationTemplate.post(
             TABLE_GROUP_URL,
