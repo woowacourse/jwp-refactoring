@@ -1,6 +1,11 @@
 package kitchenpos.factory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 
 public class OrderTableFactory {
 
@@ -33,6 +38,35 @@ public class OrderTableFactory {
         );
     }
 
+    public static OrderTable copy(OrderTableResponse orderTableResponse) {
+        return new OrderTable(
+            orderTableResponse.getId(),
+            orderTableResponse.getTableGroupId(),
+            orderTableResponse.getNumberOfGuests(),
+            orderTableResponse.isEmpty()
+        );
+    }
+
+    public static OrderTableRequest dto(OrderTable orderTable) {
+        return new OrderTableRequest(
+            orderTable.getId(),
+            orderTable.getTableGroupId(),
+            orderTable.getNumberOfGuests(),
+            orderTable.isEmpty()
+        );
+    }
+
+    public static List<OrderTableRequest> dtoList(List<OrderTable> orderTables) {
+        return orderTables.stream()
+            .map(orderTable -> new OrderTableRequest(
+                orderTable.getId(),
+                orderTable.getTableGroupId(),
+                orderTable.getNumberOfGuests(),
+                orderTable.isEmpty()
+            ))
+            .collect(Collectors.toList());
+    }
+
     public OrderTableFactory id(Long id) {
         this.id = id;
         return this;
@@ -54,11 +88,6 @@ public class OrderTableFactory {
     }
 
     public OrderTable build() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(id);
-        orderTable.setTableGroupId(tableGroupId);
-        orderTable.setNumberOfGuests(numberOfGuests);
-        orderTable.setEmpty(empty);
-        return orderTable;
+        return new OrderTable(id, tableGroupId, numberOfGuests, empty);
     }
 }

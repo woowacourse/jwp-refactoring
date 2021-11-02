@@ -38,7 +38,7 @@ public class TableGroupFactory {
         return new TableGroupRequest(
             tableGroup.getId(),
             tableGroup.getCreatedDate(),
-            tableGroup.getOrderTables()
+            OrderTableFactory.dtoList(tableGroup.getOrderTables())
         );
     }
 

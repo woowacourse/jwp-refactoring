@@ -10,6 +10,10 @@ public class TableGroup {
     private LocalDateTime createdDate;
     private List<OrderTable> orderTables;
 
+    public TableGroup() {
+        
+    }
+
     public TableGroup(OrderTable[] orderTables) {
         this(null, null, Arrays.asList(orderTables));
     }
@@ -38,5 +42,9 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void updateOrderTables(List<OrderTable> orderTables) {
+        this.orderTables = orderTables;
     }
 }

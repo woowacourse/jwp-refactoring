@@ -13,8 +13,10 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.OrderLineItemFactory;
+import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.MenuGroupTemplate;
 import kitchenpos.integration.templates.MenuTemplate;
@@ -54,11 +56,12 @@ class OrderIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        OrderTable orderTable = orderTableTemplate.create(
+        OrderTableResponse orderTableResponse = orderTableTemplate.create(
             3,
             false
         ).getBody();
-        assertThat(orderTable).isNotNull();
+        assertThat(orderTableResponse).isNotNull();
+        OrderTable orderTable = OrderTableFactory.copy(orderTableResponse);
         orderTableId = orderTable.getId();
 
         MenuGroup menuGroup = menuGroupTemplate

@@ -283,6 +283,7 @@ class TableGroupServiceTest {
                 OrderStatus.MEAL.name());
         }
 
+        @DisplayName("TableGroup 을 ungroup 한다")
         @Test
         void ungroup() {
             // given

@@ -1,6 +1,8 @@
 package kitchenpos.integration.templates;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.factory.OrderTableFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -19,16 +21,13 @@ public class OrderTableTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<OrderTable> create(int numberOfGuests, boolean isEmpty) {
-        OrderTable orderTable = OrderTableFactory.builder()
-            .numberOfGuests(numberOfGuests)
-            .empty(isEmpty)
-            .build();
+    public ResponseEntity<OrderTableResponse> create(int numberOfGuests, boolean isEmpty) {
+        OrderTableRequest orderTableRequest = new OrderTableRequest(null, null, numberOfGuests, isEmpty);
 
         return integrationTemplate.post(
             TABLE_URL,
-            orderTable,
-            OrderTable.class
+            orderTableRequest,
+            OrderTableResponse.class
         );
     }
 

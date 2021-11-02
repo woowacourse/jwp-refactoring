@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,7 +14,10 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.factory.OrderTableFactory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,6 +55,8 @@ class TableServiceTest {
 
         private OrderTable savedOrderTable;
 
+        private OrderTableRequest orderTableRequest;
+
         @BeforeEach
         void setUp() {
             orderTable = OrderTableFactory.builder()
@@ -62,19 +68,21 @@ class TableServiceTest {
                 .id(1L)
                 .tableGroupId(null)
                 .build();
+
+            orderTableRequest = OrderTableFactory.dto(orderTable);
         }
 
         @DisplayName("OrderTable 을 생성한다")
         @Test
         void create() {
             // given
-            given(orderTableDao.save(orderTable)).willReturn(savedOrderTable);
+            given(orderTableDao.save(refEq(orderTable))).willReturn(savedOrderTable);
 
             // when
-            OrderTable result = tableService.create(orderTable);
+            OrderTableResponse result = tableService.create(orderTableRequest);
 
             // then
-            verify(orderTableDao, times(1)).save(orderTable);
+            verify(orderTableDao, times(1)).save(refEq(orderTable));
             assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(savedOrderTable);
@@ -84,12 +92,14 @@ class TableServiceTest {
     @Nested
     class ModifyTest {
 
-        OrderTable orderTable;
-        Long orderTableId;
+        private OrderTable orderTable;
+        private Long orderTableId;
 
-        OrderTable savedOrderTable;
+        private OrderTable savedOrderTable;
 
-        List<String> notCompletionOrderStatuses;
+        private List<String> notCompletionOrderStatuses;
+
+        private OrderTableRequest orderTableRequest;
 
         @BeforeEach
         void setUp() {
@@ -109,6 +119,7 @@ class TableServiceTest {
                 OrderStatus.MEAL.name()
             );
 
+            orderTableRequest = OrderTableFactory.dto(orderTable);
         }
 
         @DisplayName("OrderTable 의 empty 필드를 변경한다")
@@ -123,7 +134,7 @@ class TableServiceTest {
             given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
 
             // when
-            OrderTable result = tableService.changeEmpty(orderTableId, orderTable);
+            OrderTableResponse result = tableService.changeEmpty(orderTableId, orderTableRequest);
 
             // then
             assertThat(result)
@@ -138,7 +149,7 @@ class TableServiceTest {
             given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
 
             // when // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -152,7 +163,7 @@ class TableServiceTest {
             given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
             // when // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -167,7 +178,7 @@ class TableServiceTest {
             )).willReturn(true);
 
             // when // then
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTable))
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTableId, orderTableRequest))
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -179,7 +190,8 @@ class TableServiceTest {
             given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
 
             // when
-            OrderTable result = tableService.changeNumberOfGuests(orderTableId, orderTable);
+            OrderTableResponse result =
+                tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
 
             // then
             assertThat(result)
@@ -195,8 +207,12 @@ class TableServiceTest {
                 .numberOfGuests(-1)
                 .build();
 
-            // when // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
+            // when
+            final ThrowingCallable throwingCallable =
+                () -> tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -206,8 +222,12 @@ class TableServiceTest {
             // given
             given(orderTableDao.findById(orderTableId)).willReturn(Optional.empty());
 
-            // when // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
+            // when
+            final ThrowingCallable throwingCallable =
+                () -> tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
 
@@ -220,8 +240,12 @@ class TableServiceTest {
                 .build();
             given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
 
-            // when // then
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTable))
+            // when
+            final ThrowingCallable throwingCallable =
+                () -> tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
+
+            // then
+            assertThatThrownBy(throwingCallable)
                 .isExactlyInstanceOf(IllegalArgumentException.class);
         }
     }
