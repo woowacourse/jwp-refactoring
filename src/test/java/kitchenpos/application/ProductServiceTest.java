@@ -1,4 +1,4 @@
-package kitchenpos.service;
+package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,10 +9,9 @@ import static org.junit.jupiter.params.ParameterizedTest.DISPLAY_NAME_PLACEHOLDE
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.application.ProductService;
+import kitchenpos.application.fixture.ProductFixture;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
-import kitchenpos.service.fixture.ProductFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -63,7 +62,7 @@ public class ProductServiceTest {
         @DisplayName("원(0원 미만)이면 실패한다.")
         @ValueSource(ints = {-1, -1000, -10000})
         @NullSource
-        void whenSmallerThanZeroPriceOrNull(Integer amount){
+        void whenSmallerThanZeroPriceOrNull(Integer amount) {
             //given
             String name = "새로운 상품";
             BigDecimal price = Objects.isNull(amount) ? null : new BigDecimal(amount);
@@ -73,7 +72,8 @@ public class ProductServiceTest {
             product.setPrice(price);
 
             //then
-            assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> productService.create(product))
+                .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -84,13 +84,13 @@ public class ProductServiceTest {
         List<Product> expectedFixtures = ProductFixture.createFixture().getFixtures();
         //when
         List<Product> list = productService.list();
-
         //then
         assertAll(
             () -> assertThat(list.size()).isEqualTo(expectedFixtures.size()),
             () -> expectedFixtures.forEach(
                 product -> assertThat(list).usingRecursiveFieldByFieldElementComparator()
                     .contains(product)
-            ));
+            )
+        );
     }
 }
