@@ -66,13 +66,13 @@
 
 ### 단체
 
-- [ ] 단체 생성
-  - [ ] 단체는 id, createdDate, orderTables로 지정됨
-  - [ ] OrderTable은 id, TableGroupId, memberOfGuests, empty로 구성됨
-  - [ ] 역할에 대한 것은 용어사전에 설명이 되어 있다.
-  - [ ] 테이블 사이즈가 없거나 2 미만이라면 에러 처리.
-  - [ ] db에 저장된 테이블 정보와 다르다면 에러 처리.
-  - [ ] 이미 id가 지정되어 있다면 에러처리
+- [x] 단체 생성
+  - [x] 단체는 id, createdDate, orderTables로 지정됨
+  - [x] OrderTable은 id, TableGroupId, memberOfGuests, empty로 구성됨
+  - [x] 역할에 대한 것은 용어사전에 설명이 되어 있다.
+  - [x] 테이블 사이즈가 없거나 2 미만이라면 에러 처리.
+  - [x] db에 저장된 테이블 정보와 다르다면 에러 처리.
+  - [x] 이미 id가 지정되어 있다면 에러처리
 - [x] 그룹 해제
   - [x] 식사중이거나 요리중이면 에러 처리
 
