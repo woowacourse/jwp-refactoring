@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.ProductFixture.createProduct;
+import static kitchenpos.ProductFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -34,19 +35,18 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        Product product = createProduct();
+        ProductRequest request = new ProductRequest(PRODUCT_NAME, PRODUCT_PRICE);
         when(productDao.save(any())).thenReturn(createProduct(1L));
 
-        assertDoesNotThrow(() -> productService.create(product));
+        assertDoesNotThrow(() -> productService.create(request));
     }
 
     @DisplayName("상품의 가격이 0원 미만일 경우 생성할 수 없다.")
     @Test
     void createExceptionIfPriceZero() {
-        Product product = createProduct();
-        product.setPrice(BigDecimal.valueOf(-1000));
+        ProductRequest request = new ProductRequest(PRODUCT_NAME, BigDecimal.valueOf(-1000));
 
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

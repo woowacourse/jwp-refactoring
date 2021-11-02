@@ -2,6 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,7 +12,7 @@ import org.springframework.http.MediaType;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.ProductFixture.createProduct;
+import static kitchenpos.ProductFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,12 +29,12 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         Long productId = 1L;
-        Product product = createProduct();
+        ProductRequest request = new ProductRequest(PRODUCT_NAME, PRODUCT_PRICE);
         Product savedProduct = createProduct(productId);
         when(productService.create(any())).thenReturn(savedProduct);
 
         mockMvc.perform(post("/api/products")
-                .content(objectMapper.writeValueAsString(product))
+                .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/products/" + productId))

@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 
 public class ProductFixture {
 
-    private static final String NAME = "육회초밥";
-    private static final BigDecimal PRICE = BigDecimal.valueOf(15900);
+    public static final String PRODUCT_NAME = "육회초밥";
+    public static final BigDecimal PRODUCT_PRICE = BigDecimal.valueOf(15900);
 
     public static Product createProduct() {
-        return createProduct(NAME, PRICE);
+        return createProduct(PRODUCT_NAME, PRODUCT_PRICE);
     }
 
     public static Product createProduct(Long id) {
-        return createProduct(id, NAME, PRICE);
+        return createProduct(id, PRODUCT_NAME, PRODUCT_PRICE);
     }
 
     public static Product createProduct(String name, BigDecimal price) {
@@ -22,10 +22,6 @@ public class ProductFixture {
     }
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
-        return product;
+        return new Product(id, name, price);
     }
 }
