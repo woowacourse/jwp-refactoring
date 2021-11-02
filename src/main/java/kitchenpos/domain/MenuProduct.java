@@ -1,17 +1,81 @@
 package kitchenpos.domain;
 
-public class MenuProduct {
-    private Long seq;
-    private Long menuId;
-    private Long productId;
-    private long quantity;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-    public Long getSeq() {
-        return seq;
+@Entity
+public class MenuProduct {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(nullable = false, name = "menu_id")
+    private Long menuId;
+    @Column(nullable = false)
+    private Long productId;
+    @Column(nullable = false)
+    private Long quantity;
+
+    public MenuProduct() {
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    private MenuProduct(Builder builder) {
+        this.id = builder.id;
+        this.menuId = builder.menuId;
+        this.productId = builder.productId;
+        this.quantity = builder.quantity;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Long id;
+        private Long menuId;
+        private Long productId;
+        private long quantity;
+
+        private Builder() {
+        }
+
+        public Builder of(MenuProduct menuProduct) {
+            this.id = menuProduct.id;
+            this.menuId = menuProduct.menuId;
+            this.productId = menuProduct.productId;
+            this.quantity = menuProduct.quantity;
+            return this;
+        }
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder menuId(Long menuId) {
+            this.menuId = menuId;
+            return this;
+        }
+
+        public Builder productId(Long productId) {
+            this.productId = productId;
+            return this;
+        }
+
+        public Builder quantity(Long quantity) {
+            this.quantity = quantity;
+            return this;
+        }
+
+        public MenuProduct build() {
+            return new MenuProduct(this);
+        }
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public Long getMenuId() {
@@ -26,15 +90,7 @@ public class MenuProduct {
         return productId;
     }
 
-    public void setProductId(final Long productId) {
-        this.productId = productId;
-    }
-
-    public long getQuantity() {
+    public Long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 }

@@ -3,14 +3,15 @@ package kitchenpos.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.application.dtos.ProductRequest;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.domain.Product;
-import org.assertj.core.api.Java6Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +23,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -30,42 +31,38 @@ class ProductServiceTest {
     @DisplayName("상품을 등록할 수 있다")
     @Test
     void create() {
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1500));
-        product.setName("컵누들");
-        final Product savedProduct = new Product();
-        savedProduct.setId(1L);
-        savedProduct.setPrice(BigDecimal.valueOf(1500));
-        savedProduct.setName("컵누들");
+        final ProductRequest request = new ProductRequest("컵누들", 1500L);
 
-        when(productDao.save(product)).thenReturn(savedProduct);
+        final Product savedProduct = Product.builder()
+                .name("컵누들")
+                .price(BigDecimal.valueOf(1500))
+                .id(1L)
+                .build();
 
-        final Product actual = productService.create(product);
+        when(productRepository.save(any())).thenReturn(savedProduct);
+
+        final Product actual = productService.create(request);
         assertAll(
-                () -> Java6Assertions.assertThat(actual.getId()).isEqualTo(1L),
-                () -> Java6Assertions.assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
-                () -> Java6Assertions.assertThat(actual.getName()).isEqualTo("컵누들")
+                () -> assertThat(actual.getId()).isEqualTo(1L),
+                () -> assertThat(actual.getPrice()).isEqualTo(BigDecimal.valueOf(1500)),
+                () -> assertThat(actual.getName()).isEqualTo("컵누들")
         );
     }
 
     @DisplayName("상품의 가격은 0 원 이상이어야 한다")
     @Test
     void createExceptionPriceUnderZero() {
-        final Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(-1));
-        product.setName("컵누들");
+        final ProductRequest request = new ProductRequest("컵누들", -1L);
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 가격이 비어있어서는 안 된다")
     @Test
     void createExceptionPriceNull() {
-        final Product product = new Product();
-        product.setPrice(null);
-        product.setName("컵누들");
+        final ProductRequest request = new ProductRequest("컵누들", null);
 
-        assertThatThrownBy(() -> productService.create(product)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("상품의 목록을 조회할 수 있다")
@@ -75,7 +72,7 @@ class ProductServiceTest {
         final Product product2 = new Product();
         final List<Product> products = Arrays.asList(product1, product2);
 
-        when(productDao.findAll()).thenReturn(products);
+        when(productRepository.findAll()).thenReturn(products);
 
         final List<Product> actual = productService.list();
         assertThat(actual).containsExactly(product1, product2);

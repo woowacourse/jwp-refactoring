@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
+import kitchenpos.TestFixtures;
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.DisplayName;
@@ -36,10 +37,8 @@ class TableRestControllerTest {
 
     @Test
     void create() throws Exception {
-        final OrderTable orderTableDto = new OrderTable();
-        final String content = objectMapper.writeValueAsString(orderTableDto);
-        final OrderTable orderTable = new OrderTable();
-        orderTable.setId(1L);
+        final OrderTable orderTable = TestFixtures.createOrderTable();
+        final String content = objectMapper.writeValueAsString(TestFixtures.createOrderTableRequest(orderTable));
         when(tableService.create(any())).thenReturn(orderTable);
 
         final MockHttpServletResponse response = mockMvc.perform(post("/api/tables")
@@ -50,13 +49,13 @@ class TableRestControllerTest {
 
         assertAll(
                 () -> assertThat(response.getStatus()).isEqualTo(HttpStatus.CREATED.value()),
-                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/tables/1")
+                () -> assertThat(response.getHeader("Location")).isEqualTo("/api/tables/" + orderTable.getId())
         );
     }
 
     @Test
     void list() throws Exception {
-        when(tableService.list()).thenReturn(Collections.singletonList(new OrderTable()));
+        when(tableService.list()).thenReturn(Collections.singletonList(TestFixtures.createOrderTable()));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/tables"))
                 .andReturn()
@@ -67,11 +66,11 @@ class TableRestControllerTest {
 
     @Test
     void changeEmpty() throws Exception {
-        final OrderTable orderTableDto = new OrderTable();
-        final String content = objectMapper.writeValueAsString(orderTableDto);
-        when(tableService.changeEmpty(any(), any())).thenReturn(new OrderTable());
+        final OrderTable orderTable = TestFixtures.createOrderTable();
+        final String content = objectMapper.writeValueAsString(TestFixtures.createOrderTableRequest(orderTable));
+        when(tableService.changeEmpty(any(), any())).thenReturn(orderTable);
 
-        final MockHttpServletResponse response = mockMvc.perform(put("/api/tables/1/empty")
+        final MockHttpServletResponse response = mockMvc.perform(put("/api/tables/" + orderTable.getId() + "/empty")
                         .content(content)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -82,13 +81,14 @@ class TableRestControllerTest {
 
     @Test
     void changeNumberOfGuests() throws Exception {
-        final OrderTable orderTableDto = new OrderTable();
-        final String content = objectMapper.writeValueAsString(orderTableDto);
-        when(tableService.changeNumberOfGuests(any(), any())).thenReturn(new OrderTable());
+        final OrderTable orderTable = TestFixtures.createOrderTable();
+        final String content = objectMapper.writeValueAsString(TestFixtures.createOrderTableRequest(orderTable));
+        when(tableService.changeNumberOfGuests(any(), any())).thenReturn(orderTable);
 
-        final MockHttpServletResponse response = mockMvc.perform(put("/api/tables/1/empty")
-                        .content(content)
-                        .contentType(MediaType.APPLICATION_JSON))
+        final MockHttpServletResponse response = mockMvc.perform(
+                        put("/api/tables/" + orderTable.getId() + "/number-of-guests")
+                                .content(content)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
 
