@@ -5,13 +5,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.dto.OrderTableResponse;
@@ -84,15 +84,15 @@ class OrderIntegrationTest {
             .quantity(2L)
             .build();
 
-        Menu menu = menuTemplate
+        MenuResponse menuResponse = menuTemplate
             .create(
                 "후라이드+후라이드",
                 new BigDecimal(19000),
                 menuGroupId,
                 Collections.singletonList(menuProduct))
             .getBody();
-        assertThat(menu).isNotNull();
-        Long menuId = menu.getId();
+        assertThat(menuResponse).isNotNull();
+        Long menuId = menuResponse.getId();
 
         orderLineItem = OrderLineItemFactory.builder()
             .menuId(menuId)

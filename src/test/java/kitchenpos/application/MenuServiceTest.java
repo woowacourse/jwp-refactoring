@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
@@ -15,6 +16,8 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.factory.MenuFactory;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.factory.ProductFactory;
@@ -58,10 +61,12 @@ class MenuServiceTest {
             Collections.singletonList(menuProduct));
 
         // when
-        List<Menu> result = menuService.list();
+        List<MenuResponse> result = menuService.list();
 
         // then
-        assertThat(result).containsExactly(menu);
+        assertThat(result).first()
+            .usingRecursiveComparison()
+            .isEqualTo(menu);
     }
 
     @Nested
@@ -74,6 +79,8 @@ class MenuServiceTest {
         private Menu menu;
 
         private Menu savedMenu;
+
+        private MenuRequest menuRequest;
 
         @BeforeEach
         void setUp() {
@@ -98,6 +105,8 @@ class MenuServiceTest {
             savedMenu = MenuFactory.copy(menu)
                 .id(1L)
                 .build();
+
+            menuRequest = MenuFactory.dto(menu);
         }
 
         @DisplayName("Menu 를 생성한다")
@@ -106,11 +115,11 @@ class MenuServiceTest {
             // given
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
             given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
-            given(menuDao.save(menu)).willReturn(savedMenu);
-            given(menuProductDao.save(menuProduct)).willReturn(menuProduct);
+            given(menuDao.save(any(Menu.class))).willReturn(savedMenu);
+            given(menuProductDao.save(any(MenuProduct.class))).willReturn(menuProduct);
 
             // when
-            Menu result = menuService.create(menu);
+            MenuResponse result = menuService.create(menuRequest);
 
             // then
             assertThat(result)
@@ -125,9 +134,10 @@ class MenuServiceTest {
             menu = MenuFactory.copy(menu)
                 .price(null)
                 .build();
+            menuRequest = MenuFactory.dto(menu);
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -141,9 +151,10 @@ class MenuServiceTest {
             menu = MenuFactory.copy(menu)
                 .price(new BigDecimal(0))
                 .build();
+            menuRequest = MenuFactory.dto(menu);
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -157,9 +168,10 @@ class MenuServiceTest {
             menu = MenuFactory.copy(menu)
                 .price(new BigDecimal(val))
                 .build();
+            menuRequest = MenuFactory.dto(menu);
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -173,7 +185,7 @@ class MenuServiceTest {
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(false);
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -188,7 +200,7 @@ class MenuServiceTest {
             given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.empty());
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             //then
             assertThatThrownBy(throwingCallable)
@@ -209,11 +221,12 @@ class MenuServiceTest {
                 .price(new BigDecimal(1001))
                 .menuProducts(Collections.singletonList(menuProduct))
                 .build();
+            menuRequest = MenuFactory.dto(menu);
             given(menuGroupDao.existsById(menu.getMenuGroupId())).willReturn(true);
             given(productDao.findById(menuProduct.getProductId())).willReturn(Optional.of(product));
 
             // when
-            ThrowingCallable throwingCallable = () -> menuService.create(menu);
+            ThrowingCallable throwingCallable = () -> menuService.create(menuRequest);
 
             // then
             assertThatThrownBy(throwingCallable)

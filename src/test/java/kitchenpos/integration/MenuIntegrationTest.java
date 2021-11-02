@@ -6,10 +6,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.Collections;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuResponse;
 import kitchenpos.factory.MenuProductFactory;
 import kitchenpos.integration.annotation.IntegrationTest;
 import kitchenpos.integration.templates.MenuGroupTemplate;
@@ -72,7 +72,7 @@ class MenuIntegrationTest {
     @Test
     void create() {
         // given // when
-        ResponseEntity<Menu> menuResponseEntity = menuTemplate
+        ResponseEntity<MenuResponse> menuResponseEntity = menuTemplate
             .create(
                 menuName,
                 menuPrice,
@@ -81,7 +81,7 @@ class MenuIntegrationTest {
             );
         HttpStatus statusCode = menuResponseEntity.getStatusCode();
         URI location = menuResponseEntity.getHeaders().getLocation();
-        Menu body = menuResponseEntity.getBody();
+        MenuResponse body = menuResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
@@ -111,9 +111,9 @@ class MenuIntegrationTest {
             );
 
         // when
-        ResponseEntity<Menu[]> menuResponseEntity = menuTemplate.list();
+        ResponseEntity<MenuResponse[]> menuResponseEntity = menuTemplate.list();
         HttpStatus statusCode = menuResponseEntity.getStatusCode();
-        Menu[] body = menuResponseEntity.getBody();
+        MenuResponse[] body = menuResponseEntity.getBody();
 
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);

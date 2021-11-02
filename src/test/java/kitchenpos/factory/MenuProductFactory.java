@@ -1,6 +1,9 @@
 package kitchenpos.factory;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuProductRequest;
 
 public class MenuProductFactory {
 
@@ -33,6 +36,21 @@ public class MenuProductFactory {
         );
     }
 
+    public static MenuProductRequest dto(MenuProduct menuProduct) {
+        return new MenuProductRequest(
+            menuProduct.getSeq(),
+            menuProduct.getMenuId(),
+            menuProduct.getProductId(),
+            menuProduct.getQuantity()
+        );
+    }
+
+    public static List<MenuProductRequest> dtoList(List<MenuProduct> menuProducts) {
+        return menuProducts.stream()
+            .map(MenuProductFactory::dto)
+            .collect(Collectors.toList());
+    }
+
     public MenuProductFactory seq(Long seq) {
         this.seq = seq;
         return this;
@@ -54,11 +72,6 @@ public class MenuProductFactory {
     }
 
     public MenuProduct build() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(seq);
-        menuProduct.setMenuId(menuId);
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-        return menuProduct;
+        return new MenuProduct(seq, menuId, productId, quantity);
     }
 }

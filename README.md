@@ -24,12 +24,12 @@
 ## 요구 사항
 
 - [ ] setter 정리
-- [ ] ui 레이어와 service 레이어 분리
+- [x] ui 레이어와 service 레이어 분리
   - [x] Product
   - [x] OrderTable
   - [x] TableGroup
   - [x] Order
-  - [ ] Menu
+  - [x] Menu
   - [x] MenuGroup
 - [ ] JPA 로 마이그레이션, Repository 적용
 - [ ] test template 에서 실제 객체가 아닌 dto 를 사용하도록 리팩토링
