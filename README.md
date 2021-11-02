@@ -23,6 +23,8 @@
 
 ## 요구 사항
 
+- [ ] setter 정리
+- [ ] ui 레이어와 service 레이어 분리
 - [ ] JPA 로 마이그레이션, Repository 적용
 
 ### 도메인 로직 분리
