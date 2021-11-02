@@ -1,6 +1,7 @@
 package kitchenpos.integration.templates;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -16,12 +17,11 @@ public class MenuGroupTemplate {
     }
 
     public ResponseEntity<MenuGroup> create(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest(null, name);
 
         return integrationTemplate.post(
             MENU_GROUP_URL,
-            menuGroup,
+            menuGroupRequest,
             MenuGroup.class
         );
     }
