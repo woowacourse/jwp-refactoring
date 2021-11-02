@@ -12,6 +12,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.TableGroup;
 
 public class KitchenPosFactory {
 
@@ -119,5 +120,23 @@ public class KitchenPosFactory {
         List<OrderTable> standardOrderTables = new ArrayList<>();
         standardOrderTables.add(getStandardOrderTable());
         return standardOrderTables;
+    }
+
+    public static TableGroup getStandardTableGroup() {
+        List<OrderTable> standardOrderTables = getStandardOrderTables();
+        OrderTable standardOrderTable = getStandardOrderTable();
+        standardOrderTable.setId(2L);
+        standardOrderTable.setTableGroupId(null);
+        standardOrderTable.setEmpty(true);
+        standardOrderTables.get(0).setEmpty(true);
+        standardOrderTables.get(0).setTableGroupId(null);
+        standardOrderTables.add(standardOrderTable);
+
+        TableGroup standardTableGroup = new TableGroup();
+        standardTableGroup.setId(1L);
+
+        standardTableGroup.setOrderTables(standardOrderTables);
+        standardTableGroup.setCreatedDate(LocalDateTime.now());
+        return standardTableGroup;
     }
 }

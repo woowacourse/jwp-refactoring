@@ -7,12 +7,9 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.dao.JdbcTemplateOrderTableDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.factory.KitchenPosFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
@@ -136,7 +133,8 @@ class TableServiceTest {
         int numberOfGuests = 2;
         OrderTable request = KitchenPosFactory.getStandardOrderTable();
         request.setNumberOfGuests(numberOfGuests);
-        given(orderTableDao.findById(1L)).willReturn(Optional.of(KitchenPosFactory.getStandardOrderTable()));
+        given(orderTableDao.findById(1L))
+            .willReturn(Optional.of(KitchenPosFactory.getStandardOrderTable()));
         given(orderTableDao.save((any()))).willReturn(request);
 
         //when
