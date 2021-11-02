@@ -22,7 +22,7 @@ public class IntegrationTemplate {
         );
     }
 
-    public <T> ResponseEntity<T> post(String url, T request, Class<T> responseType) {
+    public <T, P> ResponseEntity<P> post(String url, T request, Class<P> responseType) {
         return testRestTemplate.postForEntity(
             url,
             request,

@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +16,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import kitchenpos.factory.OrderTableFactory;
 import kitchenpos.factory.TableGroupFactory;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -63,6 +66,8 @@ class TableGroupServiceTest {
 
         private TableGroup savedTableGroup;
 
+        private TableGroupRequest tableGroupRequest;
+
         @BeforeEach
         void setUp() {
             orderTable1 = OrderTableFactory.builder()
@@ -106,6 +111,8 @@ class TableGroupServiceTest {
                 .id(1L)
                 .orderTables(savedOrderTables)
                 .build();
+
+            tableGroupRequest = TableGroupFactory.dto(tableGroup);
         }
 
         @DisplayName("TableGroup 을 생성한다")
@@ -113,10 +120,11 @@ class TableGroupServiceTest {
         void create() {
             // given
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
-            given(tableGroupDao.save(tableGroup)).willReturn(savedTableGroup);
+            // TODO change any()
+            given(tableGroupDao.save(any(TableGroup.class))).willReturn(savedTableGroup);
 
             // when
-            TableGroup result = tableGroupService.create(this.tableGroup);
+            TableGroupResponse result = tableGroupService.create(tableGroupRequest);
 
             // then
             verify(orderTableDao, times(2))
@@ -139,9 +147,10 @@ class TableGroupServiceTest {
             tableGroup = TableGroupFactory.copy(tableGroup)
                 .orderTables(Collections.emptyList())
                 .build();
+            tableGroupRequest = TableGroupFactory.dto(tableGroup);
 
             // when
-            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -155,9 +164,10 @@ class TableGroupServiceTest {
             tableGroup = TableGroupFactory.copy(tableGroup)
                 .orderTables(Collections.singletonList(orderTable1))
                 .build();
+            tableGroupRequest = TableGroupFactory.dto(tableGroup);
 
             // when
-            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -172,7 +182,7 @@ class TableGroupServiceTest {
                 Collections.singletonList(savedOrderTable1));
 
             // when
-            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -193,7 +203,7 @@ class TableGroupServiceTest {
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
             // when
-            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
 
             // then
             assertThatThrownBy(throwingCallable)
@@ -214,7 +224,7 @@ class TableGroupServiceTest {
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
 
             // when
-            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroup);
+            ThrowingCallable throwingCallable = () -> tableGroupService.create(tableGroupRequest);
 
             // then
             assertThatThrownBy(throwingCallable)

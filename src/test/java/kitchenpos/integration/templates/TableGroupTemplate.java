@@ -3,6 +3,7 @@ package kitchenpos.integration.templates;
 import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +19,13 @@ public class TableGroupTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<TableGroup> create(OrderTable... tables) {
+    public ResponseEntity<TableGroupResponse> create(OrderTable... tables) {
         TableGroup tableGroup = new TableGroup(tables);
 
         return integrationTemplate.post(
             TABLE_GROUP_URL,
             tableGroup,
-            TableGroup.class
+            TableGroupResponse.class
         );
     }
 
