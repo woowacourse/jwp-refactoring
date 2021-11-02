@@ -5,8 +5,10 @@ import kitchenpos.application.MenuGroupService;
 import kitchenpos.application.MenuService;
 import kitchenpos.application.OrderService;
 import kitchenpos.application.ProductService;
+import kitchenpos.application.TableGroupService;
 import kitchenpos.application.TableService;
 import kitchenpos.common.DatabaseInitializer;
+import kitchenpos.domain.TableGroup;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class IntegrationTest {
 
     @Autowired
     protected MenuGroupService menuGroupService;
+
+    @Autowired
+    protected TableGroupService tableGroupService;
 
     @BeforeEach
     void setUp() {
