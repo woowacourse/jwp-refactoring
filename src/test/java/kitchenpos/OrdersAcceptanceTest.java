@@ -26,7 +26,7 @@ public class OrdersAcceptanceTest extends ApplicationTest {
     private final OrderLineItem 기본_주문_메뉴 = new OrderLineItem();
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         super.setUp();
         기본_주문_메뉴.setMenuId(1L);
         기본_주문_메뉴.setQuantity(1L);

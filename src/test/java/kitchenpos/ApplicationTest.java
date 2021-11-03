@@ -18,7 +18,7 @@ class ApplicationTest {
     protected int port;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         RestAssured.port = port;
         기본_메뉴_그룹.setName("기본메뉴그룹");
     }

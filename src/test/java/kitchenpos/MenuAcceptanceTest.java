@@ -28,7 +28,7 @@ public class MenuAcceptanceTest extends ApplicationTest {
     private List<MenuProduct> 메뉴_구성_상품;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         super.setUp();
         MenuGroupAcceptanceTest.메뉴_그룹_생성(기본_메뉴_그룹);
         메뉴_구성_상품 = getMenuProducts(1L, 3);

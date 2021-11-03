@@ -22,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
 public class TableAcceptanceTest extends ApplicationTest {
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         super.setUp();
     }
 

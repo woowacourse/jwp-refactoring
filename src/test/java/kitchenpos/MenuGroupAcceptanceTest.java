@@ -19,7 +19,7 @@ import org.springframework.test.context.jdbc.Sql;
 public class MenuGroupAcceptanceTest extends ApplicationTest {
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         super.setUp();
         메뉴_그룹_생성(기본_메뉴_그룹);
     }
