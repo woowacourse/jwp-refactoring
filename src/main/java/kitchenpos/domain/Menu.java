@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Menu {
     private Long id;
@@ -20,6 +21,10 @@ public class Menu {
         this.price = price;
         this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
+    }
+
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
     public Long getId() {
@@ -60,5 +65,11 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    public void setMenuIdsInProducts(Long menuId) {
+        this.menuProducts = menuProducts.stream()
+                .map(it -> new MenuProduct(it.getSeq(), menuId, it.getProductId(), it.getQuantity()))
+                .collect(Collectors.toList());
     }
 }

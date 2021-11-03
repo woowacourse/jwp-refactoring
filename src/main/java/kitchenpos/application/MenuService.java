@@ -11,6 +11,7 @@ import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,9 @@ public class MenuService {
     }
 
     @Transactional
-    public Menu create(final Menu menu) {
+    public Menu create(final MenuRequest menuRequest) {
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuRequest.getMenuGroupId(),
+                menuRequest.getMenuProducts());
         checkValidMenu(menu);
 
         return saveMenu(menu);
@@ -43,12 +46,12 @@ public class MenuService {
     private Menu saveMenu(Menu menu) {
         final Menu savedMenu = menuDao.save(menu);
         final List<MenuProduct> savedMenuProducts = new ArrayList<>();
+        menu.setMenuIdsInProducts(savedMenu.getId());
         for (final MenuProduct menuProduct : menu.getMenuProducts()) {
-            menuProduct.setMenuId(savedMenu.getId());
             savedMenuProducts.add(menuProductDao.save(menuProduct));
         }
-        savedMenu.setMenuProducts(savedMenuProducts);
-        return savedMenu;
+
+        return menuDao.findById(savedMenu.getId()).orElseThrow(IllegalArgumentException::new);
     }
 
     private void checkValidMenu(Menu menu) {
@@ -58,7 +61,7 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        if (isNotGrouppingMenu(menu)) {
+        if (isNotGroupingMenu(menu)) {
             throw new IllegalArgumentException();
         }
         checkInvalidSumPrice(price, menuProducts);
@@ -81,7 +84,7 @@ public class MenuService {
         return price.compareTo(sum) > 0;
     }
 
-    private boolean isNotGrouppingMenu(Menu menu) {
+    private boolean isNotGroupingMenu(Menu menu) {
         return !menuGroupDao.existsById(menu.getMenuGroupId());
     }
 
@@ -90,12 +93,6 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuDao.findAll();
-
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(menuProductDao.findAllByMenuId(menu.getId()));
-        }
-
-        return menus;
+        return menuDao.findAll();
     }
 }
