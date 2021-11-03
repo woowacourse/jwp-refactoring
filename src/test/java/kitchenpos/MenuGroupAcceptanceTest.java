@@ -41,7 +41,7 @@ public class MenuGroupAcceptanceTest extends ApplicationTest {
 
     @DisplayName("전체 메뉴그룹을 불러오는데 성공하면, 200 응답을 받는다.")
     @Test
-    void getMenuGroup(){
+    void getMenuGroup() {
 
         //given
         ExtractableResponse<Response> response = 전체_그룹_조회();

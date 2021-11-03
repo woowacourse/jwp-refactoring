@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+@DisplayName("상품 기능")
 public class ProductAcceptanceTest extends ApplicationTest {
 
     private Product 기본_상품 = new Product();
@@ -50,7 +51,7 @@ public class ProductAcceptanceTest extends ApplicationTest {
 
     @DisplayName("전체 상품 조회에 성공하면, 200 응답을 받는다.")
     @Test
-    void getProducts(){
+    void getProducts() {
         ExtractableResponse<Response> response = 전체_상품_조회();
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }

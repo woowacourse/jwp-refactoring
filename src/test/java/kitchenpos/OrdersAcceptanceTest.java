@@ -90,7 +90,7 @@ public class OrdersAcceptanceTest extends ApplicationTest {
 
         @DisplayName("주문아이디로 주문 상태를 변경하려고하면 500응답을 받는다.")
         @Test
-        void changeOrderStatus(){
+        void changeOrderStatus() {
             주문_테이블_채우기();
             주문_추가(기본_주문);
 
@@ -134,7 +134,7 @@ public class OrdersAcceptanceTest extends ApplicationTest {
 
     @DisplayName("주문 상태를 변경하는데 성공하면, 200 응답을 받는다.")
     @Test
-    void changeOrderStatus(){
+    void changeOrderStatus() {
         주문_테이블_채우기();
         주문_추가(기본_주문);
 
@@ -149,7 +149,7 @@ public class OrdersAcceptanceTest extends ApplicationTest {
 
     @DisplayName("COMPLETION 주문상태를 변경하려고하면, 500 응답을 받는다.")
     @Test
-    void completionChangeOrderStatus(){
+    void completionChangeOrderStatus() {
         주문_테이블_채우기();
         주문_추가(기본_주문);
 

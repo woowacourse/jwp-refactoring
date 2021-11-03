@@ -73,7 +73,7 @@ public class TableAcceptanceTest extends ApplicationTest {
 
     @DisplayName("손님수를 변경하는데 성공하면, 200 응답을 받는다.")
     @Test
-    void changeGuestNumber(){
+    void changeGuestNumber() {
 
         //given
         OrderTable orderTable = new OrderTable();
@@ -91,6 +91,7 @@ public class TableAcceptanceTest extends ApplicationTest {
     @DisplayName("잘못된 ")
     @Nested
     class FailTest {
+
         @DisplayName("주문 테이블 id로 테이블을 비우거나, 채우려고 하면 500 응답을 받는다.")
         @ValueSource(longs = {-1L, 2000L})
         @ParameterizedTest
