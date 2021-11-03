@@ -104,7 +104,6 @@ public class TestFixtures {
         return TableGroup.builder()
                 .id(tableGroupId)
                 .createdDate(LocalDateTime.now())
-//                .orderTables(Arrays.asList(createOrderTable(1L, tableGroupId), createOrderTable(2L, tableGroupId)))
                 .build();
     }
 

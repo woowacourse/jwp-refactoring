@@ -106,10 +106,6 @@ public class Order {
         return orderTableId;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
-    }
-
     public String getOrderStatus() {
         return orderStatus;
     }

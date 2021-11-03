@@ -111,8 +111,6 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
         when(productRepository.findAllByIdIn(any())).thenReturn(products);
-//        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-//        when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
         final Menu actual = menuService.create(request);
@@ -157,8 +155,6 @@ class MenuServiceTest {
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
         when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
-//        when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
-//        when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }

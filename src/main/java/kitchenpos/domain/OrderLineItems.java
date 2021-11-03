@@ -46,6 +46,6 @@ public class OrderLineItems {
     }
 
     public void updateOrderId(Long orderId) {
-        orderLineItems.forEach(it -> it.setOrderId(orderId));
+        orderLineItems.forEach(it -> it.updateOrderId(orderId));
     }
 }
