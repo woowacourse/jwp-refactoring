@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.dao.MenuGroupDao;
+import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.fixture.MenuGroupFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,7 @@ public class MenuGroupServiceTest extends ServiceTest {
     void create() {
         when(menuGroupDao.save(any())).thenReturn(MenuGroupFixture.menuGroup());
 
-        menuGroupService.create(MenuGroupFixture.menuGroup());
+        menuGroupService.create(new MenuGroupRequest("name"));
     }
 
     @DisplayName("메뉴 조회")
