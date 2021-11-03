@@ -18,8 +18,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 
 @DisplayName("메뉴 기능")
+@Sql({"classpath:tableInit.sql", "classpath:dataInsert.sql"})
 public class MenuAcceptanceTest extends ApplicationTest {
 
     private final Menu 기본_메뉴 = new Menu();
