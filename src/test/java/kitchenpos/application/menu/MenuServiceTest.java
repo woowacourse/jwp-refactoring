@@ -140,6 +140,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 가격이 상품보다 비싸선 안 된다.")
     @Test
     void createMenuWithMoreExpensivePrice() {
+        //given
         Product product = new Product();
         product.setPrice(BigDecimal.valueOf(CHEAPER_PRICE));
 
