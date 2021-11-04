@@ -20,11 +20,14 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import static kitchenpos.fixture.MenuFixture.createMenu;
 import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.in;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -54,6 +57,7 @@ class MenuServiceTest {
         @BeforeEach
         void setUp() {
             when(mockMenuDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
+            when(mockProductDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
             when(mockMenuGroupDao.existsById(any())).thenReturn(true);
             when(mockProductDao.findById(any())).thenReturn(Optional.of(createProduct()));
         }
