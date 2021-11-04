@@ -1,0 +1,115 @@
+ifndef::snippets[]
+:snippets: ../../../build/generated-snippets
+endif::[]
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:author: livenow14
+:email: xowjd41@gmail.com
+
+== 상품
+=== 상품 저장
+==== 성공
+===== Request
+include::{snippets}/product-create/http-request.adoc[]
+===== Response
+include::{snippets}/product-create/http-response.adoc[]
+=== 상품 조회
+==== 성공
+===== Request
+include::{snippets}/product-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/product-findAll/http-response.adoc[]
+
+
+== 메뉴 그룹
+=== 메뉴 그룹 저장
+==== 성공
+===== Request
+include::{snippets}/menu-group-create/http-request.adoc[]
+===== Response
+include::{snippets}/menu-group-create/http-response.adoc[]
+
+=== 메뉴 그룹 조회
+==== 성공
+===== Request
+include::{snippets}/menu-group-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/menu-group-findAll/http-response.adoc[]
+
+== 메뉴
+=== 메뉴 저장
+==== 성공
+===== Request
+include::{snippets}/menu-create/http-request.adoc[]
+===== Response
+include::{snippets}/menu-create/http-response.adoc[]
+=== 메뉴 조회
+==== 성공
+===== Request
+include::{snippets}/menu-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/menu-findAll/http-response.adoc[]
+
+== 테이블
+=== 테이블 저장
+==== 성공
+===== Request
+include::{snippets}/table-create/http-request.adoc[]
+===== Response
+include::{snippets}/table-create/http-response.adoc[]
+=== 테이블 조회
+==== 성공
+===== Request
+include::{snippets}/table-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/table-findAll/http-response.adoc[]
+
+=== 테이블 상태 변경
+==== 성공
+===== Request
+include::{snippets}/table-change-status/http-request.adoc[]
+===== Response
+include::{snippets}/table-change-status/http-response.adoc[]
+=== 테이블 손님 수 변경
+==== 성공
+===== Request
+include::{snippets}/table-change-quest-number/http-request.adoc[]
+===== Response
+include::{snippets}/table-change-quest-number/http-response.adoc[]
+
+== 테이블 그룹
+=== 테이블 그룹 저장
+==== 성공
+===== Request
+include::{snippets}/table-group-create/http-request.adoc[]
+===== Response
+include::{snippets}/table-group-create/http-response.adoc[]
+=== 테이블 그룹 해제
+==== 성공
+===== Request
+include::{snippets}/table-group-ungroup/http-request.adoc[]
+===== Response
+include::{snippets}/table-group-ungroup/http-response.adoc[]
+
+== 주문
+=== 주문 저장
+==== 성공
+===== Request
+include::{snippets}/order-create/http-request.adoc[]
+===== Response
+include::{snippets}/order-create/http-response.adoc[]
+=== 주문 조회
+==== 성공
+===== Request
+include::{snippets}/order-findAll/http-request.adoc[]
+===== Response
+include::{snippets}/order-findAll/http-response.adoc[]
+=== 주문 상태 변경
+==== 성공
+===== Request
+include::{snippets}/order-change-status/http-request.adoc[]
+===== Response
+include::{snippets}/order-change-status/http-response.adoc[]
