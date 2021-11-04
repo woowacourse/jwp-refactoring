@@ -11,9 +11,6 @@ public class Order {
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
 
-    public Order() {
-    }
-
     public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
     }
@@ -31,16 +28,8 @@ public class Order {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getOrderTableId() {
         return orderTableId;
-    }
-
-    public void setOrderTableId(final Long orderTableId) {
-        this.orderTableId = orderTableId;
     }
 
     public String getOrderStatus() {
@@ -55,10 +44,6 @@ public class Order {
         return orderedTime;
     }
 
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
@@ -67,14 +52,9 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    public List<Long> getMenuIds() {
-        return orderLineItems.stream().map(OrderLineItem::getMenuId).collect(Collectors.toList());
-    }
-
     public void setOrderIdsInLineItems(Long orderId) {
         this.orderLineItems = orderLineItems.stream()
                 .map(it -> new OrderLineItem(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
                 .collect(Collectors.toList());
-
     }
 }
