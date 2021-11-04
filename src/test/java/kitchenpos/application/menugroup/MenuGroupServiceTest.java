@@ -64,12 +64,12 @@ class MenuGroupServiceTest {
         given(menuGroupDao.save(any())).willReturn(standardMenuGroup);
 
         //when
-        MenuGroup menuGroup = menuGroupDao.save(standardMenuGroup);
+        MenuGroup menuGroup = menuGroupService.create(standardMenuGroup);
 
         //then
         assertAll(
-            () -> assertThat(standardMenuGroup.getId()).isEqualTo(BASIC_MENU_GROUP_ID),
-            () -> assertThat(standardMenuGroup.getName()).isEqualTo(BASIC_MENU_GROUP_NAME)
+            () -> assertThat(menuGroup.getId()).isEqualTo(BASIC_MENU_GROUP_ID),
+            () -> assertThat(menuGroup.getName()).isEqualTo(BASIC_MENU_GROUP_NAME)
         );
 
     }
