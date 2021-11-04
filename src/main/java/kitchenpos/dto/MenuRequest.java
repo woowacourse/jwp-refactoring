@@ -5,10 +5,10 @@ import java.util.List;
 import kitchenpos.domain.MenuProduct;
 
 public class MenuRequest {
-    private String name;
-    private BigDecimal price;
-    private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private final String name;
+    private final BigDecimal price;
+    private final Long menuGroupId;
+    private final List<MenuProduct> menuProducts;
 
     public MenuRequest(String name, BigDecimal price, Long menuGroupId,
                        List<MenuProduct> menuProducts) {

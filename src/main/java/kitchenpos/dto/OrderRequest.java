@@ -1,19 +1,14 @@
 package kitchenpos.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderLineItem;
 
 public class OrderRequest {
-    private Long orderTableId;
-    private String orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private final Long orderTableId;
+    private final List<OrderLineItem> orderLineItems;
 
     public OrderRequest(Long orderTableId, List<OrderLineItem> orderLineItems) {
         this.orderTableId = orderTableId;
-        this.orderStatus = null;
-        this.orderedTime = null;
         this.orderLineItems = orderLineItems;
     }
 

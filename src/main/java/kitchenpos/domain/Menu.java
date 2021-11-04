@@ -67,7 +67,7 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void setMenuIdsInProducts(Long menuId) {
+    public void setMenuIdInProducts(Long menuId) {
         this.menuProducts = menuProducts.stream()
                 .map(it -> new MenuProduct(it.getSeq(), menuId, it.getProductId(), it.getQuantity()))
                 .collect(Collectors.toList());

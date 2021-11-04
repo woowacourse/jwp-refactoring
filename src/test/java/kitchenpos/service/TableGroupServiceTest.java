@@ -34,8 +34,9 @@ public class TableGroupServiceTest extends ServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(
                 Arrays.asList(OrderTableFixture.notGroupedTable(), OrderTableFixture.notGroupedTable()));
         when(tableGroupDao.save(any())).thenReturn(TableGroupFixture.tableGroup());
+        when(tableGroupDao.findById(any())).thenReturn(Optional.of(TableGroupFixture.tableGroup()));
 
-        tableGroupService.create(TableGroupFixture.tableGroup());
+        tableGroupService.create(TableGroupFixture.tableGroupRequest());
     }
 
     @DisplayName("단체 지정시 주문 테이블이 둘 이상 존재해야 한다")
@@ -44,7 +45,7 @@ public class TableGroupServiceTest extends ServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(
                 Arrays.asList(OrderTableFixture.notGroupedTable()));
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroup())).
+        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroupRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -54,7 +55,7 @@ public class TableGroupServiceTest extends ServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(
                 Arrays.asList());
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroup())).
+        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroupRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -64,7 +65,7 @@ public class TableGroupServiceTest extends ServiceTest {
         when(orderTableDao.findAllByIdIn(any())).thenReturn(
                 Arrays.asList(OrderTableFixture.orderTable(), OrderTableFixture.orderTable()));
 
-        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroup())).
+        assertThatThrownBy(() -> tableGroupService.create(TableGroupFixture.tableGroupRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 

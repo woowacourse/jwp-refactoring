@@ -12,6 +12,10 @@ public class TableGroup {
     public TableGroup() {
     }
 
+    public TableGroup(LocalDateTime localDateTime, List<OrderTable> savedOrderTables) {
+        this(null, localDateTime, savedOrderTables);
+    }
+
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
         this.id = id;
         this.createdDate = createdDate;
@@ -45,6 +49,18 @@ public class TableGroup {
     public List<Long> getTableIds() {
         return orderTables.stream()
                 .map(OrderTable::getId)
+                .collect(Collectors.toList());
+    }
+
+    public void setTableGroupIdInOrderTables(Long tableGroupId) {
+        this.orderTables = orderTables.stream()
+                .map(it -> new OrderTable(it.getId(), tableGroupId, it.getNumberOfGuests(), it.isEmpty()))
+                .collect(Collectors.toList());
+    }
+
+    public void unGrouping() {
+        this.orderTables = orderTables.stream()
+                .map(it -> new OrderTable(it.getId(), null, it.getNumberOfGuests(), false))
                 .collect(Collectors.toList());
     }
 }
