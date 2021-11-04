@@ -14,7 +14,8 @@ public class TableGroupServiceUnGroupTest extends TableGroupServiceTest {
     @Test
     void withCookOrMeal() {
         //given
-        given(orderTableDao.findAllByTableGroupId(BASIC_TABLE_GROUP_ID)).willReturn(standardOrderTables);
+        given(orderTableDao.findAllByTableGroupId(BASIC_TABLE_GROUP_ID)).willReturn(
+            standardOrderTables);
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
             Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID),
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
