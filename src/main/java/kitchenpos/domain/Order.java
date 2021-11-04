@@ -14,6 +14,10 @@ public class Order {
     public Order() {
     }
 
+    public Order(Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, orderStatus, orderedTime, orderLineItems);
+    }
+
     public Order(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
         this.id = id;
@@ -65,5 +69,12 @@ public class Order {
 
     public List<Long> getMenuIds() {
         return orderLineItems.stream().map(OrderLineItem::getMenuId).collect(Collectors.toList());
+    }
+
+    public void setOrderIdsInLineItems(Long orderId) {
+        this.orderLineItems = orderLineItems.stream()
+                .map(it -> new OrderLineItem(it.getSeq(), orderId, it.getMenuId(), it.getQuantity()))
+                .collect(Collectors.toList());
+
     }
 }

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderLineItemDao;
@@ -12,6 +13,7 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -36,38 +38,30 @@ public class OrderService {
     }
 
     @Transactional
-    public Order create(final Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        checkValidOrder(order, orderLineItems);
+    public Order create(final OrderRequest orderRequest) {
+        checkValidOrder(orderRequest);
 
-        order.setId(null);
-
-        final OrderTable orderTable = findOrderTableById(order);
-
-        order.setOrderTableId(orderTable.getId());
-        order.setOrderStatus(OrderStatus.COOKING.name());
-        order.setOrderedTime(LocalDateTime.now());
-
-        final Order savedOrder = saveOrder(order, orderLineItems);
-
-        return savedOrder;
+        final OrderTable orderTable = findOrderTableById(orderRequest.getOrderTableId());
+        Order order = new Order(orderTable.getId(),
+                OrderStatus.COOKING.name(),
+                LocalDateTime.now(),
+                orderRequest.getOrderLineItems());
+        return saveOrder(order);
     }
 
-    private Order saveOrder(Order order, List<OrderLineItem> orderLineItems) {
+    private Order saveOrder(Order order) {
         final Order savedOrder = orderDao.save(order);
 
-        final Long orderId = savedOrder.getId();
         final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
-        for (final OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrderId(orderId);
+        order.setOrderIdsInLineItems(order.getId());
+        for (final OrderLineItem orderLineItem : order.getOrderLineItems()) {
             savedOrderLineItems.add(orderLineItemDao.save(orderLineItem));
         }
-        savedOrder.setOrderLineItems(savedOrderLineItems);
-        return savedOrder;
+        return orderDao.findById(savedOrder.getId()).orElseThrow(IllegalArgumentException::new);
     }
 
-    private OrderTable findOrderTableById(Order order) {
-        final OrderTable orderTable = orderTableDao.findById(order.getOrderTableId())
+    private OrderTable findOrderTableById(Long id) {
+        final OrderTable orderTable = orderTableDao.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
@@ -75,18 +69,19 @@ public class OrderService {
         return orderTable;
     }
 
-    private void checkValidOrder(Order order, List<OrderLineItem> orderLineItems) {
+    private void checkValidOrder(OrderRequest orderRequest) {
+        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
-        if (isNotAllSavedMenuIds(order)) {
+        if (isNotAllSavedMenuIds(orderRequest)) {
             throw new IllegalArgumentException();
         }
     }
 
-    private boolean isNotAllSavedMenuIds(Order order) {
-        final List<OrderLineItem> orderLineItems = order.getOrderLineItems();
-        final List<Long> menuIds = order.getMenuIds();
+    private boolean isNotAllSavedMenuIds(OrderRequest orderRequest) {
+        final List<OrderLineItem> orderLineItems = orderRequest.getOrderLineItems();
+        final List<Long> menuIds = orderLineItems.stream().map(OrderLineItem::getMenuId).collect(Collectors.toList());
         return orderLineItems.size() != menuDao.countByIdIn(menuIds);
     }
 

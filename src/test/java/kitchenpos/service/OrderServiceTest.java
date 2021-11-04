@@ -43,9 +43,10 @@ public class OrderServiceTest extends ServiceTest {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.orderTable()));
         when(orderDao.save(any())).thenReturn(OrderFixture.order());
         when(orderLineItemDao.save(any())).thenReturn(OrderLineItemFixture.orderLineItem());
+        when(orderDao.findById(any())).thenReturn(Optional.of(OrderFixture.order()));
         Order order = OrderFixture.order();
 
-        orderService.create(order);
+        orderService.create(OrderFixture.orderRequest());
     }
 
     @DisplayName("주문시 주문 항목이 empty 일 수 없다.")
@@ -53,7 +54,8 @@ public class OrderServiceTest extends ServiceTest {
     void createEmpty() {
         Order order = new Order(0L, 0L, OrderStatus.MEAL.name(), LocalDateTime.now(), Collections.emptyList());
 
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(OrderFixture.orderRequest())).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("주문 시 주문 항목이 모두 등록되어 있어야 한다")
@@ -62,7 +64,8 @@ public class OrderServiceTest extends ServiceTest {
         when(menuDao.countByIdIn(any())).thenReturn(0L);
         Order order = OrderFixture.order();
 
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(OrderFixture.orderRequest())).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블이 등록되어 있어야 한다")
@@ -72,7 +75,8 @@ public class OrderServiceTest extends ServiceTest {
         when(orderTableDao.findById(any())).thenReturn(Optional.empty());
         Order order = OrderFixture.order();
 
-        assertThatThrownBy(() -> orderService.create(order)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> orderService.create(OrderFixture.orderRequest())).isInstanceOf(
+                IllegalArgumentException.class);
     }
 
     @DisplayName("주문들을 조회할 수 있다.")
