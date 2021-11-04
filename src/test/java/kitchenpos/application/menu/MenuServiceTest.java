@@ -37,7 +37,8 @@ class MenuServiceTest {
     private static final Long BASIC_PRODUCT_ID = 1L;
     private static final Long BASIC_QUANTITY = 1L;
     private static final Long BASIC_SEQUENCE_NUMBER = 1L;
-    private static final String BASIC_MENU_NAME = "신상품";
+    private static final String BASIC_MENU_NAME = "신상품 메뉴";
+    private static final String BASIC_PRODUCT_NAME = "신상품";
 
     private List<Menu> standardMenuRegistry;
     private Menu standardMenu;
@@ -142,6 +143,8 @@ class MenuServiceTest {
     void createMenuWithMoreExpensivePrice() {
         //given
         Product product = new Product();
+        product.setId(BASIC_PRODUCT_ID);
+        product.setName(BASIC_PRODUCT_NAME);
         product.setPrice(BigDecimal.valueOf(CHEAPER_PRICE));
 
         Long supposeExistedMenuGroupId = standardMenu.getMenuGroupId();
@@ -161,6 +164,8 @@ class MenuServiceTest {
     void createMenu() {
         //given
         Product product = new Product();
+        product.setId(BASIC_PRODUCT_ID);
+        product.setName(BASIC_PRODUCT_NAME);
         product.setPrice(BigDecimal.valueOf(BASIC_PRICE));
 
         Long supposeExistedMenuGroupId = standardMenu.getMenuGroupId();
@@ -177,7 +182,7 @@ class MenuServiceTest {
         assertAll(
             () -> assertThat(menu.getId()).isEqualTo(BASIC_MENU_ID),
             () -> assertThat(menu.getMenuGroupId()).isEqualTo(BASIC_MENU_GROUP_ID),
-            () -> assertThat(menu.getName()).isEqualTo("신상품"),
+            () -> assertThat(menu.getName()).isEqualTo(BASIC_MENU_NAME),
             () -> assertThat(menu.getMenuProducts().size()).isEqualTo(BASIC_SIZE),
             () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(BASIC_PRICE))
         );
