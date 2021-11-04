@@ -16,11 +16,14 @@ import org.junit.jupiter.api.Test;
 
 public class TableGroupServiceCreateTest extends TableGroupServiceTest {
 
+    protected static final Boolean NOT_EMPTY_STATE = false;
+    private static final List<OrderTable> NULL_TABLES = null;
+
     @DisplayName("단체를 생성할 때, 주문 테이블이 비어선 안 된다.")
     @Test
     void withNullOrderTables() {
         //given
-        standardTableGroup.setOrderTables(null);
+        standardTableGroup.setOrderTables(NULL_TABLES);
 
         //when
 
@@ -48,7 +51,9 @@ public class TableGroupServiceCreateTest extends TableGroupServiceTest {
     void withChangedTableNumbers() {
         //given
         List<OrderTable> zeroOrderTables = new LinkedList<>();
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(zeroOrderTables);
+        given(
+            orderTableDao.findAllByIdIn(Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID))).willReturn(
+            zeroOrderTables);
 
         //when
 
@@ -62,8 +67,10 @@ public class TableGroupServiceCreateTest extends TableGroupServiceTest {
     void withFullTable() {
         //given
         standardTableGroup.getOrderTables()
-            .forEach(table -> table.setEmpty(false));
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(standardOrderTables);
+            .forEach(table -> table.setEmpty(NOT_EMPTY_STATE));
+        given(
+            orderTableDao.findAllByIdIn(Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID))).willReturn(
+            standardOrderTables);
 
         //when
 
@@ -76,9 +83,11 @@ public class TableGroupServiceCreateTest extends TableGroupServiceTest {
     @Test
     void withGrouppedTable() {
         //given
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(standardOrderTables);
+        given(
+            orderTableDao.findAllByIdIn(Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID))).willReturn(
+            standardOrderTables);
         standardTableGroup.getOrderTables()
-            .forEach(table -> table.setTableGroupId(1L));
+            .forEach(table -> table.setTableGroupId(BASIC_TABLE_GROUP_ID));
 
         //when
 
@@ -91,7 +100,9 @@ public class TableGroupServiceCreateTest extends TableGroupServiceTest {
     @Test
     void createTableGroup() {
         //given
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(standardOrderTables);
+        given(
+            orderTableDao.findAllByIdIn(Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID))).willReturn(
+            standardOrderTables);
         given(tableGroupDao.save(standardTableGroup)).willReturn(standardTableGroup);
 
         //when
@@ -99,9 +110,9 @@ public class TableGroupServiceCreateTest extends TableGroupServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(tableGroup.getOrderTables().size()).isEqualTo(2),
-            () -> assertThat(tableGroup.getId()).isEqualTo(1L),
-            () -> assertThat(tableGroup.getCreatedDate()).isNotEqualTo(LocalDateTime.MAX)
+            () -> assertThat(tableGroup.getOrderTables().size()).isEqualTo(BASIC_TABLE_NUMBER),
+            () -> assertThat(tableGroup.getId()).isEqualTo(BASIC_TABLE_GROUP_ID),
+            () -> assertThat(tableGroup.getCreatedDate()).isNotEqualTo(BASIC_CREATED_TIME)
         );
     }
 

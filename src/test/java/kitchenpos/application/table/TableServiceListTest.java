@@ -20,7 +20,7 @@ public class TableServiceListTest extends TableServiceTest {
         List<OrderTable> orderTables = tableService.list();
 
         //then
-        assertThat(orderTables.size()).isEqualTo(1);
+        assertThat(orderTables.size()).isEqualTo(BASIC_TABLE_NUMBER);
     }
 
 }

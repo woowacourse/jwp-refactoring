@@ -18,6 +18,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class TableGroupServiceTest {
 
+    protected static final Boolean BASIC_EMPTY_STATE = true;
+    protected static final Integer BASIC_GUEST_NUMBER = 5;
+    protected static final Integer BASIC_TABLE_NUMBER = 2;
+    protected static final Long BASIC_TABLE_GROUP_ID = 1L;
+    protected static final Long FIRST_TABLE_ID = 1L;
+    protected static final Long SECOND_TABLE_ID = 2L;
+    protected static final LocalDateTime BASIC_CREATED_TIME = LocalDateTime.MAX;
+
     protected List<OrderTable> standardOrderTables;
     protected TableGroup standardTableGroup;
 
@@ -36,22 +44,22 @@ public class TableGroupServiceTest {
     @BeforeEach
     protected void setUp() {
         OrderTable firstOrderTable = new OrderTable();
-        firstOrderTable.setId(1L);
-        firstOrderTable.setEmpty(true);
-        firstOrderTable.setNumberOfGuests(5);
+        firstOrderTable.setId(FIRST_TABLE_ID);
+        firstOrderTable.setEmpty(BASIC_EMPTY_STATE);
+        firstOrderTable.setNumberOfGuests(BASIC_GUEST_NUMBER);
 
         OrderTable secondOrderTable = new OrderTable();
-        secondOrderTable.setId(2L);
-        secondOrderTable.setEmpty(true);
-        secondOrderTable.setNumberOfGuests(5);
+        secondOrderTable.setId(SECOND_TABLE_ID);
+        secondOrderTable.setEmpty(BASIC_EMPTY_STATE);
+        secondOrderTable.setNumberOfGuests(BASIC_GUEST_NUMBER);
 
         standardOrderTables = new LinkedList<>();
         standardOrderTables.add(firstOrderTable);
         standardOrderTables.add(secondOrderTable);
 
         standardTableGroup = new TableGroup();
-        standardTableGroup.setId(1L);
-        standardTableGroup.setCreatedDate(LocalDateTime.MAX);
+        standardTableGroup.setId(BASIC_TABLE_GROUP_ID);
+        standardTableGroup.setCreatedDate(BASIC_CREATED_TIME);
         standardTableGroup.setOrderTables(standardOrderTables);
     }
 

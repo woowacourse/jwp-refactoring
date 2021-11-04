@@ -17,12 +17,12 @@ public class OrderServiceChangeTest extends OrderServiceTest {
     @Test
     void nullOrderStatus() {
         //given
-        given(orderDao.findById(1L)).willReturn(Optional.empty());
+        given(orderDao.findById(BASIC_ORDER_ID)).willReturn(Optional.empty());
 
         //when
 
         //then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, standardOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(BASIC_ORDER_ID, standardOrder))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -31,12 +31,12 @@ public class OrderServiceChangeTest extends OrderServiceTest {
     void completedOrderStatus() {
         //given
         standardOrder.setOrderStatus(OrderStatus.COMPLETION.name());
-        given(orderDao.findById(1L)).willReturn(Optional.of(standardOrder));
+        given(orderDao.findById(BASIC_ORDER_ID)).willReturn(Optional.of(standardOrder));
 
         //when
 
         //then
-        assertThatThrownBy(() -> orderService.changeOrderStatus(1L, standardOrder))
+        assertThatThrownBy(() -> orderService.changeOrderStatus(BASIC_ORDER_ID, standardOrder))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -45,18 +45,18 @@ public class OrderServiceChangeTest extends OrderServiceTest {
     void changeOrderStatus() {
         //given
         standardOrder.setOrderStatus(OrderStatus.MEAL.name());
-        given(orderDao.findById(1L)).willReturn(Optional.of(standardOrder));
-        given(orderLineItemDao.findAllByOrderId(1L)).willReturn(standardOrderLineItems);
+        given(orderDao.findById(BASIC_ORDER_ID)).willReturn(Optional.of(standardOrder));
+        given(orderLineItemDao.findAllByOrderId(BASIC_ORDER_ID)).willReturn(standardOrderLineItems);
 
         //when
-        Order order = orderService.changeOrderStatus(1L, standardOrder);
+        Order order = orderService.changeOrderStatus(BASIC_ORDER_ID, standardOrder);
 
         //then
         assertAll(
-            () -> assertThat(order.getId()).isEqualTo(1L),
+            () -> assertThat(order.getId()).isEqualTo(BASIC_ORDER_ID),
             () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name()),
-            () -> assertThat(order.getOrderLineItems().size()).isEqualTo(1),
-            () -> assertThat(order.getOrderTableId()).isEqualTo(1)
+            () -> assertThat(order.getOrderLineItems().size()).isEqualTo(BASIC_SIZE),
+            () -> assertThat(order.getOrderTableId()).isEqualTo(BASIC_ORDER_TABLE_ID)
         );
     }
 

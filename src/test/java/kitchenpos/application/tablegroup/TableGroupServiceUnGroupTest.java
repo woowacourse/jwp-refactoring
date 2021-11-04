@@ -14,15 +14,15 @@ public class TableGroupServiceUnGroupTest extends TableGroupServiceTest {
     @Test
     void withCookOrMeal() {
         //given
-        given(orderTableDao.findAllByTableGroupId(1L)).willReturn(standardOrderTables);
+        given(orderTableDao.findAllByTableGroupId(BASIC_TABLE_GROUP_ID)).willReturn(standardOrderTables);
         given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-            Arrays.asList(1L, 2L),
+            Arrays.asList(FIRST_TABLE_ID, SECOND_TABLE_ID),
             Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableGroupService.ungroup(1L))
+        assertThatThrownBy(() -> tableGroupService.ungroup(BASIC_TABLE_GROUP_ID))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

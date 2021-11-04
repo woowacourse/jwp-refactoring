@@ -13,16 +13,19 @@ import org.junit.jupiter.api.Test;
 
 public class TableServiceEmptyTest extends TableServiceTest {
 
+    private static final Boolean CHANGED_EMPTY_STATE = false;
+    private static final Long NULL_TABLE_ID = null;
+
     @DisplayName("테이블을 빈 상태로 변경할 시에 테이블이 존재해야만 한다.")
     @Test
     void unexsistedTable() {
         //given
-        given(orderTableDao.findById(1L)).willReturn(Optional.empty());
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(Optional.empty());
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -30,13 +33,14 @@ public class TableServiceEmptyTest extends TableServiceTest {
     @Test
     void saveOrderTable() {
         //given
-        standardTable.setTableGroupId(1L);
-        given(orderTableDao.findById(1L)).willReturn(Optional.ofNullable(standardTable));
+        standardTable.setTableGroupId(BASIC_TABLE_GROUP_ID);
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(
+            Optional.ofNullable(standardTable));
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -44,15 +48,17 @@ public class TableServiceEmptyTest extends TableServiceTest {
     @Test
     void cookAndMealStatus() {
         //given
-        standardTable.setTableGroupId(null);
-        given(orderTableDao.findById(1L)).willReturn(Optional.ofNullable(standardTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L,
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        standardTable.setTableGroupId(NULL_TABLE_ID);
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(
+            Optional.ofNullable(standardTable));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(BASIC_ORDER_TABLE_ID,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(
+            BASIC_EMPTY_STATE);
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeEmpty(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeEmpty(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -60,15 +66,17 @@ public class TableServiceEmptyTest extends TableServiceTest {
     @Test
     void changeTableEmptyStatus() {
         //given
-        standardTable.setEmpty(false);
-        standardTable.setTableGroupId(null);
-        given(orderTableDao.findById(1L)).willReturn(Optional.ofNullable(standardTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(1L,
-            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
+        standardTable.setEmpty(CHANGED_EMPTY_STATE);
+        standardTable.setTableGroupId(NULL_TABLE_ID);
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(
+            Optional.ofNullable(standardTable));
+        given(orderDao.existsByOrderTableIdAndOrderStatusIn(BASIC_ORDER_TABLE_ID,
+            Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(
+            CHANGED_EMPTY_STATE);
         given(orderTableDao.save(standardTable)).willReturn(standardTable);
 
         //when
-        OrderTable orderTable = tableService.changeEmpty(1L, standardTable);
+        OrderTable orderTable = tableService.changeEmpty(BASIC_ORDER_TABLE_ID, standardTable);
 
         //then
         assertThat(orderTable.isEmpty()).isFalse();

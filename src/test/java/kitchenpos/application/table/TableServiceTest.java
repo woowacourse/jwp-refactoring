@@ -15,6 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 public class TableServiceTest {
 
+    protected static final Boolean BASIC_EMPTY_STATE = true;
+    protected static final Integer BASIC_GUEST_NUMBER = 10;
+    protected static final Integer BASIC_TABLE_NUMBER = 1;
+    protected static final Long BASIC_ORDER_TABLE_ID = 1L;
+    protected static final Long BASIC_TABLE_GROUP_ID = 1L;
+
     protected List<OrderTable> standardTables;
     protected OrderTable standardTable;
 
@@ -30,10 +36,10 @@ public class TableServiceTest {
     @BeforeEach
     protected void setUp() {
         standardTable = new OrderTable();
-        standardTable.setId(1L);
-        standardTable.setEmpty(true);
-        standardTable.setNumberOfGuests(10);
-        standardTable.setTableGroupId(1L);
+        standardTable.setId(BASIC_ORDER_TABLE_ID);
+        standardTable.setEmpty(BASIC_EMPTY_STATE);
+        standardTable.setNumberOfGuests(BASIC_GUEST_NUMBER);
+        standardTable.setTableGroupId(BASIC_TABLE_GROUP_ID);
 
         standardTables = new ArrayList<>();
         standardTables.add(standardTable);

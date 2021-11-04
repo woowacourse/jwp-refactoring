@@ -21,7 +21,7 @@ public class TableServiceCreateTest extends TableServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(10),
+            () -> assertThat(orderTable.getNumberOfGuests()).isEqualTo(BASIC_GUEST_NUMBER),
             () -> assertThat(orderTable.isEmpty()).isTrue()
         );
     }

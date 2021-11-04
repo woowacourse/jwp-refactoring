@@ -28,6 +28,17 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
 
+    private static final Double BASIC_PRICE = 1000.0d;
+    private static final Double CHEAPER_PRICE = 800.0d;
+    private static final Double MINUS_PRICE = -100.0d;
+    private static final Integer BASIC_SIZE = 1;
+    private static final Long BASIC_MENU_ID = 1L;
+    private static final Long BASIC_MENU_GROUP_ID = 1L;
+    private static final Long BASIC_PRODUCT_ID = 1L;
+    private static final Long BASIC_QUANTITY = 1L;
+    private static final Long BASIC_SEQUENCE_NUMBER = 1L;
+    private static final String BASIC_MENU_NAME = "신상품";
+
     private List<Menu> standardMenuRegistry;
     private Menu standardMenu;
     private List<MenuProduct> standardMenuProducts;
@@ -51,18 +62,18 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         standardMenuProduct = new MenuProduct();
-        standardMenuProduct.setSeq(1L);
-        standardMenuProduct.setMenuId(1L);
-        standardMenuProduct.setProductId(1L);
-        standardMenuProduct.setQuantity(1L);
+        standardMenuProduct.setSeq(BASIC_SEQUENCE_NUMBER);
+        standardMenuProduct.setMenuId(BASIC_MENU_ID);
+        standardMenuProduct.setProductId(BASIC_PRODUCT_ID);
+        standardMenuProduct.setQuantity(BASIC_QUANTITY);
         standardMenuProducts = new LinkedList<>();
         standardMenuProducts.add(standardMenuProduct);
 
         standardMenu = new Menu();
-        standardMenu.setId(1L);
-        standardMenu.setName("신상품");
-        standardMenu.setPrice(BigDecimal.valueOf(1000.0d));
-        standardMenu.setMenuGroupId(1L);
+        standardMenu.setId(BASIC_MENU_ID);
+        standardMenu.setName(BASIC_MENU_NAME);
+        standardMenu.setPrice(BigDecimal.valueOf(BASIC_PRICE));
+        standardMenu.setMenuGroupId(BASIC_MENU_GROUP_ID);
         standardMenu.setMenuProducts(standardMenuProducts);
         standardMenuRegistry = new LinkedList<>();
         standardMenuRegistry.add(standardMenu);
@@ -73,7 +84,7 @@ class MenuServiceTest {
     void getMenu() {
         //given
         given(menuDao.findAll()).willReturn(standardMenuRegistry);
-        given(menuProductDao.findAllByMenuId(1L)).willReturn(standardMenuProducts);
+        given(menuProductDao.findAllByMenuId(BASIC_MENU_ID)).willReturn(standardMenuProducts);
 
         //when
         List<Menu> menuRegistry = menuService.list();
@@ -86,7 +97,7 @@ class MenuServiceTest {
     @Test
     void createMenuWithMinusPrice() {
         //given
-        standardMenu.setPrice(BigDecimal.valueOf(-1000.0d));
+        standardMenu.setPrice(BigDecimal.valueOf(MINUS_PRICE));
 
         //when
 
@@ -130,7 +141,7 @@ class MenuServiceTest {
     @Test
     void createMenuWithMoreExpensivePrice() {
         Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(800.0d));
+        product.setPrice(BigDecimal.valueOf(CHEAPER_PRICE));
 
         Long supposeExistedMenuGroupId = standardMenu.getMenuGroupId();
         Long supposedExistedProductId = standardMenuProduct.getProductId();
@@ -149,7 +160,7 @@ class MenuServiceTest {
     void createMenu() {
         //given
         Product product = new Product();
-        product.setPrice(BigDecimal.valueOf(1200.0d));
+        product.setPrice(BigDecimal.valueOf(BASIC_PRICE));
 
         Long supposeExistedMenuGroupId = standardMenu.getMenuGroupId();
         Long supposedExistedProductId = standardMenuProduct.getProductId();
@@ -163,11 +174,11 @@ class MenuServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(menu.getId()).isEqualTo(1L),
-            () -> assertThat(menu.getMenuGroupId()).isEqualTo(1L),
+            () -> assertThat(menu.getId()).isEqualTo(BASIC_MENU_ID),
+            () -> assertThat(menu.getMenuGroupId()).isEqualTo(BASIC_MENU_GROUP_ID),
             () -> assertThat(menu.getName()).isEqualTo("신상품"),
-            () -> assertThat(menu.getMenuProducts().size()).isEqualTo(1),
-            () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(1000.0d))
+            () -> assertThat(menu.getMenuProducts().size()).isEqualTo(BASIC_SIZE),
+            () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(BASIC_PRICE))
         );
     }
 

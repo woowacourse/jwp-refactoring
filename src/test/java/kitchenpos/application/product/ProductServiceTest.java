@@ -22,6 +22,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
+    private static final Double BASIC_PRODUCT_PRICE = 1000.00d;
+    private static final Integer BASIC_SIZE = 1;
+    private static final Long BASIC_PRODUCT_ID = 1L;
+    private static final Long NEXT_PRODUCT_ID = 1L;
+    private static final String BASIC_PRODUCT_NAME = "신상품";
+
     private List<Product> standardProducts;
     private Product standardProduct;
 
@@ -34,9 +40,9 @@ class ProductServiceTest {
     @BeforeEach
     void setUp() {
         standardProduct = new Product();
-        standardProduct.setId(1L);
+        standardProduct.setId(BASIC_PRODUCT_ID);
         standardProduct.setName("신상품");
-        standardProduct.setPrice(BigDecimal.valueOf(1000.00d));
+        standardProduct.setPrice(BigDecimal.valueOf(BASIC_PRODUCT_PRICE));
         standardProducts = new LinkedList<>();
         standardProducts.add(standardProduct);
     }
@@ -51,7 +57,7 @@ class ProductServiceTest {
         List<Product> products = productService.list();
 
         //then
-        assertThat(products.size()).isEqualTo(1);
+        assertThat(products.size()).isEqualTo(BASIC_SIZE);
     }
 
     @DisplayName("상품을 추가한다.")
@@ -59,9 +65,9 @@ class ProductServiceTest {
     void createProduct() {
         //given
         Product product = new Product();
-        Long id = 2L;
-        String name = "신상품";
-        BigDecimal price = BigDecimal.valueOf(1000.0d);
+        Long id = NEXT_PRODUCT_ID;
+        String name = BASIC_PRODUCT_NAME;
+        BigDecimal price = BigDecimal.valueOf(BASIC_PRODUCT_PRICE);
         product.setId(id);
         product.setName(name);
         product.setPrice(price);
@@ -72,7 +78,7 @@ class ProductServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(createdProduct.getId()).isEqualTo(2L),
+            () -> assertThat(createdProduct.getId()).isEqualTo(NEXT_PRODUCT_ID),
             () -> assertThat(createdProduct.getPrice()).isEqualTo("1000.0"),
             () -> assertThat(createdProduct.getName()).isEqualTo(name)
         );

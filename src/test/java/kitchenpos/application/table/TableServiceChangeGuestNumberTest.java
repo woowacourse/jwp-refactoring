@@ -11,16 +11,20 @@ import org.junit.jupiter.api.Test;
 
 public class TableServiceChangeGuestNumberTest extends TableServiceTest {
 
+    private static final Boolean CHANGED_EMPTY_STATE = false;
+    private static final Integer ZERO_GUEST_NUMBER = 0;
+    private static final Integer CHANGED_GUEST_NUMBER = 5;
+
     @DisplayName("테이블의 손님 수 변경 시에 손님이 최소 1명보단 많아야 한다.")
     @Test
     void zeroGuest() {
         //given
-        standardTable.setNumberOfGuests(0);
+        standardTable.setNumberOfGuests(ZERO_GUEST_NUMBER);
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -28,12 +32,12 @@ public class TableServiceChangeGuestNumberTest extends TableServiceTest {
     @Test
     void unexsitedTable() {
         //given
-        given(orderTableDao.findById(1L)).willReturn(Optional.empty());
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(Optional.empty());
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -41,13 +45,13 @@ public class TableServiceChangeGuestNumberTest extends TableServiceTest {
     @Test
     void emptyTable() {
         //given
-        standardTable.setEmpty(true);
-        given(orderTableDao.findById(1L)).willReturn(Optional.ofNullable(standardTable));
+        standardTable.setEmpty(BASIC_EMPTY_STATE);
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(Optional.ofNullable(standardTable));
 
         //when
 
         //then
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, standardTable))
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(BASIC_ORDER_TABLE_ID, standardTable))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -55,16 +59,16 @@ public class TableServiceChangeGuestNumberTest extends TableServiceTest {
     @Test
     void changeTableNumberOfGuest() {
         //given
-        standardTable.setEmpty(false);
-        standardTable.setNumberOfGuests(5);
-        given(orderTableDao.findById(1L)).willReturn(Optional.ofNullable(standardTable));
+        standardTable.setEmpty(CHANGED_EMPTY_STATE);
+        standardTable.setNumberOfGuests(CHANGED_GUEST_NUMBER);
+        given(orderTableDao.findById(BASIC_ORDER_TABLE_ID)).willReturn(Optional.ofNullable(standardTable));
         given(orderTableDao.save(standardTable)).willReturn(standardTable);
 
         //when
-        OrderTable orderTable = tableService.changeNumberOfGuests(1L, standardTable);
+        OrderTable orderTable = tableService.changeNumberOfGuests(BASIC_ORDER_TABLE_ID, standardTable);
 
         //then
-        assertThat(orderTable.getNumberOfGuests()).isEqualTo(5L);
+        assertThat(orderTable.getNumberOfGuests()).isEqualTo(CHANGED_GUEST_NUMBER);
     }
 
 }

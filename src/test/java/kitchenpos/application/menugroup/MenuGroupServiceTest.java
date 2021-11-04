@@ -21,6 +21,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class MenuGroupServiceTest {
 
+    private static final Integer BASIC_MENU_GROUP_SIZE = 1;
+    private static final Long BASIC_MENU_GROUP_ID = 1L;
+    private static final String BASIC_MENU_GROUP_NAME = "신메뉴그룹";
+
     private List<MenuGroup> standardMenuGroups;
     private MenuGroup standardMenuGroup;
 
@@ -33,8 +37,8 @@ class MenuGroupServiceTest {
     @BeforeEach
     void setUp() {
         standardMenuGroup = new MenuGroup();
-        standardMenuGroup.setId(1L);
-        standardMenuGroup.setName("신메뉴그룹");
+        standardMenuGroup.setId(BASIC_MENU_GROUP_ID);
+        standardMenuGroup.setName(BASIC_MENU_GROUP_NAME);
 
         standardMenuGroups = new LinkedList<>();
         standardMenuGroups.add(standardMenuGroup);
@@ -50,7 +54,7 @@ class MenuGroupServiceTest {
         List<MenuGroup> menuGroups = menuGroupService.list();
 
         //then
-        assertThat(menuGroups.size()).isEqualTo(1);
+        assertThat(menuGroups.size()).isEqualTo(BASIC_MENU_GROUP_SIZE);
     }
 
     @DisplayName("메뉴 그룹을 추가한다.")
@@ -64,8 +68,8 @@ class MenuGroupServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(standardMenuGroup.getId()).isEqualTo(1L),
-            () -> assertThat(standardMenuGroup.getName()).isEqualTo("신메뉴그룹")
+            () -> assertThat(standardMenuGroup.getId()).isEqualTo(BASIC_MENU_GROUP_ID),
+            () -> assertThat(standardMenuGroup.getName()).isEqualTo(BASIC_MENU_GROUP_NAME)
         );
 
     }

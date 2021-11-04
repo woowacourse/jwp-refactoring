@@ -21,6 +21,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
+    protected static final Integer BASIC_SIZE = 1;
+    protected static final Long BASIC_COUNT_NUMBER = 1L;
+    protected static final Long BASIC_MENU_ID = 1L;
+    protected static final Long BASIC_ORDER_ID = 1L;
+    protected static final Long BASIC_ORDER_TABLE_ID = 1L;
+    protected static final Long BASIC_QUANTITY = 1L;
+    protected static final Long BASIC_SEQUENCE_NUMBER = 1L;
+    protected static final Long BASIC_TABLE_GROUP_ID = 1L;
+
     protected List<Order> standardOrders;
     protected List<OrderLineItem> standardOrderLineItems;
     protected Order standardOrder;
@@ -44,16 +53,16 @@ class OrderServiceTest {
     @BeforeEach
     protected void setUp() {
         standardOrder = new Order();
-        standardOrder.setId(1L);
-        standardOrder.setOrderTableId(1L);
+        standardOrder.setId(BASIC_ORDER_ID);
+        standardOrder.setOrderTableId(BASIC_ORDER_TABLE_ID);
         standardOrder.setOrderStatus(OrderStatus.COOKING.name());
         standardOrder.setOrderedTime(LocalDateTime.now());
 
         OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(1L);
-        orderLineItem.setOrderId(1L);
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1L);
+        orderLineItem.setSeq(BASIC_SEQUENCE_NUMBER);
+        orderLineItem.setOrderId(BASIC_ORDER_ID);
+        orderLineItem.setMenuId(BASIC_MENU_ID);
+        orderLineItem.setQuantity(BASIC_QUANTITY);
         standardOrderLineItems = new LinkedList<>();
         standardOrderLineItems.add(orderLineItem);
 
@@ -62,8 +71,8 @@ class OrderServiceTest {
         standardOrder.setOrderLineItems(standardOrderLineItems);
 
         standardOrderTable = new OrderTable();
-        standardOrderTable.setId(1L);
-        standardOrderTable.setTableGroupId(1L);
+        standardOrderTable.setId(BASIC_ORDER_TABLE_ID);
+        standardOrderTable.setTableGroupId(BASIC_TABLE_GROUP_ID);
     }
 
 }

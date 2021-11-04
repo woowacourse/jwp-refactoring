@@ -32,7 +32,7 @@ public class OrderServiceCreateTest extends OrderServiceTest {
     @Test
     void withExistedItems() {
         //given
-        given(menuDao.countByIdIn(Arrays.asList(1L))).willReturn(1L);
+        given(menuDao.countByIdIn(Arrays.asList(BASIC_ORDER_ID))).willReturn(BASIC_ORDER_ID);
 
         //when
 
@@ -45,8 +45,8 @@ public class OrderServiceCreateTest extends OrderServiceTest {
     @Test
     void withOrderTable() {
         //given
-        given(menuDao.countByIdIn(any())).willReturn(1L);
-        given(orderTableDao.findById(1L)).willReturn(Optional.empty());
+        given(menuDao.countByIdIn(any())).willReturn(BASIC_ORDER_ID);
+        given(orderTableDao.findById(BASIC_ORDER_ID)).willReturn(Optional.empty());
 
         //when
 
@@ -59,7 +59,7 @@ public class OrderServiceCreateTest extends OrderServiceTest {
     @Test
     void createOrder() {
         //given
-        given(menuDao.countByIdIn(any())).willReturn(1L);
+        given(menuDao.countByIdIn(any())).willReturn(BASIC_COUNT_NUMBER);
         given(orderTableDao.findById(1L)).willReturn(Optional.of(standardOrderTable));
         given(orderDao.save(any())).willReturn(standardOrder);
 
@@ -68,8 +68,8 @@ public class OrderServiceCreateTest extends OrderServiceTest {
 
         //then
         assertAll(
-            () -> assertThat(order.getOrderTableId()).isEqualTo(1L),
-            () -> assertThat(order.getOrderLineItems().size()).isEqualTo(1),
+            () -> assertThat(order.getOrderTableId()).isEqualTo(BASIC_ORDER_TABLE_ID),
+            () -> assertThat(order.getOrderLineItems().size()).isEqualTo(BASIC_SIZE),
             () -> assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name())
         );
     }

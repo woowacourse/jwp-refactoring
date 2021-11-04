@@ -22,7 +22,7 @@ public class OrderServiceListTest extends OrderServiceTest {
         List<Order> orders = orderService.list();
 
         //then
-        assertThat(orders.size()).isEqualTo(1);
+        assertThat(orders.size()).isEqualTo(BASIC_SIZE);
     }
 
 }
