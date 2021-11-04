@@ -14,10 +14,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class ProductServiceTest {
+class ProductServiceTest extends BaseServiceTest {
 
     @Autowired
     ProductService productService;

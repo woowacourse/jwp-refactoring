@@ -13,10 +13,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class MenuGroupServiceTest {
+class MenuGroupServiceTest extends BaseServiceTest {
 
     @Autowired
     MenuGroupService menuGroupService;

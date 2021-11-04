@@ -13,10 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Sql(scripts = "/data-initialization-h2.sql")
-@SpringBootTest
 @Transactional
-class TableGroupServiceTest {
+class TableGroupServiceTest extends BaseServiceTest {
 
     @Autowired TableService tableService;
     @Autowired TableGroupService tableGroupService;
