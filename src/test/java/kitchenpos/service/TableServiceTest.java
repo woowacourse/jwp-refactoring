@@ -8,7 +8,7 @@ import java.util.Optional;
 import kitchenpos.application.TableService;
 import kitchenpos.dao.JdbcTemplateOrderDao;
 import kitchenpos.dao.JdbcTemplateOrderTableDao;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableChangeGuestRequest;
 import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("주문 테이블을 생성할 수 있다")
     @Test
     void create() {
-        tableService.create(OrderTableFixture.orderTable());
+        tableService.create(OrderTableFixture.orderTableRequest());
     }
 
     @DisplayName("모든 주문 테이블을 조회 할 수 있다")
@@ -39,20 +39,13 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeEmpty() {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.notGroupedTable()));
-        tableService.changeEmpty(0L, OrderTableFixture.notGroupedTable());
+        tableService.changeEmpty(0L, OrderTableFixture.orderEmptyRequest());
     }
 
     @DisplayName("주문 테이블을 비울 시 주문 테이블 id가 존재해야 한다")
     @Test
     void changeEmptyNullOrderTableId() {
-        assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderTable())).
-                isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("주문 테이블의 단체 지정 id가 null이어야 한다")
-    @Test
-    void changeEmptyNotNullGroupId() {
-        assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderTable())).
+        assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderEmptyRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,7 +55,7 @@ public class TableServiceTest extends ServiceTest {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.notGroupedTable()));
         when(orderDao.existsByOrderTableIdAndOrderStatusIn(any(), any())).thenReturn(true);
 
-        assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderTable())).
+        assertThatThrownBy(() -> tableService.changeEmpty(0L, OrderTableFixture.orderEmptyRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -71,15 +64,15 @@ public class TableServiceTest extends ServiceTest {
     void changeNumberOfGuests() {
         when(orderTableDao.findById(any())).thenReturn(Optional.of(OrderTableFixture.orderTable()));
 
-        tableService.changeNumberOfGuests(0L, OrderTableFixture.orderTable());
+        tableService.changeNumberOfGuests(0L, OrderTableFixture.orderGuestChangeRequest());
     }
 
     @DisplayName("주문 테이블에 방문한 손님이 0명 이하일 수 없다")
     @Test
     void changeMinusNumberOfGuests() {
-        OrderTable orderTable = new OrderTable(0L, 0L, -1, false);
+        OrderTableChangeGuestRequest orderTableChangeGuestRequest = new OrderTableChangeGuestRequest(-1);
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable)).
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTableChangeGuestRequest)).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -87,15 +80,15 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeNotRegisteredTableId() {
 
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, OrderTableFixture.orderTable())).
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, OrderTableFixture.orderGuestChangeRequest())).
                 isInstanceOf(IllegalArgumentException.class);
     }
 
     @DisplayName("주문 테이블 인원 수 변경시 주문 테이블이 비어있지 않아야 한다")
     @Test
     void changeEmptyOrdertable() {
-        OrderTable orderTable = new OrderTable(0L, 0L, 0, true);
-        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTable)).
+        OrderTableChangeGuestRequest orderTableChangeGuestRequest = new OrderTableChangeGuestRequest(0);
+        assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, orderTableChangeGuestRequest)).
                 isInstanceOf(IllegalArgumentException.class);
     }
 }
