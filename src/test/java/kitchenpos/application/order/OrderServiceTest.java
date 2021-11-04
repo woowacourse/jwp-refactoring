@@ -65,4 +65,5 @@ class OrderServiceTest {
         standardOrderTable.setId(1L);
         standardOrderTable.setTableGroupId(1L);
     }
+
 }

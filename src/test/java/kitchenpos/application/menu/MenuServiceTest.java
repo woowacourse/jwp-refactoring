@@ -170,4 +170,5 @@ class MenuServiceTest {
             () -> assertThat(menu.getPrice()).isEqualTo(BigDecimal.valueOf(1000.0d))
         );
     }
+
 }

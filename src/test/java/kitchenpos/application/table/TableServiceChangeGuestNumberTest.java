@@ -66,4 +66,5 @@ public class TableServiceChangeGuestNumberTest extends TableServiceTest {
         //then
         assertThat(orderTable.getNumberOfGuests()).isEqualTo(5L);
     }
+
 }
