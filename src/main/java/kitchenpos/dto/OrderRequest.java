@@ -17,14 +17,6 @@ public class OrderRequest {
         this.orderLineItems = orderLineItems;
     }
 
-    public String getOrderStatus() {
-        return orderStatus;
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
