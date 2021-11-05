@@ -58,16 +58,18 @@ class TableAcceptanceTest extends AcceptanceTest {
                 .empty(true)
                 .build();
 
+        OrderTables 주문_테이블들 = new OrderTables(Arrays.asList(테이블_그룹1_소속_주문_테이블3, 테이블_그룹1_소속_주문_테이블4));
+
         테이블_그룹1 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(new OrderTables(Arrays.asList(테이블_그룹1_소속_주문_테이블3, 테이블_그룹1_소속_주문_테이블4)))
                 .build();
+
+        주문_테이블들.registerTableGroup(테이블_그룹1);
 
         tableGroupRepository.save(테이블_그룹1);
         orderTableRepository.save(테이블_그룹_없음_주문_테이블1);
         orderTableRepository.save(테이블_그룹_없음_주문_테이블2);
-        orderTableRepository.save(테이블_그룹1_소속_주문_테이블3);
-        orderTableRepository.save(테이블_그룹1_소속_주문_테이블4);
+        orderTableRepository.saveAll(주문_테이블들.getOrderTables());
 
         주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
                 .menu(한마리메뉴_중_후라이드치킨)

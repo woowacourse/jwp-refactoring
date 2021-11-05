@@ -46,13 +46,14 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
                 .empty(true)
                 .build();
 
+        OrderTables 주문_테이블들 = new OrderTables(Arrays.asList(주문_테이블1, 주문_테이블2));
+
         테이블_그룹 = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(new OrderTables(Arrays.asList(주문_테이블1, 주문_테이블2)))
                 .build();
+        주문_테이블들.registerTableGroup(테이블_그룹);
         tableGroupRepository.save(테이블_그룹);
-        orderTableRepository.save(주문_테이블1);
-        orderTableRepository.save(주문_테이블2);
+        orderTableRepository.saveAll(주문_테이블들.getOrderTables());
 
         주문_테이블1_한마리메뉴_중_후라이트치킨 = new OrderLineItem.Builder()
                 .menu(한마리메뉴_중_후라이드치킨)

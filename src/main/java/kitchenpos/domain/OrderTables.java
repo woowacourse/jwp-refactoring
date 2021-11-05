@@ -1,14 +1,10 @@
 package kitchenpos.domain;
 
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
 import java.util.List;
 import java.util.Objects;
 
-@Embeddable
 public class OrderTables {
 
-    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public OrderTables() {

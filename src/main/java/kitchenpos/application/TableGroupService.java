@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
@@ -29,14 +28,23 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        final OrderTables orderTables = findOrderTables(tableGroupRequest.getOrderTables());
+        final TableGroup tableGroup = createTableGroup();
+        final OrderTables orderTables = createOrderTables(tableGroupRequest, tableGroup);
+        return TableGroupResponse.of(tableGroup, orderTables);
+    }
+
+    private TableGroup createTableGroup() {
         final TableGroup tableGroup = new TableGroup.Builder()
                 .createdDate(LocalDateTime.now())
-                .orderTables(orderTables)
                 .build();
+        return tableGroupRepository.save(tableGroup);
+    }
 
-        tableGroupRepository.save(tableGroup);
-        return TableGroupResponse.of(tableGroup);
+    private OrderTables createOrderTables(TableGroupRequest tableGroupRequest, TableGroup tableGroup) {
+        final OrderTables orderTables = findOrderTables(tableGroupRequest.getOrderTables());
+        orderTables.registerTableGroup(tableGroup);
+        final List<OrderTable> savedOrderTables = orderTableRepository.saveAll(orderTables.getOrderTables());
+        return new OrderTables(savedOrderTables);
     }
 
     private OrderTables findOrderTables(List<OrderTableIdRequest> orderTableIdRequests) {
