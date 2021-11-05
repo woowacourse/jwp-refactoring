@@ -35,11 +35,8 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
         Order savedOrder = createOrder(orderRequest);
-        List<OrderLineItem> orderLineItems = orderLineItemService.createOrderLineItem(
-                orderRequest.getOrderLineItems(),
-                savedOrder
-        );
-        return OrderResponse.of(savedOrder, orderLineItems);
+        orderLineItemService.createOrderLineItem(orderRequest.getOrderLineItems(), savedOrder);
+        return OrderResponse.from(savedOrder);
     }
 
     private Order createOrder(OrderRequest orderRequest) {
@@ -49,13 +46,20 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
+    // TODO Remove
     public List<OrderResponse> list() {
         Map<Order, List<OrderLineItem>> results = new HashMap<>();
         final List<Order> orders = orderRepository.findAll();
         for (final Order order : orders) {
             results.put(order, orderLineItemService.findAllByOrderId(order.getId()));
         }
+        // TODO order에서 orderline을 조회해올 수 있다. (양방향)
         return OrderResponse.from(results);
+    }
+
+    public List<OrderResponse> list2() {
+        final List<Order> orders = orderRepository.findAll();
+        return OrderResponse.from(orders);
     }
 
     @Transactional

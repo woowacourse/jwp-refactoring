@@ -90,6 +90,7 @@ public class OrderTable {
 
     public void ungroup() {
         this.tableGroup = null;
+        // TODO TableGroup List<OrderTable>에서도 제거를 해주어야할까?
         this.empty = false;
     }
 }

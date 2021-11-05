@@ -25,16 +25,14 @@ public class OrderLineItemService {
     }
 
     @Transactional
-    public List<OrderLineItem> createOrderLineItem(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
-        final List<OrderLineItem> savedOrderLineItems = new ArrayList<>();
+    public void createOrderLineItem(List<OrderLineItemRequest> orderLineItemRequests, Order order) {
         for (final OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
             Menu findMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(() -> new NonExistentException("메뉴를 찾을 수 없습니다."));
 
             OrderLineItem orderLineItem = new OrderLineItem(order, findMenu, orderLineItemRequest.getQuantity());
-            savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
+            orderLineItemRepository.save(orderLineItem);
         }
-        return savedOrderLineItems;
     }
 
     public List<OrderLineItem> findAllByOrderId(Long orderId) {

@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import kitchenpos.exception.FieldNotValidException;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,8 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -31,6 +35,9 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedTime;
 
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<OrderLineItem> orderLineItems;
+
     protected Order() {
     }
 
@@ -47,6 +54,10 @@ public class Order {
     }
 
     public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime) {
+        this(id, orderTable, orderStatus, orderedTime, new ArrayList<>());
+    }
+
+    public Order(Long id, OrderTable orderTable, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         validate(orderTable);
         this.id = id;
         this.orderTable = orderTable;
@@ -55,6 +66,7 @@ public class Order {
             this.orderStatus = OrderStatus.MEAL.name();
         }
         this.orderedTime = orderedTime;
+        this.orderLineItems = orderLineItems;
     }
 
     private void validate(OrderTable orderTable) {
@@ -82,6 +94,10 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 
     public void updateOrderStatus(String orderStatus) {

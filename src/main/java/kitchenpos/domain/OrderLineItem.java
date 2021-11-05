@@ -6,6 +6,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
@@ -16,6 +17,7 @@ public class OrderLineItem {
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="order_id")
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -33,9 +35,17 @@ public class OrderLineItem {
 
     public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
         this.seq = seq;
-        this.order = order;
+        setOrder(order);
         this.menu = menu;
         this.quantity = quantity;
+    }
+
+    private void setOrder(Order order) {
+        if (this.order != null) {
+            this.order.getOrderLineItems().remove(this);
+        }
+        this.order = order;
+        order.getOrderLineItems().add(this);
     }
 
     public Long getSeq() {

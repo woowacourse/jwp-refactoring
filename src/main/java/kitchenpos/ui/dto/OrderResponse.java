@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class OrderResponse {
     private Long id;
@@ -26,6 +27,16 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
+    public static OrderResponse from(Order order) {
+        return new OrderResponse(
+                order.getId(),
+                order.getOrderTableId(),
+                order.getOrderStatus(),
+                order.getOrderedTime(),
+                OrderLineItemResponse.from(order.getOrderLineItems())
+        );
+    }
+
     public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
@@ -42,6 +53,12 @@ public class OrderResponse {
                 OrderResponse.of(key, value)
         ));
         return orderResponses;
+    }
+
+    public static List<OrderResponse> from(List<Order> orders) {
+        return orders.stream()
+                .map(OrderResponse::from)
+                .collect(Collectors.toList());
     }
 
     public Long getId() {
