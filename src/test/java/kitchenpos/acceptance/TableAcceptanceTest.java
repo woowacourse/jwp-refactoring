@@ -1,10 +1,15 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.*;
-import kitchenpos.ui.request.OrderTableEmptyRequest;
-import kitchenpos.ui.request.OrderTableNumberOfGuestRequest;
-import kitchenpos.ui.request.OrderTableRequest;
-import kitchenpos.ui.response.OrderTableResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.request.OrderTableEmptyRequest;
+import kitchenpos.table.ui.request.OrderTableNumberOfGuestRequest;
+import kitchenpos.table.ui.request.OrderTableRequest;
+import kitchenpos.table.ui.response.OrderTableResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

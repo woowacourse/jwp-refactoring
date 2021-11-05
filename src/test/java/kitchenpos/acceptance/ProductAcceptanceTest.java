@@ -1,8 +1,7 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductRequest;
-import kitchenpos.ui.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductRequest;
+import kitchenpos.product.ui.response.ProductResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

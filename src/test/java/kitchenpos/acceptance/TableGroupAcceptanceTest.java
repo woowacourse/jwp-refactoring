@@ -1,9 +1,14 @@
 package kitchenpos.acceptance;
 
-import kitchenpos.domain.*;
-import kitchenpos.ui.request.OrderTableIdRequest;
-import kitchenpos.ui.request.TableGroupRequest;
-import kitchenpos.ui.response.TableGroupResponse;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrderTables;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.ui.request.OrderTableIdRequest;
+import kitchenpos.table.ui.request.TableGroupRequest;
+import kitchenpos.table.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +17,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
