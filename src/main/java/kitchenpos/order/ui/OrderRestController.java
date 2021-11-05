@@ -1,6 +1,7 @@
 package kitchenpos.order.ui;
 
 import kitchenpos.order.application.OrderService;
+import kitchenpos.order.ui.dto.OrderDetailResponse;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.ui.dto.OrderStatusRequest;
@@ -39,6 +40,11 @@ public class OrderRestController {
         return ResponseEntity.ok()
                 .body(orderService.list())
                 ;
+    }
+
+    @GetMapping("/api/order/{orderId}")
+    public ResponseEntity<OrderDetailResponse> orderDetailInfo(@PathVariable final Long orderId) {
+        return ResponseEntity.ok(orderService.orderDetailInfo(orderId));
     }
 
     @PutMapping("/api/order/{orderId}/order-status")

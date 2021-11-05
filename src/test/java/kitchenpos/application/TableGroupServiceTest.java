@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.application.TableGroupService;
-import kitchenpos.order.domain.TableGroupRepository;
+import kitchenpos.order.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

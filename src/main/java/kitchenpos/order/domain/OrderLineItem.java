@@ -1,8 +1,10 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.TemporaryMenu;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -11,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 public class OrderLineItem {
@@ -31,6 +34,9 @@ public class OrderLineItem {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Embedded
+    private TemporaryMenu temporaryMenu;
 
     protected OrderLineItem() {
     }
@@ -68,7 +74,20 @@ public class OrderLineItem {
     }
 
     public Menu getMenu() {
+        if (Objects.nonNull(temporaryMenu)) {
+            return new Menu(
+                    menu.getId(),
+                    temporaryMenu.getName(),
+                    temporaryMenu.getPrice(),
+                    menu.getMenuGroup(),
+                    menu.getMenuProducts()
+            );
+        }
         return menu;
+    }
+
+    public void setTemporaryMenu(TemporaryMenu temporaryMenu) {
+        this.temporaryMenu = temporaryMenu;
     }
 
     public long getQuantity() {

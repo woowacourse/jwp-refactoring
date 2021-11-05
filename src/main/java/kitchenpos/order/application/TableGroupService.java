@@ -3,7 +3,7 @@ package kitchenpos.order.application;
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.TableGroup;
-import kitchenpos.order.domain.TableGroupRepository;
+import kitchenpos.order.domain.repository.TableGroupRepository;
 import kitchenpos.order.ui.dto.TableGroupRequest;
 import kitchenpos.order.ui.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;

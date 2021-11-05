@@ -5,7 +5,7 @@ import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.application.OrderLineItemService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderLineItemRepository;
+import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.ui.dto.OrderLineItemRequest;
 import org.junit.jupiter.api.DisplayName;

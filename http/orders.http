@@ -32,3 +32,4 @@ Content-Type: application/json
 }
 
 ###
+GET {{host}}/api/order/1

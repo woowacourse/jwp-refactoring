@@ -2,10 +2,11 @@ package kitchenpos.order.application;
 
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.order.ui.dto.OrderDetailResponse;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
 import kitchenpos.order.ui.dto.OrderStatusRequest;
@@ -23,7 +24,10 @@ public class OrderService {
     private final OrderTableRepository orderTableRepository;
     private final OrderLineItemService orderLineItemService;
 
-    public OrderService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, OrderLineItemService orderLineItemService) {
+    public OrderService(OrderRepository orderRepository,
+                        OrderTableRepository orderTableRepository,
+                        OrderLineItemService orderLineItemService
+    ) {
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
         this.orderLineItemService = orderLineItemService;
@@ -55,5 +59,11 @@ public class OrderService {
         final OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
         updateOrder.updateOrderStatus(orderStatus.name());
         return OrderStatusResponse.from(updateOrder.getOrderStatus());
+    }
+
+    public OrderDetailResponse orderDetailInfo(Long orderId) {
+        final Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new NonExistentException("주문을 찾을 수 없습니다."));
+        return OrderDetailResponse.from(order);
     }
 }

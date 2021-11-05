@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

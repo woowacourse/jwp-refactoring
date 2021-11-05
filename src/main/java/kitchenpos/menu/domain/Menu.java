@@ -1,8 +1,7 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.exception.FieldNotValidException;
-import kitchenpos.menu.ui.dto.MenuProductRequest;
-import sun.awt.geom.AreaOp;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,12 +14,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,6 +93,23 @@ public class Menu {
         }
     }
 
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct: menuProducts) {
+            menuProduct.addMenu(this);
+        }
+    }
+
+    public void update(String name, BigDecimal price) {
+        validateName(name);
+        validatePrice(price);
+        this.name = name;
+        this.price = price;
+    }
+
+    public void publishEvent(TemporaryMenu temporaryMenu) {
+        registerEvent(new MenuChangeEvent(this, temporaryMenu, LocalDateTime.now()));
+    }
+
     public Long getId() {
         return id;
     }
@@ -115,18 +132,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct: menuProducts) {
-            menuProduct.addMenu(this);
-        }
-    }
-
-    public void update(String name, BigDecimal price) {
-        validateName(name);
-        validatePrice(price);
-        this.name = name;
-        this.price = price;
     }
 }
