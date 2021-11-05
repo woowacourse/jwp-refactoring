@@ -1,12 +1,6 @@
 package kitchenpos.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
 
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class MenuGroup {
     private Long id;
     private String name;
