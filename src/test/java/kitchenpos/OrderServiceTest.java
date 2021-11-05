@@ -5,26 +5,34 @@ import kitchenpos.application.OrderService;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.*;
+import kitchenpos.fixture.*;
+import org.aspectj.apache.bcel.generic.TABLESWITCH;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
+@Transactional
+@Sql(scripts = "/clear.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DisplayName("OrderService 테스트")
 class OrderServiceTest {
 
+    private static final long ID = 1L;
+    private static final long ORDER_TABLE_ID = 1L;
     @Autowired
     private OrderService orderService;
     @Autowired
@@ -34,64 +42,35 @@ class OrderServiceTest {
     @Autowired
     private MenuService menuService;
     @Autowired
-    private OrderTableDao tableDao;
+    private OrderTableDao orderTableDao;
 
-    private Order order;
     private MenuGroup menuGroup;
     private Product product;
-    private MenuProduct menuProduct;
     private Menu menu;
-    private OrderTable table;
-
-    private OrderLineItem orderLineItem;
+    private OrderTable orderTable;
+    private List<OrderLineItem> orderLineItems;
 
     @BeforeEach
     void setUp() {
-        menuGroup = MenuGroup.builder()
-                .name("이달의 메뉴")
-                .build();
-        menuGroup = menuGroupDao.save(menuGroup);
+        menuGroup = MenuGroupFixture.create();
+        menuGroupDao.save(menuGroup);
 
-        product = Product.builder()
-                .name("이달의 치킨")
-                .price(BigDecimal.valueOf(18_900))
-                .build();
-        product = productDao.save(product);
+        product = ProductFixture.create();
+        productDao.save(product);
 
-        menuProduct = MenuProduct.builder()
-                .productId(product.getId())
-                .quantity(1)
-                .build();
-        menu = Menu.builder()
-                .name("이달의 치킨")
-                .price(BigDecimal.valueOf(18_900))
-                .menuGroupId(menuGroup.getId())
-                .menuProducts(Arrays.asList(menuProduct))
-                .build();
-        menu = menuService.create(menu);
+        orderTable = OrderTableFixture.create();
+        orderTableDao.save(orderTable);
 
-        table = OrderTable.builder()
-                .empty(false)
-                .build();
-        table = tableDao.save(table);
+        menu = MenuFixture.create();
+        menuService.create(menu);
 
-        orderLineItem = OrderLineItem.builder()
-                .menuId(menu.getId())
-                .quantity(2)
-                .build();
-
-        order = Order.builder()
-                .orderTableId(table.getId())
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderLineItems(Arrays.asList(orderLineItem))
-                .orderedTime(LocalDateTime.now())
-                .build();
+        orderLineItems = OrderFixture.orderLineItems();
     }
 
     @DisplayName("주문 추가")
     @Test
     void create() {
-        Order savedOrder = orderService.create(order);
+        Order savedOrder = orderService.create(OrderFixture.create());
 
         assertThat(savedOrder.getId()).isNotNull();
         assertThat(savedOrder.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
@@ -101,11 +80,7 @@ class OrderServiceTest {
     @DisplayName("주문 추가 - 실패 - 주문 항목이 없는 경우")
     @Test
     void createFailureWhenNoOrderLineItem() {
-        Order order = Order.builder()
-                .orderTableId(table.getId())
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderedTime(LocalDateTime.now())
-                .build();
+        Order order = OrderFixture.create(ID, ORDER_TABLE_ID, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -114,17 +89,13 @@ class OrderServiceTest {
     @DisplayName("주문 추가 - 실패 - 존재하지 않는 메뉴가 포함된 경우")
     @Test
     void createFailureWhenNotExistMenu() {
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menuId(999L)
-                .quantity(2)
-                .build();
+        OrderLineItem orderLineItem = new OrderLineItem();
+        orderLineItem.setSeq(ID);
+        orderLineItem.setOrderId(ID);
+        orderLineItem.setMenuId(999L);
+        orderLineItem.setQuantity(1);
 
-        Order order = Order.builder()
-                .orderTableId(table.getId())
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderLineItems(Arrays.asList(orderLineItem))
-                .orderedTime(LocalDateTime.now())
-                .build();
+        Order order = OrderFixture.create(ID, ORDER_TABLE_ID, OrderStatus.COOKING.name(), LocalDateTime.now(), Collections.singletonList(orderLineItem));
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -133,17 +104,7 @@ class OrderServiceTest {
     @DisplayName("주문 추가 - 실패 - 존재하지 않는 테이블인 경우")
     @Test
     void createFailureWhenNotExistTable() {
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menuId(menu.getId())
-                .quantity(2)
-                .build();
-
-        Order order = Order.builder()
-                .orderTableId(100L)
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderLineItems(Arrays.asList(orderLineItem))
-                .orderedTime(LocalDateTime.now())
-                .build();
+        Order order = OrderFixture.create(ID, ORDER_TABLE_ID + 99L, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -152,22 +113,11 @@ class OrderServiceTest {
     @DisplayName("주문 추가 - 실패 - 빈 테이블인 경우")
     @Test
     void createFailureWhenEmptyTable() {
-        OrderTable emptyTable = OrderTable.builder()
-                .empty(true)
-                .build();
+        OrderTable emptyTable = OrderTableFixture.create();
+        emptyTable.setEmpty(true);
+        orderTableDao.save(emptyTable);
 
-        emptyTable = tableDao.save(emptyTable);
-        OrderLineItem orderLineItem = OrderLineItem.builder()
-                .menuId(menu.getId())
-                .quantity(2)
-                .build();
-
-        Order order = Order.builder()
-                .orderTableId(emptyTable.getId())
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderLineItems(Arrays.asList(orderLineItem))
-                .orderedTime(LocalDateTime.now())
-                .build();
+        Order order = OrderFixture.create(ID, emptyTable.getId(), OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
 
         assertThatThrownBy(() -> orderService.create(order))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -176,34 +126,38 @@ class OrderServiceTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
+        Order order = OrderFixture.create();
+        Order order2 = OrderFixture.create(order.getId() + 1L, ORDER_TABLE_ID, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
         orderService.create(order);
-        orderService.create(order);
+        orderService.create(order2);
+
         List<Order> list = orderService.list();
-        assertThat(list).isNotEmpty();
+        assertThat(list).hasSize(2);
     }
 
     @DisplayName("주문 상태 변경 - 성공")
     @Test
     void changeOrderStatus() {
-        Order savedOrder = orderService.create(order);
-        Order target = Order.builder()
-                .orderStatus(OrderStatus.COMPLETION.name())
-                .build();
-        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), target);
+        Order savedOrder = orderService.create(OrderFixture.create());
 
-        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(target.getOrderStatus());
+        Order completionOrder = OrderFixture.create(3L, ORDER_TABLE_ID, OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        Order changeOrderStatus = orderService.changeOrderStatus(savedOrder.getId(), completionOrder);
+
+        assertThat(changeOrderStatus.getOrderStatus()).isEqualTo(completionOrder.getOrderStatus());
     }
 
     @DisplayName("주문 상태 변경 - 실패 - 이미 완료된 주문인 경우")
     @Test
     void changeOrderStatus_With_CompletedOrder() {
-        Order savedOrder = orderService.create(order);
-        Order target = Order.builder()
-                .orderStatus(OrderStatus.COMPLETION.name())
-                .build();
-        orderService.changeOrderStatus(savedOrder.getId(), target);
+        Order order = OrderFixture.create(ID, ORDER_TABLE_ID, OrderStatus.COOKING.name(), LocalDateTime.now(), orderLineItems);
+        Order completionOrder = OrderFixture.create(ID + 1L, order.getOrderTableId(), OrderStatus.COMPLETION.name(), LocalDateTime.now(), orderLineItems);
 
-        assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrder.getId(), target))
+        Order savedOrder = orderService.create(order);
+        Order savedCompletedOrder = orderService.create(completionOrder);
+
+        orderService.changeOrderStatus(savedOrder.getId(), savedCompletedOrder);
+
+        assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), savedCompletedOrder))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
