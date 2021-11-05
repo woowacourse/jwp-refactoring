@@ -1,11 +1,10 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 
 public class MenuFixture {
     private static final Long ID = 1L;
@@ -18,7 +17,8 @@ public class MenuFixture {
     private static final Long PRODUCT_ID = 1L;
     private static final long QUANTITY = 1L;
 
-    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId,
+            List<MenuProduct> menuProducts) {
         Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);
@@ -32,21 +32,25 @@ public class MenuFixture {
         return createMenu(ID, NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
     }
 
-    public static Menu createMenu(BigDecimal price) {
-        return createMenu(ID, NAME, price, MENU_GROUP_ID, createMenuProducts());
+    public static Menu createMenu(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return createMenu(ID, NAME, price, menuGroupId, menuProducts);
     }
 
-    public static Menu createMenu(BigDecimal price, List<MenuProduct> menuProducts) {
-        return createMenu(ID, NAME, price, MENU_GROUP_ID, menuProducts);
+    public static Menu createMenu(Long menuGroupId, List<MenuProduct> menuProducts) {
+        return createMenu(ID, NAME, PRICE, menuGroupId, menuProducts);
+    }
+
+    public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {
+        MenuProduct menuProduct = new MenuProduct();
+        menuProduct.setSeq(seq);
+        menuProduct.setMenuId(menuId);
+        menuProduct.setProductId(productId);
+        menuProduct.setQuantity(quantity);
+        return menuProduct;
     }
 
     public static MenuProduct createMenuProduct() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(SEQ);
-        menuProduct.setMenuId(MENU_ID);
-        menuProduct.setProductId(PRODUCT_ID);
-        menuProduct.setQuantity(QUANTITY);
-        return menuProduct;
+        return createMenuProduct(SEQ, MENU_ID, PRODUCT_ID, QUANTITY);
     }
 
     public static List<MenuProduct> createMenuProducts() {
