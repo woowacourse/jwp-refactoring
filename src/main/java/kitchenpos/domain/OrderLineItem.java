@@ -27,10 +27,6 @@ public class OrderLineItem {
     protected OrderLineItem() {
     }
 
-    public OrderLineItem(Menu menu, long quantity) {
-        this(null, null, menu, quantity);
-    }
-
     public OrderLineItem(Order order, Menu menu, long quantity) {
         this(null, order, menu, quantity);
     }
