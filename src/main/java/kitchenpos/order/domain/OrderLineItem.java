@@ -77,8 +77,8 @@ public class OrderLineItem {
         if (Objects.nonNull(temporaryMenu)) {
             return new Menu(
                     menu.getId(),
-                    temporaryMenu.getName(),
-                    temporaryMenu.getPrice(),
+                    temporaryMenu.getTempMenuName(),
+                    temporaryMenu.getTempMenuPrice(),
                     menu.getMenuGroup(),
                     menu.getMenuProducts()
             );

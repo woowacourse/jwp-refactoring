@@ -2,9 +2,9 @@ package kitchenpos.order.application;
 
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.OrderDetailResponse;
 import kitchenpos.order.ui.dto.OrderRequest;

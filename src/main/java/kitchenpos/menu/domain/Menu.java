@@ -51,7 +51,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
-       this(id, name, price, menuGroup, new ArrayList<>());
+        this(id, name, price, menuGroup, new ArrayList<>());
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
@@ -94,7 +94,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public void addMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct: menuProducts) {
+        for (MenuProduct menuProduct : menuProducts) {
             menuProduct.addMenu(this);
         }
     }

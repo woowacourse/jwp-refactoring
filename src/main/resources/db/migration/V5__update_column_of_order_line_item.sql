@@ -1,0 +1,3 @@
+-- ALTER TABLE order_line_item ADD temp_menu_id bigint;
+-- ALTER TABLE order_line_item ADD temp_menu_name varchar(255);
+-- ALTER TABLE order_line_item ADD temp_menu_price decimal(19,2);

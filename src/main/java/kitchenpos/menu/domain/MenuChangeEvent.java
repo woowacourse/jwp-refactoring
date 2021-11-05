@@ -19,7 +19,7 @@ public class MenuChangeEvent extends ApplicationEvent {
     }
 
     public Long getMenuId() {
-        return temporaryMenu.getId();
+        return temporaryMenu.getTempMenuId();
     }
 
     public LocalDateTime getUpdatedAt() {

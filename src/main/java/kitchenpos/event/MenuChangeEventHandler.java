@@ -23,7 +23,7 @@ public class MenuChangeEventHandler {
     @Transactional
     public void handle(MenuChangeEvent event) {
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByMenuId(event.getMenuId());
-        for (OrderLineItem orderLineItem: orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
             if (isBefore(orderLineItem.getCreatedAt(), event.getUpdatedAt())) {
                 orderLineItem.setTemporaryMenu(event.getTemporaryMenu());
             }

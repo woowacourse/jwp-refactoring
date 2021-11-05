@@ -14,7 +14,8 @@ public class OrderLineItemDetailResponse {
     private String menuName;
     private BigDecimal menuPrice;
 
-    private OrderLineItemDetailResponse() {}
+    private OrderLineItemDetailResponse() {
+    }
 
     public OrderLineItemDetailResponse(Long seq, Long orderId, long quantity, Long menuId, String menuName, BigDecimal menuPrice) {
         this.seq = seq;

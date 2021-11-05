@@ -150,7 +150,7 @@ public class OrderAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
         OrderDetailResponse orderDetailResponse = response.as(OrderDetailResponse.class);
         List<OrderLineItemDetailResponse> orderLineItemDetailResponses = orderDetailResponse.getOrderLineItems();
-        for (OrderLineItemDetailResponse orderLineItemDetailResponse: orderLineItemDetailResponses) {
+        for (OrderLineItemDetailResponse orderLineItemDetailResponse : orderLineItemDetailResponses) {
             assertThat(orderLineItemDetailResponse.getMenuName()).isNotEqualTo(updatedName);
             assertThat(orderLineItemDetailResponse.getMenuPrice()).isNotEqualTo(updatedPrice);
         }

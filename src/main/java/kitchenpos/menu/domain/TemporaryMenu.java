@@ -1,7 +1,5 @@
 package kitchenpos.menu.domain;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
@@ -10,31 +8,30 @@ import java.math.BigDecimal;
 public class TemporaryMenu {
 
     @Column
-    private Long id;
-
+    private Long tempMenuId;
     @Column
-    private String name;
+    private String tempMenuName;
     @Column
-    private BigDecimal price;
+    private BigDecimal tempMenuPrice;
 
     protected TemporaryMenu() {
     }
 
-    public TemporaryMenu(Long id, String name, BigDecimal price) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
+    public TemporaryMenu(Long tempMenuId, String tempMenuName, BigDecimal tempMenuPrice) {
+        this.tempMenuId = tempMenuId;
+        this.tempMenuName = tempMenuName;
+        this.tempMenuPrice = tempMenuPrice;
     }
 
-    public Long getId() {
-        return id;
+    public Long getTempMenuId() {
+        return tempMenuId;
     }
 
-    public String getName() {
-        return name;
+    public String getTempMenuName() {
+        return tempMenuName;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getTempMenuPrice() {
+        return tempMenuPrice;
     }
 }

@@ -44,14 +44,6 @@ public class MenuProduct {
         this.quantity = quantity;
     }
 
-    private void setMenu(Menu menu) {
-        if (Objects.nonNull(this.menu)) {
-            this.menu.getMenuProducts().remove(this);
-        }
-        this.menu = menu;
-        menu.getMenuProducts().add(this);
-    }
-
     public void addMenu(Menu menu) {
         setMenu(menu);
     }
@@ -62,6 +54,14 @@ public class MenuProduct {
 
     public Menu getMenu() {
         return menu;
+    }
+
+    private void setMenu(Menu menu) {
+        if (Objects.nonNull(this.menu)) {
+            this.menu.getMenuProducts().remove(this);
+        }
+        this.menu = menu;
+        menu.getMenuProducts().add(this);
     }
 
     public Product getProduct() {
