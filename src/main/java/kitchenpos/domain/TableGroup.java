@@ -2,16 +2,18 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.OneToMany;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class TableGroup {
+public class TableGroup extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @CreatedDate
     private LocalDateTime createdDate;
 
     @OneToMany
@@ -20,13 +22,9 @@ public class TableGroup {
     public TableGroup() {}
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this.id = id;
+        super(id);
         this.createdDate = createdDate;
         this.orderTables = orderTables;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -35,20 +33,5 @@ public class TableGroup {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof TableGroup))
-            return false;
-        TableGroup that = (TableGroup) o;
-        return Objects.equals(getId(), that.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

@@ -2,15 +2,12 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 @Entity
-public class Menu {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Menu extends BaseEntity {
 
     private String name;
 
@@ -25,15 +22,11 @@ public class Menu {
     public Menu() {}
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this.id = id;
+        super(id);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public String getName() {
@@ -50,20 +43,5 @@ public class Menu {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Menu))
-            return false;
-        Menu menu = (Menu) o;
-        return Objects.equals(getId(), menu.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }

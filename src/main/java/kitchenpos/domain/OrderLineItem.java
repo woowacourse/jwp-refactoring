@@ -1,13 +1,10 @@
 package kitchenpos.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
 
 @Entity
-public class OrderLineItem {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long seq;
+public class OrderLineItem extends BaseEntity {
 
     @ManyToOne
     private Order order;
@@ -20,14 +17,10 @@ public class OrderLineItem {
     public OrderLineItem() {}
 
     public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
-        this.seq = seq;
+        super(seq);
         this.order = order;
         this.menu = menu;
         this.quantity = quantity;
-    }
-
-    public Long getSeq() {
-        return seq;
     }
 
     public Order getOrder() {

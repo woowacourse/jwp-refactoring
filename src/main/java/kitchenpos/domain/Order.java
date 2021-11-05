@@ -2,15 +2,10 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 
 @Entity
-public class Order {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Order extends BaseEntity {
 
     @ManyToOne
     private OrderTable orderTable;
@@ -26,15 +21,11 @@ public class Order {
     public Order() {}
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        this.id = id;
+        super(id);
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public OrderTable getOrderTable() {
@@ -51,20 +42,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Order))
-            return false;
-        Order order = (Order) o;
-        return Objects.equals(getId(), order.getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId());
     }
 }
