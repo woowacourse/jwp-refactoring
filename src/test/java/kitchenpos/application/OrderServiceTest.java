@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderStatusRequest;
+import kitchenpos.order.application.OrderLineItemService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.ui.dto.OrderRequest;
+import kitchenpos.order.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

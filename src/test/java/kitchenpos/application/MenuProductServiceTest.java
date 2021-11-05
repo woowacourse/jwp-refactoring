@@ -1,12 +1,13 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.repository.MenuProductRepository;
-import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.menu.application.MenuProductService;
+import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuGroup;
+import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.product.domain.Product;
+import kitchenpos.product.domain.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
