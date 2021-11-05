@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;
+    username: sa
+  config:
+    activate:
+      on-profile: test
+  jpa:
+    hibernate:
+      ddl-auto: create
+  flyway:
+    enabled: false
+  profiles:
+     active: local
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show_sql: true
+    hibernate:
+      ddl-auto: validate
+
+logging:
+  level:
+    org:
+      hibernate:
+        type:
+          descriptor:
+            sql:
+              BasicBinder: TRACE
+
