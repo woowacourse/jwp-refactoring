@@ -2,10 +2,13 @@ package kitchenpos;
 
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.fixture.ProductFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,11 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Transactional
+@Sql(scripts = "/clear.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DisplayName("Product 테스트")
 class ProductServiceTest {
 
-    private static final int VALID_PRICE = 18_900;
-    private static final int INVALID_PRICE = -1;
+    private static final BigDecimal INVALID_PRICE = BigDecimal.valueOf(-1);
 
     @Autowired
     private ProductService productService;
@@ -27,10 +31,7 @@ class ProductServiceTest {
     @Test
     void create() {
         //given
-        Product product = Product.builder()
-                .name("이달의 치킨")
-                .price(BigDecimal.valueOf(VALID_PRICE))
-                .build();
+        Product product = ProductFixture.create();
         //when
         Product create = productService.create(product);
         //then
@@ -41,14 +42,8 @@ class ProductServiceTest {
     @Test
     void createFailureWhenInvalidPrice() {
         //given
-        Product product = Product.builder()
-                .name("이달의 치킨")
-                .price(BigDecimal.valueOf(INVALID_PRICE))
-                .build();
-        Product nullProduct = Product.builder()
-                .name("이달의 치킨")
-                .price(null)
-                .build();
+        Product product = ProductFixture.create(1L, "INVALID", INVALID_PRICE);
+        Product nullProduct = ProductFixture.create(1L, "INVALID", null);
         //when
         //then
         assertThatThrownBy(() -> productService.create(product))
@@ -61,6 +56,9 @@ class ProductServiceTest {
     @Test
     void list() {
         //given
+        Product product = ProductFixture.create();
+        productService.create(product);
+        //when
         //when
         List<Product> products = productService.list();
         //then
