@@ -1,7 +1,9 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.exception.FieldNotValidException;
+import sun.awt.geom.AreaOp;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,7 +12,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -30,6 +35,9 @@ public class Menu {
     @JoinColumn(name = "menu_group_id", nullable = false)
     private MenuGroup menuGroup;
 
+    @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts;
+
     protected Menu() {
     }
 
@@ -42,11 +50,16 @@ public class Menu {
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+       this(id, name, price, menuGroup, new ArrayList<>());
+    }
+
+    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         validate(name, price, menuGroup);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+        this.menuProducts = menuProducts;
     }
 
     private void validate(String name, BigDecimal price, MenuGroup menuGroup) {
@@ -97,5 +110,15 @@ public class Menu {
 
     public Long getMenuGroupId() {
         return menuGroup.getId();
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        for (MenuProduct menuProduct: menuProducts) {
+            menuProduct.addMenu(this);
+        }
     }
 }

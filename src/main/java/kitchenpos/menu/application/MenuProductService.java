@@ -31,7 +31,7 @@ public class MenuProductService {
     public List<MenuProduct> create(MenuRequest menuRequest, Menu menu) {
         ProductQuantities productQuantities = combineProductAndQuantity(menuRequest.getMenuProducts());
         menu.validateTotalPrice(productQuantities.totalPrice());
-        return menuProductRepository.saveAll(productQuantities.groupToMenuProduct(menu));
+        return productQuantities.groupToMenuProduct(menu);
     }
 
     private ProductQuantities combineProductAndQuantity(List<MenuProductRequest> menuProductRequests) {

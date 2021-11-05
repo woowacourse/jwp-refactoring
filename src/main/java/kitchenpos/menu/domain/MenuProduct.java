@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.Objects;
 
 @Entity
 public class MenuProduct {
@@ -38,9 +39,21 @@ public class MenuProduct {
 
     public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
         this.seq = seq;
-        this.menu = menu;
+        setMenu(menu);
         this.product = product;
         this.quantity = quantity;
+    }
+
+    private void setMenu(Menu menu) {
+        if (Objects.nonNull(this.menu)) {
+            this.menu.getMenuProducts().remove(this);
+        }
+        this.menu = menu;
+        menu.getMenuProducts().add(this);
+    }
+
+    public void addMenu(Menu menu) {
+        setMenu(menu);
     }
 
     public Long getSeq() {

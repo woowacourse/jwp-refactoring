@@ -38,19 +38,18 @@ public class MenuService {
 
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
         Menu savedMenu = menuRepository.save(menu);
-
         List<MenuProduct> menuProducts = menuProductService.create(menuRequest, menu);
-        return MenuResponse.of(savedMenu, menuProducts);
+        savedMenu.addMenuProducts(menuProducts);
+        return MenuResponse.from(savedMenu);
     }
 
     public List<MenuResponse> list() {
-        Map<Menu, List<MenuProduct>> results = new HashMap<>();
+        return MenuResponse.from(menuRepository.findAll());
+    }
 
-        final List<Menu> menus = menuRepository.findAll();
-        for (final Menu menu : menus) {
-            results.put(menu, menuProductService.findAllByMenuId(menu.getId()));
-        }
+    @Transactional
+    public MenuResponse update(MenuRequest menuRequest) {
 
-        return MenuResponse.from(results);
+        return null;
     }
 }

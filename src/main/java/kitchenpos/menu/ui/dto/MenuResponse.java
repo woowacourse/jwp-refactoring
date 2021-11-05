@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MenuResponse {
     private Long id;
@@ -31,22 +32,20 @@ public class MenuResponse {
         this.menuProducts = menuProducts;
     }
 
-    public static MenuResponse of(Menu menu, List<MenuProduct> menuProducts) {
+    public static MenuResponse from(Menu menu) {
         return new MenuResponse(
                 menu.getId(),
                 menu.getName(),
                 menu.getPrice(),
                 menu.getMenuGroupId(),
-                MenuProductResponse.from(menuProducts)
+                MenuProductResponse.from(menu.getMenuProducts())
         );
     }
 
-    public static List<MenuResponse> from(Map<Menu, List<MenuProduct>> results) {
-        List<MenuResponse> menuResponses = new ArrayList<>();
-        results.forEach((key, value) -> menuResponses.add(
-                MenuResponse.of(key, value)
-        ));
-        return menuResponses;
+    public static List<MenuResponse> from(List<Menu> menus) {
+        return menus.stream()
+                .map(MenuResponse::from)
+                .collect(Collectors.toList());
     }
 
     public Long getId() {

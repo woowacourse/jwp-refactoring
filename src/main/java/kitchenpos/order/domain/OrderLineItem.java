@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
 
 @Entity
 public class OrderLineItem {
@@ -28,6 +29,9 @@ public class OrderLineItem {
     @Column(nullable = false)
     private long quantity;
 
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
+
     protected OrderLineItem() {
     }
 
@@ -36,10 +40,15 @@ public class OrderLineItem {
     }
 
     public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
+        this(seq, order, menu, quantity, LocalDateTime.now());
+    }
+
+    public OrderLineItem(Long seq, Order order, Menu menu, long quantity, LocalDateTime createdAt) {
         this.seq = seq;
         setOrder(order);
         this.menu = menu;
         this.quantity = quantity;
+        this.createdAt = createdAt;
     }
 
     public Long getSeq() {
@@ -72,5 +81,9 @@ public class OrderLineItem {
 
     public Long getMenuId() {
         return menu.getId();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
