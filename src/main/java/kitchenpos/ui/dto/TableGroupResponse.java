@@ -20,11 +20,11 @@ public class TableGroupResponse {
         this.orderTables = orderTables;
     }
 
-    public static TableGroupResponse of(TableGroup tableGroup, List<OrderTable> orderTables) {
+    public static TableGroupResponse from(TableGroup tableGroup) {
         return new TableGroupResponse(
                 tableGroup.getId(),
                 tableGroup.getCreatedDate(),
-                TableResponse.from(orderTables)
+                TableResponse.from(tableGroup.getOrderTables())
         );
     }
 

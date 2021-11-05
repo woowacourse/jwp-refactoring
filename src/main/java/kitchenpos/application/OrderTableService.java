@@ -32,6 +32,13 @@ public class OrderTableService {
         return orderTables;
     }
 
+    @Transactional
+    public void addTableGroup2(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
+        for (final OrderTable updateOrderTable : savedOrderTables) {
+            updateOrderTable.addTableGroup(savedTableGroup);
+        }
+    }
+
     public List<OrderTable> findAllOrderTables(List<Long> orderTableIds) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateOrderTables(orderTableIds, orderTables);

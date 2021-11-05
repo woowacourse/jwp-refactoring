@@ -37,24 +37,6 @@ public class OrderResponse {
         );
     }
 
-    public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
-        return new OrderResponse(
-                order.getId(),
-                order.getOrderTableId(),
-                order.getOrderStatus(),
-                order.getOrderedTime(),
-                OrderLineItemResponse.from(orderLineItems)
-        );
-    }
-
-    public static List<OrderResponse> from(Map<Order, List<OrderLineItem>> results) {
-        List<OrderResponse> orderResponses = new ArrayList<>();
-        results.forEach((key, value) -> orderResponses.add(
-                OrderResponse.of(key, value)
-        ));
-        return orderResponses;
-    }
-
     public static List<OrderResponse> from(List<Order> orders) {
         return orders.stream()
                 .map(OrderResponse::from)

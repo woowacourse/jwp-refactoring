@@ -37,7 +37,7 @@ public class OrderRestController {
     @GetMapping("/api/order")
     public ResponseEntity<List<OrderResponse>> list() {
         return ResponseEntity.ok()
-                .body(orderService.list2())
+                .body(orderService.list())
                 ;
     }
 

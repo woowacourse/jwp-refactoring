@@ -6,7 +6,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -17,6 +19,7 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
 
     @Column(nullable = false)
@@ -38,9 +41,19 @@ public class OrderTable {
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        setTableGroup(tableGroup);
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
+    }
+
+    private void setTableGroup(TableGroup tableGroup) {
+        if (Objects.nonNull(this.tableGroup)) {
+            this.tableGroup.getOrderTables().remove(this);
+        }
+        this.tableGroup = tableGroup;
+        if (Objects.nonNull(tableGroup)) {
+            tableGroup.getOrderTables().add(this);
+        }
     }
 
     public Long getId() {
@@ -77,7 +90,7 @@ public class OrderTable {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException("tableGroup이 이미 등록되어있습니다.");
         }
-        this.tableGroup = tableGroup;
+        setTableGroup(tableGroup);
         changeEmpty(false);
     }
 
@@ -89,8 +102,8 @@ public class OrderTable {
     }
 
     public void ungroup() {
+        this.tableGroup.getOrderTables().remove(this);
         this.tableGroup = null;
-        // TODO TableGroup List<OrderTable>에서도 제거를 해주어야할까?
         this.empty = false;
     }
 }

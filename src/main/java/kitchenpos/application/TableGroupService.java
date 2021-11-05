@@ -25,12 +25,10 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         List<Long> orderTableIds = tableGroupRequest.orderTableIds();
-
-        // TODO TableGroup이 List<OrderTable>을 갖도록 해서, update로 변경한다.
-        TableGroup savedTableGroup = tableGroupRepository.save(tableGroupRequest.toTableGroup());
-        List<OrderTable> findOrderTables = orderTableService.findAllOrderTables(orderTableIds);
-        List<OrderTable> updateOrderTables = orderTableService.addTableGroup(findOrderTables, savedTableGroup);
-        return TableGroupResponse.of(savedTableGroup, updateOrderTables);
+        TableGroup tableGroup = tableGroupRepository.save(tableGroupRequest.toTableGroup());
+        List<OrderTable> orderTables = orderTableService.findAllOrderTables(orderTableIds);
+        tableGroup.updateOrderTables(orderTables);
+        return TableGroupResponse.from(tableGroup);
     }
 
     @Transactional
