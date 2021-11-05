@@ -1,6 +1,7 @@
 package kitchenpos.menu.domain;
 
 import kitchenpos.exception.FieldNotValidException;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
 import sun.awt.geom.AreaOp;
 
 import javax.persistence.CascadeType;
@@ -120,5 +121,12 @@ public class Menu {
         for (MenuProduct menuProduct: menuProducts) {
             menuProduct.addMenu(this);
         }
+    }
+
+    public void update(String name, BigDecimal price) {
+        validateName(name);
+        validatePrice(price);
+        this.name = name;
+        this.price = price;
     }
 }

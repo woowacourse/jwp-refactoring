@@ -8,6 +8,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +49,10 @@ public class MenuService {
     }
 
     @Transactional
-    public MenuResponse update(MenuRequest menuRequest) {
-
-        return null;
+    public MenuResponse update(Long menuId, MenuUpdateRequest menuUpdateRequest) {
+        Menu menu = menuRepository.findById(menuId)
+                .orElseThrow(() -> new NonExistentException("menu를 찾을 수 없습니다."));
+        menu.update(menuUpdateRequest.getName(), menuUpdateRequest.getPrice());
+        return MenuResponse.from(menu);
     }
 }

@@ -6,6 +6,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.ui.dto.MenuGroupRequest;
 import kitchenpos.menu.ui.dto.MenuProductRequest;
 import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderTable;
@@ -36,6 +37,10 @@ abstract class ServiceTest {
                                                          List<MenuProductRequest> menuProductRequests
         ) {
             return MenuRequest.of(name, price, menuGroupId, menuProductRequests);
+        }
+
+        protected static MenuUpdateRequest CREATE_MENU_UPDATE_REQUEST(String name, BigDecimal price) {
+            return MenuUpdateRequest.of(name, price);
         }
 
         protected static MenuGroupRequest CREATE_MENU_GROUP_REQUEST(String name) {
