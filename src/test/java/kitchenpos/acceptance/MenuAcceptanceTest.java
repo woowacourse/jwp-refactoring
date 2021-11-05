@@ -70,7 +70,7 @@ public class MenuAcceptanceTest extends DomainAcceptanceTest {
         assertThat(menus).isNotEmpty();
     }
 
-    @DisplayName("PUT /api/menus")
+    @DisplayName("PUT /api/menus/{menuId}")
     @Test
     void update() {
         Long menuId = POST_SAMPLE_MENU();

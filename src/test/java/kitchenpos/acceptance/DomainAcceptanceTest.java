@@ -8,6 +8,7 @@ import kitchenpos.menu.ui.dto.MenuGroupResponse;
 import kitchenpos.menu.ui.dto.MenuProductRequest;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemRequest;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
@@ -48,6 +49,22 @@ abstract class DomainAcceptanceTest extends AcceptanceTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
+        MenuResponse menuResponse = response.as(MenuResponse.class);
+        return menuResponse.getId();
+    }
+
+    protected Long PUT_SAMPLE_MENU(Long menuId, String menuName, BigDecimal price) {
+        MenuUpdateRequest menuUpdateRequest = MenuUpdateRequest.of(menuName, price);
+
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(menuUpdateRequest)
+                .when().put("/api/menus/" + menuId)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
         MenuResponse menuResponse = response.as(MenuResponse.class);
         return menuResponse.getId();
     }
