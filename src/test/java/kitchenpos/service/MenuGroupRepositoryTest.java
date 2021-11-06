@@ -3,6 +3,7 @@ package kitchenpos.service;
 import kitchenpos.application.MenuGroupService;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.fixture.MenuGroupFixture;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.MenuGroupRequest;
 import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -19,32 +20,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @Transactional
 @Sql(scripts = "/clear.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@DisplayName("MenuGroupService 테스트")
-class MenuGroupServiceTest {
+@DisplayName("MenuGroupRepository 테스트")
+class MenuGroupRepositoryTest {
 
-    private static final String MENU_GROUP_NAME = "MENU_GROUP_NAME";
     @Autowired
-    private MenuGroupService menuGroupService;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("메뉴 그룹 추가")
     @Test
     void create() {
         //given
-        MenuGroupRequest menuGroup = new MenuGroupRequest(MENU_GROUP_NAME);
+        MenuGroup menuGroup = MenuGroupFixture.create();
         //when
-        MenuGroupResponse response = menuGroupService.create(menuGroup);
+        MenuGroup created = menuGroupRepository.save(menuGroup);
         //then
-        assertThat(response.getId()).isNotNull();
+        assertThat(created.getId()).isNotNull();
     }
 
     @DisplayName("메뉴 그룹 반환")
     @Test
     void list() {
         //given
-        MenuGroupRequest menuGroup = new MenuGroupRequest(MENU_GROUP_NAME);
-        menuGroupService.create(menuGroup);
+        MenuGroup menuGroup = MenuGroupFixture.create();
+        menuGroupRepository.save(menuGroup);
         //when
-        List<MenuGroupResponse> menuGroups = menuGroupService.findAll();
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
         //then
         assertThat(menuGroups).hasSize(1);
     }
