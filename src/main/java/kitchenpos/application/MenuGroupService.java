@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.dto.MenuGroupRequest;
@@ -12,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class MenuGroupService {
 
     private final MenuGroupRepository menuGroupRepository;
@@ -20,10 +20,9 @@ public class MenuGroupService {
         this.menuGroupRepository = menuGroupRepository;
     }
 
-    @Transactional
     public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
         MenuGroup newMenuGroup = menuGroupRepository.save(menuGroupRequest.toEntity());
-        return  MenuGroupResponse.from(newMenuGroup);
+        return MenuGroupResponse.from(newMenuGroup);
     }
 
     @Transactional(readOnly = true)
