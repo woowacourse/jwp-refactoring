@@ -9,7 +9,6 @@ import java.util.List;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
-
-    @Query("select o from Orders o where Orders.orderTable.id = :orderTableId")
+    @Query(value = "select o from Orders o where Orders.orderTable.id = :orderTableId", nativeQuery = true)
     List<Orders> findAllByOrderTableId(Long orderTableId);
 }

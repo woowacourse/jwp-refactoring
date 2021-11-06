@@ -21,26 +21,24 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validateNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void checkNotGrouped() {
+    public void changeEmpty(Boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("테이블 그룹이 존재합니다.");
         }
-    }
-
-    public void changeEmpty(Boolean empty) {
         this.empty = empty;
     }
 
-    public void changeNumberOfGuests(Integer numberOfGuest) {
+    public void changeNumberOfGuests(Integer numberOfGuests) {
         validateEmpty();
-        validateNumberOfGuests();
-        this.numberOfGuests = numberOfGuest;
+        validateNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
     }
 
     private void validateEmpty() {
@@ -49,9 +47,9 @@ public class OrderTable {
         }
     }
 
-    private void validateNumberOfGuests() {
+    private void validateNumberOfGuests(int numberOfGuests) {
         if (numberOfGuests < 0) {
-            throw new IllegalArgumentException("변경할 수 없는 손님수 입니다.");
+            throw new IllegalArgumentException("손님수는 0보다 작을 수 없습니다.");
         }
     }
 

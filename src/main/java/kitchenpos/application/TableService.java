@@ -38,17 +38,14 @@ public class TableService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
     public TableResponse changeEmpty(final Long orderTableId, final TableRequest tableRequest) {
         OrderTable table = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
-        table.checkNotGrouped();
         changeEmpty(orderTableId, tableRequest, table);
 
         return TableResponse.from(orderTableRepository.save(table));
     }
 
-    @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableRequest tableRequest) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new IllegalArgumentException("테이블이 존재하지 않습니다."));
@@ -67,7 +64,7 @@ public class TableService {
     }
 
     private void checkExistsNotCompletedOrder(List<Orders> notCompletedOrders) {
-        if (notCompletedOrders.size() >= 1) {
+        if (!notCompletedOrders.isEmpty()) {
             throw new IllegalArgumentException("조리중이거나, 식사중인 테이블이 존재합니다.");
         }
     }

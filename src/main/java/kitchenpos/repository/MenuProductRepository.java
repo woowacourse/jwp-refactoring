@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
-    @Query("select mp from MenuProduct mp where mp.menu.id = :menuId")
+    @Query(value = "select mp from MenuProduct mp where mp.menu.id = :menuId", nativeQuery = true)
     List<MenuProduct> findAllByMenuId(Long menuId);
 }

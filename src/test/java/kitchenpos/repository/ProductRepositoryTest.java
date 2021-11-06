@@ -1,9 +1,7 @@
-package kitchenpos.service;
+package kitchenpos.repository;
 
-import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
 import kitchenpos.fixture.ProductFixture;
-import kitchenpos.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
