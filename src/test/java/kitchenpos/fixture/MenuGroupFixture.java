@@ -8,9 +8,7 @@ public class MenuGroupFixture {
     private static final String NAME = "이달의 메뉴";
 
     public static MenuGroup create() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(ID);
-        menuGroup.setName(NAME);
+        MenuGroup menuGroup = new MenuGroup(ID, NAME);
 
         return menuGroup;
     }
