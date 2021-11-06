@@ -15,10 +15,7 @@ public class ProductFixture {
     }
 
     public static Product create(Long id, String name, BigDecimal price) {
-        Product product = new Product();
-        product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
+        Product product = new Product(id, name, price);
 
         return product;
     }
