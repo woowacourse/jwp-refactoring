@@ -33,7 +33,7 @@ public class MenuGroupRestController {
     @GetMapping("/api/menu-groups")
     public ResponseEntity<List<MenuGroupResponse>> list() {
         List<MenuGroupResponse> menuGroups = menuGroupService.findAll();
-        
+
         return ResponseEntity.ok()
                 .body(menuGroups);
     }
