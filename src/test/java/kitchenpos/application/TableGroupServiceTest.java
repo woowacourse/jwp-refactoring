@@ -51,7 +51,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         TableGroup savedTableGroup = assertDoesNotThrow(() -> tableGroupService.create(tableGroup));
         savedTableGroup.getOrderTables()
-            .forEach(it -> assertThat(it.getTableGroupId()).isNotNull());
+            .forEach(orderTable -> assertThat(orderTable.getTableGroupId()).isNotNull());
     }
 
     @Test
@@ -96,7 +96,7 @@ class TableGroupServiceTest extends ServiceTest {
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
         tableGroup.getOrderTables()
-            .forEach(it -> assertThat(it.getTableGroupId()).isNull());
+            .forEach(orderTable -> assertThat(orderTable.getTableGroupId()).isNull());
         verify(orderTableDao, times(tableGroup.getOrderTables().size()))
             .save(ArgumentMatchers.refEq(expected, "id", "numberOfGuests"));
     }

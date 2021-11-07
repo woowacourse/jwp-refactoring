@@ -108,7 +108,7 @@ class OrderServiceTest extends ServiceTest {
         List<Order> orders = assertDoesNotThrow(() -> orderService.list());
         orders.stream()
             .map(Order::getOrderLineItems)
-            .forEach(it -> assertThat(it).isNotEmpty());
+            .forEach(lineItems -> assertThat(lineItems).isNotEmpty());
     }
 
     @Test

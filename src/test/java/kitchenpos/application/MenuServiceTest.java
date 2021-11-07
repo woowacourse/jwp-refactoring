@@ -88,6 +88,6 @@ public class MenuServiceTest extends ServiceTest {
         List<Menu> menus = assertDoesNotThrow(() -> menuService.list());
         menus.stream()
             .map(Menu::getMenuProducts)
-            .forEach(it -> assertThat(it).isNotEmpty());
+            .forEach(menuProducts -> assertThat(menuProducts).isNotEmpty());
     }
 }
