@@ -44,6 +44,12 @@ public class Orders {
         }
     }
 
+    public void validateCompleted() {
+        if (!orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException("조리중이거나, 식사 중인 테이블은 그룹 해제할 수 없습니다.");
+        }
+    }
+
     public Long getId() {
         return id;
     }

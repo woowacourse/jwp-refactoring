@@ -28,6 +28,23 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public void validate() {
+        validateNoneEmpty();
+        validateNoneTableGroup();
+    }
+
+    private void validateNoneEmpty() {
+        if (!empty) {
+            throw new IllegalArgumentException("비어있지 않은 테이블입니다.");
+        }
+    }
+
+    private void validateNoneTableGroup() {
+        if (Objects.nonNull(tableGroup)) {
+            throw new IllegalArgumentException("그룹이 이미 지정된 테이블입니다.");
+        }
+    }
+
     public void changeEmpty(Boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException("테이블 그룹이 존재합니다.");
@@ -67,5 +84,14 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
+    }
+
+    public void assignTableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
     }
 }
