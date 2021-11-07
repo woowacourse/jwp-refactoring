@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
-    @Query("select o from Orders o join OrderTable ot where ot.id = :orderTableId")
+    @Query("SELECT o FROM Orders o JOIN FETCH OrderTable ot WHERE ot.id = :orderTableId")
     List<Orders> findAllByOrderTableId(Long orderTableId);
 }

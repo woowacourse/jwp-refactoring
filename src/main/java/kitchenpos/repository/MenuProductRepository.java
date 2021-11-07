@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
-    @Query(value = "select mp from MenuProduct mp join Menu m where mp.menu.id = :menuId")
+    @Query(value = "SELECT mp FROM MenuProduct mp JOIN FETCH Menu m WHERE mp.menu.id = :menuId")
     List<MenuProduct> findAllByMenuId(Long menuId);
 }
