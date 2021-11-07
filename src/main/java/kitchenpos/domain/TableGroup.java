@@ -18,6 +18,10 @@ public class TableGroup {
     public TableGroup() {
     }
 
+    public TableGroup(LocalDateTime createdDate) {
+        this(null, createdDate);
+    }
+
     public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;

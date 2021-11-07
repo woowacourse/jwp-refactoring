@@ -1,12 +1,7 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.fixture.OrderFixture;
 import kitchenpos.fixture.OrderTableFixture;
-import kitchenpos.fixture.TableGroupFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

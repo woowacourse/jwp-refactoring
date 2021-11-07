@@ -1,7 +1,9 @@
 package kitchenpos.repository;
 
-import kitchenpos.domain.*;
-import kitchenpos.fixture.*;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Orders;
+import kitchenpos.fixture.OrderTableFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

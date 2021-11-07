@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MenuTest {
 
     private static final long ID = 1L;
-    private static final MenuGroup MENU_GROUP= MenuGroupFixture.create();
+    private static final MenuGroup MENU_GROUP = MenuGroupFixture.create();
     private static final BigDecimal INVALID_PRICE = BigDecimal.valueOf(-1);
 
     @DisplayName("메뉴 추가 - 실패 - 유효한 가격이 아닌 경우")
