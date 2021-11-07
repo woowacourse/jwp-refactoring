@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class MenuGroup {
@@ -24,7 +25,7 @@ public class MenuGroup {
     }
 
     private void validateName(String name) {
-        if (name.isEmpty()) {
+        if (Objects.isNull(name) || name.isEmpty()) {
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
     }

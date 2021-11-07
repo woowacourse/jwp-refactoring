@@ -2,6 +2,8 @@ package kitchenpos.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Orders {
@@ -17,11 +19,29 @@ public class Orders {
     public Orders() {
     }
 
+    public Orders(OrderTable orderTable, OrderStatus status, LocalDateTime orderedTime) {
+        this(null, orderTable, status, orderedTime);
+    }
+
     public Orders(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
+        validateEmptyTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public void changeOrderStatus(OrderStatus orderStatus) {
+        if (this.orderStatus.equals(OrderStatus.COMPLETION)) {
+            throw new IllegalArgumentException("완료된 주문입니다.");
+        }
+        this.orderStatus = orderStatus;
+    }
+
+    private void validateEmptyTable(OrderTable orderTable) {
+        if (orderTable.isEmpty()) {
+            throw new IllegalArgumentException("비어있는 테이블은 주문할 수 없습니다");
+        }
     }
 
     public Long getId() {
@@ -42,5 +62,9 @@ public class Orders {
 
     public boolean isCompleted() {
         return orderStatus.equals(OrderStatus.COMPLETION);
+    }
+
+    public Long getOrderTableId() {
+        return orderTable.getId();
     }
 }

@@ -8,7 +8,8 @@ public class OrderLineItem {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Orders.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
     private Orders orders;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,7 +23,7 @@ public class OrderLineItem {
         this(null, null, menu, quantity);
     }
 
-    public OrderLineItem(Long seq, kitchenpos.domain.Orders orders, Menu menu, long quantity) {
+    public OrderLineItem(Long seq, Orders orders, Menu menu, long quantity) {
         this.seq = seq;
         this.orders = orders;
         this.menu = menu;
