@@ -41,7 +41,7 @@ class ProductServiceTest extends ServiceTest {
 
     @Test
     void 생성_시_가격이_음수이면_예외를_반환한다() {
-        Product invalidPriceProduct = ProductFixtures.createProduct(-1000);
+        Product invalidPriceProduct = ProductFixtures.createProduct(-1);
 
         assertThrows(IllegalArgumentException.class, () -> productService.create(invalidPriceProduct));
     }

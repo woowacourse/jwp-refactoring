@@ -97,7 +97,7 @@ public class TableServiceTest extends ServiceTest {
 
     @Test
     void 손님_수_변경_시_손님_수가_음수이면_예외를_반환한다() {
-        OrderTable invalidTable = TableFixtures.createOrderTable(1L, null, -10, false);
+        OrderTable invalidTable = TableFixtures.createOrderTable(1L, null, -1, false);
 
         assertThrows(
             IllegalArgumentException.class,

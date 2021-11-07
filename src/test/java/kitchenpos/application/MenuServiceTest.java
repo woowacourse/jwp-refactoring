@@ -8,6 +8,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuProduct;
 import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.ProductFixtures;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,15 +70,19 @@ public class MenuServiceTest extends ServiceTest {
 
     @Test
     void 생성_시_가격이_음수이면_예외를_반환한다() {
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(-1000)));
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(-1)));
     }
 
     @Test
     void 생성_시_가격이_메뉴_상품들의_가격보다_크면_예외를_반환한다() {
+        List<MenuProduct> menuProducts = MenuFixtures.createMenu().getMenuProducts();
+        BigDecimal price = ProductFixtures.createProduct().getPrice();
+        int priceSum = menuProducts.size() * price.intValue();
         given(menuGroupDao.existsById(any())).willReturn(true);
         given(productDao.findById(any())).willReturn(Optional.of(ProductFixtures.createProduct()));
 
-        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(100000)));
+        assertThrows(IllegalArgumentException.class, () -> menuService.create(MenuFixtures.createMenu(priceSum + 1)));
+
     }
 
     @Test
