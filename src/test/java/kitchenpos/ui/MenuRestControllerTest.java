@@ -1,24 +1,26 @@
 package kitchenpos.ui;
 
-import kitchenpos.RestControllerTest;
-import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-
-import java.util.Collections;
-import java.util.List;
-
-import static kitchenpos.fixture.MenuFixture.createMenu;
+import static kitchenpos.fixture.MenuFixture.createMenuRequest;
+import static kitchenpos.fixture.MenuFixture.createMenuResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Collections;
+import java.util.List;
+import kitchenpos.RestControllerTest;
+import kitchenpos.application.MenuService;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 
 @WebMvcTest(MenuRestController.class)
 class MenuRestControllerTest extends RestControllerTest {
@@ -29,22 +31,24 @@ class MenuRestControllerTest extends RestControllerTest {
     @DisplayName("메뉴 생성 요청을 처리한다.")
     @Test
     void create() throws Exception {
-        Menu requestMenu = createMenu();
-        when(mockMenuService.create(any())).then(AdditionalAnswers.returnsFirstArg());
+        MenuRequest menuRequest = createMenuRequest();
+        MenuResponse menuResponse = MenuResponse.of(menuRequest.toEntity(1L));
+
+        when(mockMenuService.create(any())).thenReturn(menuResponse);
         mockMvc.perform(post("/api/menus")
                         .characterEncoding("utf-8")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestMenu))
+                        .content(objectMapper.writeValueAsString(menuRequest))
                 )
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/menus/" + requestMenu.getId()))
-                .andExpect(content().json(objectMapper.writeValueAsString(requestMenu)));
+                .andExpect(header().string("Location", "/api/menus/" + menuResponse.getId()))
+                .andExpect(content().json(objectMapper.writeValueAsString(menuResponse)));
     }
 
     @DisplayName("메뉴 목록 반환 요청을 처리한다.")
     @Test
     void list() throws Exception {
-        List<Menu> expected = Collections.singletonList(createMenu());
+        List<MenuResponse> expected = Collections.singletonList(createMenuResponse());
         when(mockMenuService.list()).thenReturn(expected);
         mockMvc.perform(get("/api/menus"))
                 .andExpect(status().isOk())

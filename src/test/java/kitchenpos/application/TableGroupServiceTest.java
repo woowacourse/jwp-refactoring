@@ -7,6 +7,8 @@ import kitchenpos.dao.TableGroupDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,8 +19,10 @@ import java.util.Arrays;
 
 import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -44,50 +48,57 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            when(mockTableGroupDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
             when(mockOrderTableDao.save(any())).then(AdditionalAnswers.returnsFirstArg());
         }
 
         @DisplayName("단체 지정을 생성한다.")
         @Test
         void create() {
-            TableGroup tableGroup = createTableGroup(
+            TableGroupRequest tableGroupRequest = createTableGroupRequest(
                     createOrderTable(1L, null, true),
                     createOrderTable(2L, null, true)
             );
-            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
+            when(mockTableGroupDao.save(any())).thenReturn(tableGroupRequest.toEntity(1L));
+            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroupRequest.getOrderTables());
 
-            TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-            assertThat(savedTableGroup).isEqualTo(tableGroup);
+            TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
+            assertAll(
+                    () -> assertThat(savedTableGroup).isNotNull(),
+                    () -> assertThat(savedTableGroup.getId()).isNotNull(),
+                    () -> assertThat(savedTableGroup.getOrderTables()).usingRecursiveComparison().isEqualTo(tableGroupRequest.getOrderTables())
+            );
         }
 
         @DisplayName("단체 지정 대상 테이블은 이미 지정된 단체가 없어야한다.")
         @Test
         void createWithInvalidOrderTable1() {
-            TableGroup tableGroup = createTableGroup(
+            TableGroupRequest tableGroupRequest = createTableGroupRequest(
                     createOrderTable(1L, 1L, true),
                     createOrderTable(2L, 2L, true)
             );
-            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroupRequest.getOrderTables());
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정 대상 테이블의 개수는 2개 이상이다.")
         @Test
         void createWithInvalidOrderTable2() {
-            TableGroup tableGroup = createTableGroup(createOrderTable(1L, null, true));
-            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            TableGroupRequest tableGroupRequest = createTableGroupRequest(createOrderTable(1L, null, true));
+            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroupRequest.getOrderTables());
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정 대상 테이블은 비어있어야한다.")
         @Test
         void createWithInvalidOrderTable3() {
-            TableGroup tableGroup = createTableGroup(createOrderTable(false), createOrderTable(false));
-            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroup.getOrderTables());
-            assertThatThrownBy(() -> tableGroupService.create(tableGroup))
+            TableGroupRequest tableGroupRequest =  createTableGroupRequest(
+                    createOrderTable(false),
+                    createOrderTable(false)
+            );
+            when(mockOrderTableDao.findAllByIdIn(any())).thenReturn(tableGroupRequest.getOrderTables());
+            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

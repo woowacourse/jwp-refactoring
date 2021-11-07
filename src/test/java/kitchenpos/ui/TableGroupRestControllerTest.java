@@ -3,6 +3,8 @@ package kitchenpos.ui;
 import kitchenpos.RestControllerTest;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
+import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.AdditionalAnswers;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -27,16 +30,17 @@ class TableGroupRestControllerTest extends RestControllerTest {
     @DisplayName("테이블 그룹 생성 요청을 처리한다.")
     @Test
     void create() throws Exception {
-        TableGroup requestTableGroup = createTableGroup();
-        when(mockTableGroupService.create(any())).then(AdditionalAnswers.returnsFirstArg());
+        TableGroupRequest tableGroupRequest = createTableGroupRequest();
+        TableGroupResponse tableGroupResponse = TableGroupResponse.of(tableGroupRequest.toEntity(1L));
+        when(mockTableGroupService.create(any())).thenReturn(tableGroupResponse);
         mockMvc.perform(post("/api/table-groups")
                         .characterEncoding("utf-8")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestTableGroup))
+                        .content(objectMapper.writeValueAsString(tableGroupRequest))
                 )
                 .andExpect(status().isCreated())
-                .andExpect(header().string("Location", "/api/table-groups/" + requestTableGroup.getId()))
-                .andExpect(content().json(objectMapper.writeValueAsString(requestTableGroup)));
+                .andExpect(header().string("Location", "/api/table-groups/" + tableGroupResponse.getId()))
+                .andExpect(content().json(objectMapper.writeValueAsString(tableGroupResponse)));
     }
 
     @DisplayName("테이블 그룹 해제 요청을 처리한다.")

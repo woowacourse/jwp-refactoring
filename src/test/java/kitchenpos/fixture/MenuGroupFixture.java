@@ -1,6 +1,8 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.dto.MenuGroupRequest;
+import kitchenpos.dto.MenuGroupResponse;
 
 public class MenuGroupFixture {
 
@@ -12,5 +14,13 @@ public class MenuGroupFixture {
         menuGroup.setId(ID);
         menuGroup.setName(NAME);
         return menuGroup;
+    }
+
+    public static MenuGroupRequest createMenuGroupRequest() {
+        return new MenuGroupRequest(NAME);
+    }
+
+    public static MenuGroupResponse createMenuGroupResponse() {
+        return new MenuGroupResponse(ID, NAME);
     }
 }

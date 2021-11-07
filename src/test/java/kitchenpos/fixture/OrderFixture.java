@@ -1,14 +1,15 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
+import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
-
-import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderRequest;
+import kitchenpos.dto.OrderResponse;
 
 public class OrderFixture {
 
@@ -18,7 +19,8 @@ public class OrderFixture {
     private static final LocalDateTime ORDERED_TIME = LocalDateTime.now();
     private static final List<OrderLineItem> ORDER_LINE_ITEMS = Collections.singletonList(createOrderLineItem());
 
-    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+    public static Order createOrder(Long id, Long orderTableId, String orderStatus, LocalDateTime orderedTime,
+            List<OrderLineItem> orderLineItems) {
         Order order = new Order();
         order.setId(id);
         order.setOrderTableId(orderTableId);
@@ -36,12 +38,20 @@ public class OrderFixture {
         return createOrder(ID, ORDER_TABLE_ID, status, ORDERED_TIME, ORDER_LINE_ITEMS);
     }
 
-    public static Order createOrder(Long id, String status) {
-        return createOrder(id, ORDER_TABLE_ID, status, ORDERED_TIME, ORDER_LINE_ITEMS);
+    public static OrderRequest createOrderRequest(String status) {
+        return new OrderRequest(ORDER_TABLE_ID, status, ORDERED_TIME, ORDER_LINE_ITEMS);
     }
 
-    public static Order createOrder(List<OrderLineItem> orderLineItems) {
-        return createOrder(ID, ORDER_TABLE_ID, ORDER_STATUS, ORDERED_TIME, orderLineItems);
+    public static OrderRequest createOrderRequest() {
+        return new OrderRequest(ORDER_TABLE_ID, ORDER_STATUS, ORDERED_TIME, ORDER_LINE_ITEMS);
+    }
+
+    public static OrderRequest createOrderRequest(List<OrderLineItem> orderLineItems) {
+        return new OrderRequest(ORDER_TABLE_ID, ORDER_STATUS, ORDERED_TIME, orderLineItems);
+    }
+
+    public static OrderResponse createOrderResponse() {
+        return new OrderResponse(ID, ORDER_TABLE_ID, ORDER_STATUS, ORDERED_TIME, ORDER_LINE_ITEMS);
     }
 }
 

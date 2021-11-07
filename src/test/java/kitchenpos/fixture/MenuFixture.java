@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.dto.MenuRequest;
+import kitchenpos.dto.MenuResponse;
 
 public class MenuFixture {
     private static final Long ID = 1L;
@@ -17,27 +19,20 @@ public class MenuFixture {
     private static final Long PRODUCT_ID = 1L;
     private static final long QUANTITY = 1L;
 
-    public static Menu createMenu(Long id, String name, BigDecimal price, Long menuGroupId,
-            List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setId(id);
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-        return menu;
+    public static MenuRequest createMenuRequest() {
+        return new MenuRequest(NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
     }
 
-    public static Menu createMenu() {
-        return createMenu(ID, NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
+    public static MenuRequest createMenuRequest(Long menuGroupId, List<MenuProduct> menuProducts) {
+        return new MenuRequest(NAME, PRICE, menuGroupId, menuProducts);
     }
 
-    public static Menu createMenu(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        return createMenu(ID, NAME, price, menuGroupId, menuProducts);
+    public static MenuRequest createMenuRequest(BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return new MenuRequest(NAME, price, menuGroupId, menuProducts);
     }
 
-    public static Menu createMenu(Long menuGroupId, List<MenuProduct> menuProducts) {
-        return createMenu(ID, NAME, PRICE, menuGroupId, menuProducts);
+    public static MenuResponse createMenuResponse() {
+        return new MenuResponse(ID, NAME, PRICE, MENU_GROUP_ID, createMenuProducts());
     }
 
     public static MenuProduct createMenuProduct(Long seq, Long menuId, Long productId, long quantity) {

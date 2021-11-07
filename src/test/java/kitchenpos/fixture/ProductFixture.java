@@ -1,8 +1,9 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Product;
-
 import java.math.BigDecimal;
+import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
+import kitchenpos.dto.ProductResponse;
 
 public class ProductFixture {
 
@@ -18,15 +19,19 @@ public class ProductFixture {
         return product;
     }
 
-    public static Product createProduct() {
-        return createProduct(ID, NAME, PRICE);
-    }
-
     public static Product createProduct(Long id) {
         return createProduct(id, NAME, PRICE);
     }
 
-    public static Product createProduct(BigDecimal price) {
-        return createProduct(ID, NAME, price);
+    public static ProductRequest createProductRequest() {
+        return new ProductRequest(NAME, PRICE);
+    }
+
+    public static ProductRequest createProductRequest(BigDecimal price) {
+        return new ProductRequest(NAME, price);
+    }
+
+    public static ProductResponse createProductResponse() {
+        return new ProductResponse(ID, NAME, PRICE);
     }
 }

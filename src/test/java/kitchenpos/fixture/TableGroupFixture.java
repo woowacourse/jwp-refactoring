@@ -5,6 +5,7 @@ import kitchenpos.domain.TableGroup;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import kitchenpos.dto.TableGroupRequest;
 
 public class TableGroupFixture {
 
@@ -17,5 +18,9 @@ public class TableGroupFixture {
         tableGroup.setCreatedDate(CREATED_DATE);
         tableGroup.setOrderTables(Arrays.asList(orderTables));
         return tableGroup;
+    }
+
+    public static TableGroupRequest createTableGroupRequest(OrderTable... orderTables) {
+        return new TableGroupRequest(CREATED_DATE, Arrays.asList(orderTables));
     }
 }
