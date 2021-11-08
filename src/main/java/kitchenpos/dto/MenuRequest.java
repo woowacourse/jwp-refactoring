@@ -10,14 +10,13 @@ public class MenuRequest {
     private final String name;
     private final BigDecimal price;
     private final Long menuGroupId;
-    private final List<MenuProduct> menuProducts;
+    private final List<MenuProductInfo> menuProductInfos;
 
-    public MenuRequest(String name, BigDecimal price, Long menuGroupId,
-            List<MenuProduct> menuProducts) {
+    public MenuRequest(String name, BigDecimal price, Long menuGroupId, List<MenuProductInfo> menuProductInfos) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProductInfos = menuProductInfos;
     }
 
     public Menu toEntity() {
@@ -42,7 +41,7 @@ public class MenuRequest {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<MenuProductInfo> getMenuProductInfos() {
+        return menuProductInfos;
     }
 }

@@ -1,6 +1,15 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class OrderLineItem {
+
+    @GeneratedValue
+    @Id
+    private Long id;
     private Long seq;
     private Long orderId;
     private Long menuId;

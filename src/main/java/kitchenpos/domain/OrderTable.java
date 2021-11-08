@@ -1,8 +1,20 @@
 package kitchenpos.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+
+@Entity
 public class OrderTable {
+
+    @GeneratedValue
+    @Id
     private Long id;
-    private Long tableGroupId;
+
+    @ManyToOne
+    private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
