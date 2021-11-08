@@ -19,10 +19,4 @@ public class MenuGroupRequest {
     public MenuGroup toEntity() {
         return new MenuGroup(name);
     }
-
-    public MenuGroup toEntity(Long id) {
-        MenuGroup menuGroup = new MenuGroup(name);
-        menuGroup.setId(id);
-        return menuGroup;
-    }
 }

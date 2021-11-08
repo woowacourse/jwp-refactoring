@@ -1,38 +1,39 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupRequest;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.util.Arrays;
-import java.util.List;
-import kitchenpos.ServiceTest;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.dto.MenuGroupRequest;
 import kitchenpos.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
-@ServiceTest
+import java.util.Arrays;
+import java.util.List;
+
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+@Sql("classpath:db/test/truncate.sql")
+@ActiveProfiles("test")
+@SpringBootTest
 class MenuGroupServiceTest {
 
-    @Mock
-    private MenuGroupDao mockMenuGroupDao;
+    @Autowired
+    private MenuGroupRepository menuGroupRepository;
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
 
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create() {
         MenuGroupRequest menuGroupRequest = createMenuGroupRequest();
-        when(mockMenuGroupDao.save(any())).thenReturn(menuGroupRequest.toEntity(1L));
         MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroupRequest);
         assertAll(
                 () -> assertThat(savedMenuGroup).isNotNull(),
@@ -45,8 +46,7 @@ class MenuGroupServiceTest {
     @Test
     void list() {
         List<MenuGroup> savedMenuGroups = Arrays.asList(createMenuGroup(), createMenuGroup());
-        when(mockMenuGroupDao.findAll()).thenReturn(savedMenuGroups);
-
+        menuGroupRepository.saveAll(savedMenuGroups);
         List<MenuGroupResponse> list = menuGroupService.list();
         assertAll(
                 () -> assertThat(list).hasSize(savedMenuGroups.size()),

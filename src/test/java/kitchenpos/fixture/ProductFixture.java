@@ -12,10 +12,8 @@ public class ProductFixture {
     private static final BigDecimal PRICE = BigDecimal.TEN;
 
     public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product();
+        Product product = new Product(name, price);
         product.setId(id);
-        product.setName(name);
-        product.setPrice(price);
         return product;
     }
 
@@ -33,5 +31,9 @@ public class ProductFixture {
 
     public static ProductResponse createProductResponse() {
         return new ProductResponse(ID, NAME, PRICE);
+    }
+
+    public static ProductResponse createProductResponse(Long id, ProductRequest request) {
+        return new ProductResponse(id, request.getName(), request.getPrice());
     }
 }

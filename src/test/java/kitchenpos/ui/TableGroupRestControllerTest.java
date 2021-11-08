@@ -2,18 +2,16 @@ package kitchenpos.ui;
 
 import kitchenpos.RestControllerTest;
 import kitchenpos.application.TableGroupService;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
-import static kitchenpos.fixture.TableGroupFixture.createTableGroup;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
+import static kitchenpos.fixture.TableGroupFixture.createTableGroupResponse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -30,8 +28,8 @@ class TableGroupRestControllerTest extends RestControllerTest {
     @DisplayName("테이블 그룹 생성 요청을 처리한다.")
     @Test
     void create() throws Exception {
-        TableGroupRequest tableGroupRequest = createTableGroupRequest();
-        TableGroupResponse tableGroupResponse = TableGroupResponse.of(tableGroupRequest.toEntity(1L));
+        TableGroupRequest tableGroupRequest = createTableGroupRequest(1L, 2L);
+        TableGroupResponse tableGroupResponse = createTableGroupResponse(1L, tableGroupRequest);
         when(mockTableGroupService.create(any())).thenReturn(tableGroupResponse);
         mockMvc.perform(post("/api/table-groups")
                         .characterEncoding("utf-8")
@@ -46,9 +44,8 @@ class TableGroupRestControllerTest extends RestControllerTest {
     @DisplayName("테이블 그룹 해제 요청을 처리한다.")
     @Test
     void ungroup() throws Exception {
-        Long tableGroupId = 1L;
-        doNothing().when(mockTableGroupService).ungroup(tableGroupId);
-        mockMvc.perform(delete("/api/table-groups/{tableGroupId}", tableGroupId))
+        doNothing().when(mockTableGroupService).ungroup(1L);
+        mockMvc.perform(delete("/api/table-groups/{tableGroupId}", 1L))
                 .andExpect(status().isNoContent());
     }
 }

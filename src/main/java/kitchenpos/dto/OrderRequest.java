@@ -2,39 +2,29 @@ package kitchenpos.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+
+import kitchenpos.domain.OrderStatus;
 
 public class OrderRequest {
 
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItemRequest> orderLineItemRequests;
 
-    public OrderRequest(Long orderTableId, String orderStatus, LocalDateTime orderedTime,
-            List<OrderLineItem> orderLineItems) {
+    public OrderRequest(Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime,
+            List<OrderLineItemRequest> orderLineItemRequests) {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItems = orderLineItems;
-    }
-
-    public Order toEntity() {
-        return new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
-    }
-
-    public Order toEntity(Long id) {
-        Order order = new Order(orderTableId, orderStatus, orderedTime, orderLineItems);
-        order.setId(id);
-        return order;
+        this.orderLineItemRequests = orderLineItemRequests;
     }
 
     public Long getOrderTableId() {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 
@@ -42,7 +32,7 @@ public class OrderRequest {
         return orderedTime;
     }
 
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
+    public List<OrderLineItemRequest> getOrderLineItemRequests() {
+        return orderLineItemRequests;
     }
 }

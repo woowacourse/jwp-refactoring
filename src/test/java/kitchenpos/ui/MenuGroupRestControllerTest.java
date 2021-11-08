@@ -32,7 +32,7 @@ class MenuGroupRestControllerTest extends RestControllerTest {
     @Test
     void create() throws Exception {
         MenuGroupRequest menuGroupRequest = createMenuGroupRequest();
-        MenuGroupResponse menuGroupResponse = MenuGroupResponse.of(menuGroupRequest.toEntity(1L));
+        MenuGroupResponse menuGroupResponse = createMenuGroupResponse(1L, menuGroupRequest);
         when(mockMenuGroupService.create(any())).thenReturn(menuGroupResponse);
         mockMvc.perform(post("/api/menu-groups")
                         .characterEncoding("utf-8")

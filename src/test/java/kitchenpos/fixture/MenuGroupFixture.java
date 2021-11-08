@@ -10,9 +10,8 @@ public class MenuGroupFixture {
     private static final String NAME = "MENU_GROUP_NAME";
 
     public static MenuGroup createMenuGroup() {
-        MenuGroup menuGroup = new MenuGroup();
+        MenuGroup menuGroup = new MenuGroup(NAME);
         menuGroup.setId(ID);
-        menuGroup.setName(NAME);
         return menuGroup;
     }
 
@@ -22,5 +21,9 @@ public class MenuGroupFixture {
 
     public static MenuGroupResponse createMenuGroupResponse() {
         return new MenuGroupResponse(ID, NAME);
+    }
+
+    public static MenuGroupResponse createMenuGroupResponse(Long id, MenuGroupRequest request) {
+        return new MenuGroupResponse(id, request.getName());
     }
 }

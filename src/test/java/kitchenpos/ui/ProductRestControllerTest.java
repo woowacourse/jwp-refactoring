@@ -32,7 +32,7 @@ class ProductRestControllerTest extends RestControllerTest {
     @Test
     void create() throws Exception {
         ProductRequest productRequest = createProductRequest();
-        ProductResponse productResponse = ProductResponse.of(productRequest.toEntity(1L));
+        ProductResponse productResponse = createProductResponse(1L, productRequest);
         when(mockProductService.create(any())).thenReturn(productResponse);
         mockMvc.perform(post("/api/products")
                         .characterEncoding("utf-8")

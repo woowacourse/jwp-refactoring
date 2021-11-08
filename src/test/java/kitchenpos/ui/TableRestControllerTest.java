@@ -2,12 +2,10 @@ package kitchenpos.ui;
 
 import kitchenpos.RestControllerTest;
 import kitchenpos.application.TableService;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.AdditionalAnswers;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -15,7 +13,6 @@ import org.springframework.http.MediaType;
 import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableRequest;
 import static kitchenpos.fixture.OrderTableFixture.createOrderTableResponse;
 import static org.mockito.ArgumentMatchers.any;
@@ -33,7 +30,7 @@ class TableRestControllerTest extends RestControllerTest {
     @Test
     void create() throws Exception {
         OrderTableRequest orderTableRequest = createOrderTableRequest();
-        OrderTableResponse orderTableResponse = OrderTableResponse.of(orderTableRequest.toEntity(1L));
+        OrderTableResponse orderTableResponse = createOrderTableResponse(1L, orderTableRequest);
         when(mockTableService.create(any())).thenReturn(orderTableResponse);
         mockMvc.perform(post("/api/tables")
                         .characterEncoding("utf-8")
@@ -58,11 +55,11 @@ class TableRestControllerTest extends RestControllerTest {
     @DisplayName("테이블 empty 상태 변경 요청을 처리한다.")
     @Test
     void changeEmpty() throws Exception {
-        Long savedOrderTableId = 1L;
         OrderTableRequest orderTableRequest = createOrderTableRequest();
-        OrderTableResponse orderTableResponse = OrderTableResponse.of(orderTableRequest.toEntity(savedOrderTableId));
+        OrderTableResponse orderTableResponse = createOrderTableResponse(1L, orderTableRequest);
+        ;
         when(mockTableService.changeEmpty(any(), any())).thenReturn(orderTableResponse);
-        mockMvc.perform(put("/api/tables/{orderTableId}/empty", savedOrderTableId)
+        mockMvc.perform(put("/api/tables/{orderTableId}/empty", 1L)
                         .characterEncoding("utf-8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderTableRequest))
@@ -74,11 +71,10 @@ class TableRestControllerTest extends RestControllerTest {
     @DisplayName("테이블 손님 수 변경 요청을 처리한다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        Long savedOrderTableId = 1L;
         OrderTableRequest orderTableRequest = createOrderTableRequest();
-        OrderTableResponse orderTableResponse = OrderTableResponse.of(orderTableRequest.toEntity(savedOrderTableId));
+        OrderTableResponse orderTableResponse = createOrderTableResponse(1L, orderTableRequest);
         when(mockTableService.changeNumberOfGuests(any(), any())).thenReturn(orderTableResponse);
-        mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", savedOrderTableId)
+        mockMvc.perform(put("/api/tables/{orderTableId}/number-of-guests", 1L)
                         .characterEncoding("utf-8")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(orderTableRequest))

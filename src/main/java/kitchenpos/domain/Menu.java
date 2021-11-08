@@ -2,10 +2,8 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import java.util.Objects;
+import javax.persistence.*;
 
 @Entity
 public class Menu {
@@ -19,17 +17,38 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
-
+    @JoinColumn(name = "id")
+    @OneToMany
     private List<MenuProduct> menuProducts;
 
     public Menu() {
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+        validate(price, menuProducts);
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
+    }
+
+    private void validate(BigDecimal price, List<MenuProduct> menuProducts) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        BigDecimal sum = BigDecimal.ZERO;
+        for (MenuProduct menuProduct : menuProducts) {
+            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public List<MenuProduct> getMenuProducts() {
+        return menuProducts;
     }
 
     public Long getId() {
@@ -58,13 +77,5 @@ public class Menu {
 
     public MenuGroup getMenuGroup() {
         return menuGroup;
-    }
-
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
-    }
-
-    public void setMenuProducts(final List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

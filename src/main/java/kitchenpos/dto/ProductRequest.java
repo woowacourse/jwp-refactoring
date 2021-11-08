@@ -13,17 +13,6 @@ public class ProductRequest {
         this.price = price;
     }
 
-    public Product toEntity() {
-        return new Product(name, price);
-    }
-
-    public Product toEntity(Long id) {
-        Product product = new Product(name, price);
-        product.setId(id);
-        return product;
-    }
-
-
     public String getName() {
         return name;
     }

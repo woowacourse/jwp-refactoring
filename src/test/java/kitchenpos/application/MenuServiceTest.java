@@ -1,20 +1,9 @@
 package kitchenpos.application;
 
-import static kitchenpos.fixture.MenuFixture.createMenuProduct;
-import static kitchenpos.fixture.MenuFixture.createMenuRequest;
-import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
-import static kitchenpos.fixture.ProductFixture.createProduct;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.ProductRepository;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,29 +15,41 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
+
+import static kitchenpos.fixture.MenuFixture.createMenuProductRequest;
+import static kitchenpos.fixture.MenuFixture.createMenuRequest;
+import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
+import static kitchenpos.fixture.ProductFixture.createProduct;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
 @Sql("classpath:db/test/truncate.sql")
 @ActiveProfiles("test")
 @SpringBootTest
 class MenuServiceTest {
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @Autowired
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuService menuService;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductRequest> menuProducts;
 
     @BeforeEach
     void setUp() {
-        menuGroupId = menuGroupDao.save(createMenuGroup()).getId();
-        Product product = productDao.save(createProduct(1L));
+        menuGroupId = menuGroupRepository.save(createMenuGroup()).getId();
+        Product product = productRepository.save(createProduct(1L));
         menuProducts = Arrays.asList(
-                createMenuProduct(1L, null, product.getId(), 1),
-                createMenuProduct(2L, null, product.getId(), 1)
+                createMenuProductRequest(1L, product.getId(), 1),
+                createMenuProductRequest(2L, product.getId(), 1)
         );
     }
 
@@ -66,7 +67,7 @@ class MenuServiceTest {
                     () -> assertThat(savedMenu.getName()).isEqualTo(menu.getName()),
                     () -> assertThat(savedMenu.getPrice().compareTo(menu.getPrice())).isEqualTo(0),
                     () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
-                    () -> assertThat(savedMenu.getMenuProducts()).hasSize(menu.getMenuProducts().size())
+                    () -> assertThat(savedMenu.getMenuProducts()).hasSize(menu.getMenuProductRequests().size())
             );
         }
 
@@ -81,8 +82,7 @@ class MenuServiceTest {
         @DisplayName("메뉴 상품 가격의 합보다 큰 가격으로 메뉴를 생성할 수 없다.")
         @Test
         void createWithInvalidPrice2() {
-            MenuRequest menu = createMenuRequest(menuGroupId, menuProducts);
-            BigDecimal invalidPrice = sumOfProductPrice(menu.getMenuProducts()).add(BigDecimal.ONE);
+            BigDecimal invalidPrice = BigDecimal.valueOf(Long.MAX_VALUE);
             assertThatThrownBy(() -> menuService.create(createMenuRequest(invalidPrice, menuGroupId, menuProducts)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -93,15 +93,6 @@ class MenuServiceTest {
             Long invalidMenuGroupId = Long.MAX_VALUE;
             MenuRequest menu = createMenuRequest(invalidMenuGroupId, menuProducts);
             assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
-        }
-
-        private BigDecimal sumOfProductPrice(List<MenuProduct> menuProducts) {
-            BigDecimal sum = BigDecimal.ZERO;
-            for (MenuProduct menuProduct : menuProducts) {
-                Product product = productDao.findById(menuProduct.getProductId()).get();
-                sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-            }
-            return sum;
         }
     }
 

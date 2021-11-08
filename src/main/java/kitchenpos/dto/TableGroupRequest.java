@@ -8,21 +8,11 @@ import kitchenpos.domain.TableGroup;
 public class TableGroupRequest {
 
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private List<Long> orderTableIds;
 
-    public TableGroupRequest(LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroupRequest(LocalDateTime createdDate, List<Long> orderTableIds) {
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
-    }
-
-    public TableGroup toEntity() {
-        return new TableGroup(createdDate, orderTables);
-    }
-
-    public TableGroup toEntity(Long id) {
-        TableGroup tableGroup = new TableGroup(createdDate, orderTables);
-        tableGroup.setId(id);
-        return tableGroup;
+        this.orderTableIds = orderTableIds;
     }
 
     public LocalDateTime getCreatedDate() {
@@ -33,11 +23,7 @@ public class TableGroupRequest {
         this.createdDate = createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
-
-    public void setOrderTables(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+    public List<Long> getOrderTableIds() {
+        return orderTableIds;
     }
 }
