@@ -19,7 +19,7 @@ spring:
       ddl-auto: validate
     properties:
       hibernate:
-        format_sql=true: true
+        format_sql: true
     show-sql: true
 
 logging:
