@@ -4,7 +4,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
-import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
@@ -19,18 +18,15 @@ import java.util.List;
 public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final MenuProductValidator menuProductValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
             final MenuProductValidator menuProductValidator
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.menuProductValidator = menuProductValidator;
     }
 
@@ -39,7 +35,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProducts = generateMenuProducts(menuRequest.getMenuProducts());
-        menuProductValidator.validateMenuProduct(menuProducts, menuRequest.getPrice());
+        menuProductValidator.validateMenuProducts(menuProducts, menuRequest.getPrice());
 
         final Menu menu = new Menu.Builder()
                 .name(menuRequest.getName())
@@ -49,7 +45,6 @@ public class MenuService {
                 .build();
 
         menuRepository.save(menu);
-        menuProductRepository.saveAll(menuProducts);
         return MenuResponse.of(menu);
     }
 

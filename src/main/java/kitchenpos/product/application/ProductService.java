@@ -19,13 +19,13 @@ public class ProductService {
 
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        final Product newProduct = new Product.Builder()
+        final Product product = new Product.Builder()
                 .name(productRequest.getName())
                 .price(productRequest.getPrice())
                 .build();
 
-        productRepository.save(newProduct);
-        return ProductResponse.of(newProduct);
+        productRepository.save(product);
+        return ProductResponse.of(product);
     }
 
     public List<ProductResponse> list() {

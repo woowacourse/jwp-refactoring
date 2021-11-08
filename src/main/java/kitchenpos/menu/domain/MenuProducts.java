@@ -1,5 +1,6 @@
 package kitchenpos.menu.domain;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL)
     private List<MenuProduct> menuProducts;
 
     public MenuProducts() {
