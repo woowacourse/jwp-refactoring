@@ -109,7 +109,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
+        when(menuProductRepository.saveAll(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
         when(productRepository.findAllByIdIn(any())).thenReturn(products);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
@@ -154,7 +154,6 @@ class MenuServiceTest {
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
-        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
