@@ -43,7 +43,7 @@ class OrderTest {
             .build();
 
     private final OrderLineItem orderLineItem = new OrderLineItem.Builder()
-            .menu(menu)
+            .menuId(menu.getId())
             .quantity(1L)
             .build();
 
@@ -51,13 +51,13 @@ class OrderTest {
     @Test
     void createOrderWithBuilder() {
         final Order order = new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
                 .build();
 
-        assertThat(order.getOrderTable()).isEqualTo(orderTable);
+        assertThat(order.getOrderTableId()).isEqualTo(orderTable.getId());
         assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.COOKING);
         assertThat(order.getOrderedTime()).isEqualTo(LocalDateTime.MAX);
         assertThat(order.getOrderLineItems()).hasSize(1);
@@ -67,7 +67,7 @@ class OrderTest {
     @Test
     void orderLineItemCantBeNull() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(null)
@@ -79,7 +79,7 @@ class OrderTest {
     @Test
     void orderLineItemMenuShouldNotDuplicate() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem, orderLineItem))
@@ -91,7 +91,7 @@ class OrderTest {
     @Test
     void orderLineItemMenuShouldBeCooking() {
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.MEAL)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
@@ -99,7 +99,7 @@ class OrderTest {
         ).isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COMPLETION)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))
@@ -111,7 +111,7 @@ class OrderTest {
     @Test
     void orderStatusCannotChangeToComplete() {
         final Order order = new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderTable.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.MAX)
                 .orderLineItems(Arrays.asList(orderLineItem))

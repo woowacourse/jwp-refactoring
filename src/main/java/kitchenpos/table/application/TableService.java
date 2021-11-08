@@ -6,6 +6,7 @@ import kitchenpos.table.ui.request.OrderTableEmptyRequest;
 import kitchenpos.table.ui.request.OrderTableNumberOfGuestRequest;
 import kitchenpos.table.ui.request.OrderTableRequest;
 import kitchenpos.table.ui.response.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,9 +15,14 @@ import java.util.List;
 @Service
 public class TableService {
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -39,6 +45,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable foundOrderTable = findOrderTable(orderTableId);
+        applicationEventPublisher.publishEvent(new CheckAllOrderCompletedEvent(foundOrderTable.getId()));
         foundOrderTable.changeEmpty(orderTableEmptyRequest.getEmpty());
         return OrderTableResponse.of(foundOrderTable);
     }

@@ -1,14 +1,10 @@
 package kitchenpos.order.application;
 
-import kitchenpos.menu.domain.Menu;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.domain.repository.OrderTableRepository;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.order.ui.request.OrderStatusModifyRequest;
@@ -22,29 +18,29 @@ import java.util.List;
 
 @Service
 public class OrderService {
-    private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderOrderTableValidator orderOrderTableValidator;
+    private final OrderMenuValidator orderMenuValidator;
 
     public OrderService(
-            final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderOrderTableValidator orderOrderTableValidator,
+            final OrderMenuValidator orderMenuValidator
     ) {
-        this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderOrderTableValidator = orderOrderTableValidator;
+        this.orderMenuValidator = orderMenuValidator;
     }
 
     @Transactional
     public OrderResponse create(final OrderRequest orderRequest) {
-        final OrderTable orderTable = findOrderTable(orderRequest.getOrderTableId());
+        orderOrderTableValidator.validateOrderTable(orderRequest.getOrderTableId());
         final List<OrderLineItem> orderLineItems = generateOrderLineItems(orderRequest.getOrderLineItems());
         final Order order = new Order.Builder()
-                .orderTable(orderTable)
+                .orderTableId(orderRequest.getOrderTableId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(orderLineItems)
@@ -55,27 +51,18 @@ public class OrderService {
         return OrderResponse.of(order);
     }
 
-    private OrderTable findOrderTable(Long orderTableId) {
-        return orderTableRepository.findById(orderTableId)
-                .orElseThrow(IllegalArgumentException::new);
-    }
-
     private List<OrderLineItem> generateOrderLineItems(List<OrderLineItemRequest> orderLineItemRequests) {
         final List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            final Menu menu = findMenu(orderLineItemRequest.getMenuId());
+            orderMenuValidator.validateMenuId(orderLineItemRequest.getMenuId());
+
             final OrderLineItem orderLineItem = new OrderLineItem.Builder()
-                    .menu(menu)
+                    .menuId(orderLineItemRequest.getMenuId())
                     .quantity(orderLineItemRequest.getQuantity())
                     .build();
             orderLineItems.add(orderLineItem);
         }
         return orderLineItems;
-    }
-
-    private Menu findMenu(Long menuId) {
-        return menuRepository.findById(menuId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<OrderResponse> list() {

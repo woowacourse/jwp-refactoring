@@ -1,16 +1,13 @@
 package kitchenpos.order.domain;
 
-import javax.persistence.Embeddable;
-import javax.persistence.OneToMany;
 import java.util.List;
 
-@Embeddable
 public class Orders {
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
+    private final List<Order> orders;
 
-    public Orders() {
+    public Orders(List<Order> orders) {
+        this.orders = orders;
     }
 
     public void checkAllOrderCompleted() {

@@ -13,4 +13,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             "from orders as orders " +
             "left join fetch orders.orderLineItems")
     List<Order> findAllFetchJoinOrderLineItems();
+
+    List<Order> findAllByOrderTableId(Long orderTableId);
 }

@@ -18,9 +18,6 @@ public class OrderTable {
     private int numberOfGuests;
     private boolean empty;
 
-    @Embedded
-    private Orders orders;
-
     public OrderTable() {
     }
 
@@ -36,7 +33,6 @@ public class OrderTable {
     }
 
     public void ungroupFromTableGroup() {
-        this.orders.checkAllOrderCompleted();
         this.tableGroup = null;
         this.empty = false;
     }
@@ -45,7 +41,6 @@ public class OrderTable {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException();
         }
-        this.orders.checkAllOrderCompleted();
         this.empty = empty;
     }
 

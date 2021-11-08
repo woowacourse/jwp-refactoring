@@ -77,13 +77,13 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderTableRepository.saveAll(주문_테이블들.getOrderTables());
 
         주문_테이블1_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
-                .menu(한마리메뉴_중_후라이드치킨)
+                .menuId(한마리메뉴_중_후라이드치킨.getId())
                 .order(주문_테이블1_요리중인_주문)
                 .quantity(1L)
                 .build();
 
         주문_테이블1_요리중인_주문 = new Order.Builder()
-                .orderTable(테이블_그룹_없음_주문_테이블1)
+                .orderTableId(테이블_그룹_없음_주문_테이블1.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
@@ -92,13 +92,13 @@ class TableAcceptanceTest extends AcceptanceTest {
         orderLineItemRepository.save(주문_테이블1_한마리메뉴_중_후라이트치킨);
 
         주문_테이블2_한마리메뉴_중_후라이트치킨  = new OrderLineItem.Builder()
-                .menu(한마리메뉴_중_후라이드치킨)
+                .menuId(한마리메뉴_중_후라이드치킨.getId())
                 .order(주문_테이블2_식사중인_주문)
                 .quantity(1L)
                 .build();
 
         주문_테이블2_식사중인_주문 = new Order.Builder()
-                .orderTable(테이블_그룹_없음_주문_테이블2)
+                .orderTableId(테이블_그룹_없음_주문_테이블2.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Arrays.asList(주문_테이블2_한마리메뉴_중_후라이트치킨))

@@ -8,6 +8,7 @@ import kitchenpos.table.domain.repository.TableGroupRepository;
 import kitchenpos.table.ui.request.OrderTableIdRequest;
 import kitchenpos.table.ui.request.TableGroupRequest;
 import kitchenpos.table.ui.response.TableGroupResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -20,10 +21,16 @@ import java.util.stream.Collectors;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableGroupService(final OrderTableRepository orderTableRepository, final TableGroupRepository tableGroupRepository) {
+    public TableGroupService(
+            final OrderTableRepository orderTableRepository,
+            final TableGroupRepository tableGroupRepository,
+            final ApplicationEventPublisher applicationEventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -68,6 +75,7 @@ public class TableGroupService {
 
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
         for (OrderTable orderTable : orderTables) {
+            applicationEventPublisher.publishEvent(new CheckAllOrderCompletedEvent(orderTable.getId()));
             orderTable.ungroupFromTableGroup();
         }
     }

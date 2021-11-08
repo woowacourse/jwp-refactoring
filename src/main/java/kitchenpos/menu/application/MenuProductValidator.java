@@ -24,12 +24,12 @@ public class MenuProductValidator {
         }
     }
 
-    public void validateMenuProduct(List<MenuProduct> menuProducts, BigDecimal price) {
+    public void validateMenuProducts(List<MenuProduct> menuProducts, BigDecimal price) {
         if (Objects.isNull(menuProducts)) {
             throw new IllegalArgumentException();
         }
-        BigDecimal totalPriceOfSingleMenuProduct = calculateMenuProductsPrice(menuProducts);
-        if (price.compareTo(totalPriceOfSingleMenuProduct) > 0) {
+        BigDecimal menuProductsPrice = calculateMenuProductsPrice(menuProducts);
+        if (price.compareTo(menuProductsPrice) > 0) {
             throw new IllegalArgumentException();
         }
     }

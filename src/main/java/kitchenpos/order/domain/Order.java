@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.menu.domain.Menu;
 import org.springframework.util.CollectionUtils;
 
 import javax.persistence.*;
@@ -17,8 +15,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -32,29 +29,22 @@ public class Order {
     }
 
     private Order(Builder builder) {
-        validateOrderTable(builder.orderTable);
         validateOrderLineItems(builder.orderLineItems);
         validateOrderStatus(builder.orderStatus);
         this.id = builder.id;
-        this.orderTable = builder.orderTable;
+        this.orderTableId = builder.orderTableId;
         this.orderStatus = builder.orderStatus;
         this.orderedTime = builder.orderedTime;
         this.orderLineItems = new OrderLineItems(builder.orderLineItems);
         this.orderLineItems.registerOrder(this);
     }
 
-    private void validateOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-    }
-
     private void validateOrderLineItems(List<OrderLineItem> orderLineItems) {
         if (CollectionUtils.isEmpty(orderLineItems)) {
             throw new IllegalArgumentException();
         }
-        final Set<Menu> orderedMenus = orderLineItems.stream()
-                .map(OrderLineItem::getMenu)
+        final Set<Long> orderedMenus = orderLineItems.stream()
+                .map(OrderLineItem::getMenuId)
                 .collect(Collectors.toSet());
         if (orderedMenus.size() != orderLineItems.size()) {
             throw new IllegalArgumentException();
@@ -84,11 +74,7 @@ public class Order {
     }
 
     public Long getOrderTableId() {
-        return orderTable.getId();
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -105,7 +91,7 @@ public class Order {
 
     public static class Builder {
         private Long id;
-        private OrderTable orderTable;
+        private Long orderTableId;
         private OrderStatus orderStatus;
         private LocalDateTime orderedTime;
         private List<OrderLineItem> orderLineItems;
@@ -118,8 +104,8 @@ public class Order {
             return this;
         }
 
-        public Builder orderTable(OrderTable orderTable) {
-            this.orderTable = orderTable;
+        public Builder orderTableId(Long orderTableId) {
+            this.orderTableId = orderTableId;
             return this;
         }
 
