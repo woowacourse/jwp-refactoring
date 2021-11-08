@@ -161,7 +161,7 @@ class MenuServiceTest {
     @Test
     void list() {
         final List<Menu> menus = Arrays.asList(savedMenu1, savedMenu2);
-        when(menuRepository.findAll()).thenReturn(menus);
+        when(menuRepository.findAllJoinFetch()).thenReturn(menus);
 
         final List<Menu> actual = menuService.list();
 

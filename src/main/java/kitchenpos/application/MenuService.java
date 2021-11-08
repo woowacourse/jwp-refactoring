@@ -53,7 +53,7 @@ public class MenuService {
     }
 
     public List<Menu> list() {
-        return menuRepository.findAll();
+        return menuRepository.findAllJoinFetch();
     }
 
     private List<MenuProduct> menuProductsWith(List<MenuProductRequest> menuProductsRequest) {
