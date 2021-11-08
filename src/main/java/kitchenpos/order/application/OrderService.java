@@ -3,7 +3,6 @@ package kitchenpos.order.application;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
@@ -19,18 +18,15 @@ import java.util.List;
 @Service
 public class OrderService {
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderOrderTableValidator orderOrderTableValidator;
     private final OrderMenuValidator orderMenuValidator;
 
     public OrderService(
             final OrderRepository orderRepository,
-            final OrderLineItemRepository orderLineItemRepository,
             final OrderOrderTableValidator orderOrderTableValidator,
             final OrderMenuValidator orderMenuValidator
     ) {
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderOrderTableValidator = orderOrderTableValidator;
         this.orderMenuValidator = orderMenuValidator;
     }
@@ -47,7 +43,6 @@ public class OrderService {
                 .build();
 
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(orderLineItems);
         return OrderResponse.of(order);
     }
 

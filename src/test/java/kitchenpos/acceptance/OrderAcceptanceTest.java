@@ -3,11 +3,11 @@ package kitchenpos.acceptance;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.domain.OrderTable;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.request.OrderRequest;
 import kitchenpos.order.ui.request.OrderStatusModifyRequest;
 import kitchenpos.order.ui.response.OrderResponse;
+import kitchenpos.table.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -181,12 +181,19 @@ class OrderAcceptanceTest extends AcceptanceTest {
     @Test
     void cannotChangeOrderStatusWhenCompletion() {
         // given
+        OrderLineItem 새로운_주문_아이템 = new OrderLineItem.Builder()
+                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .order(null)
+                .quantity(1L)
+                .build();
+
         Order 완료된_주문 = new Order.Builder()
                 .orderTableId(차있는_주문_테이블.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(차있는_주문_테이블_한마리메뉴_중_후라이드_치킨))
+                .orderLineItems(Arrays.asList(새로운_주문_아이템))
                 .build();
+
         완료된_주문.changeOrderStatus(OrderStatus.COMPLETION);
         orderRepository.save(완료된_주문);
 

@@ -235,14 +235,22 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
     @DisplayName("통합 계산을 위해 개별 테이블을 그룹화하는 tableGroupId에 해당하는 테이블 그룹을 삭제할 때, 테이블 그룹의 테이블들의 주문 상태가 COMPLETION이 아니면 에러가 발생한다.")
     @Test
     void cannotDeleteTableGroupWhenTableOrderIsNotCompletion() {
-        // when
+        // given
+        OrderLineItem 새로운_주문_아이템 = new OrderLineItem.Builder()
+                .menuId(한마리메뉴_중_후라이드치킨.getId())
+                .order(null)
+                .quantity(1L)
+                .build();
+
         Order 요리중인_주문 = new Order.Builder()
                 .orderTableId(주문_테이블1.getId())
                 .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(주문_테이블1_한마리메뉴_중_후라이트치킨))
+                .orderLineItems(Arrays.asList(새로운_주문_아이템))
                 .build();
+
         orderRepository.save(요리중인_주문);
+
         Long 테이블_그룹1_ID = 테이블_그룹.getId();
 
         // when
