@@ -98,7 +98,7 @@ public abstract class AcceptanceTest {
 
         한마리메뉴_후라이드치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(후라이드치킨)
+                .productId(후라이드치킨.getId())
                 .quantity(1L)
                 .build();
 
@@ -113,13 +113,13 @@ public abstract class AcceptanceTest {
 
         두마리메뉴_양념치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(양념치킨)
+                .productId(양념치킨.getId())
                 .quantity(1L)
                 .build();
 
         두마리메뉴_간장치킨 = new MenuProduct.Builder()
                 .menu(null)
-                .product(간장치킨)
+                .productId(간장치킨.getId())
                 .quantity(1L)
                 .build();
 

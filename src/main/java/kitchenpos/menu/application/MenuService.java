@@ -3,11 +3,9 @@ package kitchenpos.menu.application;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.domain.repository.MenuRepository;
-import kitchenpos.product.domain.repository.ProductRepository;
 import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.ui.request.MenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
@@ -22,18 +20,18 @@ public class MenuService {
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
-    private final ProductRepository productRepository;
+    private final MenuProductValidator menuProductValidator;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository
+            final MenuProductValidator menuProductValidator
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
-        this.productRepository = productRepository;
+        this.menuProductValidator = menuProductValidator;
     }
 
     @Transactional
@@ -41,6 +39,7 @@ public class MenuService {
         final MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
         final List<MenuProduct> menuProducts = generateMenuProducts(menuRequest.getMenuProducts());
+        menuProductValidator.validateMenuProduct(menuProducts, menuRequest.getPrice());
 
         final Menu menu = new Menu.Builder()
                 .name(menuRequest.getName())
@@ -58,18 +57,15 @@ public class MenuService {
         final List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            menuProductValidator.validateProductId(menuProductRequest.getProductId());
+
             final MenuProduct menuProduct = new MenuProduct.Builder()
-                    .product(findProductById(menuProductRequest.getProductId()))
+                    .productId(menuProductRequest.getProductId())
                     .quantity(menuProductRequest.getQuantity())
                     .build();
             menuProducts.add(menuProduct);
         }
         return menuProducts;
-    }
-
-    private Product findProductById(Long productId) {
-        return productRepository.findById(productId)
-                .orElseThrow(IllegalArgumentException::new);
     }
 
     public List<MenuResponse> list() {

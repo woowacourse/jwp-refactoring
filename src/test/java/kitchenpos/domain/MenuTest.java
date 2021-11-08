@@ -20,7 +20,7 @@ class MenuTest {
             .build();
 
     private final MenuProduct menuProduct = new MenuProduct.Builder()
-            .product(product)
+            .productId(product.getId())
             .quantity(1L)
             .build();
 
@@ -58,32 +58,6 @@ class MenuTest {
                 .id(1L)
                 .name("menu")
                 .price(BigDecimal.valueOf(-10000))
-                .menuGroup(null)
-                .menuProducts(Arrays.asList(menuProduct))
-                .build()
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 구성하는 MenuProduct는 null일 수 없다.")
-    @Test
-    void menuProductsMustNotBeNull() {
-        assertThatThrownBy(() -> new Menu.Builder()
-                .id(1L)
-                .name("menu")
-                .price(BigDecimal.valueOf(10000))
-                .menuGroup(null)
-                .menuProducts(null)
-                .build()
-        ).isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @DisplayName("메뉴를 구성하는 MenuProduct의 가격의 총합보다 비싸게 Menu의 Price를 책정할 수 없다.")
-    @Test
-    void menuCannotBeExpensiveThanMenuProductPriceTotal() {
-        assertThatThrownBy(() -> new Menu.Builder()
-                .id(1L)
-                .name("menu")
-                .price(BigDecimal.valueOf(999999999))
                 .menuGroup(null)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build()

@@ -15,8 +15,7 @@ public class MenuProduct {
     @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Product product;
+    private Long productId;
 
     private Long quantity;
 
@@ -26,16 +25,12 @@ public class MenuProduct {
     private MenuProduct(Builder builder) {
         this.seq = builder.seq;
         this.menu = builder.menu;
-        this.product = builder.product;
+        this.productId = builder.productId;
         this.quantity = builder.quantity;
     }
 
     public void registerMenu(Menu menu) {
         this.menu = menu;
-    }
-
-    public BigDecimal calculatePrice() {
-        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public long getQuantity() {
@@ -50,18 +45,14 @@ public class MenuProduct {
         return menu.getId();
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public Long getProductId() {
-        return product.getId();
+        return productId;
     }
 
     public static class Builder {
         private Long seq;
         private Menu menu;
-        private Product product;
+        private Long productId;
         private Long quantity;
 
         public Builder() {
@@ -77,8 +68,8 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder product(Product product) {
-            this.product = product;
+        public Builder productId(Long productId) {
+            this.productId = productId;
             return this;
         }
 

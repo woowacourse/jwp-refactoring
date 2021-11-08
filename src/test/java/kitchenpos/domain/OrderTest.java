@@ -25,7 +25,7 @@ class OrderTest {
             .build();
 
     private final MenuProduct menuProduct = new MenuProduct.Builder()
-            .product(product)
+            .productId(product.getId())
             .quantity(1L)
             .build();
 
