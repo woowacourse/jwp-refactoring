@@ -17,7 +17,7 @@ public class MenuFixture {
     }
 
     public static Menu create(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
-        Menu menu = new Menu(name, price, menuGroup);
+        Menu menu = new Menu(id, name, price, menuGroup);
 
         return menu;
     }
