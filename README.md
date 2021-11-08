@@ -115,7 +115,272 @@
     - 주문 상태 COMPLETION으로 변경
     - 테이블 인원 수 양수 -> 0 으로 수정 
     - 테이블 empty false -> true 로 수정
-  
+
+## 서비스 리팩터링
+
+### DTO로 LayerArchitecture 지키기
+
+- Request DTO 생성
+  - [ ] MenuRequestDto
+  - [ ] MenuGroupRequestDto
+  - [ ] OrderRequestDto
+  - [ ] OrderStatusRequestDto
+    - [ ] OrderId
+    - [ ] Order -> Status만 포함하도록 변경
+  - [ ] ProductRequestDto
+  - [ ] TableGroupRequestDto
+  - [ ] TableUngroupRequestDto
+  - [ ] OrderTableRequestDto -> TableRequestDto로 네이밍 변경
+  - [ ] MenuProductDto
+  - [ ] TableEmptyRequestDto
+    - [ ] OrderTableId
+    - [ ] OrderTable -> Empty 여부만 포함하도록 변경
+  - [ ] TableGuestRequestDto
+    - [ ] OrderTableId
+    - [ ] OrderTable -> NumberOfGuest만 포함하도록 변경
+
+- Response DTO 생성
+- [ ] MenuResponseDto
+- [ ] MenuGroupResponseDto
+- [ ] List<MenuGroup>
+- [ ] List<Menu>
+- [ ] OrderResponseDto
+- [ ] List<Order>
+- [ ] ProductResponseDto
+- [ ] List<Product>
+- [ ] TableGroupResponseDto
+- [ ] OrderTableResponseDto
+- [ ] List<OrderTable>
+
+<br>
+
+## 서비스 리팩터링
+### DTO로 LayerArchitecture 지키기
+
+- Request DTO 생성
+  - [ ] MenuRequestDto
+  - [ ] MenuGroupRequestDto
+  - [ ] OrderRequestDto
+  - [ ] OrderStatusRequestDto
+    - [ ] OrderId
+    - [ ] Order -> Status만 포함하도록 변경
+  - [ ] ProductRequestDto
+  - [ ] TableGroupRequestDto
+  - [ ] TableUngroupRequestDto
+  - [ ] OrderTableRequestDto -> TableRequestDto로 네이밍 변경
+  - [ ] MenuProductDto
+  - [ ] TableEmptyRequestDto
+    - [ ] OrderTableId
+    - [ ] OrderTable -> Empty 여부만 포함하도록 변경
+  - [ ] TableGuestRequestDto
+    - [ ] OrderTableId
+    - [ ] OrderTable -> NumberOfGuest만 포함하도록 변경
+
+- Response DTO 생성
+- [ ] MenuResponseDto
+- [ ] MenuGroupResponseDto
+- [ ] List<MenuGroup>
+- [ ] List<Menu>
+- [ ] OrderResponseDto
+- [ ] List<Order>
+- [ ] ProductResponseDto
+- [ ] List<Product>
+- [ ] TableGroupResponseDto
+- [ ] OrderTableResponseDto
+- [ ] List<OrderTable>
+
+### 비지니스 로직 Domain 책임으로 옮기기
+#### Menu
+**도메인 담당**
+- 메뉴 생성 로직
+  - Price 유효성 검사
+    - [ ] null 이거나 0 보다 작으면 예외
+  - [ ] MenuProducts 가격 합보다 Price가 크면 예외
+
+
+**서비스 흐름**
+- 메뉴 생성 로직
+  - [ ] MenuGroup 유효성
+  - [ ] Menu에 속한 MenuProducts 구하기
+  - [ ] 새로운 Menu 저장
+  - [ ] 소속 MenuProducts 저장
+    - [ ] MenuProducts의 MenuId 지정
+
+#### Order
+**도메인 담당**
+- 주문 생성 로직
+  - [ ] OrderLineItems가 Empty 라면 예외
+  - [ ] 주문 첫 생성시 초기값 세팅
+    - [ ] 주문 상태: COOKING
+    - [ ] 주문 시각: now()
+
+- OrderStatus 변경 로직
+  - [ ] Order의 status가 COMPLETION 이라면 예외
+
+**서비스 흐름**
+- 주문 생성 로직
+  - [ ] OrderLineItem의 MenuId가 존재하지 않는 Id라면 예외
+  - [ ] 주문한 orderTable이 없다면 예외
+  - [ ] 주문한 orderTable이 비었다면 예외
+  - [ ] Order 및 OrderLineItems 저장
+    - [ ] OrderLineItems의 orderId를 세팅한 후 저장
+
+- [ ] OrderStatus 변경 로직
+  - [ ] 저장된 Order 불러오기
+  - [ ] 도메인에서 유효성 검사 후 새로운 OrderStatus 지정
+  - [ ] 변경내용 저장
+
+#### Product
+**도메인 담당**
+- 프로덕트 생성 로직
+  - [ ] 가격이 Null, 혹은 0 보다 작다면 예외
+
+#### TableGroup
+**도메인 담당**
+- 테이블 그룹 생성 로직
+  - [ ] 소속 테이블이 비었거나 개수가 2보다 작다면 예외
+- [ ] 소속 테이블 중 비어있지 않거나 TableGroup이 이미 지정된 곳이 있다면 예외
+
+- 테이블 그룹 해제 로직
+  - [ ] 소속 테이블 중 COOKING, MEAL인 테이블이 있다면 예외
+
+**서비스 담당**
+- 테이블 그룹 생성 로직
+  - [ ] 소속 테이블 중 존재하지 않는 테이블이 있다면 예외
+- 초기값 세팅 (메서드 호출하고 도메인에서 한번에 처리하도록 구현)
+  - [ ] 소속 테이블의 tableGroupId, empty 여부 세팅 및 저장
+  - [ ] 생성 시간 now()로 세팅
+
+- 테이블 그룹 해제 로직
+  - [ ] 그룹 해제 설정
+    - [ ] 테이블 GroupId null
+    - [ ] empty 여부 false로 변경
+
+#### Table
+**도메인 담당**
+- 테이블 Empty 여부 변경 로직
+  - [ ] TableGroupId가 null이 아니라면 예외
+
+- 테이블의 손님 수 변경 로직
+  - [ ] 변경하려는 손님수가 0 이하라면 예외
+  - [ ] 변경하려는 테이블이 빈 테이블이라면 예외
+
+
+**서비스 담당**
+- 테이블 Empty 여부 변경 로직
+  - [ ] 수정하려는 OrderTable이 없다면 예외
+  - [ ] 속한 OrderTable의 Order가 COOKING이나 MEAL이라면 예외
+  - [ ] 테이블의 empty를 지정하고 저장
+
+- 테이블의 손님 수 변경 로직
+  - [ ] 수정하려는 OrderTable이 없다면 예외
+  - [ ] 테이블의 손님 수를 지정하고 저장
+
+### JPA로 리팩토링
+- [ ] 기존 JdbcTemplate을 JPA로 변경
+
+### 테스트코드 수정
+- [ ] 기존에 DTO를 사용하지 않던 테스트코드 인자를 수정
+- [ ] JPA Repository 테스트코드 추가
+- [ ] 단위테스트 추가
+
+### 비지니스 로직 Domain 책임으로 옮기기
+#### Menu
+**도메인 담당**
+- 메뉴 생성 로직
+  - Price 유효성 검사
+    - [ ] null 이거나 0 보다 작으면 예외
+  - [ ] MenuProducts 가격 합보다 Price가 크면 예외
+
+
+**서비스 흐름**
+- 메뉴 생성 로직
+  - [ ] MenuGroup 유효성
+  - [ ] Menu에 속한 MenuProducts 구하기
+  - [ ] 새로운 Menu 저장
+  - [ ] 소속 MenuProducts 저장
+    - [ ] MenuProducts의 MenuId 지정
+
+#### Order
+**도메인 담당**
+- 주문 생성 로직
+  - [ ] OrderLineItems가 Empty 라면 예외
+  - [ ] 주문 첫 생성시 초기값 세팅
+    - [ ] 주문 상태: COOKING
+    - [ ] 주문 시각: now()
+
+- OrderStatus 변경 로직
+  - [ ] Order의 status가 COMPLETION 이라면 예외
+
+**서비스 흐름**
+- 주문 생성 로직
+  - [ ] OrderLineItem의 MenuId가 존재하지 않는 Id라면 예외
+  - [ ] 주문한 orderTable이 없다면 예외
+  - [ ] 주문한 orderTable이 비었다면 예외
+  - [ ] Order 및 OrderLineItems 저장
+    - [ ] OrderLineItems의 orderId를 세팅한 후 저장
+
+- [ ] OrderStatus 변경 로직
+  - [ ] 저장된 Order 불러오기
+  - [ ] 도메인에서 유효성 검사 후 새로운 OrderStatus 지정
+  - [ ] 변경내용 저장
+
+#### Product
+**도메인 담당**
+- 프로덕트 생성 로직
+  - [ ] 가격이 Null, 혹은 0 보다 작다면 예외
+
+#### TableGroup
+**도메인 담당**
+- 테이블 그룹 생성 로직
+  - [ ] 소속 테이블이 비었거나 개수가 2보다 작다면 예외
+- [ ] 소속 테이블 중 비어있지 않거나 TableGroup이 이미 지정된 곳이 있다면 예외
+
+- 테이블 그룹 해제 로직
+  - [ ] 소속 테이블 중 COOKING, MEAL인 테이블이 있다면 예외
+
+**서비스 담당**
+- 테이블 그룹 생성 로직
+  - [ ] 소속 테이블 중 존재하지 않는 테이블이 있다면 예외
+- 초기값 세팅 (메서드 호출하고 도메인에서 한번에 처리하도록 구현)
+  - [ ] 소속 테이블의 tableGroupId, empty 여부 세팅 및 저장
+  - [ ] 생성 시간 now()로 세팅
+
+- 테이블 그룹 해제 로직
+  - [ ] 그룹 해제 설정
+    - [ ] 테이블 GroupId null
+    - [ ] empty 여부 false로 변경
+
+#### Table
+**도메인 담당**
+- 테이블 Empty 여부 변경 로직
+  - [ ] TableGroupId가 null이 아니라면 예외
+
+- 테이블의 손님 수 변경 로직
+  - [ ] 변경하려는 손님수가 0 이하라면 예외
+  - [ ] 변경하려는 테이블이 빈 테이블이라면 예외
+
+
+**서비스 담당**
+- 테이블 Empty 여부 변경 로직
+  - [ ] 수정하려는 OrderTable이 없다면 예외
+  - [ ] 속한 OrderTable의 Order가 COOKING이나 MEAL이라면 예외
+  - [ ] 테이블의 empty를 지정하고 저장
+
+- 테이블의 손님 수 변경 로직
+  - [ ] 수정하려는 OrderTable이 없다면 예외
+  - [ ] 테이블의 손님 수를 지정하고 저장
+
+### JPA로 리팩토링
+- [ ] 기존 JdbcTemplate을 JPA로 변경
+
+### 테스트코드 수정
+- [ ] 기존에 DTO를 사용하지 않던 테스트코드 인자를 수정
+- [ ] JPA Repository 테스트코드 추가
+- [ ] 단위테스트 추가
+
+<br>
+
 ## 용어 사전
 
 | 한글명 | 영문명 | 설명 |
