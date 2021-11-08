@@ -1,9 +1,9 @@
 package kitchenpos.table.application;
 
-public class CheckAllOrderCompletedEvent {
+public class OrdersCompletedCheckEvent {
     private final Long orderTableId;
 
-    public CheckAllOrderCompletedEvent(Long orderTableId) {
+    public OrdersCompletedCheckEvent(Long orderTableId) {
         this.orderTableId = orderTableId;
     }
 

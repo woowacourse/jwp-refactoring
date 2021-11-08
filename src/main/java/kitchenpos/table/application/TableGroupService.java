@@ -75,7 +75,7 @@ public class TableGroupService {
 
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
         for (OrderTable orderTable : orderTables) {
-            applicationEventPublisher.publishEvent(new CheckAllOrderCompletedEvent(orderTable.getId()));
+            applicationEventPublisher.publishEvent(new OrdersCompletedCheckEvent(orderTable.getId()));
             orderTable.ungroupFromTableGroup();
         }
     }

@@ -2,7 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.order.domain.Orders;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.table.application.CheckAllOrderCompletedEvent;
+import kitchenpos.table.application.OrdersCompletedCheckEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
@@ -16,8 +16,8 @@ public class OrderEventHandler {
     }
 
     @EventListener
-    public void checkAllOrderCompleted(CheckAllOrderCompletedEvent checkAllOrderCompletedEvent) {
-        final Long orderTableId = checkAllOrderCompletedEvent.getOrderTableId();
+    public void checkAllOrderCompleted(OrdersCompletedCheckEvent ordersCompletedCheckEvent) {
+        final Long orderTableId = ordersCompletedCheckEvent.getOrderTableId();
         final Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
         orders.checkAllOrderCompleted();
     }

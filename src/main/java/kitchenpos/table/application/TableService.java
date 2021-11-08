@@ -45,7 +45,7 @@ public class TableService {
     @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable foundOrderTable = findOrderTable(orderTableId);
-        applicationEventPublisher.publishEvent(new CheckAllOrderCompletedEvent(foundOrderTable.getId()));
+        applicationEventPublisher.publishEvent(new OrdersCompletedCheckEvent(foundOrderTable.getId()));
         foundOrderTable.changeEmpty(orderTableEmptyRequest.getEmpty());
         return OrderTableResponse.of(foundOrderTable);
     }
