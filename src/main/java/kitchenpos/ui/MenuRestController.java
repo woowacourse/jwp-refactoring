@@ -27,11 +27,13 @@ public class MenuRestController {
         final URI uri = URI.create("/api/menus/" + newMenu.getId());
         return ResponseEntity.created(uri)
                 .body(newMenu);
+                .body(created);
     }
 
     @GetMapping("/api/menus")
     public ResponseEntity<List<MenuResponse>> findAll() {
         return ResponseEntity.ok()
                 .body(menuService.findAll());
+                .body(menuService.list());
     }
 }

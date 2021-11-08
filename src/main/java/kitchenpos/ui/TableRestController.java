@@ -25,6 +25,7 @@ public class TableRestController {
         final URI uri = URI.create("/api/tables/" + newTable.getId());
         return ResponseEntity.created(uri)
                 .body(newTable);
+                .body(created);
     }
 
     @GetMapping("/api/tables")
@@ -32,6 +33,7 @@ public class TableRestController {
         List<TableResponse> tables = tableService.findAll();
         return ResponseEntity.ok()
                 .body(tables);
+                .body(tableService.list());
     }
 
     @PutMapping("/api/tables/{orderTableId}/empty")
@@ -39,6 +41,7 @@ public class TableRestController {
                                                   @RequestBody final TableRequest tableRequest) {
         return ResponseEntity.ok()
                 .body(tableService.changeEmpty(orderTableId, tableRequest));
+                .body(tableService.changeEmpty(orderTableId, orderTable));
     }
 
     @PutMapping("/api/tables/{orderTableId}/number-of-guests")
@@ -46,5 +49,6 @@ public class TableRestController {
                                                            @RequestBody final TableRequest tableRequest) {
         return ResponseEntity.ok()
                 .body(tableService.changeNumberOfGuests(orderTableId, tableRequest));
+                .body(tableService.changeNumberOfGuests(orderTableId, orderTable));
     }
 }

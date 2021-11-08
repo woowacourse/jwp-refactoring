@@ -28,6 +28,7 @@ public class MenuGroupRestController {
 
         return ResponseEntity.created(uri)
                 .body(createdMenuGroup);
+                .body(created);
     }
 
     @GetMapping("/api/menu-groups")
@@ -36,5 +37,6 @@ public class MenuGroupRestController {
 
         return ResponseEntity.ok()
                 .body(menuGroups);
+                .body(menuGroupService.list());
     }
 }

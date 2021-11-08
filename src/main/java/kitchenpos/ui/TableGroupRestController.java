@@ -23,6 +23,7 @@ public class TableGroupRestController {
         final URI uri = URI.create("/api/table-groups/" + newTableGroup.getId());
         return ResponseEntity.created(uri)
                 .body(newTableGroup);
+                .body(created);
     }
 
     @DeleteMapping("/api/table-groups/{tableGroupId}")

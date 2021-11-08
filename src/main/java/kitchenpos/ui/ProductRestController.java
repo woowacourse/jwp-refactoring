@@ -27,6 +27,7 @@ public class ProductRestController {
         final URI uri = URI.create("/api/products/" + newProduct.getId());
         return ResponseEntity.created(uri)
                 .body(newProduct);
+                .body(created);
     }
 
     @GetMapping("/api/products")
@@ -35,5 +36,6 @@ public class ProductRestController {
 
         return ResponseEntity.ok()
                 .body(products);
+                .body(productService.list());
     }
 }
