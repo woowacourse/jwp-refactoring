@@ -17,6 +17,10 @@ public class OrderFixture {
         return create(ID, ORDER_TABLE, ORDER_STATUS, ORDERED_TIME);
     }
 
+    public static Orders complete() {
+        return create(ID, ORDER_TABLE, OrderStatus.COMPLETION, ORDERED_TIME);
+    }
+
     public static Orders create(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         Orders order = new Orders(id, orderTable, orderStatus, orderedTime);
 

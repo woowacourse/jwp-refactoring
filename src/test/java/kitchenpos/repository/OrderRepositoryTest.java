@@ -8,17 +8,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-@Transactional
+@DataJpaTest
 @Sql(scripts = "/clear.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @DisplayName("OrderRepository 테스트")
 class OrderRepositoryTest {
@@ -32,7 +30,7 @@ class OrderRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        orderTable = OrderTableFixture.create();
+        orderTable = OrderTableFixture.nullTableGroup();
         orderTableRepository.save(orderTable);
     }
 
