@@ -5,14 +5,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class OrderLineItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, name = "order_id")
-    private Long orderId;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
     @Column(nullable = false)
     private Long menuId;
     @Column(nullable = false)
@@ -23,7 +26,7 @@ public class OrderLineItem {
 
     private OrderLineItem(Builder builder) {
         this.id = builder.id;
-        this.orderId = builder.orderId;
+        this.order = builder.order;
         this.menuId = builder.menuId;
         this.quantity = builder.quantity;
     }
@@ -34,7 +37,7 @@ public class OrderLineItem {
 
     public static class Builder {
         private Long id;
-        private Long orderId;
+        private Order order;
         private Long menuId;
         private long quantity;
 
@@ -43,7 +46,7 @@ public class OrderLineItem {
 
         public Builder of(OrderLineItem orderLineItem) {
             this.id = orderLineItem.id;
-            this.orderId = orderLineItem.orderId;
+            this.order = orderLineItem.order;
             this.menuId = orderLineItem.menuId;
             this.quantity = orderLineItem.quantity;
             return this;
@@ -54,8 +57,8 @@ public class OrderLineItem {
             return this;
         }
 
-        public Builder orderId(Long orderId) {
-            this.orderId = orderId;
+        public Builder order(Order order) {
+            this.order = order;
             return this;
         }
 
@@ -79,12 +82,12 @@ public class OrderLineItem {
         return id;
     }
 
-    public Long getOrderId() {
-        return orderId;
+    public Long getOrder() {
+        return order.getId();
     }
 
-    public void updateOrderId(final Long orderId) {
-        this.orderId = orderId;
+    public void updateOrder(final Order order) {
+        this.order = order;
     }
 
     public Long getMenuId() {

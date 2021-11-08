@@ -45,6 +45,10 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public void updateOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = new OrderLineItems(orderLineItems);
+    }
+
     public static class Builder {
         private Long id;
         private Long orderTableId;

@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import static kitchenpos.TestFixtures.createOrderLineItem;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,7 +58,9 @@ class OrderRestControllerTest {
 
     @Test
     void list() throws Exception {
-        when(orderService.list()).thenReturn(Collections.singletonList(TestFixtures.createOrder()));
+        final Order order = TestFixtures.createOrder();
+        order.updateOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
+        when(orderService.list()).thenReturn(Collections.singletonList(order));
 
         final MockHttpServletResponse response = mockMvc.perform(get("/api/orders"))
                 .andReturn()
@@ -69,6 +72,7 @@ class OrderRestControllerTest {
     @Test
     void changeOrderStatus() throws Exception {
         final Order order = TestFixtures.createOrder();
+        order.updateOrderLineItems(Collections.singletonList(createOrderLineItem(1L)));
         final String content = objectMapper.writeValueAsString(new OrderStatusRequest(OrderStatus.MEAL.name()));
         when(orderService.changeOrderStatus(any(), any())).thenReturn(order);
 

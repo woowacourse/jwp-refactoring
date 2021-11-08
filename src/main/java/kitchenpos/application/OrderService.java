@@ -48,7 +48,7 @@ public class OrderService {
 
         final Order savedOrder = orderRepository.save(orderWith(orderTable));
 
-        orderLineItems.updateOrderId(savedOrder.getId());
+        orderLineItems.updateOrderId(savedOrder);
         savedOrder.updateOrderLineItems(orderLineItems);
         orderLineItemRepository.saveAll(orderLineItems.getOrderLineItems());
 

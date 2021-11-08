@@ -61,7 +61,7 @@ public class TestFixtures {
     public static OrderLineItem createOrderLineItem(Long id) {
         return OrderLineItem.builder()
                 .id(id)
-                .orderId(1L)
+                .order(createOrder())
                 .menuId(1L)
                 .quantity(1L)
                 .build();
@@ -73,7 +73,6 @@ public class TestFixtures {
                 .orderTableId(1L)
                 .orderStatus(OrderStatus.COMPLETION.name())
                 .orderedTime(LocalDateTime.now())
-                .orderLineItems(Arrays.asList(createOrderLineItem(1L), createOrderLineItem(2L)))
                 .build();
     }
 
@@ -86,6 +85,7 @@ public class TestFixtures {
     }
 
     public static OrderRequest createOrderRequest(Order order) {
+        order.updateOrderLineItems(Arrays.asList(createOrderLineItem(1L), createOrderLineItem(2L)));
         final List<OrderLineItemRequest> orderLineItemRequests = order.getOrderLineItems().stream()
                 .map(OrderLineItemRequest::new)
                 .collect(Collectors.toList());
