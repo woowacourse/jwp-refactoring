@@ -6,7 +6,10 @@ import javax.persistence.Embeddable;
 
 @Embeddable
 public class Price {
-    private final BigDecimal price;
+    private BigDecimal price;
+
+    public Price() {
+    }
 
     public Price(Long price) {
         validate(price);

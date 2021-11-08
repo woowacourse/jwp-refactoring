@@ -17,7 +17,7 @@ public class Menu {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private BigDecimal price;
+    private Price price;
     @Column(nullable = false)
     private Long menuGroupId;
     @Embedded
@@ -49,7 +49,7 @@ public class Menu {
     public static class Builder {
         private Long id;
         private String name;
-        private BigDecimal price;
+        private Price price;
         private Long menuGroupId;
         private MenuProducts menuProducts;
 
@@ -76,7 +76,7 @@ public class Menu {
         }
 
         public Builder price(BigDecimal price) {
-            this.price = price;
+            this.price = new Price(price);
             return this;
         }
 
@@ -101,7 +101,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getPrice();
     }
 
     public Long getMenuGroupId() {

@@ -86,13 +86,13 @@ class MenuServiceTest {
                 .build();
         menuProduct1 = MenuProduct.builder()
                 .id(1L)
-                .menuId(savedMenu1.getId())
+                .menu(savedMenu1)
                 .productId(savedProduct1.getId())
                 .quantity(1L)
                 .build();
         menuProduct2 = MenuProduct.builder()
                 .id(2L)
-                .menuId(savedMenu2.getId())
+                .menu(savedMenu2)
                 .productId(savedProduct2.getId())
                 .quantity(1L)
                 .build();
@@ -109,8 +109,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(menuProductRepository.saveAll(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
-        when(productRepository.findAllByIdIn(any())).thenReturn(products);
+        when(productRepository.findByIdIn(any())).thenReturn(products);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
         final Menu actual = menuService.create(request);
@@ -143,7 +142,7 @@ class MenuServiceTest {
                 .id(3L)
                 .build();
         final MenuProduct weirdMenuProduct = MenuProduct.builder()
-                .menuId(savedMenu1.getId())
+                .menu(savedMenu1)
                 .productId(weirdSavedProduct.getId())
                 .quantity(1L)
                 .build();

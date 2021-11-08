@@ -12,8 +12,7 @@ import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "menu_id")
+    @OneToMany(mappedBy = "menu")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public MenuProducts() {
@@ -29,7 +28,7 @@ public class MenuProducts {
 
     public List<Long> getProductIds() {
         return menuProducts.stream()
-                .map(MenuProduct::getId)
+                .map(MenuProduct::getProductId)
                 .collect(Collectors.toList());
     }
 
@@ -52,5 +51,9 @@ public class MenuProducts {
         if (menuPrice.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void updateMenu(Menu menu) {
+        menuProducts.forEach(it -> it.updateMenu(menu));
     }
 }

@@ -43,7 +43,7 @@ public class TestFixtures {
     public static MenuProduct createMenuProduct() {
         return MenuProduct.builder()
                 .id(1L)
-                .menuId(1L)
+                .menu(createMenu())
                 .productId(1L)
                 .quantity(1L)
                 .build();

@@ -13,7 +13,6 @@ import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.ProductRepository;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,19 +22,16 @@ public class MenuService {
     private final MenuGroupRepository menuGroupRepository;
     private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
-    private final ApplicationEventPublisher eventPublisher;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
             final MenuProductRepository menuProductRepository,
-            final ProductRepository productRepository,
-            final ApplicationEventPublisher eventPublisher) {
+            final ProductRepository productRepository) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
         this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
-        this.eventPublisher = eventPublisher;
     }
 
     @Transactional
@@ -44,26 +40,29 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
         final Menu menu = menuWith(request);
-
-        final List<MenuProductRequest> menuProductsRequest = request.getMenuProducts();
-        final List<MenuProduct> menuProducts = menuProductsRequest.stream()
-                .map(menuProductRequest -> MenuProduct.builder()
-                        .productId(menuProductRequest.getProductId())
-                        .quantity(menuProductRequest.getQuantity())
-                        .build()
-                ).collect(Collectors.toList());
-        final MenuProducts savedMenuProducts = new MenuProducts(menuProductRepository.saveAll(menuProducts));
+        final MenuProducts menuProducts = new MenuProducts(menuProductsWith(request.getMenuProducts()));
 
         final Menu savedMenu = menuRepository.save(menu);
-        final List<Product> savedProducts = productRepository.findAllByIdIn(savedMenuProducts.getProductIds());
-        savedMenuProducts.checkValidityOfMenuPrice(savedProducts, savedMenu.getPrice());
-        savedMenu.updateMenuProducts(savedMenuProducts);
+        final List<Product> savedProducts = productRepository.findByIdIn(menuProducts.getProductIds());
+        menuProducts.checkValidityOfMenuPrice(savedProducts, savedMenu.getPrice());
+        savedMenu.updateMenuProducts(menuProducts);
+        menuProducts.updateMenu(savedMenu);
+        menuProductRepository.saveAll(menuProducts.getMenuProducts());
 
         return savedMenu;
     }
 
     public List<Menu> list() {
         return menuRepository.findAll();
+    }
+
+    private List<MenuProduct> menuProductsWith(List<MenuProductRequest> menuProductsRequest) {
+        return menuProductsRequest.stream()
+                .map(menuProductRequest -> MenuProduct.builder()
+                        .productId(menuProductRequest.getProductId())
+                        .quantity(menuProductRequest.getQuantity())
+                        .build()
+                ).collect(Collectors.toList());
     }
 
     private Menu menuWith(MenuRequest request) {
