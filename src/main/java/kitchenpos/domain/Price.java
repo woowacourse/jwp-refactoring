@@ -29,4 +29,8 @@ public class Price {
     public BigDecimal getPrice() {
         return price;
     }
+
+    public Price multiply(Long quantity) {
+        return new Price(this.price.multiply(BigDecimal.valueOf(quantity)));
+    }
 }

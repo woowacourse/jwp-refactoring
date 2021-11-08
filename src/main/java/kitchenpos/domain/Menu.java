@@ -46,6 +46,10 @@ public class Menu {
         this.menuProducts = new MenuProducts(menuProducts);
     }
 
+    public void updatePrice(Price price) {
+        this.price = price;
+    }
+
     public static class Builder {
         private Long id;
         private String name;
