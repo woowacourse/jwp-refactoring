@@ -18,15 +18,18 @@ public class ProductService {
 
     @Transactional
     public Product create(final ProductRequest request) {
-        final Product product = Product.builder()
-                .name(request.getName())
-                .price(new Price(request.getPrice()))
-                .build();
-
+        final Product product = productWith(request);
         return productRepository.save(product);
     }
 
     public List<Product> list() {
         return productRepository.findAll();
+    }
+
+    private Product productWith(ProductRequest request) {
+        return Product.builder()
+                .name(request.getName())
+                .price(new Price(request.getPrice()))
+                .build();
     }
 }

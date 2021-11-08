@@ -37,11 +37,7 @@ public class MenuService {
         if (!menuGroupRepository.existsById(request.getMenuGroupId())) {
             throw new IllegalArgumentException();
         }
-        final Menu menu = Menu.builder()
-                .name(request.getName())
-                .price(BigDecimal.valueOf(request.getPrice()))
-                .menuGroupId(request.getMenuGroupId())
-                .build();
+        final Menu menu = menuWith(request);
 
         final Menu savedMenu = menuRepository.save(menu);
         final MenuProducts savedMenuProducts = new MenuProducts(
@@ -55,5 +51,13 @@ public class MenuService {
 
     public List<Menu> list() {
         return menuRepository.findAll();
+    }
+
+    private Menu menuWith(MenuRequest request) {
+        return Menu.builder()
+                .name(request.getName())
+                .price(BigDecimal.valueOf(request.getPrice()))
+                .menuGroupId(request.getMenuGroupId())
+                .build();
     }
 }

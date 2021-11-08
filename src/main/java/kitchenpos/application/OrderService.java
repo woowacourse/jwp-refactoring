@@ -3,6 +3,7 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderStatusRequest;
 import kitchenpos.repository.MenuRepository;
@@ -38,25 +39,14 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest request) {
-        final List<OrderLineItem> requestOrderLineItems = request.getOrderLineItems().stream()
-                .map(orderLineItem -> OrderLineItem.builder()
-                        .menuId(orderLineItem.getMenuId())
-                        .quantity(orderLineItem.getQuantity())
-                        .build())
-                .collect(Collectors.toList());
-        final OrderLineItems orderLineItems = new OrderLineItems(requestOrderLineItems);
+        final OrderLineItems orderLineItems = new OrderLineItems(orderLineItemsWith(request));
         orderLineItems.checkSize(menuRepository.countByIdIn(orderLineItems.getMenuIds()));
 
         final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.checkValidity();
 
-        final Order order = Order.builder()
-                .orderTableId(orderTable.getId())
-                .orderStatus(OrderStatus.COOKING.name())
-                .orderedTime(LocalDateTime.now())
-                .build();
-        final Order savedOrder = orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(orderWith(orderTable));
 
         orderLineItems.updateOrderId(savedOrder.getId());
         savedOrder.updateOrderLineItems(orderLineItems);
@@ -78,5 +68,26 @@ public class OrderService {
         savedOrder.updateOrderStatus(orderStatus.name());
 
         return savedOrder;
+    }
+
+    private Order orderWith(OrderTable orderTable) {
+        return Order.builder()
+                .orderTableId(orderTable.getId())
+                .orderStatus(OrderStatus.COOKING.name())
+                .orderedTime(LocalDateTime.now())
+                .build();
+    }
+
+    private OrderLineItem orderLineItemWith(OrderLineItemRequest orderLineItem) {
+        return OrderLineItem.builder()
+                .menuId(orderLineItem.getMenuId())
+                .quantity(orderLineItem.getQuantity())
+                .build();
+    }
+
+    private List<OrderLineItem> orderLineItemsWith(OrderRequest request) {
+        return request.getOrderLineItems().stream()
+                .map(this::orderLineItemWith)
+                .collect(Collectors.toList());
     }
 }
