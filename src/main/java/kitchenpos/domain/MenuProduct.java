@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import kitchenpos.application.product.domain.Product;
+import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {

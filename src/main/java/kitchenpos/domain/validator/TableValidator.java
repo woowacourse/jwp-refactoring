@@ -1,9 +1,9 @@
 package kitchenpos.domain.validator;
 
 import java.util.Arrays;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Component;
 
 @Component

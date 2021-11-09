@@ -1,11 +1,11 @@
 package kitchenpos.application.mapper;
 
 import java.util.stream.Collectors;
-import kitchenpos.application.dto.request.OrderRequest;
-import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
+import kitchenpos.order.service.OrderRequest;
+import kitchenpos.order.service.OrderRequest.OrderLineItemRequest;
 import org.springframework.stereotype.Component;
 
 @Component

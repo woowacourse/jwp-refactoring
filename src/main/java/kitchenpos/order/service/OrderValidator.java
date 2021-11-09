@@ -1,10 +1,10 @@
-package kitchenpos.domain.validator;
+package kitchenpos.order.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItem;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 

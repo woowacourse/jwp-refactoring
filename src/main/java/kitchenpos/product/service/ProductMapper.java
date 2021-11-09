@@ -1,6 +1,6 @@
-package kitchenpos.application.product.service;
+package kitchenpos.product.service;
 
-import kitchenpos.application.product.domain.Product;
+import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Component;
 
 @Component

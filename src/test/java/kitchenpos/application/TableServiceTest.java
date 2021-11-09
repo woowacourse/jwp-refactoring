@@ -12,7 +12,7 @@ import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.request.TableGroupRequest.OrderTableId;
 import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.application.dto.response.OrderTableResponse;
-import kitchenpos.domain.repository.OrderRepository;
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.domain.validator.TableValidator;
