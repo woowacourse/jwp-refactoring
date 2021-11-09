@@ -59,8 +59,12 @@ public class Menu {
         return menuGroup.getId();
     }
 
-    public List<MenuProduct> getMenuProducts() {
+    public List<MenuProduct> getMenuProductsList() {
         return menuProducts.value();
+    }
+
+    public MenuProductGroup getMenuProducts() {
+        return menuProducts;
     }
 
 
@@ -110,8 +114,6 @@ public class Menu {
 
 
         public Menu build() {
-            validateMenu();
-
             final Menu menu = new Menu();
             menu.id = this.id;
             menu.name = this.name;
@@ -122,16 +124,6 @@ public class Menu {
                 menuProducts.addMenu(menu);
             }
             return menu;
-        }
-
-        private void validateMenu() {
-            if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalArgumentException();
-            }
-
-            if (price.compareTo(menuProducts.totalSum(price)) > 0) {
-                throw new IllegalArgumentException();
-            }
         }
     }
 }
