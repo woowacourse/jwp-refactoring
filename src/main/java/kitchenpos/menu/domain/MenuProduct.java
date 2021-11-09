@@ -19,9 +19,7 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id")
     private Menu menu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    private Long productId;
 
     private long quantity;
 
@@ -30,7 +28,7 @@ public class MenuProduct {
 
     public static MenuProduct create(Long productId, Long quantity) {
         final MenuProduct menuProduct = new MenuProduct();
-        menuProduct.product = Product.createSingleId(productId);
+        menuProduct.productId = productId;
         menuProduct.quantity = quantity;
         return menuProduct;
     }
@@ -38,8 +36,8 @@ public class MenuProduct {
     public static MenuProduct create(Long seq, Long menuId, Long productId, long quantity) {
         final MenuProduct menuProduct = new MenuProduct();
         menuProduct.seq = seq;
-        menuProduct.menu = Menu.createSingleId(menuId);;
-        menuProduct.product = Product.createSingleId(productId);
+        menuProduct.menu = Menu.createSingleId(menuId);
+        menuProduct.productId = productId;
         menuProduct.quantity = quantity;
 
         return menuProduct;
@@ -53,8 +51,8 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {

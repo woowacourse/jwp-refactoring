@@ -13,7 +13,7 @@ public class MenuProductResponse {
         final MenuProductResponse menuProductResponse = new MenuProductResponse();
         menuProductResponse.seq = menuProduct.getSeq();
         menuProductResponse.menuId = menuProduct.getMenu().getId();
-        menuProductResponse.productId = menuProduct.getProduct().getId();
+        menuProductResponse.productId = menuProduct.getProductId();
         menuProductResponse.quantity = menuProduct.getQuantity();
         return menuProductResponse;
     }

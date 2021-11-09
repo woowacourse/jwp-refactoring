@@ -3,6 +3,7 @@ package kitchenpos.menu.application.validator;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.repository.MenuGroupRepository;
 import kitchenpos.product.application.ProductService;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class MenuValidator {
         }
 
         final List<Long> productIds = menu.getMenuProducts().stream()
-            .map(menuProduct -> menuProduct.getProduct().getId())
+            .map(MenuProduct::getProductId)
             .collect(Collectors.toList());
 
         final long count = productService.countProductInIds(productIds);
