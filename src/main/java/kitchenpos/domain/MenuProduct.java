@@ -3,6 +3,9 @@ package kitchenpos.domain;
 import javax.persistence.*;
 
 @Entity
+@AttributeOverride(
+        name = "id", column = @Column(name = "seq")
+)
 public class MenuProduct extends BaseEntity {
 
     @ManyToOne

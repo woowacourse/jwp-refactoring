@@ -2,7 +2,9 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -16,7 +18,7 @@ public class Menu extends BaseEntity {
     @ManyToOne
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
+    @OneToMany(mappedBy = "menu", fetch = FetchType.EAGER)
     private List<MenuProduct> menuProducts;
 
     public Menu() {}
@@ -43,5 +45,19 @@ public class Menu extends BaseEntity {
 
     public List<MenuProduct> getMenuProducts() {
         return menuProducts;
+    }
+
+    public void validatePrice(BigDecimal sum) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 음수가 될 수 없습니다.");
+        }
+
+        if (price.compareTo(sum) > 0) {
+            throw new IllegalArgumentException("요청 가격과 저장된 가격이 다릅니다.");
+        }
+    }
+
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
+        this.menuProducts.addAll(menuProducts);
     }
 }
