@@ -14,6 +14,7 @@ import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.request.OrderRequest;
 import kitchenpos.application.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.application.dto.request.OrderStatusRequest;
+import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.application.dto.request.TableRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
@@ -22,7 +23,6 @@ import kitchenpos.application.dto.response.OrderTableResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -83,9 +83,9 @@ class OrderServiceTest {
 
         menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
 
-        chicken = productService.create(new Product("chicken", BigDecimal.valueOf(20000)));
-        pizza = productService.create(new Product("pizza", BigDecimal.valueOf(15000)));
-        frenchFry = productService.create(new Product("frenchFry", BigDecimal.valueOf(2000)));
+        chicken = productService.create(new ProductRequest("chicken", BigDecimal.valueOf(20000)));
+        pizza = productService.create(new ProductRequest("pizza", BigDecimal.valueOf(15000)));
+        frenchFry = productService.create(new ProductRequest("frenchFry", BigDecimal.valueOf(2000)));
 
         chickenSet = menuService.create(new MenuRequest("chickenSet", BigDecimal.valueOf(21000), menuGroup.getId(),
                 Arrays.asList(new MenuProductRequest(this.chicken.getId(), 1L),

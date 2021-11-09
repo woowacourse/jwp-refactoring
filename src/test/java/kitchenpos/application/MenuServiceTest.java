@@ -10,11 +10,11 @@ import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
 import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
+import kitchenpos.application.dto.request.ProductRequest;
 import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.dto.response.ProductResponse;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -52,7 +52,7 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        product = productService.create(new Product("product", BigDecimal.valueOf(1000)));
+        product = productService.create(new ProductRequest("product", BigDecimal.valueOf(1000)));
         menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
         menuProductRequest = new MenuProductRequest(product.getId(), 3L);
     }
