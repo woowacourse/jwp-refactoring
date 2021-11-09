@@ -52,5 +52,23 @@ public class OrderTable {
         this.orders = orders;
     }
 
+    public boolean isEmpty() {
+        return empty;
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
 }

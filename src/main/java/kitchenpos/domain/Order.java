@@ -1,19 +1,13 @@
 package kitchenpos.domain;
 
+import org.springframework.util.CollectionUtils;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "orders")
 public class Order {
 
     @Id
@@ -35,13 +29,24 @@ public class Order {
     protected Order() {
     }
 
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    }
+
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus,
             LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
+        validateEmptyOrderLineItem(orderLineItems);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
+    }
+
+    private void validateEmptyOrderLineItem(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public Long getId() {
