@@ -6,7 +6,6 @@ import kitchenpos.application.dto.request.OrderStatusRequest;
 import kitchenpos.application.dto.response.OrderResponse;
 import kitchenpos.application.mapper.OrderMapper;
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
@@ -36,24 +35,18 @@ public class OrderService {
         order.register(orderValidator);
 
         orderRepository.save(order);
-        orderLineItemRepository.saveAll(order.getOrderLineItems().toList());
         return OrderResponse.of(order);
     }
 
     @Transactional(readOnly = true)
     public List<OrderResponse> list() {
-        final List<Order> orders = orderRepository.findAll();
-        for (final Order order : orders) {
-            order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId())));
-        }
-        return OrderResponse.listOf(orders);
+        return OrderResponse.listOf(orderRepository.findAll());
     }
 
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest statusRequest) {
         final Order order = findOrderById(orderId);
         order.changeStatus(OrderStatus.valueOf(statusRequest.getOrderStatus()));
-        order.setOrderLineItems(new OrderLineItems(orderLineItemRepository.findAllByOrderId(orderId)));
         return OrderResponse.of(order);
     }
 

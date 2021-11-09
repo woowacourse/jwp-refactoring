@@ -2,13 +2,15 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.Transient;
+import javax.persistence.OneToMany;
 import kitchenpos.domain.validator.OrderValidator;
 
 @Entity(name = "orders")
@@ -21,27 +23,24 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
-    @Transient
-    private OrderLineItems orderLineItems;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    private List<OrderLineItem> orderLineItems;
 
     protected Order() {
     }
 
-    public Order(String orderStatus) {
-        this(null, null, OrderStatus.valueOf(orderStatus), null, null);
-    }
-
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, new OrderLineItems(orderLineItems));
+        this(null, orderTable, null, null, orderLineItems);
     }
 
     public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
                  List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime, new OrderLineItems(orderLineItems));
+        this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime, orderLineItems);
     }
 
-    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                  OrderLineItems orderLineItems) {
+    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+                 List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -54,7 +53,6 @@ public class Order {
 
         orderStatus = OrderStatus.COOKING;
         orderedTime = LocalDateTime.now();
-        orderLineItems.setOrder(this);
     }
 
     public void changeStatus(OrderStatus orderStatus) {
@@ -80,11 +78,7 @@ public class Order {
         return orderedTime;
     }
 
-    public OrderLineItems getOrderLineItems() {
+    public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderLineItems(final OrderLineItems orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 }

@@ -28,7 +28,7 @@ public class OrderResponse {
                 order.getOrderTable().getId(),
                 order.getOrderStatus().name(),
                 order.getOrderedTime(),
-                OrderLineItemResponse.listOf(order.getOrderLineItems().toList()));
+                OrderLineItemResponse.listOf(order.getOrderLineItems()));
     }
 
     public static List<OrderResponse> listOf(List<Order> orders) {
