@@ -7,24 +7,28 @@ import kitchenpos.domain.Product;
 public class ProductRequest {
 
     private String name;
-    private double price;
+    private BigDecimal price;
 
     public ProductRequest() {}
 
     public ProductRequest(String name, double price) {
         this.name = name;
-        this.price = price;
+        this.price = BigDecimal.valueOf(price);
     }
 
     public String getName() {
         return name;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
     public Product toEntity() {
-        return new Product(null, name, BigDecimal.valueOf(price));
+        if (price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("가격은 음수가 될 수 없습니다.");
+        }
+
+        return new Product(null, name, price);
     }
 }
