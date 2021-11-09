@@ -79,4 +79,8 @@ public class Order {
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
     }
+
+    public enum OrderStatus {
+        COOKING, MEAL, COMPLETION
+    }
 }
