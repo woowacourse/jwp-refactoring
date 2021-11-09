@@ -1,7 +1,7 @@
-package kitchenpos.application.response;
+package kitchenpos.product.response;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public class ProductResponse {
 

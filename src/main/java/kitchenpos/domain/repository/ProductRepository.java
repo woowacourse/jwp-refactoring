@@ -1,7 +1,7 @@
 package kitchenpos.domain.repository;
 
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

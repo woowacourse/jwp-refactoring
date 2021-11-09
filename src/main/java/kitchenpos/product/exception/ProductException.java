@@ -1,4 +1,4 @@
-package kitchenpos.exception;
+package kitchenpos.product.exception;
 
 public class ProductException extends RuntimeException{
 

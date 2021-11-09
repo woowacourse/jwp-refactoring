@@ -4,8 +4,8 @@ import java.util.List;
 import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
-import kitchenpos.ui.request.ProductCreateRequest;
-import kitchenpos.application.response.ProductResponse;
+import kitchenpos.product.ui.request.ProductCreateRequest;
+import kitchenpos.product.response.ProductResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

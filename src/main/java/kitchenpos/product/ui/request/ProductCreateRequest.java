@@ -1,7 +1,7 @@
-package kitchenpos.ui.request;
+package kitchenpos.product.ui.request;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
+import kitchenpos.product.domain.Product;
 
 public class ProductCreateRequest {
 
