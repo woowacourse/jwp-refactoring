@@ -1,5 +1,6 @@
 package kitchenpos.menu.application;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.menu.application.response.MenuResponse;
@@ -24,6 +25,13 @@ public class MenuService {
     public MenuResponse create(final Menu menu) {
         menuValidator.validateCreation(menu);
         return MenuResponse.from(menuRepository.save(menu));
+    }
+
+    @Transactional
+    public void updateMenuInfo(final Long menuId, final String name, final BigDecimal price) {
+        final Menu menu = menuRepository.findById(menuId)
+            .orElseThrow(IllegalArgumentException::new);
+        menu.updateInfo(name, price);
     }
 
     public List<MenuResponse> list() {

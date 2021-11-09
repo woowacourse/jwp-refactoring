@@ -11,9 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class Menu {
+public class Menu extends AbstractAggregateRoot<Menu> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +38,26 @@ public class Menu {
         final Menu menu = new Menu();
         menu.id = menuId;
         return menu;
+    }
+
+    public void updateInfo(String name, BigDecimal price) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (price.compareTo(menuProducts.totalSum(price)) > 0) {
+            throw new IllegalArgumentException();
+        }
+
+        final Menu originalMenu =
+            Menu.builder()
+                .menu(this)
+                .build();
+
+        registerEvent(new MenuUpdateEvent(originalMenu, id));
+
+        this.name = name;
+        this.price = price;
     }
 
     public Long getId() {
@@ -81,6 +102,14 @@ public class Menu {
         private MenuProductGroup menuProducts;
 
         private Builder() {
+        }
+
+        public Builder menu(Menu menu) {
+            this.name = menu.name;
+            this.price = menu.price;
+            this.menuGroup = menu.menuGroup;
+            this.menuProducts = menu.menuProducts;
+            return this;
         }
 
         public Builder id(Long id) {
