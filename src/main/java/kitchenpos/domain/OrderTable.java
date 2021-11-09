@@ -33,4 +33,22 @@ public class OrderTable extends BaseEntity {
     public boolean isEmpty() {
         return empty;
     }
+
+    public void changeEmpty(boolean empty) {
+        this.empty = empty;
+    }
+
+    public void changeNumberOfGuests(int numberOfGuests) {
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    public void group(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
+        this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = false;
+    }
 }
