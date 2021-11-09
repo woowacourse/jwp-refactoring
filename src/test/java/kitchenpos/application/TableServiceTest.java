@@ -6,17 +6,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.dto.OrderTableRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TableServiceTest extends ServiceTest {
 
-    private final OrderTable emptyOrderTable;
-    private final OrderTable nonEmptyOrderTable;
+    private final OrderTableRequest emptyOrderTable;
 
     public TableServiceTest() {
-        this.emptyOrderTable = new OrderTable(1L, null, 1, true);
-        this.nonEmptyOrderTable = new OrderTable(2L, null, 1, false);
+        this.emptyOrderTable = Fixtures.makeOrderTable(true);
     }
 
     @Autowired
@@ -41,7 +40,7 @@ class TableServiceTest extends ServiceTest {
         final OrderTable fromOrderTable = tableService.create(emptyOrderTable);
 
         // when
-        final OrderTable changeOrderTable = tableService.changeEmpty(fromOrderTable.getId(), nonEmptyOrderTable);
+        final OrderTable changeOrderTable = tableService.changeEmpty(fromOrderTable.getId(), false);
 
         // then
         assertThat(changeOrderTable.isEmpty()).isFalse();

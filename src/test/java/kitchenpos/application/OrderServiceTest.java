@@ -1,30 +1,22 @@
 package kitchenpos.application;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.dto.OrderRequest;
 
-import static kitchenpos.domain.OrderStatus.COMPLETION;
-import static kitchenpos.domain.OrderStatus.COOKING;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class OrderServiceTest extends ServiceTest {
 
-    private final Order cookingOrder;
-    private final Order completionOrder;
+    private final OrderRequest cookingOrder;
 
     public OrderServiceTest() {
-        final List<OrderLineItem> orderLineItems = Arrays.asList(new OrderLineItem(null, null, 1L, 1L));
-        this.cookingOrder = new Order(null, 1L, COOKING.name(), LocalDateTime.now(), orderLineItems);
-        this.completionOrder = new Order(null, 1L, COMPLETION.name(), LocalDateTime.now(), orderLineItems);
+        this.cookingOrder = Fixtures.makeOrder();
     }
 
     @Autowired
@@ -49,9 +41,9 @@ class OrderServiceTest extends ServiceTest {
         final Order savedCookingOrder = orderService.create(cookingOrder);
 
         // when
-        final Order changedOrder = orderService.changeOrderStatus(savedCookingOrder.getId(), completionOrder);
+        final Order changedOrder = orderService.changeOrderStatus(savedCookingOrder.getId(), OrderStatus.COMPLETION);
 
         // then
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(completionOrder.getOrderStatus());
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 }
