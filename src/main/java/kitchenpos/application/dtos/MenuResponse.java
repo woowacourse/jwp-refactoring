@@ -3,7 +3,9 @@ package kitchenpos.application.dtos;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
+import lombok.Getter;
 
+@Getter
 public class MenuResponse {
     private final Long id;
     private final String name;
@@ -19,25 +21,5 @@ public class MenuResponse {
         this.menuProducts = menu.getMenuProducts().stream()
                 .map(MenuProductResponse::new)
                 .collect(Collectors.toList());
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Long getPrice() {
-        return price;
-    }
-
-    public Long getMenuGroupId() {
-        return MenuGroupId;
-    }
-
-    public List<MenuProductResponse> getMenuProducts() {
-        return menuProducts;
     }
 }

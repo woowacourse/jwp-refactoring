@@ -109,6 +109,10 @@ public class OrderTable {
         return tableGroupId;
     }
 
+    public void setTableGroupId(final Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
+    }
+
     public int getNumberOfGuests() {
         return numberOfGuests;
     }

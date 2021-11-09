@@ -1,7 +1,9 @@
 package kitchenpos.application.dtos;
 
 import kitchenpos.domain.OrderLineItem;
+import lombok.Getter;
 
+@Getter
 public class OrderLineItemResponse {
     private final Long id;
     private final Long orderId;
@@ -10,24 +12,8 @@ public class OrderLineItemResponse {
 
     public OrderLineItemResponse(OrderLineItem orderLineItem) {
         this.id = orderLineItem.getId();
-        this.orderId = orderLineItem.getOrder();
+        this.orderId = orderLineItem.getOrderId();
         this.menuId = orderLineItem.getMenuId();
         this.quantity = orderLineItem.getQuantity();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public Long getMenuId() {
-        return menuId;
-    }
-
-    public Long getQuantity() {
-        return quantity;
     }
 }

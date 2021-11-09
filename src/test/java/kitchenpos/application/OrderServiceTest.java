@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dtos.OrderLineItemRequest;
 import kitchenpos.application.dtos.OrderRequest;
 import kitchenpos.application.dtos.OrderStatusRequest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,22 +53,22 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        order = Order.builder()
-                .orderTableId(1L)
-                .orderStatus(OrderStatus.COMPLETION.name())
-                .build();
         final OrderLineItem orderLineItem1 = OrderLineItem.builder()
-                .order(order)
+                .orderId(1L)
                 .menuId(1L)
                 .quantity(1L)
                 .build();
         final OrderLineItem orderLineItem2 = OrderLineItem.builder()
-                .order(order)
+                .orderId(2L)
                 .menuId(2L)
                 .quantity(2L)
                 .build();
         final List<OrderLineItem> orderLineItems = Arrays.asList(orderLineItem1, orderLineItem2);
-        order.updateOrderLineItems(orderLineItems);
+        order = Order.builder()
+                .orderTableId(1L)
+                .orderStatus(OrderStatus.COMPLETION.name())
+                .orderLineItems(orderLineItems)
+                .build();
         orderTable = OrderTable.builder()
                 .id(1L)
                 .empty(false)

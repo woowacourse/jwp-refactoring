@@ -7,13 +7,13 @@ import java.util.stream.Collectors;
 import kitchenpos.application.dtos.OrderTableRequest;
 import kitchenpos.application.dtos.TableGroupRequest;
 import kitchenpos.application.dtos.TableGroupResponse;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
+import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
-import kitchenpos.repository.OrderRepository;
-import kitchenpos.repository.OrderTableRepository;
-import kitchenpos.repository.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,10 +33,20 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        final OrderTables orderTables = new OrderTables(orderTablesWith(request));
-        final List<Long> orderTableIds = orderTableIdsWith(request);
+        final List<OrderTable> orderTablesValue = request.getOrderTables().stream()
+                .map(it -> OrderTable.builder()
+                        .id(it.getId())
+                        .build())
+                .collect(Collectors.toList());
+        final OrderTables orderTables = new OrderTables(orderTablesValue);
+        final List<Long> orderTableIds = request.getOrderTables().stream()
+                .map(OrderTableRequest::getId)
+                .collect(Collectors.toList());
+        final TableGroup tableGroup = TableGroup.builder()
+                .createdDate(LocalDateTime.now())
+                .build();
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(createTableGroup());
+        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         final OrderTables savedOrderTables = new OrderTables(orderTableRepository.findAllByIdIn(orderTableIds));
         savedOrderTables.checkValidity(orderTables);
         savedOrderTables.update(savedTableGroup.getId(), false);
@@ -56,25 +66,4 @@ public class TableGroupService {
         }
         orderTables.update(null, false);
     }
-
-    private TableGroup createTableGroup() {
-        return TableGroup.builder()
-                .createdDate(LocalDateTime.now())
-                .build();
-    }
-
-    private List<Long> orderTableIdsWith(TableGroupRequest request) {
-        return request.getOrderTables().stream()
-                .map(OrderTableRequest::getId)
-                .collect(Collectors.toList());
-    }
-
-    private List<OrderTable> orderTablesWith(TableGroupRequest request) {
-        return request.getOrderTables().stream()
-                .map(it -> OrderTable.builder()
-                        .id(it.getId())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
 }

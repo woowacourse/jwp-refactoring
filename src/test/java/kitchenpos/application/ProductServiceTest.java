@@ -4,36 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import kitchenpos.application.dtos.ProductInformationRequest;
 import kitchenpos.application.dtos.ProductRequest;
-import kitchenpos.domain.MenuProductEvent;
-import kitchenpos.domain.Product;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
 
 @DisplayName("상품")
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
     @Mock
     private ProductRepository productRepository;
-
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
 
     @InjectMocks
     private ProductService productService;
@@ -86,16 +76,5 @@ class ProductServiceTest {
 
         final List<Product> actual = productService.list();
         assertThat(actual).containsExactly(product1, product2);
-    }
-
-    @DisplayName("상품의 가격을 변경한다")
-    @Test
-    void update() {
-        final ProductInformationRequest request = new ProductInformationRequest("이름변경", 30000L);
-        when(productRepository.findById(any())).thenReturn(Optional.of(new Product()));
-
-        final Product product = productService.update(1L, request);
-
-        assertThat(product.getPrice()).isEqualTo(BigDecimal.valueOf(request.getPrice()));
     }
 }

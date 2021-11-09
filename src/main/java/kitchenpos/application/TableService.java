@@ -24,7 +24,9 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTableRequest request) {
-        final OrderTable orderTable = orderTableWith(request);
+        final OrderTable orderTable = OrderTable.builder()
+                .id(request.getId())
+                .build();
         return orderTableRepository.save(orderTable);
     }
 
@@ -57,11 +59,4 @@ public class TableService {
 
         return orderTableRepository.save(savedOrderTable);
     }
-
-    private OrderTable orderTableWith(OrderTableRequest request) {
-        return OrderTable.builder()
-                .id(request.getId())
-                .build();
-    }
-
 }

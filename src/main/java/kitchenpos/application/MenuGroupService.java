@@ -17,17 +17,13 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroup create(final MenuGroupRequest request) {
-        final MenuGroup menuGroup = menuGroupWith(request);
+        final MenuGroup menuGroup = MenuGroup.builder()
+                .name(request.getName())
+                .build();
         return menuGroupRepository.save(menuGroup);
     }
 
     public List<MenuGroup> list() {
         return menuGroupRepository.findAll();
-    }
-
-    private MenuGroup menuGroupWith(MenuGroupRequest request) {
-        return MenuGroup.builder()
-                .name(request.getName())
-                .build();
     }
 }

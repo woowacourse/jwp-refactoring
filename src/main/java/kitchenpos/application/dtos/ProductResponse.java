@@ -1,7 +1,9 @@
 package kitchenpos.application.dtos;
 
 import kitchenpos.domain.Product;
+import lombok.Getter;
 
+@Getter
 public class ProductResponse {
     private final Long id;
     private final String name;
@@ -11,17 +13,5 @@ public class ProductResponse {
         this.id = product.getId();
         this.name = product.getName();
         this.price = product.getPrice().longValue();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Long getPrice() {
-        return price;
     }
 }

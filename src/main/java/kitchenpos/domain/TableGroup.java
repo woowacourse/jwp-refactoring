@@ -50,6 +50,11 @@ public class TableGroup {
             return this;
         }
 
+//        public Builder orderTables(List<OrderTable> orderTables) {
+//            this.orderTables = new OrderTables(orderTables);
+//            return this;
+//        }
+
         public TableGroup build() {
             return new TableGroup(this);
         }
@@ -62,4 +67,16 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
+
+    public void setCreatedDate(final LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+//    public List<OrderTable> getOrderTables() {
+//        return orderTables.getOrderTables();
+//    }
+//
+//    public void setOrderTables(final List<OrderTable> orderTables) {
+//        this.orderTables = new OrderTables(orderTables);
+//    }
 }

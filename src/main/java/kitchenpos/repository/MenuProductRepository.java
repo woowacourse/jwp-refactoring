@@ -1,9 +1,11 @@
 package kitchenpos.repository;
 
-import java.util.Optional;
+import java.util.List;
 import kitchenpos.domain.MenuProduct;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MenuProductRepository extends JpaRepository<MenuProduct, Long> {
-    Optional<MenuProduct> findByProductId(Long productId);
+    List<MenuProduct> findAllByMenuId(Long menuId);
+
+    List<MenuProduct> findAllByMenuIdIn(List<Long> menuIds);
 }
