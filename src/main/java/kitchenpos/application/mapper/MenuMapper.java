@@ -5,7 +5,7 @@ import kitchenpos.application.dto.request.MenuProductRequest;
 import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.repository.ProductRepository;
+import kitchenpos.application.product.domain.ProductRepository;
 import org.springframework.stereotype.Component;
 
 @Component

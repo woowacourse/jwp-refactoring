@@ -1,9 +1,9 @@
-package kitchenpos.application.dto.response;
+package kitchenpos.application.product.service;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.Product;
+import kitchenpos.application.product.domain.Product;
 
 public class ProductResponse {
     private Long id;
