@@ -111,3 +111,9 @@
 - 객체의 생명주기
     - Product
     - Menu, MenuProduct
+
+### Step3
+
+- TableValidator를 interface로 구현하고 이 구현체를 Order부분에 위치 (아래의 의존관계를 풀어주기 위해)
+    - TableValidator -> Order의 의존성이 존재 (Order -> OrderTable -> Order)
+    - TableGroupValidator -> Order의 의존성이 존재 (Order -> OrderTable -> TableGroup -> Order)

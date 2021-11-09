@@ -12,15 +12,15 @@ public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
     private final TableMapper tableMapper;
-    private final TableGroupValidator tableGroupValidator;
+    private final TableValidator tableValidator;
 
     public TableGroupService(OrderTableRepository orderTableRepository,
                              TableGroupRepository tableGroupRepository,
-                             TableMapper tableMapper, TableGroupValidator tableGroupValidator) {
+                             TableMapper tableMapper, TableValidator tableValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
         this.tableMapper = tableMapper;
-        this.tableGroupValidator = tableGroupValidator;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -36,6 +36,6 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        orderTables.ungroup(tableGroupValidator);
+        orderTables.ungroup(tableValidator);
     }
 }

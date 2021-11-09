@@ -3,7 +3,7 @@ package kitchenpos.table.domain;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import kitchenpos.table.service.TableGroupValidator;
+import kitchenpos.table.service.TableValidator;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
@@ -46,7 +46,7 @@ public class OrderTables {
         }
     }
 
-    public void ungroup(TableGroupValidator tableGroupValidator) {
+    public void ungroup(TableValidator tableGroupValidator) {
         tableGroupValidator.validateUngroup(orderTables);
         for (final OrderTable orderTable : orderTables) {
             orderTable.setTableGroup(null);

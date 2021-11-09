@@ -9,8 +9,8 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import kitchenpos.order.domain.Order.OrderStatus;
 import kitchenpos.order.domain.OrderRepository;
+import kitchenpos.order.service.TableValidatorImpl;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.service.TableValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -18,9 +18,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
 
 @MockitoSettings
-class TableValidatorTest {
+class TableValidatorImpTest {
     @InjectMocks
-    private TableValidator tableValidator;
+    private TableValidatorImpl tableValidator;
+
     @Mock
     private OrderRepository orderRepository;
 
