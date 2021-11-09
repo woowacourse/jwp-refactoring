@@ -3,8 +3,7 @@ package kitchenpos.table.domain;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import kitchenpos.tablegroup.service.TableGroupValidator;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.table.service.TableGroupValidator;
 import org.springframework.util.CollectionUtils;
 
 public class OrderTables {
@@ -33,14 +32,17 @@ public class OrderTables {
         }
     }
 
-    public boolean canAssignTableGroup() {
-        return orderTables.stream().allMatch(OrderTable::canAssignTableGroup);
-    }
-
-    public void setTableGroup(TableGroup tableGroup) {
+    public void assign(TableGroup tableGroup) {
+        validateAssignGroup();
         for (final OrderTable savedOrderTable : orderTables) {
             savedOrderTable.setTableGroup(tableGroup);
             savedOrderTable.setEmpty(false);
+        }
+    }
+
+    private void validateAssignGroup() {
+        if (!orderTables.stream().allMatch(OrderTable::canAssignTableGroup)) {
+            throw new IllegalArgumentException();
         }
     }
 

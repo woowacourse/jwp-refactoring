@@ -15,11 +15,11 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
-import kitchenpos.tablegroup.service.TableGroupRequest;
-import kitchenpos.tablegroup.service.TableGroupRequest.OrderTableId;
-import kitchenpos.tablegroup.service.TableGroupResponse;
-import kitchenpos.tablegroup.service.TableGroupService;
+import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.service.TableGroupRequest;
+import kitchenpos.table.service.TableGroupRequest.OrderTableId;
+import kitchenpos.table.service.TableGroupResponse;
+import kitchenpos.table.service.TableGroupService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,9 +63,6 @@ class TableGroupServiceTest {
 
         assertNotNull(saved.getId());
         assertNotNull(saved.getCreatedDate());
-        assertThat(saved.getOrderTableIds())
-                .hasSize(2)
-                .allMatch(Objects::nonNull);
     }
 
     @Test

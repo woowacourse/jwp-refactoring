@@ -1,9 +1,9 @@
-package kitchenpos.tablegroup.service;
+package kitchenpos.table.service;
 
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.domain.OrderTables;
-import kitchenpos.tablegroup.domain.TableGroup;
-import kitchenpos.tablegroup.domain.TableGroupRepository;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.table.domain.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,25 +11,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
-    private final TableGroupMapper tableGroupMapper;
+    private final TableMapper tableMapper;
     private final TableGroupValidator tableGroupValidator;
 
     public TableGroupService(OrderTableRepository orderTableRepository,
                              TableGroupRepository tableGroupRepository,
-                             TableGroupMapper tableGroupMapper,
-                             TableGroupValidator tableGroupValidator) {
+                             TableMapper tableMapper, TableGroupValidator tableGroupValidator) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
-        this.tableGroupMapper = tableGroupMapper;
+        this.tableMapper = tableMapper;
         this.tableGroupValidator = tableGroupValidator;
     }
 
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
-        TableGroup tableGroup = tableGroupMapper.mapFrom(tableGroupRequest);
-        tableGroup.register();
-        tableGroupRepository.save(tableGroup);
-        orderTableRepository.saveAll(tableGroup.getGroupTables().toList());
+        OrderTables orderTables = new OrderTables(tableMapper.mapFrom(tableGroupRequest));
+
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+        orderTables.assign(tableGroup);
+
         return TableGroupResponse.of(tableGroup);
     }
 
@@ -37,6 +37,5 @@ public class TableGroupService {
     public void ungroup(final Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
         orderTables.ungroup(tableGroupValidator);
-        orderTableRepository.saveAll(orderTables.toList());
     }
 }

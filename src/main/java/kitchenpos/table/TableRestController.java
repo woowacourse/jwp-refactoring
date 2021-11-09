@@ -2,8 +2,8 @@ package kitchenpos.table;
 
 import java.net.URI;
 import java.util.List;
-import kitchenpos.table.service.TableResponse;
 import kitchenpos.table.service.TableRequest;
+import kitchenpos.table.service.TableResponse;
 import kitchenpos.table.service.TableService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
