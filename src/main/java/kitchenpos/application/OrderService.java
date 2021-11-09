@@ -83,13 +83,7 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderStatus orderStatus) {
         final Order savedOrder = findById(orderId);
-
-        if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException("이미 식사가 끝난 주문이기 때문에 상태를 변경할 수 없습니다.");
-        }
-
         savedOrder.changeStatus(orderStatus);
-
         return savedOrder;
     }
 

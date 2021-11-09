@@ -49,6 +49,10 @@ public class Order extends BaseEntity {
     }
 
     public void changeStatus(OrderStatus orderStatus) {
+        if (isCompletion()) {
+            throw new IllegalArgumentException("이미 식사가 끝난 주문이기 때문에 상태를 변경할 수 없습니다.");
+        }
+
         this.orderStatus = orderStatus;
     }
 
