@@ -29,6 +29,10 @@ public class Product {
         return new Builder();
     }
 
+    public void updatePrice(Long price) {
+        this.price = new Price(price);
+    }
+
     public static class Builder {
         private Long id;
         private String name;

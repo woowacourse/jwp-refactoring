@@ -1,13 +1,13 @@
 package kitchenpos.application.dtos;
 
-public class ProductRequest {
+public class ProductInformationRequest {
     private String name;
     private Long price;
 
-    public ProductRequest() {
+    public ProductInformationRequest() {
     }
 
-    public ProductRequest(String name, Long price) {
+    public ProductInformationRequest(String name, Long price) {
         this.name = name;
         this.price = price;
     }

@@ -2,17 +2,22 @@ package kitchenpos.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import org.springframework.data.util.Lazy;
 
 @Entity
 public class MenuProduct {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, name = "menu_id")
-    private Long menuId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "menu_id")
+    private Menu menu;
     @Column(nullable = false)
     private Long productId;
     @Column(nullable = false)
@@ -23,7 +28,7 @@ public class MenuProduct {
 
     private MenuProduct(Builder builder) {
         this.id = builder.id;
-        this.menuId = builder.menuId;
+        this.menu = builder.menu;
         this.productId = builder.productId;
         this.quantity = builder.quantity;
     }
@@ -32,9 +37,13 @@ public class MenuProduct {
         return new Builder();
     }
 
+    public void updateMenu(Menu menu) {
+        this.menu = menu;
+    }
+
     public static class Builder {
         private Long id;
-        private Long menuId;
+        private Menu menu;
         private Long productId;
         private long quantity;
 
@@ -43,7 +52,7 @@ public class MenuProduct {
 
         public Builder of(MenuProduct menuProduct) {
             this.id = menuProduct.id;
-            this.menuId = menuProduct.menuId;
+            this.menu = menuProduct.menu;
             this.productId = menuProduct.productId;
             this.quantity = menuProduct.quantity;
             return this;
@@ -54,8 +63,8 @@ public class MenuProduct {
             return this;
         }
 
-        public Builder menuId(Long menuId) {
-            this.menuId = menuId;
+        public Builder menu(Menu menu) {
+            this.menu = menu;
             return this;
         }
 
@@ -79,11 +88,7 @@ public class MenuProduct {
     }
 
     public Long getMenuId() {
-        return menuId;
-    }
-
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+        return menu.getId();
     }
 
     public Long getProductId() {

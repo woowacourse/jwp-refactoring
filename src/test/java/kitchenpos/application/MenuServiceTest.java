@@ -86,13 +86,13 @@ class MenuServiceTest {
                 .build();
         menuProduct1 = MenuProduct.builder()
                 .id(1L)
-                .menuId(savedMenu1.getId())
+                .menu(savedMenu1)
                 .productId(savedProduct1.getId())
                 .quantity(1L)
                 .build();
         menuProduct2 = MenuProduct.builder()
                 .id(2L)
-                .menuId(savedMenu2.getId())
+                .menu(savedMenu2)
                 .productId(savedProduct2.getId())
                 .quantity(1L)
                 .build();
@@ -109,10 +109,7 @@ class MenuServiceTest {
         final MenuRequest request = new MenuRequest(menuRequest.getName(), menuRequest.getPrice(),
                 menuRequest.getMenuGroupId(), menuProductsRequest);
         when(menuGroupRepository.existsById(any())).thenReturn(true);
-        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, menuProduct2));
-        when(productRepository.findAllByIdIn(any())).thenReturn(products);
-//        when(productRepository.findById(savedProduct1.getId())).thenReturn(Optional.of(savedProduct1));
-//        when(productRepository.findById(savedProduct2.getId())).thenReturn(Optional.of(savedProduct2));
+        when(productRepository.findByIdIn(any())).thenReturn(products);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
 
         final Menu actual = menuService.create(request);
@@ -145,7 +142,7 @@ class MenuServiceTest {
                 .id(3L)
                 .build();
         final MenuProduct weirdMenuProduct = MenuProduct.builder()
-                .menuId(savedMenu1.getId())
+                .menu(savedMenu1)
                 .productId(weirdSavedProduct.getId())
                 .quantity(1L)
                 .build();
@@ -156,9 +153,6 @@ class MenuServiceTest {
                 Arrays.asList(new MenuProductRequest(menuProduct1), weirdMenuProductRequest));
         when(menuGroupRepository.existsById(any())).thenReturn(true);
         when(menuRepository.save(any())).thenReturn(savedMenu1);
-        when(menuProductRepository.findAllByMenuId(any())).thenReturn(Arrays.asList(menuProduct1, weirdMenuProduct));
-//        when(productRepository.findById(any())).thenReturn(Optional.of(savedProduct1));
-//        when(productRepository.findById(any())).thenReturn(Optional.of(weirdSavedProduct));
 
         assertThatThrownBy(() -> menuService.create(menuRequest)).isInstanceOf(IllegalArgumentException.class);
     }
@@ -167,7 +161,7 @@ class MenuServiceTest {
     @Test
     void list() {
         final List<Menu> menus = Arrays.asList(savedMenu1, savedMenu2);
-        when(menuRepository.findAll()).thenReturn(menus);
+        when(menuRepository.findAllJoinFetch()).thenReturn(menus);
 
         final List<Menu> actual = menuService.list();
 
