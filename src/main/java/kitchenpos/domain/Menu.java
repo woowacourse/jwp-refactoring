@@ -1,12 +1,15 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
-import kitchenpos.domain.validator.MenuValidator;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Menu {
@@ -16,8 +19,10 @@ public class Menu {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    @Transient
-    private MenuProducts menuProducts;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "menu_id")
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -26,18 +31,33 @@ public class Menu {
         this(null, name, price, menuGroupId, menuProducts);
     }
 
-    private Menu(Long id, String name, BigDecimal price, Long menuGroupId,
-                 List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId,
+                List<MenuProduct> menuProducts) {
+        validate(price, menuProducts);
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = new MenuProducts(menuProducts);
+        this.menuProducts = menuProducts;
     }
 
-    public void register(MenuValidator menuValidator) {
-        menuValidator.validate(this);
-        menuProducts.setMenu(this);
+    private void validate(BigDecimal price, List<MenuProduct> menuProducts) {
+        if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (price.compareTo(sum(menuProducts)) > 0) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private BigDecimal sum(List<MenuProduct> menuProducts) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = menuProduct.getProduct();
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+        return sum;
     }
 
     public Long getId() {
@@ -56,11 +76,7 @@ public class Menu {
         return menuGroupId;
     }
 
-    public MenuProducts getMenuProducts() {
+    public List<MenuProduct> getMenuProducts() {
         return menuProducts;
-    }
-
-    public void setMenuProducts(MenuProducts menuProducts) {
-        this.menuProducts = menuProducts;
     }
 }

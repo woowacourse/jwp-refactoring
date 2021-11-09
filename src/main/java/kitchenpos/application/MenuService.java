@@ -5,36 +5,33 @@ import kitchenpos.application.dto.request.MenuRequest;
 import kitchenpos.application.dto.response.MenuResponse;
 import kitchenpos.application.mapper.MenuMapper;
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProducts;
-import kitchenpos.domain.repository.MenuProductRepository;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.validator.MenuValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MenuService {
     private final MenuRepository menuRepository;
-    private final MenuProductRepository menuProductRepository;
+    private final MenuGroupRepository menuGroupRepository;
     private final MenuMapper menuMapper;
-    private final MenuValidator menuValidator;
 
     public MenuService(MenuRepository menuRepository,
-                       MenuProductRepository menuProductRepository, MenuMapper menuMapper,
-                       MenuValidator menuValidator) {
+                       MenuGroupRepository menuGroupRepository,
+                       MenuMapper menuMapper) {
         this.menuRepository = menuRepository;
-        this.menuProductRepository = menuProductRepository;
+        this.menuGroupRepository = menuGroupRepository;
         this.menuMapper = menuMapper;
-        this.menuValidator = menuValidator;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest menuRequest) {
         Menu menu = menuMapper.mapFrom(menuRequest);
-        menu.register(menuValidator);
 
+        if (!menuGroupRepository.existsById(menu.getMenuGroupId())) {
+            throw new IllegalArgumentException();
+        }
         menuRepository.save(menu);
-        menuProductRepository.saveAll(menu.getMenuProducts().toList());
         return MenuResponse.of(menu);
     }
 
@@ -42,9 +39,6 @@ public class MenuService {
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
 
-        for (final Menu menu : menus) {
-            menu.setMenuProducts(new MenuProducts(menuProductRepository.findAllByMenuId(menu.getId())));
-        }
         return MenuResponse.listOf(menus);
     }
 }
