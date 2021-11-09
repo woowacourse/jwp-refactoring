@@ -16,7 +16,7 @@ public class TableGroup extends BaseEntity {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "tableGroup")
     private List<OrderTable> orderTables;
 
     public TableGroup() {}
@@ -33,5 +33,9 @@ public class TableGroup extends BaseEntity {
 
     public List<OrderTable> getOrderTables() {
         return orderTables;
+    }
+
+    public void addOrderTables(List<OrderTable> savedOrderTables) {
+        this.orderTables.addAll(savedOrderTables);
     }
 }
