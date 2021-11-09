@@ -2,7 +2,7 @@ package kitchenpos.order.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import org.springframework.stereotype.Component;

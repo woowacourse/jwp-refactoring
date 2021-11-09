@@ -1,9 +1,8 @@
 package kitchenpos.order.service;
 
 import java.util.List;
-import kitchenpos.application.mapper.OrderMapper;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import org.springframework.stereotype.Service;

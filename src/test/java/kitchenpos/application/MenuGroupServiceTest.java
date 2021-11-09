@@ -5,9 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.application.dto.response.MenuGroupResponse;
-import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.menugroup.domain.MenuGroup;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

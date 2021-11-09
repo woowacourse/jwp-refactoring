@@ -11,8 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import kitchenpos.domain.OrderTable;
 import kitchenpos.order.service.OrderValidator;
+import kitchenpos.table.domain.OrderTable;
 
 @Entity(name = "orders")
 public class Order {
