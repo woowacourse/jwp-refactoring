@@ -9,16 +9,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.service.MenuGroupResponse;
-import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.menu.service.MenuProductRequest;
 import kitchenpos.menu.service.MenuRequest;
 import kitchenpos.menu.service.MenuResponse;
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupRequest;
+import kitchenpos.menugroup.service.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.order.domain.OrderLineItemRepository;
 import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
@@ -86,7 +86,7 @@ class OrderServiceTest {
     void setUp() {
         table = tableService.create(TABLE_REQUEST_THREE_NON_EMPTY);
 
-        menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
+        menuGroup = menuGroupService.create(new MenuGroupRequest("menuGroup"));
 
         chicken = productService.create(new ProductRequest("chicken", BigDecimal.valueOf(20000)));
         pizza = productService.create(new ProductRequest("pizza", BigDecimal.valueOf(15000)));

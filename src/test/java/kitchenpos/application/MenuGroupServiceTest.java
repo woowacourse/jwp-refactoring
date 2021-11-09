@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.menugroup.domain.MenuGroup;
 import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupRequest;
 import kitchenpos.menugroup.service.MenuGroupResponse;
 import kitchenpos.menugroup.service.MenuGroupService;
 import org.junit.jupiter.api.AfterEach;
@@ -23,18 +23,18 @@ class MenuGroupServiceTest {
 
     @Test
     void create() {
-        MenuGroup menuGroup = new MenuGroup("menu_group");
-        MenuGroupResponse created = menuGroupService.create(menuGroup);
+        MenuGroupRequest menuGroupRequest = new MenuGroupRequest("menu_group");
+        MenuGroupResponse created = menuGroupService.create(menuGroupRequest);
 
         assertNotNull(created.getId());
-        assertThat(created.getName()).isEqualTo(menuGroup.getName());
+        assertThat(created.getName()).isEqualTo(menuGroupRequest.getName());
     }
 
     @Test
     void list() {
-        menuGroupService.create(new MenuGroup("group1"));
-        menuGroupService.create(new MenuGroup("group2"));
-        menuGroupService.create(new MenuGroup("group3"));
+        menuGroupService.create(new MenuGroupRequest("group1"));
+        menuGroupService.create(new MenuGroupRequest("group2"));
+        menuGroupService.create(new MenuGroupRequest("group3"));
 
         List<MenuGroupResponse> menuGroups = menuGroupService.list();
         assertThat(menuGroups.size()).isEqualTo(3);

@@ -8,16 +8,16 @@ import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
 import kitchenpos.SpringBootTestWithProfiles;
-import kitchenpos.menugroup.domain.MenuGroup;
-import kitchenpos.menugroup.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuProductRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menugroup.service.MenuGroupResponse;
-import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.menu.service.MenuProductRequest;
 import kitchenpos.menu.service.MenuRequest;
 import kitchenpos.menu.service.MenuResponse;
 import kitchenpos.menu.service.MenuService;
+import kitchenpos.menugroup.domain.MenuGroupRepository;
+import kitchenpos.menugroup.service.MenuGroupRequest;
+import kitchenpos.menugroup.service.MenuGroupResponse;
+import kitchenpos.menugroup.service.MenuGroupService;
 import kitchenpos.product.domain.ProductRepository;
 import kitchenpos.product.service.ProductRequest;
 import kitchenpos.product.service.ProductResponse;
@@ -56,7 +56,7 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         product = productService.create(new ProductRequest("product", BigDecimal.valueOf(1000)));
-        menuGroup = menuGroupService.create(new MenuGroup("menuGroup"));
+        menuGroup = menuGroupService.create(new MenuGroupRequest("menuGroup"));
         menuProductRequest = new MenuProductRequest(product.getId(), 3L);
     }
 
