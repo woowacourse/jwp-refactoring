@@ -26,10 +26,6 @@ public class ProductBuilder {
     }
 
     public Product build() {
-        Product product = new Product();
-        product.setId(this.id);
-        product.setName(this.name);
-        product.setPrice(this.price);
-        return product;
+        return new Product(this.id, this.name, this.price);
     }
 }

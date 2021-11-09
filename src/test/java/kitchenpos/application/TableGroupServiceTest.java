@@ -2,12 +2,11 @@ package kitchenpos.application;
 
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,13 +15,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 class TableGroupServiceTest extends BaseServiceTest {
 
-    @Autowired TableService tableService;
-    @Autowired TableGroupService tableGroupService;
-    @Autowired OrderTableDao orderTableDao;
-    @Autowired OrderService orderService;
-    @Autowired MenuService menuService;
-    @Autowired MenuGroupService menuGroupService;
-    @Autowired ProductService productService;
+    @Autowired
+    TableService tableService;
+    @Autowired
+    TableGroupService tableGroupService;
+    @Autowired
+    OrderTableDao orderTableDao;
+    @Autowired
+    OrderService orderService;
+    @Autowired
+    MenuService menuService;
+    @Autowired
+    MenuGroupService menuGroupService;
+    @Autowired
+    ProductRepository productRepository;
 
     OrderTable savedOrderTable1;
     OrderTable savedOrderTable2;
@@ -154,7 +160,7 @@ class TableGroupServiceTest extends BaseServiceTest {
 
     private Menu 메뉴_생성() {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productRepository.save(product);
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);

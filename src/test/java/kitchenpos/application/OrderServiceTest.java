@@ -3,11 +3,10 @@ package kitchenpos.application;
 import kitchenpos.builder.OrderBuilder;
 import kitchenpos.builder.OrderLineItemBuilder;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -25,7 +24,7 @@ class OrderServiceTest extends BaseServiceTest {
     @Autowired
     MenuGroupService menuGroupService;
     @Autowired
-    ProductService productService;
+    ProductRepository productRepository;
     @Autowired
     TableService tableService;
 
@@ -184,7 +183,7 @@ class OrderServiceTest extends BaseServiceTest {
 
     private Menu 메뉴_생성() {
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        Product savedProduct = productService.create(product);
+        Product savedProduct = productRepository.save(product);
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
         MenuGroup savedMenuGroup = menuGroupService.create(menuGroup);
         MenuProduct menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);

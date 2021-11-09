@@ -1,11 +1,10 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Product;
+import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -39,10 +38,10 @@ class ProductServiceTest extends BaseServiceTest {
     @Test
     void createWithNullPrice() {
         // given
-        Product product = TestFixtureFactory.상품_생성("가격이 null인 상품", null);
+        ProductRequest request = new ProductRequest("가격이 null인 상품", null);
 
         // when then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request.toEntity()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -50,10 +49,10 @@ class ProductServiceTest extends BaseServiceTest {
     @Test
     void createWithNegativePrice() {
         // given
-        Product product = TestFixtureFactory.상품_생성("가격이 음수인 상품", new BigDecimal(-1));
+        ProductRequest request = new ProductRequest("가격이 음수인 상품", new BigDecimal(-1));
 
         // when then
-        assertThatThrownBy(() -> productService.create(product))
+        assertThatThrownBy(() -> productService.create(request.toEntity()))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 

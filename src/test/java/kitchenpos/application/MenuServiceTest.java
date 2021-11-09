@@ -3,17 +3,15 @@ package kitchenpos.application;
 import kitchenpos.builder.MenuGroupBuilder;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -32,7 +30,7 @@ class MenuServiceTest extends BaseServiceTest {
     MenuGroupDao menuGroupDao;
 
     @Autowired
-    ProductDao productDao;
+    ProductRepository productRepository;
 
     @Autowired
     MenuProductDao menuProductDao;
@@ -48,7 +46,7 @@ class MenuServiceTest extends BaseServiceTest {
         savedMenuGroup = menuGroupDao.save(menuGroup);
 
         Product product = TestFixtureFactory.상품_후라이드_치킨();
-        savedProduct = productDao.save(product);
+        savedProduct = productRepository.save(product);
 
         menuProduct = TestFixtureFactory.메뉴상품_매핑_생성(savedProduct, 1L);
 
