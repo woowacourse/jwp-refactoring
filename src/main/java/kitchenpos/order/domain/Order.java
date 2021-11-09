@@ -32,16 +32,15 @@ public class Order {
     }
 
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, null, null, orderLineItems);
+        this(null, orderTable, null, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(OrderTable orderTable, String orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.valueOf(orderStatus), orderedTime, orderLineItems);
+    public Order(OrderTable orderTable, String orderStatus, List<OrderLineItem> orderLineItems) {
+        this(null, orderTable, OrderStatus.valueOf(orderStatus), LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
-                 List<OrderLineItem> orderLineItems) {
+    private Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime,
+                  List<OrderLineItem> orderLineItems) {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
@@ -51,9 +50,7 @@ public class Order {
 
     public void register(OrderValidator orderValidator) {
         orderValidator.validate(this);
-
         orderStatus = OrderStatus.COOKING;
-        orderedTime = LocalDateTime.now();
     }
 
     public void changeStatus(OrderStatus orderStatus) {
