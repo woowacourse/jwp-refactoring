@@ -11,7 +11,7 @@ import kitchenpos.integration.api.OrderApi;
 import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.utils.MockMvcResponse;
-import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.menu.ui.request.MenuProductRequest;
 import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemRequest;
