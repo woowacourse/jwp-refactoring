@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.builder.MenuGroupBuilder;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,17 +23,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 class MenuServiceTest extends BaseServiceTest {
 
-    @Autowired
-    MenuService menuService;
-
-    @Autowired
-    MenuGroupDao menuGroupDao;
-
-    @Autowired
-    ProductRepository productRepository;
-
-    @Autowired
-    MenuProductDao menuProductDao;
+    @Autowired MenuService menuService;
+    @Autowired MenuGroupRepository menuGroupRepository;
+    @Autowired ProductRepository productRepository;
+    @Autowired MenuProductDao menuProductDao;
 
     Menu menu;
     MenuGroup savedMenuGroup;
@@ -43,7 +36,7 @@ class MenuServiceTest extends BaseServiceTest {
     @BeforeEach
     void setUp() {
         MenuGroup menuGroup = TestFixtureFactory.메뉴그룹_인기_메뉴();
-        savedMenuGroup = menuGroupDao.save(menuGroup);
+        savedMenuGroup = menuGroupRepository.save(menuGroup);
 
         Product product = TestFixtureFactory.상품_후라이드_치킨();
         savedProduct = productRepository.save(product);
@@ -94,21 +87,14 @@ class MenuServiceTest extends BaseServiceTest {
     @Test
     void createWithoutMenuGroup() {
         // given
-        MenuGroup nullIdMenuGroup = new MenuGroupBuilder()
-                .id(null)
-                .name("존재하지 않는 메뉴그룹")
-                .build();
-        Menu menu1 = TestFixtureFactory.메뉴_생성("후라이드 한마리", savedProduct.getPrice(), nullIdMenuGroup, menuProduct);
         MenuGroup nonExistMenuGroup = new MenuGroupBuilder()
                 .id(99999L)
                 .name("존재하지 않는 메뉴그룹")
                 .build();
-        Menu menu2 = TestFixtureFactory.메뉴_생성("후라이드 한마리", savedProduct.getPrice(), nonExistMenuGroup, menuProduct);
+        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", savedProduct.getPrice(), nonExistMenuGroup, menuProduct);
 
         // when then
-        assertThatThrownBy(() -> menuService.create(menu1))
-                .isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> menuService.create(menu2))
+        assertThatThrownBy(() -> menuService.create(menu))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -118,15 +104,17 @@ class MenuServiceTest extends BaseServiceTest {
         // given
         Menu savedMenu1 = menuService.create(this.menu);
         Menu menu1 = TestFixtureFactory.메뉴_생성("JMT 후라이드 치킨", new BigDecimal(16000), savedMenuGroup, menuProduct);
-        Menu savedMenu2 = menuService.create(this.menu);
+        Menu savedMenu2 = menuService.create(menu1);
         Menu menu2 = TestFixtureFactory.메뉴_생성("통큰 후라이드 치킨", new BigDecimal(8000), savedMenuGroup, menuProduct);
-        Menu savedMenu3 = menuService.create(this.menu);
+        Menu savedMenu3 = menuService.create(menu2);
+
+        int expectedSize = 3;
 
         // when
         List<Menu> menu = menuService.list();
 
         // then
-        assertThat(menu).hasSize(3);
+        assertThat(menu).hasSize(expectedSize);
         isSameMenu(menu.get(0), savedMenu1);
         isSameMenu(menu.get(1), savedMenu2);
         isSameMenu(menu.get(2), savedMenu3);

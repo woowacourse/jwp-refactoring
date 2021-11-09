@@ -18,9 +18,6 @@ public class MenuGroupBuilder {
     }
 
     public MenuGroup build() {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setId(this.id);
-        menuGroup.setName(this.name);
-        return menuGroup;
+        return new MenuGroup(this.id, this.name);
     }
 }
