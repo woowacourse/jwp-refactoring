@@ -1,6 +1,12 @@
 package kitchenpos.dto;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderRequest {
 
@@ -22,4 +28,7 @@ public class OrderRequest {
         return orderLineItemRequests;
     }
 
+    public Order toEntity(OrderTable orderTable) {
+        return new Order(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+    }
 }

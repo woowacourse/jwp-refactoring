@@ -1,9 +1,14 @@
 package kitchenpos.domain;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 
 @Entity
+@AttributeOverride(
+        name = "id", column = @Column(name = "seq")
+)
 public class OrderLineItem extends BaseEntity {
 
     @ManyToOne

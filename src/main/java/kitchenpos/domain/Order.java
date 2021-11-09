@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "orders")
 public class Order extends BaseEntity {
 
     @ManyToOne
@@ -15,7 +15,7 @@ public class Order extends BaseEntity {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {}
@@ -42,5 +42,17 @@ public class Order extends BaseEntity {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
+    }
+
+    public boolean isCompletion() {
+        return OrderStatus.COMPLETION == orderStatus;
+    }
+
+    public void changeStatus(OrderStatus orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    public void addOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems.addAll(orderLineItems);
     }
 }
