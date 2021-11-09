@@ -27,4 +27,8 @@ public class ProductService {
             .map(ProductResponse::from)
             .collect(Collectors.toList());
     }
+
+    public long countProductInIds(List<Long> productIds) {
+        return productRepository.countProductInIds(productIds);
+    }
 }

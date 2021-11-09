@@ -2,11 +2,8 @@ package kitchenpos.integration;
 
 import static kitchenpos.integration.api.texture.ProductTexture.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.integration.api.MenuApi;
 import kitchenpos.integration.api.MenuGroupApi;
@@ -15,7 +12,7 @@ import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.ui.request.MenuProductRequest;
-import kitchenpos.application.response.MenuResponse;
+import kitchenpos.menu.application.response.MenuResponse;
 import kitchenpos.ui.request.OrderCreateRequest;
 import kitchenpos.ui.request.OrderLineItemRequest;
 import org.assertj.core.api.Assertions;

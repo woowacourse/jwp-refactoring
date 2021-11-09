@@ -9,7 +9,7 @@ import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.api.ProductApi;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.ui.request.MenuProductRequest;
-import kitchenpos.application.response.MenuResponse;
+import kitchenpos.menu.application.response.MenuResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

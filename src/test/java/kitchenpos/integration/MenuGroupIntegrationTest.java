@@ -3,7 +3,7 @@ package kitchenpos.integration;
 import java.util.List;
 import kitchenpos.integration.api.MenuGroupApi;
 import kitchenpos.integration.utils.MockMvcResponse;
-import kitchenpos.application.response.MenuGroupResponse;
+import kitchenpos.menu.application.response.MenuGroupResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
