@@ -46,11 +46,11 @@ public class TableGroupService {
 
     private void validateTableSize(List<Long> orderTableIds, List<OrderTable> savedOrderTables) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
-            throw new IllegalArgumentException("테이블 항목이 비어있거나 2보다 작습니다.");
+            throw new IllegalArgumentException("테이블 비어있거나 2보다 작습니다.");
         }
 
         if (orderTableIds.size() != savedOrderTables.size()) {
-            throw new IllegalArgumentException("저장된 테이블 항목과 요청 테이블 항목이 일치하지 않습니다.");
+            throw new IllegalArgumentException("저장된 테이블 수와 요청 테이블 수가 일치하지 않습니다.");
         }
     }
 
