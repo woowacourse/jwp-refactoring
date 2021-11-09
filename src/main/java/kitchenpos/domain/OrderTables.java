@@ -6,11 +6,11 @@ import java.util.stream.Collectors;
 import kitchenpos.domain.validator.TableGroupValidator;
 import org.springframework.util.CollectionUtils;
 
-public class GroupTables {
+public class OrderTables {
     private static final int GROUP_TABLE_MIN_SIZE = 2;
     private List<OrderTable> orderTables;
 
-    public GroupTables(List<OrderTable> orderTables) {
+    public OrderTables(List<OrderTable> orderTables) {
         validateTableGroupSize(orderTables);
         validateDistinctTables(orderTables);
         this.orderTables = orderTables;

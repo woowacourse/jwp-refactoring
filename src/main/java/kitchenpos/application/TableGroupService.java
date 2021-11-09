@@ -3,7 +3,7 @@ package kitchenpos.application;
 import kitchenpos.application.dto.request.TableGroupRequest;
 import kitchenpos.application.dto.response.TableGroupResponse;
 import kitchenpos.application.mapper.TableGroupMapper;
-import kitchenpos.domain.GroupTables;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -39,8 +39,8 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        GroupTables groupTables = new GroupTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        groupTables.ungroup(tableGroupValidator);
-        orderTableRepository.saveAll(groupTables.toList());
+        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        orderTables.ungroup(tableGroupValidator);
+        orderTableRepository.saveAll(orderTables.toList());
     }
 }

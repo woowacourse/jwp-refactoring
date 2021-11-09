@@ -14,26 +14,26 @@ public class TableGroup {
     private Long id;
     private LocalDateTime createdDate;
     @Transient
-    private GroupTables groupTables;
+    private OrderTables orderTables;
 
     protected TableGroup() {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, new GroupTables(orderTables));
+        this(null, null, new OrderTables(orderTables));
     }
 
-    private TableGroup(Long id, LocalDateTime createdDate, GroupTables groupTables) {
+    private TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
-        this.groupTables = groupTables;
+        this.orderTables = orderTables;
     }
 
     public void register() {
-        if (!groupTables.canAssignTableGroup()) {
+        if (!orderTables.canAssignTableGroup()) {
             throw new IllegalArgumentException();
         }
-        groupTables.setTableGroup(this);
+        orderTables.setTableGroup(this);
         createdDate = LocalDateTime.now();
     }
 
@@ -45,7 +45,7 @@ public class TableGroup {
         return createdDate;
     }
 
-    public GroupTables getGroupTables() {
-        return groupTables;
+    public OrderTables getGroupTables() {
+        return orderTables;
     }
 }
