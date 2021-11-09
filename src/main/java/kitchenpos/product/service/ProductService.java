@@ -9,17 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
 
-    public ProductService(ProductRepository productRepository,
-                          ProductMapper productMapper) {
+    public ProductService(ProductRepository productRepository) {
         this.productRepository = productRepository;
-        this.productMapper = productMapper;
     }
 
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
-        Product product = productMapper.mapFrom(productRequest);
+        Product product = new Product(productRequest.getName(), productRequest.getPrice());
         return ProductResponse.of(productRepository.save(product));
     }
 
