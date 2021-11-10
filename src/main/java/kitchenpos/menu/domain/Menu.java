@@ -14,7 +14,7 @@ import javax.persistence.ManyToOne;
 import org.springframework.data.domain.AbstractAggregateRoot;
 
 @Entity
-public class Menu extends AbstractAggregateRoot<Menu> {
+public class Menu {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,13 +48,6 @@ public class Menu extends AbstractAggregateRoot<Menu> {
         if (price.compareTo(menuProducts.totalSum(price)) > 0) {
             throw new IllegalArgumentException();
         }
-
-        final Menu originalMenu =
-            Menu.builder()
-                .menu(this)
-                .build();
-
-        registerEvent(new MenuUpdateEvent(originalMenu, id));
 
         this.name = name;
         this.price = price;

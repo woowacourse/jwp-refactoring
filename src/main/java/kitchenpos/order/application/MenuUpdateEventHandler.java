@@ -5,6 +5,7 @@ import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.MenuUpdateEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
@@ -22,6 +23,9 @@ public class MenuUpdateEventHandler {
     @EventListener
     @Transactional
     public void handle(MenuUpdateEvent event) {
+        if(!orderLineItemRepository.existsByMenuId(event.getOriginalId())) {
+            return;
+        }
         final Long newId = menuService.create(event.getMenu()).getId();
         orderLineItemRepository.updateMenuIds(event.getOriginalId(), newId);
     }

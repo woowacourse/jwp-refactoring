@@ -19,9 +19,8 @@ public class OrderLineItem {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     private Order order;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id")
-    private Menu menu;
+
+    private Long menuId;
 
     private long quantity;
 
@@ -32,14 +31,14 @@ public class OrderLineItem {
         final OrderLineItem orderLineItem = new OrderLineItem();
         orderLineItem.seq = id;
         orderLineItem.order = Order.createSingleId(orderId);
-        orderLineItem.menu = Menu.createSingleId(menuId);
+        orderLineItem.menuId = menuId;
         orderLineItem.quantity = quantity;
         return orderLineItem;
     }
 
-    public static OrderLineItem create(Menu menu, long quantity) {
+    public static OrderLineItem create(Long menuId, long quantity) {
         final OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.menu = menu;
+        orderLineItem.menuId = menuId;
         orderLineItem.quantity = quantity;
         return orderLineItem;
     }
@@ -52,16 +51,12 @@ public class OrderLineItem {
         return order;
     }
 
-    public Menu getMenu() {
-        return menu;
-    }
-
     public long getQuantity() {
         return quantity;
     }
 
     public Long getMenuId() {
-        return menu.getId();
+        return menuId;
     }
 
     public void setOrder(Order order) {
