@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
+import kitchenpos.domain.repository.MenuProductRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,7 @@ class MenuServiceTest extends BaseServiceTest {
     @Autowired MenuService menuService;
     @Autowired MenuGroupRepository menuGroupRepository;
     @Autowired ProductRepository productRepository;
-    @Autowired MenuProductDao menuProductDao;
+    @Autowired MenuProductRepository menuProductRepository;
 
     Menu menu;
     MenuGroup savedMenuGroup;
@@ -73,7 +74,7 @@ class MenuServiceTest extends BaseServiceTest {
 
     @DisplayName("[메뉴 생성] 메뉴의 가격이 음수면 예외가 발생한다.")
     @Test
-    void createZeroPriceMenu() {
+    void createNegativePriceMenu() {
         // given
         BigDecimal negativePrice = new BigDecimal(-1);
         Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup, menuProduct);

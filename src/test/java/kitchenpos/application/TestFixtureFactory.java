@@ -42,8 +42,8 @@ public class TestFixtureFactory {
     public static MenuProduct 메뉴상품_매핑_생성(Product product, long quantity) {
         return new MenuProductBuilder()
                 .seq(null)
-                .menuId(null)
-                .productId(product.getId())
+                .menu(null)
+                .product(product)
                 .quantity(quantity)
                 .build();
     }
@@ -53,7 +53,7 @@ public class TestFixtureFactory {
                 .id(null)
                 .name(name)
                 .price(price)
-                .menuGroupId(menuGroup.getId())
+                .menuGroup(menuGroup)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }
@@ -63,7 +63,7 @@ public class TestFixtureFactory {
                 .id(null)
                 .name("후라이드 치킨 한마리")
                 .price(new BigDecimal(16000))
-                .menuGroupId(menuGroup.getId())
+                .menuGroup(menuGroup)
                 .menuProducts(Arrays.asList(menuProduct))
                 .build();
     }

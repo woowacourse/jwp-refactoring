@@ -1,12 +1,14 @@
 package kitchenpos.builder;
 
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 
 public class MenuProductBuilder {
 
     private Long seq;
-    private Long menuId;
-    private Long productId;
+    private Menu menu;
+    private Product product;
     private long quantity;
 
     public MenuProductBuilder seq(Long seq) {
@@ -14,13 +16,13 @@ public class MenuProductBuilder {
         return this;
     }
 
-    public MenuProductBuilder menuId(Long menuId) {
-        this.menuId = menuId;
+    public MenuProductBuilder menu(Menu menu) {
+        this.menu = menu;
         return this;
     }
 
-    public MenuProductBuilder productId(Long productId) {
-        this.productId = productId;
+    public MenuProductBuilder product(Product product) {
+        this.product = product;
         return this;
     }
 
@@ -30,11 +32,6 @@ public class MenuProductBuilder {
     }
 
     public MenuProduct build() {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setSeq(this.seq);
-        menuProduct.setMenuId(this.menuId);
-        menuProduct.setProductId(this.productId);
-        menuProduct.setQuantity(this.quantity);
-        return menuProduct;
+        return  new MenuProduct(this.seq, this.menu, this.product, this.quantity);
     }
 }
