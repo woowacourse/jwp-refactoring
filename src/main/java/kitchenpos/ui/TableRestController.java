@@ -2,9 +2,9 @@ package kitchenpos.ui;
 
 import kitchenpos.application.TableService;
 import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.dto.OrderTableCreateRequest;
+import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
+import kitchenpos.dto.request.OrderTableCreateRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +21,10 @@ public class TableRestController {
     }
 
     @PostMapping("/api/tables")
-    public ResponseEntity<OrderTable> create(@RequestBody final OrderTableCreateRequest request) {
+    public ResponseEntity<Void> create(@RequestBody final OrderTableCreateRequest request) {
         final OrderTable created = tableService.create(request.toEntity());
         final URI uri = URI.create("/api/tables/" + created.getId());
-        return ResponseEntity.created(uri)
-                .body(created)
-                ;
+        return ResponseEntity.created(uri).build();
     }
 
     @GetMapping("/api/tables")
