@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
@@ -19,10 +20,14 @@ public class Menu {
     @JoinColumn(name = "menu_group_id")
     private MenuGroup menuGroup;
 
-    @OneToMany(mappedBy = "menu")
-    private List<MenuProduct> menuProducts;
+    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {
+    }
+
+    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
+        this(null, name, price, menuGroup, new ArrayList<>());
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
@@ -36,7 +41,6 @@ public class Menu {
         this.price = price;
         this.menuGroup = menuGroup;
         this.menuProducts = menuProducts;
-        validatesMenuProductsPrice();
     }
 
     private void validatesPriceValue(BigDecimal price) {
@@ -45,13 +49,14 @@ public class Menu {
         }
     }
 
-    private void validatesMenuProductsPrice() {
+    public void addMenuProducts(List<MenuProduct> menuProducts) {
         final BigDecimal sum = menuProducts.stream()
                                            .map(MenuProduct::totalPrice)
                                            .reduce(BigDecimal.ZERO, BigDecimal::add);
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
         }
+        this.menuProducts = menuProducts;
     }
 
     public Long getId() {

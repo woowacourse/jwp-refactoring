@@ -30,20 +30,21 @@ public class MenuService {
     public MenuResponse create(final CreateMenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                                                        .orElseThrow(() -> new IllegalArgumentException("메뉴 그룹이 존재하지 않습니다."));
-        final List<MenuProduct> menuProducts = getMenuProducts(request);
 
-        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
+        final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        final List<MenuProduct> menuProducts = getMenuProducts(menu, request);
+        menu.addMenuProducts(menuProducts);
+
         final Menu savedMenu = menuRepository.save(menu);
-
         return MenuResponse.from(savedMenu);
     }
 
-    private List<MenuProduct> getMenuProducts(CreateMenuRequest request) {
+    private List<MenuProduct> getMenuProducts(Menu menu, CreateMenuRequest request) {
         return request.getMenuProducts().stream()
                       .map(item -> {
                           Product product = productRepository.findById(item.getProductId())
                                                              .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
-                          return new MenuProduct(product, item.getQuantity());
+                          return new MenuProduct(menu, product, item.getQuantity());
                       })
                       .collect(Collectors.toList());
     }
