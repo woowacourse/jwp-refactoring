@@ -1,11 +1,10 @@
 package kitchenpos.order.application;
 
-import kitchenpos.domain.repository.OrderLineItemRepository;
+import kitchenpos.order.domain.repository.OrderLineItemRepository;
 import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.MenuUpdateEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Component

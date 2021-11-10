@@ -1,7 +1,7 @@
 package kitchenpos.integration;
 
-import kitchenpos.application.response.OrderTableResponse;
-import kitchenpos.application.response.TableGroupResponse;
+import kitchenpos.order.application.response.OrderTableResponse;
+import kitchenpos.order.application.response.TableGroupResponse;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.api.TableGroupApi;
 import kitchenpos.integration.utils.MockMvcResponse;
