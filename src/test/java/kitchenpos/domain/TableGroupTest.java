@@ -69,7 +69,7 @@ class TableGroupTest {
         );
 
         // when
-        group.changeFull();
+        group.changeToFull();
         List<OrderTable> results = group.getOrderTables();
 
         // then

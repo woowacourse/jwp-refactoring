@@ -48,7 +48,7 @@ public class TableGroup {
         }
     }
 
-    public void changeFull() {
+    public void changeToFull() {
         for (final OrderTable orderTable : this.orderTables) {
             orderTable.changeFull();
         }

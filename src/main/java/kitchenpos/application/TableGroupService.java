@@ -34,7 +34,7 @@ public class TableGroupService {
                                                     .collect(Collectors.toList());
 
         final TableGroup tableGroup = new TableGroup(orderTables);
-        tableGroup.changeFull();
+        tableGroup.changeToFull();
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(savedTableGroup);
