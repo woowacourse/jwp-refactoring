@@ -69,6 +69,7 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .menuGroup(menuGroup1)
                 .menuProducts(Arrays.asList(menuProduct1))
                 .build();
+        menuProduct1.connectMenu(menu1);
 
         menu2 = new MenuBuilder()
                 .id(2L)
@@ -77,6 +78,8 @@ class MenuRestControllerTest extends BaseWebMvcTest {
                 .menuGroup(menuGroup2)
                 .menuProducts(Arrays.asList(menuProduct2, menuProduct3))
                 .build();
+        menuProduct2.connectMenu(menu2);
+        menuProduct3.connectMenu(menu2);
     }
 
     @DisplayName("POST /api/menus -> 메뉴를 추가한다.")

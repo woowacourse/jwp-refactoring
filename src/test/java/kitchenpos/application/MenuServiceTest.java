@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.builder.MenuGroupBuilder;
-import kitchenpos.dao.MenuProductDao;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -24,10 +23,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 class MenuServiceTest extends BaseServiceTest {
 
-    @Autowired MenuService menuService;
-    @Autowired MenuGroupRepository menuGroupRepository;
-    @Autowired ProductRepository productRepository;
-    @Autowired MenuProductRepository menuProductRepository;
+    @Autowired
+    MenuService menuService;
+    @Autowired
+    MenuGroupRepository menuGroupRepository;
+    @Autowired
+    ProductRepository productRepository;
+    @Autowired
+    MenuProductRepository menuProductRepository;
 
     Menu menu;
     MenuGroup savedMenuGroup;
@@ -77,10 +80,9 @@ class MenuServiceTest extends BaseServiceTest {
     void createNegativePriceMenu() {
         // given
         BigDecimal negativePrice = new BigDecimal(-1);
-        Menu menu = TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup, menuProduct);
 
         // when then
-        assertThatThrownBy(() -> menuService.create(menu))
+        assertThatThrownBy(() -> TestFixtureFactory.메뉴_생성("후라이드 한마리", negativePrice, savedMenuGroup, menuProduct))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
