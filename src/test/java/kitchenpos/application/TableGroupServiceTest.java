@@ -74,8 +74,8 @@ class TableGroupServiceTest extends ServiceTest {
         given(orderTableRepository.findAllByTableGroupId(any())).willReturn(groupedTables);
 
         assertDoesNotThrow(() -> tableGroupService.ungroup(tableGroup.getId()));
-        tableGroup.getOrderTables()
-            .forEach(orderTable -> assertThat(orderTable.getTableGroup()).isNull());
+        groupedTables
+            .forEach(orderTable -> assertThat(orderTable.isGrouped()).isFalse());
     }
 
     @Test
