@@ -12,6 +12,7 @@ import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.MenuService;
 import kitchenpos.domain.Menu;
+import kitchenpos.dto.MenuRequest;
 import kitchenpos.ui.MenuRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class MenuRestControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        given(menuService.create(any(Menu.class)))
+        given(menuService.create(any(MenuRequest.class)))
             .willReturn(menu);
 
         String content = objectMapper.writeValueAsString(menu);

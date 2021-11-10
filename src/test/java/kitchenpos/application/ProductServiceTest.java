@@ -1,12 +1,11 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 
-import java.math.BigDecimal;
-import kitchenpos.Fixtures;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Product;
-import org.junit.jupiter.api.BeforeEach;
+import kitchenpos.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,16 +20,16 @@ class ProductServiceTest {
     private ProductService productService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @DisplayName("product 생성")
     @Test
     void create() {
-        Product product = Fixtures.makeProduct();
+        ProductRequest productRequest = new ProductRequest("후라이드", 16000.00);
 
-        productService.create(product);
+        productService.create(productRequest);
 
-        verify(productDao).save(product);
+        verify(productRepository).save(any(Product.class));
     }
 
     @DisplayName("product 불러오기")
@@ -38,7 +37,7 @@ class ProductServiceTest {
     void list() {
         productService.list();
 
-        verify(productDao).findAll();
+        verify(productRepository).findAll();
     }
 
 }

@@ -1,23 +1,28 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import kitchenpos.Fixtures;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.OrderLineItemRepository;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderLineItemRequest;
+import kitchenpos.dto.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,75 +40,83 @@ class OrderServiceTest {
     private List<OrderLineItem> orderLineItems;
     private Order order;
     private OrderTable orderTable;
+    private Menu menu;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuService menuService;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemService orderLineItemService;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableService orderTableService;
 
     @BeforeEach
     void setUp() {
-        orderLineItem = Fixtures.makeOrderLineItem();
+        TableGroup tableGroup = new TableGroup(1L);
+        orderTable = new OrderTable(1L, tableGroup, 1, false);
+        order = new Order(orderTable, OrderStatus.COOKING);
+        menu = Fixtures.makeMenu();
+
+        orderLineItem = new OrderLineItem(1L, order, menu, 1L);
 
         orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItem);
 
-        order = Fixtures.makeOrder();
-        order.setOrderLineItems(orderLineItems);
-
-        orderTable = Fixtures.makeOrderTable();
-        orderTable.setEmpty(false);
+        order.addOrderLineItems(orderLineItems);
 
     }
 
     @DisplayName("order 생성")
     @Test
     void create() {
-        given(menuDao.countByIdIn(anyList()))
-            .willReturn(1L);
-        given(orderTableDao.findById(anyLong()))
-            .willReturn(Optional.of(orderTable));
-        given(orderDao.save(order))
+        given(orderTableService.findById(anyLong()))
+            .willReturn(orderTable);
+        given(orderRepository.save(any(Order.class)))
             .willReturn(order);
+        given(menuService.findById(anyLong()))
+            .willReturn(menu);
 
-        orderService.create(order);
+        OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1);
 
-        verify(orderDao).save(order);
-        verify(orderLineItemDao).save(orderLineItem);
+        OrderRequest orderRequest =
+            new OrderRequest(
+                1L,
+                OrderStatus.COOKING,
+                Collections.singletonList(orderLineItemRequest));
+
+        orderService.create(orderRequest);
+
+        verify(orderRepository).save(any(Order.class));
+        verify(orderLineItemService).saveAll(anyList());
     }
 
     @DisplayName("order 불러오기")
     @Test
     void list() {
         List<Order> orders = new ArrayList<>();
-        orders.add(order);
+        orders.add(this.order);
 
-        given(orderDao.findAll())
+        given(orderRepository.findAll())
             .willReturn(orders);
 
         orderService.list();
 
-        verify(orderDao).findAll();
-        verify(orderLineItemDao).findAllByOrderId(anyLong());
+        verify(orderRepository).findAll();
     }
 
     @DisplayName("주문상태 바꾸기")
     @Test
     void changeOrder() {
-        given(orderDao.findById(anyLong()))
+        given(orderRepository.findById(anyLong()))
             .willReturn(Optional.of(order));
 
-        orderService.changeOrderStatus(1L, order);
+        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING, null);
 
-        verify(orderDao).save(order);
-        verify(orderLineItemDao).findAllByOrderId(anyLong());
+        orderService.changeOrderStatus(1L, orderRequest);
     }
 
 }

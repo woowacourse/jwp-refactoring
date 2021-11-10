@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -7,9 +8,12 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 import kitchenpos.Fixtures;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.dao.OrderRepository;
+import kitchenpos.dao.OrderTableRepository;
+import kitchenpos.dao.TableGroupRepository;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,10 +30,13 @@ class TableServiceTest {
     private OrderTable orderTable;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
+
+    @Mock
+    private TableGroupRepository tableGroupRepository;
 
     @BeforeEach
     void setUp() {
@@ -39,9 +46,15 @@ class TableServiceTest {
     @DisplayName("table 생성")
     @Test
     void create() {
-        tableService.create(orderTable);
+        TableGroup tableGroup = Fixtures.makeTableGroup();
+        given(tableGroupRepository.findById(anyLong()))
+            .willReturn(Optional.of(tableGroup));
 
-        verify(orderTableDao).save(orderTable);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 1, true);
+
+        tableService.create(orderTableRequest);
+
+        verify(orderTableRepository).save(any(OrderTable.class));
     }
 
     @DisplayName("table 불러오기")
@@ -49,20 +62,22 @@ class TableServiceTest {
     void list() {
         tableService.list();
 
-        verify(orderTableDao).findAll();
+        verify(orderTableRepository).findAll();
     }
 
     @DisplayName("table 비우기")
     @Test
     void emptyTable() {
-        given(orderTableDao.findById(anyLong()))
+        given(orderTableRepository.findById(anyLong()))
             .willReturn(Optional.of(orderTable));
-        given(orderDao.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
+        given(orderRepository.existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList()))
             .willReturn(false);
 
-        tableService.changeEmpty(1L, orderTable);
+        OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 1, false);
 
-        verify(orderTableDao).findById(anyLong());
-        verify(orderDao).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
+        tableService.changeEmpty(1L, orderTableRequest);
+
+        verify(orderTableRepository).findById(anyLong());
+        verify(orderRepository).existsByOrderTableIdAndOrderStatusIn(anyLong(), anyList());
     }
 }

@@ -7,12 +7,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.Fixtures;
 import kitchenpos.application.ProductService;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.ProductRequest;
 import kitchenpos.ui.ProductRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class ProductRestControllerTest {
 
         String content = objectMapper.writeValueAsString(product);
 
-        given(productService.create(any(Product.class)))
+        given(productService.create(any(ProductRequest.class)))
             .willReturn(product);
 
         mvc.perform(post("/api/products")

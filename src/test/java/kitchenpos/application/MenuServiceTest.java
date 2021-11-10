@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -7,16 +9,18 @@ import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import kitchenpos.Fixtures;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.MenuGroupDao;
-import kitchenpos.dao.MenuProductDao;
-import kitchenpos.dao.ProductDao;
+import kitchenpos.dao.MenuGroupRepository;
+import kitchenpos.dao.MenuProductRepository;
+import kitchenpos.dao.MenuRepository;
+import kitchenpos.dao.ProductRepository;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.dto.MenuRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,33 +36,34 @@ class MenuServiceTest {
     private MenuService menuService;
     private MenuProduct menuProduct;
     private List<MenuProduct> menuProducts;
+    private MenuGroup menuGroup;
     private Product product;
     private Menu menu;
     private List<Menu> menus;
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupService menuGroupService;
 
     @Mock
-    private MenuProductDao menuProductDao;
+    private MenuProductService menuProductService;
 
     @Mock
-    private ProductDao productDao;
+    private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        menuProduct = Fixtures.makeMenuProduct();
+        menuGroup = new MenuGroup(1L, "한마리치킨");
+        menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup);
+        product = new Product(1L, "후라이드", BigDecimal.valueOf(16000.00));
+        menuProduct = new MenuProduct(1L, menu, product, 1L);
 
         menuProducts = new ArrayList<>();
         menuProducts.add(menuProduct);
 
-        product = Fixtures.makeProduct();
-
-        menu = Fixtures.makeMenu();
-        menu.setMenuProducts(menuProducts);
+        menu.addMenuProducts(menuProducts);
 
         menus = new ArrayList<>();
         menus.add(menu);
@@ -67,34 +72,33 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성")
     @Test
     void create() {
-        given(menuGroupDao.existsById(anyLong()))
-            .willReturn(true);
-        given(productDao.findById(anyLong()))
-            .willReturn(Optional.of(product));
-        given(menuProductDao.save(menuProduct))
-            .willReturn(menuProduct);
-        given(menuDao.save(menu))
+        given(menuGroupService.findById(anyLong()))
+            .willReturn(menuGroup);
+        given(productService.findById(anyLong()))
+            .willReturn(product);
+        given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 
-        menuService.create(menu);
+        MenuRequest menuRequest = new MenuRequest("후라이드치킨", 16000.00, menuGroup.getId(),
+            Collections.singletonList(product.getId()), 1);
 
-        verify(menuDao).save(menu);
+        menuService.create(menuRequest);
+
+        verify(menuRepository).save(any(Menu.class));
+        verify(menuProductService).saveAll(any(Menu.class), anyList(), anyLong());
     }
 
 
     @DisplayName("메뉴 불러오기")
     @Test
     void list() {
-        Menu otherMenu = new Menu();
-        otherMenu.setId(2L);
-
+        Menu otherMenu = new Menu(2L, "양념치킨", BigDecimal.valueOf(17000.00), menuGroup);
         menus.add(otherMenu);
 
-        given(menuDao.findAll())
+        given(menuRepository.findAll())
             .willReturn(menus);
         menuService.list();
 
-        verify(menuDao).findAll();
-        verify(menuProductDao, times(2)).findAllByMenuId(anyLong());
+        verify(menuRepository).findAll();
     }
 }

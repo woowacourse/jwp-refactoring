@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.ArrayList;
 import kitchenpos.Fixtures;
 import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.ui.TableGroupRestController;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,13 +38,12 @@ public class TableGroupRestControllerTest {
     @Test
     void create() throws Exception {
         TableGroup tableGroup = Fixtures.makeTableGroup();
-        tableGroup.setOrderTables(new ArrayList<>());
 
         ObjectMapper objectMapper = new ObjectMapper();
 
         String content = objectMapper.writeValueAsString(tableGroup);
 
-        given(tableGroupService.create(any(TableGroup.class)))
+        given(tableGroupService.create(any(TableGroupRequest.class)))
             .willReturn(tableGroup);
 
         mvc.perform(post("/api/table-groups")
