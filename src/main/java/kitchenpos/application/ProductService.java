@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 public class ProductService {
 
     private final ProductRepository productRepository;

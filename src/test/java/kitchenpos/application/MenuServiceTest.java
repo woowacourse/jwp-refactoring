@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import kitchenpos.annotation.IntegrationTest;
 import kitchenpos.domain.Menu;
+import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,27 +36,17 @@ class MenuServiceTest {
 
     @BeforeEach
     void setUp() {
-        validMenuProduct = new MenuProduct();
-        validMenuProduct.setProductId(1L);
-        validMenuProduct.setQuantity(2);
-
-        invalidMenuProduct = new MenuProduct();
-        invalidMenuProduct.setProductId(9999L);
-        invalidMenuProduct.setQuantity(2);
+        validMenuProduct = new MenuProduct(new Product(1L), 2L);
+        invalidMenuProduct = new MenuProduct(new Product(9999L), 2L);
     }
 
     @ParameterizedTest
     @DisplayName("가격이 올바르지 않으면 Menu를 등록할 수 없다.")
     @MethodSource("minusAndNullPrice")
     public void priceException(BigDecimal price) {
-        //given
-        Menu menu = new Menu();
-        menu.setName("올바르지않은가격의메뉴");
-        menu.setMenuGroupId(1L);
-        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
-
-        //when
-        menu.setPrice(price);
+        //given & when
+        Menu menu = new Menu("invalidMenu", price,
+                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -71,14 +63,9 @@ class MenuServiceTest {
     @Test
     @DisplayName("존재하는 MenuGroup에 속해있지 않으면 Menu를 등록할 수 없다.")
     public void menuGroupException() {
-        //given
-        Menu menu = new Menu();
-        menu.setName("menuGroup이상있는메뉴");
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
-
-        //when
-        menu.setMenuGroupId(INVALID_MENU_GROUP_ID);
+        //given & when
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
+                new MenuGroup(INVALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -88,14 +75,9 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu에 속하는 MenuProduct의 Product가 존재하지 않으면 등록할 수 없다.")
     public void emptyMenuProductException() {
-        //given
-        Menu menu = new Menu();
-        menu.setName("존재하지않는product로조리하는메뉴");
-        menu.setPrice(BigDecimal.valueOf(10000));
-        menu.setMenuGroupId(VALID_MENU_GROUP_ID);
-
-        //when
-        menu.enrollMenuProducts(Collections.singletonList(invalidMenuProduct));
+        //given & when
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(10000),
+                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(invalidMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -105,14 +87,9 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu의 가격은 Menu에 들어가는 모든 Product 가격들의 합 보다 높아서는 안된다.")
     public void menuPriceLowerThanProductSumException() {
-        //given
-        Menu menu = new Menu();
-        menu.setName("총product비용보다비싼메뉴");
-        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
-        menu.setMenuGroupId(VALID_MENU_GROUP_ID);
-
-        //when
-        menu.setPrice(BigDecimal.valueOf(32001));
+        //given & when
+        Menu menu = new Menu("invalidMenu", BigDecimal.valueOf(32001),
+                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
 
         //then
         assertThatThrownBy(() -> menuService.create(menu))
@@ -122,12 +99,9 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu를 등록할 수 있다.")
     public void enrollMenu() {
-        //given
-        Menu menu = new Menu();
-        menu.setName("Menu");
-        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
-        menu.setMenuGroupId(VALID_MENU_GROUP_ID);
-        menu.setPrice(BigDecimal.valueOf(10000));
+        //given & when
+        Menu menu = new Menu("validMenu", BigDecimal.valueOf(10000),
+                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
 
         //then
         assertDoesNotThrow(() -> menuService.create(menu));
@@ -136,12 +110,9 @@ class MenuServiceTest {
     @Test
     @DisplayName("Menu 생성 후에 Menu의 MenuProduct 내에 menu_id를 할당해주어야 한다.")
     public void enrollMenuAndAllocateMenuIdIntoMenuProduct() {
-        //given
-        Menu menu = new Menu();
-        menu.setName("Menu");
-        menu.enrollMenuProducts(Collections.singletonList(validMenuProduct));
-        menu.setMenuGroupId(VALID_MENU_GROUP_ID);
-        menu.setPrice(BigDecimal.valueOf(10000));
+        //given & when
+        Menu menu = new Menu("validMenu", BigDecimal.valueOf(10000),
+                new MenuGroup(VALID_MENU_GROUP_ID), Collections.singletonList(validMenuProduct));
 
         //when
         Menu savedMenu = menuService.create(menu);

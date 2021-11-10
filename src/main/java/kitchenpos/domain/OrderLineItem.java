@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class OrderLineItem {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -40,6 +40,10 @@ public class OrderLineItem {
 
     public Order getOrder() {
         return order;
+    }
+
+    public Long getOrderId() {
+        return order.getId();
     }
 
     public Menu getMenu() {

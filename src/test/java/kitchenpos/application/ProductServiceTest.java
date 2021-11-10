@@ -27,11 +27,8 @@ class ProductServiceTest {
     @DisplayName("Product의 가격이 올바르지 않으면 등록할 수 없다.")
     @MethodSource("minusAndNullPrice")
     public void priceException(BigDecimal price) {
-        //given
-        Product product = new Product();
-
-        //when
-        product.setPrice(price);
+        //given & when
+        Product product = new Product("name", price);
 
         //then
         assertThatThrownBy(() -> productService.create(product))
@@ -49,9 +46,7 @@ class ProductServiceTest {
     @DisplayName("Product를 등록할 수 있다.")
     public void enrollProduct() {
         //given
-        Product product = new Product();
-        product.setName("진~~짜 맛있는 치킨");
-        product.setPrice(BigDecimal.valueOf(1000));
+        Product product = new Product("name", BigDecimal.valueOf(1000));
 
         //when & then
         assertDoesNotThrow(() -> productService.create(product));

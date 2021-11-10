@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.annotation.IntegrationTest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.*;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,36 +26,35 @@ class OrderServiceTest {
     @Autowired
     private TableService tableService;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
     private OrderLineItem orderLineItem;
     private OrderTable notEmptyTable;
     private Order mealStatusOrder;
     private Order completionStatusOrder;
 
+    private Menu menu;
+    private OrderTable orderTable;
+
     @BeforeEach
     void setUp() {
-        orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        notEmptyTable = new OrderTable();
-        notEmptyTable.setEmpty(false);
-
-        mealStatusOrder = new Order();
-        mealStatusOrder.setOrderStatus(OrderStatus.MEAL.name());
-
-        completionStatusOrder = new Order();
-        completionStatusOrder.setOrderStatus("COMPLETION");
+        orderTable = orderTableRepository.findById(1L).get();
+        menu = menuRepository.findById(1L).get();
+        orderLineItem = new OrderLineItem(menu, 1L);
+        notEmptyTable = new OrderTable(false);
+        mealStatusOrder = new Order(OrderStatus.MEAL.name());
+        completionStatusOrder = new Order(OrderStatus.COMPLETION.name());
     }
 
     @Test
     @DisplayName("Order 요청 시에는 order_line_item이 반드시 있어야 한다.(메뉴 주문을 무조건 해야 한다)")
     public void orderLineItemEmptyException() {
-        //given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-
-        //when
-        order.enrollOrderLineItems(Collections.emptyList());
+        //given & when
+        Order order = new Order(orderTable, Collections.emptyList());
 
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -66,12 +64,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("동일한 Menu가 별개의 order_line_item에 들어있어서는 안된다.(메뉴의 종류의 개수와 order_line_item의 개수가 같아야 한다)")
     public void notDistinctOrderLineItemsException() {
-        //given
-        Order order = new Order();
-        order.setOrderTableId(1L);
-
-        //when
-        order.enrollOrderLineItems(Arrays.asList(orderLineItem, orderLineItem));
+        //given & when
+        Order order = new Order(orderTable, Arrays.asList(orderLineItem, orderLineItem));
 
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -81,12 +75,8 @@ class OrderServiceTest {
     @Test
     @DisplayName("비어있는 order_table에서 order 요청을 할 수 없다.")
     public void emptyOrderTableOrderException() {
-        //given
-        Order order = new Order();
-        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
-
-        //when
-        order.setOrderTableId(1L);
+        //given & when
+        Order order = new Order(orderTable, Collections.singletonList(orderLineItem));
 
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -97,7 +87,7 @@ class OrderServiceTest {
     @DisplayName("Order를 등록할 수 있다.")
     public void enrollOrder() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when * then
         assertDoesNotThrow(() -> orderService.create(order));
@@ -107,7 +97,7 @@ class OrderServiceTest {
     @DisplayName("Order 생성 후에 OrderLineItem의 order_id에 생성된 Order의 id가 할당되어야 한다.")
     public void allocateOrderIdIntoOrderLineItem() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when & then
         Order savedOrder = orderService.create(order);
@@ -120,7 +110,7 @@ class OrderServiceTest {
     @DisplayName("존재하는 Order 조회를 할 수 있다.")
     public void findAll() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when
         orderService.create(order);
@@ -137,8 +127,7 @@ class OrderServiceTest {
     @DisplayName("존재하지 않는 Order의 상태를 바꿀 수 없다.")
     public void changeNotExistOrderStatusException() {
         //given & when
-        Order order = new Order();
-        order.setOrderStatus("COMPLETION");
+        Order order = new Order(OrderStatus.COMPLETION.name());
 
         //then
         assertThatThrownBy(() -> orderService.changeOrderStatus(10L, order))
@@ -149,7 +138,7 @@ class OrderServiceTest {
     @DisplayName("Order의 상태를 바꿀 수 있다.")
     public void changeOrderStatus() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when
         Order savedOrder = orderService.create(order);
@@ -164,7 +153,7 @@ class OrderServiceTest {
     @DisplayName("상태 변경 후에는 order_line_item을 포함한 Order를 반환받는다.")
     public void receiveOrderAfterChangeOrderStatus() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when
         Order savedOrder = orderService.create(order);
@@ -179,7 +168,7 @@ class OrderServiceTest {
     @DisplayName("이미 COMPLETION 상태의 Order는 상태를 변경할 수 없다.")
     public void changeCompletionStatusOrderException() {
         //given
-        Order order = creatableOrder();
+        Order order = createOrder();
 
         //when
         Order savedOrder = orderService.create(order);
@@ -191,11 +180,10 @@ class OrderServiceTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    private Order creatableOrder() {
-        Order order = new Order();
-        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
+    private Order createOrder() {
         tableService.changeEmpty(1L, notEmptyTable);
-        order.setOrderTableId(1L);
+        OrderTable findOrderTable = orderTableRepository.findById(1L).get();
+        Order order = new Order(findOrderTable, Collections.singletonList(orderLineItem));
 
         return order;
     }

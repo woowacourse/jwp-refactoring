@@ -1,10 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.annotation.IntegrationTest;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderLineItem;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.*;
+import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,6 +29,12 @@ public class TableServiceTest {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private OrderTableRepository orderTableRepository;
+
     private OrderTable notEmptyTable;
     private OrderTable emptyTable;
 
@@ -37,15 +42,11 @@ public class TableServiceTest {
 
     @BeforeEach
     void setUp() {
-        notEmptyTable = new OrderTable();
-        notEmptyTable.setEmpty(false);
-        emptyTable = new OrderTable();
-        emptyTable.setEmpty(true);
+        notEmptyTable = new OrderTable(false);
+        emptyTable = new OrderTable(true);
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable(1L);
+        OrderTable orderTable2 = new OrderTable(2L);
 
         validOrderTables.add(orderTable1);
         validOrderTables.add(orderTable2);
@@ -54,12 +55,8 @@ public class TableServiceTest {
     @Test
     @DisplayName("OrderTable을 추가할 수 있다.")
     public void enrollOrderTable() {
-        //given
-        OrderTable orderTable = new OrderTable();
-
-        //when
-        orderTable.setEmpty(false);
-        orderTable.changeNumberOfGuests(10);
+        //given & when
+        OrderTable orderTable = new OrderTable(10, false);
 
         //then
         assertDoesNotThrow(() -> tableService.create(orderTable));
@@ -86,8 +83,7 @@ public class TableServiceTest {
     @DisplayName("TableGroup에 속한 OrderTable의 Empty는 수정할 수 없다.")
     public void cannotChangeTableStatusIncludedInTableGroup() {
         //given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(validOrderTables);
+        TableGroup tableGroup = new TableGroup(validOrderTables);
         tableGroupService.create(tableGroup);
 
         //when & then
@@ -113,8 +109,7 @@ public class TableServiceTest {
         Order savedOrder = enrollOrder();
 
         //when
-        Order completedOrder = new Order();
-        completedOrder.setOrderStatus("COMPLETION");
+        Order completedOrder = new Order(OrderStatus.COMPLETION.name());
         orderService.changeOrderStatus(savedOrder.getId(), completedOrder);
 
         //then
@@ -130,11 +125,8 @@ public class TableServiceTest {
     @Test
     @DisplayName("NumberOfGuests를 0 미만의 값으로 수정할 수 없다.")
     public void cannotChangeNumberOfGuestsUnderZero() {
-        //given
-        OrderTable orderTable = new OrderTable();
-
-        //when
-        orderTable.changeNumberOfGuests(-1);
+        //given & when
+        OrderTable orderTable = new OrderTable(-1);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -144,11 +136,8 @@ public class TableServiceTest {
     @Test
     @DisplayName("NumberOfGuests 수정 시, 존재하지않은 OrderTable Id가 주어져서는 안된다.")
     public void cannotChangeNumberOfGuestsWhenNonExistOrderTableId() {
-        //given
-        OrderTable orderTable = new OrderTable();
-
-        //when
-        orderTable.changeNumberOfGuests(5);
+        //given & when
+        OrderTable orderTable = new OrderTable(5);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(100L, orderTable))
@@ -158,11 +147,8 @@ public class TableServiceTest {
     @Test
     @DisplayName("NumberOfGuests 수정 시, empty가 true인 OrderTable이어서는 안된다.")
     public void cannotChangeNumberOfGuestsWhenEmptyTable() {
-        //given
-        OrderTable orderTable = new OrderTable();
-
-        //when
-        orderTable.changeNumberOfGuests(5);
+        //given & when
+        OrderTable orderTable = new OrderTable(5);
 
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(1L, orderTable))
@@ -173,25 +159,22 @@ public class TableServiceTest {
     @DisplayName("OrderTable의 NumberOfGuests를 수정할 수 있다.")
     public void updateNumberOfGuests() {
         //given
-        OrderTable orderTable = new OrderTable();
+        OrderTable orderTable = new OrderTable(5);
 
         //when
         tableService.changeEmpty(1L, notEmptyTable);
-        orderTable.changeNumberOfGuests(5);
 
         //then
         assertDoesNotThrow(() -> tableService.changeNumberOfGuests(1L, orderTable));
     }
 
     private Order enrollOrder() {
-        Order order = new Order();
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setMenuId(1L);
-        orderLineItem.setQuantity(1);
-
-        order.enrollOrderLineItems(Collections.singletonList(orderLineItem));
         tableService.changeEmpty(1L, notEmptyTable);
-        order.setOrderTableId(1L);
+        Menu findMenu = menuRepository.findById(1L).get();
+        OrderTable findOrderTable = orderTableRepository.findById(1L).get();
+
+        OrderLineItem orderLineItem = new OrderLineItem(findMenu, 1L);
+        Order order = new Order(findOrderTable, Collections.singletonList(orderLineItem));
 
         return orderService.create(order);
     }

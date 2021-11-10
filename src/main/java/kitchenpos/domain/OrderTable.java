@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 public class OrderTable {
@@ -43,7 +44,7 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void enrollTableGroup(TableGroup savedTableGroup) {
+    public void enrollTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 
@@ -81,5 +82,9 @@ public class OrderTable {
 
     public Long getTableGroupId() {
         return tableGroup.getId();
+    }
+
+    public boolean isBelongToTableGroup() {
+        return Objects.nonNull(tableGroup);
     }
 }

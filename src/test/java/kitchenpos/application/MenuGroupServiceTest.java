@@ -5,13 +5,16 @@ import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-@IntegrationTest
+@SpringBootTest
+@Transactional
 class MenuGroupServiceTest {
 
     @Autowired
@@ -21,8 +24,7 @@ class MenuGroupServiceTest {
     @DisplayName("MenuGroup을 등록할 수 있다.")
     public void enrollMenuGroup() {
         //given & when
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("메뉴그룹");
+        MenuGroup menuGroup = new MenuGroup("menuGroup");
 
         //then
         assertDoesNotThrow(() -> menuGroupService.create(menuGroup));
