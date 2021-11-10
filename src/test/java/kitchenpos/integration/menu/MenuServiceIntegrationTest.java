@@ -121,7 +121,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
 
             Menu menu = new Menu();
             menu.setName("얌 프라이");
-            menu.setPrice(BigDecimal.valueOf(-1000));
+            menu.setPrice(BigDecimal.valueOf(8000));
             menu.setMenuGroupId(100L);
             menu.setMenuProducts(Collections.singletonList(menuProduct));
 
@@ -137,7 +137,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
             // given
             Menu menu = new Menu();
             menu.setName("얌 프라이");
-            menu.setPrice(BigDecimal.valueOf(-1000));
+            menu.setPrice(BigDecimal.valueOf(8000));
             menu.setMenuGroupId(4L);
             menu.setMenuProducts(Collections.emptyList());
 
