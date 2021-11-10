@@ -34,12 +34,12 @@ class OrderTest {
 
     @Test
     @DisplayName("메뉴 목록이 없는 경우 주문을 생성할 수 없다.")
-    void emptyOrderLineItem() {
+    void addOrderLineItemEmptyOrderLineItem() {
         // given
-        List<OrderLineItem> orderLineItems = Collections.emptyList();
+        Order order = new Order(new OrderTable());
 
         // when & then
-        assertThatThrownBy(() -> new Order(new OrderTable(), orderLineItems))
+        assertThatThrownBy(() -> order.addOrderLineItem(Collections.emptyList()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문하려면 하나 이상의 메뉴가 필요합니다.");
     }

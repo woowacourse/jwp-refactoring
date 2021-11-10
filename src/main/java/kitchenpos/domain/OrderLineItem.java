@@ -25,6 +25,10 @@ public class OrderLineItem {
         this(null, null, menu, quantity);
     }
 
+    public OrderLineItem(Order order, Menu menu, long quantity) {
+        this(null, order, menu, quantity);
+    }
+
     public OrderLineItem(Long seq, Order order, Menu menu, long quantity) {
         this.seq = seq;
         this.order = order;

@@ -132,7 +132,6 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님0_테이블1));
-        given(menuRepository.findById(anyLong())).willReturn(Optional.of(후라이드_단품));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

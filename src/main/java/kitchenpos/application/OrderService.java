@@ -31,11 +31,12 @@ public class OrderService {
     @Transactional
     public CreateOrderResponse create(final CreateOrderRequest request) {
         final OrderTable orderTable = getOrderTable(request);
-        final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
+        final Order order = new Order(orderTable);
 
-        final Order order = new Order(orderTable, orderLineItems);
+        final List<OrderLineItem> orderLineItems = getOrderLineItems(order, request);
+        order.addOrderLineItem(orderLineItems);
+
         final Order savedOrder = orderRepository.save(order);
-
         return CreateOrderResponse.from(savedOrder);
     }
 
@@ -44,13 +45,13 @@ public class OrderService {
                                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다."));
     }
 
-    private List<OrderLineItem> getOrderLineItems(CreateOrderRequest request) {
+    private List<OrderLineItem> getOrderLineItems(Order order, CreateOrderRequest request) {
         return request.getOrderLineItems()
                       .stream()
                       .map(item -> {
                           final Menu menu = menuRepository.findById(item.getMenuId())
                                                           .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다."));
-                          return new OrderLineItem(menu, item.getQuantity());
+                          return new OrderLineItem(order, menu, item.getQuantity());
                       })
                       .collect(Collectors.toList());
     }

@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
@@ -23,10 +24,14 @@ public class Order {
 
     private LocalDateTime orderedTime;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> orderLineItems;
 
     public Order() {
+    }
+
+    public Order(OrderTable orderTable) {
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
     }
 
     public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
@@ -34,7 +39,6 @@ public class Order {
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        validatesNumberOfOrderLineItem(orderLineItems);
         validatesEmptyOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
@@ -43,16 +47,17 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
-    private void validatesNumberOfOrderLineItem(List<OrderLineItem> orderLineItems) {
-        if (CollectionUtils.isEmpty(orderLineItems)) {
-            throw new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다.");
-        }
-    }
-
     private void validatesEmptyOrderTable(OrderTable orderTable) {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
         }
+    }
+
+    public void addOrderLineItem(List<OrderLineItem> orderLineItems) {
+        if (CollectionUtils.isEmpty(orderLineItems)) {
+            throw new IllegalArgumentException("주문하려면 하나 이상의 메뉴가 필요합니다.");
+        }
+        this.orderLineItems = orderLineItems;
     }
 
     public boolean isStatus(OrderStatus status) {
