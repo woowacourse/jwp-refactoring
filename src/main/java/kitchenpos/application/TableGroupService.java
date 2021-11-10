@@ -28,16 +28,25 @@ public class TableGroupService {
 
     @Transactional
     public TableGroupResponse create(final CreateTableGroupRequest request) {
-        final List<OrderTable> orderTables = request.getOrderTables().stream()
-                                                    .map(orderTable -> orderTableRepository.findById(orderTable.getId())
-                                                                                           .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블은 그룹으로 지정할 수 없습니다.")))
-                                                    .collect(Collectors.toList());
+        final TableGroup tableGroup = new TableGroup();
 
-        final TableGroup tableGroup = new TableGroup(orderTables);
-        tableGroup.changeToFull();
+        final List<OrderTable> orderTables = getOrderTables(tableGroup, request);
+
+        tableGroup.addOrderTables(orderTables);
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
         return TableGroupResponse.from(savedTableGroup);
+    }
+
+    private List<OrderTable> getOrderTables(TableGroup tableGroup, CreateTableGroupRequest request) {
+        return request.getOrderTables().stream()
+                      .map(orderTable -> {
+                          OrderTable table = orderTableRepository.findById(orderTable.getId())
+                                                                       .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블은 그룹으로 지정할 수 없습니다."));
+                          table.assigned(tableGroup);
+                          return table;
+                      })
+                      .collect(Collectors.toList());
     }
 
     @Transactional

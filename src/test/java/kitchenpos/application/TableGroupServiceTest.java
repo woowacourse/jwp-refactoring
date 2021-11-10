@@ -73,7 +73,7 @@ class TableGroupServiceTest {
     @DisplayName("목록에 둘 이상의 테이블이 포함되어야한다.")
     void createWrongTableInsufficientTable() {
         // given
-        OrderTable table = new OrderTable(1L, null, 0, false);
+        OrderTable table = new OrderTable(1L, null, 0, true);
         CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(new TableIdRequest(table.getId())));
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
@@ -108,10 +108,8 @@ class TableGroupServiceTest {
         );
 
         OrderTable table1 = new OrderTable(단일_손님0_테이블1.getId(), null, 3, false);
-        OrderTable table2 = new OrderTable(단일_손님0_테이블2.getId(), null, 5, true);
 
         given(orderTableRepository.findById(table1.getId())).willReturn(Optional.of(table1));
-        given(orderTableRepository.findById(table2.getId())).willReturn(Optional.of(table2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

@@ -79,8 +79,12 @@ public class OrderTable {
         }
     }
 
-    public void changeFull() {
+    public void assigned(TableGroup tableGroup) {
+        if (!this.empty || Objects.nonNull(this.tableGroup)) {
+            throw new IllegalArgumentException("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
+        }
         this.empty = false;
+        this.tableGroup = tableGroup;
     }
 
     public void ungroup() {

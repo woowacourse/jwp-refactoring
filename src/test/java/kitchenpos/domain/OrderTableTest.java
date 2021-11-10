@@ -129,4 +129,59 @@ class OrderTableTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("주문 상태가 조리중이나 식사중입니다.");
     }
+
+    @Test
+    @DisplayName("테이블이 비어있지 않으면 그룹으로 지정할 수 없습니다.")
+    void assignedEmptyTable() {
+        // given
+        OrderTable table = new OrderTable(
+                1L,
+                null,
+                4,
+                false,
+                Collections.singletonList(COOKING_ORDER)
+        );
+
+        // when & then
+        assertThatThrownBy(() -> table.assigned(new TableGroup()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("테이블이 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.")
+    void assignedAnotherGroupTable() {
+        // given
+        OrderTable table = new OrderTable(
+                1L,
+                new TableGroup(),
+                4,
+                true,
+                Collections.singletonList(COOKING_ORDER)
+        );
+
+        // when & then
+        assertThatThrownBy(() -> table.assigned(new TableGroup()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("그룹을 지정하면 속한 모든 테이블이 비어있지 않게된다.")
+    void notEmpty() {
+        // given
+        OrderTable table = new OrderTable(
+                1L,
+                null,
+                4,
+                true,
+                Collections.singletonList(COOKING_ORDER)
+        );
+
+        // when
+        table.assigned(new TableGroup());
+
+        // then
+        assertFalse(table.isEmpty());
+    }
 }

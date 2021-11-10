@@ -3,7 +3,6 @@ package kitchenpos.domain;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import javax.persistence.*;
 
 import org.springframework.util.CollectionUtils;
@@ -20,6 +19,7 @@ public class TableGroup {
     private List<OrderTable> orderTables;
 
     public TableGroup() {
+        this(null, LocalDateTime.now(), new ArrayList<>());
     }
 
     public TableGroup(List<OrderTable> orderTables) {
@@ -27,30 +27,19 @@ public class TableGroup {
     }
 
     public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
-        validatesNumberOfTable(orderTables);
-        validatesEmptyAndGroup(orderTables);
         this.id = id;
         this.createdDate = createdDate;
+        this.orderTables = orderTables;
+    }
+
+    public void addOrderTables(List<OrderTable> orderTables) {
+        validatesNumberOfTable(orderTables);
         this.orderTables = orderTables;
     }
 
     private void validatesNumberOfTable(List<OrderTable> orderTables) {
         if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
             throw new IllegalArgumentException("그룹을 지정하려면 둘 이상의 테이블이 필요합니다.");
-        }
-    }
-
-    private void validatesEmptyAndGroup(List<OrderTable> orderTables) {
-        for (final OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
-                throw new IllegalArgumentException("테이블이 비어있지 않거나 이미 다른 그룹에 속한 테이블은 그룹으로 지정할 수 없습니다.");
-            }
-        }
-    }
-
-    public void changeToFull() {
-        for (final OrderTable orderTable : this.orderTables) {
-            orderTable.changeFull();
         }
     }
 
