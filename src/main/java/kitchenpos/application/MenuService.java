@@ -40,7 +40,8 @@ public class MenuService {
     }
 
     private List<MenuProduct> getMenuProducts(Menu menu, CreateMenuRequest request) {
-        return request.getMenuProducts().stream()
+        return request.getMenuProducts()
+                      .stream()
                       .map(item -> {
                           Product product = productRepository.findById(item.getProductId())
                                                              .orElseThrow(() -> new IllegalArgumentException("상품이 존재하지 않습니다."));
@@ -50,7 +51,8 @@ public class MenuService {
     }
 
     public List<MenuResponse> list() {
-        return menuRepository.findAll().stream()
+        return menuRepository.findAll()
+                             .stream()
                              .map(MenuResponse::from)
                              .collect(Collectors.toList());
     }

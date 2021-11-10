@@ -29,7 +29,8 @@ public class TableService {
     }
 
     public List<TableResponse> list() {
-        return orderTableRepository.findAll().stream()
+        return orderTableRepository.findAll()
+                                   .stream()
                                    .map(TableResponse::from)
                                    .collect(Collectors.toList());
     }

@@ -39,10 +39,11 @@ public class TableGroupService {
     }
 
     private List<OrderTable> getOrderTables(TableGroup tableGroup, CreateTableGroupRequest request) {
-        return request.getOrderTables().stream()
+        return request.getOrderTables()
+                      .stream()
                       .map(orderTable -> {
                           OrderTable table = orderTableRepository.findById(orderTable.getId())
-                                                                       .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블은 그룹으로 지정할 수 없습니다."));
+                                                                 .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 테이블은 그룹으로 지정할 수 없습니다."));
                           table.assigned(tableGroup);
                           return table;
                       })
