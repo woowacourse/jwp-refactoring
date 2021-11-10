@@ -94,7 +94,7 @@ class MenuServiceIntegrationTest extends IntegrationTest {
 
             Menu menu = new Menu();
             menu.setName("얌 프라이");
-            menu.setPrice(BigDecimal.valueOf(-1000));
+            menu.setPrice(BigDecimal.valueOf(-1));
             menu.setMenuGroupId(4L);
             menu.setMenuProducts(Collections.singletonList(menuProduct));
 
