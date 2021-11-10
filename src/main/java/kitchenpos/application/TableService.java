@@ -67,16 +67,14 @@ public class TableService {
         final OrderTableRequest orderTableRequest) {
         final int numberOfGuests = orderTableRequest.getNumberOfGuests();
 
-        if (numberOfGuests < 0) {
-            throw new IllegalArgumentException();
-        }
-
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
         if (savedOrderTable.isEmpty()) {
             throw new IllegalArgumentException("테이블이 이미 존재합니다.");
         }
+
+        savedOrderTable.updateNumberOfGuests(numberOfGuests);
 
         return orderTableRepository.save(savedOrderTable);
     }

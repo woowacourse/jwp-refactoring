@@ -42,7 +42,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("orderTable에 tableGroup이 지정되있거나 비어있지 않습니다.");
             }
         }
 
@@ -53,7 +53,6 @@ public class TableGroupService {
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.addTableGroup(savedTableGroup);
             savedOrderTable.fillTable();
-            orderTableRepository.save(savedOrderTable);
         }
 
         return savedTableGroup;
@@ -70,7 +69,7 @@ public class TableGroupService {
 
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(
             orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("요리 중이거나 먹고있는 중입니다.");
         }
 
         for (final OrderTable orderTable : orderTables) {

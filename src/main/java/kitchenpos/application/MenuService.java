@@ -42,9 +42,7 @@ public class MenuService {
             BigDecimal.valueOf(menuRequest.getPrice()),
             menuGroup);
 
-        final List<Product> products = menuRequest.getProductIds().stream()
-            .map(productService::findById)
-            .collect(Collectors.toList());
+        final List<Product> products = productService.findAllById(menuRequest.getProductIds());
 
         final Menu savedMenu = menuRepository.save(menu);
 
@@ -68,7 +66,7 @@ public class MenuService {
             .reduce(0L, Long::sum);
 
         if (orderLineItems.size() != count) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("orderLineItems의 크기는 메뉴의 수와 같아야 합니다. ");
         }
     }
 

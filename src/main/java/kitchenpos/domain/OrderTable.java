@@ -30,6 +30,7 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+        validNumberOfGuests(numberOfGuests);
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
@@ -42,6 +43,22 @@ public class OrderTable {
 
     public void fillTable() {
         this.empty = false;
+    }
+
+    public void ungroup() {
+        this.tableGroup = null;
+        this.empty = true;
+    }
+
+    public void updateNumberOfGuests(int numberOfGuests) {
+        validNumberOfGuests(numberOfGuests);
+        this.numberOfGuests = numberOfGuests;
+    }
+
+    private void validNumberOfGuests(int numberOfGuests) {
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("손님의 수가 음수일 수 없습니다.");
+        }
     }
 
     public void changeEmpty(boolean empty) {
@@ -62,10 +79,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void ungroup() {
-        this.tableGroup = null;
-        this.empty = true;
     }
 }

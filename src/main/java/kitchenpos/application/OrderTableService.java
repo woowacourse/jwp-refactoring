@@ -15,6 +15,6 @@ public class OrderTableService {
 
     public OrderTable findById(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("해당 orderTable이 존재하지 않습니다."));
     }
 }

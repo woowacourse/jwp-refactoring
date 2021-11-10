@@ -44,7 +44,7 @@ public class Menu {
 
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("0 이상의 가격을 지정해주세요");
         }
     }
 

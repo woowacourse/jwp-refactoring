@@ -85,7 +85,7 @@ class OrderServiceTest {
         OrderRequest orderRequest =
             new OrderRequest(
                 1L,
-                OrderStatus.COOKING.name(),
+                OrderStatus.COOKING,
                 Collections.singletonList(orderLineItemRequest));
 
         orderService.create(orderRequest);
@@ -114,7 +114,7 @@ class OrderServiceTest {
         given(orderRepository.findById(anyLong()))
             .willReturn(Optional.of(order));
 
-        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING.name(), null);
+        OrderRequest orderRequest = new OrderRequest(1L, OrderStatus.COOKING, null);
 
         orderService.changeOrderStatus(1L, orderRequest);
     }

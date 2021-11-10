@@ -19,10 +19,7 @@ public class MenuProductService {
     }
 
     public List<MenuProduct> findAll(List<Long> menuProductIds) {
-        return menuProductIds.stream()
-            .map(menuProductId -> menuProductRepository.findById(menuProductId)
-                .orElseThrow(IllegalArgumentException::new))
-            .collect(Collectors.toList());
+        return menuProductRepository.findAllById(menuProductIds);
     }
 
     public List<MenuProduct> saveAll(Menu menu, List<Product> products, long quantity) {

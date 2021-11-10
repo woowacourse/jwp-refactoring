@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +26,7 @@ public class Order {
     @JsonIgnore
     @ManyToOne
     private OrderTable orderTable;
-    @Enumerated
+    @Enumerated(value = EnumType.STRING)
     private OrderStatus orderStatus;
 
     @CreationTimestamp

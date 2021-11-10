@@ -37,9 +37,8 @@ public class OrderService {
     @Transactional
     public Order create(final OrderRequest orderRequest) {
         OrderTable orderTable = orderTableService.findById(orderRequest.getOrderTableId());
-        OrderStatus orderStatus = OrderStatus.valueOf(orderRequest.getOrderStatus());
 
-        Order order = new Order(orderTable, orderStatus);
+        Order order = new Order(orderTable, orderRequest.getOrderStatus());
 
         Order savedOrder = orderRepository.save(order);
 
@@ -67,9 +66,9 @@ public class OrderService {
     @Transactional
     public Order changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
         final Order savedOrder = orderRepository.findById(orderId)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() ->  new IllegalArgumentException("해당 주문이 존재하지 않습니다."));
 
-        savedOrder.changeOrderStatus(OrderStatus.valueOf(orderRequest.getOrderStatus()));
+        savedOrder.changeOrderStatus(orderRequest.getOrderStatus());
 
         return savedOrder;
     }

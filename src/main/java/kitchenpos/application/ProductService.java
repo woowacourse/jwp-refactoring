@@ -31,6 +31,10 @@ public class ProductService {
 
     public Product findById(Long id) {
         return productRepository.findById(id)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(() -> new IllegalArgumentException("product 가 존재하지 않습니다."));
+    }
+
+    public List<Product> findAllById(List<Long> productIds) {
+        return productRepository.findAllById(productIds);
     }
 }
