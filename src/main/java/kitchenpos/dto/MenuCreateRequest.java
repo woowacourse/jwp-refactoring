@@ -16,7 +16,7 @@ public class MenuCreateRequest {
     private long menuGroupId;
     private List<MenuProductRequest> menuProducts;
 
-    protected  MenuCreateRequest() {
+    protected MenuCreateRequest() {
     }
 
     public Menu toEntity() {

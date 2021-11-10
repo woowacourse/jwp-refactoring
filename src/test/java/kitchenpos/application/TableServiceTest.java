@@ -124,7 +124,7 @@ public class TableServiceTest {
     @Test
     @DisplayName("OrderTable의 Empty 여부를 수정할 수 있다.")
     public void updateEmptyStatus() {
-        assertDoesNotThrow(() ->  tableService.changeEmpty(1L, notEmptyTable));
+        assertDoesNotThrow(() -> tableService.changeEmpty(1L, notEmptyTable));
     }
 
     @Test

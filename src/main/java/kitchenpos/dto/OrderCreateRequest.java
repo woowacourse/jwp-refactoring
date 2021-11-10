@@ -20,11 +20,11 @@ public class OrderCreateRequest {
         return new Order(
                 new OrderTable(orderTableId),
                 orderLineItems.stream()
-                    .map(item -> new OrderLineItem(
-                            new Menu(item.menuId),
-                            item.quantity
-                    ))
-                    .collect(Collectors.toList())
+                        .map(item -> new OrderLineItem(
+                                new Menu(item.menuId),
+                                item.quantity
+                        ))
+                        .collect(Collectors.toList())
         );
     }
 

@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @IntegrationTest
 class TableGroupServiceTest {
-    
+
     @Autowired
     private TableGroupService tableGroupService;
 
