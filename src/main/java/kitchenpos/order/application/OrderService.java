@@ -6,10 +6,9 @@ import kitchenpos.order.application.response.OrderResponse;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.order.domain.OrderTable;
 import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,10 +38,10 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderTable orderTable = orderTableRepository.findById(order.getOrderTable().getId())
+        orderTableRepository.findById(order.getOrderTableId())
                 .orElseThrow(IllegalArgumentException::new);
 
-        orderTable.startOrder(order);
+        order.startOrder();
         return OrderResponse.from(orderRepository.save(order));
     }
 

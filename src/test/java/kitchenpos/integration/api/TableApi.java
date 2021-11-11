@@ -1,12 +1,12 @@
 package kitchenpos.integration.api;
 
 import java.util.List;
-import kitchenpos.order.application.response.OrderTableResponse;
+import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
-import kitchenpos.order.ui.request.OrderTableChangeEmptyRequest;
-import kitchenpos.order.ui.request.OrderTableChangeGuestsRequest;
-import kitchenpos.order.ui.request.OrderTableCreateRequest;
+import kitchenpos.table.ui.request.OrderTableChangeEmptyRequest;
+import kitchenpos.table.ui.request.OrderTableChangeGuestsRequest;
+import kitchenpos.table.ui.request.OrderTableCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

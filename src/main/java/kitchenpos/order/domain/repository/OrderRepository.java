@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    @Query("select o from Order o where o.orderTable.tableGroup.id = :tableGroupId")
-    List<Order> findByTableGroup(Long tableGroupId);
+    @Query("select o from Order o where o.orderTableId in :orderTableIds")
+    List<Order> findByOrderTableIds(List<Long> orderTableIds);
 
-    @Query("select o from Order o where o.orderTable.id = :orderTableId")
-    List<Order> findByOrderTable(Long orderTableId);
+    @Query("select o from Order o where o.orderTableId = :orderTableId")
+    List<Order> findByOrderTableId(Long orderTableId);
 }

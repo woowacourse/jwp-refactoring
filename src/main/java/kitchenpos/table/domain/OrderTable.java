@@ -1,7 +1,5 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -9,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 @Entity
 public class OrderTable {
@@ -20,9 +17,6 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
-
-    @OneToMany(mappedBy = "orderTable", fetch = FetchType.LAZY)
-    private List<Order> orders = new ArrayList<>();
 
     private int numberOfGuests;
 
@@ -67,17 +61,8 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public List<Order> getOrders() {
-        return orders;
-    }
-
     public boolean isEmpty() {
         return empty;
-    }
-
-    public void ungroup() {
-        tableGroup = null;
-        empty = false;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
@@ -92,16 +77,11 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void startOrder(Order order) {
-        this.orders.add(order);
-        order.startOrder(this);
-    }
-
-    public boolean isChangeable() {
-        return orders
-            .stream()
-            .filter(Order::unableUngroup)
-            .findAny()
-            .isPresent();
-    }
+//    public boolean isChangeable() {
+//        return orders
+//            .stream()
+//            .filter(Order::unableUngroup)
+//            .findAny()
+//            .isPresent();
+//    }
 }

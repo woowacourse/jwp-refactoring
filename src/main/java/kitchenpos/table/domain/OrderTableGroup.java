@@ -1,4 +1,4 @@
-package kitchenpos.order.domain;
+package kitchenpos.table.domain;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class OrderTableGroup {
         }
 
         for (OrderTable orderTable : orderTables) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup().getId())) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }

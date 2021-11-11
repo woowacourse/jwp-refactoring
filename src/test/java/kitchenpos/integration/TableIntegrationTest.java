@@ -1,7 +1,7 @@
 package kitchenpos.integration;
 
 import java.util.List;
-import kitchenpos.order.application.response.OrderTableResponse;
+import kitchenpos.table.application.response.OrderTableResponse;
 import kitchenpos.integration.api.TableApi;
 import kitchenpos.integration.utils.MockMvcResponse;
 import org.assertj.core.api.Assertions;

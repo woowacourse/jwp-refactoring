@@ -16,7 +16,7 @@ public class OrderResponse {
     public static OrderResponse from(Order order) {
         final OrderResponse orderResponse = new OrderResponse();
         orderResponse.id = order.getId();
-        orderResponse.orderTableId = order.getOrderTable().getId();
+        orderResponse.orderTableId = order.getOrderTableId();
         orderResponse.orderStatus = order.getOrderStatus().name();
         orderResponse.orderedTime = order.getOrderedTime();
         orderResponse.orderLineItems = OrderLineItemResponse.fromList(order.getOrderLineItems());

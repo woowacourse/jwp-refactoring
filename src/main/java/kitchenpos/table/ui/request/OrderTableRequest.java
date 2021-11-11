@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.request;
+package kitchenpos.table.ui.request;
 
 import java.util.Arrays;
 import java.util.List;

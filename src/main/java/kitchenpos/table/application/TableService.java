@@ -1,10 +1,10 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import java.util.List;
 import java.util.Objects;
-import kitchenpos.order.application.response.OrderTableResponse;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.application.response.OrderTableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,9 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
+    private final OrderTableCondition orderTableCondition;
 
-    public TableService(OrderTableRepository orderTableRepository) {
+    public TableService(OrderTableRepository orderTableRepository,
+                        OrderTableCondition orderTableCondition) {
         this.orderTableRepository = orderTableRepository;
+        this.orderTableCondition = orderTableCondition;
     }
 
     @Transactional
@@ -31,11 +34,11 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException();
         }
 
-        if (savedOrderTable.isChangeable()) {
+        if (orderTableCondition.isUnableToChange(orderTableId)) {
             throw new IllegalArgumentException();
         }
 
@@ -53,5 +56,12 @@ public class TableService {
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
         return OrderTableResponse.from(savedOrderTable);
+    }
+
+    public List<OrderTableResponse> findAllByTableGroupId(Long tableGroupId) {
+        final List<OrderTable> orderTables = orderTableRepository
+            .findAllByTableGroup(tableGroupId);
+
+        return OrderTableResponse.fromList(orderTables);
     }
 }

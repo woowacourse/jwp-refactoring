@@ -22,9 +22,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -41,7 +39,7 @@ public class Order {
                                LocalDateTime orderedTime) {
         final Order order = new Order();
         order.id = id;
-        order.orderTable = OrderTable.createBySingleId(orderTableId);
+        order.orderTableId = orderTableId;
         order.orderStatus = OrderStatus.valueOf(orderStatus);
         order.orderedTime = orderedTime;
         return order;
@@ -53,10 +51,9 @@ public class Order {
         return order;
     }
 
-    public static Order create(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+    public static Order create(Long orderTableId, List<OrderLineItem> orderLineItems) {
         final Order order = new Order();
-
-        order.orderTable = orderTable;
+        order.orderTableId = orderTableId;
         order.orderLineItems = OrderLineItemGroup.from(orderLineItems, order);
         return order;
     }
@@ -65,8 +62,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {
@@ -81,11 +78,7 @@ public class Order {
         return orderLineItems.value();
     }
 
-    public void startOrder(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
-        this.orderTable = orderTable;
+    public void startOrder() {
         this.orderStatus = OrderStatus.COOKING;
         this.orderedTime = LocalDateTime.now();
     }
