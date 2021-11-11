@@ -3,23 +3,32 @@ package kitchenpos.application;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderTableDao;
-import kitchenpos.dao.TableGroupDao;
-import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTableRepository;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.domain.TableGroupRepository;
+import kitchenpos.dto.request.table.CreateTableGroupRequest;
+import kitchenpos.dto.request.table.TableIdRequest;
+import kitchenpos.dto.response.table.TableGroupResponse;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
+import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
+import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블1;
+import static kitchenpos.fixture.OrderTableFixture.단일_손님0_테이블2;
+import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 
 @DisplayName("TableGroupService 단위 테스트")
@@ -27,13 +36,10 @@ import static org.mockito.BDDMockito.given;
 class TableGroupServiceTest {
 
     @Mock
-    private OrderDao orderDao;
+    private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
-
-    @Mock
-    private TableGroupDao tableGroupDao;
+    private TableGroupRepository tableGroupRepository;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -42,30 +48,24 @@ class TableGroupServiceTest {
     @DisplayName("테이블을 묶어 그룹을 지정할 수 있다 - 그룹이 지정된 테이블들은 비어 있지 않은 상태가 된다.")
     void create() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        TableGroup group = new TableGroup(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, true);
-        OrderTable table2 = new OrderTable(2L, null, 5, true);
-        TableGroup savedGroup = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(table1, table2));
+        TableGroup expected = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(단일_손님0_테이블1, 단일_손님0_테이블2));
 
-        OrderTable expected_table1 = new OrderTable(1L, savedGroup.getId(), 3, false);
-        OrderTable expected_table2 = new OrderTable(2L, savedGroup.getId(), 5, false);
-        TableGroup expected = new TableGroup(1L, LocalDateTime.now(), Arrays.asList(expected_table1, expected_table2));
-
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
-        given(tableGroupDao.save(group)).willReturn(savedGroup);
+        given(orderTableRepository.findById(단일_손님0_테이블1.getId())).willReturn(Optional.of(단일_손님0_테이블1));
+        given(orderTableRepository.findById(단일_손님0_테이블2.getId())).willReturn(Optional.of(단일_손님0_테이블2));
+        given(tableGroupRepository.save(any(TableGroup.class))).willReturn(expected);
 
         // when
-        TableGroup actual = tableGroupService.create(group);
+        TableGroupResponse actual = tableGroupService.create(group);
 
         // then
         assertEquals(2, actual.getOrderTables().size());
-        assertEquals(expected.getId(), actual.getOrderTables().get(0).getTableGroupId());
-        assertEquals(expected.getId(), actual.getOrderTables().get(1).getTableGroupId());
         assertFalse(actual.getOrderTables().get(0).isEmpty());
         assertFalse(actual.getOrderTables().get(1).isEmpty());
+        assertNotNull(actual.getCreatedDate());
         assertThat(actual).usingRecursiveComparison().ignoringFields("createdDate").isEqualTo(expected);
     }
 
@@ -73,8 +73,9 @@ class TableGroupServiceTest {
     @DisplayName("목록에 둘 이상의 테이블이 포함되어야한다.")
     void createWrongTableInsufficientTable() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        TableGroup group = new TableGroup(Collections.singletonList(table1Id));
+        OrderTable table = new OrderTable(1L, null, 0, true);
+        CreateTableGroupRequest group = new CreateTableGroupRequest(Collections.singletonList(new TableIdRequest(table.getId())));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -86,13 +87,11 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 등록된 테이블이여야 한다.")
     void createWrongTableNotRegister() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        TableGroup group = new TableGroup(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, true);
-
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Collections.singletonList(table1));
+        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -104,14 +103,13 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 비어있어야 한다.")
     void createWrongTableNotEmpty() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        TableGroup group = new TableGroup(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, false);
-        OrderTable table2 = new OrderTable(2L, null, 5, true);
+        OrderTable table1 = new OrderTable(단일_손님0_테이블1.getId(), null, 3, false);
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findById(table1.getId())).willReturn(Optional.of(table1));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -123,14 +121,15 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들은 모두 소속된 다른 그룹이 없어야한다.")
     void createWrongTableInGroup() {
         // given
-        OrderTable table1Id = new OrderTable(1L, null, 0, false);
-        OrderTable table2Id = new OrderTable(2L, null, 0, false);
-        TableGroup group = new TableGroup(Arrays.asList(table1Id, table2Id));
+        CreateTableGroupRequest group = new CreateTableGroupRequest(
+                Arrays.asList(new TableIdRequest(단일_손님0_테이블1.getId()), new TableIdRequest(단일_손님0_테이블2.getId()))
+        );
 
-        OrderTable table1 = new OrderTable(1L, null, 3, true);
-        OrderTable table2 = new OrderTable(2L, 1L, 5, true);
+        OrderTable table1 = new OrderTable(단일_손님0_테이블1.getId(), null, 3, true);
+        OrderTable table2 = new OrderTable(단일_손님0_테이블2.getId(), GROUP1, 5, true);
 
-        given(orderTableDao.findAllByIdIn(Arrays.asList(1L, 2L))).willReturn(Arrays.asList(table1, table2));
+        given(orderTableRepository.findById(table1.getId())).willReturn(Optional.of(table1));
+        given(orderTableRepository.findById(table2.getId())).willReturn(Optional.of(table2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -142,20 +141,20 @@ class TableGroupServiceTest {
     @DisplayName("묶여있는 테이블 그룹을 해제할 수 있다. - 그룹이 해제된 테이블들은 비어 있지 않은 상태가 된다.")
     void ungroup() {
         // given
-        Long groupId = 1L;
-        OrderTable table1 = new OrderTable(1L, groupId, 3, true);
-        OrderTable table2 = new OrderTable(2L, groupId, 5, true);
-        given(orderTableDao.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(table1.getId(), table2.getId()),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(false);
+        OrderTable table1 = new OrderTable(1L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
+        OrderTable table2 = new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER));
+        TableGroup GROUP2 = new TableGroup(
+                2L,
+                LocalDateTime.now(),
+                Arrays.asList(table1, table2));
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
 
         // when
-        tableGroupService.ungroup(groupId);
+        tableGroupService.ungroup(GROUP2.getId());
 
         // then
-        assertNull(table1.getTableGroupId());
-        assertNull(table2.getTableGroupId());
+        assertNull(table1.getTableGroup());
+        assertNull(table2.getTableGroup());
         assertFalse(table1.isEmpty());
         assertFalse(table2.isEmpty());
     }
@@ -164,17 +163,20 @@ class TableGroupServiceTest {
     @DisplayName("목록에 포함된 테이블들의 상태가 하나라도 조리중(COOKING)이나 식사중(MEAL)인 경우 그룹을 해제할 수 없다.")
     void ungroupWrongTableCookingOrMeal() {
         // given
-        Long groupId = 1L;
-        OrderTable table1 = new OrderTable(1L, groupId, 3, true);
-        OrderTable table2 = new OrderTable(2L, groupId, 5, true);
-        given(orderTableDao.findAllByTableGroupId(groupId)).willReturn(Arrays.asList(table1, table2));
-        given(orderDao.existsByOrderTableIdInAndOrderStatusIn(
-                Arrays.asList(table1.getId(), table2.getId()),
-                Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))).willReturn(true);
+        TableGroup GROUP2 = new TableGroup(
+                2L,
+                LocalDateTime.now(),
+                Arrays.asList(
+                        new OrderTable(1L, null, 0, true, Collections.singletonList(COOKING_ORDER)),
+                        new OrderTable(2L, null, 0, true, Collections.singletonList(COMPLETION_ORDER))
+                )
+        );
+
+        given(tableGroupRepository.findById(anyLong())).willReturn(Optional.of(GROUP2));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> tableGroupService.ungroup(groupId));
-        assertEquals("조리중이나 식사중인 테이블을 포함하여 그룹으로 지정할 수 없습니다.", exception.getMessage());
+                () -> tableGroupService.ungroup(GROUP2.getId()));
+        assertEquals("주문 상태가 조리중이나 식사중입니다.", exception.getMessage());
     }
 }
