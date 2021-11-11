@@ -1,5 +1,6 @@
-package kitchenpos.application;
+package kitchenpos.service;
 
+import kitchenpos.application.TableGroupService;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.fixture.OrderTableFixture;
 import kitchenpos.fixture.TableGroupFixture;
