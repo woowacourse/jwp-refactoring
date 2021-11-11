@@ -1,11 +1,12 @@
 package kitchenpos.builder;
 
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.TableGroup;
 
 public class OrderTableBuilder {
 
     private Long id;
-    private Long tableGroupId;
+    private TableGroup tableGroup;
     private int numberOfGuests;
     private boolean empty;
 
@@ -14,8 +15,8 @@ public class OrderTableBuilder {
         return this;
     }
 
-    public OrderTableBuilder tableGroupId(Long tableGroupId) {
-        this.tableGroupId = tableGroupId;
+    public OrderTableBuilder tableGroup(TableGroup tableGroup) {
+        this.tableGroup = tableGroup;
         return this;
     }
 
@@ -30,11 +31,6 @@ public class OrderTableBuilder {
     }
 
     public OrderTable build() {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(this.id);
-        orderTable.setTableGroupId(this.tableGroupId);
-        orderTable.setNumberOfGuests(this.numberOfGuests);
-        orderTable.setEmpty(this.empty);
-        return orderTable;
+        return new OrderTable(this.id, this.tableGroup, this.numberOfGuests, this.empty);
     }
 }

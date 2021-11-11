@@ -1,13 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.*;
+import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.ProductRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +20,7 @@ class TableServiceTest extends BaseServiceTest {
     @Autowired
     TableService tableService;
     @Autowired
-    OrderTableDao orderTableDao;
+    OrderTableRepository orderTableRepository;
     @Autowired
     TableGroupService tableGroupService;
     @Autowired
@@ -30,6 +31,9 @@ class TableServiceTest extends BaseServiceTest {
     MenuGroupService menuGroupService;
     @Autowired
     ProductRepository productRepository;
+
+    @Autowired
+    EntityManager em;
 
     @DisplayName("[테이블 생성] 테이블을 정상적으로 생성한다.")
     @Test
@@ -42,7 +46,7 @@ class TableServiceTest extends BaseServiceTest {
 
         // then
         assertThat(savedOrderTable.getId()).isNotNull();
-        assertThat(savedOrderTable.getTableGroupId()).isNull();
+        assertThat(savedOrderTable.getTableGroup()).isNull();
         assertThat(savedOrderTable.getNumberOfGuests()).isZero();
         assertThat(savedOrderTable.isEmpty()).isTrue();
     }
@@ -73,6 +77,8 @@ class TableServiceTest extends BaseServiceTest {
         // given
         OrderTable orderTable = TestFixtureFactory.빈_테이블_생성();
         OrderTable savedOrderTable = tableService.create(orderTable);
+        em.flush();
+        em.clear();
 
         // when
         OrderTable requestChangeEmptyFalse = TestFixtureFactory.테이블_생성(false);
@@ -90,6 +96,8 @@ class TableServiceTest extends BaseServiceTest {
         // given
         OrderTable orderTable = TestFixtureFactory.테이블_생성(false);
         OrderTable savedOrderTable = tableService.create(orderTable);
+        em.flush();
+        em.clear();
 
         // when
         OrderTable requestChangeEmptyTrue = TestFixtureFactory.테이블_생성(true);
@@ -111,7 +119,7 @@ class TableServiceTest extends BaseServiceTest {
         OrderTable savedTable2 = tableService.create(table2);
         TableGroup tableGroup = TestFixtureFactory.테이블_그룹_생성(savedTable1, savedTable2);
         TableGroup savedTableGroup = tableGroupService.create(tableGroup);
-        OrderTable orderTable = orderTableDao.findById(savedTable1.getId()).get();
+        OrderTable orderTable = orderTableRepository.findById(savedTable1.getId()).get();
 
         // when then
         OrderTable requestEmptyTrue = TestFixtureFactory.테이블_생성(true);
@@ -137,6 +145,8 @@ class TableServiceTest extends BaseServiceTest {
         // given
         OrderTable orderTable = 활성화_시킨_테이블();
         int numberOfGuests = 4;
+        em.flush();
+        em.clear();
 
         // when
         OrderTable activeAndFourGuestsTable = tableService.changeNumberOfGuests(orderTable.getId(), TestFixtureFactory.테이블_생성(numberOfGuests));

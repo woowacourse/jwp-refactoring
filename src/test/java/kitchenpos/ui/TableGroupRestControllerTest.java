@@ -30,14 +30,12 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
     void setUp() {
         orderTable1 = new OrderTableBuilder()
                 .id(1L)
-                .tableGroupId(1L)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
 
         orderTable2 = new OrderTableBuilder()
                 .id(2L)
-                .tableGroupId(1L)
                 .numberOfGuests(4)
                 .empty(false)
                 .build();
@@ -47,6 +45,9 @@ class TableGroupRestControllerTest extends BaseWebMvcTest {
                 .createdDate(LocalDateTime.now())
                 .orderTables(Arrays.asList(orderTable1, orderTable2))
                 .build();
+
+        orderTable1.grouping(tableGroup1);
+        orderTable2.grouping(tableGroup1);
     }
 
     @DisplayName("POST /api/table-groups -> 테이블들을 그룹화한다.")

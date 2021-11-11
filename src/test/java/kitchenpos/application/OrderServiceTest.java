@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +28,8 @@ class OrderServiceTest extends BaseServiceTest {
     ProductRepository productRepository;
     @Autowired
     TableService tableService;
+    @Autowired
+    EntityManager em;
 
     @DisplayName("[주문 생성] 주문을 정상적으로 생성한다.")
     @Test
@@ -87,7 +90,7 @@ class OrderServiceTest extends BaseServiceTest {
     void createWithNonExistTable() {
         // given
         Menu menu = 메뉴_생성();
-        OrderTable table = TestFixtureFactory.테이블_생성(false);
+        OrderTable table = TestFixtureFactory.테이블_생성(1L, null, 0, false);
         OrderLineItem orderLineItem = TestFixtureFactory.주문_항목_생성(menu, 1L);
         Order order = TestFixtureFactory.주문_생성(table, orderLineItem);
 
