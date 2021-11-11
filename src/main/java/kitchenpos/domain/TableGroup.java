@@ -2,50 +2,50 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
+@Entity
 public class TableGroup {
+    @Id
+    @GeneratedValue
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    @Transient
+    private OrderTables orderTables;
 
-    public TableGroup() {
+    protected TableGroup() {
     }
 
     public TableGroup(List<OrderTable> orderTables) {
-        this(null, null, orderTables);
+        this(null, null, new OrderTables(orderTables));
     }
 
-    public TableGroup(LocalDateTime createdDate, List<OrderTable> orderTables) {
-        this(null, createdDate, orderTables);
-    }
-
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public void register() {
+        if (!orderTables.canAssignTableGroup()) {
+            throw new IllegalArgumentException();
+        }
+        orderTables.setTableGroup(this);
+        createdDate = LocalDateTime.now();
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getGroupTables() {
         return orderTables;
-    }
-
-    public void setOrderTables(final List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
     }
 }
