@@ -58,7 +58,7 @@ public class OrderFixtures {
             order.getOrderTable().getId(),
             order.getOrderStatus(),
             order.getOrderLineItems().stream()
-                .map(it -> new OrderLineItemRequest(it.getMenu().getId(), it.getQuantity()))
+                .map(item -> new OrderLineItemRequest(item.getMenu().getId(), item.getQuantity()))
                 .collect(Collectors.toList())
         );
     }

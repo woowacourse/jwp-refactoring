@@ -41,9 +41,9 @@ public class MenuService {
             .orElseThrow(NoSuchElementException::new);
 
         final List<MenuProduct> menuProducts = request.getMenuProducts().stream()
-            .map(it -> new MenuProduct(
-                    productRepository.findById(it.getProductId()).orElseThrow(NoSuchElementException::new),
-                    it.getProductId()
+            .map(menuProduct -> new MenuProduct(
+                    productRepository.findById(menuProduct.getProductId()).orElseThrow(NoSuchElementException::new),
+                    menuProduct.getQuantity()
                 )
             )
             .collect(Collectors.toList());

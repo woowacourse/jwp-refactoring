@@ -53,7 +53,7 @@ public class Menu {
 
     private void validatePrice(List<MenuProduct> menuProducts) {
         Price sum = menuProducts.stream()
-            .map(it -> it.getProduct().getPrice())
+            .map(menuProduct -> menuProduct.getProduct().getPrice())
             .reduce(Price::sum)
             .orElseGet(() -> Price.ZERO);
 

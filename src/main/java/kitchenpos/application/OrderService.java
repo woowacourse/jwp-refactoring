@@ -39,8 +39,8 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
-            .map(it -> new OrderLineItem(
-                    menuRepository.findById(it.getMenuId()).orElseThrow(NoSuchElementException::new), it.getQuantity()
+            .map(item -> new OrderLineItem(
+                    menuRepository.findById(item.getMenuId()).orElseThrow(NoSuchElementException::new), item.getQuantity()
                 )
             )
             .collect(Collectors.toList());

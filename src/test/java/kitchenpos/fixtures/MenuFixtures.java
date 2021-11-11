@@ -49,7 +49,7 @@ public class MenuFixtures {
             menu.getPrice(),
             menu.getMenuGroup().getId(),
             menu.getMenuProducts().stream()
-                .map(it -> new MenuProductRequest(it.getProduct().getId(), it.getQuantity()))
+                .map(menuProduct -> new MenuProductRequest(menuProduct.getProduct().getId(), menuProduct.getQuantity()))
                 .collect(Collectors.toList())
         );
     }
