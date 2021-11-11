@@ -198,10 +198,7 @@ class JdbcTemplateOrderLineItemDaoTest extends JdbcTemplateDaoTest {
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroup;
+        return new MenuGroup(name);
     }
 
     private Order Order를_생성한다(Long orderTableId, String orderStatus) {

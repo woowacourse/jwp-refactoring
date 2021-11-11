@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
@@ -11,6 +12,7 @@ import io.restassured.response.Response;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.exception.ExceptionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,11 +61,12 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
                 .body(menu)
                 .when().post("/api/menu-groups")
                 .then().log().all()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(BAD_REQUEST.value())
                 .extract();
 
             // then
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+            assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+            assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
     }
 

@@ -14,7 +14,6 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -234,8 +233,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
     }
 
     private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroup menuGroup = new MenuGroup(name);
 
         return postRequestWithBody("/api/menu-groups", menuGroup).as(MenuGroup.class);
     }

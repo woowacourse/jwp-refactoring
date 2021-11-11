@@ -326,8 +326,7 @@ class OrderServiceTest {
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroup menuGroup = new MenuGroup(name);
 
         return menuGroup;
     }

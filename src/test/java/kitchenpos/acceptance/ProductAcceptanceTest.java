@@ -1,6 +1,7 @@
 package kitchenpos.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
@@ -10,6 +11,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.exception.ExceptionResponse;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -59,11 +61,12 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 .body(request)
                 .when().post("/api/products")
                 .then().log().all()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(BAD_REQUEST.value())
                 .extract();
 
             // then
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+            assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+            assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
         @DisplayName("price가 Null인 경우 예외가 발생한다.")
@@ -79,11 +82,12 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 .body(request)
                 .when().post("/api/products")
                 .then().log().all()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(BAD_REQUEST.value())
                 .extract();
 
             // then
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+            assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+            assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
         @DisplayName("price가 음수인 경우 예외가 발생한다.")
@@ -99,11 +103,12 @@ public class ProductAcceptanceTest extends AcceptanceTest {
                 .body(request)
                 .when().post("/api/products")
                 .then().log().all()
-                .statusCode(INTERNAL_SERVER_ERROR.value())
+                .statusCode(BAD_REQUEST.value())
                 .extract();
 
             // then
-            assertThat(response.statusCode()).isEqualTo(INTERNAL_SERVER_ERROR.value());
+            assertThat(response.statusCode()).isEqualTo(BAD_REQUEST.value());
+            assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
     }
 

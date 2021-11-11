@@ -386,8 +386,7 @@ public class TableAcceptanceTest extends AcceptanceTest {
     }
 
     private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
+        MenuGroup menuGroup = new MenuGroup(name);
 
         return postRequestWithBody("/api/menu-groups", menuGroup).as(MenuGroup.class);
     }

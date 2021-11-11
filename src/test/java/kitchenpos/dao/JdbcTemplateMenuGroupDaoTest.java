@@ -41,17 +41,6 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateDaoTest {
                 .ignoringFields("id")
                 .isEqualTo(savedMenuGroup);
         }
-
-        @DisplayName("name이 Null인 경우 예외가 발생한다.")
-        @Test
-        void nameNullException() {
-            // given
-            MenuGroup menuGroup = MenuGroup을_생성한다(null);
-
-            // when, then
-            assertThatThrownBy(() -> jdbcTemplateMenuGroupDao.save(menuGroup))
-                .isExactlyInstanceOf(DataIntegrityViolationException.class);
-        }
     }
 
     @DisplayName("ID를 통해 MenuGroup을 조회할 때")
@@ -132,9 +121,6 @@ class JdbcTemplateMenuGroupDaoTest extends JdbcTemplateDaoTest {
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName(name);
-
-        return menuGroup;
+        return new MenuGroup(name);
     }
 }
