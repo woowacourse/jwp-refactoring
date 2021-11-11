@@ -11,10 +11,15 @@ public class OrderTable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
+
     private int numberOfGuests;
     private boolean empty;
 
     public OrderTable() {
+    }
+
+    public OrderTable(Long id) {
+        this.id = id;
     }
 
     public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
@@ -87,5 +92,18 @@ public class OrderTable {
 
     public boolean isNotEmpty() {
         return !empty;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderTable that = (OrderTable) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

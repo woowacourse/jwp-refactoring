@@ -49,8 +49,8 @@ class OrderServiceTest extends BaseServiceTest {
         assertThat(savedOrder.getOrderStatus()).isEqualTo("COOKING");
         assertThat(savedOrder.getOrderedTime()).isNotNull();
         assertThat(savedOrder.getOrderLineItems())
-                .extracting("orderId")
-                .contains(savedOrder.getId());
+                .extracting("order")
+                .contains(savedOrder);
     }
 
     @DisplayName("[주문 생성] 주문항목이 없으면 예외가 발생한다.")
@@ -74,8 +74,8 @@ class OrderServiceTest extends BaseServiceTest {
         OrderTable table = 활성화된_테이블_생성();
         OrderLineItem orderLineItem = new OrderLineItemBuilder()
                 .seq(null)
-                .menuId(999999L)
-                .orderId(null)
+                .order(null)
+                .menu(new Menu(999999L))
                 .quantity(1L)
                 .build();
         Order order = TestFixtureFactory.주문_생성(table);
@@ -141,10 +141,16 @@ class OrderServiceTest extends BaseServiceTest {
         Order requestOrderStatusCompletion = new OrderBuilder()
                 .orderStatus("COMPLETION")
                 .build();
+        em.flush();
+        em.clear();
 
         // when
         Order mealOrder = orderService.changeOrderStatus(cookingOrder.getId(), requestOrderStatusMeal);
+        em.flush();
+        em.clear();
         Order completionOrder = orderService.changeOrderStatus(cookingOrder.getId(), requestOrderStatusCompletion);
+        em.flush();
+        em.clear();
 
         // then
         assertThat(cookingOrder.getOrderStatus()).isEqualTo("COOKING");

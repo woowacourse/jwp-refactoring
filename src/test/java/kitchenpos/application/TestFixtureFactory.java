@@ -125,8 +125,8 @@ public class TestFixtureFactory {
     public static OrderLineItem 주문_항목_생성(Menu menu, long quantity) {
         return new OrderLineItemBuilder()
                 .seq(null)
-                .menuId(menu.getId())
-                .orderId(null)
+                .menu(menu)
+                .order(null)
                 .quantity(quantity)
                 .build();
     }

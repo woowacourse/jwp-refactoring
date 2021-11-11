@@ -25,6 +25,10 @@ public class Menu {
     protected Menu() {
     }
 
+    public Menu(Long id) {
+        this.id = id;
+    }
+
     public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
         this(null, name, price, menuGroup, menuProducts);
     }

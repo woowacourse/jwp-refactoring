@@ -2,7 +2,7 @@ package kitchenpos.ui;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.builder.OrderTableBuilder;
-import kitchenpos.ui.dto.OrderTableCreateRequest;
+import kitchenpos.ui.dto.ordertable.OrderTableCreateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
