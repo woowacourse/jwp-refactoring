@@ -41,28 +41,6 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateDaoTest {
             assertThat(savedProduct.getName()).isEqualTo(product.getName());
             assertThat(savedProduct.getPrice().compareTo(product.getPrice())).isEqualTo(0);
         }
-
-        @DisplayName("name이 Null인 경우 예외가 발생한다.")
-        @Test
-        void nameNullException() {
-            // given
-            Product product = Product를_생성한다(null, 4_000);
-
-            // when, then
-            assertThatThrownBy(() -> jdbcTemplateProductDao.save(product))
-                .isExactlyInstanceOf(DataIntegrityViolationException.class);
-        }
-
-        @DisplayName("price가 Null인 경우 예외가 발생한다.")
-        @Test
-        void priceNullException() {
-            // given
-            Product product = Product를_생성한다("더블 치즈 버거", null);
-
-            // when, then
-            assertThatThrownBy(() -> jdbcTemplateProductDao.save(product))
-                .isExactlyInstanceOf(DataIntegrityViolationException.class);
-        }
     }
 
     @DisplayName("ID를 통해 Product를 조회할 때")
@@ -119,10 +97,6 @@ class JdbcTemplateProductDaoTest extends JdbcTemplateDaoTest {
     }
 
     private Product Product를_생성한다(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
+        return new Product(name, price);
     }
 }

@@ -150,15 +150,17 @@ class MenuServiceTest {
         }
     }
 
-    @DisplayName("Menu 목록을 조회할 때 Menu마다의 MenuProduct도 함께 조회된다.")
+    @DisplayName("전체 Menu 목록을 조회한다.")
     @Test
     void list() {
         // given
         List<Menu> beforeSavedMenus = menuService.list();
 
         MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
+
         Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
         Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
+
         MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
         MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
         List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
@@ -172,9 +174,6 @@ class MenuServiceTest {
         // then
         assertThat(afterSavedMenus).hasSize(beforeSavedMenus.size());
         assertThat(afterSavedMenus).usingRecursiveComparison().isEqualTo(beforeSavedMenus);
-        for (Menu afterSavedMenu : afterSavedMenus) {
-            assertThat(afterSavedMenu.getMenuProducts()).isNotEmpty();
-        }
     }
 
     private Menu Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
@@ -207,10 +206,6 @@ class MenuServiceTest {
     }
 
     private Product Product를_생성한다(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
+        return new Product(name, BigDecimal.valueOf(price));
     }
 }

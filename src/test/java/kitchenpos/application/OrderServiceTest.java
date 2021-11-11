@@ -341,10 +341,6 @@ class OrderServiceTest {
     }
 
     private Product Product를_생성한다(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
-
-        return product;
+        return new Product(name, BigDecimal.valueOf(price));
     }
 }

@@ -10,7 +10,8 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.List;
-import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,13 +28,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         @Test
         void success() {
             // given
-            Product product = Product를_생성한다("치즈버거", 4_500);
+            ProductRequest request = ProductReqeust를_생성한다("치즈버거", 4_500);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(product)
+                .body(request)
                 .when().post("/api/products")
                 .then().log().all()
                 .statusCode(CREATED.value())
@@ -49,13 +50,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         @Test
         void nameNullException() {
             // given
-            Product menuGroup = Product를_생성한다(null, 4_500);
+            ProductRequest request = ProductReqeust를_생성한다(null, 4_500);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menuGroup)
+                .body(request)
                 .when().post("/api/products")
                 .then().log().all()
                 .statusCode(INTERNAL_SERVER_ERROR.value())
@@ -69,13 +70,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNullException() {
             // given
-            Product menuGroup = Product를_생성한다("치킨버거", null);
+            ProductRequest request = ProductReqeust를_생성한다("치킨버거", null);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menuGroup)
+                .body(request)
                 .when().post("/api/products")
                 .then().log().all()
                 .statusCode(INTERNAL_SERVER_ERROR.value())
@@ -89,13 +90,13 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         @Test
         void priceNegativeException() {
             // given
-            Product menuGroup = Product를_생성한다("치킨버거", -1);
+            ProductRequest request = ProductReqeust를_생성한다("치킨버거", -1);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menuGroup)
+                .body(request)
                 .when().post("/api/products")
                 .then().log().all()
                 .statusCode(INTERNAL_SERVER_ERROR.value())
@@ -117,22 +118,18 @@ public class ProductAcceptanceTest extends AcceptanceTest {
             .statusCode(OK.value())
             .extract();
 
-        List<Product> products = response.jsonPath().getList(".", Product.class);
+        List<ProductResponse> responses = response.jsonPath().getList(".", ProductResponse.class);
 
         // then
         assertThat(response.statusCode()).isEqualTo(OK.value());
-        assertThat(products).isNotNull();
+        assertThat(responses).isNotNull();
     }
 
-    private Product Product를_생성한다(String name, int price) {
-        return Product를_생성한다(name, BigDecimal.valueOf(price));
+    private ProductRequest ProductReqeust를_생성한다(String name, int price) {
+        return ProductReqeust를_생성한다(name, BigDecimal.valueOf(price));
     }
 
-    private Product Product를_생성한다(String name, BigDecimal price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-
-        return product;
+    private ProductRequest ProductReqeust를_생성한다(String name, BigDecimal price) {
+        return new ProductRequest(name, price);
     }
 }

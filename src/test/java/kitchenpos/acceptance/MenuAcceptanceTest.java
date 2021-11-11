@@ -15,6 +15,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             // given
             MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
+            ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -62,8 +64,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             // given
             MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
+            ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -89,8 +91,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         @Test
         void noExistMenuGroupId() {
             // given
-            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
+            ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -144,8 +146,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             // given
             MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
+            ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -173,8 +175,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             // given
             MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
 
-            Product 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
-            Product 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
+            ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
+            ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
             MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
             MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
@@ -246,11 +248,9 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         return menuProduct;
     }
 
-    private Product HTTP_요청을_통해_Product를_생성한다(String name, int price) {
-        Product product = new Product();
-        product.setName(name);
-        product.setPrice(BigDecimal.valueOf(price));
+    private ProductResponse HTTP_요청을_통해_Product를_생성한다(String name, int price) {
+        ProductRequest request = new ProductRequest(name, BigDecimal.valueOf(price));
 
-        return postRequestWithBody("/api/products", product).as(Product.class);
+        return postRequestWithBody("/api/products", request).as(ProductResponse.class);
     }
 }
