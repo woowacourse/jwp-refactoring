@@ -22,6 +22,7 @@ public class MenuChangeEventHandler {
     @EventListener
     @Transactional
     public void handle(MenuChangeEvent event) {
+        // TODO 수정을 두번이상 할 경우에 대해 대비하기
         List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByMenuId(event.getMenuId());
         for (OrderLineItem orderLineItem : orderLineItems) {
             if (isBefore(orderLineItem.getCreatedAt(), event.getUpdatedAt())) {

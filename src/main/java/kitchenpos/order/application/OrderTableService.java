@@ -22,23 +22,6 @@ public class OrderTableService {
         this.orderRepository = orderRepository;
     }
 
-    @Transactional
-    public List<OrderTable> addTableGroup(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
-        List<OrderTable> orderTables = new ArrayList<>();
-        for (final OrderTable updateOrderTable : savedOrderTables) {
-            updateOrderTable.addTableGroup(savedTableGroup);
-            orderTables.add(updateOrderTable);
-        }
-        return orderTables;
-    }
-
-    @Transactional
-    public void addTableGroup2(List<OrderTable> savedOrderTables, TableGroup savedTableGroup) {
-        for (final OrderTable updateOrderTable : savedOrderTables) {
-            updateOrderTable.addTableGroup(savedTableGroup);
-        }
-    }
-
     public List<OrderTable> findAllOrderTables(List<Long> orderTableIds) {
         List<OrderTable> orderTables = orderTableRepository.findAllByIdIn(orderTableIds);
         validateOrderTables(orderTableIds, orderTables);

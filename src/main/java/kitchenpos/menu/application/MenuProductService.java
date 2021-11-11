@@ -34,6 +34,7 @@ public class MenuProductService {
         return productQuantities.groupToMenuProduct(menu);
     }
 
+    // TODO Product 검증 기능 Validator로 이동시키기
     private ProductQuantities combineProductAndQuantity(List<MenuProductRequest> menuProductRequests) {
         List<ProductQuantity> productQuantities = new ArrayList<>();
         for (MenuProductRequest menuProductRequest : menuProductRequests) {
@@ -43,9 +44,5 @@ public class MenuProductService {
             productQuantities.add(new ProductQuantity(product, menuProductRequest.getQuantity()));
         }
         return new ProductQuantities(productQuantities);
-    }
-
-    public List<MenuProduct> findAllByMenuId(Long menuId) {
-        return menuProductRepository.findAllByMenuId(menuId);
     }
 }
