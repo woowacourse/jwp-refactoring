@@ -107,9 +107,5 @@ abstract class ServiceTest {
         public static Product CREATE_PRODUCT(Long id, String name, BigDecimal price) {
             return new Product(id, name, price);
         }
-
-        public static MenuProduct CREATE_MENU_PRODUCT(Long seq, Menu menu, Product product, Long quantity) {
-            return new MenuProduct(seq, menu, product, quantity);
-        }
     }
 }

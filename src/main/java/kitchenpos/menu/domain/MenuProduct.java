@@ -22,10 +22,7 @@ public class MenuProduct {
     @JoinColumn(name = "menu_id", nullable = false)
     private Menu menu;
 
-    // TODO ProductId만 갖도록 개선
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
+    private Long productId;
 
     @Column(nullable = false)
     private Long quantity;
@@ -34,14 +31,16 @@ public class MenuProduct {
 
     }
 
-    public MenuProduct(Menu menu, ProductQuantity productQuantity) {
-        this(null, menu, productQuantity.getProduct(), productQuantity.getQuantity());
+    public MenuProduct(Menu menu, Long productId, Long quantity) {
+        this(null, menu, productId, quantity);
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, Long quantity) {
+    public MenuProduct(Long seq, Menu menu, Long productId, Long quantity) {
         this.seq = seq;
-        setMenu(menu);
-        this.product = product;
+        if (Objects.nonNull(menu)) {
+            setMenu(menu);
+        }
+        this.productId = productId;
         this.quantity = quantity;
     }
 
@@ -65,10 +64,6 @@ public class MenuProduct {
         menu.getMenuProducts().add(this);
     }
 
-    public Product getProduct() {
-        return product;
-    }
-
     public Long getQuantity() {
         return quantity;
     }
@@ -78,6 +73,6 @@ public class MenuProduct {
     }
 
     public Long getProductId() {
-        return product.getId();
+        return productId;
     }
 }

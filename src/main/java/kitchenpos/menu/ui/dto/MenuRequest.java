@@ -1,6 +1,7 @@
 package kitchenpos.menu.ui.dto;
 
 import kitchenpos.menu.domain.Menu;
+import kitchenpos.menu.domain.MenuProduct;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuRequest {
     @NotBlank(message = "메뉴명이 null이거나 비어있습니다.")
@@ -53,6 +55,12 @@ public class MenuRequest {
 
     public List<MenuProductRequest> getMenuProducts() {
         return menuProducts;
+    }
+
+    public List<MenuProduct> toMenuProducts(Menu menu) {
+        return menuProducts.stream()
+                .map(menuProductRequest -> menuProductRequest.toMenuProduct(menu))
+                .collect(Collectors.toList());
     }
 
     public Menu toMenu() {

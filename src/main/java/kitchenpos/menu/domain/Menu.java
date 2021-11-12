@@ -37,7 +37,7 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     private MenuGroup menuGroup;
 
     @OneToMany(mappedBy = "menu", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MenuProduct> menuProducts;
+    private List<MenuProduct> menuProducts = new ArrayList<>();
 
     protected Menu() {
     }
@@ -90,12 +90,6 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     public void validateTotalPrice(BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("상품 가격에 비해 메뉴의 가격이 큽니다.");
-        }
-    }
-
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.addMenu(this);
         }
     }
 

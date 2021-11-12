@@ -1,8 +1,5 @@
 package kitchenpos.menu;
 
-import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.ProductQuantities;
 import kitchenpos.menu.domain.ProductQuantity;
 import kitchenpos.product.domain.Product;
@@ -53,17 +50,5 @@ class ProductQuantitiesTest {
     void totalPrice() {
         // when - then
         assertThat(productQuantities.totalPrice()).isEqualTo(expectedTotalPrice);
-    }
-
-    @DisplayName("MenuProduct로 그룹화한다.")
-    @Test
-    void groupToMenuProduct() {
-        // given
-        Menu menu = new Menu(1L, "대왕메뉴", BigDecimal.valueOf(175_000), new MenuGroup("대왕그룹"));
-        List<MenuProduct> menuProducts
-                = productQuantities.groupToMenuProduct(menu);
-
-        // when - then
-        assertThat(menuProducts).hasSize(2);
     }
 }

@@ -4,7 +4,6 @@ import kitchenpos.exception.NonExistentException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.TemporaryMenu;
 import kitchenpos.menu.ui.dto.MenuRequest;
@@ -35,11 +34,9 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new NonExistentException("menuGroup을 찾을 수 없습니다."));
-
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
         Menu savedMenu = menuRepository.save(menu);
-        List<MenuProduct> menuProducts = menuProductService.create(menuRequest, menu);
-        savedMenu.addMenuProducts(menuProducts);
+        menuProductService.addMenuToMenuProduct(menuRequest, menu);
         return MenuResponse.from(savedMenu);
     }
 

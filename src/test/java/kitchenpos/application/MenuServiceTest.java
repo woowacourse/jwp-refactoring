@@ -59,7 +59,7 @@ public class MenuServiceTest extends ServiceTest {
         then(menuRepository).should(never())
                 .save(any());
         then(menuProductService).should(never())
-                .create(any(), any());
+                .addMenuToMenuProduct(any(), any());
     }
 
     @DisplayName("메뉴를 수정한다. - 실패, menuId로 메뉴를 찾을 수 없음.")
