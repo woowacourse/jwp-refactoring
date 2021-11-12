@@ -28,9 +28,6 @@ public class OrderTableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Mock
-    private OrderRepository orderRepository;
-
-    @Mock
     private OrderTableUngroupEventPublisher orderTableUngroupEventPublisher;
 
     @DisplayName("주문 아이디에 해당하는 모든 주문 테이블을 조회한다. - 실패, 조회 결과와 요청의 크기가 다름.")

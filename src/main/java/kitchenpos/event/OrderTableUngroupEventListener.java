@@ -16,7 +16,6 @@ public class OrderTableUngroupEventListener implements ApplicationListener<Order
 
     @Override
     public void onApplicationEvent(OrderTableUngroupEvent event) {
-        System.out.println("here");
         Long orderTableId = event.getOrderTableId();
         Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
         orders.checkNotCompleted();

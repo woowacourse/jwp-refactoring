@@ -14,15 +14,10 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderRepository orderRepository;
     private final OrderTableUngroupEventPublisher orderTableUngroupEventPublisher;
 
-    public OrderTableService(OrderTableRepository orderTableRepository,
-                             OrderRepository orderRepository,
-                             OrderTableUngroupEventPublisher orderTableUngroupEventPublisher
-    ) {
+    public OrderTableService(OrderTableRepository orderTableRepository, OrderTableUngroupEventPublisher orderTableUngroupEventPublisher) {
         this.orderTableRepository = orderTableRepository;
-        this.orderRepository = orderRepository;
         this.orderTableUngroupEventPublisher = orderTableUngroupEventPublisher;
     }
 
