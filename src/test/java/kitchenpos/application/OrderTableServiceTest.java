@@ -20,7 +20,7 @@ import static org.mockito.Mockito.times;
 
 @ServiceTest
 @DisplayName("OrderTable 서비스 테스트")
-public class OrderTableServiceTest{
+public class OrderTableServiceTest {
     @InjectMocks
     private OrderTableService orderTableService;
 

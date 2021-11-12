@@ -27,9 +27,9 @@ import java.util.stream.Collectors;
 public class Fixture {
     public static class RequestFactory {
         public static MenuRequest CREATE_MENU_REQUEST(String name,
-                                                         BigDecimal price,
-                                                         Long menuGroupId,
-                                                         List<MenuProductRequest> menuProductRequests
+                                                      BigDecimal price,
+                                                      Long menuGroupId,
+                                                      List<MenuProductRequest> menuProductRequests
         ) {
             return MenuRequest.of(name, price, menuGroupId, menuProductRequests);
         }
