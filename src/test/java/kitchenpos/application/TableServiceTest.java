@@ -17,17 +17,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_TABLE_GROUP;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_TABLE_REQUEST;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_TABLE_GROUP;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_TABLE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
-class TableServiceTest extends ServiceTest {
+@ServiceTest
+class TableServiceTest {
     @InjectMocks
     private TableService tableService;
 

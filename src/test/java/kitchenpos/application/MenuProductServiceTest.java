@@ -17,18 +17,19 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_MENU;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_PRODUCT;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_REQUEST;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_MENU;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_PRODUCT;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_MENU_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 
+@ServiceTest
 @DisplayName("MenuProduct 서비스 테스트")
-class MenuProductServiceTest extends ServiceTest {
+class MenuProductServiceTest {
     @InjectMocks
     private MenuProductService menuProductService;
 

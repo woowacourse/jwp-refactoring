@@ -15,8 +15,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("TableGroup 서비스 테스트")
-class TableGroupServiceTest extends ServiceTest {
+class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 

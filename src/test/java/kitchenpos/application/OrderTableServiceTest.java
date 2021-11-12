@@ -2,9 +2,7 @@ package kitchenpos.application;
 
 import kitchenpos.event.OrderTableUngroupEventPublisher;
 import kitchenpos.order.application.OrderTableService;
-import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTables;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -14,19 +12,15 @@ import org.mockito.Mock;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_TABLE_GROUP;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("OrderTable 서비스 테스트")
-public class OrderTableServiceTest extends ServiceTest {
+public class OrderTableServiceTest{
     @InjectMocks
     private OrderTableService orderTableService;
 
@@ -57,6 +51,4 @@ public class OrderTableServiceTest extends ServiceTest {
         then(orderTableRepository).should(times(1))
                 .findAllByIdIn(orderTableIds);
     }
-
-    // TODO 그룹 해제 테스트를 통합 테스트로 추가하든 EventListener만 따로 테스트하기
 }

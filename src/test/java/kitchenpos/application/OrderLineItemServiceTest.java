@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -27,8 +27,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("OrderLineItem 서비스 테스트")
-class OrderLineItemServiceTest extends ServiceTest {
+class OrderLineItemServiceTest {
     @InjectMocks
     private OrderLineItemService orderLineItemService;
 
