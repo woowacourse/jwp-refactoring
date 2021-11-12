@@ -5,7 +5,6 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.menu.domain.TemporaryMenu;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
 import kitchenpos.menu.ui.dto.MenuUpdateRequest;
@@ -48,9 +47,7 @@ public class MenuService {
     public MenuResponse update(Long menuId, MenuUpdateRequest menuUpdateRequest) {
         Menu menu = menuRepository.findById(menuId)
                 .orElseThrow(() -> new NonExistentException("menu를 찾을 수 없습니다."));
-        TemporaryMenu temporaryMenu = new TemporaryMenu(menu.getId(), menu.getName(), menu.getPrice());
         menu.update(menuUpdateRequest.getName(), menuUpdateRequest.getPrice());
-        menu.publishEvent(temporaryMenu);
         menuRepository.save(menu);
         return MenuResponse.from(menu);
     }

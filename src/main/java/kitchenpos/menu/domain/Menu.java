@@ -94,14 +94,16 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public void update(String name, BigDecimal price) {
+        TemporaryMenu temporaryMenu = new TemporaryMenu(this.id, this.name, this.price);
+        updateTo(name, price);
+        registerEvent(new MenuChangeEvent(this, temporaryMenu, LocalDateTime.now()));
+    }
+
+    private void updateTo(String name, BigDecimal price) {
         validateName(name);
         validatePrice(price);
         this.name = name;
         this.price = price;
-    }
-
-    public void publishEvent(TemporaryMenu temporaryMenu) {
-        registerEvent(new MenuChangeEvent(this, temporaryMenu, LocalDateTime.now()));
     }
 
     public Long getId() {
