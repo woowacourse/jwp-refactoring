@@ -86,8 +86,10 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void setTemporaryMenu(TemporaryMenu temporaryMenu) {
-        this.temporaryMenu = temporaryMenu;
+    public void updateTemporaryMenu(TemporaryMenu temporaryMenu) {
+        if (Objects.isNull(this.temporaryMenu)) {
+            this.temporaryMenu = temporaryMenu;
+        }
     }
 
     public long getQuantity() {
