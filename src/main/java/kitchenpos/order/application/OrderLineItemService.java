@@ -2,7 +2,7 @@ package kitchenpos.order.application;
 
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.order.domain.repository.OrderLineItemRepository;
@@ -32,9 +32,5 @@ public class OrderLineItemService {
             OrderLineItem orderLineItem = new OrderLineItem(order, findMenu, orderLineItemRequest.getQuantity());
             orderLineItemRepository.save(orderLineItem);
         }
-    }
-
-    public List<OrderLineItem> findAllByOrderId(Long orderId) {
-        return orderLineItemRepository.findAllByOrderId(orderId);
     }
 }

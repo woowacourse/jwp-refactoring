@@ -5,7 +5,7 @@ import kitchenpos.exception.NonExistentException;
 import kitchenpos.menu.application.MenuProductService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuProductRepository;
+import kitchenpos.menu.domain.repository.MenuProductRepository;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.DisplayName;

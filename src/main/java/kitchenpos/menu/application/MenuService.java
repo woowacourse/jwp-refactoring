@@ -3,8 +3,8 @@ package kitchenpos.menu.application;
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
-import kitchenpos.menu.domain.MenuGroupRepository;
-import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.ui.dto.MenuRequest;
 import kitchenpos.menu.ui.dto.MenuResponse;
 import kitchenpos.menu.ui.dto.MenuUpdateRequest;
@@ -35,7 +35,7 @@ public class MenuService {
                 .orElseThrow(() -> new NonExistentException("menuGroup을 찾을 수 없습니다."));
         Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
         Menu savedMenu = menuRepository.save(menu);
-        menuProductService.addMenuToMenuProduct(menuRequest, menu);
+        menuProductService.addMenuToMenuProduct(menuRequest, savedMenu);
         return MenuResponse.from(savedMenu);
     }
 

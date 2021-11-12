@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.order.application.OrderLineItemService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderLineItem;

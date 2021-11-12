@@ -45,10 +45,8 @@ public class TableService {
     @Transactional
     public TableResponse changeNumberOfGuests(final Long orderTableId, final TableRequest tableRequest) {
         int numberOfGuests = tableRequest.getNumberOfGuests();
-
         OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NonExistentException("주문테이블을 찾을 수 없습니다."));
-
         savedOrderTable.addNumberOfGuests(numberOfGuests);
         return TableResponse.from(savedOrderTable);
     }
