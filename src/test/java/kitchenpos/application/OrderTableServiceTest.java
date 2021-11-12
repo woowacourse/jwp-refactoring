@@ -3,7 +3,6 @@ package kitchenpos.application;
 import kitchenpos.event.OrderTableUngroupEventPublisher;
 import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

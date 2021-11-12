@@ -3,7 +3,6 @@ package kitchenpos.order.application;
 import kitchenpos.event.OrderTableUngroupEventPublisher;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTables;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
