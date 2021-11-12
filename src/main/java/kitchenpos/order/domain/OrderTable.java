@@ -1,7 +1,5 @@
 package kitchenpos.order.domain;
 
-import org.springframework.data.domain.AbstractAggregateRoot;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
