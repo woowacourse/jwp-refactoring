@@ -1,14 +1,13 @@
 package kitchenpos.order.application;
 
+import kitchenpos.event.OrderTableUngroupEventPublisher;
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.domain.OrderTables;
 import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,10 +15,15 @@ import java.util.List;
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
     private final OrderRepository orderRepository;
+    private final OrderTableUngroupEventPublisher orderTableUngroupEventPublisher;
 
-    public OrderTableService(OrderTableRepository orderTableRepository, OrderRepository orderRepository) {
+    public OrderTableService(OrderTableRepository orderTableRepository,
+                             OrderRepository orderRepository,
+                             OrderTableUngroupEventPublisher orderTableUngroupEventPublisher
+    ) {
         this.orderTableRepository = orderTableRepository;
         this.orderRepository = orderRepository;
+        this.orderTableUngroupEventPublisher = orderTableUngroupEventPublisher;
     }
 
     public List<OrderTable> findAllOrderTables(List<Long> orderTableIds) {
@@ -36,11 +40,7 @@ public class OrderTableService {
 
     @Transactional
     public void ungroup(Long tableGroupId) {
-        List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        for (OrderTable orderTable : orderTables) {
-            Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTable.getId()));
-            orders.checkNotCompleted();
-            orderTable.ungroup();
-        }
+        OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
+        orderTables.ungroupAll(orderTableUngroupEventPublisher);
     }
 }

@@ -1,5 +1,7 @@
 package kitchenpos.order.domain;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -105,4 +107,5 @@ public class OrderTable {
         this.tableGroup = null;
         this.empty = false;
     }
+
 }
