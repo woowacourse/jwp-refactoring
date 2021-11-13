@@ -8,10 +8,17 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Menu;
+import kitchenpos.domain.InvalidMenuPriceException;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.InvalidMenuException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
+import kitchenpos.ui.response.MenuProductResponse;
+import kitchenpos.ui.response.MenuResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,15 +49,15 @@ class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", null, menuGroup.getId(), menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", null, menuGroup.getId(), menuProducts);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(InvalidMenuException.class);
         }
 
         @DisplayName("Menu의 Price가 0보다 작으면 예외가 발생한다.")
@@ -60,15 +67,15 @@ class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", -1, menuGroup.getId(), menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", -1, menuGroup.getId(), menuProducts);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(InvalidMenuException.class);
         }
 
         @DisplayName("Menu의 MenuGroupId가 존재하지 않는 경우 발생한다.")
@@ -77,15 +84,15 @@ class MenuServiceTest {
             // given
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_600, -1L, menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", 5_600, -1L, menuProducts);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(MenuGroupNotFoundException.class);
         }
 
         @DisplayName("Menu의 Product가 실제로 존재하지 않는 경우 예외가 발생한다.")
@@ -93,15 +100,16 @@ class MenuServiceTest {
         void noExistProductException() {
             // given
             MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(-1L, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(-2L, 1);
+            Product 없는_상품 = new Product(-1L, "없는 상품", BigDecimal.TEN);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(없는_상품, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(없는_상품, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(ProductNotFoundException.class);
         }
 
         @DisplayName("Menu의 총 Price가 Product들의 Price 합보다 클 경우 예외가 발생한다.")
@@ -111,15 +119,15 @@ class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_601, menuGroup.getId(), menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", 5_601, menuGroup.getId(), menuProducts);
 
             // when, then
-            assertThatThrownBy(() -> menuService.create(menu))
-                .isExactlyInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(request))
+                .isExactlyInstanceOf(InvalidMenuPriceException.class);
         }
 
         @DisplayName("정상적인 경우 menuProduct가 함께 저장되어 반환된다.")
@@ -129,23 +137,23 @@ class MenuServiceTest {
             MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            MenuRequest request = MenuReqeust를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
 
             // when
-            Menu savedMenu = menuService.create(menu);
+            MenuResponse response = menuService.create(request);
 
             // then
-            assertThat(savedMenu.getId()).isNotNull();
-            assertThat(savedMenu.getName()).isEqualTo(menu.getName());
-            assertThat(savedMenu.getPrice().compareTo(menu.getPrice())).isEqualTo(0);
-            assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId());
-            for (MenuProduct menuProduct : savedMenu.getMenuProducts()) {
-                assertThat(menuProduct.getSeq()).isNotNull();
-                assertThat(menuProduct.getMenuId()).isEqualTo(savedMenu.getId());
+            assertThat(response.getId()).isNotNull();
+            assertThat(response.getName()).isEqualTo(request.getName());
+            assertThat(response.getPrice().compareTo(request.getPrice())).isEqualTo(0);
+            assertThat(response.getMenuGroupId()).isEqualTo(request.getMenuGroup());
+            for (MenuProductResponse menuProductResponse : response.getMenuProducts()) {
+                assertThat(menuProductResponse.getSeq()).isNotNull();
+                assertThat(menuProductResponse.getMenuId()).isEqualTo(response.getId());
             }
         }
     }
@@ -154,52 +162,44 @@ class MenuServiceTest {
     @Test
     void list() {
         // given
-        List<Menu> beforeSavedMenus = menuService.list();
+        List<MenuResponse> beforeSavedMenus = menuService.list();
 
         MenuGroup menuGroup = menuGroupDao.save(MenuGroup을_생성한다("엄청난 그룹"));
 
         Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
         Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
 
-        MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-        MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+        MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+        MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
         List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-        beforeSavedMenus.add(menuService.create(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts)));
-        beforeSavedMenus.add(menuService.create(Menu를_생성한다("할인 메뉴", 4_600, menuGroup.getId(), menuProducts)));
+        beforeSavedMenus.add(menuService.create(MenuReqeust를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts)));
+        beforeSavedMenus.add(menuService.create(MenuReqeust를_생성한다("할인 메뉴", 4_600, menuGroup.getId(), menuProducts)));
 
         // when
-        List<Menu> afterSavedMenus = menuService.list();
+        List<MenuResponse> afterSavedMenus = menuService.list();
 
         // then
         assertThat(afterSavedMenus).hasSize(beforeSavedMenus.size());
-        assertThat(afterSavedMenus).usingRecursiveComparison().isEqualTo(beforeSavedMenus);
+        assertThat(afterSavedMenus).usingRecursiveComparison()
+            .ignoringFields("price")
+            .isEqualTo(beforeSavedMenus);
     }
 
-    private Menu Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        return Menu를_생성한다(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
+    private MenuRequest MenuReqeust를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return MenuReqeust를_생성한다(name, BigDecimal.valueOf(price), menuGroupId, menuProducts);
     }
 
-    private Menu Menu를_생성한다(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(price);
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+    private MenuRequest MenuReqeust를_생성한다(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        return new MenuRequest(name, price, menuGroupId, MenuProductRequest.of(menuProducts));
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
         return new MenuGroup(name);
     }
 
-    private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    private MenuProduct MenuProduct를_생성한다(Product product, long quantity) {
+        return new MenuProduct(product, quantity);
     }
 
     private Product Product를_생성한다(String name, int price) {

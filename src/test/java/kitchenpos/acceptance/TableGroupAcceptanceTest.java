@@ -21,8 +21,12 @@ import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.ui.request.MenuProductRequest;
+import kitchenpos.ui.request.MenuRequest;
 import kitchenpos.ui.request.ProductRequest;
+import kitchenpos.ui.response.MenuResponse;
 import kitchenpos.ui.response.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -171,12 +175,12 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-            Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+            MenuResponse menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            MenuResponse menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
             OrderTable orderTable1 = HTTP_요청을_통해_OrderTable을_생성한다(1, true);
             OrderTable orderTable2 = HTTP_요청을_통해_OrderTable을_생성한다(2, true);
@@ -209,12 +213,12 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
-            Menu menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
+            MenuResponse menu1 = HTTP_요청을_통해_Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts);
+            MenuResponse menu2 = HTTP_요청을_통해_Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts);
 
             OrderTable orderTable1 = HTTP_요청을_통해_OrderTable을_생성한다(1, true);
             OrderTable orderTable2 = HTTP_요청을_통해_OrderTable을_생성한다(2, true);
@@ -312,14 +316,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         return orderLineItem;
     }
 
-    private Menu HTTP_요청을_통해_Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
+    private MenuResponse HTTP_요청을_통해_Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        MenuRequest request = new MenuRequest(name, BigDecimal.valueOf(price), menuGroupId, MenuProductRequest.of(menuProducts));
 
-        return postRequestWithBody("/api/menus", menu).as(Menu.class);
+        return postRequestWithBody("/api/menus", request).as(MenuResponse.class);
     }
 
     private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
@@ -328,12 +328,10 @@ public class TableGroupAcceptanceTest extends AcceptanceTest {
         return postRequestWithBody("/api/menu-groups", menuGroup).as(MenuGroup.class);
     }
 
-    private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
+    private MenuProduct MenuProduct를_생성한다(ProductResponse productResponse, long quantity) {
+        Product product = new Product(productResponse.getId(), productResponse.getName(), productResponse.getPrice());
 
-        return menuProduct;
+        return new MenuProduct(product, quantity);
     }
 
     private ProductResponse HTTP_요청을_통해_Product를_생성한다(String name, int price) {

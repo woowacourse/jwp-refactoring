@@ -13,6 +13,7 @@ import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.exception.ExceptionResponse;
+import kitchenpos.ui.request.MenuGroupRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,14 +30,13 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         @Test
         void createPost() {
             // given
-            Menu menu = new Menu();
-            menu.setName("킹갓메뉴");
+            MenuGroupRequest request = new MenuGroupRequest("킹갓메뉴그룹");
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(request)
                 .when().post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(CREATED.value())
@@ -52,13 +52,13 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         @Test
         void nameNull() {
             // given
-            Menu menu = new Menu();
+            MenuGroupRequest request = new MenuGroupRequest(null);
 
             // when
             ExtractableResponse<Response> response = RestAssured.given()
                 .log().all()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
-                .body(menu)
+                .body(request)
                 .when().post("/api/menu-groups")
                 .then().log().all()
                 .statusCode(BAD_REQUEST.value())

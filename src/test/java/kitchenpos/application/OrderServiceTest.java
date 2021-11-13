@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.dao.MenuDao;
 import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.dao.ProductDao;
@@ -24,6 +23,7 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
+import kitchenpos.repository.MenuRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class OrderServiceTest {
     private TableGroupDao tableGroupDao;
 
     @Autowired
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Autowired
     private MenuGroupDao menuGroupDao;
@@ -66,11 +66,11 @@ class OrderServiceTest {
 
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
+            Menu menu = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
 
             Order order = Order를_생성한다(orderTable.getId(), new ArrayList<>());
 
@@ -89,11 +89,11 @@ class OrderServiceTest {
 
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
+            Menu menu = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu.getId(), 1);
@@ -113,12 +113,12 @@ class OrderServiceTest {
 
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            Menu menu1 = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
+            Menu menu2 = menuRepository.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -140,12 +140,12 @@ class OrderServiceTest {
 
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            Menu menu1 = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
+            Menu menu2 = menuRepository.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -167,12 +167,12 @@ class OrderServiceTest {
 
             Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
             Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
             List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-            Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-            Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+            Menu menu1 = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
+            Menu menu2 = menuRepository.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup));
 
             OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
             OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -258,12 +258,12 @@ class OrderServiceTest {
 
         Product 치즈버거 = productDao.save(Product를_생성한다("치즈버거", 4_000));
         Product 콜라 = productDao.save(Product를_생성한다("치즈버거", 1_600));
-        MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거.getId(), 1);
-        MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라.getId(), 1);
+        MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
+        MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
         List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
-        Menu menu1 = menuDao.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup.getId(), menuProducts));
-        Menu menu2 = menuDao.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup.getId(), menuProducts));
+        Menu menu1 = menuRepository.save(Menu를_생성한다("엄청난 메뉴", 5_600, menuGroup));
+        Menu menu2 = menuRepository.save(Menu를_생성한다("색다른 메뉴", 4_600, menuGroup));
 
         OrderLineItem orderLineItem1 = OrderLineItem을_생성한다(menu1.getId(), 1);
         OrderLineItem orderLineItem2 = OrderLineItem을_생성한다(menu2.getId(), 1);
@@ -315,14 +315,8 @@ class OrderServiceTest {
         return orderLineItem;
     }
 
-    private Menu Menu를_생성한다(String name, int price, Long menuGroupId, List<MenuProduct> menuProducts) {
-        Menu menu = new Menu();
-        menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
-        menu.setMenuGroupId(menuGroupId);
-        menu.setMenuProducts(menuProducts);
-
-        return menu;
+    private Menu Menu를_생성한다(String name, int price, MenuGroup menuGroup) {
+        return new Menu(name, BigDecimal.valueOf(price), menuGroup);
     }
 
     private MenuGroup MenuGroup을_생성한다(String name) {
@@ -331,12 +325,8 @@ class OrderServiceTest {
         return menuGroup;
     }
 
-    private MenuProduct MenuProduct를_생성한다(Long productId, long quantity) {
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(productId);
-        menuProduct.setQuantity(quantity);
-
-        return menuProduct;
+    private MenuProduct MenuProduct를_생성한다(Product product, long quantity) {
+        return new MenuProduct(product, quantity);
     }
 
     private Product Product를_생성한다(String name, int price) {
