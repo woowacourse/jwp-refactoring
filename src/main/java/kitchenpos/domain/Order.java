@@ -16,7 +16,7 @@ public class Order {
     @ManyToOne
     private OrderTable orderTable;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

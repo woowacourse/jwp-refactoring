@@ -11,7 +11,6 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne
-    @JoinColumn(name = "PRODUCT_ID")
     private Product product;
     private long quantity;
 

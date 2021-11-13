@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuGroupRepository;
 import kitchenpos.dto.MenuGroupRequest;
@@ -19,8 +20,7 @@ import static kitchenpos.fixture.MenuGroupFixture.createMenuGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class MenuGroupServiceTest {
 
     @Autowired
@@ -32,12 +32,12 @@ class MenuGroupServiceTest {
     @DisplayName("메뉴 그룹을 생성한다.")
     @Test
     void create() {
-        MenuGroupRequest menuGroupRequest = createMenuGroupRequest();
-        MenuGroupResponse savedMenuGroup = menuGroupService.create(menuGroupRequest);
+        MenuGroupRequest request = createMenuGroupRequest();
+        MenuGroupResponse result = menuGroupService.create(request);
         assertAll(
-                () -> assertThat(savedMenuGroup).isNotNull(),
-                () -> assertThat(savedMenuGroup.getId()).isNotNull(),
-                () -> assertThat(savedMenuGroup.getName()).isEqualTo(menuGroupRequest.getName())
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getName()).isEqualTo(request.getName())
         );
     }
 

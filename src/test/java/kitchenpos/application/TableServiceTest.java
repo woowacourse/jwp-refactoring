@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.*;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,8 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class TableServiceTest {
 
     @Autowired
@@ -56,14 +54,14 @@ class TableServiceTest {
     @DisplayName("테이블을 생성한다.")
     @Test
     void create() {
-        OrderTableRequest orderTableRequest = createOrderTableRequest();
-        OrderTableResponse savedOrderTable = tableService.create(orderTableRequest);
+        OrderTableRequest request = createOrderTableRequest();
+        OrderTableResponse result = tableService.create(request);
         assertAll(
-                () -> assertThat(savedOrderTable).isNotNull(),
-                () -> assertThat(savedOrderTable.getId()).isNotNull(),
-                () -> assertThat(savedOrderTable.getTableGroupId()).isEqualTo(orderTableRequest.getTableGroupId()),
-                () -> assertThat(savedOrderTable.getNumberOfGuests()).isEqualTo(orderTableRequest.getNumberOfGuests()),
-                () -> assertThat(savedOrderTable.isEmpty()).isEqualTo(orderTableRequest.isEmpty())
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.getId()).isNotNull(),
+                () -> assertThat(result.getTableGroupId()).isEqualTo(request.getTableGroupId()),
+                () -> assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests()),
+                () -> assertThat(result.isEmpty()).isEqualTo(request.isEmpty())
         );
     }
 
@@ -95,9 +93,9 @@ class TableServiceTest {
         @DisplayName("테이블의 empty 상태를 변경한다.")
         @Test
         void changeEmpty() {
-            OrderTableRequest orderTableRequest = createOrderTableRequest(true);
-            OrderTableResponse orderTableResponse = tableService.changeEmpty(orderTableId, orderTableRequest);
-            assertThat(orderTableResponse.isEmpty()).isEqualTo(orderTableRequest.isEmpty());
+            OrderTableRequest request = createOrderTableRequest(true);
+            OrderTableResponse result = tableService.changeEmpty(orderTableId, request);
+            assertThat(result.isEmpty()).isEqualTo(request.isEmpty());
         }
 
         @DisplayName("조리중이거나, 식사 중 상태의 테이블의 empty 상태를 변경할 수 없다.")
@@ -145,27 +143,25 @@ class TableServiceTest {
         @DisplayName("테이블의 손님 수를 변경한다.")
         @Test
         void changeNumberOfGuests() {
-            OrderTableRequest orderTableRequest = createOrderTableRequest(2);
-            OrderTableResponse orderTableResponse = tableService.changeNumberOfGuests(orderTableId, orderTableRequest);
-            assertThat(orderTableResponse.getNumberOfGuests()).isEqualTo(orderTableRequest.getNumberOfGuests());
+            OrderTableRequest request = createOrderTableRequest(2);
+            OrderTableResponse result = tableService.changeNumberOfGuests(orderTableId, request);
+            assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
         }
 
         @DisplayName("테이블의 손님 수를 음수로 변경할 수 없다.")
         @Test
         void changeNumberOfGuestsWithInvalid() {
-            OrderTableRequest orderTableRequest = createOrderTableRequest(-1);
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, orderTableRequest))
+            int numberOfGuests = -1;
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, createOrderTableRequest(numberOfGuests)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("비어있는 테이블의 손님 수를 변경할 수 없다.")
         @Test
         void changeNumberOfGuestWithEmptyTable() {
-            OrderTable orderTable = createOrderTable(1, true);
-            orderTableRepository.save(orderTable);
-            orderTableId = orderTable.getId();
-
-            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, createOrderTableRequest()))
+            boolean isEmpty = true;
+            OrderTable orderTable = orderTableRepository.save(createOrderTable(1, isEmpty));
+            assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTable.getId(), createOrderTableRequest()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }

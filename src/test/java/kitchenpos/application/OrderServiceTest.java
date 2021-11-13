@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderRequest;
@@ -19,8 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class OrderServiceTest {
 
     @Autowired
@@ -69,12 +69,12 @@ class OrderServiceTest {
         @DisplayName("주문을 생성한다.")
         @Test
         void create() {
-            OrderRequest orderRequest = createOrderRequest(orderTableId, menuId);
-            OrderResponse savedOrder = orderService.create(orderRequest);
+            OrderRequest request = createOrderRequest(orderTableId, menuId);
+            OrderResponse result = orderService.create(request);
             SoftAssertions.assertSoftly(it -> {
-                        it.assertThat(savedOrder).isNotNull();
-                        it.assertThat(savedOrder.getId()).isNotNull();
-                        it.assertThat(savedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
+                        it.assertThat(result).isNotNull();
+                        it.assertThat(result.getId()).isNotNull();
+                        it.assertThat(result.getOrderStatus()).isEqualTo(request.getOrderStatus());
                     }
             );
         }
@@ -82,32 +82,32 @@ class OrderServiceTest {
         @DisplayName("주문 항목이 1개 이상이어야한다.")
         @Test
         void createWithInvalidOrderItemList() {
-            OrderRequest orderRequest = createOrderRequest(orderTableId, Collections.emptyList());
-            assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
+            OrderRequest request = createOrderRequest(orderTableId, Collections.emptyList());
+            assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 항목의 메뉴가 존재해야 한다.")
         @Test
         void createWithNonexistentMenu() {
             menuId = Long.MAX_VALUE;
-            OrderRequest orderRequest = createOrderRequest(orderTableId, menuId);
-            assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
+            OrderRequest request = createOrderRequest(orderTableId, menuId);
+            assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("주문 테이블은 비어있지 않아야한다.")
         @Test
         void createWithEmptyTable() {
             OrderTable emptyTable = orderTableRepository.save(new OrderTable(1, true));
-            OrderRequest orderRequest = createOrderRequest(orderTableId, emptyTable.getId());
-            assertThatThrownBy(() -> orderService.create(orderRequest)).isInstanceOf(IllegalArgumentException.class);
+            OrderRequest request = createOrderRequest(orderTableId, emptyTable.getId());
+            assertThatThrownBy(() -> orderService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @DisplayName("주문 목록을 반환한다.")
     @Test
     void list() {
-        OrderRequest orderRequest = createOrderRequest(orderTableId, menuId);
-        List<OrderResponse> expected = Collections.singletonList(orderService.create(orderRequest));
+        OrderRequest request = createOrderRequest(orderTableId, menuId);
+        List<OrderResponse> expected = Collections.singletonList(orderService.create(request));
         List<OrderResponse> result = orderService.list();
         assertAll(
                 () -> assertThat(result).hasSize(1),
@@ -123,19 +123,19 @@ class OrderServiceTest {
 
         @BeforeEach
         void setUp() {
-            OrderRequest orderRequest = createOrderRequest(orderTableId, menuId);
-            savedOrderId = orderService.create(orderRequest).getId();
+            OrderRequest request = createOrderRequest(orderTableId, menuId);
+            savedOrderId = orderService.create(request).getId();
         }
 
         @DisplayName("주문의 상태를 변경한다.")
         @Test
         void changeOrderStatus() {
             OrderStatus newStatus = OrderStatus.MEAL;
-            OrderRequest orderRequest = createOrderRequest(orderTableId, newStatus, menuId);
-            OrderResponse orderResponse = orderService.changeOrderStatus(savedOrderId, orderRequest);
+            OrderRequest request = createOrderRequest(orderTableId, newStatus, menuId);
+            OrderResponse result = orderService.changeOrderStatus(savedOrderId, request);
             assertAll(
-                    () -> assertThat(orderResponse).isNotNull(),
-                    () -> assertThat(orderResponse.getOrderStatus()).isEqualTo(newStatus)
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getOrderStatus()).isEqualTo(newStatus)
             );
         }
 

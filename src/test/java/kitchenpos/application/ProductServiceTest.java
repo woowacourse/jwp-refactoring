@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.ProductRequest;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,8 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class ProductServiceTest {
 
     @Autowired
@@ -39,20 +37,20 @@ class ProductServiceTest {
         @DisplayName("상품을 생성한다.")
         @Test
         void create() {
-            ProductRequest productRequest = createProductRequest();
-            ProductResponse savedProduct = productService.create(productRequest);
+            ProductRequest request = createProductRequest();
+            ProductResponse result = productService.create(request);
             assertAll(
-                    () -> assertThat(savedProduct).isNotNull(),
-                    () -> assertThat(savedProduct.getId()).isNotNull(),
-                    () -> assertThat(savedProduct.getName()).isEqualTo(productRequest.getName())
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getId()).isNotNull(),
+                    () -> assertThat(result.getName()).isEqualTo(request.getName())
             );
         }
 
         @DisplayName("상품의 가격은 음수일 수 없다.")
         @Test
         void createWithInvalidPrice() {
-            ProductRequest productRequest = createProductRequest(BigDecimal.valueOf(-1L));
-            assertThatThrownBy(() -> productService.create(productRequest)).isInstanceOf(IllegalArgumentException.class);
+            ProductRequest request = createProductRequest(BigDecimal.valueOf(-1L));
+            assertThatThrownBy(() -> productService.create(request)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 

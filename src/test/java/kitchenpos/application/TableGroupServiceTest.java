@@ -1,13 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.*;
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.*;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,13 +14,13 @@ import java.util.Collections;
 import java.util.List;
 
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
+import static kitchenpos.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class TableGroupServiceTest {
 
     @Autowired
@@ -51,15 +50,6 @@ class TableGroupServiceTest {
     @Autowired
     private TableGroupService tableGroupService;
 
-    private OrderTable saveOrderTable(int numberOfGuests, boolean isEmpty) {
-        return orderTableRepository.save(new OrderTable(numberOfGuests, isEmpty));
-    }
-
-    private OrderTable saveOrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
-        TableGroup save = tableGroupRepository.save(tableGroup);
-        return orderTableRepository.save(new OrderTable(save, numberOfGuests, isEmpty));
-    }
-
     @DisplayName("단체 지정 생성")
     @Nested
     class CreateTableGroup {
@@ -67,8 +57,8 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정을 생성한다.")
         @Test
         void create() {
-            OrderTable orderTable1 = saveOrderTable(1, true);
-            OrderTable orderTable2 = saveOrderTable(1, true);
+            OrderTable orderTable1 = orderTableRepository.save(createOrderTable(true));
+            OrderTable orderTable2 = orderTableRepository.save(createOrderTable(true));
             TableGroupResponse result = tableGroupService.create(createTableGroupRequest(orderTable1, orderTable2));
             assertAll(
                     () -> assertThat(result).isNotNull(),
@@ -80,9 +70,8 @@ class TableGroupServiceTest {
         @Test
         void createWithInvalidOrderTable1() {
             TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-
-            OrderTable orderTable1 = saveOrderTable(tableGroup, 1, true);
-            OrderTable orderTable2 = saveOrderTable(tableGroup, 1, true);
+            OrderTable orderTable1 = orderTableRepository.save(createOrderTable(tableGroup, 1, true));
+            OrderTable orderTable2 = orderTableRepository.save(createOrderTable(tableGroup, 1, true));
 
             TableGroupRequest tableGroupRequest = createTableGroupRequest(orderTable1, orderTable2);
             assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
@@ -91,16 +80,16 @@ class TableGroupServiceTest {
         @DisplayName("단체 지정 대상 테이블의 개수는 2개 이상이다.")
         @Test
         void createWithInvalidOrderTable2() {
-            TableGroupRequest tableGroupRequest = createTableGroupRequest(saveOrderTable(1, true));
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest)).isInstanceOf(IllegalArgumentException.class);
+            OrderTable onlyTable = orderTableRepository.save(createOrderTable(true));
+            assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest(onlyTable)))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("단체 지정 대상 테이블은 비어있어야한다.")
         @Test
         void createWithInvalidOrderTable3() {
-            OrderTable orderTable1 = saveOrderTable(1, false);
-            OrderTable orderTable2 = saveOrderTable(1, false);
-
+            OrderTable orderTable1 = orderTableRepository.save(createOrderTable(false));
+            OrderTable orderTable2 = orderTableRepository.save(createOrderTable(false));
             assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest(orderTable1, orderTable2)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
@@ -116,8 +105,8 @@ class TableGroupServiceTest {
 
         @BeforeEach
         void setUp() {
-            orderTable1 = saveOrderTable(1, true);
-            orderTable2 = saveOrderTable(1, true);
+            orderTable1 = orderTableRepository.save(createOrderTable(true));
+            orderTable2 = orderTableRepository.save(createOrderTable(true));
 
             TableGroupRequest tableGroupRequest = createTableGroupRequest(orderTable1, orderTable2);
             tableGroupId = tableGroupService.create(tableGroupRequest).getId();
@@ -135,11 +124,10 @@ class TableGroupServiceTest {
             MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("NAME"));
             Product product = productRepository.save(new Product("NAME", BigDecimal.ONE));
             MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(1L, product, 1L));
-            Menu menu = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct)));
-            Long menuId = menu.getId();
+            Long menuId = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct))).getId();
 
-            TableGroup tableGroup = new TableGroup();
-            orderTable1 = saveOrderTable(tableGroup, 1, false);
+            TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+            orderTable1 = orderTableRepository.save(createOrderTable(tableGroup, 1, false));
 
             OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
             orderRepository.save(new Order(orderTable1, Collections.singletonList(orderLineItem), OrderStatus.MEAL, LocalDateTime.now()));

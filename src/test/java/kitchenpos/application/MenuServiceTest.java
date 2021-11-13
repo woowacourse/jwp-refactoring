@@ -1,5 +1,6 @@
 package kitchenpos.application;
 
+import kitchenpos.ServiceTest;
 import kitchenpos.domain.*;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
@@ -21,8 +22,7 @@ import static kitchenpos.fixture.ProductFixture.createProduct;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
+@ServiceTest
 class MenuServiceTest {
 
     @Autowired
@@ -74,9 +74,9 @@ class MenuServiceTest {
         @DisplayName("메뉴 가격은 음수일 수 없다.")
         @Test
         void createWithInvalidPrice1() {
-            BigDecimal price = BigDecimal.valueOf(-1);
-            MenuRequest menu = createMenuRequest(price, menuGroupId, menuProducts);
-            assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+            BigDecimal invalidPrice = BigDecimal.valueOf(-1);
+            assertThatThrownBy(() -> menuService.create( createMenuRequest(invalidPrice, menuGroupId, menuProducts)))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @DisplayName("메뉴 상품 가격의 합보다 큰 가격으로 메뉴를 생성할 수 없다.")
@@ -91,8 +91,8 @@ class MenuServiceTest {
         @Test
         void createWithInvalidMenuGroup() {
             Long invalidMenuGroupId = Long.MAX_VALUE;
-            MenuRequest menu = createMenuRequest(invalidMenuGroupId, menuProducts);
-            assertThatThrownBy(() -> menuService.create(menu)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> menuService.create(createMenuRequest(invalidMenuGroupId, menuProducts)))
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
