@@ -37,7 +37,7 @@ class OrderRepositoryTest {
     @DisplayName("주문 추가")
     @Test
     void create() {
-        Orders orders = new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Orders orders = Orders.from(orderTable);
         Orders savedOrder = ordersRepository.save(orders);
 
         assertThat(savedOrder.getId()).isNotNull();
@@ -47,9 +47,9 @@ class OrderRepositoryTest {
     @DisplayName("주문 전체 조회")
     @Test
     void list() {
-        Orders order1 = new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now());
-        Orders order2 = new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now());
-        Orders order3 = new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Orders order1 = Orders.from(orderTable);
+        Orders order2 = Orders.from(orderTable);
+        Orders order3 = Orders.from(orderTable);
         ordersRepository.save(order1);
         ordersRepository.save(order2);
         ordersRepository.save(order3);

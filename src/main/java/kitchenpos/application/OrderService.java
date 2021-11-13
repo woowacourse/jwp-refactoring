@@ -33,7 +33,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = orderLineItemService.createEntity(ordersRequest);
         OrderTable orderTable = orderTableRepository.findById(ordersRequest.getOrderTableId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
-        Orders newOrder = ordersRepository.save(new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now()));
+        Orders newOrder = ordersRepository.save(Orders.from(orderTable));
         List<OrderLineItemResponse> orderLineItemResponses = orderLineItemService.saveAll(orderLineItems, newOrder);
 
         return OrdersResponse.of(newOrder, orderLineItemResponses);

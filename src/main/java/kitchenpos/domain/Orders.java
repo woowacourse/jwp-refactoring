@@ -19,16 +19,16 @@ public class Orders {
     public Orders() {
     }
 
-    public Orders(OrderTable orderTable, OrderStatus status, LocalDateTime orderedTime) {
-        this(null, orderTable, status, orderedTime);
-    }
-
     public Orders(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {
         validateEmptyTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
+    }
+
+    public static Orders from(OrderTable orderTable) {
+        return new Orders(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public void changeOrderStatus(OrderStatus orderStatus) {

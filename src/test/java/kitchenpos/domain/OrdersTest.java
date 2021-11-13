@@ -17,7 +17,7 @@ class OrdersTest {
         OrderTable orderTable = new OrderTable(3, true);
         //when
         //then
-        assertThatThrownBy(() -> new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now()))
+        assertThatThrownBy(() -> Orders.from(orderTable))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -25,7 +25,7 @@ class OrdersTest {
     @Test
     void changeOrderStatus() {
         OrderTable orderTable = new OrderTable(3, false);
-        Orders cookingOrders = new Orders(orderTable, OrderStatus.COOKING, LocalDateTime.now());
+        Orders cookingOrders = Orders.from(orderTable);
 
         cookingOrders.changeOrderStatus(OrderStatus.MEAL);
 
@@ -36,7 +36,7 @@ class OrdersTest {
     @Test
     void changeOrderStatus_With_CompletedOrder() {
         OrderTable orderTable = new OrderTable(3, false);
-        Orders completedOrders = new Orders(orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
+        Orders completedOrders = new Orders(1L, orderTable, OrderStatus.COMPLETION, LocalDateTime.now());
 
         assertThatThrownBy(() -> completedOrders.changeOrderStatus(OrderStatus.COOKING))
                 .isInstanceOf(IllegalArgumentException.class);
