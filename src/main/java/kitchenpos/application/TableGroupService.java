@@ -6,11 +6,11 @@ import kitchenpos.dto.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class TableGroupService {
 
@@ -24,9 +24,8 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    @Transactional
     public TableGroupResponse create(final TableGroupRequest request) {
-        TableGroup tableGroup = new TableGroup();
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
 
         List<OrderTable> orderTables = orderTableRepository.findAllById(request.getOrderTableIds());
         if (orderTables.isEmpty() || orderTables.size() < 2) {
@@ -36,20 +35,20 @@ public class TableGroupService {
         for (OrderTable savedOrderTable : orderTables) {
             savedOrderTable.setTableGroup(tableGroup);
         }
-
-        tableGroup.setCreatedDate(LocalDateTime.now());
-        tableGroupRepository.save(tableGroup);
         return TableGroupResponse.of(tableGroup, orderTables);
     }
 
-    @Transactional
-    public void ungroup(final Long tableGroupId) {
 
+    public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
 
+        System.out.println(orderTableIds);
+
+        final List<Order> all = orderRepository.findAll();
+        all.forEach(it-> System.out.println(">>>"+ it.getId() +" "+ it.getOrderTable().getId()+ " "+it.getOrderStatus().name()));
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }

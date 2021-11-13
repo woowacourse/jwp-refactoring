@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class MenuService {
 
@@ -24,7 +25,6 @@ public class MenuService {
         this.menuProductRepository = menuProductRepository;
     }
 
-    @Transactional
     public MenuResponse create(final MenuRequest request) {
         List<MenuProduct> menuProducts = request.getMenuProductRequests().stream()
                 .map(it -> {
@@ -34,13 +34,13 @@ public class MenuService {
 
         MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
         Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
-
         menuRepository.save(menu);
+
         return MenuResponse.of(menu);
     }
 
     public List<MenuResponse> list() {
-        final List<Menu> menus = menuRepository.findAll();
+        List<Menu> menus = menuRepository.findAll();
         return MenuResponse.listOf(menus);
     }
 }

@@ -1,11 +1,14 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
+@Table(name = "ORDER_DETAILS")
 @Entity
 public class Order {
+
     @GeneratedValue
     @Id
     private Long id;
@@ -13,9 +16,8 @@ public class Order {
     @ManyToOne
     private OrderTable orderTable;
 
-    @JoinColumn(name = "id")
     @OneToMany
-    private List<OrderLineItem> orderLineItems;
+    private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -46,6 +48,10 @@ public class Order {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public OrderTable getOrderTable() {
         return orderTable;
     }
@@ -67,5 +73,9 @@ public class Order {
             throw new IllegalArgumentException();
         }
         this.orderStatus = orderStatus;
+    }
+
+    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
+        this.orderLineItems = orderLineItems;
     }
 }

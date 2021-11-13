@@ -15,6 +15,7 @@ public class TableGroup {
     private LocalDateTime createdDate;
 
     public TableGroup() {
+        this.createdDate = LocalDateTime.now();
     }
 
     public TableGroup(LocalDateTime createdDate) {

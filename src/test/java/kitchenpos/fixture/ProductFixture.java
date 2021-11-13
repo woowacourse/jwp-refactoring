@@ -11,14 +11,12 @@ public class ProductFixture {
     private static final String NAME = "PRODUCT_NAME";
     private static final BigDecimal PRICE = BigDecimal.TEN;
 
-    public static Product createProduct(Long id, String name, BigDecimal price) {
-        Product product = new Product(name, price);
-        product.setId(id);
-        return product;
+    public static Product createProduct(String name, BigDecimal price) {
+        return new Product(name, price);
     }
 
-    public static Product createProduct(Long id) {
-        return createProduct(id, NAME, PRICE);
+    public static Product createProduct() {
+        return new Product(NAME, PRICE);
     }
 
     public static ProductRequest createProductRequest() {

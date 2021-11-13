@@ -1,16 +1,14 @@
 package kitchenpos.application;
 
+import kitchenpos.domain.Order;
 import kitchenpos.domain.*;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -21,7 +19,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("classpath:db/test/truncate.sql")
 @ActiveProfiles("test")
 @SpringBootTest
 class OrderServiceTest {
@@ -40,6 +37,12 @@ class OrderServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private OrderService orderService;
@@ -68,10 +71,11 @@ class OrderServiceTest {
         void create() {
             OrderRequest orderRequest = createOrderRequest(orderTableId, menuId);
             OrderResponse savedOrder = orderService.create(orderRequest);
-            assertAll(
-                    () -> assertThat(savedOrder).isNotNull(),
-                    () -> assertThat(savedOrder.getId()).isNotNull(),
-                    () -> assertThat(savedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus())
+            SoftAssertions.assertSoftly(it -> {
+                        it.assertThat(savedOrder).isNotNull();
+                        it.assertThat(savedOrder.getId()).isNotNull();
+                        it.assertThat(savedOrder.getOrderStatus()).isEqualTo(orderRequest.getOrderStatus());
+                    }
             );
         }
 
@@ -138,11 +142,35 @@ class OrderServiceTest {
         @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
         @Test
         void changeOrderStatusInCompletion() {
-            OrderRequest createRequest = createOrderRequest(orderTableId, OrderStatus.COMPLETION, menuId);
+            OrderRequest createRequest = createOrderRequest(orderTableId, OrderStatus.COOKING, menuId);
             savedOrderId = orderService.create(createRequest).getId();
+            orderService.changeOrderStatus(savedOrderId, createOrderRequest(orderTableId, OrderStatus.COMPLETION, menuId));
 
             OrderRequest updateRequest = createOrderRequest(orderTableId, OrderStatus.MEAL, menuId);
             assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, updateRequest)).isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        List<Menu> menus = menuRepository.findAll();
+        for (Menu menu : menus) {
+            menu.setMenuProducts(null);
+        }
+        menuRepository.saveAll(menus);
+
+        List<Order> orders = orderRepository.findAll();
+        for (Order order : orders) {
+            order.setOrderLineItems(null);
+        }
+        orderRepository.saveAll(orders);
+
+        orderLineItemRepository.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        productRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }

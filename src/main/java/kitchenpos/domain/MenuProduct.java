@@ -1,9 +1,6 @@
 package kitchenpos.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class MenuProduct {
@@ -14,6 +11,7 @@ public class MenuProduct {
     private Long seq;
 
     @ManyToOne
+    @JoinColumn(name = "PRODUCT_ID")
     private Product product;
     private long quantity;
 
@@ -28,6 +26,10 @@ public class MenuProduct {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getSeq() {

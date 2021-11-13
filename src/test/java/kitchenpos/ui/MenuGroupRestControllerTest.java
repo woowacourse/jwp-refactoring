@@ -47,7 +47,7 @@ class MenuGroupRestControllerTest extends RestControllerTest {
     @DisplayName("메뉴 그룹 목록 반환 요청을 처리한다.")
     @Test
     void list() throws Exception {
-        List<MenuGroupResponse> expected = Collections.singletonList(createMenuGroupResponse());
+        List<MenuGroupResponse> expected = Collections.singletonList(createMenuGroupResponse(1L, "name"));
         when(mockMenuGroupService.list()).thenReturn(expected);
         mockMvc.perform(get("/api/menu-groups"))
                 .andExpect(status().isOk())

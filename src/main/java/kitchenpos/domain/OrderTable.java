@@ -44,6 +44,10 @@ public class OrderTable {
         return numberOfGuests;
     }
 
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
     public void setNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
     }
@@ -59,10 +63,15 @@ public class OrderTable {
         this.empty = empty;
     }
 
+    public boolean hasGroup() {
+        return Objects.nonNull(tableGroup);
+    }
+
     public void setTableGroup(TableGroup tableGroup) {
-        if (isEmpty() && Objects.isNull(this.tableGroup)) {
-            this.tableGroup = tableGroup;
+        if(!isEmpty() || hasGroup()){
+            throw new IllegalArgumentException();
         }
+        this.tableGroup = tableGroup;
     }
 
     public void ungroup() {

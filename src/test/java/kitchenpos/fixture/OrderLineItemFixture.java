@@ -9,7 +9,6 @@ import java.util.List;
 
 public class OrderLineItemFixture {
     private static final Long SEQ = 1L;
-    private static final Long MENU_ID = 1L;
     private static final long QUANTITY = 1L;
 
     public static OrderLineItem createOrderLineItem(Long menuId) {

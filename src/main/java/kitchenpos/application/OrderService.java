@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class OrderService {
 
@@ -26,7 +27,6 @@ public class OrderService {
         this.menuRepository = menuRepository;
     }
 
-    @Transactional
     public OrderResponse create(final OrderRequest request) {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest data : request.getOrderLineItemRequests()) {
@@ -38,6 +38,7 @@ public class OrderService {
         }
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
         Order savedOrder = new Order(orderTable, orderLineItems, OrderStatus.COOKING, LocalDateTime.now());
+        orderRepository.save(savedOrder);
         return OrderResponse.of(savedOrder);
     }
 
@@ -46,9 +47,9 @@ public class OrderService {
         return OrderResponse.listOf(orders);
     }
 
-    @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest request) {
-        final Order savedOrder = orderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
+        Order savedOrder = orderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
+        System.out.println(savedOrder.getOrderStatus());
         savedOrder.changeStatus(request.getOrderStatus());
         return OrderResponse.of(savedOrder);
     }

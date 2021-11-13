@@ -4,13 +4,13 @@ import kitchenpos.domain.Product;
 import kitchenpos.domain.ProductRepository;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("classpath:db/test/truncate.sql")
 @ActiveProfiles("test")
 @SpringBootTest
 class ProductServiceTest {
@@ -60,12 +59,21 @@ class ProductServiceTest {
     @DisplayName("상품 리스트를 반환한다.")
     @Test
     void list() {
-        List<Product> savedProducts = Arrays.asList(createProduct(1L), createProduct(2L));
-        productRepository.saveAll(savedProducts);
-        List<ProductResponse> list = productService.list();
+        Product product1 = createProduct("NAME1", BigDecimal.ONE);
+        Product product2 = createProduct("NAME2", BigDecimal.TEN);
+        List<Product> products = productRepository.saveAll(Arrays.asList(product1, product2));
+        List<ProductResponse> results = productService.list();
         assertAll(
-                () -> assertThat(list).hasSize(savedProducts.size()),
-                () -> assertThat(list).usingRecursiveComparison().isEqualTo(ProductResponse.listOf(savedProducts))
+                () -> assertThat(results).hasSize(products.size()),
+                () -> assertThat(results)
+                        .extracting("name")
+                        .usingFieldByFieldElementComparator()
+                        .contains(product1.getName(), product2.getName())
         );
+    }
+
+    @AfterEach
+    void tearDown() {
+        productRepository.deleteAll();
     }
 }

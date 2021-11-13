@@ -1,20 +1,18 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
+import kitchenpos.domain.Order;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.List;
 
 import static kitchenpos.fixture.OrderLineItemFixture.createOrderLineItem;
 import static kitchenpos.fixture.TableGroupFixture.createTableGroupRequest;
@@ -22,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("classpath:db/test/truncate.sql")
 @ActiveProfiles("test")
 @SpringBootTest
 class TableGroupServiceTest {
@@ -32,6 +29,9 @@ class TableGroupServiceTest {
 
     @Autowired
     private OrderTableRepository orderTableRepository;
+
+    @Autowired
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Autowired
     private TableGroupRepository tableGroupRepository;
@@ -56,8 +56,8 @@ class TableGroupServiceTest {
     }
 
     private OrderTable saveOrderTable(TableGroup tableGroup, int numberOfGuests, boolean isEmpty) {
-        tableGroupRepository.save(tableGroup);
-        return orderTableRepository.save(new OrderTable(tableGroup, numberOfGuests, isEmpty));
+        TableGroup save = tableGroupRepository.save(tableGroup);
+        return orderTableRepository.save(new OrderTable(save, numberOfGuests, isEmpty));
     }
 
     @DisplayName("단체 지정 생성")
@@ -69,20 +69,17 @@ class TableGroupServiceTest {
         void create() {
             OrderTable orderTable1 = saveOrderTable(1, true);
             OrderTable orderTable2 = saveOrderTable(1, true);
-
-            TableGroupRequest tableGroupRequest = createTableGroupRequest(orderTable1, orderTable2);
-            TableGroupResponse savedTableGroup = tableGroupService.create(tableGroupRequest);
+            TableGroupResponse result = tableGroupService.create(createTableGroupRequest(orderTable1, orderTable2));
             assertAll(
-                    () -> assertThat(savedTableGroup).isNotNull(),
-                    () -> assertThat(savedTableGroup.getId()).isNotNull()
+                    () -> assertThat(result).isNotNull(),
+                    () -> assertThat(result.getId()).isNotNull()
             );
         }
 
         @DisplayName("단체 지정 대상 테이블은 이미 지정된 단체가 없어야한다.")
         @Test
         void createWithInvalidOrderTable1() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroupRepository.save(tableGroup);
+            TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
 
             OrderTable orderTable1 = saveOrderTable(tableGroup, 1, true);
             OrderTable orderTable2 = saveOrderTable(tableGroup, 1, true);
@@ -104,8 +101,7 @@ class TableGroupServiceTest {
             OrderTable orderTable1 = saveOrderTable(1, false);
             OrderTable orderTable2 = saveOrderTable(1, false);
 
-            TableGroupRequest tableGroupRequest = createTableGroupRequest(orderTable1, orderTable2);
-            assertThatThrownBy(() -> tableGroupService.create(tableGroupRequest))
+            assertThatThrownBy(() -> tableGroupService.create(createTableGroupRequest(orderTable1, orderTable2)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -141,9 +137,37 @@ class TableGroupServiceTest {
             MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(1L, product, 1L));
             Menu menu = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct)));
             Long menuId = menu.getId();
-            orderRepository.save(new Order(orderTable1, Collections.singletonList(createOrderLineItem(menuId)), OrderStatus.MEAL, LocalDateTime.now()));
 
-            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
+            TableGroup tableGroup = new TableGroup();
+            orderTable1 = saveOrderTable(tableGroup, 1, false);
+
+            OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
+            orderRepository.save(new Order(orderTable1, Collections.singletonList(orderLineItem), OrderStatus.MEAL, LocalDateTime.now()));
+
+            assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
         }
+    }
+
+    @AfterEach
+    void tearDown() {
+        List<Menu> menus = menuRepository.findAll();
+        for (Menu menu : menus) {
+            menu.setMenuProducts(null);
+        }
+        menuRepository.saveAll(menus);
+
+        List<Order> orders = orderRepository.findAll();
+        for (Order order : orders) {
+            order.setOrderLineItems(null);
+        }
+        orderRepository.saveAll(orders);
+
+        orderLineItemRepository.deleteAll();
+        orderRepository.deleteAll();
+        orderTableRepository.deleteAll();
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        productRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }

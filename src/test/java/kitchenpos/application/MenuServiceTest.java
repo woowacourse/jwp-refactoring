@@ -1,19 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.MenuGroupRepository;
-import kitchenpos.domain.Product;
-import kitchenpos.domain.ProductRepository;
+import kitchenpos.domain.*;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -23,11 +18,9 @@ import static kitchenpos.fixture.MenuFixture.createMenuProductRequest;
 import static kitchenpos.fixture.MenuFixture.createMenuRequest;
 import static kitchenpos.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.fixture.ProductFixture.createProduct;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Sql("classpath:db/test/truncate.sql")
 @ActiveProfiles("test")
 @SpringBootTest
 class MenuServiceTest {
@@ -39,6 +32,12 @@ class MenuServiceTest {
     private ProductRepository productRepository;
 
     @Autowired
+    private MenuRepository menuRepository;
+
+    @Autowired
+    private MenuProductRepository menuProductRepository;
+
+    @Autowired
     private MenuService menuService;
     private Long menuGroupId;
     private List<MenuProductRequest> menuProducts;
@@ -46,10 +45,11 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         menuGroupId = menuGroupRepository.save(createMenuGroup()).getId();
-        Product product = productRepository.save(createProduct(1L));
+        Product product1 = productRepository.save(createProduct());
+        Product product2 = productRepository.save(createProduct());
         menuProducts = Arrays.asList(
-                createMenuProductRequest(1L, product.getId(), 1),
-                createMenuProductRequest(2L, product.getId(), 1)
+                createMenuProductRequest(1L, product1.getId(), 1),
+                createMenuProductRequest(2L, product2.getId(), 1)
         );
     }
 
@@ -60,14 +60,14 @@ class MenuServiceTest {
         @DisplayName("메뉴를 생성한다.")
         @Test
         void create() {
-            MenuRequest menu = createMenuRequest(menuGroupId, menuProducts);
-            MenuResponse savedMenu = menuService.create(menu);
+            MenuRequest request = createMenuRequest(menuGroupId, menuProducts);
+            MenuResponse result = menuService.create(request);
             assertAll(
-                    () -> assertThat(savedMenu.getId()).isNotNull(),
-                    () -> assertThat(savedMenu.getName()).isEqualTo(menu.getName()),
-                    () -> assertThat(savedMenu.getPrice().compareTo(menu.getPrice())).isEqualTo(0),
-                    () -> assertThat(savedMenu.getMenuGroupId()).isEqualTo(menu.getMenuGroupId()),
-                    () -> assertThat(savedMenu.getMenuProducts()).hasSize(menu.getMenuProductRequests().size())
+                    () -> assertThat(result.getId()).isNotNull(),
+                    () -> assertThat(result.getName()).isEqualTo(request.getName()),
+                    () -> assertThat(result.getPrice().compareTo(request.getPrice())).isEqualTo(0),
+                    () -> assertThat(result.getMenuGroupId()).isEqualTo(request.getMenuGroupId()),
+                    () -> assertThat(result.getMenuProducts()).hasSize(request.getMenuProductRequests().size())
             );
         }
 
@@ -101,11 +101,40 @@ class MenuServiceTest {
     void list() {
         MenuResponse menu1 = menuService.create(createMenuRequest(menuGroupId, menuProducts));
         MenuResponse menu2 = menuService.create(createMenuRequest(menuGroupId, menuProducts));
+        List<MenuResponse> result = menuService.list();
 
-        List<MenuResponse> list = menuService.list();
-        assertAll(
-                () -> assertThat(list).hasSize(2),
-                () -> assertThat(list).usingRecursiveComparison().isEqualTo(Arrays.asList(menu1, menu2))
-        );
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(result)
+                .as("크기가 다름")
+                .hasSize(2);
+        softAssertions.assertThat(result)
+                .extracting("name")
+                .usingFieldByFieldElementComparator()
+                .isEqualTo(Arrays.asList(menu1.getName(), menu2.getName()));
+        softAssertions.assertAll();
+
+        SoftAssertions.assertSoftly(it -> {
+            it.assertThat(result).hasSize(2);
+            it.assertThat(result)
+                    .extracting("id", "name")
+                    .usingFieldByFieldElementComparator()
+                    .contains(
+                            tuple(menu1.getId(), menu1.getName()),
+                            tuple(menu2.getId(), menu2.getName())
+                    );
+        });
+    }
+
+    @AfterEach
+    void tearDown() {
+        List<Menu> menus = menuRepository.findAll();
+        for (Menu menu : menus) {
+            menu.setMenuProducts(null);
+        }
+        menuRepository.saveAll(menus);
+        menuProductRepository.deleteAll();
+        menuRepository.deleteAll();
+        productRepository.deleteAll();
+        menuGroupRepository.deleteAll();
     }
 }

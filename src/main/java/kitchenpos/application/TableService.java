@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Transactional
 @Service
 public class TableService {
     private final OrderRepository orderRepository;
@@ -22,7 +23,6 @@ public class TableService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderTableResponse create(final OrderTableRequest request) {
         OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
         orderTableRepository.save(orderTable);
@@ -34,7 +34,6 @@ public class TableService {
         return OrderTableResponse.listOf(orderTables);
     }
 
-    @Transactional
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
         if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
@@ -44,7 +43,6 @@ public class TableService {
         return OrderTableResponse.of(orderTable);
     }
 
-    @Transactional
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
         OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
