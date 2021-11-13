@@ -8,12 +8,12 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Optional;
 import kitchenpos.Fixtures;
-import kitchenpos.dao.OrderRepository;
-import kitchenpos.dao.OrderTableRepository;
-import kitchenpos.dao.TableGroupRepository;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
-import kitchenpos.dto.OrderTableRequest;
+import kitchenpos.order.repository.OrderRepository;
+import kitchenpos.order.repository.OrderTableRepository;
+import kitchenpos.table.repository.TableGroupRepository;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+import kitchenpos.order.dto.OrderTableRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
