@@ -31,7 +31,7 @@ public class Price {
 
     public static Price of(List<MenuProduct> menuProducts) {
         BigDecimal value = menuProducts.stream()
-            .map(MenuProduct::totalPrice)
+            .map(MenuProduct::productTotalPrice)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new Price(value);

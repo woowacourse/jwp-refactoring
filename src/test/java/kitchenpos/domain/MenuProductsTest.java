@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import kitchenpos.exception.InvalidMenuPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,20 +16,19 @@ class MenuProductsTest {
     @Test
     void menuPriceException() {
         // given
-        MenuGroup menuGroup = new MenuGroup("좋은 그룹");
-        Product product1 = new Product("좋은 상품1", BigDecimal.valueOf(3_000));
+        MenuGroup menuGroup = new MenuGroup("그룹");
+        Menu menu = new Menu("좋은 메뉴", BigDecimal.valueOf(8_001), menuGroup);
+
+        Product product1 = new Product("좋은 상품1", BigDecimal.valueOf(1_500));
         Product product2 = new Product("좋은 상품2", BigDecimal.valueOf(5_000));
-        MenuProduct menuProduct1 = new MenuProduct(product1, 1);
-        MenuProduct menuProduct2 = new MenuProduct(product2, 1);
+        MenuProduct menuProduct1 = new MenuProduct(menu, product1, 2L);
+        MenuProduct menuProduct2 = new MenuProduct(menu, product2, 1L);
 
         MenuProducts menuProducts = new MenuProducts(Arrays.asList(menuProduct1, menuProduct2));
-        Menu goodMenu = new Menu("좋은 메뉴", BigDecimal.valueOf(8_000), menuGroup);
-        Menu badMenu = new Menu("나쁜 메뉴", BigDecimal.valueOf(8_001), menuGroup);
+
 
         // when, then
-        assertThatCode(() -> menuProducts.validateMenuPrice(new Price(goodMenu.getPrice())))
-            .doesNotThrowAnyException();
-        assertThatThrownBy(() -> menuProducts.validateMenuPrice(new Price(badMenu.getPrice())))
+        assertThatThrownBy(() -> menuProducts.validateMenuPrice(new Price(menu.getPrice())))
             .isExactlyInstanceOf(InvalidMenuPriceException.class);
     }
 }

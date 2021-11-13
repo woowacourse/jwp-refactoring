@@ -1,6 +1,7 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import kitchenpos.exception.InvalidMenuPriceException;
 
 public class MenuProducts {
 

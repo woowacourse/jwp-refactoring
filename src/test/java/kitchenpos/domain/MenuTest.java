@@ -38,6 +38,17 @@ class MenuTest {
                 .isExactlyInstanceOf(InvalidMenuException.class);
         }
 
+        @DisplayName("name이 공백으로 이루어진 경우 예외가 발생한다.")
+        @Test
+        void nameBlankException() {
+            // given
+            MenuGroup savedMenuGroup = new MenuGroup("버거킹 세트");
+
+            // when, then
+            assertThatThrownBy(() -> new Menu(" ", BigDecimal.valueOf(11_900), savedMenuGroup))
+                .isExactlyInstanceOf(InvalidMenuException.class);
+        }
+
         @DisplayName("price가 Null인 경우 예외가 발생한다.")
         @Test
         void priceNullException() {
@@ -46,6 +57,17 @@ class MenuTest {
 
             // when, then
             assertThatThrownBy(() -> new Menu("스테커3 버거", null, savedMenuGroup))
+                .isExactlyInstanceOf(InvalidMenuException.class);
+        }
+
+        @DisplayName("price가 음수인 경우 예외가 발생한다.")
+        @Test
+        void priceNegativeException() {
+            // given
+            MenuGroup savedMenuGroup = new MenuGroup("버거킹 세트");
+
+            // when, then
+            assertThatThrownBy(() -> new Menu("스테커3 버거", BigDecimal.valueOf(-1), savedMenuGroup))
                 .isExactlyInstanceOf(InvalidMenuException.class);
         }
 

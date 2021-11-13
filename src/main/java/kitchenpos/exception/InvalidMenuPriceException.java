@@ -1,6 +1,4 @@
-package kitchenpos.domain;
-
-import kitchenpos.exception.KitchenposException;
+package kitchenpos.exception;
 
 public class InvalidMenuPriceException extends KitchenposException {
 

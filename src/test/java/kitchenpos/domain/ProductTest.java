@@ -13,29 +13,37 @@ class ProductTest {
 
     @DisplayName("Product를 생성할 때")
     @Nested
-    class Construct {
+    class Create {
 
         @DisplayName("name이 Null인 경우 예외가 발생한다.")
         @Test
         void nameNullException() {
-            // given
-            String name = null;
-            BigDecimal price = BigDecimal.valueOf(5_000);
-
             // when, then
-            assertThatThrownBy(() -> new Product(name, price))
+            assertThatThrownBy(() -> new Product(null, BigDecimal.valueOf(5_000)))
                 .isExactlyInstanceOf(InvalidProductException.class);
         }
 
-        @DisplayName("name이 Null인 경우 예외가 발생한다.")
+        @DisplayName("name이 공백뿐인 경우 예외가 발생한다.")
+        @Test
+        void nameBlankException() {
+            // when, then
+            assertThatThrownBy(() -> new Product(" ", BigDecimal.valueOf(5_000)))
+                .isExactlyInstanceOf(InvalidProductException.class);
+        }
+
+        @DisplayName("price가 Null인 경우 예외가 발생한다.")
         @Test
         void priceNullException() {
-            // given
-            String name = "치즈버거";
-            BigDecimal price = null;
-
             // when, then
-            assertThatThrownBy(() -> new Product(name, price))
+            assertThatThrownBy(() -> new Product("치즈버거", null))
+                .isExactlyInstanceOf(InvalidProductException.class);
+        }
+
+        @DisplayName("price가 음수인 경우 예외가 발생한다.")
+        @Test
+        void priceNegativeException() {
+            // when, then
+            assertThatThrownBy(() -> new Product("치즈버거", BigDecimal.valueOf(-1)))
                 .isExactlyInstanceOf(InvalidProductException.class);
         }
     }
