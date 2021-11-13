@@ -9,7 +9,6 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -130,7 +129,7 @@ class TableGroupServiceTest {
             orderTable1 = orderTableRepository.save(createOrderTable(tableGroup, 1, false));
 
             OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
-            orderRepository.save(new Order(orderTable1, Collections.singletonList(orderLineItem), OrderStatus.MEAL, LocalDateTime.now()));
+            orderRepository.save(new Order(orderTable1, Collections.singletonList(orderLineItem), OrderStatus.MEAL));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
         }

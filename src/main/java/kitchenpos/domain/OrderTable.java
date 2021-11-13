@@ -48,10 +48,6 @@ public class OrderTable {
         return tableGroup;
     }
 
-    public void setNumberOfGuests(final int numberOfGuests) {
-        this.numberOfGuests = numberOfGuests;
-    }
-
     public boolean isEmpty() {
         return empty;
     }
@@ -67,7 +63,7 @@ public class OrderTable {
         return Objects.nonNull(tableGroup);
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void group(TableGroup tableGroup) {
         if(!isEmpty() || hasGroup()){
             throw new IllegalArgumentException();
         }

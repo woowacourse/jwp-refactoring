@@ -7,9 +7,8 @@ import kitchenpos.dto.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -28,29 +27,27 @@ public class OrderService {
     }
 
     public OrderResponse create(final OrderRequest request) {
-        List<OrderLineItem> orderLineItems = new ArrayList<>();
-        for (OrderLineItemRequest data : request.getOrderLineItemRequests()) {
-            if (!menuRepository.existsById(data.getMenuId())) {
-                throw new IllegalArgumentException();
-            }
-            OrderLineItem saved = orderLineItemRepository.save(new OrderLineItem(data.getSeq(), data.getMenuId(), data.getQuantity()));
-            orderLineItems.add(saved);
-        }
+        List<OrderLineItem> orderLineItems = saveOrderLineItems(request.getOrderLineItemRequests());
         OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId()).orElseThrow(IllegalArgumentException::new);
-        Order savedOrder = new Order(orderTable, orderLineItems, OrderStatus.COOKING, LocalDateTime.now());
-        orderRepository.save(savedOrder);
-        return OrderResponse.of(savedOrder);
+        Order order = orderRepository.save(Order.cooking(orderTable, orderLineItems));
+        return OrderResponse.of(order);
+    }
+
+    private List<OrderLineItem> saveOrderLineItems(List<OrderLineItemRequest> requests) {
+        return requests.stream()
+                .map(it -> {
+                    if (!menuRepository.existsById(it.getMenuId())) throw new IllegalArgumentException();
+                    return orderLineItemRepository.save(it.toEntity());
+                }).collect(Collectors.toList());
     }
 
     public List<OrderResponse> list() {
-        List<Order> orders = orderRepository.findAll();
-        return OrderResponse.listOf(orders);
+        return OrderResponse.listOf(orderRepository.findAll());
     }
 
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest request) {
-        Order savedOrder = orderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
-        System.out.println(savedOrder.getOrderStatus());
-        savedOrder.changeStatus(request.getOrderStatus());
-        return OrderResponse.of(savedOrder);
+        Order order = orderRepository.findById(orderId).orElseThrow(IllegalArgumentException::new);
+        order.changeStatus(request.getOrderStatus());
+        return OrderResponse.of(order);
     }
 }

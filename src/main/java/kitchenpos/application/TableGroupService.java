@@ -25,36 +25,27 @@ public class TableGroupService {
     }
 
     public TableGroupResponse create(final TableGroupRequest request) {
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-
         List<OrderTable> orderTables = orderTableRepository.findAllById(request.getOrderTableIds());
-        if (orderTables.isEmpty() || orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        if (orderTables.size() < 2) throw new IllegalArgumentException();
 
-        for (OrderTable savedOrderTable : orderTables) {
-            savedOrderTable.setTableGroup(tableGroup);
-        }
+        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
+        orderTables.forEach(it -> it.group(tableGroup));
         return TableGroupResponse.of(tableGroup, orderTables);
     }
 
 
     public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
+        validateOrder(orderTables);
+        orderTables.forEach(OrderTable::ungroup);
+    }
+
+    private void validateOrder(List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-
-        System.out.println(orderTableIds);
-
-        final List<Order> all = orderRepository.findAll();
-        all.forEach(it-> System.out.println(">>>"+ it.getId() +" "+ it.getOrderTable().getId()+ " "+it.getOrderStatus().name()));
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
-        }
-
-        for (final OrderTable orderTable : orderTables) {
-            orderTable.ungroup();
         }
     }
 }

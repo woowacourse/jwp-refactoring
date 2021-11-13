@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 
 public class OrderResponse {
 
-    private Long id;
-    private Long orderTableId;
-    private OrderStatus orderStatus;
-    private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItems;
+    private final Long id;
+    private final Long orderTableId;
+    private final OrderStatus orderStatus;
+    private final LocalDateTime orderedTime;
+    private final List<OrderLineItemResponse> orderLineItems;
 
     public OrderResponse(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;

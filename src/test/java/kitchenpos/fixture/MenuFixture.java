@@ -1,6 +1,5 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.Menu;
 import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuProductResponse;
 import kitchenpos.dto.MenuRequest;
@@ -30,10 +29,6 @@ public class MenuFixture {
 
     public static MenuRequest createMenuRequest(BigDecimal price, Long menuGroupId, List<MenuProductRequest> menuProductRequests) {
         return new MenuRequest(NAME, price, menuGroupId, menuProductRequests);
-    }
-
-    public static MenuResponse createMenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductResponse> menuProductResponses) {
-        return new MenuResponse(id, name, price, menuGroupId, menuProductResponses);
     }
 
     public static MenuResponse createMenuResponse(Long id) {
@@ -66,11 +61,7 @@ public class MenuFixture {
         return new MenuProductRequest(seq, productId, quantity);
     }
 
-    public static MenuProductRequest createMenuProductRequest() {
-        return createMenuProductRequest(SEQ, PRODUCT_ID, QUANTITY);
-    }
-
     public static List<MenuProductRequest> createMenuProductRequests() {
-        return Collections.singletonList(createMenuProductRequest());
+        return Collections.singletonList(createMenuProductRequest(SEQ, PRODUCT_ID, QUANTITY));
     }
 }

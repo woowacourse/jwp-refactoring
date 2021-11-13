@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.*;
+import kitchenpos.dto.MenuProductRequest;
 import kitchenpos.dto.MenuRequest;
 import kitchenpos.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -26,21 +27,21 @@ public class MenuService {
     }
 
     public MenuResponse create(final MenuRequest request) {
-        List<MenuProduct> menuProducts = request.getMenuProductRequests().stream()
+        List<MenuProduct> menuProducts = saveMenuProducts(request.getMenuProductRequests());
+        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
+        Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts));
+        return MenuResponse.of(menu);
+    }
+
+    private List<MenuProduct> saveMenuProducts(List<MenuProductRequest> requests) {
+        return requests.stream()
                 .map(it -> {
                     Product product = productRepository.findById(it.getProductId()).orElseThrow(IllegalArgumentException::new);
                     return menuProductRepository.save(new MenuProduct(it.getSeq(), product, it.getQuantity()));
                 }).collect(Collectors.toList());
-
-        MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId()).orElseThrow(IllegalArgumentException::new);
-        Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup, menuProducts);
-        menuRepository.save(menu);
-
-        return MenuResponse.of(menu);
     }
 
     public List<MenuResponse> list() {
-        List<Menu> menus = menuRepository.findAll();
-        return MenuResponse.listOf(menus);
+        return MenuResponse.listOf(menuRepository.findAll());
     }
 }

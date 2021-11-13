@@ -1,7 +1,6 @@
 package kitchenpos.fixture;
 
 import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
 
@@ -13,22 +12,15 @@ import java.util.stream.Collectors;
 
 public class TableGroupFixture {
 
-    private static final Long ID = 1L;
-    private static final LocalDateTime CREATED_DATE = LocalDateTime.now();
-
-    public static TableGroup createTableGroup() {
-        return new TableGroup(CREATED_DATE);
-    }
-
     public static TableGroupRequest createTableGroupRequest(OrderTable... orderTables) {
         List<Long> ids = Arrays.stream(orderTables)
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
-        return new TableGroupRequest(CREATED_DATE, ids);
+        return new TableGroupRequest(ids);
     }
 
     public static TableGroupRequest createTableGroupRequest(Long... orderTableIds) {
-        return new TableGroupRequest(CREATED_DATE, Arrays.asList(orderTableIds));
+        return new TableGroupRequest(Arrays.asList(orderTableIds));
     }
 
     public static TableGroupResponse createTableGroupResponse(Long id, TableGroupRequest request) {
@@ -38,6 +30,6 @@ public class TableGroupFixture {
             orderTable.setId(orderTableId);
             orderTables.add(orderTable);
         }
-        return new TableGroupResponse(id, request.getCreatedDate(), orderTables);
+        return new TableGroupResponse(id, LocalDateTime.now(), orderTables);
     }
 }

@@ -17,7 +17,6 @@ public class OrderFixture {
     private static final Long ID = 1L;
     private static final Long ORDER_TABLE_ID = 1L;
     private static final OrderStatus ORDER_STATUS = OrderStatus.COOKING;
-    private static final LocalDateTime ORDERED_TIME = LocalDateTime.now();
 
     public static OrderRequest createOrderRequest(Long orderTableId, OrderStatus orderStatus, Long... menuIds) {
         List<OrderLineItemRequest> orderLineItemRequests = new ArrayList<>();
@@ -26,7 +25,7 @@ public class OrderFixture {
             OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(seq++, id, 1L);
             orderLineItemRequests.add(orderLineItemRequest);
         }
-        return new OrderRequest(orderTableId, orderStatus, ORDERED_TIME, orderLineItemRequests);
+        return new OrderRequest(orderTableId, orderStatus, orderLineItemRequests);
     }
 
     public static OrderRequest createOrderRequest(Long orderTableId, Long... menuIds) {
@@ -38,11 +37,11 @@ public class OrderFixture {
     }
 
     public static OrderRequest createOrderRequest(Long orderTableId, List<OrderLineItemRequest> datas) {
-        return new OrderRequest(orderTableId, ORDER_STATUS, ORDERED_TIME, datas);
+        return new OrderRequest(orderTableId, ORDER_STATUS, datas);
     }
 
     public static OrderResponse createOrderResponse(OrderRequest orderRequest) {
         List<OrderLineItemResponse> orderLineItemResponses = createOrderLineItemResponses(orderRequest.getOrderLineItemRequests());
-        return new OrderResponse(ID, orderRequest.getOrderTableId(), orderRequest.getOrderStatus(), orderRequest.getOrderedTime(), orderLineItemResponses);
+        return new OrderResponse(ID, orderRequest.getOrderTableId(), orderRequest.getOrderStatus(), LocalDateTime.now(), orderLineItemResponses);
     }
 }

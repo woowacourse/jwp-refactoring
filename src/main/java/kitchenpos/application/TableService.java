@@ -24,14 +24,12 @@ public class TableService {
     }
 
     public OrderTableResponse create(final OrderTableRequest request) {
-        OrderTable orderTable = new OrderTable(request.getNumberOfGuests(), request.isEmpty());
-        orderTableRepository.save(orderTable);
+        OrderTable orderTable = orderTableRepository.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
         return OrderTableResponse.of(orderTable);
     }
 
     public List<OrderTableResponse> list() {
-        List<OrderTable> orderTables = orderTableRepository.findAll();
-        return OrderTableResponse.listOf(orderTables);
+        return OrderTableResponse.listOf(orderTableRepository.findAll());
     }
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {

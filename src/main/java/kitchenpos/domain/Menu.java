@@ -41,10 +41,7 @@ public class Menu {
         for (MenuProduct menuProduct : menuProducts) {
             sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
         }
-
-        if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
-        }
+        if (price.compareTo(sum) > 0) throw new IllegalArgumentException();
     }
 
     public List<MenuProduct> getMenuProducts() {

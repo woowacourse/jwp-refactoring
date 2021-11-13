@@ -13,6 +13,10 @@ public class ProductRequest {
         this.price = price;
     }
 
+    public Product toEntity(){
+        return new Product(name, price);
+    }
+
     public String getName() {
         return name;
     }

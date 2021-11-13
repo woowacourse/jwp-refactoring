@@ -24,7 +24,6 @@ public class MenuGroupService {
     }
 
     public List<MenuGroupResponse> list() {
-        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
-        return MenuGroupResponse.listOf(menuGroups);
+        return MenuGroupResponse.listOf(menuGroupRepository.findAll());
     }
 }

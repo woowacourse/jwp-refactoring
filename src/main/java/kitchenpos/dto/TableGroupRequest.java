@@ -1,26 +1,20 @@
 package kitchenpos.dto;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.TableGroup;
 
 public class TableGroupRequest {
 
-    private LocalDateTime createdDate;
     private List<Long> orderTableIds;
 
-    public TableGroupRequest(LocalDateTime createdDate, List<Long> orderTableIds) {
-        this.createdDate = createdDate;
+    public TableGroupRequest() {
+    }
+
+    public TableGroupRequest(List<Long> orderTableIds) {
         this.orderTableIds = orderTableIds;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setOrderTableIds(List<Long> orderTableIds) {
+        this.orderTableIds = orderTableIds;
     }
 
     public List<Long> getOrderTableIds() {

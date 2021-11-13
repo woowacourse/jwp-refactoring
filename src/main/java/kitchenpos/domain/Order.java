@@ -1,9 +1,9 @@
 package kitchenpos.domain;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
 
 @Table(name = "ORDER_DETAILS")
 @Entity
@@ -26,20 +26,20 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems, OrderStatus orderStatus, LocalDateTime orderedTime) {
+    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems, OrderStatus orderStatus) {
         validate(orderTable, orderLineItems);
         this.orderTable = orderTable;
         this.orderLineItems = orderLineItems;
         this.orderStatus = orderStatus;
-        this.orderedTime = orderedTime;
+        this.orderedTime = LocalDateTime.now();
+    }
+
+    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
+        return new Order(orderTable, orderLineItems, OrderStatus.COOKING);
     }
 
     private void validate(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        if(orderTable.isEmpty()){
-            throw new IllegalArgumentException();
-        }
-
-        if(orderLineItems.isEmpty()){
+        if (orderTable.isEmpty() || orderLineItems.isEmpty()) {
             throw new IllegalArgumentException();
         }
     }
@@ -69,10 +69,12 @@ public class Order {
     }
 
     public void changeStatus(OrderStatus orderStatus) {
-        if (OrderStatus.COMPLETION == this.orderStatus) {
-            throw new IllegalArgumentException();
-        }
+        if (completed()) throw new IllegalArgumentException();
         this.orderStatus = orderStatus;
+    }
+
+    private boolean completed() {
+        return OrderStatus.isCompletion(orderStatus);
     }
 
     public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
