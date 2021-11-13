@@ -10,12 +10,16 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuProductService;
+import kitchenpos.menu.application.MenuService;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
-import kitchenpos.product.domain.Product;
 import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.repository.MenuRepository;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.domain.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,8 +73,6 @@ class MenuServiceTest {
     void create() {
         given(menuGroupService.findById(anyLong()))
             .willReturn(menuGroup);
-        given(productService.findById(anyLong()))
-            .willReturn(product);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 

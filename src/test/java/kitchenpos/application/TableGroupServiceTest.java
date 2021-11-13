@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.Fixtures;
+import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
-import kitchenpos.table.repository.TableGroupRepository;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.TableGroupRequest;
+import kitchenpos.table.repository.TableGroupRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,6 @@ class TableGroupServiceTest {
 
         verify(orderTableRepository).findAllByIdIn(anyList());
         verify(tableGroupRepository).save(any(TableGroup.class));
-        verify(orderTableRepository, times(2)).save(any(OrderTable.class));
     }
 
     @DisplayName("table group 해제")
