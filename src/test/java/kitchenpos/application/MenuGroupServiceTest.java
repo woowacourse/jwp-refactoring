@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
 import kitchenpos.exception.InvalidMenuGroupException;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.request.MenuGroupRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @DisplayName("MenuGroup Service 테스트")
 @SpringBootTest
@@ -23,7 +22,7 @@ class MenuGroupServiceTest {
     private MenuGroupService menuGroupService;
 
     @Autowired
-    private MenuGroupDao menuGroupDao;
+    private MenuGroupRepository menuGroupRepository;
 
     @DisplayName("MenuGroup을 저장할 때")
     @Nested
@@ -39,7 +38,7 @@ class MenuGroupServiceTest {
             MenuGroupResponse response = menuGroupService.create(request);
 
             // then
-            assertThat(menuGroupDao.findById(response.getId())).isPresent();
+            assertThat(menuGroupRepository.findById(response.getId())).isPresent();
             assertThat(response).usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(response);
