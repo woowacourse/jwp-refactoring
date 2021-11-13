@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/menu-groups")
 public class MenuGroupController {
+
     private final MenuGroupService menuGroupService;
 
     public MenuGroupController(final MenuGroupService menuGroupService) {

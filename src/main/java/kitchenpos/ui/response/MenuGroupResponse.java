@@ -3,7 +3,6 @@ package kitchenpos.ui.response;
 import static java.util.stream.Collectors.toList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.domain.MenuGroup;
 
 public class MenuGroupResponse {
