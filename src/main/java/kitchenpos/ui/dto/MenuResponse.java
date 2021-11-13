@@ -1,7 +1,6 @@
 package kitchenpos.ui.dto;
 
 import kitchenpos.domain.Menu;
-import kitchenpos.domain.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,17 +13,17 @@ public class MenuResponse {
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
-    private List<MenuProduct> menuProducts;
+    private List<MenuProductResponse> menuProductResponse;
 
     public MenuResponse() {
     }
 
-    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+    public MenuResponse(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProductResponse> menuProductResponse) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;
-        this.menuProducts = menuProducts;
+        this.menuProductResponse = menuProductResponse;
     }
 
     public Long getId() {
@@ -43,15 +42,15 @@ public class MenuResponse {
         return menuGroupId;
     }
 
-    public List<MenuProduct> getMenuProducts() {
-        return menuProducts;
+    public List<MenuProductResponse> getMenuProductResponse() {
+        return menuProductResponse;
     }
 
-    public static MenuResponse of(Menu menu, List<MenuProduct> menuProducts) {
+    public static MenuResponse of(Menu menu, List<MenuProductResponse> menuProducts) {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProducts);
     }
 
-    public static List<MenuResponse> from(Map<Menu, List<MenuProduct>> menuMap) {
+    public static List<MenuResponse> from(Map<Menu, List<MenuProductResponse>> menuMap) {
 
         return menuMap.entrySet().stream()
                 .map(entry -> of(entry.getKey(), entry.getValue()))

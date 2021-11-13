@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.ui.dto.MenuProductResponse;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.springframework.stereotype.Service;
@@ -34,17 +35,17 @@ public class MenuService {
         Menu menuEntity = new Menu(menuRequest, menuGroup);
         Menu menu = menuRepository.save(menuEntity);
         List<MenuProduct> menuProducts = menuProductService.create(menu, menuRequest.getMenuProductRequests());
-        return MenuResponse.of(menu, menuProducts);
+        return MenuResponse.of(menu, MenuProductResponse.of(menuProducts));
     }
 
     @Transactional(readOnly = true)
     public List<MenuResponse> findAll() {
-        Map<Menu, List<MenuProduct>> menuMap = new HashMap<>();
+        Map<Menu, List<MenuProductResponse>> menuMap = new HashMap<>();
 
         List<Menu> menus = menuRepository.findAll();
         for (Menu menu : menus) {
             List<MenuProduct> menuProducts = menuProductService.findAllByMenuId(menu.getId());
-            menuMap.put(menu, menuProducts);
+            menuMap.put(menu, MenuProductResponse.of(menuProducts));
         }
         return MenuResponse.from(menuMap);
     }

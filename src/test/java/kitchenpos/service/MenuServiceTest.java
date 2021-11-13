@@ -18,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -64,7 +65,8 @@ class MenuServiceTest extends ServiceTest {
         MenuResponse menuResponse = menuService.create(request);
         //then
         assertThat(menuResponse.getId()).isNotNull();
-        assertThat(menuResponse.getMenuProducts()).isEqualTo(request.getMenuProductRequests());
+        assertThat(menuResponse.getMenuProductResponse().get(0).getMenuId()).isEqualTo(menuProduct.getMenuId());
+        assertThat(menuResponse.getMenuProductResponse().get(0).getProductId()).isEqualTo(menuProduct.getProductId());
     }
 
     @DisplayName("메뉴 조회 - 성공")
