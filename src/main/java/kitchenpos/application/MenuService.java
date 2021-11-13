@@ -31,9 +31,9 @@ public class MenuService {
     public MenuResponse create(final MenuRequest menuRequest) {
         MenuGroup menuGroup = menuGroupRepository.findById(menuRequest.getMenuGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 메뉴그룹입니다."));
-        Menu menuEntity = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+        Menu menuEntity = new Menu(menuRequest, menuGroup);
         Menu menu = menuRepository.save(menuEntity);
-        List<MenuProduct> menuProducts = menuProductService.create(menu, menuRequest);
+        List<MenuProduct> menuProducts = menuProductService.create(menu, menuRequest.getMenuProductRequests());
         return MenuResponse.of(menu, menuProducts);
     }
 

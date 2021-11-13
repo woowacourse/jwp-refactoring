@@ -5,6 +5,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.Product;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.ProductRepository;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,19 +26,26 @@ public class MenuProductService {
         this.productRepository = productRepository;
     }
 
-    public List<MenuProduct> create(Menu menu, MenuRequest menuRequest) {
-        BigDecimal totalPrice = calculateTotalPrice(menuRequest.getMenuProducts(), BigDecimal.ZERO);
+    public List<MenuProduct> create(Menu menu, List<MenuProductRequest> menuProductRequests) {
+        BigDecimal totalPrice = calculateTotalPrice(menuProductRequests, BigDecimal.ZERO);
         menu.validateTotalPrice(totalPrice);
-        return mapToMenuProduct(menu, menuRequest);
+
+        return mapToMenuProduct(menu, menuProductRequests);
     }
 
-    public List<MenuProduct> findAllByMenuId(Long menuId) {
-        return menuProductRepository.findAllByMenuId(menuId);
+    private BigDecimal calculateTotalPrice(List<MenuProductRequest> menuProductRequests, BigDecimal totalPrice) {
+        for (MenuProductRequest menuProductRequest : menuProductRequests) {
+            Product product = productRepository.findById(menuProductRequest.getProductId())
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
+            BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(menuProductRequest.getQuantity()));
+            totalPrice = totalPrice.add(price);
+        }
+        return totalPrice;
     }
 
-    private List<MenuProduct> mapToMenuProduct(Menu menu, MenuRequest menuRequest) {
+    private List<MenuProduct> mapToMenuProduct(Menu menu, List<MenuProductRequest> menuProductRequests) {
 
-        return menuRequest.getMenuProducts().stream()
+        return menuProductRequests.stream()
                 .map(menuProduct -> {
                     Product product = productRepository.findById(menuProduct.getProductId()).get();
                     MenuProduct newMenuProduct = new MenuProduct(menu, product, menuProduct.getQuantity());
@@ -46,13 +54,7 @@ public class MenuProductService {
                 .collect(Collectors.toList());
     }
 
-    private BigDecimal calculateTotalPrice(List<MenuProduct> menuProducts, BigDecimal totalPrice) {
-        for (MenuProduct menuProduct : menuProducts) {
-            Product product = productRepository.findById(menuProduct.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품입니다."));
-            BigDecimal price = product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity()));
-            totalPrice = totalPrice.add(price);
-        }
-        return totalPrice;
+    public List<MenuProduct> findAllByMenuId(Long menuId) {
+        return menuProductRepository.findAllByMenuId(menuId);
     }
 }

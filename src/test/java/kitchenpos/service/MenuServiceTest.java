@@ -8,6 +8,7 @@ import kitchenpos.fixture.MenuGroupFixture;
 import kitchenpos.fixture.ProductFixture;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.ui.dto.MenuProductRequest;
 import kitchenpos.ui.dto.MenuRequest;
 import kitchenpos.ui.dto.MenuResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,14 +41,16 @@ class MenuServiceTest extends ServiceTest {
 
     private MenuRequest request;
     private MenuProduct menuProduct;
+    private List<MenuProductRequest> menuProductRequests;
     private List<MenuProduct> menuProducts;
 
     @BeforeEach
     void setUp() {
         menuProduct = new MenuProduct(MenuFixture.create(), ProductFixture.create(), 1);
         menuProducts = Collections.singletonList(menuProduct);
+        menuProductRequests = Collections.singletonList(new MenuProductRequest(ProductFixture.create().getId(), 1L));
 
-        request = new MenuRequest("이달의치킨", BigDecimal.valueOf(20_000), 1L, menuProducts);
+        request = new MenuRequest("이달의치킨", BigDecimal.valueOf(20_000), 1L, menuProductRequests);
     }
 
     @DisplayName("메뉴 생성 - 성공")
@@ -61,7 +64,7 @@ class MenuServiceTest extends ServiceTest {
         MenuResponse menuResponse = menuService.create(request);
         //then
         assertThat(menuResponse.getId()).isNotNull();
-        assertThat(menuResponse.getMenuProducts()).isEqualTo(request.getMenuProducts());
+        assertThat(menuResponse.getMenuProducts()).isEqualTo(request.getMenuProductRequests());
     }
 
     @DisplayName("메뉴 조회 - 성공")

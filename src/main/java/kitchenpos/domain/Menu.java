@@ -1,7 +1,11 @@
 package kitchenpos.domain;
 
+import kitchenpos.ui.dto.MenuProductRequest;
+import kitchenpos.ui.dto.MenuRequest;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,8 +22,8 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+    public Menu(MenuRequest menuRequest, MenuGroup menuGroup) {
+        this(null, menuRequest.getName(), menuRequest.getPrice(), menuGroup);
     }
 
     public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
@@ -30,6 +34,12 @@ public class Menu {
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
+    }
+
+    public void validateTotalPrice(BigDecimal totalPrice) {
+        if (this.price.compareTo(totalPrice) > 0) {
+            throw new IllegalArgumentException("메뉴가격은 상품가격보다 클 수 없습니다.");
+        }
     }
 
     private void validateMenuGroup(MenuGroup menuGroup) {
@@ -47,12 +57,6 @@ public class Menu {
     private void validatePrice(BigDecimal price) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("유효하지 않은 가격입니다.");
-        }
-    }
-
-    public void validateTotalPrice(BigDecimal totalPrice) {
-        if (this.price.compareTo(totalPrice) > 0) {
-            throw new IllegalArgumentException("메뉴가격은 상품가격보다 클 수 없습니다.");
         }
     }
 
