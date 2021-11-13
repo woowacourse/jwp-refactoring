@@ -128,18 +128,40 @@
   - [x] price null, negative
 - [x] Price
   - [x] value null, negative
-- [ ] Order
-- [ ] Orders
-- [ ] OrderLineItem
-- [ ] OrderLineItems
-- [ ] OrderTable
-- [ ] OrderTables
-- [ ] TableGroup
+- [x] Order
+  - [x] orderTable null
+  - [x] already completion
+- [x] Orders
+  - [x] completed status
+- [x] OrderLineItem
+  - [x] order null
+  - [x] menu null
+  - [x] quantity null, negative
+- [x] OrderLineItems
+  - [x] empty
+  - [x] menu duplicate
+- [x] OrderTable
+  - [x] numberOfGuests negative
+  - [x] groupBy status
+  - [x] ungroup status
+  - [x] changeNumberOfGuests
+    - [x] negative
+    - [x] orderTable status empty
+  - [x] changeEmpty nonNull tableGroup
+- [x] OrderTables
+  - [x] orderTable count < 2
+  - [x] orderTable already not empty or grouped
+  - [x] groupBy
+- [x] TableGroup
 
 ## 추가 리팩토링
-- [ ] 테스트 코드에 테스트 데이터 생성메서드 Fixture로 분리
 - [x] 커스텀 Exception 추가
 - [ ] 인수테스트 DisplayName 변경하기
 - [ ] BaseEntity 로 중복코드 제거하기
 - [ ] 엔티티 원시값 포장
+  - [ ] quantity
+  - [ ] price
+  - [ ] name
+  - [ ] numberOfGuests
 - [ ] DTO getter 디미터 법칙
+- [ ] OrderTable에서 TableGroup 값에 따라 empty 설정을 해야하는가 고민
