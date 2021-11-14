@@ -14,7 +14,7 @@ class MenuTest {
     @Test
     void menuCreate() {
         assertThatThrownBy(() -> {
-            new Menu("후라이드치킨", BigDecimal.valueOf(-16000.00), Fixtures.makeMenuGroup());
+            new Menu("후라이드치킨", BigDecimal.valueOf(-16000.00), Fixtures.makeMenuGroup().getId());
         }).isInstanceOf(IllegalArgumentException.class);
     }
 }

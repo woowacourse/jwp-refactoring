@@ -4,16 +4,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import kitchenpos.Fixtures;
+import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.repository.OrderRepository;
-import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.table.application.TableGroupService;
 import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.dto.TableGroupRequest;
@@ -40,7 +39,7 @@ class TableGroupServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderTableRepository orderTableRepository;
+    private OrderTableService orderTableService;
 
     @Mock
     private TableGroupRepository tableGroupRepository;
@@ -56,15 +55,12 @@ class TableGroupServiceTest {
         orderTables.add(orderTable2);
 
         tableGroup = Fixtures.makeTableGroup();
-
-        tableGroup.addOrderTables(orderTables);
-
     }
 
     @DisplayName("table group 생성")
     @Test
     void create() {
-        given(orderTableRepository.findAllByIdIn(anyList()))
+        given(orderTableService.findAll(anyList()))
             .willReturn(orderTables);
         given(tableGroupRepository.save(any(TableGroup.class)))
             .willReturn(tableGroup);
@@ -73,21 +69,21 @@ class TableGroupServiceTest {
 
         tableGroupService.create(tableGroupRequest);
 
-        verify(orderTableRepository).findAllByIdIn(anyList());
+        verify(orderTableService).findAll(anyList());
         verify(tableGroupRepository).save(any(TableGroup.class));
     }
 
     @DisplayName("table group 해제")
     @Test
     void unGroup() {
-        given(orderTableRepository.findAllByTableGroupId(anyLong()))
+        given(orderTableService.findAllByTableGroupId(anyLong()))
             .willReturn(orderTables);
         given(orderRepository.existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList()))
             .willReturn(false);
 
         tableGroupService.ungroup(1L);
 
-        verify(orderTableRepository).findAllByTableGroupId(anyLong());
+        verify(orderTableService).findAllByTableGroupId(anyLong());
         verify(orderRepository).existsByOrderTableIdInAndOrderStatusIn(anyList(), anyList());
     }
 }

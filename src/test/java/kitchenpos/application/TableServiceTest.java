@@ -48,8 +48,6 @@ class TableServiceTest {
     @Test
     void create() {
         TableGroup tableGroup = Fixtures.makeTableGroup();
-        given(tableGroupRepository.findById(anyLong()))
-            .willReturn(Optional.of(tableGroup));
 
         OrderTableRequest orderTableRequest = new OrderTableRequest(1L, 1, true);
 

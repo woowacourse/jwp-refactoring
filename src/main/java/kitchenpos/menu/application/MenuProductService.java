@@ -2,9 +2,9 @@ package kitchenpos.menu.application;
 
 import java.util.ArrayList;
 import java.util.List;
-import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
+import kitchenpos.menu.repository.MenuProductRepository;
 import kitchenpos.product.domain.Product;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ public class MenuProductService {
     public List<MenuProduct> saveAll(Menu menu, List<Product> products, long quantity) {
         List<MenuProduct> menuProducts = new ArrayList<>();
         for (Product product : products) {
-            menuProducts.add(new MenuProduct(menu, product, quantity));
+            menuProducts.add(new MenuProduct(menu, product.getId(), quantity));
         }
         return menuProductRepository.saveAll(menuProducts);
     }

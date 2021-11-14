@@ -1,12 +1,11 @@
 package kitchenpos.menu.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import kitchenpos.product.domain.Product;
 
 @Entity
 public class MenuProduct {
@@ -15,30 +14,25 @@ public class MenuProduct {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Menu menu;
 
-    @JsonIgnore
-    @ManyToOne
-    private Product product;
+    private Long productId;
     private long quantity;
 
     public MenuProduct() {
 
     }
 
-    public MenuProduct(Long seq, Menu menu, Product product, long quantity) {
+    public MenuProduct(Menu menu, Long productId, long quantity) {
+        this(null, menu, productId, quantity);
+    }
+
+    public MenuProduct(Long seq, Menu menu, Long productId, long quantity) {
         validateQuantity(quantity);
         this.seq = seq;
         this.menu = menu;
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public MenuProduct(Menu menu, Product product, long quantity) {
-        this.menu = menu;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
@@ -46,6 +40,10 @@ public class MenuProduct {
         if (quantity < 0) {
             throw new IllegalArgumentException("수량은 항상 0 이상이어야 합니다.");
         }
+    }
+
+    public void addMenu(Menu menu) {
+        this.menu = menu;
     }
 
     public Long getSeq() {
@@ -56,15 +54,11 @@ public class MenuProduct {
         return menu;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public void addMenu(Menu menu) {
-        this.menu = menu;
     }
 }

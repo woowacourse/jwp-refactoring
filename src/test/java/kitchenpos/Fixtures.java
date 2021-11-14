@@ -24,14 +24,12 @@ public class Fixtures {
     }
 
     public static Product makeProduct() {
-        Product product = new Product();
-
-        return product;
+        return new Product(1L, "후라이드", BigDecimal.valueOf(16000.00));
     }
 
     public static Menu makeMenu() {
         MenuGroup menuGroup = makeMenuGroup();
-        return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup);
+        return new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup.getId());
     }
 
     public static OrderLineItem makeOrderLineItem() {
@@ -42,7 +40,7 @@ public class Fixtures {
 
     public static Order makeOrder() {
         OrderTable orderTable = makeOrderTable();
-        Order order = new Order(1L, orderTable, OrderStatus.COOKING);
+        Order order = new Order(1L, orderTable.getId(), OrderStatus.COOKING);
 
         return order;
     }

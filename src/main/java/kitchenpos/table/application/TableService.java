@@ -30,10 +30,10 @@ public class TableService {
 
     @Transactional
     public OrderTable create(final OrderTableRequest orderTableRequest) {
-        TableGroup tableGroup = tableGroupRepository.findById(orderTableRequest.getTableGroupId())
-            .orElseThrow(IllegalArgumentException::new);
         OrderTable orderTable = new OrderTable(
-            tableGroup, orderTableRequest.getNumberOfGuests(), orderTableRequest.isEmpty());
+            orderTableRequest.getTableGroupId(),
+            orderTableRequest.getNumberOfGuests(),
+            orderTableRequest.isEmpty());
 
         return orderTableRepository.save(orderTable);
     }
@@ -48,7 +48,7 @@ public class TableService {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
             .orElseThrow(IllegalArgumentException::new);
 
-        if (Objects.nonNull(savedOrderTable.getTableGroup())) {
+        if (Objects.nonNull(savedOrderTable.getTableGroupId())) {
             throw new IllegalArgumentException("table group이 이미 지정되었습니다.");
         }
 

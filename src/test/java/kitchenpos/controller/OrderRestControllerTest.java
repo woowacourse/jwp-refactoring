@@ -71,7 +71,7 @@ class OrderRestControllerTest {
     @DisplayName("주문 상태 수정")
     @Test
     void update() throws Exception {
-        Order updateOrder = new Order(1L, Fixtures.makeOrderTable(), OrderStatus.MEAL);
+        Order updateOrder = new Order(1L, Fixtures.makeOrderTable().getId(), OrderStatus.MEAL);
 
         ObjectMapper objectMapper = new ObjectMapper();
 

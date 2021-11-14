@@ -35,19 +35,18 @@ public class OrderService {
 
     @Transactional
     public Order create(final OrderRequest orderRequest) {
-        OrderTable orderTable = orderTableService.findById(orderRequest.getOrderTableId());
+        orderTableService.check(orderRequest.getOrderTableId());
 
-        Order order = new Order(orderTable, orderRequest.getOrderStatus());
+        Order order = new Order(orderRequest.getOrderTableId(), orderRequest.getOrderStatus());
 
         Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItemRequest> orderLineItemRequests = orderRequest.getOrderLineItemRequests();
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         for (OrderLineItemRequest orderLineItemRequest : orderLineItemRequests) {
-            Menu menu = menuService.findById(orderLineItemRequest.getMenuId());
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, menu, orderLineItemRequest.getQuantity());
-            orderLineItems.add(orderLineItem);
-
+            orderLineItems.add(
+                new OrderLineItem(savedOrder,
+                    orderLineItemRequest.getMenuId(), orderLineItemRequest.getQuantity()));
         }
 
         menuService.checkCount(orderLineItems);

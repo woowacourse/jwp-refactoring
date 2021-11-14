@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import kitchenpos.order.application.OrderTableService;
 import kitchenpos.order.repository.OrderRepository;
 import kitchenpos.order.repository.OrderTableRepository;
 import kitchenpos.table.repository.TableGroupRepository;
@@ -18,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableGroupService {
 
     private final OrderRepository orderRepository;
-    private final OrderTableRepository orderTableRepository;
+    private final OrderTableService orderTableService;
     private final TableGroupRepository tableGroupRepository;
 
     public TableGroupService(final OrderRepository orderRepository,
-        final OrderTableRepository orderTableRepository,
+        final OrderTableService orderTableService,
         final TableGroupRepository tableGroupRepository) {
         this.orderRepository = orderRepository;
-        this.orderTableRepository = orderTableRepository;
+        this.orderTableService = orderTableService;
         this.tableGroupRepository = tableGroupRepository;
     }
 
@@ -34,24 +35,24 @@ public class TableGroupService {
 
         final List<Long> orderTableIds = tableGroupRequest.getOrderTableIds();
 
-        final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
+        final List<OrderTable> savedOrderTables = orderTableService.findAll(orderTableIds);
 
         if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroup())) {
+            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
                 throw new IllegalArgumentException("orderTable에 tableGroup이 지정되있거나 비어있지 않습니다.");
             }
         }
 
-        TableGroup tableGroup = new TableGroup(savedOrderTables);
+        TableGroup tableGroup = new TableGroup();
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.addTableGroup(savedTableGroup);
+            savedOrderTable.addTableGroup(savedTableGroup.getId());
             savedOrderTable.fillTable();
         }
 
@@ -60,7 +61,7 @@ public class TableGroupService {
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        final List<OrderTable> orderTables = orderTableRepository
+        final List<OrderTable> orderTables = orderTableService
             .findAllByTableGroupId(tableGroupId);
 
         final List<Long> orderTableIds = orderTables.stream()

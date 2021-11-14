@@ -58,11 +58,11 @@ class OrderServiceTest {
     @BeforeEach
     void setUp() {
         TableGroup tableGroup = new TableGroup(1L);
-        orderTable = new OrderTable(1L, tableGroup, 1, false);
-        order = new Order(orderTable, OrderStatus.COOKING);
+        orderTable = new OrderTable(1L, tableGroup.getId(), 1, false);
+        order = new Order(orderTable.getId(), OrderStatus.COOKING);
         menu = Fixtures.makeMenu();
 
-        orderLineItem = new OrderLineItem(1L, order, menu, 1L);
+        orderLineItem = new OrderLineItem(1L, order, menu.getId(), 1L);
 
         orderLineItems = new ArrayList<>();
         orderLineItems.add(orderLineItem);
@@ -74,12 +74,8 @@ class OrderServiceTest {
     @DisplayName("order 생성")
     @Test
     void create() {
-        given(orderTableService.findById(anyLong()))
-            .willReturn(orderTable);
         given(orderRepository.save(any(Order.class)))
             .willReturn(order);
-        given(menuService.findById(anyLong()))
-            .willReturn(menu);
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1);
 

@@ -1,9 +1,9 @@
 package kitchenpos.menu.application;
 
 import java.util.List;
-import kitchenpos.menu.repository.MenuGroupRepository;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.dto.MenuGroupRequest;
+import kitchenpos.menu.repository.MenuGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +26,9 @@ public class MenuGroupService {
         return menuGroupRepository.findAll();
     }
 
-    public MenuGroup findById(Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
-            .orElseThrow(IllegalArgumentException::new);
+    public void check(Long menuGroupId) {
+        if (!menuGroupRepository.existsById(menuGroupId)) {
+            throw new IllegalArgumentException("존재하지 않는 menu group id 입니다.");
+        }
     }
 }

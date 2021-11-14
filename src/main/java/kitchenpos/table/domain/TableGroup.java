@@ -22,23 +22,12 @@ public class TableGroup {
     @CreationTimestamp
     private LocalDateTime createdDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "tableGroup")
-    private final List<OrderTable> orderTables = new ArrayList<>();
-
     public TableGroup() {
 
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this.orderTables.addAll(orderTables);
-    }
-
     public TableGroup(Long id) {
         this.id = id;
-    }
-
-    public void addOrderTables(List<OrderTable> orderTables) {
-        this.orderTables.addAll(orderTables);
     }
 
     public Long getId() {
@@ -49,7 +38,4 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
-    }
 }

@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Menu {
@@ -19,9 +18,7 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-
-    @OneToOne
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu")
     private final List<MenuProduct> menuProducts = new ArrayList<>();
@@ -30,16 +27,16 @@ public class Menu {
 
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
         validatePrice(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
     }
 
     private void validatePrice(BigDecimal price) {
@@ -64,8 +61,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

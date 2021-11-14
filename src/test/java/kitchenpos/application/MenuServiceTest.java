@@ -55,9 +55,9 @@ class MenuServiceTest {
     @BeforeEach
     void setUp() {
         menuGroup = new MenuGroup(1L, "한마리치킨");
-        menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup);
+        menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000.00), menuGroup.getId());
         product = new Product(1L, "후라이드", BigDecimal.valueOf(16000.00));
-        menuProduct = new MenuProduct(1L, menu, product, 1L);
+        menuProduct = new MenuProduct(1L, menu, product.getId(), 1L);
 
         menuProducts = new ArrayList<>();
         menuProducts.add(menuProduct);
@@ -71,8 +71,6 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성")
     @Test
     void create() {
-        given(menuGroupService.findById(anyLong()))
-            .willReturn(menuGroup);
         given(menuRepository.save(any(Menu.class)))
             .willReturn(menu);
 
@@ -89,7 +87,7 @@ class MenuServiceTest {
     @DisplayName("메뉴 불러오기")
     @Test
     void list() {
-        Menu otherMenu = new Menu(2L, "양념치킨", BigDecimal.valueOf(17000.00), menuGroup);
+        Menu otherMenu = new Menu(2L, "양념치킨", BigDecimal.valueOf(17000.00), menuGroup.getId());
         menus.add(otherMenu);
 
         given(menuRepository.findAll())

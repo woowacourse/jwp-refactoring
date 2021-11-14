@@ -15,9 +15,7 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne
-    private TableGroup tableGroup;
+    private Long tableGroupId;
 
     private int numberOfGuests;
     private boolean empty;
@@ -26,20 +24,20 @@ public class OrderTable {
 
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(null, tableGroup, numberOfGuests, empty);
+    public OrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
+        this(null, tableGroupId, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         validNumberOfGuests(numberOfGuests);
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
 
-    public void addTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void addTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void fillTable() {
@@ -47,7 +45,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
         this.empty = true;
     }
 
@@ -70,8 +68,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {

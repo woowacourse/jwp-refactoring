@@ -14,7 +14,8 @@ public class MenuRequest {
 
     }
 
-    public MenuRequest(String name, double price, Long menuGroupId, List<Long> productIds, long quantity) {
+    public MenuRequest(String name, double price, Long menuGroupId, List<Long> productIds,
+        long quantity) {
         this.name = name;
         this.price = price;
         this.menuGroupId = menuGroupId;

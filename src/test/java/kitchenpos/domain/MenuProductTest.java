@@ -19,7 +19,7 @@ class MenuProductTest {
         Product product = Fixtures.makeProduct();
         long quantity = -1;
         assertThrows(IllegalArgumentException.class,
-            () -> new MenuProduct(seq, menu, product, quantity));
+            () -> new MenuProduct(seq, menu, product.getId(), quantity));
     }
 
 }
