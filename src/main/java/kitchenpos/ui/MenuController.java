@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
+import javax.validation.Valid;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.Menu;
 import kitchenpos.ui.request.MenuRequest;
 import kitchenpos.ui.response.MenuResponse;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class MenuController {
     }
 
     @PostMapping
-    public ResponseEntity<MenuResponse> create(@RequestBody final MenuRequest request) {
+    public ResponseEntity<MenuResponse> create(@Valid @RequestBody final MenuRequest request) {
         final MenuResponse response = menuService.create(request);
         final URI uri = URI.create("/api/menus/" + response.getId());
 

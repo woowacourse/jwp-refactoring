@@ -17,14 +17,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-@DisplayName("MenuGroup 인수 테스트")
+@DisplayName("메뉴그룹 인수 테스트")
 public class MenuGroupAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("POST /api/menu-groups")
+    @DisplayName("POST /api/menu-groups - 메뉴그룹을 생성할 때")
     @Nested
     class Post {
 
-        @DisplayName("정상적인 경우 상태코드 201이 반환된다.")
+        @DisplayName("정상적인 메뉴그룹 생성에 성공한다.")
         @Test
         void createPost() {
             // given
@@ -46,7 +46,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
             assertThat(response.body()).isNotNull();
         }
 
-        @DisplayName("name이 Null인 경우 상태코드 500이 반환된다.")
+        @DisplayName("이름이 Null인 경우 예외가 발생한다.")
         @Test
         void nameNull() {
             // given
@@ -68,7 +68,7 @@ public class MenuGroupAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    @DisplayName("GET /api/menu-groups - 모든 MenuGroup과 상태코드 200이 반환된다.")
+    @DisplayName("GET /api/menu-groups - 모든 메뉴그룹 목록을 반환 받는다.")
     @Test
     void createGet() {
         // when

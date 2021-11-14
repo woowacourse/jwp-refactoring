@@ -7,6 +7,7 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
+import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.ui.request.MenuProductRequest;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Transactional(readOnly = true)
 @Service
 public class MenuService {
 
@@ -41,13 +43,13 @@ public class MenuService {
     public MenuResponse create(final MenuRequest request) {
         MenuGroup menuGroup = menuGroupService.findById(request.getMenuGroup());
         Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
-        MenuProducts menuProducts = createMenuProducts(menu, request.getMenuProducts());
+        MenuProducts menuProducts = generateMenuProducts(menu, request.getMenuProducts());
         menuProducts.validateMenuPrice(new Price(request.getPrice()));
 
         return MenuResponse.from(menu, menuProducts.toList());
     }
 
-    private MenuProducts createMenuProducts(Menu menu, List<MenuProductRequest> menuProductRequests) {
+    private MenuProducts generateMenuProducts(Menu menu, List<MenuProductRequest> menuProductRequests) {
         List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest request : menuProductRequests) {
@@ -68,5 +70,12 @@ public class MenuService {
         }
 
         return menuResponses;
+    }
+
+    public Menu findById(Long menuId) {
+        return menuRepository.findById(menuId)
+            .orElseThrow(() -> new MenuNotFoundException(
+                String.format("%s ID의 Menu가 존재하지 않습니다.", menuId)
+            ));
     }
 }

@@ -10,10 +10,7 @@ import io.restassured.response.Response;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.domain.MenuProduct;
-import kitchenpos.domain.Product;
 import kitchenpos.exception.ExceptionResponse;
 import kitchenpos.ui.request.MenuProductRequest;
 import kitchenpos.ui.request.MenuRequest;
@@ -25,14 +22,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-@DisplayName("Menu 인수 테스트")
+@DisplayName("메뉴 인수 테스트")
 public class MenuAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("POST /api/menus")
+    @DisplayName("POST /api/menus - 메뉴를 생성할 때")
     @Nested
     class Post {
 
-        @DisplayName("Price가 Null이면 상태코드 500이 반환된다.")
+        @DisplayName("메뉴의 가격이 Null이면 예외가 발생한다.")
         @Test
         void priceNull() {
             // given
@@ -41,9 +38,9 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", null, menuGroup, menuProducts);
 
@@ -62,7 +59,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("Menu의 Price가 0보다 작으면 상태코드 500이 반환된다.")
+        @DisplayName("메뉴의 가격이 음수면 예외가 발생한다.")
         @Test
         void priceNegative() {
             // given
@@ -71,9 +68,9 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", -1, menuGroup, menuProducts);
 
@@ -92,16 +89,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("Menu의 MenuGroupId가 존재하지 않는 경우 상태코드 500이 반환된다.")
+        @DisplayName("ID와 일치하는 메뉴그룹이 존재하지 않을 경우 예외가 발생한다.")
         @Test
         void noExistMenuGroupId() {
             // given
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
             MenuGroup 없는_그룹 = new MenuGroup(-1L, "없는_그룹");
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", 5_600, 없는_그룹, menuProducts);
@@ -121,16 +118,16 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("Menu의 Product가 실제로 존재하지 않는 경우 상태코드 500이 반환된다.")
+        @DisplayName("ID에 일치하는 상품이 존재하지 않을 경우 예외가 발생한다.")
         @Test
         void noExistProduct() {
             // given
             MenuGroup menuGroup = HTTP_요청을_통해_MenuGroup을_생성한다("엄청난 그룹");
             ProductResponse 없는_상품 = new ProductResponse(-1L, "없는 상품", BigDecimal.valueOf(1));
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(없는_상품, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(없는_상품, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(없는_상품, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(없는_상품, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts);
 
@@ -149,7 +146,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("Menu의 총 Price가 Product들의 Price 합보다 클 경우 상태코드 500이 반환된다.")
+        @DisplayName("[메뉴의 가격]이 [모든 상품의 가격 * 개수의 합]보다 클 경우 예외가 발생한다.")
         @Test
         void menuPriceNotMatch() {
             // given
@@ -158,9 +155,9 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", 5_601, menuGroup, menuProducts);
 
@@ -179,7 +176,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("정상적인 경우 상태코드 201이 반환된다.")
+        @DisplayName("정상적인 경우 메뉴 생성에 성공한다.")
         @Test
         void success() {
             // given
@@ -188,9 +185,9 @@ public class MenuAcceptanceTest extends AcceptanceTest {
             ProductResponse 치즈버거 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 4_000);
             ProductResponse 콜라 = HTTP_요청을_통해_Product를_생성한다("치즈버거", 1_600);
 
-            MenuProduct 치즈버거_MenuProduct = MenuProduct를_생성한다(치즈버거, 1);
-            MenuProduct 콜라_MenuProduct = MenuProduct를_생성한다(콜라, 1);
-            List<MenuProduct> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
+            MenuProductRequest 치즈버거_MenuProduct = MenuProductRequest를_생성한다(치즈버거, 1);
+            MenuProductRequest 콜라_MenuProduct = MenuProductRequest를_생성한다(콜라, 1);
+            List<MenuProductRequest> menuProducts = Arrays.asList(치즈버거_MenuProduct, 콜라_MenuProduct);
 
             MenuRequest request = MenuRequest를_생성한다("엄청난 메뉴", 5_600, menuGroup, menuProducts);
 
@@ -211,7 +208,7 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    @DisplayName("GET /api/menus - 모든 Menu와 상태코드 200이 반환된다.")
+    @DisplayName("GET /api/menus - 모든 메뉴 목록을 반환 받는다.")
     @Test
     void list() {
         // when
@@ -229,12 +226,12 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         assertThat(responses).isNotNull();
     }
 
-    private MenuRequest MenuRequest를_생성한다(String name, int price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    private MenuRequest MenuRequest를_생성한다(String name, int price, MenuGroup menuGroup, List<MenuProductRequest> menuProducts) {
         return MenuRequest를_생성한다(name, BigDecimal.valueOf(price), menuGroup, menuProducts);
     }
 
-    private MenuRequest MenuRequest를_생성한다(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        return new MenuRequest(name, price, menuGroup.getId(), MenuProductRequest.of(menuProducts));
+    private MenuRequest MenuRequest를_생성한다(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProductRequest> menuProducts) {
+        return new MenuRequest(name, price, menuGroup.getId(), menuProducts);
     }
 
     private MenuGroup HTTP_요청을_통해_MenuGroup을_생성한다(String name) {
@@ -243,10 +240,8 @@ public class MenuAcceptanceTest extends AcceptanceTest {
         return postRequestWithBody("/api/menu-groups", menuGroup).as(MenuGroup.class);
     }
 
-    private MenuProduct MenuProduct를_생성한다(ProductResponse productResponse, long quantity) {
-        Product product = new Product(productResponse.getId(), productResponse.getName(), productResponse.getPrice());
-
-        return new MenuProduct(product, quantity);
+    private MenuProductRequest MenuProductRequest를_생성한다(ProductResponse productResponse, long quantity) {
+        return new MenuProductRequest(productResponse.getId(), quantity);
     }
 
     private ProductResponse HTTP_요청을_통해_Product를_생성한다(String name, int price) {
