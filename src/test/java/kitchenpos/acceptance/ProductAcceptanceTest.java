@@ -3,7 +3,6 @@ package kitchenpos.acceptance;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.OK;
 
 import io.restassured.RestAssured;
@@ -19,14 +18,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 
-@DisplayName("Product 인수 테스트")
+@DisplayName("상품 인수 테스트")
 public class ProductAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("POST /api/products")
+    @DisplayName("POST /api/products - 상품을 생성할 때")
     @Nested
     class Post {
 
-        @DisplayName("정상적인 Product는 저장에 성공한다.")
+        @DisplayName("정상적인 상품은 저장에 성공한다.")
         @Test
         void success() {
             // given
@@ -48,7 +47,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
             assertThat(response.body()).isNotNull();
         }
 
-        @DisplayName("name이 Null인 경우 예외가 발생한다.")
+        @DisplayName("이름이 Null인 경우 예외가 발생한다.")
         @Test
         void nameNullException() {
             // given
@@ -69,7 +68,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("price가 Null인 경우 예외가 발생한다.")
+        @DisplayName("가격이 Null인 경우 예외가 발생한다.")
         @Test
         void priceNullException() {
             // given
@@ -90,7 +89,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
             assertThat(response.as(ExceptionResponse.class)).isNotNull();
         }
 
-        @DisplayName("price가 음수인 경우 예외가 발생한다.")
+        @DisplayName("가격이 음수인 경우 예외가 발생한다.")
         @Test
         void priceNegativeException() {
             // given
@@ -112,7 +111,7 @@ public class ProductAcceptanceTest extends AcceptanceTest {
         }
     }
 
-    @DisplayName("GET /api/products - 모든 Product를 조회한다.")
+    @DisplayName("GET /api/products - 모든 상품 목록을 조회한다.")
     @Test
     void findAll() {
         // when

@@ -1,5 +1,6 @@
 package kitchenpos.ui;
 
+import javax.validation.Valid;
 import kitchenpos.application.ProductService;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
@@ -24,7 +25,7 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductResponse> create(@RequestBody final ProductRequest request) {
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody final ProductRequest request) {
         final ProductResponse response = productService.create(request);
         final URI uri = URI.create("/api/products/" + response.getId());
 
