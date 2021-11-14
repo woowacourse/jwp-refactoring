@@ -18,7 +18,8 @@ public class Menu {
     @ManyToOne
     private MenuGroup menuGroup;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "MENU_ID")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
     public Menu() {

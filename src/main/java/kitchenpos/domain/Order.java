@@ -17,6 +17,7 @@ public class Order {
     private OrderTable orderTable;
 
     @OneToMany(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "ORDER_DETAILS_ID")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
