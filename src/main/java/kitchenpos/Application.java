@@ -1,10 +1,10 @@
 package kitchenpos;
 
-import kitchenpos.application.MenuGroupService;
-import kitchenpos.application.MenuService;
-import kitchenpos.application.ProductService;
-import kitchenpos.domain.MenuRepository;
-import kitchenpos.dto.*;
+import kitchenpos.menu.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.application.ProductService;
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.menu.dto.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
