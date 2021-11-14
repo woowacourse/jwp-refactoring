@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.Orders;
-import kitchenpos.domain.TableGroup;
 import kitchenpos.exception.OrderTableNotFoundException;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -57,17 +56,7 @@ public class OrderTableService {
         return OrderTableResponse.from(orderTable);
     }
 
-    @Transactional
-    public void ungroupWith(TableGroup tableGroup) {
-        for (OrderTable orderTable : orderTableRepository.findAllByTableGroup(tableGroup)) {
-            Orders orders = new Orders(orderRepository.findAllByOrderTable(orderTable));
-            orders.validateCompleted();
-
-            orderTable.ungroup();
-        }
-    }
-
-    public OrderTable findById(Long orderTableId) {
+    private OrderTable findById(Long orderTableId) {
         return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new OrderTableNotFoundException(
                 String.format("%s ID에 해당하는 OrderTable이 존재하지 않습니다.", orderTableId)

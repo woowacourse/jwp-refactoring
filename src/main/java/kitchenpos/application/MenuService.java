@@ -7,9 +7,12 @@ import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.MenuNotFoundException;
+import kitchenpos.exception.MenuGroupNotFoundException;
+import kitchenpos.exception.ProductNotFoundException;
+import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.repository.MenuProductRepository;
 import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.MenuProductRequest;
 import kitchenpos.ui.request.MenuRequest;
 import kitchenpos.ui.response.MenuResponse;
@@ -24,24 +27,24 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuProductRepository menuProductRepository;
-    private final MenuGroupService menuGroupService;
-    private final ProductService productService;
+    private final MenuGroupRepository menuGroupRepository;
+    private final ProductRepository productRepository;
 
     public MenuService(
         MenuRepository menuRepository,
         MenuProductRepository menuProductRepository,
-        MenuGroupService menuGroupService,
-        ProductService productService
+        MenuGroupRepository menuGroupRepository,
+        ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuProductRepository = menuProductRepository;
-        this.menuGroupService = menuGroupService;
-        this.productService = productService;
+        this.menuGroupRepository = menuGroupRepository;
+        this.productRepository = productRepository;
     }
 
     @Transactional
     public MenuResponse create(final MenuRequest request) {
-        MenuGroup menuGroup = menuGroupService.findById(request.getMenuGroup());
+        MenuGroup menuGroup = findMenuGroupById(request.getMenuGroup());
         Menu menu = menuRepository.save(new Menu(request.getName(), request.getPrice(), menuGroup));
         MenuProducts menuProducts = generateMenuProducts(menu, request.getMenuProducts());
         menuProducts.validateMenuPrice(new Price(request.getPrice()));
@@ -53,7 +56,7 @@ public class MenuService {
         List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest request : menuProductRequests) {
-            Product product = productService.findById(request.getProductId());
+            Product product = findProductById(request.getProductId());
             MenuProduct menuProduct = new MenuProduct(menu, product, request.getQuantity());
             menuProducts.add(menuProductRepository.save(menuProduct));
         }
@@ -72,10 +75,17 @@ public class MenuService {
         return menuResponses;
     }
 
-    public Menu findById(Long menuId) {
-        return menuRepository.findById(menuId)
-            .orElseThrow(() -> new MenuNotFoundException(
-                String.format("%s ID의 Menu가 존재하지 않습니다.", menuId)
+    private MenuGroup findMenuGroupById(Long menuGroupId) {
+        return menuGroupRepository.findById(menuGroupId)
+            .orElseThrow(() -> new MenuGroupNotFoundException(
+                String.format("%d ID를 가진 MenuGroup이 존재하지 않습니다.", menuGroupId)
             ));
+    }
+
+    private Product findProductById(Long productId) {
+        return productRepository.findById(productId)
+            .orElseThrow(() -> new ProductNotFoundException(
+                String.format("%d ID를 가진 Product가 존재하지 않습니다.", productId))
+            );
     }
 }

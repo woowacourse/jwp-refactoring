@@ -6,9 +6,11 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderLineItems;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.exception.MenuNotFoundException;
 import kitchenpos.exception.OrderNotFoundException;
 import kitchenpos.exception.OrderTableEmptyException;
 import kitchenpos.exception.OrderTableNotFoundException;
+import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
@@ -26,22 +28,21 @@ import java.util.List;
 @Service
 public class OrderService {
 
-    //TODO: 서비스 계층 의존 -> 최초의 순환참조 경험 -> Repository 계층 의존하도록 변경
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
-    private final MenuService menuService;
+    private final MenuRepository menuRepository;
 
     public OrderService(
         OrderRepository orderRepository,
         OrderLineItemRepository orderLineItemRepository,
         OrderTableRepository orderTableRepository,
-        MenuService menuService
+        MenuRepository menuRepository
     ) {
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
-        this.menuService = menuService;
+        this.menuRepository = menuRepository;
     }
 
     @Transactional
@@ -66,7 +67,7 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
 
         for (OrderLineItemRequest request : orderLineItemRequests) {
-            Menu menu = menuService.findById(request.getMenu());
+            Menu menu = findMenuById(request.getMenu());
             OrderLineItem orderLineItem = orderLineItemRepository.save(new OrderLineItem(order, menu, request.getQuantity()));
             orderLineItems.add(orderLineItem);
         }
@@ -102,6 +103,13 @@ public class OrderService {
         return orderTableRepository.findById(orderTableId)
             .orElseThrow(() -> new OrderTableNotFoundException(
                 String.format("%s ID에 해당하는 OrderTable이 존재하지 않습니다.", orderTableId)
+            ));
+    }
+
+    private Menu findMenuById(Long menuId) {
+        return menuRepository.findById(menuId)
+            .orElseThrow(() -> new MenuNotFoundException(
+                String.format("%s ID의 Menu가 존재하지 않습니다.", menuId)
             ));
     }
 }

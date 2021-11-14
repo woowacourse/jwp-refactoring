@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.MenuGroup;
-import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
 import kitchenpos.ui.request.MenuGroupRequest;
 import kitchenpos.ui.response.MenuGroupResponse;
@@ -31,12 +30,5 @@ public class MenuGroupService {
         List<MenuGroup> menuGroups = menuGroupRepository.findAll();
 
         return MenuGroupResponse.of(menuGroups);
-    }
-
-    public MenuGroup findById(Long menuGroupId) {
-        return menuGroupRepository.findById(menuGroupId)
-            .orElseThrow(() -> new MenuGroupNotFoundException(
-                String.format("%d ID를 가진 MenuGroup이 존재하지 않습니다.", menuGroupId)
-            ));
     }
 }

@@ -1,7 +1,6 @@
 package kitchenpos.application;
 
 import kitchenpos.domain.Product;
-import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.ProductRepository;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
@@ -31,12 +30,5 @@ public class ProductService {
         List<Product> products = productRepository.findAll();
 
         return ProductResponse.of(products);
-    }
-
-    public Product findById(Long productId) {
-        return productRepository.findById(productId)
-            .orElseThrow(() -> new ProductNotFoundException(
-                String.format("%d ID를 가진 Product가 존재하지 않습니다.", productId))
-            );
     }
 }

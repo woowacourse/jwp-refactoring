@@ -156,13 +156,13 @@
 
 ## 추가 리팩토링
 - [x] 커스텀 Exception 추가
-- [ ] 인수테스트 DisplayName 변경하기
+- [x] 인수테스트 DisplayName 변경하기
 - [ ] BaseEntity 로 중복코드 제거하기
 - [ ] 엔티티 원시값 포장
   - [ ] quantity
   - [ ] price
   - [ ] name
   - [ ] numberOfGuests
-- [ ] DTO getter 디미터 법칙
+- [x] DTO getter 디미터 법칙
 - [ ] OrderTable에서 TableGroup 값에 따라 empty 설정을 해야하는가 고민
-- [ ] 서비스 계층 의존 -> 최초의 순환참조 경험 -> Repository 계층 의존하도록 변경
+- [x] 서비스 계층 의존 -> 최초의 순환참조 경험 -> Repository 계층 의존하도록 변경
