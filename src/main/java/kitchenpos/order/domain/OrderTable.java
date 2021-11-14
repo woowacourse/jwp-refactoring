@@ -3,7 +3,6 @@ package kitchenpos.order.domain;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 import java.util.Objects;
 
 @Entity
@@ -12,9 +11,7 @@ public class OrderTable {
     @GeneratedValue
     @Id
     private Long id;
-
-    @ManyToOne
-    private TableGroup tableGroup;
+    private Long tableGroupId;
     private int numberOfGuests;
     private boolean empty;
 
@@ -27,31 +24,32 @@ public class OrderTable {
     }
 
     public void changeEmptyStatus(final boolean empty) {
-        if (Objects.nonNull(tableGroup)) {
-            throw new IllegalArgumentException();
+        if (Objects.nonNull(tableGroupId)) {
+            throw new IllegalArgumentException("테이블 그룹이 있는 상태에선 Empty 여부를 수정할 수 없습니다.");
         }
         this.empty = empty;
     }
 
-    public boolean hasGroup() {
-        return Objects.nonNull(tableGroup);
-    }
-
-    public void group(TableGroup tableGroup) {
-        if(!isEmpty() || hasGroup()){
-            throw new IllegalArgumentException();
+    public void group(Long tableGroupId) {
+        if (!isEmpty() || Objects.nonNull(this.tableGroupId)) {
+            throw new IllegalArgumentException("비어있지 않거나 이미 그룹이 있는 상태에선 그룹을 생성할 수 없습니다.");
         }
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
     }
 
     public void ungroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public void changeNumberOfGuests(int numberOfGuests) {
-        if (isEmpty() || numberOfGuests < 0) {
-            throw new IllegalArgumentException();
+        if (isEmpty()) {
+            throw new IllegalArgumentException("비어있는 상태에선 손님 수를 변경할 수 없습니다.");
         }
+
+        if (numberOfGuests < 0) {
+            throw new IllegalArgumentException("유효하지 않은 손님 수입니다.");
+        }
+
         this.numberOfGuests = numberOfGuests;
     }
 
@@ -63,8 +61,8 @@ public class OrderTable {
         return numberOfGuests;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public boolean isEmpty() {

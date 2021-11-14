@@ -64,8 +64,4 @@ public class Menu {
     public MenuGroup getMenuGroup() {
         return menuGroup;
     }
-
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
-    }
 }

@@ -1,15 +1,14 @@
 package kitchenpos.order.application;
 
-import kitchenpos.support.ServiceTest;
+import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.*;
 import kitchenpos.order.dto.OrderTableRequest;
 import kitchenpos.order.dto.OrderTableResponse;
-import kitchenpos.menu.domain.*;
-import kitchenpos.order.domain.Order;
+import kitchenpos.support.ServiceTest;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -19,22 +18,10 @@ import static kitchenpos.order.fixture.OrderTableFixture.createOrderTable;
 import static kitchenpos.order.fixture.OrderTableFixture.createOrderTableRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ServiceTest
 class TableServiceTest {
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
 
     @Autowired
     private OrderLineItemRepository orderLineItemRepository;
@@ -46,9 +33,6 @@ class TableServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private TableGroupRepository tableGroupRepository;
-
-    @Autowired
     private TableService tableService;
 
     @DisplayName("테이블을 생성한다.")
@@ -56,13 +40,12 @@ class TableServiceTest {
     void create() {
         OrderTableRequest request = createOrderTableRequest();
         OrderTableResponse result = tableService.create(request);
-        assertAll(
-                () -> assertThat(result).isNotNull(),
-                () -> assertThat(result.getId()).isNotNull(),
-                () -> assertThat(result.getTableGroupId()).isEqualTo(request.getTableGroupId()),
-                () -> assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests()),
-                () -> assertThat(result.isEmpty()).isEqualTo(request.isEmpty())
-        );
+        assertSoftly(it -> {
+            it.assertThat(result).isNotNull();
+            it.assertThat(result.getId()).isNotNull();
+            it.assertThat(result.getNumberOfGuests()).isEqualTo(request.getNumberOfGuests());
+            it.assertThat(result.isEmpty()).isEqualTo(request.isEmpty());
+        });
     }
 
     @DisplayName("테이블 목록을 반환한다.")
@@ -71,10 +54,10 @@ class TableServiceTest {
         List<OrderTable> tables = Arrays.asList(createOrderTable(), createOrderTable());
         orderTableRepository.saveAll(tables);
         List<OrderTableResponse> list = tableService.list();
-        assertAll(
-                () -> assertThat(list).hasSize(tables.size()),
-                () -> assertThat(list).usingRecursiveComparison().isEqualTo(OrderTableResponse.listOf(tables))
-        );
+        assertSoftly(it -> {
+            it.assertThat(list).hasSize(tables.size());
+            it.assertThat(list).usingRecursiveComparison().isEqualTo(OrderTableResponse.listOf(tables));
+        });
     }
 
     @DisplayName("테이블의 Empty 상태 변경")
@@ -101,13 +84,8 @@ class TableServiceTest {
         @DisplayName("조리중이거나, 식사 중 상태의 테이블의 empty 상태를 변경할 수 없다.")
         @Test
         void changeEmptyWithInvalidOrderStatus() {
-            MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("NAME"));
-            Product product = productRepository.save(new Product("NAME", BigDecimal.ONE));
-            MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(1L, product, 1L));
-            Menu menu = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct)));
-            Long menuId = menu.getId();
-
-            OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
+            Long menuId = 1L;
+            OrderTable orderTable = orderTableRepository.save(createOrderTable());
             OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
             orderRepository.save(new Order(orderTable.getId(), Collections.singletonList(orderLineItem), OrderStatus.MEAL));
 
@@ -117,12 +95,8 @@ class TableServiceTest {
         @DisplayName("그룹 지정이 되어있는 테이블의 empty 상태를 변경할 수 없다.")
         @Test
         void changeEmptyWithGroupedTable() {
-            TableGroup tableGroup = new TableGroup();
-            tableGroupRepository.save(tableGroup);
-
-            OrderTable orderTable = orderTableRepository.save(createOrderTable(tableGroup, 1, true));
-            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTableRequest()))
-                    .isInstanceOf(IllegalArgumentException.class);
+            OrderTable orderTable = orderTableRepository.save(createOrderTable(1L, 1, true));
+            assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTableRequest())).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -170,9 +144,5 @@ class TableServiceTest {
         orderRepository.deleteAll();
         orderLineItemRepository.deleteAll();
         orderTableRepository.deleteAll();
-        menuRepository.deleteAll();
-        menuProductRepository.deleteAll();
-        productRepository.deleteAll();
-        menuGroupRepository.deleteAll();
     }
 }

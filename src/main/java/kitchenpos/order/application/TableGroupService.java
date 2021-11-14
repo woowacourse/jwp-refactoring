@@ -31,23 +31,18 @@ public class TableGroupService {
         }
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        orderTables.forEach(it -> it.group(tableGroup));
+        orderTables.forEach(it -> it.group(tableGroup.getId()));
         return TableGroupResponse.of(tableGroup, orderTables);
     }
 
-
     public void ungroup(final Long tableGroupId) {
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        validateOrder(orderTables);
-        orderTables.forEach(OrderTable::ungroup);
-    }
-
-    private void validateOrder(List<OrderTable> orderTables) {
         List<Long> orderTableIds = orderTables.stream()
                 .map(OrderTable::getId)
                 .collect(Collectors.toList());
         if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
             throw new IllegalArgumentException();
         }
+        orderTables.forEach(OrderTable::ungroup);
     }
 }

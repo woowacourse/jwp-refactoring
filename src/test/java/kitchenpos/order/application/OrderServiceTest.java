@@ -5,7 +5,6 @@ import kitchenpos.order.domain.*;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
 import kitchenpos.support.ServiceTest;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import java.util.List;
 
 import static kitchenpos.order.fixture.OrderFixture.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ServiceTest
 class OrderServiceTest {
@@ -55,7 +55,7 @@ class OrderServiceTest {
         void create() {
             OrderRequest request = createOrderRequest(orderTableId, menuId);
             OrderResponse result = orderService.create(request);
-            SoftAssertions.assertSoftly(it -> {
+            assertSoftly(it -> {
                 it.assertThat(result).isNotNull();
                 it.assertThat(result.getId()).isNotNull();
                 it.assertThat(result.getOrderStatus()).isEqualTo(request.getOrderStatus());
@@ -94,7 +94,7 @@ class OrderServiceTest {
 
         List<OrderResponse> expected = Arrays.asList(order1, order2);
         List<OrderResponse> result = orderService.list();
-        SoftAssertions.assertSoftly(it -> {
+        assertSoftly(it -> {
             it.assertThat(result).hasSize(expected.size());
             it.assertThat(result).usingRecursiveComparison().isEqualTo(expected);
         });
@@ -117,7 +117,7 @@ class OrderServiceTest {
             OrderStatus newStatus = OrderStatus.MEAL;
             OrderRequest request = createOrderRequest(orderTableId, newStatus, menuId);
             OrderResponse result = orderService.changeOrderStatus(orderId, request);
-            SoftAssertions.assertSoftly(it -> {
+            assertSoftly(it -> {
                 it.assertThat(result).isNotNull();
                 it.assertThat(result.getOrderStatus()).isEqualTo(newStatus);
             });
@@ -127,7 +127,6 @@ class OrderServiceTest {
         @Test
         void changeOrderStatusInCompletion() {
             orderService.changeOrderStatus(orderId, createOrderRequest(orderTableId, OrderStatus.COMPLETION, menuId));
-
             OrderRequest updateRequest = createOrderRequest(orderTableId, OrderStatus.MEAL, menuId);
             assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, updateRequest)).isInstanceOf(IllegalArgumentException.class);
         }

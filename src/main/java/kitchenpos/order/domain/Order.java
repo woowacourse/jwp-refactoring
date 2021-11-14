@@ -27,7 +27,7 @@ public class Order {
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems, OrderStatus orderStatus) {
         if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 항목이 적절하지 않습니다.");
         }
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
@@ -44,10 +44,6 @@ public class Order {
             throw new IllegalArgumentException("완료된 주문은 주문 상태를 변경할 수 없습니다.");
         }
         this.orderStatus = orderStatus;
-    }
-
-    public void setOrderLineItems(List<OrderLineItem> orderLineItems) {
-        this.orderLineItems = orderLineItems;
     }
 
     public Long getId() {
