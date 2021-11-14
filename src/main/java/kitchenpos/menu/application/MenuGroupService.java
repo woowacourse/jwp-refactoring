@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 public class MenuGroupService {
+
     private final MenuGroupRepository menuGroupRepository;
 
     public MenuGroupService(MenuGroupRepository menuGroupRepository) {

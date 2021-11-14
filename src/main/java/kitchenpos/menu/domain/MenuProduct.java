@@ -9,17 +9,15 @@ public class MenuProduct {
     @Id
     private Long id;
     private Long seq;
-
-    @ManyToOne
-    private Product product;
-    private long quantity;
+    private Long productId;
+    private Long quantity;
 
     public MenuProduct() {
     }
 
-    public MenuProduct(Long seq, Product product, long quantity) {
+    public MenuProduct(Long seq, Long productId, long quantity) {
         this.seq = seq;
-        this.product = product;
+        this.productId = productId;
         this.quantity = quantity;
     }
 
@@ -31,8 +29,8 @@ public class MenuProduct {
         return seq;
     }
 
-    public Product getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
     }
     
     public long getQuantity() {

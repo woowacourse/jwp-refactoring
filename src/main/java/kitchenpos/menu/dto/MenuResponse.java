@@ -23,8 +23,7 @@ public class MenuResponse {
 
     public static MenuResponse of(Menu menu) {
         List<MenuProductResponse> menuProductResponses = MenuProductResponse.listOf(menu.getMenuProducts());
-        Long menuGroupId = menu.getMenuGroup().getId();
-        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menuGroupId, menuProductResponses);
+        return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
     public static List<MenuResponse> listOf(List<Menu> menus){

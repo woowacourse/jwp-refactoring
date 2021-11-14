@@ -14,9 +14,7 @@ public class Menu {
     private Long id;
     private String name;
     private BigDecimal price;
-
-    @ManyToOne
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "MENU_ID")
@@ -25,24 +23,14 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        validate(price, menuProducts);
-        this.name = name;
-        this.price = price;
-        this.menuGroup = menuGroup;
-        this.menuProducts = menuProducts;
-    }
-
-    private void validate(BigDecimal price, List<MenuProduct> menuProducts) {
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
-
-        BigDecimal sum = BigDecimal.ZERO;
-        for (MenuProduct menuProduct : menuProducts) {
-            sum = sum.add(menuProduct.getProduct().getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
-        }
-        if (price.compareTo(sum) > 0) throw new IllegalArgumentException();
+        this.name = name;
+        this.price = price;
+        this.menuGroupId = menuGroupId;
+        this.menuProducts = menuProducts;
     }
 
     public List<MenuProduct> getMenuProducts() {
@@ -61,7 +49,7 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 }

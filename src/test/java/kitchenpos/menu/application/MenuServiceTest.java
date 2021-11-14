@@ -1,10 +1,10 @@
 package kitchenpos.menu.application;
 
-import kitchenpos.support.ServiceTest;
 import kitchenpos.menu.domain.*;
 import kitchenpos.menu.dto.MenuProductRequest;
 import kitchenpos.menu.dto.MenuRequest;
 import kitchenpos.menu.dto.MenuResponse;
+import kitchenpos.support.ServiceTest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +17,9 @@ import static kitchenpos.menu.fixture.MenuFixture.createMenuProductRequest;
 import static kitchenpos.menu.fixture.MenuFixture.createMenuRequest;
 import static kitchenpos.menu.fixture.MenuGroupFixture.createMenuGroup;
 import static kitchenpos.menu.fixture.ProductFixture.createProduct;
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.tuple;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @ServiceTest
 class MenuServiceTest {
@@ -60,20 +61,20 @@ class MenuServiceTest {
         void create() {
             MenuRequest request = createMenuRequest(menuGroupId, menuProducts);
             MenuResponse result = menuService.create(request);
-            assertAll(
-                    () -> assertThat(result.getId()).isNotNull(),
-                    () -> assertThat(result.getName()).isEqualTo(request.getName()),
-                    () -> assertThat(result.getPrice().compareTo(request.getPrice())).isEqualTo(0),
-                    () -> assertThat(result.getMenuGroupId()).isEqualTo(request.getMenuGroupId()),
-                    () -> assertThat(result.getMenuProducts()).hasSize(request.getMenuProductRequests().size())
-            );
+            assertSoftly(it -> {
+                it.assertThat(result.getId()).isNotNull();
+                it.assertThat(result.getName()).isEqualTo(request.getName());
+                it.assertThat(result.getPrice().compareTo(request.getPrice())).isEqualTo(0);
+                it.assertThat(result.getMenuGroupId()).isEqualTo(request.getMenuGroupId());
+                it.assertThat(result.getMenuProducts()).hasSize(request.getMenuProductRequests().size());
+            });
         }
 
         @DisplayName("메뉴 가격은 음수일 수 없다.")
         @Test
         void createWithInvalidPrice1() {
             BigDecimal invalidPrice = BigDecimal.valueOf(-1);
-            assertThatThrownBy(() -> menuService.create( createMenuRequest(invalidPrice, menuGroupId, menuProducts)))
+            assertThatThrownBy(() -> menuService.create(createMenuRequest(invalidPrice, menuGroupId, menuProducts)))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -100,18 +101,7 @@ class MenuServiceTest {
         MenuResponse menu1 = menuService.create(createMenuRequest(menuGroupId, menuProducts));
         MenuResponse menu2 = menuService.create(createMenuRequest(menuGroupId, menuProducts));
         List<MenuResponse> result = menuService.list();
-
-        SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(result)
-                .as("크기가 다름")
-                .hasSize(2);
-        softAssertions.assertThat(result)
-                .extracting("name")
-                .usingFieldByFieldElementComparator()
-                .isEqualTo(Arrays.asList(menu1.getName(), menu2.getName()));
-        softAssertions.assertAll();
-
-        SoftAssertions.assertSoftly(it -> {
+        assertSoftly(it -> {
             it.assertThat(result).hasSize(2);
             it.assertThat(result)
                     .extracting("id", "name")
