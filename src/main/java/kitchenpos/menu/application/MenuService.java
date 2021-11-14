@@ -34,11 +34,12 @@ public class MenuService {
     }
 
     private List<MenuProduct> saveMenuProducts(List<MenuProductRequest> requests) {
-        return requests.stream()
-                .map(it -> {
-                    Product product = productRepository.findById(it.getProductId()).orElseThrow(IllegalArgumentException::new);
-                    return menuProductRepository.save(new MenuProduct(it.getSeq(), product, it.getQuantity()));
-                }).collect(Collectors.toList());
+        return requests.stream().map(this::saveMenuProduct).collect(Collectors.toList());
+    }
+
+    private MenuProduct saveMenuProduct(MenuProductRequest request) {
+        Product product = productRepository.findById(request.getProductId()).orElseThrow(IllegalArgumentException::new);
+        return menuProductRepository.save(new MenuProduct(request.getSeq(), product, request.getQuantity()));
     }
 
     public List<MenuResponse> list() {

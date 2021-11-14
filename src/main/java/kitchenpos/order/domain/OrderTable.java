@@ -26,32 +26,6 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public OrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this.tableGroup = tableGroup;
-        this.numberOfGuests = numberOfGuests;
-        this.empty = empty;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
-    public TableGroup getTableGroup() {
-        return tableGroup;
-    }
-
-    public boolean isEmpty() {
-        return empty;
-    }
-
     public void changeEmptyStatus(final boolean empty) {
         if (Objects.nonNull(tableGroup)) {
             throw new IllegalArgumentException();
@@ -79,5 +53,21 @@ public class OrderTable {
             throw new IllegalArgumentException();
         }
         this.numberOfGuests = numberOfGuests;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public TableGroup getTableGroup() {
+        return tableGroup;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 }

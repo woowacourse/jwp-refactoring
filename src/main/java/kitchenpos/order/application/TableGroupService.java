@@ -26,7 +26,9 @@ public class TableGroupService {
 
     public TableGroupResponse create(final TableGroupRequest request) {
         List<OrderTable> orderTables = orderTableRepository.findAllById(request.getOrderTableIds());
-        if (orderTables.size() < 2) throw new IllegalArgumentException();
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
 
         TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
         orderTables.forEach(it -> it.group(tableGroup));

@@ -1,38 +1,28 @@
 package kitchenpos.order.application;
 
-import kitchenpos.support.ServiceTest;
+import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.order.domain.*;
 import kitchenpos.order.dto.OrderRequest;
 import kitchenpos.order.dto.OrderResponse;
-import kitchenpos.menu.domain.*;
-import kitchenpos.order.domain.Order;
+import kitchenpos.support.ServiceTest;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import static kitchenpos.order.fixture.OrderFixture.createOrderRequest;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
 
 @ServiceTest
 class OrderServiceTest {
 
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
-    private MenuGroupRepository menuGroupRepository;
-
-    @Autowired
-    private MenuProductRepository menuProductRepository;
-
-    @Autowired
-    private MenuRepository menuRepository;
+    @MockBean
+    private MenuRepository mockMenuRepository;
 
     @Autowired
     private OrderTableRepository orderTableRepository;
@@ -46,17 +36,12 @@ class OrderServiceTest {
     @Autowired
     private OrderService orderService;
 
-    private Long menuId;
+    private Long menuId = 1L;
     private Long orderTableId;
 
     @BeforeEach
     void setUp() {
-        MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("NAME"));
-        Product product = productRepository.save(new Product("NAME", BigDecimal.ONE));
-        MenuProduct menuProduct = menuProductRepository.save(new MenuProduct(1L, product, 1L));
-        Menu menu = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct)));
-        menuId = menu.getId();
-
+        Mockito.when(mockMenuRepository.existsById(menuId)).thenReturn(true);
         OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
         orderTableId = orderTable.getId();
     }
@@ -71,11 +56,10 @@ class OrderServiceTest {
             OrderRequest request = createOrderRequest(orderTableId, menuId);
             OrderResponse result = orderService.create(request);
             SoftAssertions.assertSoftly(it -> {
-                        it.assertThat(result).isNotNull();
-                        it.assertThat(result.getId()).isNotNull();
-                        it.assertThat(result.getOrderStatus()).isEqualTo(request.getOrderStatus());
-                    }
-            );
+                it.assertThat(result).isNotNull();
+                it.assertThat(result.getId()).isNotNull();
+                it.assertThat(result.getOrderStatus()).isEqualTo(request.getOrderStatus());
+            });
         }
 
         @DisplayName("주문 항목이 1개 이상이어야한다.")
@@ -105,25 +89,26 @@ class OrderServiceTest {
     @DisplayName("주문 목록을 반환한다.")
     @Test
     void list() {
-        OrderRequest request = createOrderRequest(orderTableId, menuId);
-        List<OrderResponse> expected = Collections.singletonList(orderService.create(request));
+        OrderResponse order1 = orderService.create(createOrderRequest(orderTableId, menuId));
+        OrderResponse order2 = orderService.create(createOrderRequest(orderTableId, menuId));
+
+        List<OrderResponse> expected = Arrays.asList(order1, order2);
         List<OrderResponse> result = orderService.list();
-        assertAll(
-                () -> assertThat(result).hasSize(1),
-                () -> assertThat(result).usingRecursiveComparison().isEqualTo(expected)
-        );
+        SoftAssertions.assertSoftly(it -> {
+            it.assertThat(result).hasSize(expected.size());
+            it.assertThat(result).usingRecursiveComparison().isEqualTo(expected);
+        });
     }
 
     @DisplayName("주문 상태 변경")
     @Nested
     class ChangeOrderStatus {
 
-        private Long savedOrderId;
+        private Long orderId;
 
         @BeforeEach
         void setUp() {
-            OrderRequest request = createOrderRequest(orderTableId, menuId);
-            savedOrderId = orderService.create(request).getId();
+            orderId = orderService.create(createOrderRequest(orderTableId, menuId)).getId();
         }
 
         @DisplayName("주문의 상태를 변경한다.")
@@ -131,45 +116,27 @@ class OrderServiceTest {
         void changeOrderStatus() {
             OrderStatus newStatus = OrderStatus.MEAL;
             OrderRequest request = createOrderRequest(orderTableId, newStatus, menuId);
-            OrderResponse result = orderService.changeOrderStatus(savedOrderId, request);
-            assertAll(
-                    () -> assertThat(result).isNotNull(),
-                    () -> assertThat(result.getOrderStatus()).isEqualTo(newStatus)
-            );
+            OrderResponse result = orderService.changeOrderStatus(orderId, request);
+            SoftAssertions.assertSoftly(it -> {
+                it.assertThat(result).isNotNull();
+                it.assertThat(result.getOrderStatus()).isEqualTo(newStatus);
+            });
         }
 
         @DisplayName("주문 완료 상태의 주문은 상태를 변경할 수 없다.")
         @Test
         void changeOrderStatusInCompletion() {
-            OrderRequest createRequest = createOrderRequest(orderTableId, OrderStatus.COOKING, menuId);
-            savedOrderId = orderService.create(createRequest).getId();
-            orderService.changeOrderStatus(savedOrderId, createOrderRequest(orderTableId, OrderStatus.COMPLETION, menuId));
+            orderService.changeOrderStatus(orderId, createOrderRequest(orderTableId, OrderStatus.COMPLETION, menuId));
 
             OrderRequest updateRequest = createOrderRequest(orderTableId, OrderStatus.MEAL, menuId);
-            assertThatThrownBy(() -> orderService.changeOrderStatus(savedOrderId, updateRequest)).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> orderService.changeOrderStatus(orderId, updateRequest)).isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @AfterEach
     void tearDown() {
-        List<Menu> menus = menuRepository.findAll();
-        for (Menu menu : menus) {
-            menu.setMenuProducts(null);
-        }
-        menuRepository.saveAll(menus);
-
-        List<Order> orders = orderRepository.findAll();
-        for (Order order : orders) {
-            order.setOrderLineItems(null);
-        }
-        orderRepository.saveAll(orders);
-
-        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
+        orderLineItemRepository.deleteAll();
         orderTableRepository.deleteAll();
-        menuProductRepository.deleteAll();
-        menuRepository.deleteAll();
-        productRepository.deleteAll();
-        menuGroupRepository.deleteAll();
     }
 }

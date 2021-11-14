@@ -125,11 +125,6 @@ class MenuServiceTest {
 
     @AfterEach
     void tearDown() {
-        List<Menu> menus = menuRepository.findAll();
-        for (Menu menu : menus) {
-            menu.setMenuProducts(null);
-        }
-        menuRepository.saveAll(menus);
         menuProductRepository.deleteAll();
         menuRepository.deleteAll();
         productRepository.deleteAll();

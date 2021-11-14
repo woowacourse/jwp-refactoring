@@ -109,7 +109,7 @@ class TableServiceTest {
 
             OrderTable orderTable = orderTableRepository.save(new OrderTable(1, false));
             OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
-            orderRepository.save(new Order(orderTable, Collections.singletonList(orderLineItem), OrderStatus.MEAL));
+            orderRepository.save(new Order(orderTable.getId(), Collections.singletonList(orderLineItem), OrderStatus.MEAL));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTableRequest())).isInstanceOf(IllegalArgumentException.class);
         }
@@ -167,23 +167,11 @@ class TableServiceTest {
 
     @AfterEach
     void tearDown() {
-        List<Menu> menus = menuRepository.findAll();
-        for (Menu menu : menus) {
-            menu.setMenuProducts(null);
-        }
-        menuRepository.saveAll(menus);
-
-        List<Order> orders = orderRepository.findAll();
-        for (Order order : orders) {
-            order.setOrderLineItems(null);
-        }
-        orderRepository.saveAll(orders);
-
-        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
+        orderLineItemRepository.deleteAll();
         orderTableRepository.deleteAll();
-        menuProductRepository.deleteAll();
         menuRepository.deleteAll();
+        menuProductRepository.deleteAll();
         productRepository.deleteAll();
         menuGroupRepository.deleteAll();
     }

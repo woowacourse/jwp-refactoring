@@ -127,10 +127,10 @@ class TableGroupServiceTest {
             Long menuId = menuRepository.save(new Menu("NAME", BigDecimal.ONE, menuGroup, Collections.singletonList(menuProduct))).getId();
 
             TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-            orderTable1 = orderTableRepository.save(createOrderTable(tableGroup, 1, false));
+            orderTable1 = orderTableRepository.save(createOrderTable(tableGroup, 1, true));
 
             OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
-            orderRepository.save(new Order(orderTable1, Collections.singletonList(orderLineItem), OrderStatus.MEAL));
+            orderRepository.save(new Order(orderTable1.getId(), Collections.singletonList(orderLineItem), OrderStatus.MEAL));
 
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroup.getId())).isInstanceOf(IllegalArgumentException.class);
         }
@@ -138,23 +138,11 @@ class TableGroupServiceTest {
 
     @AfterEach
     void tearDown() {
-        List<Menu> menus = menuRepository.findAll();
-        for (Menu menu : menus) {
-            menu.setMenuProducts(null);
-        }
-        menuRepository.saveAll(menus);
-
-        List<Order> orders = orderRepository.findAll();
-        for (Order order : orders) {
-            order.setOrderLineItems(null);
-        }
-        orderRepository.saveAll(orders);
-
-        orderLineItemRepository.deleteAll();
         orderRepository.deleteAll();
+        orderLineItemRepository.deleteAll();
         orderTableRepository.deleteAll();
-        menuProductRepository.deleteAll();
         menuRepository.deleteAll();
+        menuProductRepository.deleteAll();
         productRepository.deleteAll();
         menuGroupRepository.deleteAll();
     }

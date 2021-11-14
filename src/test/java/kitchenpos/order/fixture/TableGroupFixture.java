@@ -1,6 +1,7 @@
 package kitchenpos.order.fixture;
 
 import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.dto.OrderTableResponse;
 import kitchenpos.order.dto.TableGroupRequest;
 import kitchenpos.order.dto.TableGroupResponse;
 
@@ -24,12 +25,9 @@ public class TableGroupFixture {
     }
 
     public static TableGroupResponse createTableGroupResponse(Long id, TableGroupRequest request) {
-        List<OrderTable> orderTables = new ArrayList<>();
-        for(long orderTableId : request.getOrderTableIds()){
-            OrderTable orderTable = new OrderTable(1, true);
-            orderTable.setId(orderTableId);
-            orderTables.add(orderTable);
-        }
-        return new TableGroupResponse(id, LocalDateTime.now(), orderTables);
+        List<OrderTableResponse> orderTableResponses = request.getOrderTableIds().stream()
+                .map(it -> new OrderTableResponse(it, null, 1, true))
+                .collect(Collectors.toList());
+        return new TableGroupResponse(id, LocalDateTime.now(), orderTableResponses);
     }
 }

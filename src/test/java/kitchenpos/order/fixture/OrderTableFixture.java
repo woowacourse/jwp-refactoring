@@ -20,7 +20,9 @@ public class OrderTableFixture {
     }
 
     public static OrderTable createOrderTable(TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        return new OrderTable(tableGroup, numberOfGuests, empty);
+        OrderTable orderTable = createOrderTable(numberOfGuests, empty);
+        orderTable.group(tableGroup);
+        return orderTable;
     }
 
     public static OrderTable createOrderTable() {
