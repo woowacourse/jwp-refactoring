@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 import kitchenpos.exception.InvalidOrderException;
 import kitchenpos.exception.OrderAlreadyCompletionException;
 
-//TODO: 엔티티 테스트 코드 작성
 @Entity(name = "orders")
 public class Order {
 
@@ -39,12 +38,7 @@ public class Order {
     }
 
     public Order(OrderTable orderTable) {
-        this(orderTable, OrderStatus.COOKING);
-    }
-
-    // TODO: 테스트에서만 쓰이는 생성자
-    public Order(OrderTable orderTable, OrderStatus orderStatus) {
-        this(null, orderTable, orderStatus, LocalDateTime.now());
+        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now());
     }
 
     public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime) {

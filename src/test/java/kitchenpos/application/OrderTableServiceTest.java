@@ -226,6 +226,9 @@ class OrderTableServiceTest {
     }
 
     private Order Order를_생성한다(OrderTable orderTable, OrderStatus orderStatus) {
-        return new Order(orderTable, orderStatus);
+        Order order = new Order(orderTable);
+        order.changeStatus(orderStatus);
+
+        return order;
     }
 }

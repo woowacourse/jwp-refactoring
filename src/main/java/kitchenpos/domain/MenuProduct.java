@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.exception.InvalidMenuException;
 import kitchenpos.exception.InvalidMenuProductException;
 
 @Entity
@@ -33,11 +32,6 @@ public class MenuProduct {
     private Long quantity;
 
     protected MenuProduct() {
-    }
-
-    // TODO: 테스트에서만 쓰이는 생성자
-    public MenuProduct(Product product, Long quantity) {
-        this(null, null, product, quantity);
     }
 
     public MenuProduct(Menu menu, Product product, Long quantity) {

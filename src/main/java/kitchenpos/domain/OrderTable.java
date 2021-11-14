@@ -87,11 +87,6 @@ public class OrderTable {
         return id;
     }
 
-    // TODO: 곧 제거
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Long getTableGroupId() {
         if (Objects.isNull(tableGroup)) {
             return null;

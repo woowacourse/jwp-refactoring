@@ -21,6 +21,7 @@ import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import kitchenpos.repository.TableGroupRepository;
 import kitchenpos.ui.request.TableGroupRequest;
+import kitchenpos.ui.response.OrderTableResponse;
 import kitchenpos.ui.response.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -66,10 +67,10 @@ class TableGroupServiceTest {
             // given
             OrderTable orderTable1 = orderTableRepository.save(OrderTable을_생성한다(1));
             OrderTable orderTable2 = orderTableRepository.save(OrderTable을_생성한다(2));
-            OrderTable orderTable3 = OrderTable을_생성한다(3);
-            orderTable3.setId(-1L);
+            OrderTable orderTable3 = orderTableRepository.save(OrderTable을_생성한다(3));
 
             TableGroupRequest request = TableGroupRequest를_생성한다(orderTable1, orderTable2, orderTable3);
+            orderTableRepository.delete(orderTable3);
 
             // when, then
             assertThatThrownBy(() -> tableGroupService.create(request))
@@ -212,6 +213,9 @@ class TableGroupServiceTest {
     }
 
     private Order Order를_생성한다(OrderTable orderTable, OrderStatus orderStatus) {
-        return new Order(orderTable, orderStatus);
+        Order order = new Order(orderTable);
+        order.changeStatus(orderStatus);
+
+        return order;
     }
 }

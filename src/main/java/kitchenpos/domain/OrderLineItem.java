@@ -8,10 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import kitchenpos.exception.InvalidMenuProductException;
 import kitchenpos.exception.InvalidOrderLineItemException;
 
-//TODO: 테스트 코드 작성
 @Entity
 public class OrderLineItem {
 
