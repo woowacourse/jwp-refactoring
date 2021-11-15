@@ -19,12 +19,14 @@ public class MenuGroupService {
     }
 
     @Transactional
-    public MenuGroupResponse create(final MenuGroupRequest request) {
-        MenuGroup menuGroup = menuGroupRepository.save(request.toEntity());
+    public MenuGroupResponse create(MenuGroupRequest request) {
+        MenuGroup menuGroup = request.toEntity();
+        menuGroupRepository.save(menuGroup);
         return MenuGroupResponse.of(menuGroup);
     }
 
     public List<MenuGroupResponse> list() {
-        return MenuGroupResponse.listOf(menuGroupRepository.findAll());
+        List<MenuGroup> menuGroups = menuGroupRepository.findAll();
+        return MenuGroupResponse.listOf(menuGroups);
     }
 }

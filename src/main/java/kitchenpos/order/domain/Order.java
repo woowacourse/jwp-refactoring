@@ -14,7 +14,7 @@ public class Order {
     private Long id;
     private Long orderTableId;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ORDER_DETAILS_ID")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
@@ -33,10 +33,6 @@ public class Order {
         this.orderLineItems = orderLineItems;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
-    }
-
-    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable.getId(), orderLineItems, OrderStatus.COOKING);
     }
 
     public void changeStatus(OrderStatus orderStatus) {

@@ -20,8 +20,7 @@ public class MenuProductResponse {
     }
 
     public static MenuProductResponse of(MenuProduct menuProduct) {
-        final Long productId = menuProduct.getProduct().getId();
-        return new MenuProductResponse(menuProduct.getId(), menuProduct.getSeq(), productId, menuProduct.getQuantity());
+        return new MenuProductResponse(menuProduct.getId(), menuProduct.getSeq(), menuProduct.getProductId(), menuProduct.getQuantity());
     }
 
     public static List<MenuProductResponse> listOf(List<MenuProduct> menuProducts) {

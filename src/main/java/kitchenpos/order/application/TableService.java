@@ -4,6 +4,7 @@ import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.order.dto.OrderTableRequest;
 import kitchenpos.order.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,8 @@ import java.util.List;
 @Transactional
 @Service
 public class TableService {
+
+    private OrderTableValidator orderTableValidator;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
 
@@ -33,17 +36,18 @@ public class TableService {
     }
 
     public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-        orderTable.changeEmptyStatus(request.isEmpty());
+        OrderTable orderTable = getOrderTableById(orderTableId);
+        orderTable.changeEmptyStatus(orderTableValidator, request.isEmpty());
         return OrderTableResponse.of(orderTable);
     }
 
     public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
+        OrderTable orderTable = getOrderTableById(orderTableId);
         orderTable.changeNumberOfGuests(request.getNumberOfGuests());
         return OrderTableResponse.of(orderTable);
+    }
+
+    private OrderTable getOrderTableById(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
     }
 }

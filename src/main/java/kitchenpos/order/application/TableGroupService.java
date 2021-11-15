@@ -1,48 +1,51 @@
 package kitchenpos.order.application;
 
+import java.util.List;
+import kitchenpos.order.domain.OrderTable;
+import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.TableGroup;
+import kitchenpos.order.domain.TableGroupRepository;
+import kitchenpos.order.domain.TableGroupValidator;
 import kitchenpos.order.dto.TableGroupRequest;
 import kitchenpos.order.dto.TableGroupResponse;
-import kitchenpos.order.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional
 @Service
 public class TableGroupService {
 
-    private final OrderRepository orderRepository;
+    private final TableGroupValidator tableGroupValidator;
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
 
-    public TableGroupService(OrderRepository orderRepository, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
-        this.orderRepository = orderRepository;
+    public TableGroupService(TableGroupValidator tableGroupValidator, OrderTableRepository orderTableRepository, TableGroupRepository tableGroupRepository) {
+        this.tableGroupValidator = tableGroupValidator;
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
     }
 
     public TableGroupResponse create(final TableGroupRequest request) {
+        TableGroup tableGroup = new TableGroup();
         List<OrderTable> orderTables = orderTableRepository.findAllById(request.getOrderTableIds());
-        if (orderTables.size() < 2) {
-            throw new IllegalArgumentException();
-        }
+        tableGroup.mapping(orderTables);
 
-        TableGroup tableGroup = tableGroupRepository.save(new TableGroup());
-        orderTables.forEach(it -> it.group(tableGroup.getId()));
+        tableGroupValidator.validateGroupCreation(tableGroup, request.getOrderTableIds());
+        tableGroupRepository.save(tableGroup);
+
+
         return TableGroupResponse.of(tableGroup, orderTables);
     }
 
     public void ungroup(final Long tableGroupId) {
+        TableGroup tableGroup = getTableGroupById(tableGroupId);
         List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-        if (orderRepository.existsByOrderTableIdInAndOrderStatusIn(orderTableIds, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
+        tableGroupValidator.validateGroupDeletion(orderTables);
         orderTables.forEach(OrderTable::ungroup);
+        tableGroupRepository.delete(tableGroup);
+    }
+
+    private TableGroup getTableGroupById(Long tableGroupId) {
+        return tableGroupRepository.findById(tableGroupId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹입니다."));
     }
 }

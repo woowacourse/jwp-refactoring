@@ -5,6 +5,7 @@ import kitchenpos.menu.domain.MenuProduct;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MenuRequest {
 
@@ -21,6 +22,11 @@ public class MenuRequest {
     }
 
     public Menu toEntity(List<MenuProduct> menuProducts) {
+        return new Menu(name, price, menuGroupId, menuProducts);
+    }
+
+    public Menu toEntity() {
+        List<MenuProduct> menuProducts = menuProductRequests.stream().map(MenuProductRequest::toEntity).collect(Collectors.toList());
         return new Menu(name, price, menuGroupId, menuProducts);
     }
 
