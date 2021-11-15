@@ -17,7 +17,7 @@ public class OrderLineItemRequest {
         this.quantity = quantity;
     }
 
-    public OrderLineItem toEntity(){
+    public OrderLineItem toEntity() {
         return new OrderLineItem(seq, menuId, quantity);
     }
 

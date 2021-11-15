@@ -19,11 +19,11 @@ public class OrderLineItemResponse {
         this.quantity = quantity;
     }
 
-    public static OrderLineItemResponse of(OrderLineItem orderLineItem){
+    public static OrderLineItemResponse of(OrderLineItem orderLineItem) {
         return new OrderLineItemResponse(orderLineItem.getId(), orderLineItem.getSeq(), orderLineItem.getMenuId(), orderLineItem.getQuantity());
     }
 
-    public static List<OrderLineItemResponse> listOf(List<OrderLineItem> orderLineItems){
+    public static List<OrderLineItemResponse> listOf(List<OrderLineItem> orderLineItems) {
         return orderLineItems.stream()
                 .map(OrderLineItemResponse::of)
                 .collect(Collectors.toList());

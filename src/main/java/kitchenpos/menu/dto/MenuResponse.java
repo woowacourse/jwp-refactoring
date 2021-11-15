@@ -1,9 +1,10 @@
 package kitchenpos.menu.dto;
 
+import kitchenpos.menu.domain.Menu;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.menu.domain.Menu;
 
 public class MenuResponse {
 
@@ -26,7 +27,7 @@ public class MenuResponse {
         return new MenuResponse(menu.getId(), menu.getName(), menu.getPrice(), menu.getMenuGroupId(), menuProductResponses);
     }
 
-    public static List<MenuResponse> listOf(List<Menu> menus){
+    public static List<MenuResponse> listOf(List<Menu> menus) {
         return menus.stream().map(MenuResponse::of).collect(Collectors.toList());
     }
 

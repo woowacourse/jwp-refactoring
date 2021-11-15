@@ -1,8 +1,9 @@
 package kitchenpos.order.domain;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Arrays;
 import java.util.Objects;
-import org.springframework.stereotype.Component;
 
 @Component
 public class OrderTableValidator {

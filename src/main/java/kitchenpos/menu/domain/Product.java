@@ -1,10 +1,10 @@
 package kitchenpos.menu.domain;
 
-import java.math.BigDecimal;
-import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.math.BigDecimal;
+import java.util.Objects;
 
 @Entity
 public class Product {

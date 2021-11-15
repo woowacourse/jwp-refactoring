@@ -31,8 +31,8 @@ public class TableGroupValidator {
         });
     }
 
-    public void validateUnmapping(List<OrderTable> orderTables){
-        orderTables.forEach(it->{
+    public void validateUnmapping(List<OrderTable> orderTables) {
+        orderTables.forEach(it -> {
             if (Objects.isNull(it.getTableGroupId())) {
                 throw new IllegalArgumentException("그룹 정보가 존재하지 않는 테이블입니다.");
             }

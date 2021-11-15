@@ -19,6 +19,7 @@ public class MenuGroupFixture {
     public static MenuGroupResponse createMenuGroupResponse(Long id, String name) {
         return new MenuGroupResponse(id, name);
     }
+
     public static MenuGroupResponse createMenuGroupResponse(Long id, MenuGroupRequest request) {
         return new MenuGroupResponse(id, request.getName());
     }

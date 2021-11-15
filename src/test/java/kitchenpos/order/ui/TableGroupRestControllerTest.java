@@ -1,9 +1,9 @@
 package kitchenpos.order.ui;
 
-import kitchenpos.support.RestControllerTest;
 import kitchenpos.order.application.TableGroupService;
 import kitchenpos.order.dto.TableGroupRequest;
 import kitchenpos.order.dto.TableGroupResponse;
+import kitchenpos.support.RestControllerTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

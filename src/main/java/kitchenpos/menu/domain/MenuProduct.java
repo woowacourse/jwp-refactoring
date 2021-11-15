@@ -1,6 +1,8 @@
 package kitchenpos.menu.domain;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 
 @Entity
 public class MenuProduct {
@@ -32,7 +34,7 @@ public class MenuProduct {
     public Long getProductId() {
         return productId;
     }
-    
+
     public long getQuantity() {
         return quantity;
     }
