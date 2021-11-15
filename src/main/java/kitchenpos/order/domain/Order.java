@@ -14,7 +14,7 @@ public class Order {
     private Long id;
     private Long orderTableId;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "ORDER_DETAILS_ID")
     private List<OrderLineItem> orderLineItems = new ArrayList<>();
 
@@ -26,17 +26,10 @@ public class Order {
     }
 
     public Order(Long orderTableId, List<OrderLineItem> orderLineItems, OrderStatus orderStatus) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목이 적절하지 않습니다.");
-        }
         this.orderTableId = orderTableId;
         this.orderLineItems = orderLineItems;
         this.orderStatus = orderStatus;
         this.orderedTime = LocalDateTime.now();
-    }
-
-    public static Order cooking(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable.getId(), orderLineItems, OrderStatus.COOKING);
     }
 
     public void changeStatus(OrderStatus orderStatus) {

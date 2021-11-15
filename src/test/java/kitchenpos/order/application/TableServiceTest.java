@@ -86,8 +86,7 @@ class TableServiceTest {
         void changeEmptyWithInvalidOrderStatus() {
             Long menuId = 1L;
             OrderTable orderTable = orderTableRepository.save(createOrderTable());
-            OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
-            orderRepository.save(new Order(orderTable.getId(), Collections.singletonList(orderLineItem), OrderStatus.MEAL));
+            orderRepository.save(new Order(orderTable.getId(), Collections.singletonList(createOrderLineItem(menuId)), OrderStatus.MEAL));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), createOrderTableRequest())).isInstanceOf(IllegalArgumentException.class);
         }

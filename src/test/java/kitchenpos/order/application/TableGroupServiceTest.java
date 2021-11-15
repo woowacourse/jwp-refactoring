@@ -28,9 +28,6 @@ class TableGroupServiceTest {
     private OrderTableRepository orderTableRepository;
 
     @Autowired
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Autowired
     private TableGroupRepository tableGroupRepository;
 
     @Autowired
@@ -105,8 +102,7 @@ class TableGroupServiceTest {
         @Test
         void ungroupWithInvalidStatusOrderTables() {
             Long menuId = 1L;
-            OrderLineItem orderLineItem = orderLineItemRepository.save(createOrderLineItem(menuId));
-            orderRepository.save(new Order(orderTable1.getId(), Collections.singletonList(orderLineItem), OrderStatus.MEAL));
+            orderRepository.save(new Order(orderTable1.getId(), Collections.singletonList(createOrderLineItem(menuId)), OrderStatus.MEAL));
             assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId)).isInstanceOf(IllegalArgumentException.class);
         }
     }
@@ -114,7 +110,6 @@ class TableGroupServiceTest {
     @AfterEach
     void tearDown() {
         orderRepository.deleteAll();
-        orderLineItemRepository.deleteAll();
         orderTableRepository.deleteAll();
         tableGroupRepository.deleteAll();
     }

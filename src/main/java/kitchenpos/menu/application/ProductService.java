@@ -19,12 +19,15 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponse create(final ProductRequest request) {
-        Product product = productRepository.save(request.toEntity());
+    public ProductResponse create(ProductRequest request) {
+        Product product = request.toEntity();
+        productRepository.save(product);
         return ProductResponse.of(product);
     }
 
+    @Transactional(readOnly = true)
     public List<ProductResponse> list() {
-        return ProductResponse.listOf(productRepository.findAll());
+        List<Product> products = productRepository.findAll();
+        return ProductResponse.listOf(products);
     }
 }

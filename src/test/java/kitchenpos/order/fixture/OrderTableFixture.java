@@ -11,18 +11,18 @@ public class OrderTableFixture {
     private static final int NUMBER_OF_GUESTS = 1;
     private static final boolean EMPTY = false;
 
+    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
+        return new OrderTable(numberOfGuests, empty);
+    }
+
     public static OrderTable createOrderTable(Long tableGroupId, int numberOfGuests, boolean empty) {
-        OrderTable orderTable = createOrderTable(numberOfGuests, empty);
+        OrderTable orderTable = new OrderTable(numberOfGuests, empty);
         orderTable.group(tableGroupId);
         return orderTable;
     }
 
     public static OrderTable createOrderTable(boolean empty) {
         return new OrderTable(NUMBER_OF_GUESTS, empty);
-    }
-
-    public static OrderTable createOrderTable(int numberOfGuests, boolean empty) {
-        return new OrderTable(numberOfGuests, empty);
     }
 
     public static OrderTable createOrderTable() {

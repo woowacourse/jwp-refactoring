@@ -12,11 +12,7 @@ public class OrderLineItemFixture {
     private static final long QUANTITY = 1L;
 
     public static OrderLineItem createOrderLineItem(Long menuId) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(SEQ);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(QUANTITY);
-        return orderLineItem;
+        return new OrderLineItem(SEQ, menuId, QUANTITY);
     }
 
     public static List<OrderLineItemResponse> createOrderLineItemResponses(List<OrderLineItemRequest> orderLineItemRequests) {

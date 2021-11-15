@@ -1,30 +1,30 @@
 package kitchenpos.order.application;
 
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTableRepository;
+import kitchenpos.order.domain.OrderTableValidator;
 import kitchenpos.order.dto.OrderTableRequest;
 import kitchenpos.order.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Transactional
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
+
+    private final OrderTableValidator orderTableValidator;
     private final OrderTableRepository orderTableRepository;
 
-    public TableService(OrderRepository orderRepository, OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableValidator orderTableValidator, OrderTableRepository orderTableRepository) {
+        this.orderTableValidator = orderTableValidator;
         this.orderTableRepository = orderTableRepository;
     }
 
-    public OrderTableResponse create(final OrderTableRequest request) {
-        OrderTable orderTable = orderTableRepository.save(new OrderTable(request.getNumberOfGuests(), request.isEmpty()));
+    public OrderTableResponse create(OrderTableRequest request) {
+        OrderTable orderTable = request.toEntity();
+        orderTableRepository.save(orderTable);
         return OrderTableResponse.of(orderTable);
     }
 
@@ -32,18 +32,19 @@ public class TableService {
         return OrderTableResponse.listOf(orderTableRepository.findAll());
     }
 
-    public OrderTableResponse changeEmpty(final Long orderTableId, final OrderTableRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        if (orderRepository.existsByOrderTableIdAndOrderStatusIn(orderTable.getId(), Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-        orderTable.changeEmptyStatus(request.isEmpty());
+    public OrderTableResponse changeEmpty(Long orderTableId, OrderTableRequest request) {
+        OrderTable orderTable = getOrderTableById(orderTableId);
+        orderTable.changeEmptyStatus(orderTableValidator, request.isEmpty());
         return OrderTableResponse.of(orderTable);
     }
 
-    public OrderTableResponse changeNumberOfGuests(final Long orderTableId, final OrderTableRequest request) {
-        OrderTable orderTable = orderTableRepository.findById(orderTableId).orElseThrow(IllegalArgumentException::new);
-        orderTable.changeNumberOfGuests(request.getNumberOfGuests());
+    public OrderTableResponse changeNumberOfGuests(Long orderTableId, OrderTableRequest request) {
+        OrderTable orderTable = getOrderTableById(orderTableId);
+        orderTable.changeNumberOfGuests(orderTableValidator, request.getNumberOfGuests());
         return OrderTableResponse.of(orderTable);
+    }
+
+    private OrderTable getOrderTableById(Long orderTableId) {
+        return orderTableRepository.findById(orderTableId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 테이블입니다."));
     }
 }

@@ -16,7 +16,7 @@ public class Menu {
     private BigDecimal price;
     private Long menuGroupId;
 
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "MENU_ID")
     private List<MenuProduct> menuProducts = new ArrayList<>();
 
@@ -25,7 +25,7 @@ public class Menu {
 
     public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("적절하지 않은 금액입니다.");
         }
         this.name = name;
         this.price = price;
