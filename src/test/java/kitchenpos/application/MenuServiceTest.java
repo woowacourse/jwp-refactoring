@@ -17,6 +17,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuGroup;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuRequestEvent;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 
 @ExtendWith(MockitoExtension.class)
 class MenuServiceTest {
@@ -52,6 +54,9 @@ class MenuServiceTest {
     @Mock
     private ProductService productService;
 
+    @Mock
+    private ApplicationEventPublisher publisher;
+
     @BeforeEach
     void setUp() {
         menuGroup = new MenuGroup(1L, "한마리치킨");
@@ -71,16 +76,12 @@ class MenuServiceTest {
     @DisplayName("메뉴 생성")
     @Test
     void create() {
-        given(menuRepository.save(any(Menu.class)))
-            .willReturn(menu);
-
         MenuRequest menuRequest = new MenuRequest("후라이드치킨", 16000.00, menuGroup.getId(),
             Collections.singletonList(product.getId()), 1);
 
         menuService.create(menuRequest);
 
-        verify(menuRepository).save(any(Menu.class));
-        verify(menuProductService).saveAll(any(Menu.class), anyList(), anyLong());
+        verify(publisher).publishEvent(any(MenuRequestEvent.class));
     }
 
 

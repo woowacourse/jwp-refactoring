@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.dto.MenuRequest;
+import kitchenpos.menu.dto.MenuRequestEvent;
 import kitchenpos.menu.repository.MenuRepository;
 import kitchenpos.order.domain.OrderLineItem;
 import kitchenpos.product.application.ProductService;
 import kitchenpos.product.domain.Product;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,20 +19,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class MenuService {
 
     private final MenuRepository menuRepository;
-    private final MenuProductService menuProductService;
-    private final ProductService productService;
     private final MenuGroupService menuGroupService;
+    private final ApplicationEventPublisher publisher;
 
     public MenuService(
         final MenuRepository menuRepository,
-        final MenuProductService menuProductService,
-        final ProductService productService,
-        final MenuGroupService menuGroupService
+        final MenuGroupService menuGroupService,
+        final ApplicationEventPublisher publisher
     ) {
         this.menuRepository = menuRepository;
-        this.menuProductService = menuProductService;
-        this.productService = productService;
         this.menuGroupService = menuGroupService;
+        this.publisher = publisher;
     }
 
     @Transactional
@@ -43,14 +42,9 @@ public class MenuService {
             menuRequest.getMenuGroupId()
         );
 
-        final Menu savedMenu = menuRepository.save(menu);
+        publisher.publishEvent(new MenuRequestEvent(menu, menuRequest));
 
-        List<Product> products = productService.findAllById(menuRequest.getProductIds());
-
-        List<MenuProduct> menuProducts = menuProductService
-            .saveAll(savedMenu, products, menuRequest.getQuantity());
-        savedMenu.addMenuProducts(menuProducts);
-        return savedMenu;
+        return menu;
     }
 
     public List<Menu> list() {
