@@ -25,4 +25,11 @@ public class TableGroup {
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
+
+    public void mapping(List<OrderTable> orderTables) {
+        if (orderTables.size() < 2) {
+            throw new IllegalArgumentException();
+        }
+        orderTables.forEach(it -> it.group(id));
+    }
 }
