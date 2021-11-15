@@ -5,9 +5,10 @@ import java.util.List;
 import kitchenpos.integration.api.texture.ProductTexture;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
-import kitchenpos.ui.request.MenuCreateRequest;
-import kitchenpos.ui.request.MenuProductRequest;
-import kitchenpos.application.response.MenuResponse;
+import kitchenpos.menu.ui.request.MenuCreateRequest;
+import kitchenpos.menu.ui.request.MenuProductRequest;
+import kitchenpos.menu.application.response.MenuResponse;
+import kitchenpos.menu.ui.request.MenuUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,5 +41,12 @@ public class MenuApi {
         return mockMvcUtils.request()
             .get(BASE_URL)
             .asMultiResult(MenuResponse.class);
+    }
+
+    public MockMvcResponse<MenuResponse> 메뉴_수정(Long menuId, String name, BigDecimal price) {
+        return mockMvcUtils.request()
+            .put(BASE_URL + "/{menuId}", menuId)
+            .content(MenuUpdateRequest.create(name, price))
+            .asSingleResult(MenuResponse.class);
     }
 }

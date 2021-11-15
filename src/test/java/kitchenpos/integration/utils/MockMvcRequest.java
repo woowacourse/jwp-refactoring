@@ -90,6 +90,7 @@ public class MockMvcRequest {
 
             return new MockMvcResponse<>(result, HttpStatus.resolve(status));
         } catch (Exception exception) {
+            exception.printStackTrace();
             return new MockMvcResponse<>(null, HttpStatus.BAD_REQUEST, exception.getCause().getMessage());
         }
     }

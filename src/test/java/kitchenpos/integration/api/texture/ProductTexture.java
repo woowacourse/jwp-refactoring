@@ -1,8 +1,7 @@
 package kitchenpos.integration.api.texture;
 
 import java.math.BigDecimal;
-import kitchenpos.domain.Product;
-import kitchenpos.ui.request.ProductCreateRequest;
+import kitchenpos.product.ui.request.ProductCreateRequest;
 
 public enum ProductTexture {
     강정치킨(ProductCreateRequest.create("강정치킨", new BigDecimal(17000))),

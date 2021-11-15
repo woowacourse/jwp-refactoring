@@ -1,12 +1,11 @@
 package kitchenpos.integration.api;
 
-import kitchenpos.application.response.OrderResponse;
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.application.response.OrderResponse;
+import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.integration.utils.MockMvcResponse;
 import kitchenpos.integration.utils.MockMvcUtils;
-import kitchenpos.ui.request.OrderCreateRequest;
-import kitchenpos.ui.request.OrderStatusRequest;
+import kitchenpos.order.ui.request.OrderCreateRequest;
+import kitchenpos.order.ui.request.OrderStatusRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
