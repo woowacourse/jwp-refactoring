@@ -76,12 +76,4 @@ public class OrderTable {
     public void changeEmpty(boolean empty) {
         this.empty = empty;
     }
-
-//    public boolean isChangeable() {
-//        return orders
-//            .stream()
-//            .filter(Order::unableUngroup)
-//            .findAny()
-//            .isPresent();
-//    }
 }
