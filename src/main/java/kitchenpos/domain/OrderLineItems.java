@@ -1,13 +1,14 @@
 package kitchenpos.domain;
 
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class OrderLineItems {
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
     private List<OrderLineItem> elements;
 
     protected OrderLineItems() {

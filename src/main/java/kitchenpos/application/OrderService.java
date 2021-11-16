@@ -25,15 +25,13 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
-    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
-    public OrderService(final MenuRepository menuRepository, final OrderRepository orderRepository,
-                        final OrderLineItemRepository orderLineItemRepository,
+    public OrderService(final MenuRepository menuRepository,
+                        final OrderRepository orderRepository,
                         final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
-        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -44,7 +42,6 @@ public class OrderService {
         List<OrderLineItem> orderLineItems = newOrderLineItem(orderRequest);
 
         Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
-        orderLineItemRepository.saveAll(orderLineItems);
 
         return OrderResponse.from(savedOrder);
     }
