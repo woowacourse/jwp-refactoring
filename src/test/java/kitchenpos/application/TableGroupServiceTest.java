@@ -132,7 +132,7 @@ public class TableGroupServiceTest extends ServiceTest {
     @DisplayName("이미 단체 지정이 된 테이블을 단체 지정으로 등록할 경우 예외 처리")
     @Test
     void createWhenSomeOrderTablesAreAlreadyDesignatedAsGroup() {
-        TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(orderTableRepository.findAllByIdIn(convertIdsFromOrderTables(orderTables))).thenReturn(
             orderTables
@@ -170,8 +170,7 @@ public class TableGroupServiceTest extends ServiceTest {
             tableGroupId,
             Arrays.asList(orderTable1, orderTable2)
         );
-        Order order = new Order(orderTable1,
-            Collections.singletonList(new OrderLineItem(menu, 2L)));
+        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

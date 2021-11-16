@@ -43,7 +43,7 @@ public class TableServiceTest extends ServiceTest {
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
-        TableGroup tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
     }
 
     @DisplayName("주문 테이블 등록")
@@ -135,8 +135,7 @@ public class TableServiceTest extends ServiceTest {
     @Test
     void changeEmptyWithCookingOrMealStatus() {
         Menu menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
-        Order order = new Order(orderTable1,
-            Collections.singletonList(new OrderLineItem(menu, 2L)));
+        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);

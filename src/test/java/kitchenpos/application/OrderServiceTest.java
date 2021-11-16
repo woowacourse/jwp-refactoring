@@ -20,7 +20,6 @@ import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
-import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.OrderRequest;
@@ -43,9 +42,6 @@ public class OrderServiceTest extends ServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemRepository orderLineItemRepository;
-
-    @Mock
     private OrderTableRepository orderTableRepository;
 
     @InjectMocks
@@ -54,16 +50,14 @@ public class OrderServiceTest extends ServiceTest {
     private OrderTable orderTable1;
     private Order order1;
     private Order order2;
-    private TableGroup tableGroup;
-    private MenuGroup menuGroup;
     private Menu menu;
 
     @BeforeEach
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
-        tableGroup = new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
-        menuGroup = new MenuGroup("치킨");
+        new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        MenuGroup menuGroup = new MenuGroup("치킨");
         menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000), menuGroup);
         order1 = new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
         order2 = new Order(orderTable2, Collections.singletonList(new OrderLineItem(menu, 2L)));
@@ -85,9 +79,6 @@ public class OrderServiceTest extends ServiceTest {
                 order.getOrderLineItems()
             );
         });
-        when(orderLineItemRepository.saveAll(any())).thenAnswer(
-            invocation -> invocation.getArgument(0)
-        );
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
         OrderRequest orderRequest = new OrderRequest(
@@ -97,11 +88,10 @@ public class OrderServiceTest extends ServiceTest {
         OrderResponse actual = orderService.create(orderRequest);
 
         verify(orderRepository, times(1)).save(any());
-        verify(orderLineItemRepository, times(1)).saveAll(any());
         assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name());
         assertThat(actual.getId()).isNotNull()
             .isEqualTo(actual.getOrderLineItems().get(0).getOrderId());
-        assertThat(actual.getOrderLineItems()).hasSize(1);
+        assertThat(actual.getOrderLineItems()).hasSameSizeAs(orderRequest.getOrderLineItems());
     }
 
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
