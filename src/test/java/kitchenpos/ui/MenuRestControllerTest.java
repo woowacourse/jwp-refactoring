@@ -1,9 +1,7 @@
 package kitchenpos.ui;
 
-import kitchenpos.MenuFixture;
 import kitchenpos.application.MenuService;
-import kitchenpos.domain.menu.Menu;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.ui.dto.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -32,13 +30,13 @@ class MenuRestControllerTest extends ControllerTest {
     @DisplayName("메뉴를 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        long menuId = 1L;
-        Menu menu = createMenu1(createMenuGroup1(), Collections.singletonList(createProduct1()));
-        MenuResponse response = MenuResponse.of(menu);
+        Long menuId = 1L;
+        MenuRequest request = new MenuRequest(MENU_NAME1, MENU_PRICE, MENU_GROUP_ID, Collections.singletonList(new MenuProductRequest(1L, 1)));
+        MenuResponse response = new MenuResponse(menuId, MENU_NAME1, MENU_PRICE, MenuGroupResponse.of(createMenuGroup1()), MenuProductResponse.toList(Collections.singletonList(createMenuProduct(createProduct1()))));
         when(menuService.create(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/menus")
-                .content(objectMapper.writeValueAsString(menu))
+                .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/menus/" + menuId))
@@ -53,7 +51,7 @@ class MenuRestControllerTest extends ControllerTest {
                 MenuResponse.of(createMenu2(createMenuGroup2(), Collections.singletonList(createProduct2()))));
         when(menuService.list()).thenReturn(response);
 
-        mockMvc.perform(get("/api/responses"))
+        mockMvc.perform(get("/api/menus"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
