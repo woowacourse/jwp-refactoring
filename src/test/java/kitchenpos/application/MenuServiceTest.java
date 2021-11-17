@@ -47,18 +47,21 @@ class MenuServiceTest {
     @Test
     void create() {
         //given
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setName("떡볶이");
-        product1.setPrice(new BigDecimal(3500));
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setName("순대");
-        product2.setPrice(new BigDecimal(4000));
-        Product product3 = new Product();
-        product3.setId(3L);
-        product3.setName("튀김");
-        product3.setPrice(new BigDecimal(4000));
+        Product product1 = new Product.ProductBuilder()
+                            .setId(1L)
+                            .setName("떡볶이")
+                            .setPrice(new BigDecimal(3500))
+                            .build();
+        Product product2 = new Product.ProductBuilder()
+                            .setId(2L)
+                            .setName("순대")
+                            .setPrice(new BigDecimal(4000))
+                            .build();
+        Product product3 = new Product.ProductBuilder()
+                            .setId(3L)
+                            .setName("튀김")
+                            .setPrice(new BigDecimal(4000))
+                            .build();
 
         given(productDao.findById(1L))
                 .willReturn(Optional.of(product1));
@@ -67,21 +70,24 @@ class MenuServiceTest {
         given(productDao.findById(3L))
                 .willReturn(Optional.of(product3));
 
-        MenuProduct menuProduct1 = new MenuProduct();
-        menuProduct1.setSeq(1L);
-        menuProduct1.setMenuId(1L);
-        menuProduct1.setProductId(1L);
-        menuProduct1.setQuantity(1L);
-        MenuProduct menuProduct2 = new MenuProduct();
-        menuProduct1.setSeq(1L);
-        menuProduct1.setMenuId(1L);
-        menuProduct2.setProductId(2L);
-        menuProduct2.setQuantity(1L);
-        MenuProduct menuProduct3 = new MenuProduct();
-        menuProduct1.setSeq(1L);
-        menuProduct1.setMenuId(1L);
-        menuProduct3.setProductId(3L);
-        menuProduct3.setQuantity(1L);
+        MenuProduct menuProduct1 = new MenuProduct.MenuProductBuilder()
+                                    .setSeq(1L)
+                                    .setMenuId(1L)
+                                    .setProductId(1L)
+                                    .setQuantity(1L)
+                                    .build();
+        MenuProduct menuProduct2 = new MenuProduct.MenuProductBuilder()
+                                    .setSeq(1L)
+                                    .setMenuId(1L)
+                                    .setProductId(2L)
+                                    .setQuantity(1L)
+                                    .build();
+        MenuProduct menuProduct3 = new MenuProduct.MenuProductBuilder()
+                                    .setSeq(1L)
+                                    .setMenuId(1L)
+                                    .setProductId(3L)
+                                    .setQuantity(1L)
+                                    .build();
 
         given(menuProductDao.save(menuProduct1))
                 .willReturn(menuProduct1);
@@ -90,11 +96,12 @@ class MenuServiceTest {
         given(menuProductDao.save(menuProduct3))
                 .willReturn(menuProduct3);
 
-        Menu menu = new Menu();
-        menu.setId(1L);
-        menu.setName("떡순튀");
-        menu.setPrice(new BigDecimal(11000));
-        menu.setMenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3));
+        Menu menu = new Menu.MenuBuilder()
+                .setId(1L)
+                .setName("떡순튀")
+                .setPrice(new BigDecimal(11000))
+                .setMenuProducts(List.of(menuProduct1, menuProduct2, menuProduct3))
+                .build();
 
         given(menuGroupDao.existsById(menu.getMenuGroupId()))
                 .willReturn(true);
@@ -115,7 +122,7 @@ class MenuServiceTest {
     @Test
     void createFailInvalidPrice() {
         //given
-        Menu menu = new Menu();
+        Menu menu = new Menu.MenuBuilder().build();
         menu.setPrice(new BigDecimal(-1000));
 
         //when
@@ -129,7 +136,7 @@ class MenuServiceTest {
     @Test
     void createFailNotExistMenuGroup() {
         //given
-        Menu menu = new Menu();
+        Menu menu = new Menu.MenuBuilder().build();
         menu.setPrice(new BigDecimal(1000));
 
         given(menuGroupDao.existsById(menu.getMenuGroupId()))
@@ -145,11 +152,13 @@ class MenuServiceTest {
     @Test
     void createFailNotExistProduct() {
         //given
-        Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(1000));
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menu.setMenuProducts(List.of(menuProduct));
+        MenuProduct menuProduct = new MenuProduct.MenuProductBuilder()
+                .setProductId(1L)
+                .build();
+        Menu menu = new Menu.MenuBuilder()
+                            .setPrice(new BigDecimal(1000))
+                            .setMenuProducts(List.of(menuProduct))
+                            .build();
 
         given(menuGroupDao.existsById(menu.getMenuGroupId()))
                 .willReturn(true);
@@ -166,14 +175,22 @@ class MenuServiceTest {
     @Test
     void createFailInvalidMenuPrice() {
         //given
-        Menu menu = new Menu();
-        menu.setPrice(new BigDecimal(10000));
-        MenuProduct menuProduct = new MenuProduct();
-        menuProduct.setProductId(1L);
-        menuProduct.setQuantity(1L);
-        menu.setMenuProducts(List.of(menuProduct));
-        Product product = new Product();
-        product.setPrice(new BigDecimal(9999));
+        MenuProduct menuProduct = new MenuProduct.MenuProductBuilder()
+                .setSeq(1L)
+                .setMenuId(1L)
+                .setProductId(1L)
+                .setQuantity(1L)
+                .build();
+
+        Menu menu = new Menu.MenuBuilder()
+                    .setPrice(new BigDecimal(10000))
+                    .setMenuProducts(List.of(menuProduct))
+                    .build();
+
+        Product product = new Product.ProductBuilder()
+                            .setId(1L)
+                            .setPrice(new BigDecimal(9999))
+                            .build();
 
         given(menuGroupDao.existsById(menu.getMenuGroupId()))
                 .willReturn(true);
@@ -190,8 +207,8 @@ class MenuServiceTest {
     @Test
     void list() {
         //given
-        Menu menu1 = new Menu();
-        Menu menu2 = new Menu();
+        Menu menu1 = new Menu.MenuBuilder().build();
+        Menu menu2 = new Menu.MenuBuilder().build();
         List<Menu> expected = List.of(menu1, menu2);
         given(menuDao.findAll())
                 .willReturn(expected);

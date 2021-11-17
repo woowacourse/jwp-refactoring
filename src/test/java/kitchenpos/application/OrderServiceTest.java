@@ -50,25 +50,29 @@ class OrderServiceTest {
     @Test
     void create() {
         //given
-        Order order = new Order();
-
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setSeq(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1L);
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setSeq(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem.OrderLineItemBuilder()
+                                        .setSeq(1L)
+                                        .setMenuId(1L)
+                                        .setOrderId(1L)
+                                        .setQuantity(1L)
+                                        .build();
+        OrderLineItem orderLineItem2 = new OrderLineItem.OrderLineItemBuilder()
+                                        .setSeq(2L)
+                                        .setMenuId(2L)
+                                        .setOrderId(1L)
+                                        .setQuantity(1L)
+                                        .build();
 
         List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-        order.setOrderLineItems(orderLineItems);
-        order.setOrderTableId(1L);
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setId(order.getOrderTableId());
+        Order order = new Order.OrderBuilder()
+                .setOrderLineItems(orderLineItems)
+                .setOrderTableId(1L)
+                .build();
+
+        OrderTable orderTable = new OrderTable.OrderTableBuilder()
+                                    .setId(order.getOrderTableId())
+                                    .build();
 
         given(menuDao.countByIdIn(List.of(orderLineItem1.getMenuId(), orderLineItem2.getMenuId())))
                 .willReturn((long) orderLineItems.size());
@@ -96,8 +100,9 @@ class OrderServiceTest {
     @Test
     void createFailEmptyOrderLineItem() {
         //given
-        Order order = new Order();
-        order.setOrderLineItems(Collections.emptyList());
+        Order order = new Order.OrderBuilder()
+                            .setOrderLineItems(Collections.emptyList())
+                            .build();
         //when
         //then
         assertThatThrownBy(() -> orderService.create(order))
@@ -109,21 +114,24 @@ class OrderServiceTest {
     @Test
     void createFailNotExistMenu() {
         //given
-        Order order = new Order();
-
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setSeq(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1L);
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setSeq(2L);
-        orderLineItem2.setMenuId(3L);
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem.OrderLineItemBuilder()
+                                            .setSeq(1L)
+                                            .setMenuId(1L)
+                                            .setOrderId(1L)
+                                            .setQuantity(1L)
+                                            .build();
+        OrderLineItem orderLineItem2 = new OrderLineItem.OrderLineItemBuilder()
+                                            .setSeq(2L)
+                                            .setMenuId(3L)
+                                            .setOrderId(1L)
+                                            .setQuantity(1L)
+                                            .build();
 
         List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-        order.setOrderLineItems(orderLineItems);
+
+        Order order = new Order.OrderBuilder()
+                .setOrderLineItems(orderLineItems)
+                .build();
 
         given(menuDao.countByIdIn(List.of(1L, 3L)))
                 .willReturn(1L);
@@ -138,23 +146,27 @@ class OrderServiceTest {
     @Test
     void createFailNotExistOrderTable() {
         //given
-        Order order = new Order();
 
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setSeq(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1L);
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setSeq(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem.OrderLineItemBuilder()
+                .setSeq(1L)
+                .setMenuId(1L)
+                .setOrderId(1L)
+                .setQuantity(1L)
+                .build();
+        OrderLineItem orderLineItem2 = new OrderLineItem.OrderLineItemBuilder()
+                .setSeq(2L)
+                .setMenuId(2L)
+                .setOrderId(1L)
+                .setQuantity(1L)
+                .build();
 
         List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-        order.setOrderLineItems(orderLineItems);
 
-        order.setOrderTableId(1L);
+        Order order = new Order.OrderBuilder()
+                .setOrderLineItems(orderLineItems)
+                .setOrderTableId(1L)
+                .build();
+
         given(menuDao.countByIdIn(List.of(1L, 2L)))
                 .willReturn(2L);
         given(orderTableDao.findById(order.getOrderTableId()))
@@ -170,26 +182,30 @@ class OrderServiceTest {
     @Test
     void createFailEmptyOrderTable() {
         //given
-        Order order = new Order();
 
-        OrderLineItem orderLineItem1 = new OrderLineItem();
-        orderLineItem1.setSeq(1L);
-        orderLineItem1.setMenuId(1L);
-        orderLineItem1.setOrderId(1L);
-        orderLineItem1.setQuantity(1L);
-        OrderLineItem orderLineItem2 = new OrderLineItem();
-        orderLineItem2.setSeq(2L);
-        orderLineItem2.setMenuId(2L);
-        orderLineItem2.setOrderId(1L);
-        orderLineItem2.setQuantity(1L);
+        OrderLineItem orderLineItem1 = new OrderLineItem.OrderLineItemBuilder()
+                .setSeq(1L)
+                .setMenuId(1L)
+                .setOrderId(1L)
+                .setQuantity(1L)
+                .build();
+        OrderLineItem orderLineItem2 = new OrderLineItem.OrderLineItemBuilder()
+                .setSeq(2L)
+                .setMenuId(2L)
+                .setOrderId(1L)
+                .setQuantity(1L)
+                .build();
 
         List<OrderLineItem> orderLineItems = List.of(orderLineItem1, orderLineItem2);
-        order.setOrderLineItems(orderLineItems);
 
-        order.setOrderTableId(1L);
+        Order order = new Order.OrderBuilder()
+                .setOrderLineItems(orderLineItems)
+                .setOrderTableId(1L)
+                .build();
 
-        OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(true);
+        OrderTable orderTable = new OrderTable.OrderTableBuilder()
+                                    .setEmpty(true)
+                                    .build();
 
         given(menuDao.countByIdIn(List.of(1L, 2L)))
                 .willReturn(2L);
@@ -206,10 +222,12 @@ class OrderServiceTest {
     @Test
     void list() {
         //given
-        Order order1 = new Order();
-        order1.setId(1L);
-        Order order2 = new Order();
-        order2.setId(2L);
+        Order order1 = new Order.OrderBuilder()
+                            .setId(1L)
+                            .build();
+        Order order2 = new Order.OrderBuilder()
+                            .setId(2L)
+                            .build();
 
         List<Order> expected = List.of(order1, order2);
 
@@ -230,13 +248,16 @@ class OrderServiceTest {
     void changeOrderStatus(String status) {
         //given
         Long orderId = 1L;
-        Order savedOrder = new Order();
-        Order changeOrder = new Order();
-        changeOrder.setOrderStatus(status);
+        Order savedOrder;
+        Order changeOrder = new Order.OrderBuilder()
+                .setOrderStatus(status)
+                .build();
 
         OrderLineItem orderLineItem = new OrderLineItem();
         List<OrderLineItem> orderLineItems = List.of(orderLineItem);
-        savedOrder.setOrderLineItems(orderLineItems);
+        savedOrder = new Order.OrderBuilder()
+                        .setOrderLineItems(orderLineItems)
+                        .build();
 
         given(orderDao.findById(orderId))
                 .willReturn(Optional.of(savedOrder));
@@ -257,10 +278,12 @@ class OrderServiceTest {
     void changeOrderStatusFailAlreadyCompletionStats() {
         //given
         Long orderId = 1L;
-        Order savedOrder = new Order();
-        savedOrder.setOrderStatus("COMPLETION");
-        Order changeOrder = new Order();
-        changeOrder.setOrderStatus("COMPLETION");
+        Order savedOrder = new Order.OrderBuilder()
+                            .setOrderStatus("COMPLETION")
+                            .build();
+        Order changeOrder = new Order.OrderBuilder()
+                            .setOrderStatus("COMPLETION")
+                            .build();
 
         given(orderDao.findById(orderId))
                 .willReturn(Optional.of(savedOrder));

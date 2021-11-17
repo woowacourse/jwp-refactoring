@@ -2,7 +2,6 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
@@ -44,19 +43,21 @@ class TableGroupServiceTest {
     @Test
     void create() {
         //given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setId(1L);
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                                .setId(1L)
+                                .setEmpty(true)
+                                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                                .setId(2L)
+                                .setEmpty(true)
+                                .build();
 
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
-        tableGroup.setOrderTables(orderTables);
+        TableGroup tableGroup = new TableGroup.TableGroupBuilder()
+                .setId(1L)
+                .setOrderTables(orderTables)
+                .build();
 
         given(orderTableDao.findAllByIdIn(List.of(orderTable1.getId(), orderTable2.getId())))
                 .willReturn(orderTables);
@@ -77,8 +78,9 @@ class TableGroupServiceTest {
     @Test
     void createFailInvalidOrderTableCount() {
         //given
-        TableGroup tableGroup = new TableGroup();
-        tableGroup.setOrderTables(Collections.emptyList());
+        TableGroup tableGroup = new TableGroup.TableGroupBuilder()
+                                    .setOrderTables(Collections.emptyList())
+                                    .build();
         //when
         //then
         assertThatThrownBy(() -> tableGroupService.create(tableGroup))
@@ -90,15 +92,19 @@ class TableGroupServiceTest {
     @Test
     void createFailNotExistOrderTable() {
         //given
-        TableGroup tableGroup = new TableGroup();
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setId(1L)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setId(2L)
+                .build();
 
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroup tableGroup = new TableGroup.TableGroupBuilder()
+                .setId(1L)
+                .setOrderTables(orderTables)
+                .build();
 
         given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
                 .willReturn(List.of(orderTable1));
@@ -113,16 +119,20 @@ class TableGroupServiceTest {
     @Test
     void createFailNotEmptyTable() {
         //given
-        TableGroup tableGroup = new TableGroup();
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setId(1L)
+                .setEmpty(false)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setId(2L)
+                .build();
 
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroup tableGroup = new TableGroup.TableGroupBuilder()
+                .setId(1L)
+                .setOrderTables(orderTables)
+                .build();
 
         given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
                 .willReturn(List.of(orderTable1, orderTable2));
@@ -137,18 +147,22 @@ class TableGroupServiceTest {
     @Test
     void createFailNonNullGroupTable() {
         //given
-        TableGroup tableGroup = new TableGroup();
-
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setEmpty(true);
-        orderTable1.setTableGroupId(1L);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(true);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setId(1L)
+                .setEmpty(true)
+                .setTableGroupId(1L)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setId(2L)
+                .setEmpty(true)
+                .build();
 
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
-        tableGroup.setOrderTables(orderTables);
+
+        TableGroup tableGroup = new TableGroup.TableGroupBuilder()
+                .setId(1L)
+                .setOrderTables(orderTables)
+                .build();
 
         given(orderTableDao.findAllByIdIn(List.of(1L, 2L)))
                 .willReturn(List.of(orderTable1, orderTable2));
@@ -165,14 +179,16 @@ class TableGroupServiceTest {
         //given
         Long tableGroupId = 1L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
-        orderTable2.setTableGroupId(1L);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setId(1L)
+                .setEmpty(false)
+                .setTableGroupId(1L)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setId(2L)
+                .setEmpty(false)
+                .setTableGroupId(1L)
+                .build();
 
         given(orderTableDao.findAllByTableGroupId(tableGroupId))
                 .willReturn(List.of(orderTable1, orderTable2));
@@ -196,14 +212,16 @@ class TableGroupServiceTest {
         //given
         Long tableGroupId = 1L;
 
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setId(1L);
-        orderTable1.setTableGroupId(1L);
-        orderTable1.setEmpty(false);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setId(2L);
-        orderTable2.setEmpty(false);
-        orderTable2.setTableGroupId(1L);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                .setId(1L)
+                .setEmpty(false)
+                .setTableGroupId(1L)
+                .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                .setId(2L)
+                .setEmpty(false)
+                .setTableGroupId(1L)
+                .build();
 
         given(orderTableDao.findAllByTableGroupId(tableGroupId))
                 .willReturn(List.of(orderTable1, orderTable2));

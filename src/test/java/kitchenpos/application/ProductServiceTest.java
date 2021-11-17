@@ -27,10 +27,11 @@ class ProductServiceTest {
     @Test
     void create() {
         //given
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("떡볶이");
-        product.setPrice(new BigDecimal(3500));
+        Product product = new Product.ProductBuilder()
+                            .setId(1L)
+                            .setName("떡볶이")
+                            .setPrice(new BigDecimal(3500))
+                            .build();
 
         given(productDao.save(product))
                 .willReturn(product);
@@ -45,10 +46,11 @@ class ProductServiceTest {
     @Test
     void createFailInvalidPrice() {
         //given
-        Product product = new Product();
-        product.setId(1L);
-        product.setName("떡볶이");
-        product.setPrice(new BigDecimal(-3500));
+        Product product = new Product.ProductBuilder()
+                            .setId(1L)
+                            .setName("떡볶이")
+                            .setPrice(new BigDecimal(-3500))
+                            .build();
 
         //when
         //then

@@ -36,8 +36,9 @@ class TableServiceTest {
     @Test
     void create() {
         //given
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(4);
+        OrderTable orderTable = new OrderTable.OrderTableBuilder()
+                                    .setNumberOfGuests(4)
+                                    .build();
 
         given(orderTableDao.save(orderTable))
                 .willReturn(orderTable);
@@ -53,10 +54,12 @@ class TableServiceTest {
     @Test
     void list() {
         //given
-        OrderTable orderTable1 = new OrderTable();
-        orderTable1.setNumberOfGuests(4);
-        OrderTable orderTable2 = new OrderTable();
-        orderTable2.setNumberOfGuests(2);
+        OrderTable orderTable1 = new OrderTable.OrderTableBuilder()
+                                    .setNumberOfGuests(4)
+                                    .build();
+        OrderTable orderTable2 = new OrderTable.OrderTableBuilder()
+                                    .setNumberOfGuests(2)
+                                    .build();
 
         List<OrderTable> orderTables = List.of(orderTable1, orderTable2);
 
@@ -75,10 +78,12 @@ class TableServiceTest {
     void changeEmpty() {
         //given
         Long orderTableId = 1L;
-        OrderTable savedTable = new OrderTable();
-        savedTable.setId(1L);
-        OrderTable changeTable = new OrderTable();
-        changeTable.setEmpty(true);
+        OrderTable savedTable = new OrderTable.OrderTableBuilder()
+                                    .setId(1L)
+                                    .build();
+        OrderTable changeTable = new OrderTable.OrderTableBuilder()
+                                    .setEmpty(true)
+                                    .build();
 
         given(orderTableDao.findById(orderTableId))
                 .willReturn(Optional.of(savedTable));
@@ -103,11 +108,14 @@ class TableServiceTest {
     void changeEmptyFailInvalidGroupTableID() {
         //given
         Long orderTableId = 1L;
-        OrderTable savedTable = new OrderTable();
-        savedTable.setId(1L);
-        savedTable.setTableGroupId(1L);
-        OrderTable changeTable = new OrderTable();
-        changeTable.setEmpty(true);
+
+        OrderTable savedTable = new OrderTable.OrderTableBuilder()
+                                    .setId(1L)
+                                    .setTableGroupId(1L)
+                                    .build();
+        OrderTable changeTable = new OrderTable.OrderTableBuilder()
+                                    .setEmpty(true)
+                                    .build();
 
         given(orderTableDao.findById(orderTableId))
                 .willReturn(Optional.of(savedTable));
@@ -123,10 +131,12 @@ class TableServiceTest {
     void changeEmptyFailInvalidOrderStatus() {
         //given
         Long orderTableId = 1L;
-        OrderTable savedTable = new OrderTable();
-        savedTable.setId(1L);
-        OrderTable changeTable = new OrderTable();
-        changeTable.setEmpty(true);
+        OrderTable savedTable = new OrderTable.OrderTableBuilder()
+                                    .setId(1L)
+                                    .build();
+        OrderTable changeTable = new OrderTable.OrderTableBuilder()
+                                    .setEmpty(true)
+                                    .build();
 
         given(orderTableDao.findById(orderTableId))
                 .willReturn(Optional.of(savedTable));
@@ -145,8 +155,9 @@ class TableServiceTest {
     void changeNumberOfGuests() {
         //given
         Long orderTableId = 1L;
-        OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setNumberOfGuests(2);
+        OrderTable changeOrderTable = new OrderTable.OrderTableBuilder()
+                                        .setNumberOfGuests(2)
+                                        .build();
         OrderTable expectedOrderTable = new OrderTable();
 
         given(orderTableDao.findById(orderTableId))
@@ -167,8 +178,9 @@ class TableServiceTest {
     void changeNumberOfGuestsFailInvalidGuestNumber() {
         //given
         Long orderTableId = 1L;
-        OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setNumberOfGuests(-2);
+        OrderTable changeOrderTable = new OrderTable.OrderTableBuilder()
+                                        .setNumberOfGuests(-2)
+                                        .build();
         //when
         //then
         assertThatThrownBy(() -> tableService.changeNumberOfGuests(orderTableId, changeOrderTable))
@@ -181,8 +193,9 @@ class TableServiceTest {
     void changeNumberOfGuestsFailInvalidTableNumber() {
         //given
         Long orderTableId = 10L;
-        OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setNumberOfGuests(2);
+        OrderTable changeOrderTable = new OrderTable.OrderTableBuilder()
+                                        .setNumberOfGuests(2)
+                                        .build();
 
         given(orderTableDao.findById(orderTableId))
                 .willReturn(Optional.empty());
@@ -198,10 +211,12 @@ class TableServiceTest {
     void changeNumberOfGuestsFailEmptyTable() {
         //given
         Long orderTableId = 1L;
-        OrderTable changeOrderTable = new OrderTable();
-        changeOrderTable.setNumberOfGuests(2);
-        OrderTable expectedOrderTable = new OrderTable();
-        expectedOrderTable.setEmpty(true);
+        OrderTable changeOrderTable = new OrderTable.OrderTableBuilder()
+                                            .setNumberOfGuests(2)
+                                            .build();
+        OrderTable expectedOrderTable = new OrderTable.OrderTableBuilder()
+                                            .setEmpty(true)
+                                            .build();
 
         given(orderTableDao.findById(orderTableId))
                 .willReturn(Optional.of(expectedOrderTable));

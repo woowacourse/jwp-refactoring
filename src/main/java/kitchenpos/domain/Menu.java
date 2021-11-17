@@ -4,11 +4,23 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class Menu {
+
     private Long id;
     private String name;
     private BigDecimal price;
     private Long menuGroupId;
     private List<MenuProduct> menuProducts;
+
+    public Menu() {
+    }
+
+    private Menu(MenuBuilder menuBuilder) {
+        this.id = menuBuilder.id;
+        this.name = menuBuilder.name;
+        this.price = menuBuilder.price;
+        this.menuGroupId = menuBuilder.menuGroupId;
+        this.menuProducts = menuBuilder.menuProducts;
+    }
 
     public Long getId() {
         return id;
@@ -48,5 +60,43 @@ public class Menu {
 
     public void setMenuProducts(final List<MenuProduct> menuProducts) {
         this.menuProducts = menuProducts;
+    }
+
+    public static class MenuBuilder {
+
+        private Long id;
+        private String name;
+        private BigDecimal price;
+        private Long menuGroupId;
+        private List<MenuProduct> menuProducts;
+
+        public MenuBuilder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public MenuBuilder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public MenuBuilder setPrice(BigDecimal price) {
+            this.price = price;
+            return this;
+        }
+
+        public MenuBuilder setMenuGroupId(Long menuGroupId) {
+            this.menuGroupId = menuGroupId;
+            return this;
+        }
+
+        public MenuBuilder setMenuProducts(List<MenuProduct> menuProducts) {
+            this.menuProducts = menuProducts;
+            return this;
+        }
+
+        public Menu build() {
+            return new Menu(this);
+        }
     }
 }

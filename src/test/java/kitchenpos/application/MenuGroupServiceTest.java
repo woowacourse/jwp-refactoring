@@ -28,11 +28,13 @@ class MenuGroupServiceTest {
     @Test
     void create() {
         //given
-        MenuGroup menuGroup = new MenuGroup();
-        menuGroup.setName("치킨");
-        MenuGroup expected = new MenuGroup();
-        expected.setId(1L);
-        expected.setName("치킨");
+        MenuGroup menuGroup = new MenuGroup.MenuGroupBuilder()
+                                .setName("치킨")
+                                .build();
+        MenuGroup expected = new MenuGroup.MenuGroupBuilder()
+                                .setId(1L)
+                                .setName("치킨")
+                                .build();
 
         given(menuGroupDao.save(menuGroup))
                 .willReturn(expected);
@@ -48,12 +50,15 @@ class MenuGroupServiceTest {
     @Test
     void list() {
         //given
-        MenuGroup menuGroupChicken = new MenuGroup();
-        menuGroupChicken.setId(1L);
-        menuGroupChicken.setName("치킨");
-        MenuGroup menuGroupPizza = new MenuGroup();
-        menuGroupPizza.setId(2L);
-        menuGroupPizza.setName("피자");
+        MenuGroup menuGroupChicken = new MenuGroup.MenuGroupBuilder()
+                                        .setId(1L)
+                                        .setName("치킨")
+                                        .build();
+
+        MenuGroup menuGroupPizza = new MenuGroup.MenuGroupBuilder()
+                                        .setId(2L)
+                                        .setName("피자")
+                                        .build();
 
         List<MenuGroup> expected = List.of(menuGroupChicken, menuGroupPizza);
 
