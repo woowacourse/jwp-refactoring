@@ -1,13 +1,24 @@
-package kitchenpos.domain;
+package kitchenpos.domain.product;
 
-import javax.persistence.Embedded;
+import kitchenpos.domain.Price;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
 public class Product {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     @Embedded
     private Price price;
+
+    protected Product() {
+    }
 
     public Product(String name, BigDecimal price) {
         this(0L, name, price);
@@ -45,5 +56,9 @@ public class Product {
 
     public void setPrice(final Price price) {
         this.price = price;
+    }
+
+    public BigDecimal getAmount(long quantity) {
+        return price.multiply(quantity);
     }
 }

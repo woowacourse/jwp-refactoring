@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
-import kitchenpos.dao.ProductDao;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
+import kitchenpos.domain.product.ProductRepository;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,14 +20,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
 
     @Mock
-    private ProductDao productDao;
+    private ProductRepository productRepository;
 
     @InjectMocks
     private ProductService productService;
@@ -35,8 +34,8 @@ class ProductServiceTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        ProductRequest request = new ProductRequest(PRODUCT_NAME, PRODUCT_PRICE);
-        when(productDao.save(any())).thenReturn(createProduct(1L));
+        ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
+        when(productRepository.save(any())).thenReturn(createProduct1(1L));
 
         assertDoesNotThrow(() -> productService.create(request));
     }
@@ -44,7 +43,7 @@ class ProductServiceTest {
     @DisplayName("상품의 가격이 0원 미만일 경우 생성할 수 없다.")
     @Test
     void createExceptionIfPriceZero() {
-        ProductRequest request = new ProductRequest(PRODUCT_NAME, BigDecimal.valueOf(-1000));
+        ProductRequest request = new ProductRequest(PRODUCT_NAME1, BigDecimal.valueOf(-1000));
 
         assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -53,13 +52,12 @@ class ProductServiceTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() {
-        Product product1 = createProduct(1L);
-        Product product2 = createProduct(2L);
-        when(productDao.findAll()).thenReturn(Arrays.asList(product1, product2));
+        Product product1 = createProduct1(1L);
+        Product product2 = createProduct1(2L);
+        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
 
         List<Product> actual = productService.list();
 
-        verify(productDao).findAll();
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual).containsExactly(product1, product2)

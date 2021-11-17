@@ -1,7 +1,8 @@
 package kitchenpos.ui;
 
+import kitchenpos.MenuFixture;
 import kitchenpos.application.MenuGroupService;
-import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.menugroup.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -11,7 +12,7 @@ import org.springframework.http.MediaType;
 import java.util.Arrays;
 import java.util.List;
 
-import static kitchenpos.MenuFixture.createMenuGroup;
+import static kitchenpos.MenuFixture.createMenuGroup1;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,8 +29,8 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         Long menuGroupId = 1L;
-        MenuGroup menuGroup = createMenuGroup();
-        MenuGroup savedMenuGroup = createMenuGroup(menuGroupId);
+        MenuGroup menuGroup = MenuFixture.createMenuGroup1();
+        MenuGroup savedMenuGroup = createMenuGroup1(menuGroupId);
 
         when(menuGroupService.create(any())).thenReturn(savedMenuGroup);
 
@@ -44,7 +45,7 @@ class MenuGroupRestControllerTest extends ControllerTest {
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<MenuGroup> menuGroups = Arrays.asList(createMenuGroup(1L), createMenuGroup(2L));
+        List<MenuGroup> menuGroups = Arrays.asList(createMenuGroup1(1L), createMenuGroup1(2L));
         when(menuGroupService.list()).thenReturn(menuGroups);
 
         mockMvc.perform(get("/api/menu-groups"))

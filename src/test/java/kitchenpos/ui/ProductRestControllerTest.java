@@ -1,7 +1,7 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.ProductRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,8 +29,8 @@ class ProductRestControllerTest extends ControllerTest {
     @Test
     void create() throws Exception {
         Long productId = 1L;
-        ProductRequest request = new ProductRequest(PRODUCT_NAME, PRODUCT_PRICE);
-        Product savedProduct = createProduct(productId);
+        ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
+        Product savedProduct = createProduct1(productId);
         when(productService.create(any())).thenReturn(savedProduct);
 
         mockMvc.perform(post("/api/products")
@@ -44,7 +44,7 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<Product> products = Arrays.asList(createProduct(1L), createProduct(2L));
+        List<Product> products = Arrays.asList(createProduct1(1L), createProduct1(2L));
         when(productService.list()).thenReturn(products);
 
         mockMvc.perform(get("/api/products"))
