@@ -1,12 +1,32 @@
 package kitchenpos.application;
 
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
+import kitchenpos.SpringBootTestSupport;
+import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.menu.Menu;
+import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.product.Product;
+import kitchenpos.ui.dto.OrderLineItemsRequest;
+import kitchenpos.ui.dto.OrderRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@ExtendWith(MockitoExtension.class)
-class OrderServiceTest {
+import java.util.Collections;
 
-//    @Mock
+import static kitchenpos.MenuFixture.*;
+import static kitchenpos.ProductFixture.createProduct1;
+import static kitchenpos.ProductFixture.createProduct2;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+class OrderServiceTest extends SpringBootTestSupport {
+
+    @Autowired
+    private OrderService orderService;
+
+    //    @Mock
 //    private MenuDao menuDao;
 //
 //    @Mock
@@ -36,77 +56,64 @@ class OrderServiceTest {
 //        );
 //    }
 //
-//    @DisplayName("주문 생성은")
-//    @Nested
-//    class Create {
-//
-//        private Order order;
-//        private OrderLineItem orderLineItem1;
-//        private OrderLineItem orderLineItem2;
-//
-//        @BeforeEach
-//        void setUp() {
-//            order = createOrder();
-//            orderLineItem1 = createOrderLineItem(1L);
-//            orderLineItem2 = createOrderLineItem(2L);
-//        }
-//
-//        private void subject() {
-//            orderService.create(order);
-//        }
-//
-//        @DisplayName("주문 항목이 없는 경우 생성할 수 없다.")
-//        @Test
-//        void createExceptionIfNotHasItem() {
-//            order.setOrderLineItems(Collections.emptyList());
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("존재하지 않는 메뉴를 포함한 주문 항목이 포함된 경우 생성할 수 없다.")
-//        @Test
-//        void createExceptionIfHasNotExistMenu() {
-//            order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-//            when(menuDao.countByIdIn(any())).thenReturn(1L);
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("존재하지 않는 주문 테이블에 속한 경우 생성할 수 없다.")
-//        @Test
-//        void createExceptionIfHasNotExistOrder() {
-//            order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-//            when(menuDao.countByIdIn(any())).thenReturn(2L);
-//            when(orderTableDao.findById(any())).thenReturn(Optional.empty());
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("빈 테이블의 주문은 생성할 수 없다.")
-//        @Test
-//        void createExceptionIfEmptyOrderTable() {
-//            OrderTable orderTable = createOrderTable();
-//            orderTable.setEmpty(true);
-//            order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-//            when(menuDao.countByIdIn(any())).thenReturn(2L);
-//            when(orderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("조건을 만족하는 경우 생성할 수 있다.")
-//        @Test
-//        void create() {
-//            OrderTable orderTable = createOrderTable();
-//            order.setOrderLineItems(Arrays.asList(orderLineItem1, orderLineItem2));
-//            when(menuDao.countByIdIn(any())).thenReturn(2L);
-//            when(orderTableDao.findById(any())).thenReturn(Optional.of(orderTable));
-//            when(orderDao.save(any())).thenReturn(order);
-//            when(orderLineItemDao.save(any())).thenReturn(createOrderLineItem());
-//
-//            assertDoesNotThrow(this::subject);
-//        }
-//    }
+    @DisplayName("주문 생성은")
+    @Nested
+    class Create extends SpringBootTestSupport {
+
+        private OrderRequest request;
+        private MenuGroup menuGroup1;
+        private MenuGroup menuGroup2;
+        private Product product1;
+        private Product product2;
+        private Menu menu1;
+        private OrderTable orderTable;
+
+        @BeforeEach
+        void setUp() {
+            menuGroup1 = save(createMenuGroup1());
+            menuGroup2 = save(createMenuGroup2());
+            product1 = save(createProduct1());
+            product2 = save(createProduct2());
+            menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
+            orderTable = save(new OrderTable(3, false));
+        }
+
+        @DisplayName("존재하지 않는 메뉴를 포함한 주문 항목이 포함된 경우 생성할 수 없다.")
+        @Test
+        void createExceptionIfHasNotExistMenu() {
+            request = new OrderRequest(orderTable.getId(), Collections.singletonList(new OrderLineItemsRequest(0L, 2)));
+
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("존재하지 않는 주문 테이블에 속한 경우 생성할 수 없다.")
+        @Test
+        void createExceptionIfHasNotExistOrder() {
+            request = new OrderRequest(0L, Collections.singletonList(new OrderLineItemsRequest(menu1.getId(), 2)));
+
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("빈 테이블의 주문은 생성할 수 없다.")
+        @Test
+        void createExceptionIfEmptyOrderTable() {
+            orderTable = save(new OrderTable(3, true));
+            request = new OrderRequest(orderTable.getId(), Collections.singletonList(new OrderLineItemsRequest(menu1.getId(), 2)));
+
+            assertThatThrownBy(() -> orderService.create(request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("조건을 만족하는 경우 생성할 수 있다.")
+        @Test
+        void create() {
+            request = new OrderRequest(orderTable.getId(), Collections.singletonList(new OrderLineItemsRequest(menu1.getId(), 2)));
+
+            assertDoesNotThrow(() -> orderService.create(request));
+        }
+    }
 //
 //    @DisplayName("주문 상태 변경은")
 //    @Nested

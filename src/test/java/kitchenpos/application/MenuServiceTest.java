@@ -12,8 +12,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -27,8 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
-@SpringBootTest
 class MenuServiceTest extends SpringBootTestSupport {
 
     @Autowired
@@ -36,7 +32,7 @@ class MenuServiceTest extends SpringBootTestSupport {
 
     @DisplayName("메뉴 생성은")
     @Nested
-    class Create {
+    class Create extends SpringBootTestSupport {
 
         private MenuGroup menuGroup1;
         private Product product1;
@@ -50,7 +46,7 @@ class MenuServiceTest extends SpringBootTestSupport {
             menuGroup1 = save(createMenuGroup1());
             product1 = save(createProduct1());
             product2 = save(createProduct2());
-            menuProductRequest = new MenuProductRequest(PRODUCT_ID, QUANTITY);
+            menuProductRequest = new MenuProductRequest(PRODUCT_ID, MENU_QUANTITY);
         }
 
         @DisplayName("존재하지 않는 메뉴 그룹에 속한 경우 생성할 수 없다.")
@@ -65,7 +61,7 @@ class MenuServiceTest extends SpringBootTestSupport {
         @DisplayName("존재하지 않는 상품을 포함한 경우 생성할 수 없다.")
         @Test
         void createExceptionIfNotExistProduct() {
-            menuProductRequest = new MenuProductRequest(0L, QUANTITY);
+            menuProductRequest = new MenuProductRequest(0L, MENU_QUANTITY);
             request = new MenuRequest(MENU_NAME1, MENU_PRICE, MENU_GROUP_ID, Collections.singletonList(menuProductRequest));
 
             assertThatThrownBy(() -> menuService.create(request))

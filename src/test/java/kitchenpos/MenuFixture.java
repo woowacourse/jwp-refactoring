@@ -19,7 +19,7 @@ public class MenuFixture {
     public static final BigDecimal MENU_PRICE = BigDecimal.valueOf(15900);
     public static final Long MENU_GROUP_ID = 1L;
     public static final Long PRODUCT_ID = 1L;
-    public static final long QUANTITY = 1;
+    public static final long MENU_QUANTITY = 1;
 
     public static MenuGroup createMenuGroup1() {
         return new MenuGroup(MENU_GROUP_NAME1);
@@ -33,24 +33,22 @@ public class MenuFixture {
         return new MenuGroup(id, MENU_GROUP_NAME1);
     }
 
-    public static Menu createMenu1() {
-        return createMenu1(null, MENU_NAME1, MENU_PRICE);
-    }
-
     public static Menu createMenu1(MenuGroup menuGroup, List<Product> products) {
         Menu menu = new Menu(MENU_NAME1, MENU_PRICE, menuGroup);
         List<MenuProduct> menuProducts = products.stream()
-                .map(it -> new MenuProduct(it, QUANTITY))
+                .map(it -> new MenuProduct(it, MENU_QUANTITY))
                 .collect(Collectors.toList());
         menu.changeMenuProducts(menuProducts);
         return menu;
     }
 
     public static Menu createMenu2(MenuGroup menuGroup, List<Product> products) {
+        Menu menu = new Menu(MENU_NAME2, MENU_PRICE, menuGroup);
         List<MenuProduct> menuProducts = products.stream()
-                .map(it -> new MenuProduct(it, QUANTITY))
+                .map(it -> new MenuProduct(it, MENU_QUANTITY))
                 .collect(Collectors.toList());
-        return new Menu(MENU_NAME2, MENU_PRICE, menuGroup, new MenuProducts(menuProducts));
+        menu.changeMenuProducts(menuProducts);
+        return menu;
     }
 
     public static Menu createMenu1(Long id) {
@@ -64,12 +62,12 @@ public class MenuFixture {
     public static MenuProduct createMenuProduct(Product product) {
         MenuProduct menuProduct = new MenuProduct();
 //        menuProduct.setProductId(product.getId());
-        menuProduct.setQuantity(QUANTITY);
+        menuProduct.setQuantity(MENU_QUANTITY);
         return menuProduct;
     }
 
     public static MenuProductRequest createMenuProductRequest() {
-        return new MenuProductRequest(PRODUCT_ID, QUANTITY);
+        return new MenuProductRequest(PRODUCT_ID, MENU_QUANTITY);
     }
 
     public static MenuProduct createMenuProduct(Product product, long quantity) {

@@ -16,8 +16,6 @@ import static kitchenpos.MenuFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Transactional
-@SpringBootTest
 class MenuGroupServiceTest extends SpringBootTestSupport {
 
     @Autowired

@@ -47,22 +47,22 @@ public class TableGroupService {
             throw new IllegalArgumentException();
         }
 
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
-                throw new IllegalArgumentException();
-            }
-        }
+//        for (final OrderTable savedOrderTable : savedOrderTables) {
+//            if (!savedOrderTable.isEmpty() || Objects.nonNull(savedOrderTable.getTableGroupId())) {
+//                throw new IllegalArgumentException();
+//            }
+//        }
 
         tableGroup.setCreatedDate(LocalDateTime.now());
 
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
         final Long tableGroupId = savedTableGroup.getId();
-        for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.setTableGroupId(tableGroupId);
-            savedOrderTable.setEmpty(false);
-            orderTableRepository.save(savedOrderTable);
-        }
+//        for (final OrderTable savedOrderTable : savedOrderTables) {
+//            savedOrderTable.setTableGroupId(tableGroupId);
+//            savedOrderTable.setEmpty(false);
+//            orderTableRepository.save(savedOrderTable);
+//        }
         savedTableGroup.setOrderTables(savedOrderTables);
 
         return savedTableGroup;

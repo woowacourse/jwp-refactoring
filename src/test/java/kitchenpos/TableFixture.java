@@ -11,15 +11,7 @@ public class TableFixture {
     private static final LocalDateTime CREATE_DATE = LocalDateTime.now();
 
     public static OrderTable createOrderTable() {
-        return createOrderTable(null);
-    }
-
-    public static OrderTable createOrderTable(Long id) {
-        OrderTable orderTable = new OrderTable();
-        orderTable.setNumberOfGuests(NUMBER_OF_GUEST);
-        orderTable.setEmpty(false);
-        orderTable.setId(id);
-        return orderTable;
+        return new OrderTable(NUMBER_OF_GUEST, false);
     }
 
     public static TableGroup createTableGroup() {
