@@ -55,14 +55,10 @@ public class OrderService {
                 }).collect(Collectors.toList());
     }
 
-    public List<Order> list() {
+    @Transactional(readOnly = true)
+    public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
-
-//        for (final Order order : orders) {
-//            order.setOrderLineItems(orderLineItemRepository.findAllByOrderId(order.getId()));
-//        }
-
-        return orders;
+        return OrderResponse.toList(orders);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import kitchenpos.ui.OrderTableResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OrderResponse {
 
@@ -30,6 +31,12 @@ public class OrderResponse {
                 order.getOrderedTime(),
                 OrderLineItemResponse.toList(order.getOrderLineItems())
         );
+    }
+
+    public static List<OrderResponse> toList(List<Order> orders) {
+        return orders.stream()
+                .map(OrderResponse::of)
+                .collect(Collectors.toList());
     }
 
     public Long getId() {

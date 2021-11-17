@@ -1,6 +1,8 @@
 package kitchenpos.domain.order;
 
 import kitchenpos.domain.OrderTable;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Table(name = "orders")
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Order {
 
@@ -20,6 +23,8 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+    @CreatedDate
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)

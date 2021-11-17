@@ -4,9 +4,12 @@ import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
+import kitchenpos.domain.order.Order;
+import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderRequest;
+import kitchenpos.ui.dto.OrderResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,11 +17,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
+import java.util.List;
 
 import static kitchenpos.MenuFixture.*;
+import static kitchenpos.OrderFixture.createOrder;
+import static kitchenpos.OrderFixture.createOrderLineItem;
 import static kitchenpos.ProductFixture.createProduct1;
 import static kitchenpos.ProductFixture.createProduct2;
+import static kitchenpos.TableFixture.createOrderTable;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class OrderServiceTest extends SpringBootTestSupport {
@@ -26,56 +35,22 @@ class OrderServiceTest extends SpringBootTestSupport {
     @Autowired
     private OrderService orderService;
 
-    //    @Mock
-//    private MenuDao menuDao;
-//
-//    @Mock
-//    private OrderDao orderDao;
-//
-//    @Mock
-//    private OrderLineItemDao orderLineItemDao;
-//
-//    @Mock
-//    private OrderTableDao orderTableDao;
-//
-//    @InjectMocks
-//    private OrderService orderService;
-//
-//    @DisplayName("주문 목록을 조회할 수 있다.")
-//    @Test
-//    void list() {
-//        Order order1 = createOrder();
-//        Order order2 = createOrder();
-//        when(orderDao.findAll()).thenReturn(Arrays.asList(order1, order2));
-//
-//        List<Order> actual = orderService.list();
-//
-//        assertAll(
-//                () -> assertThat(actual).hasSize(2),
-//                () -> assertThat(actual).containsExactly(order1, order2)
-//        );
-//    }
-//
     @DisplayName("주문 생성은")
     @Nested
     class Create extends SpringBootTestSupport {
 
         private OrderRequest request;
         private MenuGroup menuGroup1;
-        private MenuGroup menuGroup2;
         private Product product1;
-        private Product product2;
         private Menu menu1;
         private OrderTable orderTable;
 
         @BeforeEach
         void setUp() {
             menuGroup1 = save(createMenuGroup1());
-            menuGroup2 = save(createMenuGroup2());
             product1 = save(createProduct1());
-            product2 = save(createProduct2());
             menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
-            orderTable = save(new OrderTable(3, false));
+            orderTable = save(createOrderTable());
         }
 
         @DisplayName("존재하지 않는 메뉴를 포함한 주문 항목이 포함된 경우 생성할 수 없다.")
@@ -111,8 +86,38 @@ class OrderServiceTest extends SpringBootTestSupport {
         void create() {
             request = new OrderRequest(orderTable.getId(), Collections.singletonList(new OrderLineItemsRequest(menu1.getId(), 2)));
 
-            assertDoesNotThrow(() -> orderService.create(request));
+            final OrderResponse actual = orderService.create(request);
+
+            assertAll(
+                    () -> assertThat(actual.getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderStatus()).isEqualTo(OrderStatus.COOKING.name()),
+                    () -> assertThat(actual.getOrderedTime()).isNotNull(),
+                    () -> assertThat(actual.getOrderTable().getId()).isNotNull(),
+                    () -> assertThat(actual.getOrderLineItems()).hasSize(1)
+            );
         }
+    }
+
+    @DisplayName("주문 목록을 조회할 수 있다.")
+    @Test
+    void list() {
+        MenuGroup menuGroup1 = save(createMenuGroup1());
+        MenuGroup menuGroup2 = save(createMenuGroup2());
+        Product product1 = save(createProduct1());
+        Product product2 = save(createProduct2());
+        Menu menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
+        Menu menu2 = save(createMenu2(menuGroup2, Collections.singletonList(product2)));
+        OrderTable orderTable = save(createOrderTable());
+        Order order1 = save(createOrder(orderTable, Collections.singletonList(createOrderLineItem(menu1))));
+        Order order2 = save(createOrder(orderTable, Collections.singletonList(createOrderLineItem(menu2))));
+
+        List<OrderResponse> actual = orderService.list();
+
+        assertAll(
+                () -> assertThat(actual).hasSize(2),
+                () -> assertThat(actual.get(0).getId()).isEqualTo(order1.getId()),
+                () -> assertThat(actual.get(1).getId()).isEqualTo(order2.getId())
+        );
     }
 //
 //    @DisplayName("주문 상태 변경은")
