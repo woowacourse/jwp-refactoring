@@ -6,14 +6,13 @@ import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
+import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,20 +30,16 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroup create(final TableGroup tableGroup) {
-        final List<OrderTable> orderTables = tableGroup.getOrderTables();
+    public TableGroup create(final TableGroupCreateRequest request) {
+        List<Long> orderTableIds = request.orderTableIds();
 
-        if (CollectionUtils.isEmpty(orderTables) || orderTables.size() < 2) {
+        if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
 
-        final List<Long> orderTableIds = orderTables.stream()
-                .map(OrderTable::getId)
-                .collect(Collectors.toList());
-
         final List<OrderTable> savedOrderTables = orderTableRepository.findAllByIdIn(orderTableIds);
 
-        if (orderTables.size() != savedOrderTables.size()) {
+        if (orderTableIds.size() != savedOrderTables.size()) {
             throw new IllegalArgumentException();
         }
 
@@ -54,21 +49,19 @@ public class TableGroupService {
             }
         }
 
-        final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
+        final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.enrollTableGroup(savedTableGroup);
+            savedOrderTable.enrollTableGroup(savedTableGroup.getId());
             savedOrderTable.grouped(false);
         }
-        savedTableGroup.enrollOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }
 
     @Transactional
     public void ungroup(final Long tableGroupId) {
-        TableGroup tableGroup = tableGroupRepository.findById(tableGroupId).get();
-        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroup(tableGroup);
+        final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
 
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(
                 orderTables, Arrays.asList(OrderStatus.COOKING.name(), OrderStatus.MEAL.name()))) {

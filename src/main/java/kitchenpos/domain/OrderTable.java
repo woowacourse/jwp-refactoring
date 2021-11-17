@@ -1,7 +1,5 @@
 package kitchenpos.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,9 +10,8 @@ public class OrderTable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "table_group_id")
-    private TableGroup tableGroup;
+    @Column(name = "table_group_id")
+    private Long tableGroupId;
 
     private int numberOfGuests;
 
@@ -23,9 +20,9 @@ public class OrderTable {
     protected OrderTable() {
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
+    public OrderTable(Long id, Long tableGroupId, int numberOfGuests, boolean empty) {
         this.id = id;
-        this.tableGroup = tableGroup;
+        this.tableGroupId = tableGroupId;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
     }
@@ -46,8 +43,8 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void enrollTableGroup(TableGroup tableGroup) {
-        this.tableGroup = tableGroup;
+    public void enrollTableGroup(Long tableGroupId) {
+        this.tableGroupId = tableGroupId;
     }
 
     public void grouped(boolean empty) {
@@ -55,7 +52,7 @@ public class OrderTable {
     }
 
     public void releaseTableGroup() {
-        this.tableGroup = null;
+        this.tableGroupId = null;
     }
 
     public void enrollId(Long id) {
@@ -70,8 +67,8 @@ public class OrderTable {
         return id;
     }
 
-    public TableGroup getTableGroup() {
-        return tableGroup;
+    public Long getTableGroupId() {
+        return tableGroupId;
     }
 
     public int getNumberOfGuests() {
@@ -82,11 +79,7 @@ public class OrderTable {
         return empty;
     }
 
-    public Long getTableGroupId() {
-        return tableGroup.getId();
-    }
-
     public boolean isBelongToTableGroup() {
-        return Objects.nonNull(tableGroup);
+        return Objects.nonNull(tableGroupId);
     }
 }

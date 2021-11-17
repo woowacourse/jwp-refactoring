@@ -17,5 +17,5 @@ public interface OrderTableRepository extends JpaRepository<OrderTable, Long> {
 
     List<OrderTable> findAllByIdIn(List<Long> orderTableIds);
 
-    List<OrderTable> findAllByTableGroup(TableGroup tableGroup);
+    List<OrderTable> findAllByTableGroupId(Long tableGroupId);
 }
