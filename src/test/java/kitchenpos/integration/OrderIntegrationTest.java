@@ -118,7 +118,7 @@ class OrderIntegrationTest {
         assertThat(body).isNotNull();
         assertThat(body.getId()).isNotNull();
         assertThat(body.getOrderTableId()).isEqualTo(orderTableId);
-        assertThat(body.getOrderLineItemResponses()).first()
+        assertThat(body.getOrderLineItems()).first()
             .usingRecursiveComparison()
             .ignoringExpectedNullFields()
             .isEqualTo(orderLineItem);

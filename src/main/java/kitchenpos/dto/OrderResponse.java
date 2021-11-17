@@ -11,7 +11,7 @@ public class OrderResponse {
     private Long orderTableId;
     private String orderStatus;
     private LocalDateTime orderedTime;
-    private List<OrderLineItemResponse> orderLineItemResponses;
+    private List<OrderLineItemResponse> orderLineItems;
 
     private OrderResponse(Long id,
                          Long orderTableId,
@@ -23,7 +23,7 @@ public class OrderResponse {
         this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
-        this.orderLineItemResponses = orderLineItemResponses;
+        this.orderLineItems = orderLineItemResponses;
     }
 
     public static OrderResponse of(Order order) {
@@ -58,7 +58,7 @@ public class OrderResponse {
         return orderedTime;
     }
 
-    public List<OrderLineItemResponse> getOrderLineItemResponses() {
-        return orderLineItemResponses;
+    public List<OrderLineItemResponse> getOrderLineItems() {
+        return orderLineItems;
     }
 }

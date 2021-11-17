@@ -73,7 +73,7 @@ class TableGroupIntegrationTest {
         assertThat(statusCode).isEqualTo(HttpStatus.CREATED);
         assertThat(body).isNotNull();
         assertThat(body.getId()).isNotNull();
-        assertThat(body.getOrderTableResponses())
+        assertThat(body.getOrderTables())
             .extracting("id")
             .contains(
                 orderTable1.getId(),

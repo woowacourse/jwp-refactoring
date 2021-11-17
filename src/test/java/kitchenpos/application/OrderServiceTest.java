@@ -70,12 +70,7 @@ class OrderServiceTest {
         // then
         assertThat(result).first()
             .usingRecursiveComparison()
-            .ignoringFields("orderLineItemResponses")
             .isEqualTo(order);
-        assertThat(result).first()
-            .extracting("orderLineItemResponses")
-            .usingRecursiveComparison()
-            .isEqualTo(orderLineItems);
     }
 
     @Nested
@@ -154,7 +149,7 @@ class OrderServiceTest {
             assertThat(result.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId());
             assertThat(result.getOrderStatus()).isEqualTo(savedOrder.getOrderStatus());
             assertThat(result.getOrderedTime()).isEqualTo(savedOrder.getOrderedTime());
-            assertThat(result.getOrderLineItemResponses())
+            assertThat(result.getOrderLineItems())
                 .usingRecursiveComparison()
                 .isEqualTo(savedOrder.getOrderLineItems());
         }

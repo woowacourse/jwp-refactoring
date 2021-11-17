@@ -136,7 +136,7 @@ class TableGroupServiceTest {
                 );
             assertThat(result.getId()).isEqualTo(savedTableGroup.getId());
             assertThat(result.getCreatedDate()).isEqualTo(savedTableGroup.getCreatedDate());
-            assertThat(result.getOrderTableResponses())
+            assertThat(result.getOrderTables())
                 .usingRecursiveComparison()
                 .isEqualTo(savedTableGroup.getOrderTables());
         }

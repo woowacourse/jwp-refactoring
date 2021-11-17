@@ -8,12 +8,12 @@ public class TableGroupResponse {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTableResponse> orderTableResponses;
+    private List<OrderTableResponse> orderTables;
 
     private TableGroupResponse(Long id, LocalDateTime createdDate, List<OrderTableResponse> orderTableResponses) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTableResponses = orderTableResponses;
+        this.orderTables = orderTableResponses;
     }
 
     public static TableGroupResponse of(TableGroup tableGroup) {
@@ -32,7 +32,7 @@ public class TableGroupResponse {
         return createdDate;
     }
 
-    public List<OrderTableResponse> getOrderTableResponses() {
-        return orderTableResponses;
+    public List<OrderTableResponse> getOrderTables() {
+        return orderTables;
     }
 }

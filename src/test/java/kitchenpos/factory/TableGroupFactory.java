@@ -39,7 +39,7 @@ public class TableGroupFactory {
         return new TableGroupFactory(
             tableGroupResponse.getId(),
             tableGroupResponse.getCreatedDate(),
-            OrderTableFactory.copyList(tableGroupResponse.getOrderTableResponses())
+            OrderTableFactory.copyList(tableGroupResponse.getOrderTables())
         );
     }
 
