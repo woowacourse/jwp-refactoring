@@ -1,12 +1,13 @@
 package kitchenpos.ui.dto;
 
-import kitchenpos.domain.Product;
+import kitchenpos.domain.product.Product;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
 
 public class ProductRequest {
+
     @NotBlank
     private String name;
 
