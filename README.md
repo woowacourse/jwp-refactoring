@@ -31,7 +31,7 @@
   - [x] Order
   - [x] Menu
   - [x] MenuGroup
-- [ ] JPA 로 마이그레이션, Repository 적용
+- [x] JPA 로 마이그레이션, Repository 적용
 - [ ] test template 에서 실제 객체가 아닌 dto 를 사용하도록 리팩토링
 
 ### 도메인 로직 분리
