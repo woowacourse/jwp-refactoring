@@ -24,7 +24,7 @@
 ## 요구 사항
 
 - [ ] setter 정리
-- [x] ui 레이어와 service 레이어 분리
+- [x] ui 레이어어와 service 레이 분리
   - [x] Product
   - [x] OrderTable
   - [x] TableGroup
