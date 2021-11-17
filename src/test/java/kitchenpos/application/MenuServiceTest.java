@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 @SpringBootTest
-class MenuServiceIntegrityTest extends SpringBootTestSupport {
+class MenuServiceTest extends SpringBootTestSupport {
 
     @Autowired
     private MenuService menuService;

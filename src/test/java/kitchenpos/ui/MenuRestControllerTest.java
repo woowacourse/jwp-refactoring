@@ -33,6 +33,7 @@ class MenuRestControllerTest extends ControllerTest {
         Long menuId = 1L;
         MenuRequest request = new MenuRequest(MENU_NAME1, MENU_PRICE, MENU_GROUP_ID, Collections.singletonList(new MenuProductRequest(1L, 1)));
         MenuResponse response = new MenuResponse(menuId, MENU_NAME1, MENU_PRICE, MenuGroupResponse.of(createMenuGroup1()), MenuProductResponse.toList(Collections.singletonList(createMenuProduct(createProduct1()))));
+
         when(menuService.create(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/menus")
