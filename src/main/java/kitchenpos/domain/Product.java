@@ -19,10 +19,18 @@ public class Product {
 
     }
 
+    public Product(Long id) {
+        this(id, null, null);
+    }
+
     public Product(Long id, String name, BigDecimal price) {
         this.id = id;
         this.name = name;
         this.price = price;
+    }
+
+    public boolean isId(Long id) {
+        return this.id.equals(id);
     }
 
     public Long getId() {

@@ -1,11 +1,9 @@
 package kitchenpos.integration.templates;
 
 import java.util.List;
-import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
-import kitchenpos.factory.OrderFactory;
 import kitchenpos.factory.OrderLineItemFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

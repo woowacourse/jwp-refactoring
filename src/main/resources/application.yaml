@@ -9,8 +9,9 @@ spring:
       hibernate:
         format_sql: true
     show_sql: true
-    hibernate:
-      ddl-auto: validate
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   h2:
     console:
       enabled: true

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -26,10 +27,6 @@ public class Menu {
 
     }
 
-    public Menu(Long id, String name, BigDecimal price, Long menuGroupId) {
-        this(id, name, price, menuGroupId, null);
-    }
-
     public Menu(Long id,
                 String name,
                 BigDecimal price,
@@ -43,13 +40,18 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
-    public void validatePrice() {
+    public void validatePriceWith(BigDecimal upperInclusive) {
+        validatePriceGreaterThanOrEqualToZero();
+        validatePriceLessThanOrEqualTo(upperInclusive);
+    }
+
+    private void validatePriceGreaterThanOrEqualToZero() {
         if (Objects.isNull(price) || price.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException();
         }
     }
 
-    public void priceLessThan(BigDecimal sum) {
+    private void validatePriceLessThanOrEqualTo(BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException();
         }
@@ -75,7 +77,18 @@ public class Menu {
         return menuProducts;
     }
 
-    public void setMenuProducts(List<MenuProduct> menuProducts) {
-        this.menuProducts = menuProducts;
+    public List<Long> getProductIds() {
+        return menuProducts.stream()
+            .map(MenuProduct::getProductId)
+            .collect(Collectors.toList());
+    }
+
+    public void validatePrice(Products products) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final MenuProduct menuProduct : menuProducts) {
+            final Product product = products.findById(menuProduct.getProductId());
+            sum = sum.add(product.getPrice().multiply(BigDecimal.valueOf(menuProduct.getQuantity())));
+        }
+        validatePriceWith(sum);
     }
 }

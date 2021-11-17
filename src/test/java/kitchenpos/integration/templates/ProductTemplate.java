@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
 import kitchenpos.dto.ProductResponse;
-import kitchenpos.factory.ProductFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 

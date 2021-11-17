@@ -16,6 +16,10 @@ public class MenuProductRequest {
         this.quantity = quantity;
     }
 
+    public MenuProduct toMenuProduct() {
+        return new MenuProduct(seq, menuId, productId, quantity);
+    }
+
     public Long getSeq() {
         return seq;
     }
@@ -30,9 +34,5 @@ public class MenuProductRequest {
 
     public long getQuantity() {
         return quantity;
-    }
-
-    public MenuProduct toMenuProduct() {
-        return new MenuProduct(seq, menuId, productId, quantity);
     }
 }
