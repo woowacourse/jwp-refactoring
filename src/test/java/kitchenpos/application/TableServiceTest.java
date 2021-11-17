@@ -97,7 +97,7 @@ class TableServiceTest {
 
         private OrderTable savedOrderTable;
 
-        private List<String> notCompletionOrderStatuses;
+        private List<OrderStatus> notCompletionOrderStatuses;
 
         private OrderTableRequest orderTableRequest;
 
@@ -115,8 +115,8 @@ class TableServiceTest {
                 .build();
 
             notCompletionOrderStatuses = Arrays.asList(
-                OrderStatus.COOKING.name(),
-                OrderStatus.MEAL.name()
+                OrderStatus.COOKING,
+                OrderStatus.MEAL
             );
 
             orderTableRequest = OrderTableFactory.dto(orderTable);

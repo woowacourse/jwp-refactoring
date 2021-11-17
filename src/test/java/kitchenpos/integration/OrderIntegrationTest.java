@@ -163,8 +163,14 @@ class OrderIntegrationTest {
         Long orderId = orderResponse.getId();
 
         // when
-        OrderRequest orderRequest = new OrderRequest(null, null, OrderStatus.MEAL.name(), null,
-            null);
+        OrderRequest orderRequest =
+            new OrderRequest(
+                null,
+                null,
+                OrderStatus.MEAL,
+                null,
+                null
+            );
 
         ResponseEntity<OrderResponse> orderResponseEntity = orderTemplate
             .changeOrderStatus(
@@ -177,6 +183,6 @@ class OrderIntegrationTest {
         // then
         assertThat(statusCode).isEqualTo(HttpStatus.OK);
         assertThat(body).isNotNull();
-        assertThat(body.getOrderStatus()).isEqualTo(OrderStatus.MEAL.name());
+        assertThat(body.getOrderStatus()).isEqualTo(OrderStatus.MEAL);
     }
 }

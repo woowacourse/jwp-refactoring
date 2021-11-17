@@ -4,18 +4,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Order;
+import kitchenpos.domain.OrderStatus;
 
 public class OrderResponse {
 
     private Long id;
     private Long orderTableId;
-    private String orderStatus;
+    private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
     private OrderResponse(Long id,
                          Long orderTableId,
-                         String orderStatus,
+                         OrderStatus orderStatus,
                          LocalDateTime orderedTime,
                          List<OrderLineItemResponse> orderLineItemResponses
     ) {
@@ -50,7 +51,7 @@ public class OrderResponse {
         return orderTableId;
     }
 
-    public String getOrderStatus() {
+    public OrderStatus getOrderStatus() {
         return orderStatus;
     }
 

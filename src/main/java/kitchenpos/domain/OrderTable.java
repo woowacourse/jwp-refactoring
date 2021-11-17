@@ -63,4 +63,10 @@ public class OrderTable {
     public boolean isEmpty() {
         return empty;
     }
+
+    public void validateNotEmpty() {
+        if (empty) {
+            throw new IllegalArgumentException();
+        }
+    }
 }

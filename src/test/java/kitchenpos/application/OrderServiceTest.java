@@ -2,7 +2,9 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.in;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 
 import java.math.BigDecimal;
@@ -35,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class OrderServiceTest {
@@ -58,11 +61,12 @@ class OrderServiceTest {
     @Test
     void list() {
         // given
-        Order order = OrderFactory.builder().build();
         List<OrderLineItem> orderLineItems =
             Collections.singletonList(OrderLineItemFactory.builder().build());
+        Order order = OrderFactory.builder()
+            .orderLineItems(orderLineItems)
+            .build();
         given(orderDao.findAll()).willReturn(Collections.singletonList(order));
-        given(orderLineItemDao.findAllByOrderId(order.getId())).willReturn(orderLineItems);
 
         // when
         List<OrderResponse> result = orderService.list();
@@ -83,6 +87,8 @@ class OrderServiceTest {
         private OrderTable orderTable;
 
         private Order order;
+
+        private Long savedOrderId;
 
         private Order savedOrder;
 
@@ -106,6 +112,7 @@ class OrderServiceTest {
 
             orderLineItem = OrderLineItemFactory.builder()
                 .seq(1L)
+                .orderId(1L)
                 .menuId(menu.getId())
                 .quantity(1L)
                 .build();
@@ -118,14 +125,15 @@ class OrderServiceTest {
 
             order = OrderFactory.builder()
                 .orderTableId(orderTable.getId())
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(Collections.singletonList(orderLineItem))
                 .build();
 
+            savedOrderId = 1L;
             savedOrder = OrderFactory.copy(order)
-                .id(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .id(savedOrderId)
+                .orderStatus(OrderStatus.COOKING)
                 .build();
 
             orderRequest = OrderFactory.dto(order);
@@ -138,20 +146,23 @@ class OrderServiceTest {
             given(menuDao.countByIdIn(menuIds)).willReturn(1L);
             given(orderTableDao.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
-            given(orderDao.save(any(Order.class))).willReturn(savedOrder);
-            given(orderLineItemDao.save(any(OrderLineItem.class))).willReturn(orderLineItem);
+            given(orderDao.save(any(Order.class))).willAnswer(
+                invocation -> {
+                    Order toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedOrderId);
+                    return null;
+                }
+            );
+            given(orderLineItemDao.saveAll(anyList())).willReturn(anyList());
 
             // when
             OrderResponse result = orderService.create(orderRequest);
 
             // then
-            assertThat(result.getId()).isEqualTo(savedOrder.getId());
-            assertThat(result.getOrderTableId()).isEqualTo(savedOrder.getOrderTableId());
-            assertThat(result.getOrderStatus()).isEqualTo(savedOrder.getOrderStatus());
-            assertThat(result.getOrderedTime()).isEqualTo(savedOrder.getOrderedTime());
-            assertThat(result.getOrderLineItems())
+            assertThat(result)
                 .usingRecursiveComparison()
-                .isEqualTo(savedOrder.getOrderLineItems());
+                .ignoringFieldsOfTypes(LocalDateTime.class)
+                .isEqualTo(savedOrder);
         }
 
         @DisplayName("Order 생성 실패한다 - orderLineItems 가 비어있는 경우")
@@ -175,6 +186,8 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderLineItemCountIsNotEqualToMenuCount() {
             // given
+            given(orderTableDao.findById(order.getOrderTableId()))
+                .willReturn(Optional.of(orderTable));
             given(menuDao.countByIdIn(menuIds)).willReturn(0L);
 
             // when
@@ -189,7 +202,6 @@ class OrderServiceTest {
         @Test
         void createFail_whenOrderTableDoesNotExist() {
             // given
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
             given(orderTableDao.findById(order.getOrderTableId())).willReturn(Optional.empty());
 
             // when
@@ -207,7 +219,6 @@ class OrderServiceTest {
             orderTable = OrderTableFactory.copy(orderTable)
                 .empty(true)
                 .build();
-            given(menuDao.countByIdIn(menuIds)).willReturn(1L);
             given(orderTableDao.findById(order.getOrderTableId()))
                 .willReturn(Optional.of(orderTable));
 
@@ -240,7 +251,7 @@ class OrderServiceTest {
             order = OrderFactory.builder()
                 .id(orderId)
                 .orderTableId(1L)
-                .orderStatus(OrderStatus.COOKING.name())
+                .orderStatus(OrderStatus.COOKING)
                 .orderedTime(LocalDateTime.now())
                 .orderLineItems(orderLineItems)
                 .build();
@@ -253,8 +264,6 @@ class OrderServiceTest {
         void changeOrderStatus() {
             // given
             given(orderDao.findById(orderId)).willReturn(Optional.of(order));
-            given(orderDao.save(order)).willReturn(order);
-            given(orderLineItemDao.findAllByOrderId(orderId)).willReturn(orderLineItems);
 
             // when
             OrderResponse result = orderService.changeOrderStatus(orderId, orderRequest);
@@ -283,7 +292,7 @@ class OrderServiceTest {
         void changeOrderStatusFail_whenOrderIsAlreadyCompleted() {
             // given
             order = OrderFactory.copy(order)
-                .orderStatus(OrderStatus.COMPLETION.name())
+                .orderStatus(OrderStatus.COMPLETION)
                 .build();
             given(orderDao.findById(orderId)).willReturn(Optional.of(order));
 

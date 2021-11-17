@@ -245,7 +245,7 @@ class TableGroupServiceTest {
         private TableGroup tableGroup;
         private Long tableGroupId;
 
-        private List<String> notCompletionOrderStatuses;
+        private List<OrderStatus> notCompletionOrderStatuses;
 
         @BeforeEach
         void setUp() {
@@ -280,8 +280,10 @@ class TableGroupServiceTest {
                 orderTable2.getId()
             );
 
-            notCompletionOrderStatuses = Arrays.asList(OrderStatus.COOKING.name(),
-                OrderStatus.MEAL.name());
+            notCompletionOrderStatuses = Arrays.asList(
+                OrderStatus.COOKING,
+                OrderStatus.MEAL
+            );
         }
 
         @DisplayName("TableGroup 을 ungroup 한다")
