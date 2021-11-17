@@ -21,6 +21,7 @@ public class ProductService {
         return productRepository.save(request.toEntity());
     }
 
+    @Transactional(readOnly = true)
     public List<Product> list() {
         return productRepository.findAll();
     }
