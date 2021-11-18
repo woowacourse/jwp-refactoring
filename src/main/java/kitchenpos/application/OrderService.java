@@ -41,7 +41,8 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Order order = new Order(orderTable, OrderStatus.COOKING, orderLineItems);
+        Order order = new Order(orderTable, OrderStatus.COOKING);
+        order.changeOrderLineItems(orderLineItems);
         final Order savedOrder = orderRepository.save(order);
         return OrderResponse.of(savedOrder);
     }
@@ -70,7 +71,7 @@ public class OrderService {
             throw new IllegalArgumentException();
         }
 
-        final OrderStatus orderStatus = OrderStatus.valueOf(order.getOrderStatus());
+        final OrderStatus orderStatus = order.getOrderStatus();
         savedOrder.setOrderStatus(orderStatus);
 
         orderRepository.save(savedOrder);

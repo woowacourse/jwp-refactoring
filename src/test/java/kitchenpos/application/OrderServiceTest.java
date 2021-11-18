@@ -28,7 +28,6 @@ import static kitchenpos.TableFixture.createOrderTable;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class OrderServiceTest extends SpringBootTestSupport {
 
@@ -116,13 +115,15 @@ class OrderServiceTest extends SpringBootTestSupport {
         assertAll(
                 () -> assertThat(actual).hasSize(2),
                 () -> assertThat(actual.get(0).getId()).isEqualTo(order1.getId()),
-                () -> assertThat(actual.get(1).getId()).isEqualTo(order2.getId())
+                () -> assertThat(actual.get(0).getOrderLineItems()).hasSize(1),
+                () -> assertThat(actual.get(1).getId()).isEqualTo(order2.getId()),
+                () -> assertThat(actual.get(1).getOrderLineItems()).hasSize(1)
         );
     }
-//
+
 //    @DisplayName("주문 상태 변경은")
 //    @Nested
-//    class ChangeStatus {
+//    class ChangeStatus extends SpringBootTestSupport {
 //
 //        private final Long orderId = 1L;
 //        private Order order;

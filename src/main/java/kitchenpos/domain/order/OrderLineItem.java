@@ -36,8 +36,8 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setSeq(final Long seq) {
-        this.seq = seq;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public Menu getMenu() {

@@ -27,7 +27,7 @@ public class OrderResponse {
         return new OrderResponse(
                 order.getId(),
                 OrderTableResponse.of(order.getOrderTable()),
-                order.getOrderStatus(),
+                order.getOrderStatus().name(),
                 order.getOrderedTime(),
                 OrderLineItemResponse.toList(order.getOrderLineItems())
         );

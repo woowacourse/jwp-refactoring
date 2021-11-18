@@ -33,13 +33,13 @@ public class Order {
     protected Order() {
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus) {
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
     }
 
-    public Order(OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        this.orderTable = orderTable;
         this.orderStatus = orderStatus;
         this.orderLineItems = orderLineItems;
     }
@@ -56,12 +56,9 @@ public class Order {
         return orderTable;
     }
 
-    public void setOrderTableId(final Long orderTableId) {
-//        this.orderTableId = orderTableId;
-    }
 
-    public String getOrderStatus() {
-        return orderStatus.name();
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
     }
 
     public void setOrderStatus(final OrderStatus orderStatus) {
@@ -80,7 +77,10 @@ public class Order {
         return orderLineItems;
     }
 
-    public void setOrderLineItems(final List<OrderLineItem> orderLineItems) {
+    public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
+        for (OrderLineItem orderLineItem : orderLineItems) {
+            orderLineItem.setOrder(this);
+        }
         this.orderLineItems = orderLineItems;
     }
 }

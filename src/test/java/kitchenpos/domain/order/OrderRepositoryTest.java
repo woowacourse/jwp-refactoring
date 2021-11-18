@@ -14,6 +14,7 @@ import java.util.Collections;
 
 import static kitchenpos.MenuFixture.createMenu1;
 import static kitchenpos.MenuFixture.createMenuGroup1;
+import static kitchenpos.OrderFixture.createOrder;
 import static kitchenpos.OrderFixture.createOrderLineItem;
 import static kitchenpos.ProductFixture.createProduct1;
 import static kitchenpos.TableFixture.createOrderTable;
@@ -37,7 +38,7 @@ class OrderRepositoryTest {
         final OrderTable orderTable1 = createOrderTable();
         final OrderTable orderTable2 = createOrderTable();
         final OrderLineItem orderLineItem = createOrderLineItem(menu);
-        final Order order = new Order(orderTable1, OrderStatus.MEAL, Collections.singletonList(orderLineItem));
+        final Order order = createOrder(orderTable1, Collections.singletonList(orderLineItem));
 
         em.persist(menuGroup1);
         em.persist(product1);
@@ -47,8 +48,8 @@ class OrderRepositoryTest {
         em.persist(order);
         em.flush();
 
-        final boolean isExist = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable1, Collections.singletonList(OrderStatus.MEAL));
-        final boolean isNotExist = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable2, Collections.singletonList(OrderStatus.MEAL));
+        final boolean isExist = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable1, Collections.singletonList(order.getOrderStatus()));
+        final boolean isNotExist = orderRepository.existsByOrderTableAndOrderStatusIn(orderTable2, Collections.singletonList(OrderStatus.COOKING));
 
         assertThat(isExist).isTrue();
         assertThat(isNotExist).isFalse();

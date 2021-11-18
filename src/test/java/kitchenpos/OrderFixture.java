@@ -18,7 +18,9 @@ public class OrderFixture {
     private static final long ORDER_LINE_QUANTITY = 1;
 
     public static Order createOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        return new Order(orderTable, ORDER_STATUS, orderLineItems);
+        Order order = new Order(orderTable, ORDER_STATUS);
+        order.changeOrderLineItems(orderLineItems);
+        return order;
     }
 
     public static OrderLineItem createOrderLineItem(Menu menu) {
