@@ -1,5 +1,6 @@
 package kitchenpos.order.application;
 
+import kitchenpos.event.OrderStatusCheckEventPublisher;
 import kitchenpos.exception.NonExistentException;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.Orders;
@@ -14,12 +15,12 @@ import java.util.List;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderStatusCheckEventPublisher orderStatusCheckEventPublisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(OrderTableRepository orderTableRepository, OrderStatusCheckEventPublisher orderStatusCheckEventPublisher) {
         this.orderTableRepository = orderTableRepository;
+        this.orderStatusCheckEventPublisher = orderStatusCheckEventPublisher;
     }
 
     @Transactional
@@ -35,9 +36,7 @@ public class TableService {
     public TableResponse changeEmpty(final Long orderTableId, final TableRequest tableRequest) {
         final OrderTable savedOrderTable = orderTableRepository.findById(orderTableId)
                 .orElseThrow(() -> new NonExistentException("주문테이블을 찾을 수 없습니다."));
-
-        Orders orders = new Orders(orderRepository.findAllByOrderTableId(orderTableId));
-        orders.checkNotCompleted();
+        savedOrderTable.checkOrderStatus(orderStatusCheckEventPublisher);
         savedOrderTable.changeEmpty(tableRequest.isEmpty());
         return TableResponse.from(savedOrderTable);
     }

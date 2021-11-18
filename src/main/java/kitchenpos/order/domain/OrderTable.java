@@ -1,5 +1,7 @@
 package kitchenpos.order.domain;
 
+import kitchenpos.event.OrderStatusCheckEventPublisher;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -104,6 +106,10 @@ public class OrderTable {
         tableGroup.removeOrderTables(this);
         this.tableGroup = null;
         this.empty = false;
+    }
+
+    public void checkOrderStatus(OrderStatusCheckEventPublisher orderStatusCheckEventPublisher) {
+        orderStatusCheckEventPublisher.publish(this);
     }
 
 }
