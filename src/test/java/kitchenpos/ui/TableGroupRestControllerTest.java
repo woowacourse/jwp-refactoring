@@ -30,9 +30,9 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("단체 지정을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        Long tableGroupId = 1L;
-        TableGroupRequest request = new TableGroupRequest(Arrays.asList(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L)));
-        TableGroupResponse response = new TableGroupResponse(1L, LocalDateTime.now(),
+        final Long tableGroupId = 1L;
+        final TableGroupRequest request = new TableGroupRequest(Arrays.asList(new OrderTableIdRequest(1L), new OrderTableIdRequest(2L)));
+        final TableGroupResponse response = new TableGroupResponse(1L, LocalDateTime.now(),
                 Arrays.asList(new OrderTableRequest(10, false), new OrderTableRequest(10, false)));
 
         when(tableGroupService.create(any())).thenReturn(response);
@@ -48,7 +48,7 @@ class TableGroupRestControllerTest extends ControllerTest {
     @DisplayName("단체 지정을 해제할 수 있다.")
     @Test
     void ungroup() throws Exception {
-        Long tableGroupId = 1L;
+        final Long tableGroupId = 1L;
 
         doNothing().when(tableGroupService).ungroup(any());
 

@@ -21,13 +21,4 @@ public class TableFixture {
     public static OrderTable createOrderTable(boolean empty) {
         return new OrderTable(NUMBER_OF_GUEST, empty);
     }
-
-    public static TableGroup createTableGroup(List<OrderTable> orderTables) {
-        TableGroup tableGroup = new TableGroup();
-        List<OrderTable> newOrderTables = orderTables.stream()
-                .map(it -> createOrderTable())
-                .collect(Collectors.toList());
-        tableGroup.changeOrderTables(newOrderTables);
-        return tableGroup;
-    }
 }

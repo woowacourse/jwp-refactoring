@@ -28,9 +28,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        Long orderTableId = 1L;
-        OrderTableRequest request = new OrderTableRequest(10, true);
-        OrderTableResponse response = new OrderTableResponse(orderTableId, 10, true);
+        final Long orderTableId = 1L;
+        final OrderTableRequest request = new OrderTableRequest(10, true);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, 10, true);
 
         when(tableService.create(any())).thenReturn(response);
 
@@ -45,7 +45,7 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<OrderTableResponse> response = Collections.singletonList(new OrderTableResponse(1L, 10, true));
+        final List<OrderTableResponse> response = Collections.singletonList(new OrderTableResponse(1L, 10, true));
 
         when(tableService.list()).thenReturn(response);
 
@@ -57,9 +57,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("빈 테이블로 변경할 수 있다.")
     @Test
     void changeEmpty() throws Exception {
-        Long orderTableId = 1L;
-        OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
-        OrderTableResponse response = new OrderTableResponse(orderTableId, 10, true);
+        final Long orderTableId = 1L;
+        final OrderTableEmptyRequest request = new OrderTableEmptyRequest(true);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, 10, true);
 
         when(tableService.changeEmpty(any(), any())).thenReturn(response);
 
@@ -73,9 +73,9 @@ class TableRestControllerTest extends ControllerTest {
     @DisplayName("주문 테이블의 방문한 손님 수를 변경할 수 있다.")
     @Test
     void changeNumberOfGuests() throws Exception {
-        Long orderTableId = 1L;
-        OrderTableGuestRequest request = new OrderTableGuestRequest(20);
-        OrderTableResponse response = new OrderTableResponse(orderTableId, 20, true);
+        final Long orderTableId = 1L;
+        final OrderTableGuestRequest request = new OrderTableGuestRequest(20);
+        final OrderTableResponse response = new OrderTableResponse(orderTableId, 20, true);
 
         when(tableService.changeNumberOfGuests(any(), any())).thenReturn(response);
 

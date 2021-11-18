@@ -32,8 +32,8 @@ class MenuGroupServiceTest extends SpringBootTestSupport {
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup1 = save(createMenuGroup1());
-        MenuGroup menuGroup2 = save(createMenuGroup2());
+        final MenuGroup menuGroup1 = save(createMenuGroup1());
+        final MenuGroup menuGroup2 = save(createMenuGroup2());
 
         final List<MenuGroupResponse> actual = menuGroupService.list();
 

@@ -82,7 +82,7 @@ class MenuServiceTest extends SpringBootTestSupport {
         void create() {
             request = new MenuRequest(MENU_NAME1, MENU_PRICE, menuGroup1.getId(), Arrays.asList(new MenuProductRequest(product1.getId(), 1), new MenuProductRequest(product2.getId(), 2)));
 
-            MenuResponse actual = menuService.create(request);
+            final MenuResponse actual = menuService.create(request);
 
             assertAll(
                     () -> assertThat(actual.getId()).isNotNull(),
@@ -97,14 +97,14 @@ class MenuServiceTest extends SpringBootTestSupport {
     @DisplayName("메뉴 목록을 조회할 수 있다.")
     @Test
     void list() {
-        MenuGroup menuGroup1 = save(createMenuGroup1());
-        MenuGroup menuGroup2 = save(createMenuGroup2());
-        Product product1 = save(createProduct1());
-        Product product2 = save(createProduct2());
-        Menu menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
-        Menu menu2 = save(createMenu2(menuGroup2, Collections.singletonList(product2)));
+        final MenuGroup menuGroup1 = save(createMenuGroup1());
+        final MenuGroup menuGroup2 = save(createMenuGroup2());
+        final Product product1 = save(createProduct1());
+        final Product product2 = save(createProduct2());
+        final Menu menu1 = save(createMenu1(menuGroup1, Collections.singletonList(product1)));
+        final Menu menu2 = save(createMenu2(menuGroup2, Collections.singletonList(product2)));
 
-        List<MenuResponse> actual = menuService.list();
+        final List<MenuResponse> actual = menuService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(2),

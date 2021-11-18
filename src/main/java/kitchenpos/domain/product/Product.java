@@ -21,11 +21,12 @@ public class Product {
     }
 
     public Product(String name, BigDecimal price) {
-        this(0L, name, price);
+        this(name, new Price(price));
     }
 
-    public Product(Long id, String name, BigDecimal price) {
-        this(id, name, new Price(price));
+    public Product(String name, Price price) {
+        this.name = name;
+        this.price = price;
     }
 
     public Product(Long id, String name, Price price) {

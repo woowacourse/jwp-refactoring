@@ -1,7 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.order.OrderTable;
-import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuRepository;
 import kitchenpos.domain.order.*;
@@ -38,7 +36,7 @@ public class OrderService {
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
-        Order order = new Order(orderTable, OrderStatus.COOKING);
+        final Order order = new Order(orderTable, OrderStatus.COOKING);
         order.changeOrderLineItems(orderLineItems);
         final Order savedOrder = orderRepository.save(order);
         return OrderResponse.of(savedOrder);

@@ -27,9 +27,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        long orderId = 1L;
-        OrderRequest request = new OrderRequest(1L, Collections.singletonList(new OrderLineItemsRequest(1L, 2)));
-        OrderResponse response = new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
+        final long orderId = 1L;
+        final OrderRequest request = new OrderRequest(1L, Collections.singletonList(new OrderLineItemsRequest(1L, 2)));
+        final OrderResponse response = new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
                 OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItemResponse(1L, 1L, 1)));
 
@@ -46,7 +46,7 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<OrderResponse> response = Collections.singletonList(new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
+        final List<OrderResponse> response = Collections.singletonList(new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
                 OrderStatus.COOKING.name(), LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItemResponse(1L, 1L, 1))));
 
@@ -60,9 +60,9 @@ class OrderRestControllerTest extends ControllerTest {
     @DisplayName("주문 상태를 변경할 수 있다.")
     @Test
     void changeOrderStatus() throws Exception {
-        Long orderId = 1L;
-        OrderStatusRequest request = new OrderStatusRequest(OrderStatus.MEAL.name());
-        OrderResponse response = new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
+        final Long orderId = 1L;
+        final OrderStatusRequest request = new OrderStatusRequest(OrderStatus.MEAL.name());
+        final OrderResponse response = new OrderResponse(1L, new OrderTableResponse(1L, 10, false),
                 OrderStatus.MEAL.name(), LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItemResponse(1L, 1L, 1)));
 

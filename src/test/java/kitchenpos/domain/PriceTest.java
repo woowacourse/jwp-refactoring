@@ -27,10 +27,10 @@ class PriceTest {
     @DisplayName("가격과 수량을 곱한다.")
     @Test
     void multiply() {
-        Price price = new Price(BigDecimal.valueOf(1000));
-        long quantity = 2;
+        final Price price = new Price(BigDecimal.valueOf(1000));
+        final long quantity = 2;
 
-        BigDecimal actual = price.multiply(quantity);
+        final BigDecimal actual = price.multiply(quantity);
 
         assertThat(actual).isEqualTo(BigDecimal.valueOf(2000));
     }

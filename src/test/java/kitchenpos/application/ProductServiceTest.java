@@ -23,7 +23,7 @@ class ProductServiceTest extends SpringBootTestSupport {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() {
-        ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
+        final ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
 
         final ProductResponse actual = productService.create(request);
 
@@ -37,7 +37,7 @@ class ProductServiceTest extends SpringBootTestSupport {
     @DisplayName("상품의 가격이 0원 미만일 경우 생성할 수 없다.")
     @Test
     void createExceptionIfPriceZero() {
-        ProductRequest request = new ProductRequest(PRODUCT_NAME1, BigDecimal.valueOf(-1000));
+        final ProductRequest request = new ProductRequest(PRODUCT_NAME1, BigDecimal.valueOf(-1000));
 
         assertThatThrownBy(() -> productService.create(request))
                 .isInstanceOf(IllegalArgumentException.class);
@@ -47,9 +47,9 @@ class ProductServiceTest extends SpringBootTestSupport {
     @Test
     void list() {
         save(createProduct1());
-        save(createProduct1());
+        save(createProduct2());
 
-        List<ProductResponse> actual = productService.list();
+        final List<ProductResponse> actual = productService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(2),

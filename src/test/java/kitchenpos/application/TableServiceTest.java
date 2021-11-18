@@ -38,7 +38,7 @@ class TableServiceTest extends SpringBootTestSupport {
     @DisplayName("주문 테이블을 생성할 수 있다.")
     @Test
     void create() {
-        OrderTableRequest request = new OrderTableRequest(10, true);
+        final OrderTableRequest request = new OrderTableRequest(10, true);
 
         final OrderTableResponse actual = tableService.create(request);
 
@@ -52,10 +52,10 @@ class TableServiceTest extends SpringBootTestSupport {
     @DisplayName("주문 테이블 목록을 조회할 수 있다.")
     @Test
     void list() {
-        OrderTable orderTable1 = save(createOrderTable());
-        OrderTable orderTable2 = save(createOrderTable());
+        final OrderTable orderTable1 = save(createOrderTable());
+        final OrderTable orderTable2 = save(createOrderTable());
 
-        List<OrderTableResponse> actual = tableService.list();
+        final List<OrderTableResponse> actual = tableService.list();
 
         assertAll(
                 () -> assertThat(actual).hasSize(2),
@@ -97,10 +97,10 @@ class TableServiceTest extends SpringBootTestSupport {
         @DisplayName("조리, 식사 주문 상태를 가진 주문이 있는 주문 테이블은 변경할 수 없다.")
         @Test
         void changeEmptyExceptionIfHasStatus() {
-            MenuGroup menuGroup = save(createMenuGroup1());
-            Product product = save(createProduct1());
-            Menu menu = save(createMenu1(menuGroup, Collections.singletonList(product)));
-            OrderTable orderTable = save(createOrderTable());
+            final MenuGroup menuGroup = save(createMenuGroup1());
+            final Product product = save(createProduct1());
+            final Menu menu = save(createMenu1(menuGroup, Collections.singletonList(product)));
+            final OrderTable orderTable = save(createOrderTable());
             save(createOrder(orderTable, OrderStatus.COOKING, Collections.singletonList(createOrderLineItem(menu))));
 
             assertThatThrownBy(() -> tableService.changeEmpty(orderTable.getId(), request))
@@ -123,7 +123,6 @@ class TableServiceTest extends SpringBootTestSupport {
     @Nested
     class ChangeNumber extends SpringBootTestSupport {
 
-        private final Long orderTableId = 1L;
         private OrderTableGuestRequest request;
         private OrderTable orderTable;
 
@@ -131,10 +130,6 @@ class TableServiceTest extends SpringBootTestSupport {
         void setUp() {
             request = new OrderTableGuestRequest(15);
             orderTable = save(createOrderTable());
-        }
-
-        void subject() {
-            tableService.changeNumberOfGuests(orderTableId, request);
         }
 
         @DisplayName("존재하지 않는 주문 테이블일 경우 변경할 수 없다.")

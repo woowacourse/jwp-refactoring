@@ -29,9 +29,9 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품을 생성할 수 있다.")
     @Test
     void create() throws Exception {
-        Long productId = 1L;
-        ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
-        ProductResponse response = new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE);
+        final Long productId = 1L;
+        final ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
+        final ProductResponse response = new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE);
         when(productService.create(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/products")
@@ -45,7 +45,7 @@ class ProductRestControllerTest extends ControllerTest {
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<ProductResponse> response = Collections.singletonList(new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE));
+        final List<ProductResponse> response = Collections.singletonList(new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE));
 
         when(productService.list()).thenReturn(response);
 
