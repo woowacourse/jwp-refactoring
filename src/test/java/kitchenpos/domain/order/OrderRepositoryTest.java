@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import static kitchenpos.MenuFixture.createMenu1;
@@ -52,5 +53,30 @@ class OrderRepositoryTest {
 
         assertThat(isExist).isTrue();
         assertThat(isNotExist).isFalse();
+    }
+
+    @DisplayName("주어진 주문 테이블들과 주문 상태들을 가진 주문이 있는지 확인한다.")
+    @Test
+    void existsByOrderTableInAndOrderStatusIn() {
+        final MenuGroup menuGroup1 = createMenuGroup1();
+        final Product product1 = createProduct1();
+        final Menu menu = createMenu1(menuGroup1, Collections.singletonList(product1));
+        final OrderTable orderTable1 = createOrderTable();
+        final OrderTable orderTable2 = createOrderTable();
+        final OrderLineItem orderLineItem = createOrderLineItem(menu);
+        final Order order = createOrder(orderTable1, Collections.singletonList(orderLineItem));
+
+        em.persist(menuGroup1);
+        em.persist(product1);
+        em.persist(menu);
+        em.persist(orderTable1);
+        em.persist(orderTable2);
+        em.persist(order);
+        em.flush();
+
+        final boolean isExist = orderRepository.existsByOrderTableInAndOrderStatusIn(
+                Arrays.asList(orderTable1, orderTable2), Collections.singletonList(order.getOrderStatus()));
+
+        assertThat(isExist).isTrue();
     }
 }
