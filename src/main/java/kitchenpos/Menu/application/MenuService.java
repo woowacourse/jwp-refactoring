@@ -4,7 +4,6 @@ import kitchenpos.Menu.domain.Menu;
 import kitchenpos.Menu.domain.MenuProduct;
 import kitchenpos.Menu.domain.Product;
 import kitchenpos.Menu.domain.repository.MenuGroupRepository;
-import kitchenpos.Menu.domain.repository.MenuProductRepository;
 import kitchenpos.Menu.domain.repository.MenuRepository;
 import kitchenpos.Menu.domain.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -21,18 +20,15 @@ public class MenuService {
 
     private final MenuRepository menuRepository;
     private final MenuGroupRepository menuGroupRepository;
-    private final MenuProductRepository menuProductRepository;
     private final ProductRepository productRepository;
 
     public MenuService(
             final MenuRepository menuRepository,
             final MenuGroupRepository menuGroupRepository,
-            final MenuProductRepository menuProductRepository,
             final ProductRepository productRepository
     ) {
         this.menuRepository = menuRepository;
         this.menuGroupRepository = menuGroupRepository;
-        this.menuProductRepository = menuProductRepository;
         this.productRepository = productRepository;
     }
 
@@ -61,25 +57,10 @@ public class MenuService {
             throw new IllegalArgumentException();
         }
 
-        final Menu savedMenu = menuRepository.save(menu);
-
-        final List<MenuProduct> savedMenuProducts = new ArrayList<>();
-        for (final MenuProduct menuProduct : menuProducts) {
-            menuProduct.enrollMenu(savedMenu);
-            savedMenuProducts.add(menuProductRepository.save(menuProduct));
-        }
-        savedMenu.enrollMenuProducts(savedMenuProducts);
-
-        return savedMenu;
+        return menuRepository.save(menu);
     }
 
     public List<Menu> list() {
-        final List<Menu> menus = menuRepository.findAll();
-
-        for (final Menu menu : menus) {
-            menu.enrollMenuProducts(menuProductRepository.findAllByMenu(menu));
-        }
-
-        return menus;
+        return menuRepository.findAll();
     }
 }
