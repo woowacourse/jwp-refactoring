@@ -1,6 +1,6 @@
 package kitchenpos.order.application;
 
-import kitchenpos.event.OrderTableUngroupEventPublisher;
+import kitchenpos.event.OrderStatusCheckEventPublisher;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.OrderTables;
 import kitchenpos.order.domain.repository.OrderTableRepository;
@@ -13,11 +13,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class OrderTableService {
     private final OrderTableRepository orderTableRepository;
-    private final OrderTableUngroupEventPublisher orderTableUngroupEventPublisher;
+    private final OrderStatusCheckEventPublisher orderStatusCheckEventPublisher;
 
-    public OrderTableService(OrderTableRepository orderTableRepository, OrderTableUngroupEventPublisher orderTableUngroupEventPublisher) {
+    public OrderTableService(OrderTableRepository orderTableRepository, OrderStatusCheckEventPublisher orderStatusCheckEventPublisher) {
         this.orderTableRepository = orderTableRepository;
-        this.orderTableUngroupEventPublisher = orderTableUngroupEventPublisher;
+        this.orderStatusCheckEventPublisher = orderStatusCheckEventPublisher;
     }
 
     public List<OrderTable> findAllOrderTables(List<Long> orderTableIds) {
@@ -35,6 +35,6 @@ public class OrderTableService {
     @Transactional
     public void ungroup(Long tableGroupId) {
         OrderTables orderTables = new OrderTables(orderTableRepository.findAllByTableGroupId(tableGroupId));
-        orderTables.ungroupAll(orderTableUngroupEventPublisher);
+        orderTables.ungroupAll(orderStatusCheckEventPublisher);
     }
 }

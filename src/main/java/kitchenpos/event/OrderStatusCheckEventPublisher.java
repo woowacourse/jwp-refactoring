@@ -1,20 +1,20 @@
 package kitchenpos.event;
 
 import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.OrderTableUngroupEvent;
+import kitchenpos.order.domain.OrderStatusCheckEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderTableUngroupEventPublisher {
+public class OrderStatusCheckEventPublisher {
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public OrderTableUngroupEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    public OrderStatusCheckEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public void publish(OrderTable orderTable) {
-        OrderTableUngroupEvent orderTableUngroupEvent = new OrderTableUngroupEvent(orderTable);
-        applicationEventPublisher.publishEvent(orderTableUngroupEvent);
+        OrderStatusCheckEvent orderStatusCheckEvent = new OrderStatusCheckEvent(orderTable);
+        applicationEventPublisher.publishEvent(orderStatusCheckEvent);
     }
 }

@@ -1,6 +1,6 @@
 package kitchenpos.order.domain;
 
-import kitchenpos.event.OrderTableUngroupEventPublisher;
+import kitchenpos.event.OrderStatusCheckEventPublisher;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ public class OrderTables {
         this.orderTables = orderTables;
     }
 
-    public void ungroupAll(OrderTableUngroupEventPublisher orderTableUngroupEventPublisher) {
-        orderTables.forEach(orderTableUngroupEventPublisher::publish);
+    public void ungroupAll(OrderStatusCheckEventPublisher orderStatusCheckEventPublisher) {
+        orderTables.forEach(orderStatusCheckEventPublisher::publish);
         ungroup();
     }
 
