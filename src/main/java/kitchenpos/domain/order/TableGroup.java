@@ -26,7 +26,7 @@ public class TableGroup {
 
     public void addOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = new OrderTables(orderTables);
-        this.orderTables.setTableGroup(this);
+        this.orderTables.addTableGroup(this);
     }
 
     public void ungroup() {

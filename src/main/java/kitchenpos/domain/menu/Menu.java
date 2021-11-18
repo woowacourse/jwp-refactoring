@@ -53,7 +53,7 @@ public class Menu {
 
     public void changeMenuProducts(List<MenuProduct> menuProducts) {
         for (MenuProduct menuProduct : menuProducts) {
-            menuProduct.setMenu(this);
+            menuProduct.changeMenu(this);
         }
         this.menuProducts = MenuProducts.of(price.getValue(), menuProducts);
     }

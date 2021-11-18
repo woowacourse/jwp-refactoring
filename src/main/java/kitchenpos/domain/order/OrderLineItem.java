@@ -36,7 +36,7 @@ public class OrderLineItem {
         return seq;
     }
 
-    public void setOrder(Order order) {
+    public void changeOrder(Order order) {
         this.order = order;
     }
 

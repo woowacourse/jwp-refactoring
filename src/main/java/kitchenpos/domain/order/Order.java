@@ -43,7 +43,7 @@ public class Order {
 
     public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
         for (OrderLineItem orderLineItem : orderLineItems) {
-            orderLineItem.setOrder(this);
+            orderLineItem.changeOrder(this);
         }
         this.orderLineItems = orderLineItems;
     }

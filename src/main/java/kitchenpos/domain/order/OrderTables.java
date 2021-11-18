@@ -31,9 +31,9 @@ public class OrderTables {
         }
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void addTableGroup(TableGroup tableGroup) {
         for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(tableGroup);
+            orderTable.changeTableGroup(tableGroup);
             orderTable.changeEmpty(false);
         }
     }
@@ -44,7 +44,7 @@ public class OrderTables {
 
     public void ungroup() {
         for (final OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(null);
+            orderTable.changeTableGroup(null);
             orderTable.changeEmpty(false);
         }
     }

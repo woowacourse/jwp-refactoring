@@ -53,7 +53,7 @@ public class OrderTable {
         return empty;
     }
 
-    public void setTableGroup(TableGroup tableGroup) {
+    public void changeTableGroup(TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
 

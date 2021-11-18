@@ -61,7 +61,7 @@ class OrderTablesTest {
         final OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
         final TableGroup tableGroup = new TableGroup();
 
-        orderTables.setTableGroup(tableGroup);
+        orderTables.addTableGroup(tableGroup);
 
         assertAll(
                 () -> assertThat(orderTables.getOrderTables().get(0).getTableGroup()).isNotNull(),
@@ -76,7 +76,7 @@ class OrderTablesTest {
         final OrderTable orderTable2 = createOrderTable(true);
         final OrderTables orderTables = new OrderTables(Arrays.asList(orderTable1, orderTable2));
         final TableGroup tableGroup = new TableGroup();
-        orderTables.setTableGroup(tableGroup);
+        orderTables.addTableGroup(tableGroup);
 
         orderTables.ungroup();
 
