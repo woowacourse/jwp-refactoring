@@ -19,13 +19,4 @@ public class SpringBootTestSupport {
         em.clear();
         return entity;
     }
-
-    protected <T> Iterable<T> saveAll(Iterable<T> entities) {
-        for (T entity : entities) {
-            em.persist(entity);
-            em.flush();
-            em.clear();
-        }
-        return entities;
-    }
 }
