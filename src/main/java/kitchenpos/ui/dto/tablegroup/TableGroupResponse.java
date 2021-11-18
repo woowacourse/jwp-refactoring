@@ -1,6 +1,7 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.tablegroup;
 
 import kitchenpos.domain.order.TableGroup;
+import kitchenpos.ui.dto.order.OrderTableRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;

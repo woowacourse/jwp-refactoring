@@ -2,9 +2,9 @@ package kitchenpos.application;
 
 
 import kitchenpos.domain.order.*;
-import kitchenpos.ui.dto.OrderTableIdRequest;
-import kitchenpos.ui.dto.TableGroupRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.ui.dto.order.OrderTableIdRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

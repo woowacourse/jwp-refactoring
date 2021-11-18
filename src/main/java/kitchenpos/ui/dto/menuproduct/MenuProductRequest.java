@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.menuproduct;
 
 import javax.validation.constraints.NotNull;
 

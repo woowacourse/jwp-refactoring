@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.product;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;

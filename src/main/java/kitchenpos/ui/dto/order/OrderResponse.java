@@ -1,4 +1,4 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.order;
 
 import kitchenpos.domain.order.Order;
 

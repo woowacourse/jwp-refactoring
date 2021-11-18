@@ -1,10 +1,10 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.TableGroupService;
-import kitchenpos.ui.dto.OrderTableIdRequest;
-import kitchenpos.ui.dto.OrderTableRequest;
-import kitchenpos.ui.dto.TableGroupRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
+import kitchenpos.ui.dto.order.OrderTableIdRequest;
+import kitchenpos.ui.dto.order.OrderTableRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupRequest;
+import kitchenpos.ui.dto.tablegroup.TableGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

@@ -1,4 +1,6 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.menu;
+
+import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;

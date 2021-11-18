@@ -1,4 +1,6 @@
-package kitchenpos.ui.dto;
+package kitchenpos.ui.dto.tablegroup;
+
+import kitchenpos.ui.dto.order.OrderTableIdRequest;
 
 import javax.validation.constraints.NotNull;
 import java.util.List;
