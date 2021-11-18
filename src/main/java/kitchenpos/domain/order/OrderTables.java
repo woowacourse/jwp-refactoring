@@ -3,13 +3,14 @@ package kitchenpos.domain.order;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 
 @Embeddable
 public class OrderTables {
 
     @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.REMOVE)
-    private List<OrderTable> orderTables;
+    private List<OrderTable> orderTables  = new ArrayList<>();
 
     protected OrderTables() {
     }

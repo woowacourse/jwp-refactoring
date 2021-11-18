@@ -33,10 +33,6 @@ public class MenuProduct {
         return id;
     }
 
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
     public Menu getMenu() {
         return menu;
     }
@@ -49,16 +45,8 @@ public class MenuProduct {
         return product;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
     public long getQuantity() {
         return quantity;
-    }
-
-    public void setQuantity(final long quantity) {
-        this.quantity = quantity;
     }
 
     public BigDecimal getAmount() {

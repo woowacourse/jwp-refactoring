@@ -29,24 +29,8 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public int getNumberOfGuests() {
-        return numberOfGuests;
-    }
-
     public void changeNumberOfGuests(final int numberOfGuests) {
         this.numberOfGuests = numberOfGuests;
-    }
-
-    public boolean isEmpty() {
-        return empty;
     }
 
     public void changeEmpty(final boolean empty) {
@@ -55,6 +39,18 @@ public class OrderTable {
 
     public boolean hasTableGroup() {
         return Objects.nonNull(this.tableGroup);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public int getNumberOfGuests() {
+        return numberOfGuests;
+    }
+
+    public boolean isEmpty() {
+        return empty;
     }
 
     public void setTableGroup(TableGroup tableGroup) {

@@ -23,10 +23,6 @@ public class Price {
         }
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
-
     public BigDecimal getValue() {
         return value;
     }

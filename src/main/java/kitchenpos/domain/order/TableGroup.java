@@ -24,26 +24,6 @@ public class TableGroup {
     public TableGroup() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables.getOrderTables();
-    }
-
     public void addOrderTables(final List<OrderTable> orderTables) {
         this.orderTables = new OrderTables(orderTables);
         this.orderTables.setTableGroup(this);
@@ -51,5 +31,17 @@ public class TableGroup {
 
     public void ungroup() {
         orderTables.ungroup();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public List<OrderTable> getOrderTables() {
+        return orderTables.getOrderTables();
     }
 }

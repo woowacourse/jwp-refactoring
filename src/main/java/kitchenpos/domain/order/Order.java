@@ -37,41 +37,8 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public OrderTable getOrderTable() {
-        return orderTable;
-    }
-
-
-    public OrderStatus getOrderStatus() {
-        return orderStatus;
-    }
-
     public void changeStatus(final String orderStatus) {
         this.orderStatus = OrderStatus.valueOf(orderStatus);
-    }
-
-    public boolean isCompletion(){
-        return this.orderStatus.isCompletion();
-    }
-
-    public LocalDateTime getOrderedTime() {
-        return orderedTime;
-    }
-
-    public void setOrderedTime(final LocalDateTime orderedTime) {
-        this.orderedTime = orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems;
     }
 
     public void changeOrderLineItems(final List<OrderLineItem> orderLineItems) {
@@ -79,5 +46,29 @@ public class Order {
             orderLineItem.setOrder(this);
         }
         this.orderLineItems = orderLineItems;
+    }
+
+    public boolean isCompletion() {
+        return this.orderStatus.isCompletion();
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public OrderTable getOrderTable() {
+        return orderTable;
+    }
+
+    public OrderStatus getOrderStatus() {
+        return orderStatus;
+    }
+
+    public LocalDateTime getOrderedTime() {
+        return orderedTime;
+    }
+
+    public List<OrderLineItem> getOrderLineItems() {
+        return orderLineItems;
     }
 }
