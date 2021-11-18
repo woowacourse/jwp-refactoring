@@ -15,11 +15,11 @@ public class Price {
     }
 
     public Price(final BigDecimal value) {
-        validates(value);
+        validateToConstruct(value);
         this.value = value;
     }
 
-    private static void validates(final BigDecimal value) {
+    private static void validateToConstruct(final BigDecimal value) {
         if (Objects.isNull(value) || value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException(String.format("가격은 0이상 입니다.(price: %s)", value));
         }
