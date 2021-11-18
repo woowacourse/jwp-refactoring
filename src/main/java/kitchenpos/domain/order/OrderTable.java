@@ -11,8 +11,13 @@ public class OrderTable {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "table_group_id")
     private TableGroup tableGroup;
+
+    @Column(nullable = false)
     private int numberOfGuests;
+
+    @Column(nullable = false)
     private boolean empty;
 
     protected OrderTable() {

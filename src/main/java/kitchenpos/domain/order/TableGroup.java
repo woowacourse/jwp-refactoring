@@ -16,6 +16,7 @@ public class TableGroup {
     private Long id;
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime createdDate;
 
     @Embedded

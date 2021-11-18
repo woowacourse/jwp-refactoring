@@ -18,12 +18,15 @@ public class Order {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_table_id", nullable = false)
     private OrderTable orderTable;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
     @CreatedDate
+    @Column(nullable = false)
     private LocalDateTime orderedTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
