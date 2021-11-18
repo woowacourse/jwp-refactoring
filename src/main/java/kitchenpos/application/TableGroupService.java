@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.OrderTableRepository;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.OrderTableRepository;
 import kitchenpos.domain.order.OrderRepository;
-import kitchenpos.domain.tableGroup.TableGroup;
-import kitchenpos.domain.tableGroup.TableGroupRepository;
+import kitchenpos.domain.order.TableGroup;
+import kitchenpos.domain.order.TableGroupRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -13,7 +13,6 @@ import org.springframework.util.CollectionUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service

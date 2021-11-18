@@ -1,6 +1,6 @@
 package kitchenpos.ui;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 
 import java.util.List;
 import java.util.stream.Collectors;

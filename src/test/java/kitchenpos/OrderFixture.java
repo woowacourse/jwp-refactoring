@@ -1,12 +1,11 @@
 package kitchenpos;
 
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
 import kitchenpos.domain.order.OrderStatus;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static kitchenpos.domain.order.OrderStatus.MEAL;

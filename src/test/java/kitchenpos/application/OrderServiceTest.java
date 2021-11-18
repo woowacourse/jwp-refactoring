@@ -1,7 +1,7 @@
 package kitchenpos.application;
 
 import kitchenpos.SpringBootTestSupport;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
