@@ -26,4 +26,9 @@ public class ExceptionController {
                 .collect(Collectors.joining(System.lineSeparator()));
         return ResponseEntity.badRequest().body(ErrorResponse.from(message));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        return ResponseEntity.badRequest().body(ErrorResponse.from("알 수 없는 문제가 발생했습니다."));
+    }
 }

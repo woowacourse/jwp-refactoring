@@ -3,21 +3,22 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.dto.MenuGroupRequest;
-import kitchenpos.ui.dto.MenuGroupResponse;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
-import kitchenpos.ui.dto.MenuResponse;
-import kitchenpos.ui.dto.OrderLineItemRequest;
-import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderResponse;
-import kitchenpos.ui.dto.OrderTableIdRequest;
-import kitchenpos.ui.dto.ProductRequest;
-import kitchenpos.ui.dto.ProductResponse;
-import kitchenpos.ui.dto.TableGroupRequest;
-import kitchenpos.ui.dto.TableGroupResponse;
-import kitchenpos.ui.dto.TableRequest;
-import kitchenpos.ui.dto.TableResponse;
+import kitchenpos.menu.ui.dto.MenuGroupRequest;
+import kitchenpos.menu.ui.dto.MenuGroupResponse;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
+import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
+import kitchenpos.order.ui.dto.OrderLineItemRequest;
+import kitchenpos.order.ui.dto.OrderRequest;
+import kitchenpos.order.ui.dto.OrderResponse;
+import kitchenpos.product.ui.dto.ProductRequest;
+import kitchenpos.product.ui.dto.ProductResponse;
+import kitchenpos.table.ui.dto.OrderTableIdRequest;
+import kitchenpos.table.ui.dto.TableGroupRequest;
+import kitchenpos.table.ui.dto.TableGroupResponse;
+import kitchenpos.table.ui.dto.TableRequest;
+import kitchenpos.table.ui.dto.TableResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
@@ -48,6 +49,22 @@ abstract class DomainAcceptanceTest extends AcceptanceTest {
                 .then()
                 .statusCode(HttpStatus.CREATED.value())
                 .extract();
+        MenuResponse menuResponse = response.as(MenuResponse.class);
+        return menuResponse.getId();
+    }
+
+    protected Long PUT_SAMPLE_MENU(Long menuId, String menuName, BigDecimal price) {
+        MenuUpdateRequest menuUpdateRequest = MenuUpdateRequest.of(menuName, price);
+
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(menuUpdateRequest)
+                .when().put("/api/menus/" + menuId)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
         MenuResponse menuResponse = response.as(MenuResponse.class);
         return menuResponse.getId();
     }

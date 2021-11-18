@@ -1,12 +1,14 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.repository.OrderRepository;
-import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.ui.dto.OrderRequest;
-import kitchenpos.ui.dto.OrderStatusRequest;
+import kitchenpos.order.application.OrderLineItemService;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.domain.repository.OrderRepository;
+import kitchenpos.order.ui.dto.OrderRequest;
+import kitchenpos.order.ui.dto.OrderStatusRequest;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,11 +17,11 @@ import org.mockito.Mock;
 import java.util.Arrays;
 import java.util.Optional;
 
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER;
-import static kitchenpos.application.ServiceTest.DomainFactory.CREATE_ORDER_TABLE;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_REQUEST;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_ORDER_STATUS_REQUEST;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER;
+import static kitchenpos.utils.Fixture.DomainFactory.CREATE_ORDER_TABLE;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_ORDER_ITEM_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_ORDER_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_ORDER_STATUS_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -28,8 +30,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("Order 서비스 테스트")
-public class OrderServiceTest extends ServiceTest {
+public class OrderServiceTest {
     @InjectMocks
     private OrderService orderService;
 

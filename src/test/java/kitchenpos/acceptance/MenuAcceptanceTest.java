@@ -3,9 +3,10 @@ package kitchenpos.acceptance;
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kitchenpos.ui.dto.MenuProductRequest;
-import kitchenpos.ui.dto.MenuRequest;
-import kitchenpos.ui.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuProductRequest;
+import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menu.ui.dto.MenuResponse;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -67,5 +68,32 @@ public class MenuAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
         assertThat(menus).isNotNull();
         assertThat(menus).isNotEmpty();
+    }
+
+    @DisplayName("PUT /api/menus/{menuId}")
+    @Test
+    void update() {
+        Long menuId = POST_SAMPLE_MENU();
+        // given
+        MenuUpdateRequest menuUpdateRequest = MenuUpdateRequest.of(
+                "양념+양념",
+                BigDecimal.valueOf(20000.00)
+        );
+
+        // then
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .body(menuUpdateRequest)
+                .when().put("/api/menus/" + menuId)
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract();
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(response.body()).isNotNull();
+        MenuResponse menuResponse = response.as(MenuResponse.class);
+        assertThat(menuResponse.getName()).isEqualTo(menuUpdateRequest.getName());
+        assertThat(menuResponse.getPrice()).isEqualTo(menuUpdateRequest.getPrice());
     }
 }
