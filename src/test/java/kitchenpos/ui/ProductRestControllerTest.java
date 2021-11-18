@@ -1,18 +1,19 @@
 package kitchenpos.ui;
 
 import kitchenpos.application.ProductService;
-import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.ProductRequest;
+import kitchenpos.ui.dto.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static kitchenpos.ProductFixture.*;
+import static kitchenpos.ProductFixture.PRODUCT_NAME1;
+import static kitchenpos.ProductFixture.PRODUCT_PRICE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,25 +31,26 @@ class ProductRestControllerTest extends ControllerTest {
     void create() throws Exception {
         Long productId = 1L;
         ProductRequest request = new ProductRequest(PRODUCT_NAME1, PRODUCT_PRICE);
-        Product savedProduct = createProduct1(productId);
-        when(productService.create(any())).thenReturn(savedProduct);
+        ProductResponse response = new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE);
+        when(productService.create(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/products")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(header().string("Location", "/api/products/" + productId))
-                .andExpect(content().json(objectMapper.writeValueAsString(savedProduct)));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 
     @DisplayName("상품 목록을 조회할 수 있다.")
     @Test
     void list() throws Exception {
-        List<Product> products = Arrays.asList(createProduct1(1L), createProduct1(2L));
-        when(productService.list()).thenReturn(products);
+        List<ProductResponse> response = Collections.singletonList(new ProductResponse(1L, PRODUCT_NAME1, PRODUCT_PRICE));
+
+        when(productService.list()).thenReturn(response);
 
         mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(products)));
+                .andExpect(content().json(objectMapper.writeValueAsString(response)));
     }
 }
