@@ -101,7 +101,7 @@ public class OrderTable {
     }
 
     public void ungroup() {
-        this.tableGroup.getOrderTables().remove(this);
+        tableGroup.removeOrderTables(this);
         this.tableGroup = null;
         this.empty = false;
     }

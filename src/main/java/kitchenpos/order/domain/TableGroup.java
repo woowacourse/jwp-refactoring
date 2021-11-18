@@ -54,4 +54,8 @@ public class TableGroup {
     public List<OrderTable> getOrderTables() {
         return orderTables;
     }
+
+    public void removeOrderTables(OrderTable orderTable) {
+        orderTables.remove(orderTable);
+    }
 }
