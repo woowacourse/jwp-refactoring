@@ -1,5 +1,7 @@
 package kitchenpos.domain.order;
 
+import org.springframework.data.annotation.CreatedDate;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,10 +12,15 @@ public class TableGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany
+    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.REMOVE)
     private List<OrderTable> orderTables;
+
+    public TableGroup() {
+    }
 
     public Long getId() {
         return id;
@@ -35,7 +42,10 @@ public class TableGroup {
         return orderTables;
     }
 
-    public void setOrderTables(final List<OrderTable> orderTables) {
+    public void changeOrderTables(final List<OrderTable> orderTables) {
+        for (OrderTable orderTable : orderTables) {
+            orderTable.setTableGroup(this);
+        }
         this.orderTables = orderTables;
     }
 }

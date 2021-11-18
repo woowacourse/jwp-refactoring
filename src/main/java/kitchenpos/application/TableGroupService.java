@@ -62,7 +62,7 @@ public class TableGroupService {
 //            savedOrderTable.setEmpty(false);
 //            orderTableRepository.save(savedOrderTable);
 //        }
-        savedTableGroup.setOrderTables(savedOrderTables);
+        savedTableGroup.changeOrderTables(savedOrderTables);
 
         return savedTableGroup;
     }
