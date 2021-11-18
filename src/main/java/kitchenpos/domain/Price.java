@@ -1,5 +1,6 @@
 package kitchenpos.domain;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -7,14 +8,15 @@ import java.util.Objects;
 @Embeddable
 public class Price {
 
-    private BigDecimal value;
+    @Column
+    private BigDecimal price;
 
     protected Price() {
     }
 
-    public Price(BigDecimal value) {
-        validatePrice(value);
-        this.value = value;
+    public Price(BigDecimal price) {
+        validatePrice(price);
+        this.price = price;
     }
 
     private void validatePrice(BigDecimal price) {
@@ -23,11 +25,11 @@ public class Price {
         }
     }
 
-    public BigDecimal getValue() {
-        return value;
+    public BigDecimal getPrice() {
+        return price;
     }
 
     public BigDecimal multiply(long quantity) {
-        return value.multiply(BigDecimal.valueOf(quantity));
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 }

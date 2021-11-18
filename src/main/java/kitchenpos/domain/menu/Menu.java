@@ -55,7 +55,7 @@ public class Menu {
         for (MenuProduct menuProduct : menuProducts) {
             menuProduct.changeMenu(this);
         }
-        this.menuProducts = MenuProducts.of(price.getValue(), menuProducts);
+        this.menuProducts = MenuProducts.of(price.getPrice(), menuProducts);
     }
 
     public Long getId() {
@@ -67,7 +67,7 @@ public class Menu {
     }
 
     public BigDecimal getPrice() {
-        return price.getValue();
+        return price.getPrice();
     }
 
     public MenuGroup getMenuGroup() {
