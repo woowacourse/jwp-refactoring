@@ -12,8 +12,4 @@ public class OrderStatusChangeRequest {
     public String getOrderStatus() {
         return orderStatus;
     }
-
-    public Order toEntity() {
-        return new Order(orderStatus);
-    }
 }
