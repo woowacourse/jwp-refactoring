@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +34,7 @@ public class OrderService {
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
         final OrderTable orderTable = getOrderTable(request);
         if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("빈 테이블의 주문은 생성할 수 없습니다.");
         }
         final Order order = new Order(orderTable, OrderStatus.COOKING);
         order.changeOrderLineItems(orderLineItems);
@@ -43,16 +44,16 @@ public class OrderService {
 
     private OrderTable getOrderTable(OrderRequest request) {
         return orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 주문 테이블이 존재하지 않습니다. id: " + request.getOrderTableId()));
     }
 
     private List<OrderLineItem> getOrderLineItems(OrderRequest request) {
         return request.getOrderLineItems()
                 .stream()
-                .map(lineItemsRequest -> {
-                    final Menu menu = menuRepository.findById(lineItemsRequest.getMenuId())
-                            .orElseThrow(IllegalArgumentException::new);
-                    return new OrderLineItem(menu, lineItemsRequest.getQuantity());
+                .map(lineItem -> {
+                    final Menu menu = menuRepository.findById(lineItem.getMenuId())
+                            .orElseThrow(() -> new NoSuchElementException("해당 메뉴가 존재하지 않습니다. id: " + lineItem.getMenuId()));
+                    return new OrderLineItem(menu, lineItem.getQuantity());
                 }).collect(Collectors.toList());
     }
 
@@ -65,9 +66,9 @@ public class OrderService {
     @Transactional
     public OrderResponse changeOrderStatus(final Long orderId, final OrderStatusRequest request) {
         final Order savedOrder = orderRepository.findById(orderId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 주문이 존재하지 않습니다. id: " + orderId));
         if (savedOrder.isCompletion()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("계산 완료된 주문의 상태는 변경할 수 없습니다.");
         }
         savedOrder.changeStatus(request.getOrderStatus());
         return OrderResponse.of(savedOrder);

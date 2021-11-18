@@ -4,9 +4,9 @@ import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
-import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
+import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static kitchenpos.MenuFixture.*;
 import static kitchenpos.ProductFixture.createProduct1;
@@ -55,23 +56,23 @@ class MenuServiceTest extends SpringBootTestSupport {
             request = new MenuRequest(MENU_NAME1, MENU_PRICE, 0L, Collections.singletonList(menuProductRequest));
 
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("존재하지 않는 상품을 포함한 경우 생성할 수 없다.")
         @Test
         void createExceptionIfNotExistProduct() {
             menuProductRequest = new MenuProductRequest(0L, MENU_QUANTITY);
-            request = new MenuRequest(MENU_NAME1, MENU_PRICE, MENU_GROUP_ID, Collections.singletonList(menuProductRequest));
+            request = new MenuRequest(MENU_NAME1, MENU_PRICE, menuGroup1.getId(), Collections.singletonList(menuProductRequest));
 
             assertThatThrownBy(() -> menuService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("메뉴 가격이 메뉴 상품 가격의 총합보다 클 수 없다.")
         @Test
         void createExceptionIfExceedPrice() {
-            request = new MenuRequest(MENU_NAME1, BigDecimal.valueOf(100000), MENU_GROUP_ID, Arrays.asList(new MenuProductRequest(product1.getId(), 1), new MenuProductRequest(product2.getId(), 2)));
+            request = new MenuRequest(MENU_NAME1, BigDecimal.valueOf(100000), menuGroup1.getId(), Arrays.asList(new MenuProductRequest(product1.getId(), 1), new MenuProductRequest(product2.getId(), 2)));
 
             assertThatThrownBy(() -> menuService.create(request))
                     .isInstanceOf(IllegalArgumentException.class);

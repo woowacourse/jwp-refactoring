@@ -21,11 +21,11 @@ public class OrderTables {
 
     private void validate(List<OrderTable> orderTables) {
         if (orderTables.size() < 2) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("주문 테이블의 개수가 2 미만일 경우 생성할 수 없습니다.");
         }
         for (final OrderTable savedOrderTable : orderTables) {
             if (!savedOrderTable.isEmpty() || savedOrderTable.hasTableGroup()) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("빈 테이블이 아닌 경우 생성할 수 없다.");
             }
         }
     }

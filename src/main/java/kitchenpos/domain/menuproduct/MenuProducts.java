@@ -32,7 +32,7 @@ public class MenuProducts {
         }
 
         if (price.compareTo(sum) > 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("메뉴 가격이 메뉴 상품들 가격의 총합보다 클 수 없습니다.");
         }
     }
 

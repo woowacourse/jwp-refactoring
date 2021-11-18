@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static kitchenpos.MenuFixture.createMenu1;
 import static kitchenpos.MenuFixture.createMenuGroup1;
@@ -81,7 +82,7 @@ class TableServiceTest extends SpringBootTestSupport {
         @Test
         void changeEmptyIfNotExist() {
             assertThatThrownBy(() -> tableService.changeEmpty(0L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("단체 지정에 속해있는 주문 테이블은 변경할 수 없다.")
@@ -136,7 +137,7 @@ class TableServiceTest extends SpringBootTestSupport {
         @Test
         void changeNumberOfGuestsExceptionIfNotExist() {
             assertThatThrownBy(() -> tableService.changeNumberOfGuests(0L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("빈 테이블일 경우 변경할 수 없다.")

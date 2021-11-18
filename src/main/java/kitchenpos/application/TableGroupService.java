@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class TableGroupService {
@@ -35,11 +36,11 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 단체 지정이 존재하지 않습니다. id: " + tableGroupId));
         final List<OrderTable> orderTables = tableGroup.getOrderTables();
         if (orderRepository.existsByOrderTableInAndOrderStatusIn(
                 orderTables, Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("조리, 식사 상태의 주문을 가진 주문 테이블을 포함한 경우 해제할 수 없습니다.");
         }
         tableGroup.ungroup();
     }

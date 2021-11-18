@@ -1,11 +1,11 @@
 package kitchenpos.application;
 
 import kitchenpos.SpringBootTestSupport;
-import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderStatus;
+import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.order.OrderLineItemsRequest;
 import kitchenpos.ui.dto.order.OrderRequest;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static kitchenpos.MenuFixture.*;
 import static kitchenpos.OrderFixture.createOrder;
@@ -59,7 +60,7 @@ class OrderServiceTest extends SpringBootTestSupport {
             request = new OrderRequest(orderTable.getId(), Collections.singletonList(new OrderLineItemsRequest(0L, 2)));
 
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("존재하지 않는 주문 테이블에 속한 경우 생성할 수 없다.")
@@ -68,7 +69,7 @@ class OrderServiceTest extends SpringBootTestSupport {
             request = new OrderRequest(0L, Collections.singletonList(new OrderLineItemsRequest(menu1.getId(), 2)));
 
             assertThatThrownBy(() -> orderService.create(request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("빈 테이블의 주문은 생성할 수 없다.")
@@ -147,7 +148,7 @@ class OrderServiceTest extends SpringBootTestSupport {
         @Test
         void changeOrderStatusExceptionIfNotExist() {
             assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(NoSuchElementException.class);
         }
 
         @DisplayName("계산 완료된 주문일 경우 변경할 수 없다.")

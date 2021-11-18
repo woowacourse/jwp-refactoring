@@ -7,13 +7,14 @@ import kitchenpos.domain.menugroup.MenuGroupRepository;
 import kitchenpos.domain.menuproduct.MenuProduct;
 import kitchenpos.domain.product.Product;
 import kitchenpos.domain.product.ProductRepository;
-import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 import kitchenpos.ui.dto.menu.MenuRequest;
 import kitchenpos.ui.dto.menu.MenuResponse;
+import kitchenpos.ui.dto.menuproduct.MenuProductRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +36,7 @@ public class MenuService {
     @Transactional
     public MenuResponse create(final MenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 메뉴 그룹이 존재하지 않습니다. id: " + request.getMenuGroupId()));
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
         final List<MenuProduct> menuProducts = getMenuProducts(request);
         menu.changeMenuProducts(menuProducts);
@@ -52,7 +53,7 @@ public class MenuService {
 
     private MenuProduct getMenuProduct(MenuProductRequest menuProduct) {
         final Product product = productRepository.findById(menuProduct.getProductId())
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new NoSuchElementException("해당 상품이 존재하지 않습니다. id: " + menuProduct.getProductId()));
         return new MenuProduct(product, menuProduct.getQuantity());
     }
 
