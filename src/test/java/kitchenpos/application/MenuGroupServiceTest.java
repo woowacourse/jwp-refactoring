@@ -7,8 +7,6 @@ import kitchenpos.ui.dto.MenuGroupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,9 +26,7 @@ class MenuGroupServiceTest extends SpringBootTestSupport {
 
         final MenuGroupResponse actual = menuGroupService.create(request);
 
-        assertAll(
-                () -> assertThat(actual.getName()).isEqualTo(MENU_GROUP_NAME1)
-        );
+        assertThat(actual.getName()).isEqualTo(MENU_GROUP_NAME1);
     }
 
     @DisplayName("메뉴 그룹 목록을 조회할 수 있다.")
