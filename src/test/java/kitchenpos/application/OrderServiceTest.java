@@ -6,7 +6,7 @@ import kitchenpos.order.application.OrderService;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.order.domain.repository.OrderRepository;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.DisplayName;

@@ -1,6 +1,6 @@
-package kitchenpos.order.ui.dto;
+package kitchenpos.table.ui.dto;
 
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderTable;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

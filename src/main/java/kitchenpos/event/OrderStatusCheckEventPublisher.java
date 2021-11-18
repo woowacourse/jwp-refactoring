@@ -1,7 +1,7 @@
 package kitchenpos.event;
 
-import kitchenpos.order.domain.OrderStatusCheckEvent;
-import kitchenpos.order.domain.OrderTable;
+import kitchenpos.table.domain.OrderStatusCheckEvent;
+import kitchenpos.table.domain.OrderTable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 

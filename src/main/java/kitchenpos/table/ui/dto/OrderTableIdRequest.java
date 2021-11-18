@@ -1,4 +1,4 @@
-package kitchenpos.order.ui.dto;
+package kitchenpos.table.ui.dto;
 
 public class OrderTableIdRequest {
     private Long id;

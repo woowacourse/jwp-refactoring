@@ -1,6 +1,6 @@
-package kitchenpos.order.ui.dto;
+package kitchenpos.table.ui.dto;
 
-import kitchenpos.order.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;

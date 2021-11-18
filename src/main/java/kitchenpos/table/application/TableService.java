@@ -1,11 +1,11 @@
-package kitchenpos.order.application;
+package kitchenpos.table.application;
 
 import kitchenpos.event.OrderStatusCheckEventPublisher;
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderTableRepository;
-import kitchenpos.order.ui.dto.TableRequest;
-import kitchenpos.order.ui.dto.TableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
+import kitchenpos.table.ui.dto.TableRequest;
+import kitchenpos.table.ui.dto.TableResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -1,9 +1,9 @@
 package kitchenpos.application;
 
 import kitchenpos.event.OrderStatusCheckEventPublisher;
-import kitchenpos.order.application.OrderTableService;
-import kitchenpos.order.domain.OrderTable;
-import kitchenpos.order.domain.repository.OrderTableRepository;
+import kitchenpos.table.application.OrderTableService;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.repository.OrderTableRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

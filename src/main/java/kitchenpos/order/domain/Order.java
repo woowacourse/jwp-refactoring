@@ -1,6 +1,7 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.exception.FieldNotValidException;
+import kitchenpos.table.domain.OrderTable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
