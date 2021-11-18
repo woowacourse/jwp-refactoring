@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.OrderStatus;
@@ -30,14 +29,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-class TableGroupServiceTest extends SpringBootTestSupport {
+class TableGroupServiceTest extends EntityManagerSupport {
 
     @Autowired
     private TableGroupService tableGroupService;
 
     @DisplayName("단체 지정을 생성은")
     @Nested
-    class Create extends SpringBootTestSupport {
+    class Create extends EntityManagerSupport {
 
         private TableGroupRequest request;
         private OrderTable orderTable1;
@@ -111,7 +110,7 @@ class TableGroupServiceTest extends SpringBootTestSupport {
 
     @DisplayName("단체 지정 해제는")
     @Nested
-    class Ungroup extends SpringBootTestSupport {
+    class Ungroup extends EntityManagerSupport {
 
         private MenuGroup menuGroup;
         private Product product;

@@ -1,4 +1,4 @@
-package kitchenpos;
+package kitchenpos.application;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 
 @Transactional
 @SpringBootTest
-public class SpringBootTestSupport {
+public class EntityManagerSupport {
 
     @Autowired
     private EntityManager em;

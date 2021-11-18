@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.order.OrderStatus;
@@ -31,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class TableServiceTest extends SpringBootTestSupport {
+class TableServiceTest extends EntityManagerSupport {
 
     @Autowired
     private TableService tableService;
@@ -67,7 +66,7 @@ class TableServiceTest extends SpringBootTestSupport {
 
     @DisplayName("빈 테이블로의 변경은")
     @Nested
-    class ChangeEmpty extends SpringBootTestSupport {
+    class ChangeEmpty extends EntityManagerSupport {
 
         private OrderTableEmptyRequest request;
         private OrderTable orderTable;
@@ -122,7 +121,7 @@ class TableServiceTest extends SpringBootTestSupport {
 
     @DisplayName("주문 테이블의 방문한 손님 수 변경은")
     @Nested
-    class ChangeNumber extends SpringBootTestSupport {
+    class ChangeNumber extends EntityManagerSupport {
 
         private OrderTableGuestRequest request;
         private OrderTable orderTable;

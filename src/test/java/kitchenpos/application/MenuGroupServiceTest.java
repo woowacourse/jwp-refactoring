@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.ui.dto.menugroup.MenuGroupRequest;
 import kitchenpos.ui.dto.menugroup.MenuGroupResponse;
@@ -14,7 +13,7 @@ import static kitchenpos.MenuFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class MenuGroupServiceTest extends SpringBootTestSupport {
+class MenuGroupServiceTest extends EntityManagerSupport {
 
     @Autowired
     private MenuGroupService menuGroupService;

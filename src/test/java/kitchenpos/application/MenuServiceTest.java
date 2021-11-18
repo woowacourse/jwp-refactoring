@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.SpringBootTestSupport;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menugroup.MenuGroup;
 import kitchenpos.domain.product.Product;
@@ -26,14 +25,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class MenuServiceTest extends SpringBootTestSupport {
+class MenuServiceTest extends EntityManagerSupport {
 
     @Autowired
     private MenuService menuService;
 
     @DisplayName("메뉴 생성은")
     @Nested
-    class Create extends SpringBootTestSupport {
+    class Create extends EntityManagerSupport {
 
         private MenuGroup menuGroup1;
         private Product product1;

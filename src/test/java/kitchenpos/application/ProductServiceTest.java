@@ -1,6 +1,5 @@
 package kitchenpos.application;
 
-import kitchenpos.SpringBootTestSupport;
 import kitchenpos.ui.dto.product.ProductRequest;
 import kitchenpos.ui.dto.product.ProductResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -15,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-class ProductServiceTest extends SpringBootTestSupport {
+class ProductServiceTest extends EntityManagerSupport {
 
     @Autowired
     private ProductService productService;
