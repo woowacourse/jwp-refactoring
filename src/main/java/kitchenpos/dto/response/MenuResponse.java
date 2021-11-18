@@ -35,10 +35,10 @@ public class MenuResponse {
     public static MenuResponse from(final Menu menu) {
         return new MenuResponse(
             menu.getId(),
-            menu.getName(),
+            menu.getName().getValue(),
             menu.getPrice().getValue(),
             menu.getMenuGroup().getId(),
-            MenuProductResponse.from(menu)
+            MenuProductResponse.listFrom(menu)
         );
     }
 
@@ -80,19 +80,19 @@ public class MenuResponse {
             this.quantity = quantity;
         }
 
-        public static List<MenuProductResponse> from(final Menu menu) {
+        public static List<MenuProductResponse> listFrom(final Menu menu) {
             return menu.getMenuProducts().getElements()
                 .stream()
-                .map(MenuProductResponse::from)
+                .map(menuProduct -> MenuProductResponse.from(menu, menuProduct))
                 .collect(Collectors.toList());
         }
 
-        public static MenuProductResponse from(final MenuProduct menuProduct) {
+        public static MenuProductResponse from(final Menu menu, final MenuProduct menuProduct) {
             return new MenuProductResponse(
                 menuProduct.getSeq(),
-                menuProduct.getMenu().getId(),
+                menu.getId(),
                 menuProduct.getProduct().getId(),
-                menuProduct.getQuantity()
+                menuProduct.getQuantity().getValue()
             );
         }
 

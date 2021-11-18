@@ -85,7 +85,7 @@ public class OrderResponse {
                 orderLineItem.getSeq(),
                 orderLineItem.getOrder().getId(),
                 orderLineItem.getMenu().getId(),
-                orderLineItem.getQuantity()
+                orderLineItem.getQuantity().getValue()
             );
         }
 

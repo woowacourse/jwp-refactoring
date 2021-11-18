@@ -15,9 +15,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Name;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.domain.repository.TableGroupRepository;
@@ -50,7 +55,12 @@ public class TableGroupServiceTest extends ServiceTest {
     void setUp() {
         orderTable1 = new OrderTable(1L, null, 4, true);
         orderTable2 = new OrderTable(2L, null, 4, true);
-        menu = new Menu(1L, "후라이드", BigDecimal.valueOf(16000), new MenuGroup(1L, "치킨"));
+        menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+            new MenuGroup(1L, "치킨"),
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
+            ))
+        );
     }
 
     @DisplayName("단체 지정 저장")

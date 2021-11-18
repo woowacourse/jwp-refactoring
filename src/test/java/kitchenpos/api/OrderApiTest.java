@@ -7,15 +7,19 @@ import java.sql.SQLException;
 import java.util.Collections;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
+import kitchenpos.domain.repository.ProductRepository;
 import kitchenpos.dto.request.OrderRequest;
 import kitchenpos.dto.request.OrderRequest.OrderLineItemRequest;
 import kitchenpos.dto.request.OrderStatusRequest;
@@ -34,6 +38,9 @@ import org.springframework.http.ResponseEntity;
 public class OrderApiTest extends ApiTest {
 
     private static final String BASE_URL = "/api/orders";
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private MenuGroupRepository menuGroupRepository;
@@ -61,7 +68,12 @@ public class OrderApiTest extends ApiTest {
         super.setUp();
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
-        menu = menuRepository.save(new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup));
+        Product product = productRepository.save(new Product("후라이드치킨", BigDecimal.valueOf(16000)));
+        menu = menuRepository.save(
+            new Menu("후라이드치킨", BigDecimal.valueOf(16000), menuGroup,
+                new MenuProducts(Collections.singletonList(new MenuProduct(product, 2L)))
+            )
+        );
         orderTable = orderTableRepository.save(new OrderTable(0, false));
         order = orderRepository.save(
             new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 1L)))
@@ -126,8 +138,8 @@ public class OrderApiTest extends ApiTest {
         assertThat(response).usingRecursiveComparison()
             .ignoringFields("orderStatus", "orderLineItems")
             .isEqualTo(order);
-        assertThat(response.getOrderLineItems()).hasSize(1);
+        assertThat(response.getOrderLineItems()).hasSameSizeAs(order.getOrderLineItems());
         assertThat(response.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
+            .isEqualTo(OrderLineItemResponse.from(order.getOrderLineItems().get(0)));
     }
 }

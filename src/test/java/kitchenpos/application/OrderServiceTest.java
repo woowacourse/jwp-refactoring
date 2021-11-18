@@ -14,10 +14,15 @@ import java.util.List;
 import java.util.Optional;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Name;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.Price;
+import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.domain.repository.OrderRepository;
@@ -47,26 +52,31 @@ public class OrderServiceTest extends ServiceTest {
     @InjectMocks
     private OrderService orderService;
 
-    private OrderTable orderTable1;
+    private OrderTable orderTable;
     private Order order1;
     private Order order2;
     private Menu menu;
 
     @BeforeEach
     void setUp() {
-        orderTable1 = new OrderTable(1L, null, 4, true);
+        orderTable = new OrderTable(1L, null, 4, true);
         OrderTable orderTable2 = new OrderTable(2L, null, 4, true);
-        new TableGroup(1L, Arrays.asList(orderTable1, orderTable2));
+        new TableGroup(1L, Arrays.asList(orderTable, orderTable2));
         MenuGroup menuGroup = new MenuGroup("치킨");
-        menu = new Menu(1L, "후라이드치킨", BigDecimal.valueOf(16000), menuGroup);
-        order1 = new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
+        menu = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+            menuGroup,
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
+            ))
+        );
+        order1 = new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 2L)));
         order2 = new Order(orderTable2, Collections.singletonList(new OrderLineItem(menu, 2L)));
     }
 
     @DisplayName("주문 등록")
     @Test
     void create() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
         when(menuRepository.findAllById(any())).thenReturn(
             Collections.singletonList(menu)
         );
@@ -97,7 +107,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 항목이 0개인 주문 등록할 경우 예외 처리")
     @Test
     void createWithoutOrderLineItems() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
         OrderRequest orderRequest = new OrderRequest(1L, Collections.emptyList());
 
         assertThatThrownBy(() -> orderService.create(orderRequest)).isExactlyInstanceOf(
@@ -108,7 +118,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 메뉴로 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundMenu() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
         when(menuRepository.findAllById(any())).thenReturn(Collections.emptyList());
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
@@ -125,7 +135,7 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("등록되지 않은 테이블에 주문 등록할 경우 예외 처리")
     @Test
     void createWithNotFoundOrderTable() {
-        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
+        when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable));
         when(orderTableRepository.findById(1L)).thenReturn(Optional.empty());
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
@@ -202,7 +212,7 @@ public class OrderServiceTest extends ServiceTest {
         when(orderRepository.findById(idToChange)).thenReturn(Optional.of(
             new Order(
                 1L,
-                orderTable1,
+                orderTable,
                 OrderStatus.COMPLETION,
                 Collections.singletonList(new OrderLineItem(menu, 2L))
             )

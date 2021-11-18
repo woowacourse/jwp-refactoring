@@ -17,6 +17,8 @@ import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
 import kitchenpos.domain.MenuProducts;
+import kitchenpos.domain.Name;
+import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -84,7 +86,6 @@ public class MenuServiceTest extends ServiceTest {
                 .stream()
                 .map(menuProduct -> new MenuProduct(
                     seq,
-                    new Menu(menuId, menu.getName(), menu.getPrice(), menu.getMenuGroup()),
                     new Product(
                         menuProduct.getProduct().getId(),
                         "후라이드",
@@ -168,20 +169,19 @@ public class MenuServiceTest extends ServiceTest {
     @Test
     void list() {
         MenuGroup menuGroup = new MenuGroup(1L, "두마리메뉴");
-        Menu friedChicken = new Menu(
-            1L,
-            "후라이드치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
+        Menu friedChicken = new Menu(1L, new Name("후라이드치킨"), new Price(BigDecimal.valueOf(16000)),
+            menuGroup,
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(new Product(1L, "후라이드치킨", BigDecimal.valueOf(16000)), 2L)
+            ))
         );
-        friedChicken.addProduct(new Product(1L, "후라이드", BigDecimal.valueOf(16000)), 2);
-        Menu seasonedSpicyChicken = new Menu(
-            2L,
-            "양념치킨",
-            BigDecimal.valueOf(16000),
-            menuGroup
+        Menu seasonedSpicyChicken = new Menu(2L, new Name("후라이드치킨"),
+            new Price(BigDecimal.valueOf(16000)),
+            menuGroup,
+            new MenuProducts(Collections.singletonList(
+                new MenuProduct(new Product(2L, "양념치킨", BigDecimal.valueOf(16000)), 2L)
+            ))
         );
-        seasonedSpicyChicken.addProduct(new Product(2L, "양념치킨", BigDecimal.valueOf(16000)), 2);
         List<Menu> menus = Arrays.asList(friedChicken, seasonedSpicyChicken);
         when(menuRepository.findAll()).thenReturn(menus);
 

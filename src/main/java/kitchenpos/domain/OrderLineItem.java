@@ -52,7 +52,7 @@ public class OrderLineItem {
         return menu;
     }
 
-    public long getQuantity() {
-        return quantity.getValue();
+    public Quantity getQuantity() {
+        return quantity;
     }
 }

@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 @Embeddable
 public class MenuProducts {
 
-    @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "menu_id")
     private final List<MenuProduct> elements;
 
     public MenuProducts() {
@@ -25,13 +27,10 @@ public class MenuProducts {
         elements.add(menuProduct);
     }
 
-    public BigDecimal totalPrice() {
+    public Price totalPrice() {
         return elements.stream()
-            .map(element -> element
-                .getProduct()
-                .getPrice()
-                .getValue()
-            ).reduce(BigDecimal.ZERO, BigDecimal::add);
+            .map(MenuProduct::getPrice)
+            .reduce(new Price(BigDecimal.ZERO), Price::add);
     }
 
     public List<MenuProduct> getElements() {

@@ -25,8 +25,16 @@ public class Price {
         }
     }
 
-    public boolean isBiggerThan(final BigDecimal target) {
-        return value.compareTo(target) > 0;
+    public Price add(final Price target) {
+        return new Price(value.add(target.getValue()));
+    }
+
+    public Price multiply(final BigDecimal multiplier) {
+        return new Price(value.multiply(multiplier));
+    }
+
+    public boolean isBiggerThan(final Price target) {
+        return value.compareTo(target.getValue()) > 0;
     }
 
     public BigDecimal getValue() {

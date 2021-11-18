@@ -1,8 +1,11 @@
 package kitchenpos.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
+import kitchenpos.domain.MenuProduct;
+import kitchenpos.domain.MenuProducts;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.repository.MenuGroupRepository;
 import kitchenpos.domain.repository.MenuRepository;
@@ -35,7 +38,16 @@ public class MenuService {
             .orElseThrow(() -> new IllegalArgumentException(
                 String.format("존재하지 않는 메뉴 그룹입니다. (id: %d)", menuRequest.getMenuGroupId())
             ));
-        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup);
+
+        MenuProducts menuProducts = newMenuProducts(menuRequest);
+        Menu menu = new Menu(menuRequest.getName(), menuRequest.getPrice(), menuGroup,
+            menuProducts);
+
+        return MenuResponse.from(menuRepository.save(menu));
+    }
+
+    private MenuProducts newMenuProducts(final MenuRequest menuRequest) {
+        List<MenuProduct> menuProducts = new ArrayList<>();
 
         for (MenuProductRequest menuProductRequest : menuRequest.getMenuProducts()) {
             Long productId = menuProductRequest.getProductId();
@@ -43,10 +55,10 @@ public class MenuService {
                 .orElseThrow(() -> new IllegalArgumentException(
                     String.format("존재하지 않는 제품이 있습니다.(id: %d)", productId)
                 ));
-            menu.addProduct(product, menuProductRequest.getQuantity());
+            menuProducts.add(new MenuProduct(product, menuProductRequest.getQuantity()));
         }
 
-        return MenuResponse.from(menuRepository.save(menu));
+        return new MenuProducts(menuProducts);
     }
 
     public List<MenuResponse> list() {
