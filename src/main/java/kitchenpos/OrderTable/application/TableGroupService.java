@@ -54,7 +54,7 @@ public class TableGroupService {
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
             savedOrderTable.enrollTableGroup(savedTableGroup.getId());
-            savedOrderTable.grouped(false);
+            savedOrderTable.changeEmptyStatus(false);
         }
 
         return savedTableGroup;
@@ -71,7 +71,7 @@ public class TableGroupService {
 
         for (final OrderTable orderTable : orderTables) {
             orderTable.releaseTableGroup();
-            orderTable.grouped(false);
+            orderTable.changeEmptyStatus(false);
         }
     }
 }

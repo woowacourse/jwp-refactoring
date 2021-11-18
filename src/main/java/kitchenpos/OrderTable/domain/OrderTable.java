@@ -47,7 +47,7 @@ public class OrderTable {
         this.tableGroupId = tableGroupId;
     }
 
-    public void grouped(boolean empty) {
+    public void changeEmptyStatus(boolean empty) {
         this.empty = empty;
     }
 

@@ -6,10 +6,6 @@ import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeEmptyRequest;
 import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeNumberOfGuestsRequest;
 import kitchenpos.OrderTable.domain.dto.request.OrderTableCreateRequest;
 import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
-import kitchenpos.dto.request.OrderTableChangeEmptyRequest;
-import kitchenpos.dto.request.OrderTableChangeNumberOfGuestsRequest;
-import kitchenpos.dto.request.OrderTableCreateRequest;
-import kitchenpos.dto.response.OrderTableResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,7 +48,9 @@ public class TableRestController {
             @RequestBody final OrderTableChangeEmptyRequest request
     ) {
         return ResponseEntity.ok()
-                .body(OrderTableResponse.toDTO(tableService.changeEmpty(orderTableId, request.toEntity())))
+                .body(OrderTableResponse.toDTO(
+                        tableService.changeEmpty(orderTableId, request.isEmpty()))
+                )
                 ;
     }
 
@@ -62,7 +60,7 @@ public class TableRestController {
             @RequestBody final OrderTableChangeNumberOfGuestsRequest request
     ) {
         return ResponseEntity.ok()
-                .body(OrderTableResponse.toDTO(tableService.changeNumberOfGuests(orderTableId, request.toEntity())))
+                .body(OrderTableResponse.toDTO(tableService.changeNumberOfGuests(orderTableId, request.getNumberOfGuests())))
                 ;
     }
 }

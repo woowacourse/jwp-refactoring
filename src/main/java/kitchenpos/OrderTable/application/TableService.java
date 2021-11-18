@@ -1,7 +1,11 @@
 package kitchenpos.OrderTable.application;
 
+import kitchenpos.Order.domain.OrderStatus;
 import kitchenpos.Order.domain.repository.OrderRepository;
 import kitchenpos.OrderTable.domain.OrderTable;
+import kitchenpos.OrderTable.domain.dto.request.OrderTableChangeEmptyRequest;
+import kitchenpos.OrderTable.domain.dto.request.OrderTableCreateRequest;
+import kitchenpos.OrderTable.domain.dto.response.OrderTableResponse;
 import kitchenpos.OrderTable.domain.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +26,6 @@ public class TableService {
     }
 
     public OrderTable create(final OrderTable orderTable) {
-        orderTable.enrollId(null);
-        orderTable.releaseTableGroup();
-
         return orderTableRepository.save(orderTable);
     }
 
@@ -32,7 +33,7 @@ public class TableService {
         return orderTableRepository.findAll();
     }
 
-    public OrderTable changeEmpty(final Long orderTableId, final OrderTable orderTable) {
+    public OrderTable changeEmpty(final Long orderTableId, final boolean empty) {
         final OrderTable savedOrderTable = orderTableRepository.findByIdWithTableGroup(orderTableId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -45,14 +46,11 @@ public class TableService {
             throw new IllegalArgumentException();
         }
 
-        savedOrderTable.grouped(orderTable.isEmpty());
-
-        return orderTableRepository.save(savedOrderTable);
+        savedOrderTable.changeEmptyStatus(empty);
+        return savedOrderTable;
     }
 
-    public OrderTable changeNumberOfGuests(final Long orderTableId, final OrderTable orderTable) {
-        final int numberOfGuests = orderTable.getNumberOfGuests();
-
+    public OrderTable changeNumberOfGuests(final Long orderTableId, final int numberOfGuests) {
         if (numberOfGuests < 0) {
             throw new IllegalArgumentException();
         }
@@ -65,7 +63,6 @@ public class TableService {
         }
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
-
         return savedOrderTable;
     }
 }
