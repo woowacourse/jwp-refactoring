@@ -94,9 +94,9 @@ public class Menu extends AbstractAggregateRoot<Menu> {
     }
 
     public void update(String name, BigDecimal price) {
-        TemporaryMenu temporaryMenu = new TemporaryMenu(this.id, this.name, this.price);
+        OrderedMenu orderedMenu = new OrderedMenu(this.id, this.name, this.price);
         updateTo(name, price);
-        registerEvent(new MenuChangeEvent(this, temporaryMenu, LocalDateTime.now()));
+        registerEvent(new MenuChangeEvent(this, orderedMenu, LocalDateTime.now()));
     }
 
     private void updateTo(String name, BigDecimal price) {

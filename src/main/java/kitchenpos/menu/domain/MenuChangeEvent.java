@@ -5,21 +5,21 @@ import org.springframework.context.ApplicationEvent;
 import java.time.LocalDateTime;
 
 public class MenuChangeEvent extends ApplicationEvent {
-    private TemporaryMenu temporaryMenu;
+    private OrderedMenu orderedMenu;
     private LocalDateTime updatedAt;
 
-    public MenuChangeEvent(Object source, TemporaryMenu temporaryMenu, LocalDateTime updatedAt) {
+    public MenuChangeEvent(Object source, OrderedMenu orderedMenu, LocalDateTime updatedAt) {
         super(source);
-        this.temporaryMenu = temporaryMenu;
+        this.orderedMenu = orderedMenu;
         this.updatedAt = updatedAt;
     }
 
-    public TemporaryMenu getTemporaryMenu() {
-        return temporaryMenu;
+    public OrderedMenu getTemporaryMenu() {
+        return orderedMenu;
     }
 
     public Long getMenuId() {
-        return temporaryMenu.getTempMenuId();
+        return orderedMenu.getTempMenuId();
     }
 
     public LocalDateTime getUpdatedAt() {

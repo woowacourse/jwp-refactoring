@@ -1,7 +1,7 @@
 package kitchenpos.order.domain;
 
 import kitchenpos.menu.domain.Menu;
-import kitchenpos.menu.domain.TemporaryMenu;
+import kitchenpos.menu.domain.OrderedMenu;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -36,7 +36,7 @@ public class OrderLineItem {
     private LocalDateTime createdAt;
 
     @Embedded
-    private TemporaryMenu temporaryMenu;
+    private OrderedMenu orderedMenu;
 
     protected OrderLineItem() {
     }
@@ -74,11 +74,11 @@ public class OrderLineItem {
     }
 
     public Menu getMenu() {
-        if (Objects.nonNull(temporaryMenu)) {
+        if (Objects.nonNull(orderedMenu)) {
             return new Menu(
                     menu.getId(),
-                    temporaryMenu.getTempMenuName(),
-                    temporaryMenu.getTempMenuPrice(),
+                    orderedMenu.getTempMenuName(),
+                    orderedMenu.getTempMenuPrice(),
                     menu.getMenuGroup(),
                     menu.getMenuProducts()
             );
@@ -86,9 +86,9 @@ public class OrderLineItem {
         return menu;
     }
 
-    public void updateTemporaryMenu(TemporaryMenu temporaryMenu) {
-        if (Objects.isNull(this.temporaryMenu)) {
-            this.temporaryMenu = temporaryMenu;
+    public void updateTemporaryMenu(OrderedMenu orderedMenu) {
+        if (Objects.isNull(this.orderedMenu)) {
+            this.orderedMenu = orderedMenu;
         }
     }
 

@@ -5,7 +5,7 @@ import javax.persistence.Embeddable;
 import java.math.BigDecimal;
 
 @Embeddable
-public class TemporaryMenu {
+public class OrderedMenu {
 
     @Column
     private Long tempMenuId;
@@ -14,10 +14,10 @@ public class TemporaryMenu {
     @Column
     private BigDecimal tempMenuPrice;
 
-    protected TemporaryMenu() {
+    protected OrderedMenu() {
     }
 
-    public TemporaryMenu(Long tempMenuId, String tempMenuName, BigDecimal tempMenuPrice) {
+    public OrderedMenu(Long tempMenuId, String tempMenuName, BigDecimal tempMenuPrice) {
         this.tempMenuId = tempMenuId;
         this.tempMenuName = tempMenuName;
         this.tempMenuPrice = tempMenuPrice;
