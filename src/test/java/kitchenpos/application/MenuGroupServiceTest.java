@@ -1,28 +1,27 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.util.List;
-import kitchenpos.dao.MenuGroupDao;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.request.MenuGroupRequest;
+import kitchenpos.application.dto.response.MenuGroupResponse;
 import kitchenpos.domain.MenuGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+@SpringBootTest
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class MenuGroupServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MenuGroupService menuGroupService;
-
-    @Mock
-    private MenuGroupDao menuGroupDao;
 
     @DisplayName("메뉴 그룹을 등록한다.")
     @Test
@@ -31,45 +30,52 @@ class MenuGroupServiceTest {
         MenuGroup menuGroup = new MenuGroup.MenuGroupBuilder()
                                 .setName("치킨")
                                 .build();
-        MenuGroup expected = new MenuGroup.MenuGroupBuilder()
-                                .setId(1L)
-                                .setName("치킨")
-                                .build();
 
-        given(menuGroupDao.save(menuGroup))
-                .willReturn(expected);
         //when
-        MenuGroup actual = menuGroupService.create(menuGroup);
+        MenuGroupResponse actual = menuGroupService
+                .create(MenuGroupRequest.create(menuGroup));
+
+        MenuGroupResponse expected = MenuGroupResponse.toDto(new MenuGroup.MenuGroupBuilder()
+                .setId(actual.getId())
+                .setName("치킨")
+                .build());
+
         //then
         assertThat(actual).isEqualTo(expected);
-
-        verify(menuGroupDao, times(1)).save(menuGroup);
     }
 
     @DisplayName("메뉴 그룹 목록을 불러온다.")
     @Test
     void list() {
         //given
-        MenuGroup menuGroupChicken = new MenuGroup.MenuGroupBuilder()
-                                        .setId(1L)
-                                        .setName("치킨")
-                                        .build();
+        MenuGroup menuGroup1 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(1L)
+                                    .setName("두마리메뉴")
+                                    .build();
 
-        MenuGroup menuGroupPizza = new MenuGroup.MenuGroupBuilder()
-                                        .setId(2L)
-                                        .setName("피자")
-                                        .build();
+        MenuGroup menuGroup2 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(2L)
+                                    .setName("한마리메뉴")
+                                    .build();
 
-        List<MenuGroup> expected = List.of(menuGroupChicken, menuGroupPizza);
+        MenuGroup menuGroup3 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(3L)
+                                    .setName("순살파닭두마리메뉴")
+                                    .build();
 
-        given(menuGroupDao.findAll())
-                .willReturn(expected);
+        MenuGroup menuGroup4 = new MenuGroup.MenuGroupBuilder()
+                                    .setId(4L)
+                                    .setName("신메뉴")
+                                    .build();
+
+        List<MenuGroupResponse> expected = List.of(menuGroup1, menuGroup2, menuGroup3, menuGroup4).stream()
+                                            .map(MenuGroupResponse::toDto)
+                                            .collect(Collectors.toList());
+
         //when
-        List<MenuGroup> actual = menuGroupService.list();
+        List<MenuGroupResponse> actual = menuGroupService.list();
         //then
 
         assertThat(actual).isEqualTo(expected);
-
-        verify(menuGroupDao, times(1)).findAll();
     }
 }
