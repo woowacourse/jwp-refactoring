@@ -4,8 +4,6 @@ import kitchenpos.OrderTable.application.TableGroupService;
 import kitchenpos.OrderTable.domain.TableGroup;
 import kitchenpos.OrderTable.domain.dto.request.TableGroupCreateRequest;
 import kitchenpos.OrderTable.domain.dto.response.TableGroupResponse;
-import kitchenpos.dto.request.TableGroupCreateRequest;
-import kitchenpos.dto.response.TableGroupResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +19,7 @@ public class TableGroupRestController {
 
     @PostMapping("/api/table-groups")
     public ResponseEntity<TableGroupResponse> create(@RequestBody final TableGroupCreateRequest request) {
-        final TableGroup created = tableGroupService.create(request);
+        final TableGroup created = tableGroupService.create(request.getOrderTableIds());
         final URI uri = URI.create("/api/table-groups/" + created.getId());
         return ResponseEntity.created(uri)
                 .body(TableGroupResponse.toDTO(created))

@@ -4,10 +4,8 @@ import kitchenpos.Order.domain.OrderStatus;
 import kitchenpos.Order.domain.repository.OrderRepository;
 import kitchenpos.OrderTable.domain.OrderTable;
 import kitchenpos.OrderTable.domain.TableGroup;
-import kitchenpos.OrderTable.domain.dto.request.TableGroupCreateRequest;
 import kitchenpos.OrderTable.domain.repository.OrderTableRepository;
 import kitchenpos.OrderTable.domain.repository.TableGroupRepository;
-import kitchenpos.dto.request.TableGroupCreateRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -31,9 +29,7 @@ public class TableGroupService {
         this.tableGroupRepository = tableGroupRepository;
     }
 
-    public TableGroup create(final TableGroupCreateRequest request) {
-        List<Long> orderTableIds = request.orderTableIds();
-
+    public TableGroup create(final List<Long> orderTableIds) {
         if (CollectionUtils.isEmpty(orderTableIds) || orderTableIds.size() < 2) {
             throw new IllegalArgumentException();
         }
@@ -53,7 +49,7 @@ public class TableGroupService {
         final TableGroup savedTableGroup = tableGroupRepository.save(new TableGroup());
 
         for (final OrderTable savedOrderTable : savedOrderTables) {
-            savedOrderTable.enrollTableGroup(savedTableGroup.getId());
+            savedOrderTable.enrollTableGroupId(savedTableGroup.getId());
             savedOrderTable.changeEmptyStatus(false);
         }
 
@@ -70,7 +66,7 @@ public class TableGroupService {
         }
 
         for (final OrderTable orderTable : orderTables) {
-            orderTable.releaseTableGroup();
+            orderTable.releaseTableGroupId();
             orderTable.changeEmptyStatus(false);
         }
     }

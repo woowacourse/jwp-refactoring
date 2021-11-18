@@ -43,7 +43,7 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public void enrollTableGroup(Long tableGroupId) {
+    public void enrollTableGroupId(Long tableGroupId) {
         this.tableGroupId = tableGroupId;
     }
 
@@ -51,7 +51,7 @@ public class OrderTable {
         this.empty = empty;
     }
 
-    public void releaseTableGroup() {
+    public void releaseTableGroupId() {
         this.tableGroupId = null;
     }
 
