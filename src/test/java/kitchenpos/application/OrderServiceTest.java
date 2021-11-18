@@ -10,6 +10,7 @@ import kitchenpos.domain.product.Product;
 import kitchenpos.ui.dto.OrderLineItemsRequest;
 import kitchenpos.ui.dto.OrderRequest;
 import kitchenpos.ui.dto.OrderResponse;
+import kitchenpos.ui.dto.OrderStatusRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -121,50 +122,49 @@ class OrderServiceTest extends SpringBootTestSupport {
         );
     }
 
-//    @DisplayName("주문 상태 변경은")
-//    @Nested
-//    class ChangeStatus extends SpringBootTestSupport {
-//
-//        private final Long orderId = 1L;
-//        private Order order;
-//        private OrderLineItem orderLineItem1;
-//        private OrderLineItem orderLineItem2;
-//
-//        @BeforeEach
-//        void setUp() {
-//            order = createOrder(orderId);
-//            orderLineItem1 = createOrderLineItem();
-//            orderLineItem2 = createOrderLineItem();
-//        }
-//
-//        private void subject() {
-//            orderService.changeOrderStatus(orderId, order);
-//        }
-//
-//        @DisplayName("존재하지 않는 주문일 경우 변경할 수 없다.")
-//        @Test
-//        void changeOrderStatusExceptionIfNotExist() {
-//            when(orderDao.findById(any())).thenReturn(Optional.empty());
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("계산 완료된 주문일 경우 변경할 수 없다.")
-//        @Test
-//        void changeOrderStatusExceptionIfCompletion() {
-//            order.setOrderStatus(OrderStatus.COMPLETION.name());
-//            when(orderDao.findById(any())).thenReturn(Optional.of(order));
-//
-//            assertThatThrownBy(this::subject).isInstanceOf(IllegalArgumentException.class);
-//        }
-//
-//        @DisplayName("조건을 만족할 경우 변경할 수 있다.")
-//        @Test
-//        void changeOrderStatus() {
-//            when(orderDao.findById(any())).thenReturn(Optional.of(order));
-//            when(orderLineItemDao.findAllByOrderId(any())).thenReturn(Arrays.asList(orderLineItem1, orderLineItem2));
-//
-//            assertDoesNotThrow(this::subject);
-//        }
-//    }
+    @DisplayName("주문 상태 변경은")
+    @Nested
+    class ChangeStatus extends SpringBootTestSupport {
+
+        private OrderStatusRequest request;
+        private MenuGroup menuGroup;
+        private Product product;
+        private Menu menu;
+        private OrderTable orderTable;
+        private Order order;
+
+        @BeforeEach
+        void setUp() {
+            request = new OrderStatusRequest(OrderStatus.MEAL.name());
+            menuGroup = save(createMenuGroup1());
+            product = save(createProduct1());
+            menu = save(createMenu1(menuGroup, Collections.singletonList(product)));
+            orderTable = save(createOrderTable());
+            order = save(createOrder(orderTable, Collections.singletonList(createOrderLineItem(menu))));
+        }
+
+        @DisplayName("존재하지 않는 주문일 경우 변경할 수 없다.")
+        @Test
+        void changeOrderStatusExceptionIfNotExist() {
+            assertThatThrownBy(() -> orderService.changeOrderStatus(0L, request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("계산 완료된 주문일 경우 변경할 수 없다.")
+        @Test
+        void changeOrderStatusExceptionIfCompletion() {
+            order = save(createOrder(orderTable, OrderStatus.COMPLETION, Collections.singletonList(createOrderLineItem(menu))));
+
+            assertThatThrownBy(() -> orderService.changeOrderStatus(order.getId(), request))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("조건을 만족할 경우 변경할 수 있다.")
+        @Test
+        void changeOrderStatus() {
+            final OrderResponse actual = orderService.changeOrderStatus(order.getId(), request);
+
+            assertThat(actual.getOrderStatus()).isEqualTo(request.getOrderStatus());
+        }
+    }
 }

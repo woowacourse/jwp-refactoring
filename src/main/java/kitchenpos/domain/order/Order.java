@@ -38,12 +38,6 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
-    public Order(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
-        this.orderTable = orderTable;
-        this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
-    }
-
     public Long getId() {
         return id;
     }
@@ -61,8 +55,12 @@ public class Order {
         return orderStatus;
     }
 
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
+    public void changeStatus(final String orderStatus) {
+        this.orderStatus = OrderStatus.valueOf(orderStatus);
+    }
+
+    public boolean isCompletion(){
+        return this.orderStatus.isCompletion();
     }
 
     public LocalDateTime getOrderedTime() {

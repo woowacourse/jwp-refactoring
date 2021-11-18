@@ -14,11 +14,14 @@ import static kitchenpos.domain.order.OrderStatus.MEAL;
 public class OrderFixture {
 
     private static final OrderStatus ORDER_STATUS = MEAL;
-    private static final LocalDateTime ORDER_TIME = LocalDateTime.now();
     private static final long ORDER_LINE_QUANTITY = 1;
 
     public static Order createOrder(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        Order order = new Order(orderTable, ORDER_STATUS);
+        return createOrder(orderTable, ORDER_STATUS, orderLineItems);
+    }
+
+    public static Order createOrder(OrderTable orderTable, OrderStatus orderStatus, List<OrderLineItem> orderLineItems) {
+        Order order = new Order(orderTable, orderStatus);
         order.changeOrderLineItems(orderLineItems);
         return order;
     }
