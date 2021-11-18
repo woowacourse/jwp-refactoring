@@ -4,6 +4,7 @@ import kitchenpos.application.TableService;
 import kitchenpos.ui.dto.OrderTableEmptyRequest;
 import kitchenpos.ui.dto.OrderTableGuestRequest;
 import kitchenpos.ui.dto.OrderTableRequest;
+import kitchenpos.ui.dto.OrderTableResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

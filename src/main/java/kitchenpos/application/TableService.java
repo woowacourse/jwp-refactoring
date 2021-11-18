@@ -4,7 +4,7 @@ import kitchenpos.domain.order.OrderRepository;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.domain.order.OrderTableRepository;
-import kitchenpos.ui.OrderTableResponse;
+import kitchenpos.ui.dto.OrderTableResponse;
 import kitchenpos.ui.dto.OrderTableEmptyRequest;
 import kitchenpos.ui.dto.OrderTableGuestRequest;
 import kitchenpos.ui.dto.OrderTableRequest;
