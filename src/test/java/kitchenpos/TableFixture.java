@@ -21,4 +21,8 @@ public class TableFixture {
     public static OrderTable createOrderTable(boolean empty) {
         return new OrderTable(NUMBER_OF_GUEST, empty);
     }
+
+    public static OrderTable createOrderTable(TableGroup tableGroup, boolean empty) {
+        return new OrderTable(tableGroup, NUMBER_OF_GUEST, empty);
+    }
 }

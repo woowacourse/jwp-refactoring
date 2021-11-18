@@ -36,10 +36,9 @@ public class MenuService {
     public MenuResponse create(final MenuRequest request) {
         final MenuGroup menuGroup = menuGroupRepository.findById(request.getMenuGroupId())
                 .orElseThrow(IllegalArgumentException::new);
-        final List<MenuProduct> menuProducts = getMenuProducts(request);
         final Menu menu = new Menu(request.getName(), request.getPrice(), menuGroup);
+        final List<MenuProduct> menuProducts = getMenuProducts(request);
         menu.changeMenuProducts(menuProducts);
-
         final Menu savedMenu = menuRepository.save(menu);
         return MenuResponse.of(savedMenu);
     }
@@ -60,7 +59,6 @@ public class MenuService {
     @Transactional(readOnly = true)
     public List<MenuResponse> list() {
         final List<Menu> menus = menuRepository.findAll();
-
         return MenuResponse.toList(menus);
     }
 }

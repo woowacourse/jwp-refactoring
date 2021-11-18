@@ -18,8 +18,8 @@ public class TableGroup {
     @CreatedDate
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup", cascade = CascadeType.REMOVE)
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     public TableGroup() {
     }
@@ -41,13 +41,15 @@ public class TableGroup {
     }
 
     public List<OrderTable> getOrderTables() {
-        return orderTables;
+        return orderTables.getOrderTables();
     }
 
-    public void changeOrderTables(final List<OrderTable> orderTables) {
-        for (OrderTable orderTable : orderTables) {
-            orderTable.setTableGroup(this);
-        }
-        this.orderTables = orderTables;
+    public void addOrderTables(final List<OrderTable> orderTables) {
+        this.orderTables = new OrderTables(orderTables);
+        this.orderTables.setTableGroup(this);
+    }
+
+    public void ungroup() {
+        orderTables.ungroup();
     }
 }

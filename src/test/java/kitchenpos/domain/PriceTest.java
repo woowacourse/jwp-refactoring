@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 class PriceTest {
 
-    @DisplayName("가격 객체를 생성한다.")
+    @DisplayName("가격 객체를 성공적으로 생성한다.")
     @Test
     void create() {
         assertDoesNotThrow(() -> new Price(BigDecimal.TEN));

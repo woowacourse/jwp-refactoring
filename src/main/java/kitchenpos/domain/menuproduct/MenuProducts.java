@@ -20,11 +20,11 @@ public class MenuProducts {
     }
 
     public static MenuProducts of(BigDecimal price, List<MenuProduct> menuProducts) {
-        check(price, menuProducts);
+        validate(price, menuProducts);
         return new MenuProducts(menuProducts);
     }
 
-    public static void check(BigDecimal price, List<MenuProduct> menuProducts) {
+    private static void validate(BigDecimal price, List<MenuProduct> menuProducts) {
         BigDecimal sum = BigDecimal.ZERO;
         for (final MenuProduct menuProduct : menuProducts) {
             final BigDecimal amount = menuProduct.getAmount();

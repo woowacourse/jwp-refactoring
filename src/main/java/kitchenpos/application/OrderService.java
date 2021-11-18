@@ -31,8 +31,7 @@ public class OrderService {
     @Transactional
     public OrderResponse create(final OrderRequest request) {
         final List<OrderLineItem> orderLineItems = getOrderLineItems(request);
-        final OrderTable orderTable = orderTableRepository.findById(request.getOrderTableId())
-                .orElseThrow(IllegalArgumentException::new);
+        final OrderTable orderTable = getOrderTable(request);
         if (orderTable.isEmpty()) {
             throw new IllegalArgumentException();
         }
@@ -42,12 +41,18 @@ public class OrderService {
         return OrderResponse.of(savedOrder);
     }
 
+    private OrderTable getOrderTable(OrderRequest request) {
+        return orderTableRepository.findById(request.getOrderTableId())
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
     private List<OrderLineItem> getOrderLineItems(OrderRequest request) {
         return request.getOrderLineItems()
                 .stream()
-                .map(orderLineItemsRequest -> {
-                    final Menu menu = menuRepository.findById(orderLineItemsRequest.getMenuId()).orElseThrow(IllegalArgumentException::new);
-                    return new OrderLineItem(menu, orderLineItemsRequest.getQuantity());
+                .map(lineItemsRequest -> {
+                    final Menu menu = menuRepository.findById(lineItemsRequest.getMenuId())
+                            .orElseThrow(IllegalArgumentException::new);
+                    return new OrderLineItem(menu, lineItemsRequest.getQuantity());
                 }).collect(Collectors.toList());
     }
 
