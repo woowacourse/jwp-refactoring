@@ -2,12 +2,12 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.refEq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
 import kitchenpos.dao.ProductDao;
 import kitchenpos.domain.Product;
 import kitchenpos.dto.ProductRequest;
@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class ProductServiceTest {
@@ -31,19 +32,32 @@ class ProductServiceTest {
     @InjectMocks
     private ProductService productService;
 
+    @DisplayName("모든 Product 를 조회한다")
     @Test
     void list() {
+        // given
+        Product product = ProductFactory.builder()
+            .id(1L)
+            .name("닭")
+            .price(new BigDecimal(1000))
+            .build();
+        given(productDao.findAll()).willReturn(Collections.singletonList(product));
+
         // when
-        productService.list();
+        final List<ProductResponse> result = productService.list();
 
         // then
-        verify(productDao, times(1)).findAll();
+        assertThat(result).first()
+            .usingRecursiveComparison()
+            .isEqualTo(product);
     }
 
     @Nested
     class CreateTest {
 
         private Product product;
+
+        private Long savedProductId;
 
         private Product savedProduct;
 
@@ -55,6 +69,7 @@ class ProductServiceTest {
                 .price(new BigDecimal(17000))
                 .build();
 
+            savedProductId = 1L;
             savedProduct = ProductFactory.copy(product)
                 .id(1L)
                 .build();
@@ -66,7 +81,13 @@ class ProductServiceTest {
         @Test
         void create() {
             // given
-            given(productDao.save(refEq(product))).willReturn(savedProduct);
+            given(productDao.save(any(Product.class))).willAnswer(
+                invocation -> {
+                    Product toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedProductId);
+                    return null;
+                }
+            );
 
             // when
             ProductResponse result = productService.create(productRequest);

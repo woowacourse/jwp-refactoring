@@ -41,7 +41,7 @@
 - [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.
 - [x] MenuService
 - [x] OrderService
-- [ ] ProductService
+- [x] ProductService
 - [ ] TableGroupService
 - [ ] TableService
 

@@ -55,6 +55,7 @@ public class OrderService {
     private void updateOrderLineItems(Order order) {
         final OrderLineItems orderLineItems = new OrderLineItems(order.getOrderLineItems());
         orderLineItems.validateNotEmpty();
+
         final List<Long> menuIds = orderLineItems.toMenuIds();
         orderLineItems.validateSize(menuDao.countByIdIn(menuIds));
 
