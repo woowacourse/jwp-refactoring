@@ -12,13 +12,13 @@ import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import kitchenpos.order.ui.dto.OrderLineItemRequest;
 import kitchenpos.order.ui.dto.OrderRequest;
 import kitchenpos.order.ui.dto.OrderResponse;
+import kitchenpos.product.ui.dto.ProductRequest;
+import kitchenpos.product.ui.dto.ProductResponse;
 import kitchenpos.table.ui.dto.OrderTableIdRequest;
 import kitchenpos.table.ui.dto.TableGroupRequest;
 import kitchenpos.table.ui.dto.TableGroupResponse;
 import kitchenpos.table.ui.dto.TableRequest;
 import kitchenpos.table.ui.dto.TableResponse;
-import kitchenpos.product.ui.dto.ProductRequest;
-import kitchenpos.product.ui.dto.ProductResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
