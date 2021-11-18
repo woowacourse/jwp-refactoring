@@ -10,6 +10,7 @@ import kitchenpos.domain.OrderLineItem;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.OrderRequest;
@@ -24,13 +25,16 @@ public class OrderService {
 
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
+    private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
 
     public OrderService(final MenuRepository menuRepository,
                         final OrderRepository orderRepository,
+                        final OrderLineItemRepository orderLineItemRepository,
                         final OrderTableRepository orderTableRepository) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
+        this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
     }
 
@@ -38,14 +42,17 @@ public class OrderService {
     public OrderResponse create(final OrderRequest orderRequest) {
         OrderTable orderTable = orderTableRepository.findById(orderRequest.getOrderTableId())
             .orElseThrow(IllegalArgumentException::new);
-        List<OrderLineItem> orderLineItems = newOrderLineItem(orderRequest);
 
-        Order savedOrder = orderRepository.save(new Order(orderTable, orderLineItems));
+        Order savedOrder = orderRepository.save(new Order(orderTable));
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.saveAll(
+            newOrderLineItems(savedOrder, orderRequest)
+        );
 
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(savedOrder, orderLineItems);
     }
 
-    private List<OrderLineItem> newOrderLineItem(final OrderRequest orderRequest) {
+    private List<OrderLineItem> newOrderLineItems(final Order order,
+                                                  final OrderRequest orderRequest) {
         if (Objects.isNull(orderRequest.getOrderLineItems())) {
             throw new IllegalArgumentException();
         }
@@ -54,24 +61,26 @@ public class OrderService {
         List<Menu> menus = menuRepository.findAllById(menuIdAndQuantity.keySet());
         validateMenusSize(orderRequest, menus);
 
-        return orderLineItemsFromMenus(menuIdAndQuantity, menus);
+        return orderLineItemsFromMenus(order, menuIdAndQuantity, menus);
     }
 
-    private List<OrderLineItem> orderLineItemsFromMenus(final Map<Long, Long> menuIdAndQuantity,
+    private List<OrderLineItem> orderLineItemsFromMenus(final Order order,
+                                                        final Map<Long, Long> menuIdAndQuantity,
                                                         final List<Menu> menus) {
         return menus.stream()
-            .map(menu -> new OrderLineItem(menu, menuIdAndQuantity.get(menu.getId())))
+            .map(menu -> new OrderLineItem(order, menu, menuIdAndQuantity.get(menu.getId())))
             .collect(Collectors.toList());
     }
 
     private void validateMenusSize(final OrderRequest orderRequest, final List<Menu> menus) {
-        if (orderRequest.getOrderLineItems().size() != menus.size()) {
+        if (menus.isEmpty() || orderRequest.getOrderLineItems().size() != menus.size()) {
             throw new IllegalArgumentException();
         }
     }
 
     public List<OrderResponse> list() {
-        return OrderResponse.listFrom(orderRepository.findAll());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAll();
+        return OrderResponse.listFrom(orderLineItems);
     }
 
     @Transactional
@@ -80,8 +89,9 @@ public class OrderService {
         Order savedOrder = orderRepository.findById(orderId)
             .orElseThrow(IllegalArgumentException::new);
         OrderStatus orderStatus = OrderStatus.valueOf(orderStatusRequest.getOrderStatus());
+        List<OrderLineItem> orderLineItems = orderLineItemRepository.findAllByOrder(savedOrder);
 
         savedOrder.changeOrder(orderStatus);
-        return OrderResponse.from(savedOrder);
+        return OrderResponse.from(savedOrder, orderLineItems);
     }
 }

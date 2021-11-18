@@ -139,13 +139,7 @@ public class TableServiceTest extends ServiceTest {
     @DisplayName("조리나 식사 상태인 주문 테이블의 빈 상태를 수정할 경우 예외 처리")
     @Test
     void changeEmptyWithCookingOrMealStatus() {
-        Menu menu = new Menu(1L, new Name("후라이드"), new Price(BigDecimal.valueOf(16000)),
-            new MenuGroup(1L, "치킨"),
-            new MenuProducts(Collections.singletonList(
-                new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
-            ))
-        );
-        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
+        new Order(orderTable1);
         when(orderTableRepository.findById(1L)).thenReturn(Optional.of(orderTable1));
 
         OrderTableEmptyRequest request = new OrderTableEmptyRequest(false);

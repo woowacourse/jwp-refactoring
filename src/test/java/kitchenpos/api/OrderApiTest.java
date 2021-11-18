@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import kitchenpos.domain.Menu;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.MenuProduct;
@@ -60,12 +62,13 @@ public class OrderApiTest extends ApiTest {
     private Menu menu;
     private OrderTable orderTable;
     private Order order;
-    private OrderLineItem orderLineItem;
+    private List<OrderLineItem> orderLineItems;
 
     @Override
     @BeforeEach
     void setUp() throws SQLException {
         super.setUp();
+        orderLineItems = new ArrayList<>();
 
         MenuGroup menuGroup = menuGroupRepository.save(new MenuGroup("두마리메뉴"));
         Product product = productRepository.save(new Product("후라이드치킨", BigDecimal.valueOf(16000)));
@@ -75,10 +78,8 @@ public class OrderApiTest extends ApiTest {
             )
         );
         orderTable = orderTableRepository.save(new OrderTable(0, false));
-        order = orderRepository.save(
-            new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 1L)))
-        );
-        orderLineItem = orderLineItemRepository.save(order.getOrderLineItems().get(0));
+        order = orderRepository.save(new Order(orderTable));
+        orderLineItems.add(orderLineItemRepository.save(new OrderLineItem(order, menu, 1L)));
     }
 
     @DisplayName("주문 등록")
@@ -117,10 +118,10 @@ public class OrderApiTest extends ApiTest {
         OrderResponse actualOrderLineItem = response[0];
         assertThat(actualOrderLineItem).usingRecursiveComparison()
             .ignoringFields("orderLineItems")
-            .isEqualTo(OrderResponse.from(order));
+            .isEqualTo(OrderResponse.from(order, orderLineItems));
         assertThat(actualOrderLineItem.getOrderLineItems()).hasSize(1);
         assertThat(actualOrderLineItem.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(OrderLineItemResponse.from(orderLineItem));
+            .isEqualTo(OrderLineItemResponse.from(orderLineItems.get(0)));
     }
 
     @DisplayName("주문 상태 수정")
@@ -138,8 +139,8 @@ public class OrderApiTest extends ApiTest {
         assertThat(response).usingRecursiveComparison()
             .ignoringFields("orderStatus", "orderLineItems")
             .isEqualTo(order);
-        assertThat(response.getOrderLineItems()).hasSameSizeAs(order.getOrderLineItems());
+        assertThat(response.getOrderLineItems()).hasSameSizeAs(orderLineItems);
         assertThat(response.getOrderLineItems().get(0)).usingRecursiveComparison()
-            .isEqualTo(OrderLineItemResponse.from(order.getOrderLineItems().get(0)));
+            .isEqualTo(OrderLineItemResponse.from(orderLineItems.get(0)));
     }
 }

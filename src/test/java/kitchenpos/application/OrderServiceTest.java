@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -25,6 +26,7 @@ import kitchenpos.domain.Price;
 import kitchenpos.domain.Product;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.domain.repository.MenuRepository;
+import kitchenpos.domain.repository.OrderLineItemRepository;
 import kitchenpos.domain.repository.OrderRepository;
 import kitchenpos.domain.repository.OrderTableRepository;
 import kitchenpos.dto.request.OrderRequest;
@@ -47,6 +49,9 @@ public class OrderServiceTest extends ServiceTest {
     private OrderRepository orderRepository;
 
     @Mock
+    private OrderLineItemRepository orderLineItemRepository;
+
+    @Mock
     private OrderTableRepository orderTableRepository;
 
     @InjectMocks
@@ -54,7 +59,9 @@ public class OrderServiceTest extends ServiceTest {
 
     private OrderTable orderTable;
     private Order order1;
+    private OrderLineItem orderLineItemOfOrder1;
     private Order order2;
+    private OrderLineItem orderLineItemOfOrder2;
     private Menu menu;
 
     @BeforeEach
@@ -69,8 +76,10 @@ public class OrderServiceTest extends ServiceTest {
                 new MenuProduct(new Product("후라이드치킨", BigDecimal.valueOf(16000)), 2L)
             ))
         );
-        order1 = new Order(orderTable, Collections.singletonList(new OrderLineItem(menu, 2L)));
-        order2 = new Order(orderTable2, Collections.singletonList(new OrderLineItem(menu, 2L)));
+        order1 = new Order(1L, orderTable, OrderStatus.COOKING);
+        orderLineItemOfOrder1 = new OrderLineItem(order1, menu, 2L);
+        order2 = new Order(2L, orderTable2, OrderStatus.COOKING);
+        orderLineItemOfOrder2 = new OrderLineItem(order2, menu, 2L);
     }
 
     @DisplayName("주문 등록")
@@ -85,9 +94,20 @@ public class OrderServiceTest extends ServiceTest {
             return new Order(
                 1L,
                 order.getOrderTable(),
-                order.getOrderStatus(),
-                order.getOrderLineItems()
+                order.getOrderStatus()
             );
+        });
+        when(orderLineItemRepository.saveAll(any())).thenAnswer(invocation -> {
+            List<OrderLineItem> orderLineItems = invocation.getArgument(0);
+            List<OrderLineItem> result = new ArrayList<>();
+            for (int seq = 1; seq <= orderLineItems.size(); seq++) {
+                OrderLineItem orderLineItem = orderLineItems.get(seq - 1);
+                result.add(
+                    new OrderLineItem((long) seq, orderLineItem.getOrder(), orderLineItem.getMenu(),
+                        orderLineItem.getQuantity())
+                );
+            }
+            return result;
         });
 
         OrderLineItemRequest orderLineItemRequest = new OrderLineItemRequest(1L, 1L);
@@ -162,11 +182,13 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 조회")
     @Test
     void list() {
-        List<Order> orders = Arrays.asList(order1, order2);
-        when(orderRepository.findAll()).thenReturn(orders);
+        when(orderLineItemRepository.findAll()).thenReturn(
+            Arrays.asList(orderLineItemOfOrder1, orderLineItemOfOrder2)
+        );
 
         List<OrderResponse> actual = orderService.list();
-        List<OrderResponse> expected = OrderResponse.listFrom(orders);
+        List<OrderResponse> expected = OrderResponse.listFrom(
+            Arrays.asList(orderLineItemOfOrder1, orderLineItemOfOrder2));
 
         assertThat(actual).hasSameSizeAs(expected)
             .usingRecursiveFieldByFieldElementComparator()
@@ -177,8 +199,11 @@ public class OrderServiceTest extends ServiceTest {
     @DisplayName("주문 상태 수정")
     @Test
     void changeOrderStatus() {
-        long idToChange = 1L;
+        long idToChange = order1.getId();
         when(orderRepository.findById(idToChange)).thenReturn(Optional.of(order1));
+        when(orderLineItemRepository.findAllByOrder(order1)).thenReturn(
+            Collections.singletonList(orderLineItemOfOrder1)
+        );
 
         OrderStatusRequest orderStatusRequest = new OrderStatusRequest(OrderStatus.MEAL.name());
         OrderResponse actual = orderService.changeOrderStatus(idToChange, orderStatusRequest);
@@ -186,7 +211,7 @@ public class OrderServiceTest extends ServiceTest {
             order1.getId(),
             orderStatusRequest.getOrderStatus(),
             order1.getOrderedTime(),
-            OrderLineItemResponse.listFrom(order1.getOrderLineItems())
+            OrderLineItemResponse.listFrom(Collections.singletonList(orderLineItemOfOrder1))
         );
 
         assertThat(actual).usingRecursiveComparison()
@@ -213,8 +238,7 @@ public class OrderServiceTest extends ServiceTest {
             new Order(
                 1L,
                 orderTable,
-                OrderStatus.COMPLETION,
-                Collections.singletonList(new OrderLineItem(menu, 2L))
+                OrderStatus.COMPLETION
             )
         ));
 

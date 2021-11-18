@@ -180,7 +180,7 @@ public class TableGroupServiceTest extends ServiceTest {
             tableGroupId,
             Arrays.asList(orderTable1, orderTable2)
         );
-        new Order(orderTable1, Collections.singletonList(new OrderLineItem(menu, 2L)));
+        new Order(orderTable1);
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))

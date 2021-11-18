@@ -30,36 +30,20 @@ public class Order {
     private OrderStatus orderStatus;
     @CreatedDate
     private LocalDateTime orderedTime;
-    @Embedded
-    private OrderLineItems orderLineItems;
 
     protected Order() {
     }
 
-    public Order(final OrderTable orderTable, final List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, orderLineItems);
+    public Order(final OrderTable orderTable) {
+        this(null, orderTable, OrderStatus.COOKING);
     }
 
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final List<OrderLineItem> orderLineItems) {
-        this(id, orderTable, orderStatus, new OrderLineItems(orderLineItems));
-    }
-
-    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus,
-                 final OrderLineItems orderLineItems) {
-        validateToConstruct(orderTable, orderLineItems);
+    public Order(final Long id, final OrderTable orderTable, final OrderStatus orderStatus) {
+        validateOrderTable(orderTable);
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        this.orderLineItems = orderLineItems;
         orderTable.addOrder(this);
-        orderLineItems.setOrder(this);
-    }
-
-    private void validateToConstruct(final OrderTable orderTable,
-                                     final OrderLineItems orderLineItems) {
-        validateOrderTable(orderTable);
-        validateOrderLineItemsSize(orderLineItems);
     }
 
     private void validateOrderTable(final OrderTable orderTable) {
@@ -68,12 +52,6 @@ public class Order {
                 "빈 상태의 테이블에는 주문을 추가할 수 없습니다.(table id: %d)",
                 orderTable.getId()
             ));
-        }
-    }
-
-    private void validateOrderLineItemsSize(final OrderLineItems orderLineItems) {
-        if (orderLineItems.isEmpty()) {
-            throw new IllegalArgumentException("주문 항목은 1개이상 입니다.");
         }
     }
 
@@ -103,9 +81,5 @@ public class Order {
 
     public LocalDateTime getOrderedTime() {
         return orderedTime;
-    }
-
-    public List<OrderLineItem> getOrderLineItems() {
-        return orderLineItems.getElements();
     }
 }
