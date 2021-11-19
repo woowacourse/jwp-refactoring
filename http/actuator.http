@@ -1,0 +1,14 @@
+###
+GET {{host}}/actuator
+
+###
+
+###
+GET {{host}}/actuator/health
+
+###
+
+###
+GET {{host}}/actuator/info
+
+###
