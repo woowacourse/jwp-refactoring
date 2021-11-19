@@ -1,4 +1,4 @@
-package kitchenpos.acceptance.tablegroup;
+package kitchenpos.acceptance.order;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
