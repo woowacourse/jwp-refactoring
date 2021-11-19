@@ -4,27 +4,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class PriceTest {
 
-    @ParameterizedTest
-    @ValueSource(doubles = {-1, -5.9999, -1000000000})
-    void 생성_시_음수_이면_예외를_반환한다(double input) {
-        BigDecimal param = BigDecimal.valueOf(input);
+    @Test
+    void 생성_시_음수_이면_예외를_반환한다() {
+        BigDecimal param = BigDecimal.valueOf(-1);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> new Price(param));
         assertThat(exception.getMessage()).isEqualTo("가격 값이 유효하지 않습니다.");
     }
 
-    @ParameterizedTest
-    @CsvSource(value = {"1,1,2", "1.00001,1.99999,3.00000", "10001,10001,20002"})
-    void 값을_더한다(double first, double second, double expected) {
-        Price price1 = new Price(BigDecimal.valueOf(first));
-        Price price2 = new Price(BigDecimal.valueOf(second));
-        Price expectedPrice = new Price(BigDecimal.valueOf(expected));
+    @Test
+    void 값을_더한다() {
+        Price price1 = new Price(BigDecimal.valueOf(1));
+        Price price2 = new Price(BigDecimal.valueOf(2));
+        Price expectedPrice = new Price(BigDecimal.valueOf(3));
 
         assertThat(price1.sum(price2)).isEqualTo(expectedPrice);
     }
