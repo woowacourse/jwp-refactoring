@@ -1,7 +1,9 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.repository.TableGroupRepository;
 import kitchenpos.exception.NonExistentException;
+import kitchenpos.table.application.OrderTableService;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.domain.repository.TableGroupRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -13,8 +15,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("TableGroup 서비스 테스트")
-class TableGroupServiceTest extends ServiceTest {
+class TableGroupServiceTest {
     @InjectMocks
     private TableGroupService tableGroupService;
 

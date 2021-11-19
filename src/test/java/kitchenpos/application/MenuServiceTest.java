@@ -1,9 +1,12 @@
 package kitchenpos.application;
 
-import kitchenpos.domain.repository.MenuGroupRepository;
-import kitchenpos.domain.repository.MenuRepository;
 import kitchenpos.exception.NonExistentException;
-import kitchenpos.ui.dto.MenuRequest;
+import kitchenpos.menu.application.MenuProductService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.domain.repository.MenuGroupRepository;
+import kitchenpos.menu.domain.repository.MenuRepository;
+import kitchenpos.menu.ui.dto.MenuRequest;
+import kitchenpos.menu.ui.dto.MenuUpdateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,8 +15,9 @@ import org.mockito.Mock;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
-import static kitchenpos.application.ServiceTest.RequestFactory.CREATE_MENU_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_MENU_PRODUCT_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_MENU_REQUEST;
+import static kitchenpos.utils.Fixture.RequestFactory.CREATE_MENU_UPDATE_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -21,8 +25,9 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 
+@ServiceTest
 @DisplayName("Menu 서비스 테스트")
-public class MenuServiceTest extends ServiceTest {
+public class MenuServiceTest {
     @InjectMocks
     private MenuService menuService;
 
@@ -55,6 +60,22 @@ public class MenuServiceTest extends ServiceTest {
         then(menuRepository).should(never())
                 .save(any());
         then(menuProductService).should(never())
-                .create(any(), any());
+                .addMenuToMenuProduct(any(), any());
+    }
+
+    @DisplayName("메뉴를 수정한다. - 실패, menuId로 메뉴를 찾을 수 없음.")
+    @Test
+    void update() {
+        // given
+        MenuUpdateRequest menuUpdateRequest = CREATE_MENU_UPDATE_REQUEST("인기메뉴", BigDecimal.TEN);
+        Long menuId = 100L;
+        // when
+        given(menuRepository.findById(menuId))
+                .willThrow(NonExistentException.class);
+        // then
+        assertThatThrownBy(() -> menuService.update(menuId, menuUpdateRequest))
+                .isInstanceOf(NonExistentException.class);
+        then(menuRepository).should(times(1))
+                .findById(menuId);
     }
 }
