@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.graalvm.compiler.core.common.type.ArithmeticOpTable.BinaryOp.Or;
 
 public class Order {
     private Long id;
@@ -9,6 +10,14 @@ public class Order {
     private String orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItem> orderLineItems;
+
+    public Order() {
+    }
+
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this.orderTableId = orderTableId;
+        this.orderLineItems = orderLineItems;
+    }
 
     public Long getId() {
         return id;

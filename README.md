@@ -116,79 +116,44 @@
     - 테이블 인원 수 양수 -> 0 으로 수정 
     - 테이블 empty false -> true 로 수정
 
-## 서비스 리팩터링
+## 도메인 리팩터링
+- [ ] setter 삭제
+- [ ] 필요 생성자 만들기
+- [ ] 필요시 equals & hashcode 오버라이드 하기 
 
+## 서비스 리팩터링
 ### DTO로 LayerArchitecture 지키기
 
 - Request DTO 생성
-  - [ ] MenuRequestDto
-  - [ ] MenuGroupRequestDto
-  - [ ] OrderRequestDto
-  - [ ] OrderStatusRequestDto
-    - [ ] OrderId
-    - [ ] Order -> Status만 포함하도록 변경
-  - [ ] ProductRequestDto
-  - [ ] TableGroupRequestDto
-  - [ ] TableUngroupRequestDto
-  - [ ] OrderTableRequestDto -> TableRequestDto로 네이밍 변경
+  - [x] MenuRequestDto
+  - [x] MenuGroupRequestDto
+  - [x] OrderRequestDto
+  - [x] OrderStatusRequestDto
+    - [x] Order 
+  - [x] ProductRequestDto
+  - [x] TableGroupRequestDto
+  - [x] OrderTableRequestDto
   - [ ] MenuProductDto
-  - [ ] TableEmptyRequestDto
-    - [ ] OrderTableId
-    - [ ] OrderTable -> Empty 여부만 포함하도록 변경
-  - [ ] TableGuestRequestDto
-    - [ ] OrderTableId
-    - [ ] OrderTable -> NumberOfGuest만 포함하도록 변경
+  - [x] TableEmptyRequestDto
+    - [x] OrderTable 
+  - [x] TableGuestRequestDto
+    - [x] OrderTable 
 
 - Response DTO 생성
-- [ ] MenuResponseDto
-- [ ] MenuGroupResponseDto
-- [ ] List<MenuGroup>
-- [ ] List<Menu>
-- [ ] OrderResponseDto
-- [ ] List<Order>
-- [ ] ProductResponseDto
-- [ ] List<Product>
-- [ ] TableGroupResponseDto
-- [ ] OrderTableResponseDto
-- [ ] List<OrderTable>
+- [x] MenuResponseDto
+- [x] MenuGroupResponseDto
+- [x] List<MenuGroup>
+- [x] List<Menu>
+- [x] OrderResponseDto
+- [x] List<Order>
+- [x] ProductResponseDto
+- [x] List<Product>
+- [x] TableGroupResponseDto
+- [x] OrderTableResponseDto
+- [x] List<OrderTable>
 
 <br>
 
-## 서비스 리팩터링
-### DTO로 LayerArchitecture 지키기
-
-- Request DTO 생성
-  - [ ] MenuRequestDto
-  - [ ] MenuGroupRequestDto
-  - [ ] OrderRequestDto
-  - [ ] OrderStatusRequestDto
-    - [ ] OrderId
-    - [ ] Order -> Status만 포함하도록 변경
-  - [ ] ProductRequestDto
-  - [ ] TableGroupRequestDto
-  - [ ] TableUngroupRequestDto
-  - [ ] OrderTableRequestDto -> TableRequestDto로 네이밍 변경
-  - [ ] MenuProductDto
-  - [ ] TableEmptyRequestDto
-    - [ ] OrderTableId
-    - [ ] OrderTable -> Empty 여부만 포함하도록 변경
-  - [ ] TableGuestRequestDto
-    - [ ] OrderTableId
-    - [ ] OrderTable -> NumberOfGuest만 포함하도록 변경
-
-- Response DTO 생성
-- [ ] MenuResponseDto
-- [ ] MenuGroupResponseDto
-- [ ] List<MenuGroup>
-- [ ] List<Menu>
-- [ ] OrderResponseDto
-- [ ] List<Order>
-- [ ] ProductResponseDto
-- [ ] List<Product>
-- [ ] TableGroupResponseDto
-- [ ] OrderTableResponseDto
-- [ ] List<OrderTable>
-
 ### 비지니스 로직 Domain 책임으로 옮기기
 #### Menu
 **도메인 담당**
@@ -379,6 +344,19 @@
 - [ ] JPA Repository 테스트코드 추가
 - [ ] 단위테스트 추가
 
+## 생각할 거리 
+- DTO를 어느 layer까지 사용해야 할까 ?
+  - 완벽한 단방향 layer를 하기 위해서는 application과 presentation 에서 각기 다른 Dto를 사용하는 것이 맞다.
+  - 하지만 지나치게 많은 DTO파일을 생성해야하며 DTO 포장하는 등의 작업이 매우 번거로우며 비지니스 코드보다 오래걸릴 수 있다. 
+  - DTO를 하나만 쓴다면 다음 두 가지 경우 중 무엇이 적합할까? 
+    1. controller에서 DTO <-> Domain 변환
+      - 도메인이 presentation layer에 노출이 되지만 단방향을 유지할 수 있다.
+      - presentation layer에서 도메인이 노출될 수 있다. 
+    2. service에서 DTO <-> Domain 변환
+      - presentation layer에 속하는 dto가 application layer에 역방향으로 참조된다. 
+      - 자주 바뀌는 presentation의 변화에 application layer가 영향을 받을 수 있다. 
+  - 결론: 현재 테스트코드의 서비스가 모두 도메인을 인자로 받고 있는 점, 모듈이 분리될 수 있으므로 단방향을 유지하고자 하는 점에 의해 1번을 선택하도록 한다. 
+  
 <br>
 
 ## 용어 사전
