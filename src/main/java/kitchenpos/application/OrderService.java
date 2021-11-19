@@ -82,7 +82,7 @@ public class OrderService {
             OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(
                     orderLineItem.getSeq(),
                     orderLineItem.getOrder().getId(),
-                    orderLineItem.getMenu().getId(),
+                    orderLineItem.getMenuId(),
                     orderLineItem.getQuantity()
             );
             orderLineItemResponses.add(orderLineItemResponse);
@@ -95,7 +95,11 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItemRequest : orderRequest.getOrderLineItemRequests()) {
             Menu savedMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
-            OrderLineItem orderLineItem = new OrderLineItem(savedOrder, savedMenu, orderLineItemRequest.getQuantity());
+            OrderLineItem orderLineItem = new OrderLineItem(
+                    savedOrder,
+                    savedMenu.getId(),
+                    orderLineItemRequest.getQuantity()
+            );
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
         }
         return savedOrderLineItems;
