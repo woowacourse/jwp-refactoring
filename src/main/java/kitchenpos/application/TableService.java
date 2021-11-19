@@ -2,8 +2,8 @@ package kitchenpos.application;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import kitchenpos.domain.OrderTable;
-import kitchenpos.domain.Orders;
+import kitchenpos.domain.order.OrderTable;
+import kitchenpos.domain.order.Orders;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.repository.OrderRepository;

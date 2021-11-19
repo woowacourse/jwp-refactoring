@@ -1,5 +1,6 @@
-package kitchenpos.domain;
+package kitchenpos.domain.menu;
 
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,27 +9,32 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class OrderLineItem {
+public class MenuProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
     @ManyToOne
-    private Order order;
+    private Menu menu;
 
-    private Long menuId;
+    @ManyToOne
+    private Product product;
 
     @Column(nullable = false)
     private long quantity;
 
-    public OrderLineItem() {
+    public MenuProduct() {
     }
 
-    public OrderLineItem(Order order, Long menuId, long quantity) {
-        this.order = order;
-        this.menuId = menuId;
+    public MenuProduct(Menu menu, Product product, long quantity) {
+        this.menu = menu;
+        this.product = product;
         this.quantity = quantity;
+    }
+
+    public BigDecimal amount() {
+        return product.getPrice().multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getSeq() {
@@ -39,20 +45,20 @@ public class OrderLineItem {
         this.seq = seq;
     }
 
-    public Order getOrder() {
-        return order;
+    public Menu getMenu() {
+        return menu;
     }
 
-    public void setOrder(final Order order) {
-        this.order = order;
+    public void setMenu(final Menu menu) {
+        this.menu = menu;
     }
 
-    public Long getMenuId() {
-        return menuId;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setMenuId(final Long menuId) {
-        this.menuId = menuId;
+    public void setProduct(final Product product) {
+        this.product = product;
     }
 
     public long getQuantity() {
