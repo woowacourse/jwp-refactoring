@@ -1,13 +1,12 @@
 package kitchenpos.domain;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 
 @Entity
 public class TableGroup {
@@ -16,25 +15,30 @@ public class TableGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDateTime createdDate;
-    @OneToMany(mappedBy = "tableGroupId")
-    private List<OrderTable> orderTables;
+    @Embedded
+    private OrderTables orderTables;
 
     protected TableGroup() {
         
     }
 
     public TableGroup(OrderTable[] orderTables) {
-        this(null, null, Arrays.asList(orderTables));
+        this(null, null, new OrderTables(orderTables));
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate) {
-        this(id, createdDate, null);
+    public TableGroup(Long id, LocalDateTime localDateTime, List<OrderTable> orderTables) {
+        this(id, localDateTime, new OrderTables(orderTables));
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
+    }
+
+    public void createWith(OrderTables savedOrderTables) {
+        setOrderTables(savedOrderTables);
+        updateCreatedDate();
     }
 
     public void updateCreatedDate() {
@@ -49,11 +53,15 @@ public class TableGroup {
         return createdDate;
     }
 
-    public List<OrderTable> getOrderTables() {
+    public OrderTables getOrderTables() {
         return orderTables;
     }
 
-    public void updateOrderTables(List<OrderTable> orderTables) {
+    public List<Long> getOrderTableIds() {
+        return orderTables.getIds();
+    }
+
+    public void setOrderTables(OrderTables orderTables) {
         this.orderTables = orderTables;
     }
 }

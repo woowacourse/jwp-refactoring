@@ -2,6 +2,7 @@ package kitchenpos.integration.templates;
 
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
@@ -21,7 +22,7 @@ public class TableGroupTemplate {
         this.integrationTemplate = integrationTemplate;
     }
 
-    public ResponseEntity<TableGroupResponse> create(List<OrderTable> tables) {
+    public ResponseEntity<TableGroupResponse> create(OrderTables tables) {
         TableGroupRequest tableGroupRequet =
             new TableGroupRequest(null, null, OrderTableFactory.dtoList(tables));
 

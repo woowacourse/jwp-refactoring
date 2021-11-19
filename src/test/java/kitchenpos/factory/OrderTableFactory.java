@@ -3,6 +3,7 @@ package kitchenpos.factory;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 
@@ -46,10 +47,11 @@ public class OrderTableFactory {
         );
     }
 
-    public static List<OrderTable> copyList(List<OrderTableResponse> orderTableResponses) {
-        return orderTableResponses.stream()
+    public static OrderTables copyList(List<OrderTableResponse> orderTableResponses) {
+        List<OrderTable> orderTableList = orderTableResponses.stream()
             .map(OrderTableFactory::copy)
             .collect(Collectors.toList());
+        return new OrderTables(orderTableList);
     }
 
     public static OrderTableRequest dto(OrderTable orderTable) {
@@ -61,8 +63,8 @@ public class OrderTableFactory {
         );
     }
 
-    public static List<OrderTableRequest> dtoList(List<OrderTable> orderTables) {
-        return orderTables.stream()
+    public static List<OrderTableRequest> dtoList(OrderTables orderTables) {
+        return orderTables.toList().stream()
             .map(orderTable -> new OrderTableRequest(
                 orderTable.getId(),
                 orderTable.getTableGroupId(),

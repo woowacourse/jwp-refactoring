@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.net.URI;
 import java.util.Arrays;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.OrderTableResponse;
 import kitchenpos.dto.TableGroupResponse;
@@ -61,10 +62,7 @@ class TableGroupIntegrationTest {
     void create() {
         // given // when
         ResponseEntity<TableGroupResponse> tableGroupResponse = tableGroupTemplate
-            .create(Arrays.asList(
-                orderTable1,
-                orderTable2
-            ));
+            .create(new OrderTables(orderTable1, orderTable2));
         HttpStatus statusCode = tableGroupResponse.getStatusCode();
         URI location = tableGroupResponse.getHeaders().getLocation();
         TableGroupResponse body = tableGroupResponse.getBody();
@@ -87,9 +85,7 @@ class TableGroupIntegrationTest {
     void ungroup() {
         // given
         TableGroupResponse tableGroupResponse = tableGroupTemplate
-            .create(Arrays.asList(
-                orderTable1,
-                orderTable2))
+            .create(new OrderTables(orderTable1, orderTable2))
             .getBody();
         assertThat(tableGroupResponse).isNotNull();
         TableGroup createdTableGroup = TableGroupFactory.copy(tableGroupResponse).build();

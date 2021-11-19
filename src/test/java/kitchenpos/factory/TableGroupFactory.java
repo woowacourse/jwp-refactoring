@@ -3,6 +3,7 @@ package kitchenpos.factory;
 import java.time.LocalDateTime;
 import java.util.List;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.domain.TableGroup;
 import kitchenpos.dto.TableGroupRequest;
 import kitchenpos.dto.TableGroupResponse;
@@ -11,13 +12,13 @@ public class TableGroupFactory {
 
     private Long id;
     private LocalDateTime createdDate;
-    private List<OrderTable> orderTables;
+    private OrderTables orderTables;
 
     private TableGroupFactory() {
 
     }
 
-    private TableGroupFactory(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    private TableGroupFactory(Long id, LocalDateTime createdDate, OrderTables orderTables) {
         this.id = id;
         this.createdDate = createdDate;
         this.orderTables = orderTables;
@@ -62,7 +63,7 @@ public class TableGroupFactory {
     }
 
     public TableGroupFactory orderTables(List<OrderTable> orderTables) {
-        this.orderTables = orderTables;
+        this.orderTables = new OrderTables(orderTables);
         return this;
     }
 

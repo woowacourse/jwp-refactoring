@@ -1,6 +1,7 @@
 package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -30,6 +31,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class TableGroupServiceTest {
@@ -63,6 +65,8 @@ class TableGroupServiceTest {
         private List<Long> orderTableIds;
 
         private TableGroup tableGroup;
+
+        private Long savedTableGroupId;
 
         private TableGroup savedTableGroup;
 
@@ -107,8 +111,10 @@ class TableGroupServiceTest {
                 .orderTables(orderTables)
                 .build();
 
+            savedTableGroupId = 1L;
+
             savedTableGroup = TableGroupFactory.copy(tableGroup)
-                .id(1L)
+                .id(savedTableGroupId)
                 .orderTables(savedOrderTables)
                 .build();
 
@@ -120,25 +126,22 @@ class TableGroupServiceTest {
         void create() {
             // given
             given(orderTableDao.findAllByIdIn(orderTableIds)).willReturn(savedOrderTables);
-            given(tableGroupDao.save(any(TableGroup.class))).willReturn(savedTableGroup);
+            given(tableGroupDao.save(any(TableGroup.class))).willAnswer(
+                invocation -> {
+                    TableGroup toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedTableGroupId);
+                    return null;
+                }
+            );
 
             // when
             TableGroupResponse result = tableGroupService.create(tableGroupRequest);
 
             // then
-            verify(orderTableDao, times(2))
-                .save(orderTableArgumentCaptor.capture());
-            List<OrderTable> orderTableArguments = orderTableArgumentCaptor.getAllValues();
-            assertThat(orderTableArguments)
-                .containsExactly(
-                    savedOrderTable1,
-                    savedOrderTable2
-                );
             assertThat(result.getId()).isEqualTo(savedTableGroup.getId());
-            assertThat(result.getCreatedDate()).isEqualTo(savedTableGroup.getCreatedDate());
             assertThat(result.getOrderTables())
                 .usingRecursiveComparison()
-                .isEqualTo(savedTableGroup.getOrderTables());
+                .isEqualTo(savedTableGroup.getOrderTables().toList());
         }
 
         @DisplayName("TableGroup 생성 실패한다 - 요청한 orderTables 가 비어있는 경우")
@@ -297,16 +300,11 @@ class TableGroupServiceTest {
             )).willReturn(false);
 
             // when
-            tableGroupService.ungroup(tableGroupId);
+            ThrowingCallable throwingCallable = () -> tableGroupService.ungroup(tableGroupId);
 
             // then
-            verify(orderTableDao, times(2)).save(orderTableArgumentCaptor.capture());
-            List<OrderTable> orderTableArguments = orderTableArgumentCaptor.getAllValues();
-            assertThat(orderTableArguments)
-                .containsExactly(
-                    orderTable1,
-                    orderTable2
-                );
+            assertThatCode(throwingCallable)
+                .doesNotThrowAnyException();
         }
 
         @DisplayName("TableGroup 을 ungroup 하는 것을 실패한다 - 요청한 orderTable 의 order 상태가 COMPLETION 이 아닌 경우")

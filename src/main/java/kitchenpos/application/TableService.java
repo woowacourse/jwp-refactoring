@@ -7,6 +7,7 @@ import kitchenpos.dao.OrderDao;
 import kitchenpos.dao.OrderTableDao;
 import kitchenpos.domain.OrderStatus;
 import kitchenpos.domain.OrderTable;
+import kitchenpos.domain.OrderTables;
 import kitchenpos.dto.OrderTableRequest;
 import kitchenpos.dto.OrderTableResponse;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class TableService {
     }
 
     public List<OrderTableResponse> list() {
-        final List<OrderTable> orderTables = orderTableDao.findAll();
+        final OrderTables orderTables = new OrderTables(orderTableDao.findAll());
         return OrderTableResponse.ofList(orderTables);
     }
 

@@ -42,7 +42,7 @@
 - [x] MenuService
 - [x] OrderService
 - [x] ProductService
-- [ ] TableGroupService
+- [x] TableGroupService
 - [ ] TableService
 
 ### 통합 테스트
