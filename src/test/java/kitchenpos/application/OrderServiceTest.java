@@ -66,7 +66,7 @@ class OrderServiceTest {
                 단일_손님2_테이블,
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
-                Collections.singletonList(new OrderLineItem(후라이드_단품, 2))
+                Collections.singletonList(new OrderLineItem(후라이드_단품.getId(), 2))
         );
 
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));

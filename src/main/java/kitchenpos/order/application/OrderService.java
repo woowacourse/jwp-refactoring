@@ -57,7 +57,7 @@ public class OrderService {
                       .map(item -> {
                           final Menu menu = menuRepository.findById(item.getMenuId())
                                                           .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다."));
-                          return new OrderLineItem(order, menu, item.getQuantity());
+                          return new OrderLineItem(order, menu.getId(), item.getQuantity());
                       })
                       .collect(Collectors.toList());
     }

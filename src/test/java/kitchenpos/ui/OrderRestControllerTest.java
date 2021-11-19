@@ -51,7 +51,7 @@ class OrderRestControllerTest extends ControllerTest {
                 OrderedTableResponse.from(단일_손님2_테이블),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
-                Collections.singletonList(new OrderLineItemResponse(1L, MenuResponse.from(후라이드_단품), 2))
+                Collections.singletonList(new OrderLineItemResponse(1L, 후라이드_단품.getId(), 2))
         );
         given(orderService.create(any(CreateOrderRequest.class))).willReturn(expected);
 
