@@ -35,8 +35,7 @@ public class TableRestController {
 
     @GetMapping
     public ResponseEntity<List<OrderTableResponse>> list() {
-        return ResponseEntity.ok()
-            .body(tableService.list());
+        return ResponseEntity.ok(tableService.list());
     }
 
     @PutMapping("/{orderTableId}/empty")
@@ -44,8 +43,7 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestParam final Boolean empty
     ) {
-        return ResponseEntity.ok()
-            .body(tableService.changeEmpty(orderTableId, empty));
+        return ResponseEntity.ok(tableService.changeEmpty(orderTableId, empty));
     }
 
     @PutMapping("/{orderTableId}/number-of-guests")
@@ -53,7 +51,6 @@ public class TableRestController {
         @PathVariable final Long orderTableId,
         @RequestParam final Integer numberOfGuests
     ) {
-        return ResponseEntity.ok()
-            .body(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
+        return ResponseEntity.ok(tableService.changeNumberOfGuests(orderTableId, numberOfGuests));
     }
 }
