@@ -16,6 +16,7 @@ import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class OrderService {
 
@@ -36,7 +37,6 @@ public class OrderService {
         this.orderTableRepository = orderTableRepository;
     }
 
-    @Transactional
     public OrderResponse create(final OrderRequest request) {
         final List<OrderLineItem> orderLineItems = request.getOrderLineItems().stream()
             .map(item -> new OrderLineItem(
@@ -54,6 +54,7 @@ public class OrderService {
         return OrderResponse.of(savedOrder);
     }
 
+    @Transactional(readOnly = true)
     public List<OrderResponse> list() {
         final List<Order> orders = orderRepository.findAll();
 
