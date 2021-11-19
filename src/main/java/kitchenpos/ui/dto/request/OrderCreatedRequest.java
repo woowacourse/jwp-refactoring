@@ -2,12 +2,12 @@ package kitchenpos.ui.dto.request;
 
 import java.util.List;
 
-public class OrderRequest {
+public class OrderCreatedRequest {
 
     private Long orderTableId;
     private List<OrderLineItemRequest> orderLineItemRequests;
 
-    public OrderRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
+    public OrderCreatedRequest(Long orderTableId, List<OrderLineItemRequest> orderLineItems) {
         this.orderTableId = orderTableId;
         this.orderLineItemRequests = orderLineItems;
     }

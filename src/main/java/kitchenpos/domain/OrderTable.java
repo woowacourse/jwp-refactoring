@@ -29,9 +29,6 @@ public class OrderTable {
     @Column
     private boolean empty;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
-
     protected OrderTable() {
     }
 
@@ -39,17 +36,15 @@ public class OrderTable {
         this(null, null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(id, tableGroup, numberOfGuests, empty, new ArrayList<>());
+    public OrderTable(Long id, int numberOfGuests, boolean empty) {
+        this(id, null, numberOfGuests, empty);
     }
 
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty,
-            List<Order> orders) {
+    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orders = orders;
     }
 
     public boolean isEmpty() {
@@ -66,9 +61,5 @@ public class OrderTable {
 
     public int getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 }

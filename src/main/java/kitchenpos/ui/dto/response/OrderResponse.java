@@ -25,12 +25,12 @@ public class OrderResponse {
         this.orderLineItems = orderLineItems;
     }
 
-    public static OrderResponse create(Order order) {
+    public static OrderResponse create(Order order, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
                 OrderTableResponse.create(order.getOrderTable()),
                 order.getOrderStatus(), order.getOrderedTime(),
-                getOrderLineItemResponses(order.getOrderLineItems())
+                getOrderLineItemResponses(orderLineItems)
         );
     }
 

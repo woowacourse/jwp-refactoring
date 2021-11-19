@@ -17,20 +17,16 @@ public class TableGroup {
     @Column
     private LocalDateTime createdDate;
 
-    @OneToMany(mappedBy = "tableGroup")
-    private List<OrderTable> orderTables;
-
     public TableGroup() {
     }
 
-    public TableGroup(List<OrderTable> orderTables) {
-        this(null, LocalDateTime.now(), orderTables);
+    public TableGroup() {
+        this(null, LocalDateTime.now());
     }
 
-    public TableGroup(Long id, LocalDateTime createdDate, List<OrderTable> orderTables) {
+    public TableGroup(Long id, LocalDateTime createdDate) {
         this.id = id;
         this.createdDate = createdDate;
-        this.orderTables = orderTables;
     }
 
     public Long getId() {
@@ -39,9 +35,5 @@ public class TableGroup {
 
     public LocalDateTime getCreatedDate() {
         return createdDate;
-    }
-
-    public List<OrderTable> getOrderTables() {
-        return orderTables;
     }
 }
