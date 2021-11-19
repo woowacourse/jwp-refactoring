@@ -18,11 +18,12 @@ public class MenuGroupService {
 
     @Transactional
     public MenuGroupResponse create(final MenuGroupRequest menuGroupRequest) {
-        MenuGroup menuGroup = new MenuGroup(menuGroupRequest.getId(), menuGroupRequest.getName());
-        final MenuGroup savedMenuGroup = menuGroupDao.save(menuGroup);
-        return MenuGroupResponse.of(savedMenuGroup);
+        MenuGroup menuGroup = menuGroupRequest.toMenuGroup();
+        menuGroupDao.save(menuGroup);
+        return MenuGroupResponse.of(menuGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<MenuGroupResponse> list() {
         List<MenuGroup> menuGroups = menuGroupDao.findAll();
         return MenuGroupResponse.ofList(menuGroups);

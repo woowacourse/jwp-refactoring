@@ -40,7 +40,6 @@ public class OrderService {
 
         order.startCooking();
         orderDao.save(order);
-
         updateOrderLineItems(order);
 
         return OrderResponse.of(order);
@@ -54,11 +53,9 @@ public class OrderService {
 
     private void updateOrderLineItems(Order order) {
         final OrderLineItems orderLineItems = new OrderLineItems(order.getOrderLineItems());
-        orderLineItems.validateNotEmpty();
+        final List<Long> menuIds = orderLineItems.getMenuIds();
 
-        final List<Long> menuIds = orderLineItems.toMenuIds();
-        orderLineItems.validateSize(menuDao.countByIdIn(menuIds));
-
+        orderLineItems.validateSameSize(menuDao.countByIdIn(menuIds));
         orderLineItems.updateOrderId(order);
         orderLineItemDao.saveAll(orderLineItems.toList());
     }
@@ -73,11 +70,9 @@ public class OrderService {
     public OrderResponse changeOrderStatus(final Long orderId, final OrderRequest orderRequest) {
         final Order order = orderDao.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
-        order.validateNotCompleted();
-
         final OrderStatus orderStatus = orderRequest.getOrderStatus();
-        order.setOrderStatus(orderStatus);
 
+        order.changeOrderStatus(orderStatus);
         return OrderResponse.of(order);
     }
 }

@@ -45,6 +45,11 @@ public class Order {
         this.orderLineItems = orderLineItems;
     }
 
+    public void changeOrderStatus(final OrderStatus orderStatus) {
+        validateNotCompleted();
+        this.orderStatus = orderStatus;
+    }
+
     public void validateNotCompleted() {
         if (OrderStatus.COMPLETION.equals(orderStatus)) {
             throw new IllegalArgumentException();
@@ -74,9 +79,5 @@ public class Order {
 
     public List<OrderLineItem> getOrderLineItems() {
         return orderLineItems;
-    }
-
-    public void setOrderStatus(final OrderStatus orderStatus) {
-        this.orderStatus = orderStatus;
     }
 }

@@ -31,20 +31,26 @@ public class TableGroupService {
     @Transactional
     public TableGroupResponse create(final TableGroupRequest tableGroupRequest) {
         final TableGroup tableGroup = tableGroupRequest.toTableGroup();
-
-        final OrderTables orderTables =
-            new OrderTables(orderTableDao.findAllByIdIn(tableGroup.getOrderTableIds()));
-        orderTables.connect(tableGroup);
+        final OrderTables orderTables = orderTablesOf(tableGroup);
 
         tableGroup.createWith(orderTables);
         tableGroupDao.save(tableGroup);
         return TableGroupResponse.of(tableGroup);
     }
 
+    private OrderTables orderTablesOf(TableGroup tableGroup) {
+        final OrderTables orderTables =
+            new OrderTables(orderTableDao.findAllByIdIn(tableGroup.getOrderTableIds()));
+
+        orderTables.connect(tableGroup);
+        return orderTables;
+    }
+
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final OrderTables orderTables =
             new OrderTables(orderTableDao.findAllByTableGroupId(tableGroupId));
+
         validateCompletion(orderTables);
         orderTables.upGroupAll();
     }
@@ -52,6 +58,7 @@ public class TableGroupService {
     private void validateCompletion(OrderTables orderTables) {
         final List<Long> tableIds = orderTables.getIds();
         final List<OrderStatus> notCompleted = Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL);
+
         if (orderDao.existsByOrderTableIdInAndOrderStatusIn(tableIds, notCompleted)) {
             throw new IllegalArgumentException();
         }

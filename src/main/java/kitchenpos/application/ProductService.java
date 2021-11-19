@@ -19,6 +19,7 @@ public class ProductService {
     @Transactional
     public ProductResponse create(final ProductRequest productRequest) {
         final Product product = productRequest.toProduct();
+
         product.validatePrice();
         productDao.save(product);
         return ProductResponse.of(product);
