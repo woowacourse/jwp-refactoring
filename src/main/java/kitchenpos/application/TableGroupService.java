@@ -49,7 +49,7 @@ public class TableGroupService {
         TableGroup tableGroup = new TableGroup();
         final TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        tables.changeCondition(tableGroup);
+        tables.changeCondition(tableGroup.getId());
 
         List<OrderTableResponse> orderTableResponses = getOrderTableResponses(savedOrderTables);
 

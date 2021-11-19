@@ -72,7 +72,7 @@ class TablesTest {
         assertThat(orderTable2.getTableGroupId()).isNull();
         assertThat(orderTable.isEmpty()).isTrue();
         assertThat(orderTable2.isEmpty()).isTrue();
-        tables.changeCondition(tableGroup);
+        tables.changeCondition(tableGroup.getId());
         assertThat(orderTable.getTableGroupId()).isNotNull();
         assertThat(orderTable2.getTableGroupId()).isNotNull();
         assertThat(orderTable.isEmpty()).isFalse();

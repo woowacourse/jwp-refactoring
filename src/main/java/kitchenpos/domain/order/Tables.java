@@ -25,9 +25,9 @@ public class Tables {
         }
     }
 
-    public void changeCondition(TableGroup tableGroup) {
+    public void changeCondition(Long tableGroupId) {
         for (final OrderTable savedOrderTable : values) {
-            savedOrderTable.changeTableGroupId(tableGroup.getId());
+            savedOrderTable.changeTableGroupId(tableGroupId);
             savedOrderTable.changeEmpty(false);
         }
     }

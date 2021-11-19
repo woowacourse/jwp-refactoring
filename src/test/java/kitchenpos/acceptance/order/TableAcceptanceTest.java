@@ -102,7 +102,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenTableHasTableGroupId() {
         TableGroup tableGroup = new TableGroup();
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
-        OrderTable table = new OrderTable(savedTableGroup, 0, true);
+        OrderTable table = new OrderTable(savedTableGroup.getId(), 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
