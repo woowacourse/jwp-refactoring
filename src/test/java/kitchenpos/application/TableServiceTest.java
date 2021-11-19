@@ -2,6 +2,7 @@ package kitchenpos.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoSettings;
+import org.springframework.test.util.ReflectionTestUtils;
 
 @MockitoSettings
 class TableServiceTest {
@@ -53,6 +55,8 @@ class TableServiceTest {
 
         private OrderTable orderTable;
 
+        private Long savedOrderTableId;
+
         private OrderTable savedOrderTable;
 
         private OrderTableRequest orderTableRequest;
@@ -64,8 +68,10 @@ class TableServiceTest {
                 .empty(true)
                 .build();
 
+            savedOrderTableId = 1L;
+
             savedOrderTable = OrderTableFactory.copy(orderTable)
-                .id(1L)
+                .id(savedOrderTableId)
                 .tableGroupId(null)
                 .build();
 
@@ -76,13 +82,18 @@ class TableServiceTest {
         @Test
         void create() {
             // given
-            given(orderTableDao.save(refEq(orderTable))).willReturn(savedOrderTable);
+            given(orderTableDao.save(any(OrderTable.class))).willAnswer(
+                invocation -> {
+                    OrderTable toSave = invocation.getArgument(0);
+                    ReflectionTestUtils.setField(toSave, "id", savedOrderTableId);
+                    return null;
+                }
+            );
 
             // when
             OrderTableResponse result = tableService.create(orderTableRequest);
 
             // then
-            verify(orderTableDao, times(1)).save(refEq(orderTable));
             assertThat(result)
                 .usingRecursiveComparison()
                 .isEqualTo(savedOrderTable);
@@ -131,7 +142,6 @@ class TableServiceTest {
                 orderTableId,
                 notCompletionOrderStatuses
             )).willReturn(false);
-            given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
 
             // when
             OrderTableResponse result = tableService.changeEmpty(orderTableId, orderTableRequest);
@@ -187,7 +197,6 @@ class TableServiceTest {
         void changeNumberOfGuests() {
             // given
             given(orderTableDao.findById(orderTableId)).willReturn(Optional.of(savedOrderTable));
-            given(orderTableDao.save(savedOrderTable)).willReturn(savedOrderTable);
 
             // when
             OrderTableResponse result =

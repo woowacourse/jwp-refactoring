@@ -15,9 +15,8 @@ class OrderTableTest {
     void setUp() {
         orderTable = OrderTableFactory.builder()
             .id(1L)
-            .tableGroupId(1L)
             .numberOfGuests(1)
-            .empty(true)
+            .empty(false)
             .build();
     }
 

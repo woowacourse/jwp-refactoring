@@ -36,6 +36,7 @@
   - [ ] Menu, MenuProduct
 - [ ] 예외 메시지 작성
 - [ ] test template 에서 실제 객체가 아닌 dto 를 사용하도록 리팩토링
+- [ ] test 필드 final 처리
 
 ### 도메인 로직 분리
 - [x] MenuGroupService : 로직이 간단하여 분리할 것이 없음.
@@ -43,7 +44,7 @@
 - [x] OrderService
 - [x] ProductService
 - [x] TableGroupService
-- [ ] TableService
+- [x] TableService
 
 ### 통합 테스트
 - [x] /api/menus POST success
