@@ -14,9 +14,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class TableService {
 
     private final OrderTableRepository orderTableRepository;
+    private final TableEmptyChangeService tableEmptyChangeService;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final TableEmptyChangeService tableEmptyChangeService) {
         this.orderTableRepository = orderTableRepository;
+        this.tableEmptyChangeService = tableEmptyChangeService;
     }
 
     @Transactional
@@ -33,8 +36,11 @@ public class TableService {
     public OrderTableResponse changeEmpty(final Long orderTableId,
                                           final OrderTableEmptyRequest orderTableEmptyRequest) {
         final OrderTable savedOrderTable = findOrderTable(orderTableId);
-        savedOrderTable.changeEmpty(orderTableEmptyRequest.isEmpty());
+        if (!tableEmptyChangeService.canChangeEmpty(savedOrderTable)) {
+            throw new IllegalArgumentException();
+        }
 
+        savedOrderTable.changeEmpty(orderTableEmptyRequest.isEmpty());
         return OrderTableResponse.from(savedOrderTable);
     }
 

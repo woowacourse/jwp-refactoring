@@ -19,6 +19,7 @@ import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuProducts;
 import kitchenpos.name.Name;
 import kitchenpos.order.domain.Order;
+import kitchenpos.table.application.TableEmptyChangeService;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.price.Price;
 import kitchenpos.product.domain.Product;
@@ -43,6 +44,9 @@ public class TableGroupServiceTest extends ServiceTest {
 
     @Mock
     private TableGroupRepository tableGroupRepository;
+
+    @Mock
+    private TableEmptyChangeService tableEmptyChangeService;
 
     @InjectMocks
     private TableGroupService tableGroupService;
@@ -163,6 +167,7 @@ public class TableGroupServiceTest extends ServiceTest {
         );
         List<OrderTable> orderTables = Arrays.asList(orderTable1, orderTable2);
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
+        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(true);
 
         tableGroupService.ungroup(tableGroupId);
 
@@ -182,6 +187,7 @@ public class TableGroupServiceTest extends ServiceTest {
         );
         new Order(orderTable1);
         when(tableGroupRepository.findById(tableGroupId)).thenReturn(Optional.of(tableGroup));
+        when(tableEmptyChangeService.canChangeEmpty(any())).thenReturn(false);
 
         assertThatThrownBy(() -> tableGroupService.ungroup(tableGroupId))
             .isExactlyInstanceOf(IllegalArgumentException.class);

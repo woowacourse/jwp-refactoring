@@ -1,7 +1,5 @@
 package kitchenpos.table.domain;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -10,8 +8,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 
 @Entity
 public class OrderTable {
@@ -24,8 +20,6 @@ public class OrderTable {
     private TableGroup tableGroup;
     @Embedded
     private NumberOfGuests numberOfGuests;
-    @Embedded
-    private Orders orders;
     private boolean empty;
 
     protected OrderTable() {
@@ -50,7 +44,6 @@ public class OrderTable {
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orders = new Orders();
     }
 
     public void changeEmpty(final boolean empty) {
@@ -62,13 +55,6 @@ public class OrderTable {
         if (isIncludedInGroup()) {
             throw new IllegalArgumentException("단체 지정이 된 테이블은 빈 상태를 수정할 수 없습니다.");
         }
-        if (orders.containsOrderStatusIn(Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    public boolean containsOrderStatusIn(final List<OrderStatus> orderStatuses) {
-        return orders.containsOrderStatusIn(orderStatuses);
     }
 
     private boolean isIncludedInGroup() {
@@ -86,12 +72,6 @@ public class OrderTable {
         }
     }
 
-    public void addOrder(final Order order) {
-        if (!orders.contains(order)) {
-            orders.add(order);
-        }
-    }
-
     public void changeTableGroup(final TableGroup tableGroup) {
         this.tableGroup = tableGroup;
     }
@@ -106,10 +86,6 @@ public class OrderTable {
 
     public NumberOfGuests getNumberOfGuests() {
         return numberOfGuests;
-    }
-
-    public List<Order> getOrders() {
-        return orders.getElements();
     }
 
     public boolean isEmpty() {

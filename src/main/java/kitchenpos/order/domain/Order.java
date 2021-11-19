@@ -43,7 +43,6 @@ public class Order {
         this.id = id;
         this.orderTable = orderTable;
         this.orderStatus = orderStatus;
-        orderTable.addOrder(this);
     }
 
     private void validateOrderTable(final OrderTable orderTable) {

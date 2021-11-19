@@ -61,22 +61,10 @@ public class OrderTables {
     }
 
     public void ungroup() {
-        validateToUngroup();
         for (final OrderTable element : elements) {
             element.changeTableGroup(null);
             element.changeEmpty(false);
         }
-    }
-
-    private void validateToUngroup() {
-        if (containsOrderStatusIn(Arrays.asList(OrderStatus.COOKING, OrderStatus.MEAL))) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private boolean containsOrderStatusIn(final List<OrderStatus> orderStatuses) {
-        return elements.stream()
-            .anyMatch(orderTable -> orderTable.containsOrderStatusIn(orderStatuses));
     }
 
     public List<OrderTable> getElements() {
