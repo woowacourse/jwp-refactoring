@@ -57,7 +57,7 @@ public class TableService {
         Orders orders = new Orders(orderRepository.findAllByOrderTableId(savedOrderTable.getId()));
         orders.validateChangeEmpty();
 
-        savedOrderTable.setEmpty(orderTableRequest.isEmpty());
+        savedOrderTable.changeEmpty(orderTableRequest.isEmpty());
 
         return new OrderTableResponse(
                 savedOrderTable.getId(),

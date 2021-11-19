@@ -130,7 +130,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.validateChangeStatus();
 
-        savedOrder.setOrderStatus(orderRequest.getOrderStatus());
+        savedOrder.changeOrderStatus(orderRequest.getOrderStatus());
 
         List<OrderLineItemResponse> orderLineItemResponses = getOrderLineItemResponse(
                 orderLineItemRepository.findAllByOrderId(orderId));

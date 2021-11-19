@@ -3,6 +3,7 @@ package kitchenpos.domain.order;
 import java.util.List;
 
 public class Orders {
+
     private List<Order> values;
 
     public Orders(List<Order> values) {
