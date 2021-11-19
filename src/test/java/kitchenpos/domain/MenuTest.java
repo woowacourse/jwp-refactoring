@@ -69,7 +69,7 @@ class MenuTest {
         List<MenuProduct> menuProducts = Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품); // 후라이드 치킨 17000원, 양념 치킨 17000원
 
         // when & then
-        assertThatThrownBy(() -> menu.addMenuProducts(menuProducts))
+        assertThatThrownBy(() -> menu.addMenuProducts(menuProducts, BigDecimal.valueOf(34000)))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
     }

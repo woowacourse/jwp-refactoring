@@ -42,7 +42,7 @@ public class Product {
     }
 
     public BigDecimal calculatePrice(long quantity) {
-        return this.price.multiply(BigDecimal.valueOf(quantity));
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
     public Long getId() {

@@ -47,10 +47,7 @@ public class Menu {
         }
     }
 
-    public void addMenuProducts(List<MenuProduct> menuProducts) {
-        final BigDecimal sum = menuProducts.stream()
-                                           .map(MenuProduct::totalPrice)
-                                           .reduce(BigDecimal.ZERO, BigDecimal::add);
+    public void addMenuProducts(List<MenuProduct> menuProducts, BigDecimal sum) {
         if (price.compareTo(sum) > 0) {
             throw new IllegalArgumentException("메뉴의 가격은 제품 단품의 합보다 클 수 없습니다.");
         }

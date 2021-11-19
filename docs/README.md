@@ -32,7 +32,7 @@
         - [ ] Order <-> OrderTable 단방향으로 변경
     - [ ] 패키지 간 연관 관계 Repository를 통한 탐색(약한 결합도)으로 변경
         - [x] Menu -> MenuGroup 객체 참조를 id로 변경
-        - [ ] MenuProduct -> Product 객체 참조를 id로 변경
+        - [x] MenuProduct -> Product 객체 참조를 id로 변경
         - [ ] OrderLineItem -> Menu 객체 참조를 id로 변경
         - [ ] Order -> OrderTable 객체 참조를 id로 변경
 

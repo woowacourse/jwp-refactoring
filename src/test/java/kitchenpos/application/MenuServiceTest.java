@@ -60,7 +60,7 @@ class MenuServiceTest {
                 Collections.singletonList(new MenuProductRequest(강정치킨.getId(), 1))
         );
         Menu expected = new Menu(1L, "강정", BigDecimal.valueOf(15000), 추천메뉴.getId(), Collections.singletonList(강정치킨_한마리_메뉴상품));
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
         given(productRepository.findById(anyLong())).willReturn(Optional.of(강정치킨));
         given(menuRepository.save(any(Menu.class))).willReturn(expected);
 
@@ -86,7 +86,7 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -107,7 +107,7 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -128,7 +128,7 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
         given(productRepository.findById(후라이드치킨.getId())).willReturn(Optional.of(후라이드치킨));
         given(productRepository.findById(양념치킨.getId())).willReturn(Optional.of(양념치킨));
 
@@ -151,7 +151,7 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.empty());
+        given(menuGroupRepository.existsById(anyLong())).willReturn(false);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -172,7 +172,7 @@ class MenuServiceTest {
                         new MenuProductRequest(양념치킨.getId(), 1)
                 )
         );
-        given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
+        given(menuGroupRepository.existsById(anyLong())).willReturn(true);
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
