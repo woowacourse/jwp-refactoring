@@ -15,7 +15,7 @@ public class MenuFixture {
             1L,
             "후라이드 단품",
             BigDecimal.valueOf(17000),
-            추천메뉴,
+            추천메뉴.getId(),
             Collections.singletonList(후라이드치킨_한마리_메뉴상품)
     );
 
@@ -23,7 +23,7 @@ public class MenuFixture {
             2L,
             "양념 단품",
             BigDecimal.valueOf(17000),
-            추천메뉴,
+            추천메뉴.getId(),
             Collections.singletonList(양념치킨_한마리_메뉴상품)
     );
 
@@ -31,7 +31,7 @@ public class MenuFixture {
             3L,
             "양념 반 + 후라이드 반",
             BigDecimal.valueOf(30000),
-            추천메뉴,
+            추천메뉴.getId(),
             Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품)
     );
 
@@ -39,7 +39,7 @@ public class MenuFixture {
             4L,
             "더블 간장",
             BigDecimal.valueOf(29000),
-            신메뉴,
+            신메뉴.getId(),
             Collections.singletonList(간장치킨_두마리_메뉴상품)
     );
 }

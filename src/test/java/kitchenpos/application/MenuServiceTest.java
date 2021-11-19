@@ -59,7 +59,7 @@ class MenuServiceTest {
                 추천메뉴.getId(),
                 Collections.singletonList(new MenuProductRequest(강정치킨.getId(), 1))
         );
-        Menu expected = new Menu(1L, "강정", BigDecimal.valueOf(15000), 추천메뉴, Collections.singletonList(강정치킨_한마리_메뉴상품));
+        Menu expected = new Menu(1L, "강정", BigDecimal.valueOf(15000), 추천메뉴.getId(), Collections.singletonList(강정치킨_한마리_메뉴상품));
         given(menuGroupRepository.findById(anyLong())).willReturn(Optional.of(추천메뉴));
         given(productRepository.findById(anyLong())).willReturn(Optional.of(강정치킨));
         given(menuRepository.save(any(Menu.class))).willReturn(expected);

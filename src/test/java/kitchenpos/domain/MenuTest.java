@@ -26,7 +26,7 @@ class MenuTest {
         assertDoesNotThrow(() -> new Menu(
                 "양념 반 + 후라이드 반",
                 BigDecimal.valueOf(30000),
-                추천메뉴,
+                추천메뉴.getId(),
                 Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품)));
     }
 
@@ -37,7 +37,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "양념 반 + 후라이드 반",
                 null,
-                추천메뉴,
+                추천메뉴.getId(),
                 Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품))
         )
                 .isInstanceOf(IllegalArgumentException.class)
@@ -51,7 +51,7 @@ class MenuTest {
         assertThatThrownBy(() -> new Menu(
                 "양념 반 + 후라이드 반",
                 BigDecimal.valueOf(-1),
-                추천메뉴,
+                추천메뉴.getId(),
                 Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품))
         )
                 .isInstanceOf(IllegalArgumentException.class)
@@ -65,7 +65,7 @@ class MenuTest {
         Menu menu = new Menu(
                 "양념 반 + 후라이드 반",
                 BigDecimal.valueOf(34001),
-                추천메뉴);
+                추천메뉴.getId());
         List<MenuProduct> menuProducts = Arrays.asList(후라이드치킨_한마리_메뉴상품, 양념치킨_한마리_메뉴상품); // 후라이드 치킨 17000원, 양념 치킨 17000원
 
         // when & then

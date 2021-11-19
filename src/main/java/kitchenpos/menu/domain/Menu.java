@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
 
-import kitchenpos.menugroup.domain.MenuGroup;
-
 @Entity
 public class Menu {
     @Id
@@ -18,9 +16,7 @@ public class Menu {
 
     private BigDecimal price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_group_id")
-    private MenuGroup menuGroup;
+    private Long menuGroupId;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.PERSIST)
     private List<MenuProduct> menuProducts = new ArrayList<>();
@@ -28,20 +24,20 @@ public class Menu {
     public Menu() {
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup, new ArrayList<>());
+    public Menu(String name, BigDecimal price, Long menuGroupId) {
+        this(null, name, price, menuGroupId, new ArrayList<>());
     }
 
-    public Menu(String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
-        this(null, name, price, menuGroup, menuProducts);
+    public Menu(String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
+        this(null, name, price, menuGroupId, menuProducts);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup, List<MenuProduct> menuProducts) {
+    public Menu(Long id, String name, BigDecimal price, Long menuGroupId, List<MenuProduct> menuProducts) {
         validatesPriceValue(price);
         this.id = id;
         this.name = name;
         this.price = price;
-        this.menuGroup = menuGroup;
+        this.menuGroupId = menuGroupId;
         this.menuProducts = menuProducts;
     }
 
@@ -73,8 +69,8 @@ public class Menu {
         return price;
     }
 
-    public MenuGroup getMenuGroup() {
-        return menuGroup;
+    public Long getMenuGroupId() {
+        return menuGroupId;
     }
 
     public List<MenuProduct> getMenuProducts() {

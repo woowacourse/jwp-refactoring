@@ -51,7 +51,7 @@ class MenuRestControllerTest extends ControllerTest {
                 1L,
                 "양념 반 + 후라이드 반",
                 BigDecimal.valueOf(30000),
-                MenuGroupResponse.from(추천메뉴),
+                추천메뉴.getId(),
                 Arrays.asList(
                         MenuProductResponse.from(후라이드치킨_한마리_메뉴상품),
                         MenuProductResponse.from(양념치킨_한마리_메뉴상품))
