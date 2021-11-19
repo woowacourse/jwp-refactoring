@@ -50,7 +50,7 @@ public class Menu {
         Price totalMenuProductsPrice = menuProducts.totalPrice();
         if (price.isBiggerThan(totalMenuProductsPrice)) {
             throw new IllegalArgumentException(String.format(
-                "메뉴 가격은 상품 가격의 합보다 클 수 없습니다.(메뉴 가격: %d, 상품 가격: %d",
+                "메뉴 가격은 상품 가격의 합보다 클 수 없습니다.(메뉴 가격: %d, 상품 가격: %d)",
                 price.getValue().intValue(),
                 totalMenuProductsPrice.getValue().intValue()
             ));

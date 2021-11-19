@@ -88,7 +88,7 @@ public class OrderResponse {
             return new OrderLineItemResponse(
                 orderLineItem.getSeq(),
                 orderLineItem.getOrder().getId(),
-                orderLineItem.getMenu().getId(),
+                orderLineItem.getOrderMenu().getMenuId(),
                 orderLineItem.getQuantity().getValue()
             );
         }

@@ -104,7 +104,7 @@ public class OrderServiceTest extends ServiceTest {
             for (int seq = 1; seq <= orderLineItems.size(); seq++) {
                 OrderLineItem orderLineItem = orderLineItems.get(seq - 1);
                 result.add(
-                    new OrderLineItem((long) seq, orderLineItem.getOrder(), orderLineItem.getMenu(),
+                    new OrderLineItem((long) seq, orderLineItem.getOrder(), orderLineItem.getOrderMenu(),
                         orderLineItem.getQuantity())
                 );
             }
