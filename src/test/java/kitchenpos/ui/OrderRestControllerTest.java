@@ -11,15 +11,15 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.OrderStatus;
-import kitchenpos.dto.request.order.ChangeOrderStatusRequest;
-import kitchenpos.dto.request.order.CreateOrderRequest;
-import kitchenpos.dto.request.order.OrderLineItemRequest;
-import kitchenpos.dto.response.order.CreateOrderResponse;
-import kitchenpos.dto.response.menu.MenuResponse;
-import kitchenpos.dto.response.order.OrderLineItemResponse;
-import kitchenpos.dto.response.order.OrderResponse;
-import kitchenpos.dto.response.table.OrderedTableResponse;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
+import kitchenpos.order.ui.request.CreateOrderRequest;
+import kitchenpos.order.ui.request.OrderLineItemRequest;
+import kitchenpos.order.ui.response.CreateOrderResponse;
+import kitchenpos.menu.ui.response.MenuResponse;
+import kitchenpos.order.ui.response.OrderLineItemResponse;
+import kitchenpos.order.ui.response.OrderResponse;
+import kitchenpos.table.ui.response.OrderedTableResponse;
 
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;

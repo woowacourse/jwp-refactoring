@@ -5,6 +5,9 @@ import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
+
 import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

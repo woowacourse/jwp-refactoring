@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
-import kitchenpos.domain.Order;
-import kitchenpos.domain.OrderStatus;
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
 
 import static kitchenpos.fixture.OrderLineItemFixture.양념반_후라이드반_하나;
 import static kitchenpos.fixture.OrderLineItemFixture.후라이드_단품_둘;

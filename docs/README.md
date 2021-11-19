@@ -20,8 +20,8 @@
     - 도메인 이벤트 퍼블리싱 적용
 
 #### TODO
-- [ ] Package by Feature로 구조 변경
-- [ ] 의존성 그려보기
+- [x] Package by Feature로 구조 변경
+- [x] 의존성 그려보기
 - [ ] 의존성 관점에서 리팩터링
     - [ ] 메뉴(Menu)의 이름, 가격 변경시 주문 항목(OrderLineItem)에 영향을 미치지 않게
     - [ ] 클래스 사이 의존 관계 단방향으로 변경(pr에 이유 작성)
@@ -31,6 +31,7 @@
     - [ ] 패키지 사이 의존 관계 단방향으로 변경
         - [ ] Order <-> OrderTable 단방향으로 변경
     - [ ] 패키지 간 연관 관계 Repository를 통한 탐색(약한 결합도)으로 변경
+        - [ ] Menu -> MenuGroup 객체 참조를 id로 변경
         - [ ] MenuProduct -> Product 객체 참조를 id로 변경
         - [ ] OrderLineItem -> Menu 객체 참조를 id로 변경
         - [ ] Order -> OrderTable 객체 참조를 id로 변경

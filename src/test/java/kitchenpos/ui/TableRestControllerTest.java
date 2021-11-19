@@ -10,11 +10,11 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import kitchenpos.domain.OrderTable;
-import kitchenpos.dto.request.table.ChangeTableEmptyRequest;
-import kitchenpos.dto.request.table.ChangeTableGuestRequest;
-import kitchenpos.dto.request.table.CreateTableRequest;
-import kitchenpos.dto.response.table.TableResponse;
+import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.ui.request.ChangeTableEmptyRequest;
+import kitchenpos.table.ui.request.ChangeTableGuestRequest;
+import kitchenpos.table.ui.request.CreateTableRequest;
+import kitchenpos.table.ui.response.TableResponse;
 
 import static kitchenpos.fixture.TableGroupFixture.GROUP1;
 import static org.junit.jupiter.api.Assertions.assertTrue;

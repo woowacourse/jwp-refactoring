@@ -13,7 +13,18 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import org.junit.jupiter.api.BeforeEach;
 
-import kitchenpos.application.*;
+import kitchenpos.menugroup.application.MenuGroupService;
+import kitchenpos.menu.application.MenuService;
+import kitchenpos.menugroup.ui.MenuGroupRestController;
+import kitchenpos.menu.ui.MenuRestController;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.ui.OrderRestController;
+import kitchenpos.product.application.ProductService;
+import kitchenpos.product.ui.ProductRestController;
+import kitchenpos.table.application.TableGroupService;
+import kitchenpos.table.application.TableService;
+import kitchenpos.table.ui.TableGroupRestController;
+import kitchenpos.table.ui.TableRestController;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 

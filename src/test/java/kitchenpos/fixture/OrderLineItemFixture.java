@@ -1,6 +1,6 @@
 package kitchenpos.fixture;
 
-import kitchenpos.domain.OrderLineItem;
+import kitchenpos.order.domain.OrderLineItem;
 
 import static kitchenpos.fixture.MenuFixture.양념반_후라이드반;
 import static kitchenpos.fixture.MenuFixture.후라이드_단품;

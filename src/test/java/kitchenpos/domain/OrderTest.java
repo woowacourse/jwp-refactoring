@@ -2,10 +2,13 @@ package kitchenpos.domain;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import kitchenpos.order.domain.Order;
+import kitchenpos.order.domain.OrderStatus;
+import kitchenpos.table.domain.OrderTable;
 
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
 import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
