@@ -13,7 +13,7 @@ import java.util.Optional;
 import kitchenpos.order.domain.Order;
 import kitchenpos.table.application.TableService;
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.tablegroup.domain.TableGroup;
+import kitchenpos.table.domain.TableGroup;
 import kitchenpos.table.domain.OrderTableRepository;
 import kitchenpos.table.dto.OrderTableEmptyRequest;
 import kitchenpos.table.dto.OrderTableNumberOfGuestsRequest;
