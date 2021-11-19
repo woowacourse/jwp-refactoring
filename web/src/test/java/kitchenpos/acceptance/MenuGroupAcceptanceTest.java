@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("메뉴 그룹 인수 테스트")
 public class MenuGroupAcceptanceTest extends DomainAcceptanceTest {
-    @DisplayName("POST /api/kitchenpos.ui.menu-groups")
+    @DisplayName("POST /api/menu-groups")
     @Test
     void createPost() {
         // given -  when
@@ -36,7 +36,7 @@ public class MenuGroupAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.header("Location")).isNotBlank();
     }
 
-    @DisplayName("GET /api/kitchenpos.ui.menu-groups")
+    @DisplayName("GET /api/menu-groups")
     @Test
     void createGet() {
         // given - when

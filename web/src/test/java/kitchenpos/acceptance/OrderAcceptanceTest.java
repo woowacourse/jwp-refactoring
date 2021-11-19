@@ -24,11 +24,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("주문 인수 테스트")
 public class OrderAcceptanceTest extends DomainAcceptanceTest {
-    @DisplayName("POST /api/kitchenpos.ui.order")
+    @DisplayName("POST /api/order")
     @Test
     void create() {
         // given
-        // kitchenpos.ui.menu 등록
+        // menu 등록
         Long menuId = POST_SAMPLE_MENU();
 
         // orderTable 등록
@@ -53,7 +53,7 @@ public class OrderAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("GET /api/kitchenpos.ui.order")
+    @DisplayName("GET /api/order")
     @Test
     void list() {
         // given
@@ -71,7 +71,7 @@ public class OrderAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("PUT /api/kitchenpos.ui.order/{orderId}/kitchenpos.ui.order-status")
+    @DisplayName("PUT /api/order/{orderId}/order-status")
     @Test
     void changeOrderStatus() {
         // given
@@ -94,7 +94,7 @@ public class OrderAcceptanceTest extends DomainAcceptanceTest {
         assertThat(orderStatusResponse.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
     }
 
-    @DisplayName("GET /api/kitchenpos.ui.order/{orderId}")
+    @DisplayName("GET /api/order/{orderId}")
     @Test
     void orderDetailInfo() {
         // given
@@ -112,7 +112,7 @@ public class OrderAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("GET /api/kitchenpos.ui.order/{orderId}")
+    @DisplayName("GET /api/order/{orderId}")
     @Test
     void orderDetailInfoWhenMenuIsUpdated() {
         // given

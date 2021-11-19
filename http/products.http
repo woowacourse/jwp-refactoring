@@ -1,6 +1,6 @@
 ###
 POST {{host}}/api/products
-Content-Type: kitchenpos.application/json
+Content-Type: application/json
 
 {
   "name": "강정치킨",

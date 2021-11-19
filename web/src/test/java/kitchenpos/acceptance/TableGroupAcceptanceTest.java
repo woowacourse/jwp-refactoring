@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("테이블 그룹 인수 테스트")
 public class TableGroupAcceptanceTest extends DomainAcceptanceTest {
-    @DisplayName("POST /api/kitchenpos.ui.table-groups")
+    @DisplayName("POST /api/table-groups")
     @Test
     void create() {
         // given
@@ -45,7 +45,7 @@ public class TableGroupAcceptanceTest extends DomainAcceptanceTest {
         assertThat(response.body()).isNotNull();
     }
 
-    @DisplayName("DELETE /api/kitchenpos.ui.table-groups/{tableGroupId}")
+    @DisplayName("DELETE /api/table-groups/{tableGroupId}")
     @Test
     void ungroup() {
         // given
