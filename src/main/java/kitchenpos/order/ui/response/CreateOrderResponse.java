@@ -6,18 +6,17 @@ import java.util.stream.Collectors;
 
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
-import kitchenpos.table.ui.response.OrderedTableResponse;
 
 public class CreateOrderResponse {
     private Long id;
-    private OrderedTableResponse orderTable;
+    private Long orderTableId;
     private OrderStatus orderStatus;
     private LocalDateTime orderedTime;
     private List<OrderLineItemResponse> orderLineItems;
 
-    public CreateOrderResponse(Long id, OrderedTableResponse orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
+    public CreateOrderResponse(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItemResponse> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
@@ -26,7 +25,7 @@ public class CreateOrderResponse {
     public static CreateOrderResponse from(Order order) {
         return new CreateOrderResponse(
                 order.getId(),
-                OrderedTableResponse.from(order.getOrderTable()),
+                order.getOrderTableId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 orderLineItemResponse(order)
@@ -43,8 +42,8 @@ public class CreateOrderResponse {
         return id;
     }
 
-    public OrderedTableResponse getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

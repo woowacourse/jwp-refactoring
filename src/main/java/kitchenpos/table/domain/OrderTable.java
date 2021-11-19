@@ -1,12 +1,7 @@
 package kitchenpos.table.domain;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import javax.persistence.*;
-
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderStatus;
 
 @Entity
 public class OrderTable {
@@ -22,9 +17,6 @@ public class OrderTable {
 
     private boolean empty;
 
-    @OneToMany(mappedBy = "orderTable")
-    private List<Order> orders;
-
     public OrderTable() {
     }
 
@@ -33,34 +25,21 @@ public class OrderTable {
     }
 
     public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty) {
-        this(id, tableGroup, numberOfGuests, empty, new ArrayList<>());
-    }
-
-    public OrderTable(Long id, TableGroup tableGroup, int numberOfGuests, boolean empty, List<Order> orders) {
         this.id = id;
         this.tableGroup = tableGroup;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orders = orders;
     }
 
-    public void changeEmpty(boolean empty) {
+    public void changeEmpty(boolean empty, TableValidator tableValidator) {
         validatesTableGroup();
-        validatesOrderStatus();
+        tableValidator.validate(this);
         this.empty = empty;
     }
 
     private void validatesTableGroup() {
         if (Objects.nonNull(this.tableGroup)) {
             throw new IllegalArgumentException("주문 테이블이 그룹에 속해있습니다. 그룹을 해제해주세요.");
-        }
-    }
-
-    private void validatesOrderStatus() {
-        boolean isCookingOrMeal = orders.stream()
-                                        .anyMatch(order -> order.isStatus(OrderStatus.COOKING) || order.isStatus(OrderStatus.MEAL));
-        if (isCookingOrMeal) {
-            throw new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.");
         }
     }
 
@@ -90,8 +69,8 @@ public class OrderTable {
         this.tableGroup = tableGroup;
     }
 
-    public void ungroup() {
-        validatesOrderStatus();
+    public void ungroup(TableValidator tableValidator) {
+        tableValidator.validate(this);
         this.tableGroup = null;
         this.empty = false;
     }
@@ -110,9 +89,5 @@ public class OrderTable {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public List<Order> getOrders() {
-        return orders;
     }
 }

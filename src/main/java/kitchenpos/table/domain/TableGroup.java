@@ -43,8 +43,8 @@ public class TableGroup {
         }
     }
 
-    public void ungroup() {
-        orderTables.forEach(OrderTable::ungroup);
+    public void ungroup(TableValidator tableValidator) {
+        orderTables.forEach(table -> table.ungroup(tableValidator));
     }
 
     public Long getId() {

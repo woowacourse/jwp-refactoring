@@ -48,7 +48,7 @@ class OrderRestControllerTest extends ControllerTest {
         );
         CreateOrderResponse expected = new CreateOrderResponse(
                 1L,
-                OrderedTableResponse.from(단일_손님2_테이블),
+                단일_손님2_테이블.getId(),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItemResponse(1L, 후라이드_단품.getId(), 2))

@@ -8,8 +8,6 @@ import javax.persistence.*;
 
 import org.springframework.util.CollectionUtils;
 
-import kitchenpos.table.domain.OrderTable;
-
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -17,9 +15,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_table_id")
-    private OrderTable orderTable;
+    private Long orderTableId;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
@@ -32,27 +28,20 @@ public class Order {
     public Order() {
     }
 
-    public Order(OrderTable orderTable) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
+    public Order(Long orderTableId) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), new ArrayList<>());
     }
 
-    public Order(OrderTable orderTable, List<OrderLineItem> orderLineItems) {
-        this(null, orderTable, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
+    public Order(Long orderTableId, List<OrderLineItem> orderLineItems) {
+        this(null, orderTableId, OrderStatus.COOKING, LocalDateTime.now(), orderLineItems);
     }
 
-    public Order(Long id, OrderTable orderTable, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
-        validatesEmptyOrderTable(orderTable);
+    public Order(Long id, Long orderTableId, OrderStatus orderStatus, LocalDateTime orderedTime, List<OrderLineItem> orderLineItems) {
         this.id = id;
-        this.orderTable = orderTable;
+        this.orderTableId = orderTableId;
         this.orderStatus = orderStatus;
         this.orderedTime = orderedTime;
         this.orderLineItems = orderLineItems;
-    }
-
-    private void validatesEmptyOrderTable(OrderTable orderTable) {
-        if (orderTable.isEmpty()) {
-            throw new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.");
-        }
     }
 
     public void addOrderLineItem(List<OrderLineItem> orderLineItems) {
@@ -78,8 +67,8 @@ public class Order {
         return id;
     }
 
-    public OrderTable getOrderTable() {
-        return orderTable;
+    public Long getOrderTableId() {
+        return orderTableId;
     }
 
     public OrderStatus getOrderStatus() {

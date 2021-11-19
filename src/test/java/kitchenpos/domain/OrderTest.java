@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import kitchenpos.order.domain.Order;
 import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.TableGroup;
 
 import static kitchenpos.fixture.OrderFixture.COMPLETION_ORDER;
 import static kitchenpos.fixture.OrderFixture.COOKING_ORDER;
@@ -24,12 +25,12 @@ class OrderTest {
     @DisplayName("주문을 생성할 수 있다")
     void create() {
         // given
-        OrderTable orderTable = new OrderTable(5, false);
+        OrderTable orderTable = new OrderTable(1L, new TableGroup(), 5, false);
 
         // when & then
         assertDoesNotThrow(() -> {
-            Order order = new Order(orderTable, Arrays.asList(후라이드_단품_둘, 양념반_후라이드반_하나));
-            assertNotNull(order.getOrderTable());
+            Order order = new Order(orderTable.getId(), Arrays.asList(후라이드_단품_둘, 양념반_후라이드반_하나));
+            assertNotNull(order.getOrderTableId());
             assertEquals(OrderStatus.COOKING, order.getOrderStatus());
             assertNotNull(order.getOrderedTime());
         });
@@ -39,7 +40,7 @@ class OrderTest {
     @DisplayName("메뉴 목록이 없는 경우 주문을 생성할 수 없다.")
     void addOrderLineItemEmptyOrderLineItem() {
         // given
-        Order order = new Order(new OrderTable());
+        Order order = new Order(1L);
 
         // when & then
         assertThatThrownBy(() -> order.addOrderLineItem(Collections.emptyList()))
@@ -47,17 +48,17 @@ class OrderTest {
                 .hasMessage("주문하려면 하나 이상의 메뉴가 필요합니다.");
     }
 
-    @Test
-    @DisplayName("주문하려는 테이블이 비어있으면 주문을 생성할 수 없다.")
-    void emptyOrderTable() {
-        // given
-        OrderTable orderTable = new OrderTable(0, true);
-
-        // when & then
-        assertThatThrownBy(() -> new Order(orderTable, Collections.singletonList(후라이드_단품_둘)))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("빈 테이블은 주문할 수 없습니다.");
-    }
+//    @Test
+//    @DisplayName("주문하려는 테이블이 비어있으면 주문을 생성할 수 없다.")
+//    void emptyOrderTable() {
+//        // given
+//        OrderTable orderTable = new OrderTable(1L, new TableGroup(), 0, true);
+//
+//        // when & then
+//        assertThatThrownBy(() -> new Order(orderTable.getId(), Collections.singletonList(후라이드_단품_둘)))
+//                .isInstanceOf(IllegalArgumentException.class)
+//                .hasMessage("빈 테이블은 주문할 수 없습니다.");
+//    }
 
     @Test
     @DisplayName("주문 상태를 변경할 수 있다.")

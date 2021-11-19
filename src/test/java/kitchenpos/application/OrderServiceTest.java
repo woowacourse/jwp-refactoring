@@ -6,21 +6,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import kitchenpos.menu.domain.MenuRepository;
+import kitchenpos.order.application.OrderService;
+import kitchenpos.order.domain.*;
 import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.request.CreateOrderRequest;
 import kitchenpos.order.ui.request.OrderLineItemRequest;
 import kitchenpos.order.ui.response.CreateOrderResponse;
 import kitchenpos.order.ui.response.OrderResponse;
-import kitchenpos.menu.domain.MenuRepository;
-import kitchenpos.order.application.OrderService;
-import kitchenpos.order.domain.Order;
-import kitchenpos.order.domain.OrderLineItem;
-import kitchenpos.order.domain.OrderRepository;
-import kitchenpos.order.domain.OrderStatus;
 import kitchenpos.table.domain.OrderTableRepository;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -36,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("OrderService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -50,6 +50,9 @@ class OrderServiceTest {
     @Mock
     private OrderTableRepository orderTableRepository;
 
+    @Mock
+    private OrderValidator orderValidator;
+
     @InjectMocks
     private OrderService orderService;
 
@@ -63,7 +66,7 @@ class OrderServiceTest {
         );
         Order order = new Order(
                 1L,
-                단일_손님2_테이블,
+                단일_손님2_테이블.getId(),
                 OrderStatus.COOKING,
                 LocalDateTime.now(),
                 Collections.singletonList(new OrderLineItem(후라이드_단품.getId(), 2))
@@ -138,6 +141,7 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님0_테이블1));
+        doThrow(new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.")).when(orderValidator).validate(any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

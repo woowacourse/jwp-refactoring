@@ -5,12 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.boot.test.mock.mockito.MockBean;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import kitchenpos.order.domain.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.ui.request.ChangeTableEmptyRequest;
 import kitchenpos.table.ui.request.ChangeTableGuestRequest;
 import kitchenpos.table.ui.request.CreateTableRequest;
@@ -27,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 
 @DisplayName("TableService 단위 테스트")
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +39,9 @@ class TableServiceTest {
 
     @Mock
     private OrderTableRepository orderTableRepository;
+
+    @Mock
+    private TableValidator tableValidator;
 
     @InjectMocks
     private TableService tableService;
@@ -120,11 +128,11 @@ class TableServiceTest {
                 5L,
                 null,
                 2,
-                false,
-                Collections.singletonList(COOKING_ORDER)
+                false
         );
         ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
         given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(table));
+        doThrow(new IllegalArgumentException("주문 상태가 조리중이나 식사중입니다.")).when(tableValidator).validate(any());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,

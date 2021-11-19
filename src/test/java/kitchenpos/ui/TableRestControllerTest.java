@@ -33,7 +33,7 @@ class TableRestControllerTest extends ControllerTest {
     void create() throws Exception {
         // given
         CreateTableRequest table = new CreateTableRequest(0, true);
-        TableResponse expected = new TableResponse(1L, null, 0, false, Collections.emptyList());
+        TableResponse expected = new TableResponse(1L, null, 0, false);
         given(tableService.create(any(CreateTableRequest.class))).willReturn(expected);
 
         // when
@@ -70,7 +70,7 @@ class TableRestControllerTest extends ControllerTest {
     void changeEmpty() throws Exception {
         // given
         ChangeTableEmptyRequest request = new ChangeTableEmptyRequest(false);
-        TableResponse expected = new TableResponse(1L, null, 0, false, Collections.emptyList());
+        TableResponse expected = new TableResponse(1L, null, 0, false);
         given(tableService.changeEmpty(anyLong(), any(ChangeTableEmptyRequest.class))).willReturn(expected);
 
         // when
@@ -145,7 +145,7 @@ class TableRestControllerTest extends ControllerTest {
     void changeNumberOfGuests() throws Exception {
         // given
         ChangeTableGuestRequest request = new ChangeTableGuestRequest(5);
-        TableResponse expected = new TableResponse(1L, null, 5, false, Collections.emptyList());
+        TableResponse expected = new TableResponse(1L, null, 5, false);
         given(tableService.changeNumberOfGuests(anyLong(), any(ChangeTableGuestRequest.class))).willReturn(expected);
 
         // when

@@ -6,10 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import kitchenpos.table.domain.OrderTable;
-import kitchenpos.table.domain.OrderTableRepository;
-import kitchenpos.table.domain.TableGroup;
-import kitchenpos.table.domain.TableGroupRepository;
+import kitchenpos.table.domain.*;
 import kitchenpos.table.ui.request.CreateTableGroupRequest;
 import kitchenpos.table.ui.response.TableGroupResponse;
 
@@ -17,13 +14,16 @@ import kitchenpos.table.ui.response.TableGroupResponse;
 public class TableGroupService {
     private final OrderTableRepository orderTableRepository;
     private final TableGroupRepository tableGroupRepository;
+    private final TableValidator tableValidator;
 
     public TableGroupService(
             final OrderTableRepository orderTableRepository,
-            final TableGroupRepository tableGroupRepository
+            final TableGroupRepository tableGroupRepository,
+            final TableValidator tableValidator
     ) {
         this.orderTableRepository = orderTableRepository;
         this.tableGroupRepository = tableGroupRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -55,6 +55,6 @@ public class TableGroupService {
         final TableGroup tableGroup = tableGroupRepository.findById(tableGroupId)
                                                           .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 그룹입니다."));
 
-        tableGroup.ungroup();
+        tableGroup.ungroup(tableValidator);
     }
 }

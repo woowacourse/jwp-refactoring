@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import kitchenpos.order.domain.OrderValidator;
 import kitchenpos.order.ui.request.ChangeOrderStatusRequest;
 import kitchenpos.order.ui.request.CreateOrderRequest;
 import kitchenpos.order.ui.response.CreateOrderResponse;
@@ -23,21 +24,25 @@ public class OrderService {
     private final MenuRepository menuRepository;
     private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderValidator orderValidator;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderValidator orderValidator
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderValidator = orderValidator;
     }
 
     @Transactional
     public CreateOrderResponse create(final CreateOrderRequest request) {
         final OrderTable orderTable = getOrderTable(request);
-        final Order order = new Order(orderTable);
+        orderValidator.validate(orderTable);
+        final Order order = new Order(orderTable.getId());
 
         final List<OrderLineItem> orderLineItems = getOrderLineItems(order, request);
         order.addOrderLineItem(orderLineItems);

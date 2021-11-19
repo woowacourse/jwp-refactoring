@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import kitchenpos.table.domain.OrderTable;
 import kitchenpos.table.domain.OrderTableRepository;
+import kitchenpos.table.domain.TableValidator;
 import kitchenpos.table.ui.request.ChangeTableEmptyRequest;
 import kitchenpos.table.ui.request.ChangeTableGuestRequest;
 import kitchenpos.table.ui.request.CreateTableRequest;
@@ -16,9 +17,14 @@ import kitchenpos.table.ui.response.TableResponse;
 @Service
 public class TableService {
     private final OrderTableRepository orderTableRepository;
+    private final TableValidator tableValidator;
 
-    public TableService(final OrderTableRepository orderTableRepository) {
+    public TableService(
+            final OrderTableRepository orderTableRepository,
+            final TableValidator tableValidator
+    ) {
         this.orderTableRepository = orderTableRepository;
+        this.tableValidator = tableValidator;
     }
 
     @Transactional
@@ -40,7 +46,7 @@ public class TableService {
         final OrderTable table = orderTableRepository.findById(orderTableId)
                                                      .orElseThrow(() -> new IllegalArgumentException("주문 테이블이 존재하지 않습니다."));
 
-        table.changeEmpty(request.isEmpty());
+        table.changeEmpty(request.isEmpty(), tableValidator);
         return TableResponse.from(table);
     }
 

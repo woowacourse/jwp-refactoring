@@ -1,24 +1,18 @@
 package kitchenpos.table.ui.response;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import kitchenpos.table.domain.OrderTable;
-import kitchenpos.order.ui.response.OrderResponse;
 
 public class TableResponse {
     private Long id;
     private GroupOfTableResponse tableGroup;
     private int numberOfGuests;
     private boolean empty;
-    private List<OrderResponse> orders;
 
-    public TableResponse(Long id, GroupOfTableResponse tableGroupResponse, int numberOfGuests, boolean empty, List<OrderResponse> orders) {
+    public TableResponse(Long id, GroupOfTableResponse tableGroupResponse, int numberOfGuests, boolean empty) {
         this.id = id;
         this.tableGroup = tableGroupResponse;
         this.numberOfGuests = numberOfGuests;
         this.empty = empty;
-        this.orders = orders;
     }
 
     public static TableResponse from(OrderTable orderTable) {
@@ -26,15 +20,8 @@ public class TableResponse {
                 orderTable.getId(),
                 GroupOfTableResponse.from(orderTable.getTableGroup()),
                 orderTable.getNumberOfGuests(),
-                orderTable.isEmpty(),
-                orderResponse(orderTable)
+                orderTable.isEmpty()
         );
-    }
-
-    private static List<OrderResponse> orderResponse(OrderTable orderTable) {
-        return orderTable.getOrders().stream()
-                         .map(OrderResponse::from)
-                         .collect(Collectors.toList());
     }
 
     public Long getId() {
@@ -51,9 +38,5 @@ public class TableResponse {
 
     public boolean isEmpty() {
         return empty;
-    }
-
-    public List<OrderResponse> getOrders() {
-        return orders;
     }
 }
