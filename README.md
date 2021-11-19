@@ -190,7 +190,13 @@
 - [x] 클래스 사이, 패키지 사이의 의존 관계 단방향 확인
     <img width="1928" alt="스크린샷 2021-11-01 오전 5 48 00" src="https://user-images.githubusercontent.com/53412998/139600869-e0e8aa66-4804-42e3-bc80-d44a87e04cc7.png">
 
+<br/>
 
+## 4단계 - 멀티 모듈 적용
+
+- module-web 모듈 : 사용자와의 접점을 담당하는 클래스들 (Controller)
+- module-api 모듈 : DB와의 접점을 담당하는 클래스들 (Service)
+- module-common 모듈 : 공통으로 사용되는 클래스들 (DTO, Domain, Repository, Exception, Configuration)
 
 <br/>
 

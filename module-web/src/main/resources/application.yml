@@ -1,0 +1,6 @@
+spring:
+  profiles:
+    active: module-web-local
+
+    include:
+      - module-common-local
