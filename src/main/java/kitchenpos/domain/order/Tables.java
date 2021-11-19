@@ -19,7 +19,7 @@ public class Tables {
 
     public void validateCondition() {
         for (final OrderTable orderTable : values) {
-            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroup())) {
+            if (!orderTable.isEmpty() || Objects.nonNull(orderTable.getTableGroupId())) {
                 throw new IllegalArgumentException();
             }
         }
@@ -27,7 +27,7 @@ public class Tables {
 
     public void changeCondition(TableGroup tableGroup) {
         for (final OrderTable savedOrderTable : values) {
-            savedOrderTable.changeTableGroup(tableGroup);
+            savedOrderTable.changeTableGroupId(tableGroup.getId());
             savedOrderTable.changeEmpty(false);
         }
     }

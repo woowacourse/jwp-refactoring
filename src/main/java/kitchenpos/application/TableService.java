@@ -32,7 +32,7 @@ public class TableService {
 
         return new OrderTableResponse(
                 savedOrderTable.getId(),
-                savedOrderTable.tableGroupId(),
+                savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(),
                 savedOrderTable.isEmpty()
         );
@@ -42,7 +42,7 @@ public class TableService {
         return orderTableRepository.findAll().stream()
                 .map(orderTable -> new OrderTableResponse(
                         orderTable.getId(),
-                        orderTable.tableGroupId(),
+                        orderTable.getTableGroupId(),
                         orderTable.getNumberOfGuests(),
                         orderTable.isEmpty()))
                 .collect(Collectors.toList());
@@ -61,7 +61,7 @@ public class TableService {
 
         return new OrderTableResponse(
                 savedOrderTable.getId(),
-                savedOrderTable.tableGroupId(),
+                savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(),
                 savedOrderTable.isEmpty()
         );
@@ -79,7 +79,7 @@ public class TableService {
 
         return new OrderTableResponse(
                 savedOrderTable.getId(),
-                savedOrderTable.tableGroupId(),
+                savedOrderTable.getTableGroupId(),
                 savedOrderTable.getNumberOfGuests(),
                 savedOrderTable.isEmpty()
         );

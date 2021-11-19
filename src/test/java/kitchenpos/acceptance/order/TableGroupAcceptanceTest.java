@@ -116,7 +116,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         TableGroup tableGroup = new TableGroup();
         TableGroup savedTableGroup = tableGroupRepository.save(tableGroup);
 
-        OrderTable table2 = new OrderTable(savedTableGroup, 0, true);
+        OrderTable table2 = new OrderTable(savedTableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
         TableGroupRequest tableGroupRequest = new TableGroupRequest(Arrays.asList(
@@ -139,19 +139,19 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup = tableGroupRepository.save(tableGroup);
 
-        OrderTable table = new OrderTable(tableGroup, 0, true);
+        OrderTable table = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
 
-        OrderTable table2 = new OrderTable(tableGroup, 0, true);
+        OrderTable table2 = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
         testRestTemplate.delete("/api/table-groups/" + tableGroup.getId());
 
         savedTable = orderTableRepository.findById(savedTable.getId()).orElseThrow(IllegalArgumentException::new);
-        assertThat(savedTable.tableGroupId()).isNull();
+        assertThat(savedTable.getTableGroupId()).isNull();
 
         savedTable2 = orderTableRepository.findById(savedTable2.getId()).orElseThrow(IllegalArgumentException::new);
-        assertThat(savedTable2.tableGroupId()).isNull();
+        assertThat(savedTable2.getTableGroupId()).isNull();
     }
 
     @DisplayName("테이블 그룹 해제 실패 - 조리 상태의 주문이 있는 경우")
@@ -160,10 +160,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup = tableGroupRepository.save(tableGroup);
 
-        OrderTable table = new OrderTable(tableGroup, 0, true);
+        OrderTable table = new OrderTable(tableGroup.getId(), 0, true);
         orderTableRepository.save(table);
 
-        OrderTable table2 = new OrderTable(tableGroup, 0, true);
+        OrderTable table2 = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
         Order order = new Order(savedTable2, OrderStatus.COOKING.name());
@@ -185,10 +185,10 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         TableGroup tableGroup = new TableGroup();
         tableGroup = tableGroupRepository.save(tableGroup);
 
-        OrderTable table = new OrderTable(tableGroup, 0, true);
+        OrderTable table = new OrderTable(tableGroup.getId(), 0, true);
         orderTableRepository.save(table);
 
-        OrderTable table2 = new OrderTable(tableGroup, 0, true);
+        OrderTable table2 = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
         Order order = new Order(savedTable2, OrderStatus.MEAL.name());

@@ -58,7 +58,7 @@ class TablesTest {
     @DisplayName("테이블 조건 검증 실패 - 테이블 그룹이 있는 경우")
     @Test
     void validateConditionFailWhenTableHasTableGroup() {
-        orderTable2 = new OrderTable(tableGroup, 0, true);
+        orderTable2 = new OrderTable(tableGroup.getId(), 0, true);
         Tables tables = new Tables(Arrays.asList(orderTable, orderTable2));
         assertThatThrownBy(tables::validateCondition)
                 .isInstanceOf(IllegalArgumentException.class);
@@ -68,13 +68,13 @@ class TablesTest {
     @Test
     void changeCondition() {
         Tables tables = new Tables(Arrays.asList(orderTable, orderTable2));
-        assertThat(orderTable.tableGroupId()).isNull();
-        assertThat(orderTable2.tableGroupId()).isNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
+        assertThat(orderTable2.getTableGroupId()).isNull();
         assertThat(orderTable.isEmpty()).isTrue();
         assertThat(orderTable2.isEmpty()).isTrue();
         tables.changeCondition(tableGroup);
-        assertThat(orderTable.tableGroupId()).isNotNull();
-        assertThat(orderTable2.tableGroupId()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNotNull();
+        assertThat(orderTable2.getTableGroupId()).isNotNull();
         assertThat(orderTable.isEmpty()).isFalse();
         assertThat(orderTable.isEmpty()).isFalse();
     }

@@ -44,7 +44,7 @@ class OrderTableTest {
     @DisplayName("빈 테이블 검증 실패")
     @Test
     void validateGroupFail() {
-        OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), 0, true);
         assertThatThrownBy(orderTable::validateEmpty)
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -60,7 +60,7 @@ class OrderTableTest {
     @DisplayName("테이블 인원 변경 실패")
     @Test
     void changeNumberOfGuestsFail() {
-        OrderTable orderTable = new OrderTable(tableGroup, 0, true);
+        OrderTable orderTable = new OrderTable(tableGroup.getId(), 0, true);
         assertThatThrownBy(() -> orderTable.changeNumberOfGuests(-1))
                 .isInstanceOf(IllegalArgumentException.class);
     }
@@ -78,17 +78,17 @@ class OrderTableTest {
     @Test
     void changeTableGroup() {
         OrderTable orderTable = new OrderTable(null, 0, false);
-        assertThat(orderTable.getTableGroup()).isNull();
-        orderTable.changeTableGroup(tableGroup);
-        assertThat(orderTable.getTableGroup()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
+        orderTable.changeTableGroupId(tableGroup.getId());
+        assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 
     @DisplayName("테이블 그룹 아이디 조회")
     @Test
     void tableGroupId() {
         OrderTable orderTable = new OrderTable(null, 0, false);
-        assertThat(orderTable.getTableGroup()).isNull();
-        orderTable.changeTableGroup(tableGroup);
-        assertThat(orderTable.getTableGroup()).isNotNull();
+        assertThat(orderTable.getTableGroupId()).isNull();
+        orderTable.changeTableGroupId(tableGroup.getId());
+        assertThat(orderTable.getTableGroupId()).isNotNull();
     }
 }

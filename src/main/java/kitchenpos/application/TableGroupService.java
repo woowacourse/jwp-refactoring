@@ -70,7 +70,7 @@ public class TableGroupService {
         List<OrderTableResponse> orderTableResponses = new ArrayList<>();
         for (OrderTable orderTable : savedOrderTables) {
             OrderTableResponse orderTableResponse = new OrderTableResponse(orderTable.getId(),
-                    orderTable.getTableGroup().getId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
+                    orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
             orderTableResponses.add(orderTableResponse);
         }
         return orderTableResponses;
