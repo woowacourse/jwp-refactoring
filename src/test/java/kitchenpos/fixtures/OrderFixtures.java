@@ -3,65 +3,87 @@ package kitchenpos.fixtures;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import kitchenpos.application.dto.OrderLineItemRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.domain.Menu;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderLineItem;
+import kitchenpos.domain.OrderStatus;
+import kitchenpos.domain.OrderTable;
 
 public class OrderFixtures {
 
     private static final long ORDER_TABLE_ID = 1L;
-    private static final String ORDER_STATUS = "COOKING";
+    private static final OrderStatus ORDER_STATUS = OrderStatus.COOKING;
     private static final long ORDER_ID = 1L;
-    private static final long MENU_ID = 1L;
     private static final long QUANTITY = 1L;
-    private static final long SEQ = 1L;
 
     public static Order createOrder(
         Long id,
-        Long orderTableId,
-        String orderStatus,
+        OrderTable orderTable,
+        OrderStatus orderStatus,
         List<OrderLineItem> orderLineItems
     ) {
-        Order order = new Order();
-        order.setId(id);
-        order.setOrderTableId(orderTableId);
-        order.setOrderStatus(orderStatus);
-        order.setOrderedTime(LocalDateTime.now());
-        order.setOrderLineItems(orderLineItems);
+        return new Order(id, orderTable, orderStatus, LocalDateTime.now(), orderLineItems);
+    }
+
+    public static Order createOrder(OrderStatus status) {
+        OrderTable orderTable = new OrderTable(ORDER_TABLE_ID, null, new ArrayList<>(), 10, false);
+        Order order = createOrder(ORDER_ID, orderTable, status, createOrderLineItems());
+        orderTable.addOrder(order);
         return order;
     }
 
     public static Order createOrder() {
-        return createOrder(ORDER_ID, ORDER_TABLE_ID, ORDER_STATUS, createOrderLineItems());
+        return createOrder(ORDER_STATUS);
     }
 
-    public static Order createOrder(String status) {
-        Order order = createOrder();
-        order.setOrderStatus(status);
-        return order;
+    public static List<Order> createCompletedOrders() {
+        List<Order> orders = new ArrayList<>();
+        orders.add(createOrder(OrderStatus.COMPLETION));
+        orders.add(createOrder(OrderStatus.COMPLETION));
+        return orders;
+    }
+
+    public static List<Order> createMealOrders() {
+        List<Order> orders = new ArrayList<>();
+        orders.add(createOrder(OrderStatus.MEAL));
+        orders.add(createOrder(OrderStatus.MEAL));
+        return orders;
+    }
+
+    public static OrderRequest createOrderRequest(Order order) {
+        return new OrderRequest(
+            order.getOrderTable().getId(),
+            order.getOrderStatus(),
+            order.getOrderLineItems().stream()
+                .map(item -> new OrderLineItemRequest(item.getMenu().getId(), item.getQuantity()))
+                .collect(Collectors.toList())
+        );
+    }
+
+    public static OrderRequest createOrderRequest() {
+        return createOrderRequest(createOrder());
     }
 
     public static List<OrderLineItem> createOrderLineItems() {
         List<OrderLineItem> orderLineItems = new ArrayList<>();
         orderLineItems.add(createOrderLineItem());
-        orderLineItems.add(createOrderLineItem(2L, 1L, 2L, 2L));
+        orderLineItems.add(createOrderLineItem());
         return orderLineItems;
     }
 
     public static OrderLineItem createOrderLineItem(
         Long seq,
-        Long orderId,
-        Long menuId,
+        Order order,
+        Menu menu,
         long quantity
     ) {
-        OrderLineItem orderLineItem = new OrderLineItem();
-        orderLineItem.setSeq(seq);
-        orderLineItem.setOrderId(orderId);
-        orderLineItem.setMenuId(menuId);
-        orderLineItem.setQuantity(quantity);
-        return orderLineItem;
+        return new OrderLineItem(seq, order, menu, quantity);
     }
 
     public static OrderLineItem createOrderLineItem() {
-        return createOrderLineItem(SEQ, ORDER_ID, MENU_ID, QUANTITY);
+        return createOrderLineItem(null, null, MenuFixtures.createMenu(), QUANTITY);
     }
 }

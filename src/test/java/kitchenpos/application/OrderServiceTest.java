@@ -1,5 +1,7 @@
 package kitchenpos.application;
 
+import static kitchenpos.fixtures.OrderFixtures.createOrder;
+import static kitchenpos.fixtures.OrderFixtures.createOrderRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -10,16 +12,20 @@ import static org.mockito.Mockito.verify;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
-import kitchenpos.dao.MenuDao;
-import kitchenpos.dao.OrderDao;
-import kitchenpos.dao.OrderLineItemDao;
-import kitchenpos.dao.OrderTableDao;
+import kitchenpos.application.dto.ChangeOrderStatusRequest;
+import kitchenpos.application.dto.OrderRequest;
+import kitchenpos.application.dto.OrderResponse;
 import kitchenpos.domain.Order;
 import kitchenpos.domain.OrderStatus;
-import kitchenpos.domain.OrderTable;
+import kitchenpos.fixtures.MenuFixtures;
 import kitchenpos.fixtures.OrderFixtures;
 import kitchenpos.fixtures.TableFixtures;
+import kitchenpos.repository.MenuRepository;
+import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderRepository;
+import kitchenpos.repository.OrderTableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,118 +34,86 @@ import org.mockito.Mock;
 class OrderServiceTest extends ServiceTest {
 
     @Mock
-    private MenuDao menuDao;
+    private MenuRepository menuRepository;
 
     @Mock
-    private OrderDao orderDao;
+    private OrderRepository orderRepository;
 
     @Mock
-    private OrderLineItemDao orderLineItemDao;
+    private OrderLineItemRepository orderLineItemRepository;
 
     @Mock
-    private OrderTableDao orderTableDao;
+    private OrderTableRepository orderTableRepository;
 
     @InjectMocks
     private OrderService orderService;
 
     private Order order;
+    private OrderRequest request;
 
     @BeforeEach
     void setUp() {
-        order = OrderFixtures.createOrder();
+        order = createOrder();
+        request = createOrderRequest();
     }
 
     @Test
     void 주문을_생성한다() {
-        given(menuDao.countByIdIn(any()))
-            .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(any())).willReturn(Optional.of(TableFixtures.createOrderTable(false)));
-        given(orderDao.save(any())).willReturn(order);
-        given(orderLineItemDao.save(any())).willReturn(OrderFixtures.createOrderLineItem());
+        given(menuRepository.findById(any())).willReturn(Optional.of(MenuFixtures.createMenu()));
+        given(orderTableRepository.findById(any())).willReturn(Optional.of(TableFixtures.createOrderTable(false)));
+        given(orderRepository.save(any())).willReturn(order);
+        given(orderLineItemRepository.saveAll(any())).willReturn(OrderFixtures.createOrderLineItems());
 
-        assertDoesNotThrow(() -> orderService.create(OrderFixtures.createOrder()));
-        verify(orderLineItemDao, times(order.getOrderLineItems().size())).save(any());
-        verify(orderDao, times(1)).save(any());
-    }
-
-    @Test
-    void 생성_시_주문_항목이_비어있으면_예외를_반환한다() {
-        Order emptyOrder = OrderFixtures.createOrder(
-            1L, 1L, "COOKING", Collections.emptyList()
-        );
-
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(emptyOrder));
+        assertDoesNotThrow(() -> orderService.create(request));
+        verify(orderLineItemRepository, times(1)).saveAll(any());
+        verify(orderRepository, times(1)).save(any());
     }
 
     @Test
     void 생성_시_주문_항목의_수와_메뉴의_수가_일치하지_않으면_예외를_반환한다() {
-        given(menuDao.countByIdIn(any()))
-            .willReturn(Long.valueOf(order.getOrderLineItems().size() + 1));
+        given(menuRepository.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+        assertThrows(NoSuchElementException.class, () -> orderService.create(request));
     }
 
     @Test
     void 생성_시_주문_테이블이_존재하지_않으면_예외를_반환한다() {
-        given(menuDao.countByIdIn(any()))
-            .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(any())).willReturn(Optional.empty());
+        given(menuRepository.findById(any())).willReturn(Optional.of(MenuFixtures.createMenu()));
+        given(orderTableRepository.findById(any())).willReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
-    }
-
-    @Test
-    void 생성_시_주문_테이블이_빈_테이블이면_예외를_반환한다() {
-        OrderTable emptyTable = TableFixtures.createOrderTable(true);
-        given(menuDao.countByIdIn(any()))
-            .willReturn(Long.valueOf(order.getOrderLineItems().size()));
-        given(orderTableDao.findById(any())).willReturn(Optional.of(emptyTable));
-
-        assertThrows(IllegalArgumentException.class, () -> orderService.create(order));
+        assertThrows(NoSuchElementException.class, () -> orderService.create(request));
     }
 
     @Test
     void 주문_리스트를_반환한다() {
-        given(orderDao.findAll()).willReturn(Collections.singletonList(order));
-        given(orderLineItemDao.findAllByOrderId(any())).willReturn(
-            Collections.singletonList(OrderFixtures.createOrderLineItem())
-        );
+        given(orderRepository.findAll()).willReturn(Collections.singletonList(order));
 
-        List<Order> orders = assertDoesNotThrow(() -> orderService.list());
+        List<OrderResponse> orders = assertDoesNotThrow(() -> orderService.list());
         orders.stream()
-            .map(Order::getOrderLineItems)
+            .map(OrderResponse::getOrderLineItems)
             .forEach(lineItems -> assertThat(lineItems).isNotEmpty());
     }
 
     @Test
     void 주문_상태를_변경한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
-        given(orderDao.findById(any())).willReturn(Optional.of(order));
-        given(orderLineItemDao.findAllByOrderId(any())).willReturn(OrderFixtures.createOrderLineItems());
+        ChangeOrderStatusRequest completedOrder = new ChangeOrderStatusRequest(OrderStatus.COMPLETION);
+        given(orderRepository.findById(any())).willReturn(Optional.of(order));
+        given(orderRepository.save(any())).willReturn(OrderFixtures.createOrder(OrderStatus.COMPLETION));
 
-        Order changedOrder = assertDoesNotThrow(() -> orderService.changeOrderStatus(this.order.getId(), completedOrder));
-        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION.name());
+        OrderResponse changedOrder = assertDoesNotThrow(
+            () -> orderService.changeOrderStatus(this.order.getId(), completedOrder)
+        );
+        assertThat(changedOrder.getOrderStatus()).isEqualTo(OrderStatus.COMPLETION);
     }
 
     @Test
     void 상태_변경_시_주문이_존재하지_않으면_예외를_반환한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
-        given(orderDao.findById(any())).willReturn(Optional.empty());
+        ChangeOrderStatusRequest completedOrder = new ChangeOrderStatusRequest(OrderStatus.COMPLETION);
+        given(orderRepository.findById(any())).willReturn(Optional.empty());
 
         assertThrows(
-            IllegalArgumentException.class,
+            NoSuchElementException.class,
             () -> orderService.changeOrderStatus(this.order.getId(), completedOrder)
-        );
-    }
-
-    @Test
-    void 상태_변경_시_완료된_주문_변경_시_예외를_반환한다() {
-        Order completedOrder = OrderFixtures.createOrder(OrderStatus.COMPLETION.name());
-        given(orderDao.findById(any())).willReturn(Optional.of(completedOrder));
-
-        assertThrows(
-            IllegalArgumentException.class,
-            () -> orderService.changeOrderStatus(this.order.getId(), order)
         );
     }
 }
