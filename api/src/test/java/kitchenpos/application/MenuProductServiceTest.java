@@ -1,12 +1,12 @@
 package kitchenpos.application;
 
 import kitchenpos.application.menu.MenuProductService;
+import kitchenpos.application.menu.MenuProductValidator;
 import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.MenuGroup;
 import kitchenpos.domain.menu.repository.MenuProductRepository;
 import kitchenpos.domain.product.Product;
 import kitchenpos.dto.menu.MenuRequest;
-import kitchenpos.application.menu.MenuProductValidator;
 import kitchenpos.exception.NonExistentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
