@@ -21,16 +21,18 @@ public class Fixtures {
         return menuProduct;
     }
 
-    public static Menu menu(long id,
+    public static Menu menu(Long id,
                             String name,
-                            long price,
-                            long menuGroupId,
+                            Long price,
+                            Long menuGroupId,
                             List<MenuProduct> menuProducts) {
 
         Menu menu = new Menu();
         menu.setId(id);
         menu.setName(name);
-        menu.setPrice(BigDecimal.valueOf(price));
+        if (price != null) {
+            menu.setPrice(BigDecimal.valueOf(price));
+        }
         menu.setMenuGroupId(menuGroupId);
         menu.setMenuProducts(menuProducts);
         return menu;
