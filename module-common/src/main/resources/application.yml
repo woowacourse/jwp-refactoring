@@ -1,18 +1,21 @@
 spring:
   profiles:
-    active: test
+    active: module-common-local
 
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MYSQL;
     username: sa
     password:
-    schema:
-      - classpath:db/migration/V1__Initialize_project_tables.sql
-      - classpath:db/migration/V3__Add_ordered_menu.sql
+
+  h2:
+    console:
+      enabled: true
 
   flyway:
-    enabled: false
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
 
   jpa:
     hibernate:

@@ -194,8 +194,9 @@
 
 ## 4단계 - 멀티 모듈 적용
 
-- module-api 모듈 : API와 관련된 클래스들 (Controller, Service, DTO)
-- module-common 모듈 : 공통으로 사용되는 클래스들 (Domain, Repository, Exception, Configuration)
+- module-web 모듈 : 사용자와의 접점을 담당하는 클래스들 (Controller)
+- module-api 모듈 : DB와의 접점을 담당하는 클래스들 (Service)
+- module-common 모듈 : 공통으로 사용되는 클래스들 (DTO, Domain, Repository, Exception, Configuration)
 
 <br/>
 
