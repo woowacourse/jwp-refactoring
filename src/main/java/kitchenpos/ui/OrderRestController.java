@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@RequestMapping("/api/orders")
 @RestController
 public class OrderRestController {
 
@@ -23,7 +25,7 @@ public class OrderRestController {
         this.orderService = orderService;
     }
 
-    @PostMapping("/api/orders")
+    @PostMapping
     public ResponseEntity<OrderResponse> create(@RequestBody final OrderRequest order) {
         final OrderResponse created = orderService.create(order);
         final URI uri = URI.create("/api/orders/" + created.getId());
@@ -31,13 +33,13 @@ public class OrderRestController {
             .body(created);
     }
 
-    @GetMapping("/api/orders")
+    @GetMapping
     public ResponseEntity<List<OrderResponse>> list() {
         return ResponseEntity.ok()
             .body(orderService.list());
     }
 
-    @PutMapping("/api/orders/{orderId}/order-status")
+    @PutMapping("/{orderId}/order-status")
     public ResponseEntity<OrderResponse> changeOrderStatus(
         @PathVariable final Long orderId,
         @RequestBody final ChangeOrderStatusRequest status
