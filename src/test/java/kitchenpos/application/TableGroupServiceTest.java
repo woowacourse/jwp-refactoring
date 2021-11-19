@@ -19,10 +19,8 @@ class TableGroupServiceTest extends IntegrationTest {
     @Test
     void create() {
         // given
-        OrderTable savedOrderTable = createOrderTable();
-
         TableGroup tableGroup = new TableGroup();
-        List<OrderTable> orderTables = Arrays.asList(savedOrderTable);
+        List<OrderTable> orderTables = Arrays.asList(createOrderTable(), createOrderTable());
         tableGroup.setOrderTables(orderTables);
 
         // when
@@ -51,7 +49,7 @@ class TableGroupServiceTest extends IntegrationTest {
 
     private OrderTable createOrderTable() {
         OrderTable orderTable = new OrderTable();
-        orderTable.setEmpty(false);
+        orderTable.setEmpty(true);
         orderTable.setNumberOfGuests(0);
         return tableService.create(orderTable);
     }
