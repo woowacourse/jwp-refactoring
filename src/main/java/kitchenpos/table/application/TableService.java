@@ -1,23 +1,24 @@
 package kitchenpos.table.application;
 
 import java.util.List;
-import kitchenpos.order.domain.Orders;
-import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.table.domain.OrderTable;
+import kitchenpos.table.domain.OrdersValidatedEvent;
 import kitchenpos.table.domain.repository.OrderTableRepository;
 import kitchenpos.table.dto.request.OrderTableRequest;
 import kitchenpos.table.dto.response.OrderTableResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TableService {
-    private final OrderRepository orderRepository;
     private final OrderTableRepository orderTableRepository;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
-    public TableService(final OrderRepository orderRepository, final OrderTableRepository orderTableRepository) {
-        this.orderRepository = orderRepository;
+    public TableService(final OrderTableRepository orderTableRepository,
+                        final ApplicationEventPublisher applicationEventPublisher) {
         this.orderTableRepository = orderTableRepository;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Transactional
@@ -42,8 +43,7 @@ public class TableService {
                 .orElseThrow(IllegalArgumentException::new);
         savedOrderTable.validateGroup();
 
-        Orders orders = new Orders(orderRepository.findAllByOrderTableId(savedOrderTable.getId()));
-        orders.validateChangeEmpty();
+        applicationEventPublisher.publishEvent(new OrdersValidatedEvent(savedOrderTable.getId()));
 
         savedOrderTable.changeEmpty(orderTableRequest.isEmpty());
 
