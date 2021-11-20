@@ -17,7 +17,6 @@ import kitchenpos.order.domain.repository.OrderRepository;
 import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.dto.request.OrderLineItemRequest;
 import kitchenpos.order.dto.request.OrderRequest;
-import kitchenpos.order.dto.response.OrderLineItemResponse;
 import kitchenpos.order.dto.response.OrderResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,35 +63,14 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(savedOrder, orderRequest);
-        List<OrderLineItemResponse> orderLineItemResponses = getOrderLineItemResponse(savedOrderLineItems);
 
-        return new OrderResponse(
-                savedOrder.getId(),
-                savedOrder.getOrderTable().getId(),
-                savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(),
-                orderLineItemResponses
-        );
+        return OrderResponse.of(savedOrder, savedOrderLineItems);
     }
 
     private List<Long> getMenuIds(List<OrderLineItemRequest> orderLineItemRequests) {
         return orderLineItemRequests.stream()
                 .map(OrderLineItemRequest::getMenuId)
                 .collect(Collectors.toList());
-    }
-
-    private List<OrderLineItemResponse> getOrderLineItemResponse(List<OrderLineItem> savedOrderLineItems) {
-        List<OrderLineItemResponse> orderLineItemResponses = new ArrayList<>();
-        for (OrderLineItem orderLineItem : savedOrderLineItems) {
-            OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(
-                    orderLineItem.getSeq(),
-                    orderLineItem.getOrder().getId(),
-                    orderLineItem.getOrderMenu().getId(),
-                    orderLineItem.getQuantity()
-            );
-            orderLineItemResponses.add(orderLineItemResponse);
-        }
-        return orderLineItemResponses;
     }
 
     private List<OrderLineItem> saveOrderLineItems(Order savedOrder, OrderRequest orderRequest) {
@@ -117,18 +95,10 @@ public class OrderService {
         final List<Order> orders = orderRepository.findAll();
         List<OrderResponse> orderResponses = new ArrayList<>();
         for (final Order order : orders) {
-            List<OrderLineItemResponse> orderLineItemResponses = getOrderLineItemResponse(
+            OrderResponse orderResponse = OrderResponse.of(order,
                     orderLineItemRepository.findAllByOrderId(order.getId()));
-            OrderResponse orderResponse = new OrderResponse(
-                    order.getId(),
-                    order.getOrderTable().getId(),
-                    order.getOrderStatus(),
-                    order.getOrderedTime(),
-                    orderLineItemResponses
-            );
             orderResponses.add(orderResponse);
         }
-
         return orderResponses;
     }
 
@@ -137,18 +107,7 @@ public class OrderService {
         final Order savedOrder = orderRepository.findById(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         savedOrder.validateChangeStatus();
-
         savedOrder.changeOrderStatus(orderRequest.getOrderStatus());
-
-        List<OrderLineItemResponse> orderLineItemResponses = getOrderLineItemResponse(
-                orderLineItemRepository.findAllByOrderId(orderId));
-
-        return new OrderResponse(
-                savedOrder.getId(),
-                savedOrder.getOrderTable().getId(),
-                savedOrder.getOrderStatus(),
-                savedOrder.getOrderedTime(),
-                orderLineItemResponses
-        );
+        return OrderResponse.of(savedOrder, orderLineItemRepository.findAllByOrderId(orderId));
     }
 }

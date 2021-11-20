@@ -1,7 +1,6 @@
 package kitchenpos.order.application;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderTable;
 import kitchenpos.order.domain.Orders;
 import kitchenpos.order.domain.repository.OrderRepository;
@@ -30,22 +29,11 @@ public class TableService {
         );
         OrderTable savedOrderTable = orderTableRepository.save(orderTable);
 
-        return new OrderTableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return OrderTableResponse.of(savedOrderTable);
     }
 
     public List<OrderTableResponse> list() {
-        return orderTableRepository.findAll().stream()
-                .map(orderTable -> new OrderTableResponse(
-                        orderTable.getId(),
-                        orderTable.getTableGroupId(),
-                        orderTable.getNumberOfGuests(),
-                        orderTable.isEmpty()))
-                .collect(Collectors.toList());
+        return OrderTableResponse.toList(orderTableRepository.findAll());
     }
 
     @Transactional
@@ -59,12 +47,7 @@ public class TableService {
 
         savedOrderTable.changeEmpty(orderTableRequest.isEmpty());
 
-        return new OrderTableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return OrderTableResponse.of(savedOrderTable);
     }
 
     @Transactional
@@ -77,11 +60,6 @@ public class TableService {
 
         savedOrderTable.changeNumberOfGuests(numberOfGuests);
 
-        return new OrderTableResponse(
-                savedOrderTable.getId(),
-                savedOrderTable.getTableGroupId(),
-                savedOrderTable.getNumberOfGuests(),
-                savedOrderTable.isEmpty()
-        );
+        return OrderTableResponse.of(savedOrderTable);
     }
 }

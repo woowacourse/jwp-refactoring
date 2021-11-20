@@ -13,7 +13,6 @@ import kitchenpos.menu.domain.repository.MenuRepository;
 import kitchenpos.menu.domain.repository.ProductRepository;
 import kitchenpos.menu.dto.request.MenuProductRequest;
 import kitchenpos.menu.dto.request.MenuRequest;
-import kitchenpos.menu.dto.response.MenuProductResponse;
 import kitchenpos.menu.dto.response.MenuResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,29 +46,10 @@ public class MenuService {
 
         List<MenuProduct> savedMenuProducts = saveMenuProducts(savedMenu, menuRequest);
 
-        MenuProducts menuProducts = new MenuProducts(menuProductRepository.findAllByMenuId(savedMenu.getId()));
+        MenuProducts menuProducts = new MenuProducts(savedMenuProducts);
         menuProducts.validate(savedMenu.getPrice());
 
-        return new MenuResponse(
-                savedMenu.getId(),
-                savedMenu.getName(),
-                savedMenu.getPrice(),
-                savedMenu.getMenuGroup().getId(),
-                getMenuProductResponses(savedMenuProducts)
-        );
-    }
-
-    private List<MenuProductResponse> getMenuProductResponses(List<MenuProduct> savedMenuProducts) {
-        final List<MenuProductResponse> menuProductResponses = new ArrayList<>();
-        for (final MenuProduct savedMenuProduct : savedMenuProducts) {
-            menuProductResponses.add(new MenuProductResponse(
-                    savedMenuProduct.getSeq(),
-                    savedMenuProduct.getMenu().getId(),
-                    savedMenuProduct.getProduct().getId(),
-                    savedMenuProduct.getQuantity())
-            );
-        }
-        return menuProductResponses;
+        return MenuResponse.of(savedMenu, savedMenuProducts);
     }
 
     private List<MenuProduct> saveMenuProducts(Menu savedMenu, MenuRequest menuRequest) {
@@ -88,14 +68,7 @@ public class MenuService {
         final List<Menu> menus = menuRepository.findAll();
         List<MenuResponse> menuResponses = new ArrayList<>();
         for (final Menu menu : menus) {
-            List<MenuProduct> menuProducts = menuProductRepository.findAllByMenuId(menu.getId());
-            MenuResponse menuResponse = new MenuResponse(
-                    menu.getId(),
-                    menu.getName(),
-                    menu.getPrice(),
-                    menu.getMenuGroup().getId(),
-                    getMenuProductResponses(menuProducts)
-            );
+            MenuResponse menuResponse = MenuResponse.of(menu, menuProductRepository.findAllByMenuId(menu.getId()));
             menuResponses.add(menuResponse);
         }
         return menuResponses;

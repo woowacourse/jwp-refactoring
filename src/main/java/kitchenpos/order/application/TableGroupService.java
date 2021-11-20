@@ -1,6 +1,5 @@
 package kitchenpos.order.application;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import kitchenpos.order.domain.OrderTable;
@@ -12,7 +11,6 @@ import kitchenpos.order.domain.repository.OrderTableRepository;
 import kitchenpos.order.domain.repository.TableGroupRepository;
 import kitchenpos.order.dto.request.OrderTableRequest;
 import kitchenpos.order.dto.request.TableGroupRequest;
-import kitchenpos.order.dto.response.OrderTableResponse;
 import kitchenpos.order.dto.response.TableGroupResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,29 +49,13 @@ public class TableGroupService {
 
         tables.changeCondition(tableGroup.getId());
 
-        List<OrderTableResponse> orderTableResponses = getOrderTableResponses(savedOrderTables);
-
-        return new TableGroupResponse(
-                savedTableGroup.getId(),
-                savedTableGroup.getCreatedDate(),
-                orderTableResponses
-        );
+        return TableGroupResponse.of(savedTableGroup, savedOrderTables);
     }
 
     private List<Long> getOrderTableIds(List<OrderTableRequest> orderTables) {
         return orderTables.stream()
                 .map(OrderTableRequest::getId)
                 .collect(Collectors.toList());
-    }
-
-    private List<OrderTableResponse> getOrderTableResponses(List<OrderTable> savedOrderTables) {
-        List<OrderTableResponse> orderTableResponses = new ArrayList<>();
-        for (OrderTable orderTable : savedOrderTables) {
-            OrderTableResponse orderTableResponse = new OrderTableResponse(orderTable.getId(),
-                    orderTable.getTableGroupId(), orderTable.getNumberOfGuests(), orderTable.isEmpty());
-            orderTableResponses.add(orderTableResponse);
-        }
-        return orderTableResponses;
     }
 
     @Transactional
