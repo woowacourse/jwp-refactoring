@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -72,8 +70,6 @@ class OrderServiceTest {
                 Collections.singletonList(new OrderLineItem(후라이드_단품.getId(), 2))
         );
 
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
-        given(menuRepository.findById(anyLong())).willReturn(Optional.of(후라이드_단품));
         given(orderRepository.save(any(Order.class))).willReturn(order);
 
         // when
@@ -91,7 +87,6 @@ class OrderServiceTest {
                 단일_손님2_테이블.getId(),
                 Collections.emptyList()
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -107,8 +102,7 @@ class OrderServiceTest {
                 단일_손님2_테이블.getId(),
                 Collections.singletonList(new OrderLineItemRequest(10L, 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님2_테이블));
-        given(menuRepository.findById(anyLong())).willReturn(Optional.empty());
+        doThrow(new IllegalArgumentException("등록되지 않은 메뉴는 주문할 수 없습니다.")).when(orderValidator).validateMenu(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -124,7 +118,7 @@ class OrderServiceTest {
                 10L,
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.empty());
+        doThrow(new IllegalArgumentException("존재하지 않는 테이블은 주문할 수 없습니다.")).when(orderValidator).validateTable(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
@@ -140,8 +134,7 @@ class OrderServiceTest {
                 단일_손님0_테이블1.getId(),
                 Collections.singletonList(new OrderLineItemRequest(후라이드_단품.getId(), 2))
         );
-        given(orderTableRepository.findById(anyLong())).willReturn(Optional.of(단일_손님0_테이블1));
-        doThrow(new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.")).when(orderValidator).validate(any());
+        doThrow(new IllegalArgumentException("빈 테이블은 주문할 수 없습니다.")).when(orderValidator).validateTable(anyLong());
 
         // when & then
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
