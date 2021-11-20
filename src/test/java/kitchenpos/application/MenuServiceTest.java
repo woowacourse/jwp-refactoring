@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import kitchenpos.domain.MenuGroup;
 import kitchenpos.domain.Product;
-import kitchenpos.exception.InvalidMenuException;
 import kitchenpos.exception.InvalidMenuPriceException;
+import kitchenpos.exception.InvalidPriceException;
 import kitchenpos.exception.MenuGroupNotFoundException;
 import kitchenpos.exception.ProductNotFoundException;
 import kitchenpos.repository.MenuGroupRepository;
@@ -56,7 +56,7 @@ class MenuServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("Menu의 Price가 0보다 작으면 예외가 발생한다.")
@@ -74,7 +74,7 @@ class MenuServiceTest {
 
             // when, then
             assertThatThrownBy(() -> menuService.create(request))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("Menu의 MenuGroupId가 존재하지 않는 경우 발생한다.")

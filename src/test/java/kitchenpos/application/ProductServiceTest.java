@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import java.util.List;
+import kitchenpos.exception.InvalidNameException;
 import kitchenpos.exception.InvalidProductException;
 import kitchenpos.ui.request.ProductRequest;
 import kitchenpos.ui.response.ProductResponse;
@@ -48,7 +49,7 @@ class ProductServiceTest {
 
             // when, then
             assertThatThrownBy(() -> productService.create(request))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
 
         @DisplayName("price가 Null인 경우 예외가 발생한다.")

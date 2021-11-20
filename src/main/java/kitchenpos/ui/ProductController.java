@@ -1,5 +1,7 @@
 package kitchenpos.ui;
 
+import java.net.URI;
+import java.util.List;
 import javax.validation.Valid;
 import kitchenpos.application.ProductService;
 import kitchenpos.ui.request.ProductRequest;
@@ -10,9 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")

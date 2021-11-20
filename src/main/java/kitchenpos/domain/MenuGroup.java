@@ -1,12 +1,11 @@
 package kitchenpos.domain;
 
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.validation.constraints.NotNull;
-import kitchenpos.exception.InvalidMenuGroupException;
 
 @Entity
 public class MenuGroup {
@@ -15,8 +14,8 @@ public class MenuGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String name;
+    @Embedded
+    private Name name;
 
     protected MenuGroup() {
     }
@@ -26,15 +25,12 @@ public class MenuGroup {
     }
 
     public MenuGroup(Long id, String name) {
-        this.id = id;
-        this.name = name;
-        validateName(this.name);
+        this(id, new Name(name));
     }
 
-    private void validateName(String name) {
-        if (Objects.isNull(name) || name.replaceAll(" ", "").isEmpty()) {
-            throw new InvalidMenuGroupException("MenuGroup 이름은 Null이거나 공백일 수 없습니다.");
-        }
+    public MenuGroup(Long id, Name name) {
+        this.id = id;
+        this.name = name;
     }
 
     public Long getId() {
@@ -42,7 +38,7 @@ public class MenuGroup {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     @Override

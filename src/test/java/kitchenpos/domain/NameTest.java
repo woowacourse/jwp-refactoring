@@ -7,26 +7,26 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("MenuGroup 단위 테스트")
-public class MenuGroupTest {
+@DisplayName("Name 단위 테스트")
+class NameTest {
 
-    @DisplayName("MenuGroup을 생성할 때")
+    @DisplayName("Name을 생성할 때")
     @Nested
     class Create {
 
-        @DisplayName("name이 Null인 경우 예외가 발생한다.")
+        @DisplayName("값이 null일 경우 예외가 발생한다.")
         @Test
-        void nameNullException() {
+        void nullException() {
             // when, then
-            assertThatThrownBy(() -> new MenuGroup(null))
+            assertThatThrownBy(() -> new Name(null))
                 .isExactlyInstanceOf(InvalidNameException.class);
         }
 
-        @DisplayName("name이 공백뿐인 경우 예외가 발생한다.")
+        @DisplayName("값이 공백으로만 이루어진 경우 예외가 발생한다.")
         @Test
-        void nameBlankException() {
+        void blankException() {
             // when, then
-            assertThatThrownBy(() -> new MenuGroup(" "))
+            assertThatThrownBy(() -> new Name(" "))
                 .isExactlyInstanceOf(InvalidNameException.class);
         }
     }

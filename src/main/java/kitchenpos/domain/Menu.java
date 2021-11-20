@@ -2,6 +2,7 @@ package kitchenpos.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,11 +19,11 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private String name;
+    @Embedded
+    private Name name;
 
-    @NotNull
-    private BigDecimal price;
+    @Embedded
+    private Price price;
 
     @NotNull
     @ManyToOne
@@ -33,48 +34,20 @@ public class Menu {
     }
 
     public Menu(String name, BigDecimal price, MenuGroup menuGroup) {
-        this(null, name, price, menuGroup);
+        this(null, new Name(name), new Price(price), menuGroup);
     }
 
-    public Menu(Long id, String name, BigDecimal price, MenuGroup menuGroup) {
+    public Menu(Long id, Name name, Price price, MenuGroup menuGroup) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.menuGroup = menuGroup;
-        validateName(this.name);
-        validatePrice(this.price);
         validateMenuGroupNull(this.menuGroup);
     }
 
-    private void validateName(String name) {
-        validateNull(name);
-        validateBlank(name);
-    }
-
-    private void validatePrice(BigDecimal price) {
-        validateNull(price);
-        validateNegative(price);
-    }
-
     private void validateMenuGroupNull(MenuGroup menuGroup) {
-        validateNull(menuGroup);
-    }
-
-    private void validateNull(Object object) {
-        if (Objects.isNull(object)) {
+        if (Objects.isNull(menuGroup)) {
             throw new InvalidMenuException("Menu 정보에 null이 포함되었습니다.");
-        }
-    }
-
-    private void validateBlank(String name) {
-        if (name.replaceAll(" ", "").isEmpty()) {
-            throw new InvalidMenuException("Menu name은 공백일 수 없습니다.");
-        }
-    }
-
-    private void validateNegative(BigDecimal price) {
-        if (price.compareTo(BigDecimal.ZERO) < 0) {
-            throw new InvalidMenuException(String.format("Menu price는 음수일 수 없습니다. (%s)", price));
         }
     }
 
@@ -83,11 +56,11 @@ public class Menu {
     }
 
     public String getName() {
-        return name;
+        return name.getValue();
     }
 
     public BigDecimal getPrice() {
-        return price;
+        return price.getValue();
     }
 
     public Long getMenuGroupId() {

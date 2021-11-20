@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
 import kitchenpos.exception.InvalidMenuException;
+import kitchenpos.exception.InvalidNameException;
+import kitchenpos.exception.InvalidPriceException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -35,7 +37,7 @@ class MenuTest {
 
             // when, then
             assertThatThrownBy(() -> new Menu(null, BigDecimal.valueOf(11_900), savedMenuGroup))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
 
         @DisplayName("name이 공백으로 이루어진 경우 예외가 발생한다.")
@@ -46,7 +48,7 @@ class MenuTest {
 
             // when, then
             assertThatThrownBy(() -> new Menu(" ", BigDecimal.valueOf(11_900), savedMenuGroup))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
 
         @DisplayName("price가 Null인 경우 예외가 발생한다.")
@@ -57,7 +59,7 @@ class MenuTest {
 
             // when, then
             assertThatThrownBy(() -> new Menu("스테커3 버거", null, savedMenuGroup))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("price가 음수인 경우 예외가 발생한다.")
@@ -68,7 +70,7 @@ class MenuTest {
 
             // when, then
             assertThatThrownBy(() -> new Menu("스테커3 버거", BigDecimal.valueOf(-1), savedMenuGroup))
-                .isExactlyInstanceOf(InvalidMenuException.class);
+                .isExactlyInstanceOf(InvalidPriceException.class);
         }
 
         @DisplayName("menuGroup이 Null인 경우 예외가 발생한다.")

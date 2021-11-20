@@ -161,7 +161,7 @@
 - [ ] 엔티티 원시값 포장
   - [ ] quantity
   - [ ] price
-  - [ ] name
+  - [x] name
   - [ ] numberOfGuests
 - [x] DTO getter 디미터 법칙
 - [ ] OrderTable에서 TableGroup 값에 따라 empty 설정을 해야하는가 고민

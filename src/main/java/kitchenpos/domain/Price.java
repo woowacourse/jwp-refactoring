@@ -3,11 +3,20 @@ package kitchenpos.domain;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 import kitchenpos.exception.InvalidPriceException;
 
+@Embeddable
 public class Price {
 
-    private final BigDecimal value;
+    @NotNull
+    @Column(name = "price")
+    private BigDecimal value;
+
+    protected Price() {
+    }
 
     public Price(BigDecimal value) {
         this.value = value;

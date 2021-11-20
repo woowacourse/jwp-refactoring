@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
+import kitchenpos.exception.InvalidNameException;
 import kitchenpos.exception.InvalidProductException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,7 +24,7 @@ class ProductTest {
         void nameNullException() {
             // when, then
             assertThatThrownBy(() -> new Product(null, BigDecimal.valueOf(5_000)))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
 
         @DisplayName("name이 공백뿐인 경우 예외가 발생한다.")
@@ -31,7 +32,7 @@ class ProductTest {
         void nameBlankException() {
             // when, then
             assertThatThrownBy(() -> new Product(" ", BigDecimal.valueOf(5_000)))
-                .isExactlyInstanceOf(InvalidProductException.class);
+                .isExactlyInstanceOf(InvalidNameException.class);
         }
 
         @DisplayName("price가 Null인 경우 예외가 발생한다.")
