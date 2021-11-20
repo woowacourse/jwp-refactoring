@@ -22,7 +22,7 @@ class OrderTest {
     @DisplayName("주문 상태 변경 검증 성공")
     @Test
     void validateChangeStatus() {
-        Order order = new Order(orderTable, OrderStatus.COOKING.name());
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name());
         assertThatCode(order::validateChangeStatus)
                 .doesNotThrowAnyException();
     }
@@ -30,7 +30,7 @@ class OrderTest {
     @DisplayName("주문 상태 변경 검증 실패")
     @Test
     void validateChangeStatusFail() {
-        Order order = new Order(orderTable, OrderStatus.COMPLETION.name());
+        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name());
         assertThatThrownBy(order::validateChangeStatus)
                 .isInstanceOf(IllegalArgumentException.class);
     }

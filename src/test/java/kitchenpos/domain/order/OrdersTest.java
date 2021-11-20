@@ -26,8 +26,8 @@ class OrdersTest {
     @DisplayName("주문 가능 상태 변경 검증 성공")
     @Test
     void validateChangeStatus() {
-        Order order = new Order(orderTable, OrderStatus.COMPLETION.name());
-        Order order2 = new Order(orderTable2, OrderStatus.COMPLETION.name());
+        Order order = new Order(orderTable.getId(), OrderStatus.COMPLETION.name());
+        Order order2 = new Order(orderTable2.getId(), OrderStatus.COMPLETION.name());
         Orders orders = new Orders(Arrays.asList(order, order2));
         assertThatCode(orders::validateChangeEmpty)
                 .doesNotThrowAnyException();
@@ -36,8 +36,8 @@ class OrdersTest {
     @DisplayName("주문 가능 상태 변경 검증 실패")
     @Test
     void validateChangeStatusFail() {
-        Order order = new Order(orderTable, OrderStatus.COOKING.name());
-        Order order2 = new Order(orderTable2, OrderStatus.MEAL.name());
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name());
+        Order order2 = new Order(orderTable2.getId(), OrderStatus.MEAL.name());
         Orders orders = new Orders(Arrays.asList(order, order2));
         assertThatThrownBy(orders::validateChangeEmpty)
                 .isInstanceOf(IllegalArgumentException.class);

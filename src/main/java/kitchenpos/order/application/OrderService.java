@@ -59,7 +59,7 @@ public class OrderService {
                 .orElseThrow(IllegalArgumentException::new);
         orderTable.validateEmpty();
 
-        Order order = new Order(orderTable, OrderStatus.COOKING.name());
+        Order order = new Order(orderTable.getId(), OrderStatus.COOKING.name());
         final Order savedOrder = orderRepository.save(order);
 
         List<OrderLineItem> savedOrderLineItems = saveOrderLineItems(savedOrder, orderRequest);

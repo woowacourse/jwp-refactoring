@@ -121,7 +121,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenOrderIsCompletion() {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
-        Order order = new Order(savedTable, OrderStatus.COMPLETION.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.COMPLETION.name());
         orderRepository.save(order);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
@@ -142,7 +142,7 @@ class TableAcceptanceTest extends AcceptanceTest {
     void changeEmptyWhenOrderIsCooking() {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
-        Order order = new Order(savedTable, OrderStatus.COOKING.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
 
@@ -162,7 +162,7 @@ class TableAcceptanceTest extends AcceptanceTest {
         OrderTable table = new OrderTable(null, 0, true);
         OrderTable savedTable = orderTableRepository.save(table);
         OrderTableRequest orderTableRequest = new OrderTableRequest(false);
-        Order order = new Order(savedTable, OrderStatus.MEAL.name());
+        Order order = new Order(savedTable.getId(), OrderStatus.MEAL.name());
         orderRepository.save(order);
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(

@@ -166,7 +166,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         OrderTable table2 = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
-        Order order = new Order(savedTable2, OrderStatus.COOKING.name());
+        Order order = new Order(savedTable2.getId(), OrderStatus.COOKING.name());
         orderRepository.save(order);
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(
@@ -191,7 +191,7 @@ class TableGroupAcceptanceTest extends AcceptanceTest {
         OrderTable table2 = new OrderTable(tableGroup.getId(), 0, true);
         OrderTable savedTable2 = orderTableRepository.save(table2);
 
-        Order order = new Order(savedTable2, OrderStatus.MEAL.name());
+        Order order = new Order(savedTable2.getId(), OrderStatus.MEAL.name());
         orderRepository.save(order);
 
         ResponseEntity<Void> responseEntity = testRestTemplate.exchange(

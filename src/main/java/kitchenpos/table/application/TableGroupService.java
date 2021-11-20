@@ -61,7 +61,10 @@ public class TableGroupService {
     @Transactional
     public void ungroup(final Long tableGroupId) {
         final List<OrderTable> orderTables = orderTableRepository.findAllByTableGroupId(tableGroupId);
-        Orders orders = new Orders(orderRepository.findAllByOrderTableIn(orderTables));
+        final List<Long> orderTableIds = orderTables.stream()
+                .map(orderTable -> orderTable.getId())
+                .collect(Collectors.toList());
+        Orders orders = new Orders(orderRepository.findAllByOrderTableIdIn(orderTableIds));
         orders.validateChangeEmpty();
         Tables tables = new Tables(orderTables);
         tables.changeCondition(null);

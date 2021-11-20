@@ -16,7 +16,7 @@ public class OrderResponse {
     public static OrderResponse of(Order order, List<OrderLineItem> orderLineItems) {
         return new OrderResponse(
                 order.getId(),
-                order.getOrderTable().getId(),
+                order.getOrderTableId(),
                 order.getOrderStatus(),
                 order.getOrderedTime(),
                 OrderLineItemResponse.toList(orderLineItems)
