@@ -10,6 +10,7 @@ import kitchenpos.menu.domain.Menu;
 import kitchenpos.menu.domain.MenuProduct;
 import kitchenpos.menu.domain.MenuRepository;
 import kitchenpos.menu.domain.MenuValidator;
+import kitchenpos.menu.ui.request.ChangeNamePriceRequest;
 import kitchenpos.menu.ui.request.CreateMenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
 
@@ -50,5 +51,12 @@ public class MenuService {
                              .stream()
                              .map(MenuResponse::from)
                              .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void changeNamePrice(Long menuId, ChangeNamePriceRequest request) {
+        final Menu menu = menuRepository.findById(menuId)
+                                  .orElseThrow(IllegalArgumentException::new);
+        menu.changeNameAndPrice(request.getName(), request.getPrice());
     }
 }

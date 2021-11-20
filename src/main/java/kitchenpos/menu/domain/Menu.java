@@ -52,6 +52,11 @@ public class Menu {
         this.menuProducts = menuProducts;
     }
 
+    public void changeNameAndPrice(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,14 +1,12 @@
 package kitchenpos.menu.ui;
 
 import kitchenpos.menu.application.MenuService;
+import kitchenpos.menu.ui.request.ChangeNamePriceRequest;
 import kitchenpos.menu.ui.request.CreateMenuRequest;
 import kitchenpos.menu.ui.response.MenuResponse;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
@@ -33,5 +31,14 @@ public class MenuRestController {
     public ResponseEntity<List<MenuResponse>> list() {
         return ResponseEntity.ok()
                 .body(menuService.list());
+    }
+
+    @PutMapping("/api/menus/{menuId}")
+    public ResponseEntity<Void> changeNamePrice(
+            @PathVariable final Long menuId,
+            @RequestBody final ChangeNamePriceRequest request
+    ) {
+        menuService.changeNamePrice(menuId, request);
+        return ResponseEntity.noContent().build();
     }
 }
