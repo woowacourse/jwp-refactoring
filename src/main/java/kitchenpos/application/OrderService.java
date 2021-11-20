@@ -7,6 +7,7 @@ import kitchenpos.domain.menu.Menu;
 import kitchenpos.domain.menu.Menus;
 import kitchenpos.domain.order.Order;
 import kitchenpos.domain.order.OrderLineItem;
+import kitchenpos.domain.order.OrderMenu;
 import kitchenpos.domain.order.OrderStatus;
 import kitchenpos.domain.order.OrderTable;
 import kitchenpos.dto.OrderLineItemRequest;
@@ -15,6 +16,7 @@ import kitchenpos.dto.OrderRequest;
 import kitchenpos.dto.OrderResponse;
 import kitchenpos.repository.MenuRepository;
 import kitchenpos.repository.OrderLineItemRepository;
+import kitchenpos.repository.OrderMenuRepository;
 import kitchenpos.repository.OrderRepository;
 import kitchenpos.repository.OrderTableRepository;
 import org.springframework.stereotype.Service;
@@ -27,17 +29,20 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderLineItemRepository orderLineItemRepository;
     private final OrderTableRepository orderTableRepository;
+    private final OrderMenuRepository orderMenuRepository;
 
     public OrderService(
             final MenuRepository menuRepository,
             final OrderRepository orderRepository,
             final OrderLineItemRepository orderLineItemRepository,
-            final OrderTableRepository orderTableRepository
+            final OrderTableRepository orderTableRepository,
+            final OrderMenuRepository orderMenuRepository
     ) {
         this.menuRepository = menuRepository;
         this.orderRepository = orderRepository;
         this.orderLineItemRepository = orderLineItemRepository;
         this.orderTableRepository = orderTableRepository;
+        this.orderMenuRepository = orderMenuRepository;
     }
 
     @Transactional
@@ -82,7 +87,7 @@ public class OrderService {
             OrderLineItemResponse orderLineItemResponse = new OrderLineItemResponse(
                     orderLineItem.getSeq(),
                     orderLineItem.getOrder().getId(),
-                    orderLineItem.getMenuId(),
+                    orderLineItem.getOrderMenuId(),
                     orderLineItem.getQuantity()
             );
             orderLineItemResponses.add(orderLineItemResponse);
@@ -95,9 +100,12 @@ public class OrderService {
         for (final OrderLineItemRequest orderLineItemRequest : orderRequest.getOrderLineItemRequests()) {
             Menu savedMenu = menuRepository.findById(orderLineItemRequest.getMenuId())
                     .orElseThrow(IllegalArgumentException::new);
+            OrderMenu savedOrderMenu = orderMenuRepository.save(
+                    new OrderMenu(savedMenu.getName(), savedMenu.getPrice())
+            );
             OrderLineItem orderLineItem = new OrderLineItem(
                     savedOrder,
-                    savedMenu.getId(),
+                    savedOrderMenu.getId(),
                     orderLineItemRequest.getQuantity()
             );
             savedOrderLineItems.add(orderLineItemRepository.save(orderLineItem));
